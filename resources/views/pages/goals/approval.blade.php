@@ -10,7 +10,18 @@
           <button class="btn btn-outline-secondary btn-sm badge-pill px-4">Save as Draft</button>
         <form action="{{ route('goals-approve') }}" method="POST">
             @csrf
-            <button type="submit" class="btn btn-primary px-4">Submit</button>
+            <div class="btn dropleft">
+            <a class="btn btn-outline-primary px-4" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
+            {{-- <a class="btn btn-secondary dropdown-toggle">
+                Dropdown link
+              </a> --}}
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Employee</a>
+                <a class="dropdown-item" href="#">Manager L1</a>
+                <a class="dropdown-item" href="#">Manager L2</a>
+              </div> 
+            </div>           
+            <button type="submit" class="btn btn-primary px-4">Approve</button>
           </div>
           <input type="hidden" class="form-control" name="id" value="{{ $id }}">
           <!-- Content Row -->
