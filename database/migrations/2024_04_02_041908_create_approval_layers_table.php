@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('approval_requests', function (Blueprint $table) {
+        Schema::create('approval_layers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('form_content_id')->unique();
-            $table->uuid('current_approval_layer_id')->unique();
-            $table->uuid('users_id')->unique();
-            $table->enum('form_status', ['pending', 'approved', 'rejected'])->nullable();
+            $table->string('name', 100);
+            $table->uuid('role_id')->unique();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('approval_requests');
+        Schema::dropIfExists('approval_layers');
     }
 };
