@@ -58,7 +58,7 @@
                         <x-text-input id="email" type="email" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" placeholder="Email" aria-label="Email" aria-describedby="email-addon" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                       </div>
-                      <x-input-label class="mb-2 ml-1 font-bold text-xs text-slate-700" for="password" :value="__('Password')" />
+                      <x-input-label class="mb-2 ml-1 font-bold text-xs text-slate-700" for="password" :value="__('New Password')" />
                       <div class="mb-4">
                         <x-text-input id="password" type="password" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" name="password" :value="old('password')" required autocomplete="new-password" />
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
