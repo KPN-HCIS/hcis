@@ -13,7 +13,7 @@
             <div style="margin: 30px; text-align: center"><a href="{{ $resetUrl }}" style="background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a></div>
             <p>This password reset link will expire in 60 minutes.</p>
             <p style="margin-top: 20px;">Thank you,</p>
-            <p>HC System</p>
+            <p>HC Support</p>
         </div>
     </div>
 </body>

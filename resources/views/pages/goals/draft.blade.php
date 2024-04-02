@@ -17,26 +17,27 @@
         </div>
         <form action="{{ route('goals-submit') }}" method="POST">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-          <a class="btn btn-outline-secondary btn-sm badge-pill px-4 save-draft">Save as Draft</a>
             @csrf
-            <button type="submit" class="btn btn-primary px-4 shadow">Submit</button>
-          </div>
+            <button type="submit" name="save_draft" class="btn btn-outline-secondary btn-sm badge-pill px-4 save-draft">Save as Draft</button>
+            <button type="submit" name="submit" class="btn btn-primary px-4 shadow">Submit</button>
+        </div>
           <input type="hidden" class="form-control" name="id" value="1">
           <!-- Content Row -->
-          <div class="container-card">
+          @for($i = 0; $i <= 9; $i++)
             <div class="card col-md-12 mb-3 border-left-primary shadow-sm">
-                <div class="card-body pt-5">
+                <div class="card-header border-0 px-0 bg-white d-sm-flex align-items-center justify-content-start">#{{ $i+1 }}</div>
+                <div class="card-body pt-0">
                     <div class="row mx-auto">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="kpi">KPI</label>
-                                <textarea name="kpi[]" id="kpi" class="form-control">{{ old('kpi.0') }}</textarea>
+                                <textarea name="kpi[]" id="kpi" class="form-control">{{ old('kpi.'.$i) }}</textarea>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="target">Target</label>
-                                <input type="text" name="target[]" value="{{ old('target.0') }}" id="target" class="form-control">
+                                <input type="text" name="target[]" value="{{ old('target.'.$i) }}" id="target" class="form-control">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -55,7 +56,7 @@
                             <div class="form-group">
                                 <label for="weightage">Weightage</label>
                                 <div class="input-group">
-                                    <input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ old('weightage.0') }}" required>
+                                    <input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ old('weightage.'.$i) }}" required>
                                     <div class="input-group-append">
                                         <span class="input-group-text">%</span>
                                     </div>
@@ -77,10 +78,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-2">
-            <a class="btn btn-outline-primary badge-pill px-4 mt-2 mb-4 add_field_button"><i class="fas fa-plus"></i> Add KPI</a>
-        </div>
+            @endfor
         </form>
     </div>
     </x-slot>
