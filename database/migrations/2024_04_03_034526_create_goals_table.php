@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('goals', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->unsignedBigInteger('id')->autoIncrement();
             $table->uuid('users_id')->unique();
             $table->json('form_data')->nullable();
             $table->enum('form_status', ['draft', 'submitted', 'approved', 'rejected'])->nullable();
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('form_contents');
+        Schema::dropIfExists('goals');
     }
 };

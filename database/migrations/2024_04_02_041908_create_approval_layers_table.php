@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('approval_layers', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('name', 100);
             $table->uuid('role_id')->unique();
             $table->timestamps();
