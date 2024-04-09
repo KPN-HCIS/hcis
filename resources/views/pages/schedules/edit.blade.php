@@ -16,12 +16,13 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid py-3">
-                        <form id="scheduleForm" method="post" action="{{ route('save-schedule') }}">@csrf
+                        <form id="scheduleForm" method="post" action="{{ route('update-schedule') }}">@csrf
                             <div class="row my-2">
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="name">Schedule Name</label>
-                                        <input type="text" class="form-control bg-light" placeholder="Enter name.." id="name" name="schedule_name">
+                                        <input type="text" class="form-control bg-light" placeholder="Enter name.." id="name" name="schedule_name" value="{{ $model->schedule_name }}">
+                                        <input type="hidden" class="form-control bg-light" placeholder="Enter name.." id="id_schedule" name="id_schedule" value="{{ $model->id }}">
                                     </div>
                                 </div>
                             </div>
@@ -30,10 +31,10 @@
                                     <div class="form-group">
                                         <label for="type">Employee Type</label>
                                         <select name="employee_type" class="form-control bg-light">
-                                            <option value="Permanent">Permanent</option>
-                                            <option value="Contract">Contract</option>
-                                            <option value="Probation">Probation</option>
-                                            <option value="Service Bond">Service Bond</option>
+                                            <option value="Permanent" {{ $model->employee_type == 'Permanent' ? 'selected' : '' }}>Permanent</option>
+                                            <option value="Contract" {{ $model->employee_type == 'Contract' ? 'selected' : '' }}>Contract</option>
+                                            <option value="Probation" {{ $model->employee_type == 'Probation' ? 'selected' : '' }}>Probation</option>
+                                            <option value="Service Bond" {{ $model->employee_type == 'Service Bond' ? 'selected' : '' }}>Service Bond</option>
                                         </select>
                                     </div>
                                 </div>
@@ -42,13 +43,13 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="start">Start Date</label>
-                                        <input type="date" name="start_date" class="form-control bg-light" id="start" placeholder="mm/dd/yyyy">
+                                        <input type="date" name="start_date" class="form-control bg-light" id="start" value="{{ $model->start_date }}" placeholder="mm/dd/yyyy">
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="end">End Date</label>
-                                        <input type="date" name="end_date" class="form-control bg-light" id="end" placeholder="mm/dd/yyyy">
+                                        <input type="date" name="end_date" class="form-control bg-light" id="end" value="{{ $model->end_date }}" placeholder="mm/dd/yyyy">
                                     </div>
                                 </div>
                             </div>
@@ -56,13 +57,13 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="checkbox_reminder" name="checkbox_reminder" value="1">
+                                            <input type="checkbox" class="custom-control-input" id="checkbox_reminder" name="checkbox_reminder" value="1" @if ($model->checkbox_reminder == 1) checked @endif>
                                             <label class="custom-control-label" for="checkbox_reminder">Reminder</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="reminders" hidden>
+                            <div class="reminders" @if ($model->checkbox_reminder == 0) hidden @endif>
                                 <div class="row">
                                     <div class="col-md">
                                         <label for="repeatDays">Repeat On</label>
@@ -71,13 +72,14 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="btn-group w-75" id="repeatDays" role="group" aria-label="Repeat Days">
-                                            <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button">Mon</button>
-                                            <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button">Tue</button>
-                                            <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button">Wed</button>
-                                            <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button">Thu</button>
-                                            <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button">Fri</button>
-                                            <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button">Sat</button>
-                                            <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button">Sun</button>
+                                            @php $repeat_days = $repeat_days = explode(',', $model->repeat_days); @endphp
+                                            <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button {{ in_array('Mon', $repeat_days) ? 'active' : '' }}">Mon</button>
+                                            <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button {{ in_array('Tue', $repeat_days) ? 'active' : '' }}">Tue</button>
+                                            <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button {{ in_array('Wed', $repeat_days) ? 'active' : '' }}">Wed</button>
+                                            <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button {{ in_array('Thu', $repeat_days) ? 'active' : '' }}">Thu</button>
+                                            <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button {{ in_array('Fri', $repeat_days) ? 'active' : '' }}">Fri</button>
+                                            <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button {{ in_array('Sat', $repeat_days) ? 'active' : '' }}">Sat</button>
+                                            <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button {{ in_array('Sun', $repeat_days) ? 'active' : '' }}">Sun</button>
                                             <button type="button" class="btn btn-primary btn-sm" id="select-all">Select All</button>
                                         </div>          
                                     </div>
@@ -86,7 +88,7 @@
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label for="messages">Messages</label>
-                                            <textarea name="messages" id="messages" rows="5" class="form-control bg-light" placeholder="Enter message.."></textarea>
+                                            <textarea name="messages" id="messages" rows="5" class="form-control bg-light" placeholder="Enter message..">{{ $model->messages }}</textarea>
                                         </div>
                                     </div>
                                 </div>

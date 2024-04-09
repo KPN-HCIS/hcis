@@ -289,3 +289,8 @@
         </div>
       </x-slot>
 </x-app-layout>
+@if(session('success'))
+    <script>
+        swal("Berhasil", "{{ session('success') }}", "success");
+    </script>
+@endif

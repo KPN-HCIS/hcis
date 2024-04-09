@@ -19,29 +19,35 @@
                               <tr class="text-center">
                                   <th>#</th>
                                   <th>Name</th>
+                                  <th>Type</th>
                                   <th>From</th>
                                   <th>To</th>
-                                  <th>Initiated By</th>
-                                  <th>Trigger date</th>
-                                  <th>Status</th>
+                                  <th>Reminder</th>
+                                  <th>Days</th>
+                                  <th>Messages</th>
                                   <th>Actions</th>
                               </tr>
                           </thead>
                           <tbody>
+
+                            @foreach($schedules as $schedule)
                               <tr>
-                                    <td>1</td>
-                                    <td>KPI Setting Period</td>
-                                    <td>01/06/2024</td>
-                                    <td>30/06/2024</td>
-                                    <td>Admin 01</td>
-                                    <td>31/05/2024</td>
-                                    <td><span class="badge badge-success badge-pill w-100">Active</span></td>
+                                    <td>{{ $loop->index + 1 }}</td>
+                                    <td>{{ $schedule->schedule_name }}</td>
+                                    <td>{{ $schedule->employee_type }}</td>
+                                    <td>{{ $schedule->start_date }}</td>
+                                    <td>{{ $schedule->end_date }}</td>
+                                    <td>@if($schedule->checkbox_reminder == '1') Yes @else No @endif</td>
+                                    <td>{{ $schedule->repeat_days }}</td>
+                                    <td>{{ $schedule->messages }}</td>
+                                    <!--<td><span class="badge badge-success badge-pill w-100">Active</span></td>-->
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-circle btn-outline-primary" title="Edit" ><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-circle btn-outline-secondary" title="Archive"><i class="fas fa-inbox"></i></button>
-                                        <button class="btn btn-sm btn-circle btn-outline-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                        <a href="{{ route('edit-schedule', $schedule->id) }}" class="btn btn-sm btn-circle btn-outline-primary" title="Edit" ><i class="fas fa-edit"></i></a>
+                                        
+                                        <a class="btn btn-sm btn-circle btn-outline-danger" title="Delete" onclick="handleDelete(this)" data-id="{{ $schedule->id }}"><i class="fas fa-trash-alt"></i></a>
                                     </td>
                               </tr>
+                              @endforeach
                           </tbody>
                       </table>
                   </div>
@@ -52,3 +58,38 @@
     </div>
     </x-slot>
 </x-app-layout>
+<script>
+    // Periksa apakah ada pesan sukses
+    var successMessage = "{{ session('success') }}";
+
+    // Jika ada pesan sukses, tampilkan sebagai alert
+    if (successMessage) {
+        alert(successMessage);
+    }
+</script>
+<script>
+        function handleDelete(element) {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                var scheduleId = element.getAttribute('data-id');
+
+                fetch('/schedule/' + scheduleId, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Terjadi kesalahan saat menghapus data.');
+                    }
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus data.');
+                });
+            }
+        }
+    
+</script>
