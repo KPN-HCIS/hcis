@@ -47,22 +47,26 @@
                 <div class="relative flex flex-col min-w-0 mt-32 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
                   <div class="p-6 pb-0 mb-0 bg-transparent border-b-0 rounded-t-2xl">
                     <h3 class="relative z-10 font-bold text-transparent bg-gradient-to-tl from-blue-600 to-cyan-400 bg-clip-text">Welcome back</h3>
-                    <p class="mb-0">Enter your email and password to sign in</p>
+                    <p class="mb-0">Enter your employee id / email and password to sign in</p>
                   </div>
                   <div class="flex-auto p-6">
                     <form method="POST" action="{{ route('login') }}">
                     @csrf
-                      <x-input-label class="mb-2 ml-1 font-bold text-xs text-slate-700" for="email" :value="__('Email')" />
-                      <div class="mb-4">
-                        <x-text-input id="email" type="email" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" placeholder="Email" aria-label="Email" aria-describedby="email-addon" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                      <x-input-label class="mb-2 ml-1 font-bold text-xs text-slate-700" for="email" :value="__('Employee ID / Email')" />
+                      <div>
+                        <x-text-input id="email" type="text" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" placeholder="Email" aria-label="Email" aria-describedby="email-addon" name="email" :value="old('email')" required autofocus autocomplete="username" />
                       </div>
-                      <x-input-label class="mb-2 ml-1 font-bold text-xs text-slate-700" for="password" :value="__('Password')" />
-                      <div class="mb-4">
+                      <x-input-error :messages="$errors->first('email')" class="mb-2" />
+                      <x-input-label class="mb-2 mt-4 ml-1 font-bold text-xs text-slate-700" for="password" :value="__('Password')" />
+                      <div>
                         <x-text-input id="password" type="password" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:outline-none focus:transition-shadow" placeholder="Password" aria-label="Password" aria-describedby="password-addon" type="password"
                         name="password"
                         required autocomplete="current-password"/>
                       </div>
-                      <div class="min-h-6 mb-0.5 block pl-12">
+                      @if (!$errors->first('email'))
+                      <x-input-error :messages="$errors->first('password')" class="mb-2" />
+                      @endif
+                      <div class="min-h-6 mb-0.5 block pl-12 mt-4">
                         <input id="rememberMe" class="mt-0.54 rounded-10 duration-250 ease-soft-in-out after:rounded-circle after:shadow-soft-2xl after:duration-250 checked:after:translate-x-5.25 h-5 relative float-left -ml-12 w-10 cursor-pointer appearance-none border border-solid border-gray-200 bg-slate-800/10 bg-none bg-contain bg-left bg-no-repeat align-top transition-all after:absolute after:top-px after:h-4 after:w-4 after:translate-x-px after:bg-white after:content-[''] checked:border-slate-800/95 checked:bg-slate-800/95 checked:bg-none checked:bg-right" type="checkbox" checked="" />
                         <label class="mb-2 ml-1 font-normal cursor-pointer select-none text-sm text-slate-700" for="rememberMe">Remember me</label>
                       </div>

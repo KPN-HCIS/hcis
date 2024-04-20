@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,7 +29,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home', absolute: false));
+        if (Auth::check()) {
+            Alert::success('Welcome '.Auth::user()->name, 'You have successfully logged in!')->showConfirmButton('OK');
+            return redirect()->intended(route('home', [], false));
+        } else {
+            Alert::error('Error', 'Email or password is incorrect.')->showConfirmButton('OK');
+            return redirect()->back();
+        }
+
     }
 
     /**

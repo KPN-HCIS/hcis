@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('goals', function (Blueprint $table) {
-            $table->string('id')->unique();
-            $table->string('employee_id');
-            $table->string('category');
+        Schema::create('approval_snapshots', function (Blueprint $table) {
+            $table->string('id')->unique()->primary();
+            $table->string('form_id');
             $table->json('form_data')->nullable();
-            $table->enum('form_status', ['Draft', 'Submitted', 'Approved', 'Rejected']);
+            $table->string('employee_id');
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('goals');
+        Schema::dropIfExists('approval_snapshots');
     }
 };

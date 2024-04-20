@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,14 +42,33 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $credential = $this->only('email', 'password');
+        $remember = $this->boolean('remember');
+        $checkPassword = User::where('email', $credential['email'])->orWhere('employee_id', $credential['email'])->first();
+        
+        // Validasi apakah password tidak boleh kosong
+        if (empty($checkPassword)) {
+            throw ValidationException::withMessages([
+                'email' => 'Employee ID / Email is not registered.',
+            ]);
+        }
+        if (empty($checkPassword->password)) {
+            throw ValidationException::withMessages([
+                'password' => 'Password incorrect. Please try again or click Forgot password to reset.',
+            ]);
+        }
+        $credentials = [ 'email' => $checkPassword->email, 'password' => $credential['password']];
+
+        if (!Auth::attempt($credentials, $remember)) {
+            // Jika autentikasi gagal, tambahkan hit pada RateLimiter
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'Email or password is incorrect.',
             ]);
         }
 
+        // Jika autentikasi berhasil, hapus semua percobaan RateLimiter
         RateLimiter::clear($this->throttleKey());
     }
 

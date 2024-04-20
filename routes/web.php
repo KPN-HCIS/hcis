@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\LayerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\SendbackController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -69,11 +71,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/tasks', [TaskController::class, 'task'])->name('tasks');
 
     // Goals
-    Route::get('/goals', [GoalController::class, 'goal'])->name('goals');
-    Route::get('/goals/approval/{id}', [GoalController::class, 'approval'])->name('goals-approval');
-    Route::post('/goals/approve', [GoalController::class, 'approve'])->name('goals-approve');
-    Route::get('/goals/form', [GoalController::class, 'form'])->name('goals-form');
-    Route::post('/goals/form', [GoalController::class, 'saveForm'])->name('goals-submit');
+    Route::get('/goals', [GoalController::class, 'index'])->name('goals');
+    Route::get('/goals/detail/{id}', [GoalController::class, 'show'])->name('goals.detail');
+    Route::get('/goals/form/{id}', [GoalController::class, 'create'])->name('goals.form');
+    Route::post('/goals/submit', [GoalController::class, 'store'])->name('goals.submit');
+    Route::get('/goals/edit/{id}', [GoalController::class, 'edit'])->name('goals.edit');
+    Route::post('/goals/update', [GoalController::class, 'update'])->name('goals.update');
+    
+    // Approval
+    Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
+
+    // Sendback
+    Route::post('/sendback/goal', [SendbackController::class, 'store'])->name('sendback.goal');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'report'])->name('reports');
@@ -113,6 +122,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+
+    Route::get('/get-tooltip-content', [GoalController::class, 'getTooltipContent']);
+    Route::get('/units-of-measurement', [GoalController::class, 'unitOfMeasurement']);
 });
 
 

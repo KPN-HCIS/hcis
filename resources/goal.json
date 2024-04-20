@@ -1,0 +1,92 @@
+{
+    "UoM": {
+        "Time": ["Hour (h)", "Minute (min)", "Second (s)"],
+        "Length": [
+            "Centimeter (cm)",
+            "Meter (m)",
+            "Kilometer (km)",
+            "Inch (in)",
+            "Foot (ft)",
+            "Mile (mi)"
+        ],
+        "Weight": ["Gram (g)", "Kilogram (kg)", "Pound (lb)", "Ounce (oz)"],
+        "Volume": [
+            "Liter (L)",
+            "Milliliter (mL)",
+            "Cubic Meter (m³)",
+            "Cubic Foot (ft³)",
+            "Gallon (gal)",
+            "Pint (pt)"
+        ],
+        "Speed": [
+            "Kilometer per Hour (km/h)",
+            "Meter per Second (m/s)",
+            "Mile per Hour (mph)"
+        ],
+        "Quantity": ["Piece (pcs)", "Package (pkg)", "Box (box)"],
+        "Temperature": [
+            "Degree Celsius (°C)",
+            "Degree Fahrenheit (°F)",
+            "Kelvin (K)"
+        ],
+        "Area": [
+            "Square Meter (m²)",
+            "Square Kilometer (km²)",
+            "Hectare (ha)",
+            "Square Foot (ft²)",
+            "Acre (ac)"
+        ],
+        "Capacity": [
+            "Megabyte (MB)",
+            "Gigabyte (GB)",
+            "Terabyte (TB)",
+            "Kilobyte (KB)"
+        ],
+        "Price": [
+            "Dollar ($)",
+            "Euro (€)",
+            "Pound Sterling (£)",
+            "Yen (¥)",
+            "Rupee (₹)"
+        ],
+        "Storage Capacity": [
+            "Megabyte (MB)",
+            "Gigabyte (GB)",
+            "Terabyte (TB)",
+            "Kilobyte (KB)"
+        ],
+        "Production Rate": [
+            "Unit per Hour (unit/h)",
+            "Item per Minute (item/min)"
+        ],
+        "Energy Consumption": [
+            "Kilowatt-hour (kWh)",
+            "Joule (J)",
+            "Calorie (cal)"
+        ],
+        "Expenditure Rate": [
+            "Dollar per Month ($/month)",
+            "Dollar per Year ($/year)",
+            "Dollar per Unit ($/unit)"
+        ],
+        "Profit": ["Percentage (%)", "Dollar ($)"],
+        "Income": [
+            "Dollar ($)",
+            "Pound Sterling (£)",
+            "Euro (€)",
+            "Yen (¥)",
+            "Rupee (₹)"
+        ],
+        "Frequency": ["Hertz (Hz)", "Megahertz (MHz)", "Gigahertz (GHz)"],
+        "Fuel Consumption": [
+            "Liter per 100 Kilometer (L/100km)",
+            "Miles per Gallon (mpg)",
+            "Kilometer per Liter (km/L)"
+        ],
+        "Quality": ["Scale 1-10", "Rating (rating)"],
+        "Other": ["Other"]
+    },
+    "Type": {
+        "Type": ["Higher is better", "Lowest is better", "Exact value"]
+    }
+}
