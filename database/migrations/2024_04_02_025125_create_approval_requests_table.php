@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('approval_requests', function (Blueprint $table) {
             $table->id();
             $table->string('form_id')->unique(); // uuid from submitted form table
-            $table->string('current_approval_layer_id');
+            $table->string('current_approval_id');
             $table->string('employee_id');
             $table->enum('status', ['Pending','Approved'])->default('Pending');
             $table->text('messages')->nullable();
@@ -22,11 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
-            // id uuid primary key
-            // form_content_id uuid
-            // current_approval_layer_id uuid
-            // users_id uuid
-            // status enum
+            $table->softDeletes();
         });
     }
 

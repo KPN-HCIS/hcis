@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('approval_snapshots', function (Blueprint $table) {
-            $table->string('id')->unique()->primary();
+            $table->uuid('id')->primary();
             $table->string('form_id');
             $table->json('form_data')->nullable();
             $table->string('employee_id');

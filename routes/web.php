@@ -19,6 +19,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SendbackController;
+use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,8 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return view('pages.home');
 })->middleware(['auth', 'verified'])->name('home');
+
+Route::get('dbauth', [SsoController::class, 'dbauth']);
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -54,7 +57,8 @@ Route::middleware('guest')->group(function () {
     
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
                     ->name('password.email');
-
+    
+    
 });
 
 
@@ -90,6 +94,10 @@ Route::middleware('auth')->group(function () {
     // Schedule
     Route::get('/schedules', [ScheduleController::class, 'schedule'])->name('schedules');
     Route::get('/schedules/form', [ScheduleController::class, 'form'])->name('schedules-form');
+    Route::post('/save-schedule', [ScheduleController::class, 'save'])->name('save-schedule');
+    Route::get('/edit-schedule/{id}', [ScheduleController::class, 'edit'])->name('edit-schedule');
+    Route::post('/update-schedule', [ScheduleController::class, 'update'])->name('update-schedule');
+    Route::delete('/schedule/{id}', [ScheduleController::class, 'softDelete'])->name('soft-delete-schedule');
 
     // Assignments
     Route::get('/assignments', [AssignmentController::class, 'assignment'])->name('assignments');
@@ -125,6 +133,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/get-tooltip-content', [GoalController::class, 'getTooltipContent']);
     Route::get('/units-of-measurement', [GoalController::class, 'unitOfMeasurement']);
+    
+                
 });
 
 
