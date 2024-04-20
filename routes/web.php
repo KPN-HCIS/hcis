@@ -137,5 +137,8 @@ Route::middleware('auth')->group(function () {
                 
 });
 
+Route::fallback(function () {
+    return view('errors.404');
+});
 
 require __DIR__.'/auth.php';
