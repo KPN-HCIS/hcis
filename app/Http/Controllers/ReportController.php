@@ -20,7 +20,6 @@ class ReportController extends Controller
 
         $data = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated'])->get();
 
-        // dd($data);
         // Logic to fetch and return report content based on $reportType
         if ($reportType === 'Goal') {
             return view('reports.goal', compact('data'));
