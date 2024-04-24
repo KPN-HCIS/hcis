@@ -1,7 +1,7 @@
 <table>
     <thead>
     <tr>
-        <th>Employee ID</th>
+        <th @style('background-color: yellow')>Employee ID</th>
         <th>Name</th>
         <th>Gender</th>
         <th>Email</th>
