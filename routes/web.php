@@ -63,7 +63,7 @@ Route::middleware('guest')->group(function () {
 });
 
 
-Route::middleware('auth', 'tokencheck')->group(function () {
+Route::middleware('auth')->group(function () {
 
     Route::get('reset-self', [PasswordResetLinkController::class, 'selfReset'])
                 ->name('password.reset.self');
