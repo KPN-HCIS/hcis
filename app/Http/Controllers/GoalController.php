@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UserExport;
 use App\Models\ApprovalLayer;
 use App\Models\ApprovalRequest;
 use App\Models\ApprovalSnapshots;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use stdClass;
 
@@ -256,7 +258,7 @@ class GoalController extends Controller
         $approval = new ApprovalRequest();
         $approval->form_id = $model->id;
         $approval->employee_id = $request->employee_id;
-        $approval->current_approval_layer_id = $request->approver_id;
+        $approval->current_approval_id = $request->approver_id;
         $approval->created_by = Auth::user()->id;
         // Set other attributes as needed
         $approval->save();
@@ -355,7 +357,7 @@ class GoalController extends Controller
         
         if ($approvalRequest) {
             $name = $approvalRequest->manager->fullname;
-            $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_layer_id)->value('layer');
+            $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->value('layer');
             return response()->json(['name' => $name, 'layer' => $approvalLayer]);
         }
 
@@ -386,4 +388,5 @@ class GoalController extends Controller
         // Lakukan sesuatu dengan daftar previous_approvers, seperti menampilkannya di view
         return view('approval.sendback', compact('previousApprovers'));
     }
+
 }
