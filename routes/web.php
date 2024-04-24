@@ -21,6 +21,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SendbackController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -62,7 +63,7 @@ Route::middleware('guest')->group(function () {
 });
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'tokencheck')->group(function () {
 
     Route::get('reset-self', [PasswordResetLinkController::class, 'selfReset'])
                 ->name('password.reset.self');
@@ -109,7 +110,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/roles', [RoleController::class, 'role'])->name('roles');
 
     // Layers
-    Route::get('/layers', [LayerController::class, 'layer'])->name('layers');
+    Route::get('/employees', [EmployeeController::class, 'employee'])->name('employees');
     
     // Authentication
     
