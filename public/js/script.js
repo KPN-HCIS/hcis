@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $("#taskTable").DataTable();
     $("#tableInitiate").DataTable();
+    $("#reportGoalsTable").DataTable();
 });
 
 // tippy("#approval.badge-warning", {
@@ -8,23 +9,44 @@ $(document).ready(function () {
 //     placement: "right",
 // });
 $(document).ready(function () {
-    fetch("/get-tooltip-content")
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch tooltip content");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            const name = data.name;
-            const layer = data.layer;
+    let tooltipInitialized = false; // Flag to track tooltip initialization
 
-            // Initialize Tippy with the retrieved content
-            tippy("#approval.badge-warning", {
-                content: `Manager L${layer}: ${name}`,
-                placement: "right",
-            });
+    // Function to initialize tippy tooltip
+    function initializeTooltip(name, layer) {
+        tippy("#approval.badge-warning", {
+            content: `Manager L${layer}: ${name}`,
+            placement: "right",
         });
+    }
+
+    // Function to fetch tooltip content and initialize tooltip
+    function fetchAndInitializeTooltip() {
+        if (!tooltipInitialized) {
+            fetch("/get-tooltip-content")
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch tooltip content");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    const name = data.name;
+                    const layer = data.layer;
+                    // Initialize tooltip with retrieved content
+                    initializeTooltip(name, layer);
+                    tooltipInitialized = true; // Update flag
+                })
+                .catch((error) => {
+                    console.error("Error fetching tooltip content:", error);
+                });
+        }
+    }
+
+    // Attach tooltip initialization when #approval.badge-warning is hovered
+    $(document).on("mouseenter", "#approval.badge-warning", function () {
+        fetchAndInitializeTooltip(); // Call the function to fetch and initialize tooltip
+        $(this).off("mouseenter"); // Remove the event listener after initialization
+    });
 });
 
 $(document).ready(function () {
@@ -105,56 +127,27 @@ $(document).ready(function () {
     });
 });
 
-// $(document).ready(function () {
-//     fetch("/units-of-measurement")
-//         .then((response) => response.json())
-//         .then((data) => {
-//             const uomSelect = document.getElementById("uom");
-//             Object.keys(data.UoM).forEach((category) => {
-//                 const optgroup = document.createElement("optgroup");
-//                 optgroup.label = category;
-//                 data.UoM[category].forEach((unit) => {
-//                     const option = document.createElement("option");
-//                     option.value = unit;
-//                     option.textContent = unit;
-//                     optgroup.appendChild(option);
-//                 });
-//                 uomSelect.appendChild(optgroup);
-//             });
+$(document).ready(function () {
+    const reportTypeSelect = $("#report_type");
+    const generateButton = $("#generate");
+    const exportButton = $("#export");
+    const reportContentDiv = $("#report_content");
 
-//             // Event listener for select element
-//             uomSelect.addEventListener("change", function () {
-//                 const selectedValue = this.value;
-//                 if (selectedValue === "Other") {
-//                     // Display input field
-//                     const inputField = document.createElement("input");
-//                     inputField.type = "text";
-//                     inputField.placeholder = "Enter UoM";
-//                     inputField.id = "customUom";
-//                     inputField.name = "customUom";
-//                     inputField.className = "form-control mt-2";
-//                     inputField.required = true;
-
-//                     // Remove any previously displayed input field
-//                     const existingInputField =
-//                         document.getElementById("customUom");
-//                     if (existingInputField) {
-//                         existingInputField.remove();
-//                     }
-
-//                     // Append input field to the parent element of select
-//                     this.parentNode.appendChild(inputField);
-//                 } else {
-//                     // If a value other than "Other" is selected, remove the input field if it exists
-//                     const existingInputField =
-//                         document.getElementById("customUom");
-//                     if (existingInputField) {
-//                         existingInputField.remove();
-//                     }
-//                 }
-//             });
-//         })
-//         .catch((error) => {
-//             console.error("Error fetching units of measurement:", error);
-//         });
-// });
+    generateButton.on("click", function () {
+        const selectedValue = reportTypeSelect.val();
+        if (selectedValue !== "") {
+            // Send AJAX request to fetch and display report content
+            $.ajax({
+                url: `/get-report-content/${selectedValue}`,
+                method: "GET",
+                success: function (data) {
+                    reportContentDiv.html(data); // Update report content
+                    exportButton.removeClass("disabled"); // Show the Generate button
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching report content:", error);
+                },
+            });
+        }
+    });
+});

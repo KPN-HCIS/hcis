@@ -30,7 +30,7 @@ class Employee extends Model
     }
     public function approvalManager()
     {
-        return $this->hasMany(ApprovalRequest::class, 'employee_id', 'current_approval_layer_id');
+        return $this->hasMany(ApprovalRequest::class, 'employee_id', 'current_approval_id');
     }
     public function creatorApproverLayer()
     {

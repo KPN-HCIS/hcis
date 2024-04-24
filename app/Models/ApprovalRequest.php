@@ -28,11 +28,15 @@ class ApprovalRequest extends Model
 
     public function manager()
     {
-        return $this->belongsTo(Employee::class, 'current_approval_layer_id', 'employee_id');
+        return $this->belongsTo(Employee::class, 'current_approval_id', 'employee_id');
     }
     public function approval()
     {
         return $this->hasMany(Approval::class, 'request_id');
+    }
+    public function initiated()
+    {
+        return $this->belongsTo(User::class, 'id')->select(['id', 'employee_id', 'name']);
     }
 
 }

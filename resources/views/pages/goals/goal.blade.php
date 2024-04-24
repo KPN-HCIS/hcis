@@ -38,11 +38,11 @@
                                 <tr>
                                     <td>{{ $row->request->employee->fullname }}</td>
                                     <td>{{ $row->request->goal->category }}</td>
-                                    <td class="px-5"><span id="approval" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->request->goal->form_status == 'Draft' ? 'Draft':$row->request->status }}</span></td>
+                                    <td class="px-5"><a href="#" id="approval" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->request->goal->form_status == 'Draft' ? 'Draft':$row->request->status }}</a></td>
                                     <td class="text-center">{{ $row->request->created_at }}</td>
                                     <td class="text-center">{{ $row->request->employee->fullname }}</td>
                                     <td class="text-center">{{ $row->request->updated_at }}</td>
-                                    <td>
+                                    <td class="text-center">
                                         @if ($row->request->employee_id == Auth::user()->employee_id)
                                             @if ($row->request->goal->form_status == 'submitted' || $row->request->goal->form_status == 'Approved')
                                             <a href="#" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $row->request->goal->id }}"><i class="fas fa-eye"></i></a>

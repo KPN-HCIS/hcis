@@ -126,7 +126,7 @@ class ApprovalController extends Controller
         $model->save();
 
         $approvalRequest = ApprovalRequest::where('form_id', $request->id)->first();
-        $approvalRequest->current_approval_layer_id = $approver;
+        $approvalRequest->current_approval_id = $approver;
         $approvalRequest->status = $statusRequest;
         $approvalRequest->updated_by = Auth::user()->id;
         $approvalRequest->messages = $request->messages;

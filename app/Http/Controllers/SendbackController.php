@@ -24,7 +24,7 @@ class SendbackController extends Controller
             if ($firstApproval) {
                 $sendto = $firstApproval->approver_id;
             }else{
-                $sendto = $checkRequest->current_approval_layer_id;
+                $sendto = $checkRequest->current_approval_id;
             }
         }else{
             $sendto = $request->sendto;
@@ -32,7 +32,7 @@ class SendbackController extends Controller
 
 
         $model = ApprovalRequest::find($request->request_id);
-        $model->current_approval_layer_id = $sendto;
+        $model->current_approval_id = $sendto;
         $model->sendback_messages = $request->messages;
         $model->updated_by = Auth::user()->id;
         

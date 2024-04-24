@@ -11,9 +11,9 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ExportExcelController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LayerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
@@ -89,7 +89,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/sendback/goal', [SendbackController::class, 'store'])->name('sendback.goal');
 
     // Reports
-    Route::get('/reports', [ReportController::class, 'report'])->name('reports');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+    Route::get('export/employees', [ExportExcelController::class, 'export'])->name('export.employee');
+    Route::get('/get-report-content/{reportType}', [ReportController::class, 'getReportContent']);
+
 
     // Schedule
     Route::get('/schedules', [ScheduleController::class, 'schedule'])->name('schedules');
