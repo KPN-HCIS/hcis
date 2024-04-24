@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class SsoController extends Controller
 {
@@ -27,6 +28,7 @@ class SsoController extends Controller
     $decryptedData = base64_decode($decryptedDataxor);
 
     $decryptedDataArray = json_decode($decryptedData, true);
+    //dd($decryptedDataArray);
 
     $email = $decryptedDataArray['email'];
     $token = $decryptedDataArray['token'];
@@ -74,9 +76,16 @@ class SsoController extends Controller
             $request->session()->regenerate();
 
             // Redirect ke halaman setelah login
-            return redirect()->intended(route('home', absolute: false))->with('success', 'Login berhasil dengan email ' . $email);
+            Alert::success('Welcome '.Auth::user()->name, 'You have successfully logged in via Darwinbox!')->showConfirmButton('OK');
+            return redirect()->intended(route('home', absolute: false));
             
+        }else{
+            Alert::error('Login Failed, Please Contact Administrator')->showConfirmButton('OK');
+            return redirect('https://kpncorporation.darwinbox.com/');
         }
+    }else{
+        Alert::error('Login Failed, Please Contact Administrator')->showConfirmButton('OK');
+        return redirect('https://kpncorporation.darwinbox.com/');
     }
     
     }

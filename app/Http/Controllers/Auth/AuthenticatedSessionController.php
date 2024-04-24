@@ -44,6 +44,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+        // Memastikan bahwa $user adalah instance dari model User
+        if($user instanceof \App\Models\User) {
+            $user->token = null; 
+            $user->save();
+        } else {
+            // Jika $user bukan instance dari model User
+            // Lakukan penanganan kesalahan sesuai kebutuhan Anda
+        }
+        
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

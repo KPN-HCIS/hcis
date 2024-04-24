@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('gender', ['Male', 'Female']);
             $table->string('email', 100);
             $table->string('group_company', 50);
-            $table->string('designation', 50);
+            $table->string('designation', 255);
             $table->string('job_level', 50);
             $table->string('company_name', 50);
             $table->string('work_area_code', 50);
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('manager_l1_id', 25);
             $table->string('manager_l2_id', 25);
             $table->enum('employee_type', ['Permanent', 'Contract', 'Probation', 'Service Bond']);
-            $table->string('unit', 25);
+            $table->string('unit', 255);
             $table->date('date_of_joining');
             $table->timestamps();
             $table->softDeletes();
