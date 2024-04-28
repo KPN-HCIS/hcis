@@ -2,13 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\EmployeeExport;
+use App\Exports\GoalExport;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExportExcelController extends Controller
 {
-    public function export() 
+    public function export(Request $request) 
     {
-        return Excel::download(new EmployeeExport, 'employees.xlsx');
+        $reportType = $request->export_report_type;
+        $groupCompany = $request->export_group_company;
+        $company = $request->export_company;
+        $location = $request->export_location;
+
+        if($reportType==='Goal'){
+            $export = new GoalExport($groupCompany, $location, $company);
+            return Excel::download($export, 'goals.xlsx');
+        }
+        return;
+
     }
 }

@@ -91,8 +91,12 @@ Route::middleware('auth')->group(function () {
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
-    Route::get('export/employees', [ExportExcelController::class, 'export'])->name('export.employee');
-    Route::get('/get-report-content/{reportType}', [ReportController::class, 'getReportContent']);
+    Route::post('/export', [ExportExcelController::class, 'export'])->name('export');
+    // Route::get('/export/goals', [ReportController::class, 'exportGoal'])->name('export.goal');
+    Route::post('/get-report-content', [ReportController::class, 'getReportContent']);
+    Route::get('/changes-group-company', [ReportController::class, 'changesGroupCompany']);
+    Route::get('/changes-company', [ReportController::class, 'changesCompany']);
+
 
 
     // Schedule

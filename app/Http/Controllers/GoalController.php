@@ -184,7 +184,8 @@ class GoalController extends Controller
         $weightages = $request->input('weightage', []);
         $types = $request->input('type', []);
         $status = $submit_status;
-
+        $custom_uoms = $request->input('custom_uom', []);
+        
         // Menyiapkan aturan validasi
         $rules = [
             'kpi.*' => 'required|string',
@@ -220,14 +221,15 @@ class GoalController extends Controller
         // Iterasi melalui input untuk mendapatkan data KPI
         foreach ($kpis as $index => $kpi) {
             // Memastikan ada nilai untuk semua input terkait
-            if ($submit_status=='Draft' || isset($targets[$index], $uoms[$index], $weightages[$index], $types[$index])) {
+            if ($submit_status=='Draft' || isset($targets[$index], $uoms[$index], $custom_uom[$index], $weightages[$index], $types[$index])) {
                 // Simpan data KPI ke dalam array dengan nomor indeks sebagai kunci
                 $kpiData[$index] = [
                     'kpi' => $kpi,
                     'target' => $targets[$index],
                     'uom' => $uoms[$index],
                     'weightage' => $weightages[$index],
-                    'type' => $types[$index]
+                    'type' => $types[$index],
+                    'custom_uom' => $custom_uoms[$index]
                 ];
 
                 $index++;
@@ -285,6 +287,7 @@ class GoalController extends Controller
         $weightages = $request->input('weightage', []);
         $types = $request->input('type', []);
         $status = $submit_status;
+        $custom_uoms = $request->input('custom_uom', []);
 
         // Menyiapkan aturan validasi
         $rules = [
@@ -319,14 +322,15 @@ class GoalController extends Controller
         // Iterasi melalui input untuk mendapatkan data KPI
         foreach ($kpis as $index => $kpi) {
             // Memastikan ada nilai untuk semua input terkait
-            if ($submit_status=='Draft' || isset($targets[$index], $uoms[$index], $weightages[$index], $types[$index])) {
+            if ($submit_status=='Draft' || isset($targets[$index], $uoms[$index], $custom_uoms[$index], $weightages[$index], $types[$index])) {
                 // Simpan data KPI ke dalam array dengan nomor indeks sebagai kunci
                 $kpiData[$index] = [
                     'kpi' => $kpi,
                     'target' => $targets[$index],
                     'uom' => $uoms[$index],
                     'weightage' => $weightages[$index],
-                    'type' => $types[$index]
+                    'type' => $types[$index],
+                    'custom_uom' => $custom_uoms[$index]
                 ];
 
                 $index++;

@@ -1,34 +1,17 @@
-$(document).ready(function () {
-    const uomSelect = document.getElementById("uom");
+function otherUom(index) {
+    const uomSelect = $("#uom" + index).val();
     // Event listener for select element
-    uomSelect.addEventListener("change", function () {
-        const selectedValue = this.value;
-        if (selectedValue === "Other") {
-            // Display input field
-            const inputField = document.createElement("input");
-            inputField.type = "text";
-            inputField.placeholder = "Enter UoM";
-            inputField.id = "customUom";
-            inputField.name = "customUom";
-            inputField.className = "form-control mt-2";
-            inputField.required = true;
-
-            // Remove any previously displayed input field
-            const existingInputField = document.getElementById("customUom");
-            if (existingInputField) {
-                existingInputField.remove();
-            }
-
-            // Append input field to the parent element of select
-            this.parentNode.appendChild(inputField);
-        } else {
-            // If a value other than "Other" is selected, remove the input field if it exists
-            const existingInputField = document.getElementById("customUom");
-            if (existingInputField) {
-                existingInputField.remove();
-            }
-        }
-    });
+    const inputField = $("#custom_uom" + index);
+    if (uomSelect === "Other") {
+        // Display input field
+        inputField.show(); // Show the input field
+        inputField.prop("required", true); // Set input as required
+    } else {
+        inputField.hide().val(""); // Hide the input field
+        inputField.prop("required", false); // Remove required attribute
+    }
+}
+$(document).ready(function () {
     // Get the value of the hidden input
     var managerId = $('input[name="manager_id"]').val();
 
@@ -103,9 +86,13 @@ function addField(val) {
                 '<label for="uom">UoM</label>' +
                 '<select class="form-control uom-select" name="uom[]" id="uom' +
                 x +
-                '" title="Unit of Measure" required>' +
+                '"onchange="otherUom(' +
+                x +
+                ')" title="Unit of Measure" required>' +
                 '<option value="">- Select -</option>' +
-                "</select>" +
+                '</select><input type="text" name="custom_uom[]" id="custom_uom' +
+                x +
+                '" class="form-control mt-2" placeholder="Enter UoM" style="display: none" placeholder="Enter UoM">' +
                 "</div>" +
                 "</div>" +
                 '<div class="col-md-2">' +
@@ -155,24 +142,24 @@ $(wrapper).on("click", ".remove_field", function (e) {
 });
 
 // Event listener for select element
-$(wrapper).on("change", ".uom-select", function () {
-    const selectedValue = $(this).val();
-    if (selectedValue === "Other") {
-        // Display input field
-        const inputField = $(
-            '<input type="text" name="customUom" class="form-control mt-2 custom-measurement" placeholder="Enter UoM" required>'
-        );
+// $(wrapper).on("change", ".uom-select", function () {
+//     const selectedValue = $(this).val();
+//     if (selectedValue === "Other") {
+//         // Display input field
+//         const inputField = $(
+//             '<input type="text" name="custom_uom[]" class="form-control mt-2 custom-measurement" placeholder="Enter UoM" required>'
+//         );
 
-        // Remove any previously displayed input field
-        $(this).closest(".row").find(".custom-measurement").remove();
+//         // Remove any previously displayed input field
+//         $(this).closest(".row").find(".custom-measurement").remove();
 
-        // Append input field to the parent element of select
-        $(this).closest(".form-group").append(inputField);
-    } else {
-        // If a value other than "Others" is selected, remove the input field if it exists
-        $(this).closest(".row").find(".custom-measurement").remove();
-    }
-});
+//         // Append input field to the parent element of select
+//         $(this).closest(".form-group").append(inputField);
+//     } else {
+//         // If a value other than "Others" is selected, remove the input field if it exists
+//         $(this).closest(".row").find(".custom-measurement").remove();
+//     }
+// });
 
 var firstSelect = $("#uom"); // Assuming your first select has an ID "uom1"
 populateUoMSelect(firstSelect);
