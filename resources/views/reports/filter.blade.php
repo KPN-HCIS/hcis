@@ -12,7 +12,7 @@
                   <input type="text" id="employee_name" class="form-control" placeholder="Search employee.." hidden>
               </div>
             </div>
-            <form id="filter_form" action="" method="post">
+            <form id="filter_form" action="" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="container-fluid py-3">

@@ -15,11 +15,11 @@ class ReportController extends Controller
     function index() {
         $link = 'reports';
 
-        $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
-        $groupCompanies = Location::select('company_name')
-        ->orderBy('company_name')
+        $locations = Location::select('group_company', 'area', 'work_area')->orderBy('area')->get();
+        $groupCompanies = Location::select('group_company')
+        ->orderBy('group_company')
         ->distinct()
-        ->pluck('company_name');
+        ->pluck('group_company');
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
         return view('reports.app', compact('locations', 'companies', 'groupCompanies'),  [
@@ -37,7 +37,7 @@ class ReportController extends Controller
         // Check if a specific group company is selected
         if ($selectedGroupCompany) {
             // Filter locations by the selected group company
-            $locationsQuery->where('company_name', $selectedGroupCompany);
+            $locationsQuery->where('group_company', $selectedGroupCompany);
         }
 
         // Fetch locations based on the modified query
@@ -67,7 +67,7 @@ class ReportController extends Controller
         // Apply filters based on request parameters
         if ($request->filled('group_company')) {
             $query->whereHas('employee', function ($query) use ($group_company) {
-                $query->where('company_name', $group_company);
+                $query->where('group_company', $group_company);
             });
         }
         if ($request->filled('location')) {

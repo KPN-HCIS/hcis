@@ -30,7 +30,7 @@ class GoalExport implements FromView, WithStyles
         // Apply filters if they are provided
         if ($this->groupCompany) {
             $query->whereHas('employee', function ($query) {
-                $query->where('company_name', $this->groupCompany);
+                $query->where('group_company', $this->groupCompany);
             });
         }
 
