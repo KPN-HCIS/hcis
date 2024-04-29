@@ -10,10 +10,10 @@ deployment:
     - /bin/cp -r public/* /home/hcis2460/public_html/
 
     # Change directory to the deployment path
-    - cd $DEPLOYPATH
+    # - cd $DEPLOYPATH
 
     # Install production dependencies using Composer
-    - composer install --no-dev --optimize-autoloader
+    # - composer install --no-dev --optimize-autoloader
 
     # Clear Laravel application cache
-    - php artisan cache:clear
+    # - php artisan cache:clear
