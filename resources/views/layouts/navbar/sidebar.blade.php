@@ -16,7 +16,7 @@
         Menu
     </div>
 
-       <!-- Nav Item - Dashboard -->
+    <!-- Nav Item - Dashboard -->
     <li class="nav-item">
     <a class="nav-link" href="{{ route('home') }}">
         <i class="fas fa-fw fa-chart-pie"></i>
@@ -55,11 +55,12 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
+    @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('superadmin')))
     <div class="sidebar-heading">
         Admin
     </div>
 
-    <!-- Nav Item - Pages Collapse Menu -->
+    
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
             aria-expanded="true" aria-controls="collapsePages">
@@ -75,9 +76,10 @@
             </div>
         </div>
     </li>
-
+    
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
+    @endif
 
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">

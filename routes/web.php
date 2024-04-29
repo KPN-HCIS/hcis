@@ -23,6 +23,8 @@ use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use App\Http\Middleware\EnsureUserHasRole;
 
 Route::get('/', function () {
     return redirect('home');
@@ -63,7 +65,7 @@ Route::middleware('guest')->group(function () {
 });
 
 
-Route::middleware('auth', 'tokencheck')->group(function () {
+Route::middleware('auth')->group(function () {
 
     Route::get('reset-self', [PasswordResetLinkController::class, 'selfReset'])
                 ->name('password.reset.self');
@@ -93,24 +95,7 @@ Route::middleware('auth', 'tokencheck')->group(function () {
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
     Route::get('export/employees', [ExportExcelController::class, 'export'])->name('export.employee');
     Route::get('/get-report-content/{reportType}', [ReportController::class, 'getReportContent']);
-
-
-    // Schedule
-    Route::get('/schedules', [ScheduleController::class, 'schedule'])->name('schedules');
-    Route::get('/schedules/form', [ScheduleController::class, 'form'])->name('schedules-form');
-    Route::post('/save-schedule', [ScheduleController::class, 'save'])->name('save-schedule');
-    Route::get('/edit-schedule/{id}', [ScheduleController::class, 'edit'])->name('edit-schedule');
-    Route::post('/update-schedule', [ScheduleController::class, 'update'])->name('update-schedule');
-    Route::delete('/schedule/{id}', [ScheduleController::class, 'softDelete'])->name('soft-delete-schedule');
-
-    // Assignments
-    Route::get('/assignments', [AssignmentController::class, 'assignment'])->name('assignments');
-
-    // Roles
-    Route::get('/roles', [RoleController::class, 'role'])->name('roles');
-
-    // Layers
-    Route::get('/employees', [EmployeeController::class, 'employee'])->name('employees');
+    Route::get('/export/report-emp', [ExportExcelController::class, 'exportreportemp'])->name('export.reportemp');
     
     // Authentication
     
@@ -138,7 +123,26 @@ Route::middleware('auth', 'tokencheck')->group(function () {
     Route::get('/get-tooltip-content', [GoalController::class, 'getTooltipContent']);
     Route::get('/units-of-measurement', [GoalController::class, 'unitOfMeasurement']);
     
-                
+});
+
+Route::group(['middleware'=>'admin'],function(){
+	//Employee
+    Route::get('/employees', [EmployeeController::class, 'employee'])->name('employees');
+    Route::get('/employee/filter', 'EmployeeController@filterEmployees')->name('employee.filter');
+
+    // Schedule
+    Route::get('/schedules', [ScheduleController::class, 'schedule'])->name('schedules');
+    Route::get('/schedules/form', [ScheduleController::class, 'form'])->name('schedules-form');
+    Route::post('/save-schedule', [ScheduleController::class, 'save'])->name('save-schedule');
+    Route::get('/edit-schedule/{id}', [ScheduleController::class, 'edit'])->name('edit-schedule');
+    Route::post('/update-schedule', [ScheduleController::class, 'update'])->name('update-schedule');
+    Route::delete('/schedule/{id}', [ScheduleController::class, 'softDelete'])->name('soft-delete-schedule');
+
+    // Assignments
+    Route::get('/assignments', [AssignmentController::class, 'assignment'])->name('assignments');
+
+    // Roles
+    Route::get('/roles', [RoleController::class, 'role'])->name('roles');
 });
 
 Route::fallback(function () {
