@@ -1,8 +1,19 @@
+# ---
+# deployment:
+#   tasks:
+#     - export DEPLOYPATH=/home/hcis2460/laravel
+#     - /bin/mkdir -p $DEPLOYPATH
+#     - /bin/cp -R $HOME/public/* /home/hcis2460/public_html/
+#     - /bin/cp -R $HOME/* $DEPLOYPATH/
+#     - /bin/mv $DEPLOYPATH/public $HOME/
+
 ---
 deployment:
   tasks:
     - export DEPLOYPATH=/home/hcis2460/laravel
     - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R $HOME/app $DEPLOYPATH/
+    - /bin/cp -R $HOME/resources $DEPLOYPATH/
+    - /bin/cp -R $HOME/routes $DEPLOYPATH/
+    - /bin/mkdir -p /home/hcis2460/public_html
     - /bin/cp -R $HOME/public/* /home/hcis2460/public_html/
-    - /bin/cp -R $HOME/* $DEPLOYPATH/
-    - /bin/mv $DEPLOYPATH/public $HOME/
