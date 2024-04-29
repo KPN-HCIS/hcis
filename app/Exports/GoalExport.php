@@ -48,6 +48,8 @@ class GoalExport implements FromView, WithStyles
 
         $goals = $query->with(['employee', 'manager', 'goal', 'initiated'])->get();
 
+        dd($goals);
+
         return view('exports.goal', [
             'goals' => $goals
         ]);
