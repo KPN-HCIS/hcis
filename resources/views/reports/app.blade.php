@@ -18,8 +18,8 @@
             </div>
           </div>
         </div>
-        <div class="form-group ml-sm-auto">
-          <form id="exportForm" class="float-right" action="{{ route('export') }}" method="POST">
+        <div class="form-group ml-md-auto d-flex justify-content-end">
+          <form id="exportForm" action="{{ route('export') }}" method="POST">
             @csrf
             <input type="hidden" name="export_report_type" id="export_report_type">
             <input type="hidden" name="export_group_company" id="export_group_company">
@@ -30,11 +30,11 @@
         </div>
       </div>
       
-      <!-- Content -->
       <div id="report_content">
           @yield('report_content')
       </div>
       @include('reports.filter')
-  </div>
+    </div>
+    <!-- Content -->
   </x-slot>
 </x-app-layout>
