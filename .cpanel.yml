@@ -7,7 +7,7 @@ deployment:
     - /bin/cp -r app config database routes resources $DEPLOYPATH
 
     # Copy public assets to the public_html directory
-    - /bin/cp -r public/* /home/hcis2460/public_html/
+    - /bin/cp -r public/assets public/css public/img public/js /home/hcis2460/public_html/
 
     # Change directory to the deployment path
     - cd $DEPLOYPATH
@@ -16,4 +16,4 @@ deployment:
     # - composer install --no-dev --optimize-autoloader
 
     # Clear Laravel application cache
-    - php artisan cache:clear
+    - php artisan optimize
