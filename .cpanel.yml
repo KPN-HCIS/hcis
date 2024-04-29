@@ -4,7 +4,7 @@ deployment:
     - export DEPLOYPATH=/home/hcis2460/laravel/
 
     # Copy essential Laravel application directories to deployment path
-    - /bin/cp -r app config database routes resources $DEPLOYPATH
+    - /bin/cp -r app bootstrap config database routes resources $DEPLOYPATH
 
     # Copy public assets to the public_html directory
     - /bin/cp -r public/assets public/css public/img public/js /home/hcis2460/public_html/
