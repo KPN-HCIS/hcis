@@ -23,11 +23,11 @@
         <span>Dashboard</span></a>
     </li>
 
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link" href="{{ route('tasks') }}">
             <i class="fas fa-fw fa-tasks"></i>
             <span>Tasks</span></a>
-    </li>
+    </li> --}}
     <li class="nav-item">
         <a class="nav-link" href="{{ route('goals') }}">
             <i class="fas fa-fw fa-flag-checkered"></i>
@@ -35,7 +35,7 @@
         </a>
     </li>
     
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Appraisal</span></a>
@@ -44,7 +44,7 @@
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-chart-bar"></i>
             <span>Calibration</span></a>
-    </li>
+    </li> --}}
     <li class="nav-item">
         <a class="nav-link" href="{{ Url('/reports') }}">
             <i class="fas fa-fw fa-file-alt"></i>
