@@ -17,3 +17,4 @@ deployment:
 
     # Clear Laravel application cache
     - php artisan optimize
+    - php artisan cache:clear
