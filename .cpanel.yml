@@ -1,12 +1,15 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/hcis2460/public_html/
-    - /bin/cp -r $HOME/public $DEPLOYPATH
+    - export DEPLOYPATH=/home/hcis2460/laravel/
+    - /bin/cp -r app $DEPLOYPATH
+    - /bin/cp -r config $DEPLOYPATH
+    - /bin/cp -r database $DEPLOYPATH
+    - /bin/cp -r routes $DEPLOYPATH
+    - /bin/cp -r resources $DEPLOYPATH
 
-    # - export DEPLOYPATH=/home/hcis2460/laravel
-    # - /bin/mkdir -p $DEPLOYPATH
-    # - /bin/cp -R $HOME/app $DEPLOYPATH/
-    # - /bin/cp -R $HOME/resources $DEPLOYPATH/
-    # - /bin/cp -R $HOME/routes $DEPLOYPATH/
-    # - /bin/mkdir -p /home/hcis2460/public_html
-    # - /bin/cp -R $HOME/public/* /home/hcis2460/public_html/
+    - /bin/cp -r public/* /home/hcis2460/public_html/
+
+    - cd laravel
+    - composer install --no-dev --optimize-autoloader
+
+    - php laravel/artisan cache:clear
