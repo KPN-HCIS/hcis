@@ -1,15 +1,19 @@
+---
 deployment:
   tasks:
     - export DEPLOYPATH=/home/hcis2460/laravel/
-    - /bin/cp -r app $DEPLOYPATH
-    - /bin/cp -r config $DEPLOYPATH
-    - /bin/cp -r database $DEPLOYPATH
-    - /bin/cp -r routes $DEPLOYPATH
-    - /bin/cp -r resources $DEPLOYPATH
 
+    # Copy essential Laravel application directories to deployment path
+    - /bin/cp -r app config database routes resources $DEPLOYPATH
+
+    # Copy public assets to the public_html directory
     - /bin/cp -r public/* /home/hcis2460/public_html/
 
-    - cd laravel
+    # Change directory to the deployment path
+    - cd $DEPLOYPATH
+
+    # Install production dependencies using Composer
     - composer install --no-dev --optimize-autoloader
 
-    - php laravel/artisan cache:clear
+    # Clear Laravel application cache
+    - php artisan cache:clear
