@@ -19,7 +19,7 @@
         <div class="d-flex align-items-center justify-content-between mb-4">
             @csrf
             <input type="hidden" name="submit_type" id="submitType" value=""> <!-- Hidden input to store the button clicked -->
-            <button type="submit" name="save_draft" class="btn btn-outline-secondary btn-sm badge-pill px-4 save-draft" onclick="return setSubmitType('save_draft')">Save as Draft</button>
+            <button type="submit" name="save_draft" class="btn btn-outline-secondary btn-sm badge-pill px-4 mr-3 save-draft" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>
             <div class="d-flex align-items-center">
                 <a href="{{ url()->previous() }}" class="btn btn-outline-secondary px-4 mr-3">Cancel</a>
                 <button type="submit" name="submit_form" class="btn btn-primary px-4 shadow" onclick="return setSubmitType('submit_form')">Submit</button>
