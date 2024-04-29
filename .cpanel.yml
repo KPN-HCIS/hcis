@@ -1,4 +1,7 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/hcis2460/public_html/
-    - /bin/cp -r public $DEPLOYPATH
+    - /bin/cp -r public/assets $DEPLOYPATH
+    - /bin/cp -r public/css $DEPLOYPATH
+    - /bin/cp -r public/img $DEPLOYPATH
+    - /bin/cp -r public/js $DEPLOYPATH
