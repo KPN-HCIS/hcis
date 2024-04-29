@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\EmployeeExport;
+use App\Exports\EmployeeDetailExport;
 use App\Exports\GoalExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+
 
 class ExportExcelController extends Controller
 {
@@ -21,5 +24,9 @@ class ExportExcelController extends Controller
         }
         return;
 
+    }
+    public function exportreportemp() 
+    {
+        return Excel::download(new EmployeeDetailExport, 'employees_detail.xlsx');
     }
 }
