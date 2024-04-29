@@ -36,12 +36,12 @@
     </li>
     
     <li class="nav-item">
-        <a class="nav-link" href="{{ Url('/') }}">
+        <a class="nav-link" href="#">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Appraisal</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{{ Url('/') }}">
+        <a class="nav-link" href="#">
             <i class="fas fa-fw fa-chart-bar"></i>
             <span>Calibration</span></a>
     </li>
