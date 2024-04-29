@@ -22,9 +22,9 @@
 <!-- Page level custom scripts -->
 <script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
 
-<script src="https://unpkg.com/popper.js@1"></script>
-<script src="https://unpkg.com/tippy.js@4"></script>
+<script src="{{ asset('assets/js/popper.min.js') }}"></script>
+<script src="{{ asset('assets/js/tippy.min.js') }}"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ asset('assets/js/sweetalert2@11.js') }}"></script>
 
 <script src="{{ asset('js/script.js') }}"></script>

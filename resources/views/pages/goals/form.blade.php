@@ -25,7 +25,7 @@
                 <button type="submit" name="submit_form" class="btn btn-primary px-4 shadow" onclick="return setSubmitType('submit_form')">Submit</button>
             </div>
           </div>
-          @foreach ($layer as $data)
+          @foreach ($layer as $index => $data)
           <input type="hidden" class="form-control" name="users_id" value="{{ Auth::user()->id }}">
           <input type="hidden" class="form-control" name="approver_id" value="{{ $data->approver_id }}">
           <input type="hidden" class="form-control" name="employee_id" value="{{ $data->employee_id }}">
@@ -55,7 +55,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="uom">UoM</label>
-                                <select class="form-control" name="uom[]" id="uom" title="Unit of Measure" required>
+                                <select class="form-control" name="uom[]" id="uom{{ $index }}" onchange="otherUom('{{ $index }}')" title="Unit of Measure" required>
                                     <option value="">- Select -</option>
                                     @foreach ($uomOption as $label => $options)
                                     <optgroup label="{{ $label }}">
@@ -67,6 +67,7 @@
                                     </optgroup>
                                     @endforeach
                                 </select>
+                                <input type="text" class="form-control mt-2" name="custom_uom[]" id="custom_uom{{ $index }}" @style('display: none') placeholder="Enter UoM">
                             </div>
                         </div>
                         <div class="col-md-2">
