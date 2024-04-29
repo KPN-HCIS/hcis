@@ -1,39 +1,4 @@
----
 deployment:
   tasks:
-    # Create Laravel deployment directory if it doesn't exist
-    - mkdir -p $HOME/laravel
-
-    # Copy Laravel application files (app, config, database, routes, resources)
-    - cp -R $HOME/app $HOME/laravel/
-    - cp -R $HOME/config $HOME/laravel/
-    - cp -R $HOME/database $HOME/laravel/
-    - cp -R $HOME/routes $HOME/laravel/
-    - cp -R $HOME/resources $HOME/laravel/
-
-    # Copy public directory to public_html (web root)
-    - cp -R $HOME/public $HOME/public_html
-
-    # Exclude unnecessary files/directories (e.g., .env, vendor)
-    - rm -rf $HOME/laravel/public # Remove public directory from laravel directory
-
-    # Install composer dependencies (assuming composer is available on the server)
-    - cd $HOME/laravel
-    - composer install --no-dev --optimize-autoloader
-
-    # Set permissions (adjust as needed based on server configuration)
-    - chmod -R 755 $HOME/public_html
-    - chmod -R 755 $HOME/laravel/storage
-
-    # Clear Laravel application cache
-    - php $HOME/laravel/artisan cache:clear
-# ---
-# deployment:
-#   tasks:
-#     - export DEPLOYPATH=/home/hcis2460/laravel
-#     - /bin/mkdir -p $DEPLOYPATH
-#     - /bin/cp -R $HOME/app $DEPLOYPATH/
-#     - /bin/cp -R $HOME/resources $DEPLOYPATH/
-#     - /bin/cp -R $HOME/routes $DEPLOYPATH/
-#     - /bin/mkdir -p /home/hcis2460/public_html
-#     - /bin/cp -R $HOME/public/* /home/hcis2460/public_html/
+    - export DEPLOYPATH=/home/hcis2460/public_html/
+    - /bin/cp -r public $DEPLOYPATH
