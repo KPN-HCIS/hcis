@@ -2,6 +2,7 @@
     <thead>
     <tr>
         <th>Employee ID</th>
+        <th>Employee Name</th>
         <th>Category</th>
         <th>KPI</th>
         <th>Target</th>
@@ -23,6 +24,7 @@
             @foreach ($formData as $item)
                 <tr>
                     <td>{{ $row->employee_id }}</td>
+                    <td>{{ $row->employee->fullname }}</td>
                     <td>{{ $row->goal->category }}</td>
                     <td>{{ $item['kpi'] }}</td>
                     <td>{{ $item['target'] }}</td>
