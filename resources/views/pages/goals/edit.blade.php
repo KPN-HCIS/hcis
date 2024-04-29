@@ -85,7 +85,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="type">Type</label>
-                                <select class="form-control" name="type[]" id="type{{ $index }}" required>
+                                <select class="form-control" name="type[]" id="type" required>
                                     <option value="">Select</option>
                                     @foreach ($typeOption as $label => $options)
                                         @foreach ($options as $option)
