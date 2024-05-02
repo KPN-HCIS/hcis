@@ -46,7 +46,7 @@
             <span>Calibration</span></a>
     </li> --}}
     <li class="nav-item">
-        @if (auth()->user()->isApprover())
+        @if (auth()->user()->isApprover() || auth()->user()->hasRole('admin'))
             <a class="nav-link" href="{{ url('/reports') }}">
                 <i class="fas fa-fw fa-file-alt"></i>
                 <span>Reports</span>
@@ -75,8 +75,8 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="{{ route('schedules') }}">Schedule</a>
                 <a class="collapse-item" href="{{ route('employees') }}">Employee</a>
-                <a class="collapse-item" href="{{ route('assignments') }}">Assignment</a>
-                <a class="collapse-item" href="{{ route('roles') }}">Role</a>
+                <a class="collapse-item" href="{{ route('layer') }}">Layer</a>
+                {{-- <a class="collapse-item" href="{{ route('roles') }}">Role</a> --}}
             </div>
         </div>
     </li>

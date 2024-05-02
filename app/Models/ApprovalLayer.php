@@ -27,4 +27,8 @@ class ApprovalLayer extends Model
     {
         return $this->hasMany(Employee::class, 'employee_id', 'approver_id');
     }
+    public function view_employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
 }

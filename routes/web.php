@@ -148,6 +148,9 @@ Route::group(['middleware'=>'admin'],function(){
     // Assignments
     Route::get('/assignments', [AssignmentController::class, 'assignment'])->name('assignments');
 
+    // layer
+    Route::get('/layer', [LayerController::class, 'layer'])->name('layer');
+
     // Roles
     Route::get('/roles', [RoleController::class, 'role'])->name('roles');
 });
