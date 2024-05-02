@@ -9,7 +9,7 @@
         </div>
         <div class="form-group" style="width: 50%">
             <label for="locationFilter">Filter Locations:</label>
-            <select class="form-control" id="locationFilter">
+            <select class="form-control select2" id="locationFilter">
                 <option value="">Select location...</option>
                 @foreach($locations as $location)
                     <option value="{{ $location->area." (".$location->company_name.")" }}">{{ $location->area." (".$location->company_name.")" }}</option>
