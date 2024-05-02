@@ -1,4 +1,4 @@
-<div class="modal fade" id="modalFilter" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="modalFilter" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog mt-3" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -27,6 +27,7 @@
                                     </select>
                                 </div> 
                             </div>
+                            @if (auth()->user()->hasRole('superadmin') || auth()->user()->hasRole('admin'))
                             <div class="d-sm-flex">
                                 <div class="form-group">
                                     <label for="group_company">Group Company</label>
@@ -38,10 +39,10 @@
                                     </select>
                                 </div> 
                             </div>
-                            <div class="d-sm-flex">
+                            <div class="flex">
                                 <div class="form-group">
                                     <label for="company">Company</label>
-                                    <select class="form-control" name="company" id="company">
+                                    <select class="form-control select2" name="company" id="company">
                                         <option value="">- select company -</option>
                                         @foreach ($companies as $company)
                                         <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level }}</option>
@@ -49,17 +50,18 @@
                                     </select>
                                 </div> 
                             </div>
-                            <div class="d-sm-flex">
+                            <div class="flex">
                                 <div class="form-group">
                                     <label for="location">Location</label>
-                                    <select class="form-control" name="location" id="location">
+                                    <select class="form-control select2" name="location" id="location">
                                         <option value="">- select location -</option>
                                         @foreach ($locations as $location)
                                         <option value="{{ $location->work_area }}">{{ $location->area.' ('.$location->company_name.')' }}</option>
                                         @endforeach
                                     </select>
                                 </div> 
-                            </div>
+                            </div>  
+                            @endif
                         </div>
                     </div>
                 </div>

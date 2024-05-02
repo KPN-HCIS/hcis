@@ -217,3 +217,9 @@ function exportExcel() {
     // Submit the form
     exportForm.submit();
 }
+
+$(document).ready(function () {
+    $(".select2").select2({
+        theme: "bootstrap4",
+    });
+});

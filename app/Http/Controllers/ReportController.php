@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\GoalExport;
 use App\Models\ApprovalRequest;
 use App\Models\Company;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {

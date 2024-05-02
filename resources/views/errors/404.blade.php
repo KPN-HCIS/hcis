@@ -15,7 +15,7 @@
                     <img @style('width: 50%') src="{{ asset('img/page-not-found.svg') }}" alt="Page Not Found">
                 </div>
                 <h1 class="h3 mb-5">Page Not Found!</h1>
-                <a href="/" class="btn btn-light" >Back to Home Page</a>
+                <a href="/" class="btn btn-primary px-4" >Return</a>
             </div>
         </div>
     </div>

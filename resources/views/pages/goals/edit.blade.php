@@ -20,7 +20,7 @@
             @csrf
             <input type="hidden" name="submit_type" id="submitType" value=""> <!-- Hidden input to store the button clicked -->
             @if ($goal->form_status=='Draft')
-            <button type="submit" name="save_draft" class="btn btn-outline-secondary btn-sm badge-pill px-4 save-draft" onclick="return setSubmitType('save_draft')">Save as Draft</button>
+            <button type="submit" name="save_draft" class="btn btn-outline-secondary btn-sm rounded-pill save-draft" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>
             @endif
             <div class="d-flex align-items-center">
                 <a href="{{ url()->previous() }}" class="btn btn-outline-secondary px-4 mr-3">Cancel</a>
@@ -54,7 +54,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="uom">UoM</label>
-                                <select class="form-control" name="uom[]" id="uom{{ $index }}" onchange="otherUom('{{ $index }}')" title="Unit of Measure" required>
+                                <select class="form-control select2 max-w-full" name="uom[]" id="uom{{ $index }}" onchange="otherUom('{{ $index }}')" title="Unit of Measure" required>
                                     <option value="">- Select -</option>
                                     @foreach ($uomOption as $label => $options)
                                     <optgroup label="{{ $label }}">
@@ -67,7 +67,17 @@
                                     </optgroup>
                                     @endforeach
                                 </select>
-                                <input type="text" name="custom_uom[]" id="custom_uom{{ $index }}" class="form-control mt-2" value="{{ $row['custom_uom'] }}" placeholder="Enter UoM" {{ $selectedUoM[$index] === 'Other' ? '' : 'hidden' }}>
+                                <input 
+                                    type="text" 
+                                    name="custom_uom[]" 
+                                    id="custom_uom{{ $index }}" 
+                                    class="form-control mt-2" 
+                                    value="{{ $row['custom_uom'] }}" 
+                                    placeholder="Enter UoM" 
+                                    @if ($selectedUoM[$index] !== 'Other') 
+                                        style="display: none;" 
+                                    @endif 
+                                >
                             </div>
                         </div>
                         <div class="col-md-2">

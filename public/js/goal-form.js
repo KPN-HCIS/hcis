@@ -7,7 +7,7 @@ function otherUom(index) {
         inputField.show(); // Show the input field
         inputField.prop("required", true); // Set input as required
     } else {
-        inputField.hide().val(""); // Hide the input field
+        inputField.hide(); // Hide the input field
         inputField.prop("required", false); // Remove required attribute
     }
 }
@@ -111,9 +111,9 @@ function addField(val) {
                 '<label for="type">Type</label>' +
                 '<select class="form-control" name="type[]" id="type" required>' +
                 '<option value="">- Select -</option>' +
-                '<option value="Higher is Better">Higher is Better</option>' +
-                '<option value="Lower is Better">Lower is Better</option>' +
-                '<option value="Exact Value">Exact Value</option>' +
+                '<option value="Higher is better">Higher is better</option>' +
+                '<option value="Lower is better">Lower is better</option>' +
+                '<option value="Exact value">Exact value</option>' +
                 "</select>" +
                 "</div>" +
                 "</div>" +
