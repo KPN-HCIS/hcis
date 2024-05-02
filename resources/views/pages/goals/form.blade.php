@@ -55,7 +55,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="uom">UoM</label>
-                                <select class="form-control" name="uom[]" id="uom{{ $index }}" onchange="otherUom('{{ $index }}')" title="Unit of Measure" required>
+                                <select class="form-control select2 max-w-full" name="uom[]" id="uom{{ $index }}" onchange="otherUom('{{ $index }}')" title="Unit of Measure" required>
                                     <option value="">- Select -</option>
                                     @foreach ($uomOption as $label => $options)
                                     <optgroup label="{{ $label }}">
