@@ -12,9 +12,9 @@
         <div class="d-flex align-items-center justify-content-center vh-100">
             <div class="form-group text-center">
                 <div class="mb-3">
-                    <img @style('width: 50%') src="{{ asset('img/page-not-found.svg') }}" alt="Page Not Found">
+                    <img @style('width: 50%') src="{{ asset('img/error_403.svg') }}" alt="Page Not Found">
                 </div>
-                <h1 class="h3 mb-5">Page Not Found!</h1>
+                <h1 class="h3 mb-5">The page you are looking for seems to be off limits.</h1>
                 <a href="/" class="btn btn-primary px-4" >Return</a>
             </div>
         </div>

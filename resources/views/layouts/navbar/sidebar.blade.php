@@ -46,7 +46,7 @@
             <span>Calibration</span></a>
     </li> --}}
     <li class="nav-item">
-        @if (auth()->user()->isApprover())
+        @if (auth()->user()->isApprover() || auth()->user()->hasRole('superadmin') || auth()->user()->hasRole('admin'))
             <a class="nav-link" href="{{ url('/reports') }}">
                 <i class="fas fa-fw fa-file-alt"></i>
                 <span>Reports</span>

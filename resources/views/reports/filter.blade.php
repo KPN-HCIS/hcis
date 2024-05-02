@@ -27,6 +27,7 @@
                                     </select>
                                 </div> 
                             </div>
+                            @if (auth()->user()->hasRole('superadmin') || auth()->user()->hasRole('admin'))
                             <div class="d-sm-flex">
                                 <div class="form-group">
                                     <label for="group_company">Group Company</label>
@@ -59,7 +60,8 @@
                                         @endforeach
                                     </select>
                                 </div> 
-                            </div>
+                            </div>  
+                            @endif
                         </div>
                     </div>
                 </div>

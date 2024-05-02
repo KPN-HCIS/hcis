@@ -132,7 +132,7 @@ Route::middleware('auth')->group(function () {
     
 });
 
-Route::group(['middleware'=>'admin'],function(){
+Route::group(['middleware' => ['role:admin|superadmin']],function(){
 	//Employee
     Route::get('/employees', [EmployeeController::class, 'employee'])->name('employees');
     Route::get('/employee/filter', 'EmployeeController@filterEmployees')->name('employee.filter');
