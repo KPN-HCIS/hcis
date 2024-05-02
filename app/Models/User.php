@@ -67,4 +67,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(ApprovalRequest::class, 'employee_id', 'employee_id');
     }
+
+    public function isApprover()
+    {
+        return $this->approver_layers()->exists();
+    }
+
+    public function approver_layers()
+    {
+        return $this->hasMany(ApprovalLayer::class, 'approver_id', 'employee_id');
+    }
 }

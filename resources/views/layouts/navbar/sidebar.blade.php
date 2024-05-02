@@ -46,10 +46,14 @@
             <span>Calibration</span></a>
     </li> --}}
     <li class="nav-item">
-        <a class="nav-link" href="{{ Url('/reports') }}">
-            <i class="fas fa-fw fa-file-alt"></i>
-            <span>Reports</span></a>
+        @if (auth()->user()->isApprover())
+            <a class="nav-link" href="{{ url('/reports') }}">
+                <i class="fas fa-fw fa-file-alt"></i>
+                <span>Reports</span>
+            </a>
+        @endif
     </li>
+    
 
     <!-- Divider -->
     <hr class="sidebar-divider">
