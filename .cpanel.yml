@@ -7,7 +7,7 @@ deployment:
     - /bin/cp -r app bootstrap config database routes resources $DEPLOYPATH
 
     # Copy public assets to the public_html directory
-    - /bin/cp -r public/assets public/css public/img public/js /home/hcis2460/public_html/
+    - /bin/cp -r public/assets public/css public/img public/js public/vendor /home/hcis2460/public_html/
 
     # Change directory to the deployment path
     - cd $DEPLOYPATH
