@@ -19,9 +19,10 @@ $(document).ready(function () {
     }
 
     // Function to fetch tooltip content and initialize tooltip
-    function fetchAndInitializeTooltip() {
+    function fetchAndInitializeTooltip(id) {
         if (!tooltipInitialized) {
-            fetch("/get-tooltip-content")
+            let url = `/get-tooltip-content?id=${id}`;
+            fetch(url)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Failed to fetch tooltip content");
@@ -43,10 +44,14 @@ $(document).ready(function () {
 
     // Attach tooltip initialization when #approval.badge-warning is hovered
     $(document).on("mouseenter", "#approval.badge-warning", function () {
-        fetchAndInitializeTooltip(); // Call the function to fetch and initialize tooltip
+        var id = $(this).data("id");
+
+        fetchAndInitializeTooltip(id); // Call the function to fetch and initialize tooltip
         $(this).off("mouseenter"); // Remove the event listener after initialization
     });
 });
+
+// My-Approval -------
 $(document).ready(function () {
     let tooltipInitialized = false; // Flag to track tooltip initialization
 
@@ -59,9 +64,10 @@ $(document).ready(function () {
     }
 
     // Function to fetch tooltip content and initialize tooltip
-    function fetchAndInitializeTooltip() {
+    function fetchAndInitializeTooltip(id) {
         if (!tooltipInitialized) {
-            fetch("/get-tooltip-content")
+            let url = `/get-tooltip-content?id=${id}`;
+            fetch(url)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Failed to fetch tooltip content");
@@ -83,7 +89,9 @@ $(document).ready(function () {
 
     // Attach tooltip initialization when #approval.badge-warning is hovered
     $(document).on("mouseenter", "#myApproval.badge-warning", function () {
-        fetchAndInitializeTooltip(); // Call the function to fetch and initialize tooltip
+        var id = $(this).data("id");
+
+        fetchAndInitializeTooltip(id); // Call the function to fetch and initialize tooltip
         $(this).off("mouseenter"); // Remove the event listener after initialization
     });
 });

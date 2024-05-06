@@ -368,14 +368,14 @@ class TeamGoalController extends Controller
 
     }
 
-    public function getTooltipContent()
+    public function getTooltipContent(Request $request)
     {
-        $approvalRequest = ApprovalRequest::with(['manager'])->first();
+        $approvalRequest = ApprovalRequest::with(['manager'])->where('employee_id', $request->id)->first();
         
         if ($approvalRequest) {
             $name = $approvalRequest->manager->fullname.' ('.$approvalRequest->manager->employee_id.')';
-            $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->get();
-            dd($approvalRequest->current_approval_id);
+            $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->value('layer');
+
             return response()->json(['name' => $name, 'layer' => $approvalLayer]);
         }
 

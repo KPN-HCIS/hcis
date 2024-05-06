@@ -108,7 +108,7 @@
                         <div class="col-lg col-sm-12 p-2">
                             <label class="font-weight-bold">Status :</label>
                             <div>
-                                <a href="#" id="myApproval" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill px-3 py-2">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? 'Waiting for approval' : $row->request->status) }}</a>
+                                <a href="#" id="myApproval" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill px-3 py-2">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? 'Waiting for approval' : $row->request->status) }}</a>
                             </div>
                         </div>
                     </div>
