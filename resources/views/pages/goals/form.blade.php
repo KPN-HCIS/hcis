@@ -16,15 +16,7 @@
         <div class="d-flex align-items-center justify-content-start mb-4">
         </div>
         <form id="goalForm" action="{{ route('goals.submit') }}" method="POST">
-        <div class="d-flex align-items-center justify-content-between mb-4">
             @csrf
-            <input type="hidden" name="submit_type" id="submitType" value=""> <!-- Hidden input to store the button clicked -->
-            <button type="submit" name="save_draft" class="btn btn-outline-secondary btn-sm badge-pill px-4 mr-3 save-draft" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>
-            <div class="d-flex align-items-center">
-                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary px-4 mr-3">Cancel</a>
-                <button type="submit" name="submit_form" class="btn btn-primary px-4 shadow" onclick="return setSubmitType('submit_form')">Submit</button>
-            </div>
-          </div>
           @foreach ($layer as $index => $data)
           <input type="hidden" class="form-control" name="users_id" value="{{ Auth::user()->id }}">
           <input type="hidden" class="form-control" name="approver_id" value="{{ $data->approver_id }}">
@@ -42,7 +34,7 @@
                     <div class="row mx-auto">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="kpi">KPI</label>
+                                <label for="kpi">KPI {{ $index + 1 }}</label>
                                 <textarea name="kpi[]" id="kpi" class="form-control" required>{{ old('kpi.0') }}</textarea>
                             </div>
                         </div>
@@ -72,6 +64,17 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
+                                <label for="type">Type</label>
+                                <select class="form-control" name="type[]" id="type" required>
+                                    <option value="">- Select -</option>
+                                    <option value="Higher is better">Higher is better</option>
+                                    <option value="Lower is better">Lower is better</option>
+                                    <option value="Exact value">Exact value</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
                                 <label for="weightage">Weightage</label>
                                 <div class="input-group">
                                     <input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ old('weightage.0') }}" required>
@@ -82,23 +85,21 @@
                             </div>
                             {{ $errors->first("weightage") }}
                         </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="type">Type</label>
-                                <select class="form-control" name="type[]" id="type" required>
-                                    <option value="">- Select -</option>
-                                    <option value="Higher is better">Higher is better</option>
-                                    <option value="Lower is better">Lower is better</option>
-                                    <option value="Exact value">Exact value</option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
             <a class="btn btn-outline-primary badge-pill px-4 mt-2 mb-4" onclick="addField('input')"><i class="fas fa-plus"></i> Add KPI</a>
+        </div>
+        <div class="d-sm-flex align-items-end justify-content-between mb-4">
+            <input type="hidden" name="submit_type" id="submitType" value=""> <!-- Hidden input to store the button clicked -->
+            <div class="d-flex align-items-center justify-content-center mb-3"><h5>Total Weightage : <span class="font-weight-bold" id="totalWeightage">-</span></h5></div>
+            <div class="d-flex align-items-center justify-content-center mb-3">
+                <button type="submit" name="save_draft" class="btn btn-outline-info save-draft mr-3" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>
+                <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3">Cancel</a>
+                <button type="submit" name="submit_form" class="btn btn-primary px-4 shadow" onclick="return setSubmitType('submit_form')">Submit</button>
+            </div>
         </div>
         </form>
     </div>

@@ -33,6 +33,7 @@ $(document).ready(function () {
 var wrapper = $(".container-card"); // Fields wrapper
 
 var x = 1; // initial text box count
+var index = $("#count").val();
 
 // Function to fetch UoM data and populate select element
 function populateUoMSelect(select) {
@@ -60,11 +61,13 @@ function populateUoMSelect(select) {
 
 function addField(val) {
     var count = $("#count").val();
-    var max_fields = val === "input" ? 10 : 10 - count; // maximum input boxes allowed
+
+    var max_fields = val === "input" ? 9 : 10 - count; // maximum input boxes allowed
     // on add input button click
-    if (x < max_fields) {
+    if (x <= max_fields) {
         // max input box allowed
         x++; // text box increment
+        index++; // text box increment
         $(wrapper).append(
             '<div class="card col-md-12 mb-4 shadow-sm">' +
                 ' <div class="card-header border-0 p-0 bg-white d-flex align-items-center justify-content-between"><h1 class="rotate-n-45 text-primary"><i class="fas fa-angle-up p-0"></i></h1><a class="btn btn-danger btn-sm btn-circle remove_field"><i class="fas fa-times"></i></a></div>' +
@@ -72,7 +75,9 @@ function addField(val) {
                 '<div class="row mx-auto">' +
                 '<div class="col-md-4">' +
                 '<div class="form-group">' +
-                '<label for="kpi">KPI</label>' +
+                '<label for="kpi">KPI ' +
+                (index ? index : x) +
+                "</label>" +
                 '<textarea name="kpi[]" id="kpi" class="form-control" required></textarea>' +
                 "</div>" +
                 "</div>" +
@@ -84,26 +89,15 @@ function addField(val) {
                 '<div class="col-md-2">' +
                 '<div class="form-group">' +
                 '<label for="uom">UoM</label>' +
-                '<select class="form-control uom-select" name="uom[]" id="uom' +
-                x +
+                '<select class="form-control select2" name="uom[]" id="uom' +
+                index +
                 '"onchange="otherUom(' +
-                x +
+                index +
                 ')" title="Unit of Measure" required>' +
                 '<option value="">- Select -</option>' +
                 '</select><input type="text" name="custom_uom[]" id="custom_uom' +
-                x +
+                index +
                 '" class="form-control mt-2" placeholder="Enter UoM" style="display: none" placeholder="Enter UoM">' +
-                "</div>" +
-                "</div>" +
-                '<div class="col-md-2">' +
-                '<div class="form-group">' +
-                '<label for="weightage">Weightage</label>' +
-                '<div class="input-group">' +
-                '<input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ old("weightage") }}" required>' +
-                '<div class="input-group-append">' +
-                '<span class="input-group-text">%</span>' +
-                "</div>" +
-                "</div>" +
                 "</div>" +
                 "</div>" +
                 '<div class="col-md-2">' +
@@ -117,13 +111,36 @@ function addField(val) {
                 "</select>" +
                 "</div>" +
                 "</div>" +
+                '<div class="col-md-2">' +
+                '<div class="form-group">' +
+                '<label for="weightage">Weightage</label>' +
+                '<div class="input-group">' +
+                '<input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ old("weightage") }}" required>' +
+                '<div class="input-group-append">' +
+                '<span class="input-group-text">%</span>' +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
                 "</div>" +
                 "</div>" +
                 "</div>"
         ); // add input box
         // Populate UoM select for the newly added field
-        var newSelect = $("#uom" + x); // Assuming your select has an ID like "uom1", "uom2", ...
+        var newSelect = $("#uom" + index); // Assuming your select has an ID like "uom1", "uom2", ...
         populateUoMSelect(newSelect);
+
+        $(".select2").select2({
+            theme: "bootstrap4",
+        });
+
+        var weightageInputs = document.getElementsByName("weightage[]");
+        for (var i = 0; i < weightageInputs.length; i++) {
+            weightageInputs[i].addEventListener(
+                "keyup",
+                updateWeightageSummary
+            );
+        }
     } else {
         Swal.fire({
             title: "Oops, you've exceeded the maximum KPI inputs",
@@ -135,31 +152,16 @@ function addField(val) {
 }
 
 $(wrapper).on("click", ".remove_field", function (e) {
-    // user click on remove text
     e.preventDefault();
-    $(this).closest(".card").remove();
-    x--;
+
+    // Find the last card within the wrapper and remove it
+    $(wrapper)
+        .children(".card")
+        .last() // Select the last (most recently added) card
+        .remove();
+
+    x--; // Decrement the text box count
 });
-
-// Event listener for select element
-// $(wrapper).on("change", ".uom-select", function () {
-//     const selectedValue = $(this).val();
-//     if (selectedValue === "Other") {
-//         // Display input field
-//         const inputField = $(
-//             '<input type="text" name="custom_uom[]" class="form-control mt-2 custom-measurement" placeholder="Enter UoM" required>'
-//         );
-
-//         // Remove any previously displayed input field
-//         $(this).closest(".row").find(".custom-measurement").remove();
-
-//         // Append input field to the parent element of select
-//         $(this).closest(".form-group").append(inputField);
-//     } else {
-//         // If a value other than "Others" is selected, remove the input field if it exists
-//         $(this).closest(".row").find(".custom-measurement").remove();
-//     }
-// });
 
 var firstSelect = $("#uom"); // Assuming your first select has an ID "uom1"
 populateUoMSelect(firstSelect);
@@ -185,16 +187,16 @@ function checkEmptyFields(submitType) {
     return true; // All required fields are filled
 }
 
-function validate() {
+function validate(submitType) {
     var weight = document.querySelectorAll('input[name="weightage[]"]');
     var sum = 0;
     for (var i = 0; i < weight.length; i++) {
         sum += parseInt(weight[i].value) || 0; // Parse input value to integer, default to 0 if NaN
     }
 
-    if (sum > 100) {
+    if (sum != 100 && submitType === "submit_form") {
         Swal.fire({
-            title: "The total weightage cannot exceed 100%",
+            title: "The total weightage must be 100%",
             confirmButtonColor: "#3085d6",
             icon: "error",
             // If confirmed, proceed with form submission
@@ -205,11 +207,42 @@ function validate() {
     return true; // Allow form submission
 }
 
+function validateWeightage(submitType) {
+    // Get all input elements with name="weightage[]"
+    var weightageInputs = document.getElementsByName("weightage[]");
+
+    // Iterate through each input element
+    for (var i = 0; i < weightageInputs.length; i++) {
+        var input = weightageInputs[i];
+
+        // Get the value of the input (convert to number)
+        var value = parseFloat(input.value);
+
+        // Check if value is below 5%
+        if (value < 5 && submitType === "submit_form") {
+            // Display alert message
+            Swal.fire({
+                title: "The weightage cannot lower than 5%",
+                confirmButtonColor: "#3085d6",
+                icon: "error",
+                // If confirmed, proceed with form submission
+            });
+            weightageInputs.focus();
+            return false; // Prevent form submission
+        }
+    }
+
+    return true; // All weightages are valid
+}
+
 function setSubmitType(submitType) {
     document.getElementById("submitType").value = submitType; // Set the value of the hidden input field
     // Now you can call the confirmSubmission() function to show the confirmation dialog
     // Check for empty required fields
     if (!checkEmptyFields(submitType)) {
+        return false; // Stop submission if required fields are empty
+    }
+    if (!validateWeightage(submitType)) {
         return false; // Stop submission if required fields are empty
     }
     if (!validate()) {
@@ -256,4 +289,50 @@ function confirmSubmission(submitType) {
     });
 
     return false; // Prevent default form submission
+}
+
+// Function to calculate and display the sum of weightage inputs
+function updateWeightageSummary() {
+    // Get all input elements with name="weightage[]"
+    var weightageInputs = document.getElementsByName("weightage[]");
+    var totalSum = 0;
+
+    // Iterate through each input element
+    for (var i = 0; i < weightageInputs.length; i++) {
+        var input = weightageInputs[i];
+
+        // Get the value of the input (convert to number)
+        var value = parseFloat(input.value);
+
+        // Check if the value is a valid number and within the allowed range
+        if (!isNaN(value) && value >= 5 && value <= 100) {
+            totalSum += value; // Add valid value to total sum
+        }
+    }
+
+    // Display the total sum in a summary element
+    var summaryElement = document.getElementById("totalWeightage");
+
+    if (totalSum !== 100) {
+        summaryElement.classList.remove("text-success");
+        summaryElement.classList.add("text-danger"); // Add text-danger class
+        // Add or update a sibling element to display the additional message
+        if (summaryElement) {
+            summaryElement.textContent =
+                totalSum.toFixed(0) + "% - Total weightage must be 100%";
+        }
+    } else {
+        summaryElement.classList.remove("text-danger"); // Remove text-danger class
+        summaryElement.classList.add("text-success"); // Remove text-danger class
+        // Hide the message element if totalSum is 100
+        if (summaryElement) {
+            summaryElement.textContent = totalSum.toFixed(0) + "%";
+        }
+    }
+}
+
+// Add event listener for keyup event on all weightage inputs
+var weightageInputs = document.getElementsByName("weightage[]");
+for (var i = 0; i < weightageInputs.length; i++) {
+    weightageInputs[i].addEventListener("keyup", updateWeightageSummary);
 }

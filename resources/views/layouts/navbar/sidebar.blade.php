@@ -29,10 +29,20 @@
             <span>Tasks</span></a>
     </li> --}}
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('goals') }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGoals"
+            aria-expanded="true" aria-controls="collapseGoals">
             <i class="fas fa-fw fa-flag-checkered"></i>
             <span>Goals</span>
         </a>
+        <div id="collapseGoals" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('goals') }}">My Goals</a>
+                @if(auth()->user()->isApprover())
+                <a class="collapse-item" href="{{ route('team-goals') }}">Team Goals</a>
+                @endif
+                {{-- <a class="collapse-item" href="{{ route('roles') }}">Role</a> --}}
+            </div>
+        </div>
     </li>
     
     {{-- <li class="nav-item">
@@ -66,12 +76,12 @@
 
     
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-            aria-expanded="true" aria-controls="collapsePages">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSettings"
+            aria-expanded="true" aria-controls="collapseSettings">
             <i class="fas fa-fw fa-cog"></i>
             <span>Settings</span>
         </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div id="collapseSettings" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="{{ route('schedules') }}">Schedule</a>
                 <a class="collapse-item" href="{{ route('employees') }}">Employee</a>

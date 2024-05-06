@@ -47,6 +47,46 @@ $(document).ready(function () {
         $(this).off("mouseenter"); // Remove the event listener after initialization
     });
 });
+$(document).ready(function () {
+    let tooltipInitialized = false; // Flag to track tooltip initialization
+
+    // Function to initialize tippy tooltip
+    function initializeTooltip(name, layer) {
+        tippy("#myApproval.badge-warning", {
+            content: `Manager L${layer}: ${name}`,
+            placement: "right",
+        });
+    }
+
+    // Function to fetch tooltip content and initialize tooltip
+    function fetchAndInitializeTooltip() {
+        if (!tooltipInitialized) {
+            fetch("/get-tooltip-content")
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch tooltip content");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    const name = data.name;
+                    const layer = data.layer;
+                    // Initialize tooltip with retrieved content
+                    initializeTooltip(name, layer);
+                    tooltipInitialized = true; // Update flag
+                })
+                .catch((error) => {
+                    console.error("Error fetching tooltip content:", error);
+                });
+        }
+    }
+
+    // Attach tooltip initialization when #approval.badge-warning is hovered
+    $(document).on("mouseenter", "#myApproval.badge-warning", function () {
+        fetchAndInitializeTooltip(); // Call the function to fetch and initialize tooltip
+        $(this).off("mouseenter"); // Remove the event listener after initialization
+    });
+});
 
 $(document).ready(function () {
     // Function to handle "Select All" button click

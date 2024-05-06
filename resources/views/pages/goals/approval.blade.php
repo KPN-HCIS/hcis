@@ -67,21 +67,6 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="weightage">Weightage</label>
-                                            <div class="input-group">
-                                                <input type="number" min="5" max="100" name="weightage[]" class="form-control" value="{{ $data['weightage'] }}" required>
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">%</span>
-                                                </div>
-                                            </div>
-                                            <!-- Tambahkan kode untuk menampilkan error weightage jika ada -->
-                                            @if ($errors->has("weightage"))
-                                                <span class="text-danger">{{ $errors->first("weightage") }}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
                                             <label for="type">Type</label>
                                             <select class="form-control" name="type[]" id="type" required>
                                                 <option value="">Select</option>
@@ -94,6 +79,21 @@
                                                     @endforeach
                                                 @endforeach
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="weightage">Weightage</label>
+                                            <div class="input-group">
+                                                <input type="number" min="5" max="100" name="weightage[]" class="form-control" value="{{ $data['weightage'] }}" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">%</span>
+                                                </div>
+                                            </div>
+                                            <!-- Tambahkan kode untuk menampilkan error weightage jika ada -->
+                                            @if ($errors->has("weightage"))
+                                                <span class="text-danger">{{ $errors->first("weightage") }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -112,7 +112,7 @@
                 <input type="hidden" name="employee_id" value="{{ $row->request->employee_id }}">
                 <div class="d-flex align-items-center mt-4">
                     <div class="form-group w-100">
-                        <label for="messages">Messages</label>
+                        <label for="messages">Messages*</label>
                         <textarea name="messages" id="messages{{ $row->request->id }}" class="form-control" placeholder="Enter messages..">{{ $row->request->messages }}</textarea>
                     </div>
                 </div>

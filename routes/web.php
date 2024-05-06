@@ -22,6 +22,8 @@ use App\Http\Controllers\SendbackController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\MyGoalController;
+use App\Http\Controllers\TeamGoalController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use App\Http\Middleware\EnsureUserHasRole;
@@ -77,13 +79,23 @@ Route::middleware('auth')->group(function () {
     // Tasks
     Route::get('/tasks', [TaskController::class, 'task'])->name('tasks');
 
-    // Goals
-    Route::get('/goals', [GoalController::class, 'index'])->name('goals');
-    Route::get('/goals/detail/{id}', [GoalController::class, 'show'])->name('goals.detail');
-    Route::get('/goals/form/{id}', [GoalController::class, 'create'])->name('goals.form');
-    Route::post('/goals/submit', [GoalController::class, 'store'])->name('goals.submit');
-    Route::get('/goals/edit/{id}', [GoalController::class, 'edit'])->name('goals.edit');
-    Route::post('/goals/update', [GoalController::class, 'update'])->name('goals.update');
+    // My Goals
+    Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');
+    Route::get('/goals/detail/{id}', [MyGoalController::class, 'show'])->name('goals.detail');
+    Route::get('/goals/form/{id}', [MyGoalController::class, 'create'])->name('goals.form');
+    Route::post('/goals/submit', [MyGoalController::class, 'store'])->name('goals.submit');
+    Route::get('/goals/edit/{id}', [MyGoalController::class, 'edit'])->name('goals.edit');
+    Route::post('/goals/update', [MyGoalController::class, 'update'])->name('goals.update');
+
+    // Team Goals
+    Route::get('/team-goals', [TeamGoalController::class, 'index'])->name('team-goals');
+    Route::get('/team-goals/detail/{id}', [TeamGoalController::class, 'show'])->name('team-goals.detail');
+    Route::get('/team-goals/form/{id}', [TeamGoalController::class, 'create'])->name('team-goals.form');
+    Route::post('/team-goals/submit', [TeamGoalController::class, 'store'])->name('team-goals.submit');
+    Route::get('/team-goals/edit/{id}', [TeamGoalController::class, 'edit'])->name('team-goals.edit');
+    // Route::post('/goals/update', [TeamGoalController::class, 'update'])->name('goals.update');
+    Route::get('/get-tooltip-content', [TeamGoalController::class, 'getTooltipContent']);
+    Route::get('/units-of-measurement', [TeamGoalController::class, 'unitOfMeasurement']);
     
     // Approval
     Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
@@ -126,9 +138,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
-
-    Route::get('/get-tooltip-content', [GoalController::class, 'getTooltipContent']);
-    Route::get('/units-of-measurement', [GoalController::class, 'unitOfMeasurement']);
     
 });
 

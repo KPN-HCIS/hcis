@@ -18,7 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use stdClass;
 
-class GoalController extends Controller
+class TeamGoalController extends Controller
 {
     function index() {
         
@@ -29,7 +29,7 @@ class GoalController extends Controller
             $query->with('approverName'); // Load nested relationship
         }])->whereHas('approvalLayer', function ($query) use ($user) {
             $query->where('employee_id', $user)->orWhere('approver_id', $user);
-        })->get();
+        })->where('employee_id', '!=', Auth::user()->employee_id)->get();
         
         $data = [];
         
@@ -80,7 +80,7 @@ class GoalController extends Controller
 
         $link = 'goals';
         
-        return view('pages.goals.goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
+        return view('pages.goals.team-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
        
     }
     function show($id) {
@@ -273,7 +273,7 @@ class GoalController extends Controller
 
         // Beri respon bahwa data berhasil disimpan
         // return response()->json(['message' => 'Data saved successfully'], 200);
-        return redirect('goals');
+            return redirect('team-goals');
     }
 
     function update(Request $request) {
@@ -364,7 +364,8 @@ class GoalController extends Controller
         
         $snapshot->save();
 
-        return redirect('goals');
+            return redirect('team-goals');
+
     }
 
     public function getTooltipContent()
@@ -372,7 +373,7 @@ class GoalController extends Controller
         $approvalRequest = ApprovalRequest::with(['manager'])->first();
         
         if ($approvalRequest) {
-            $name = $approvalRequest->manager->fullname;
+            $name = $approvalRequest->manager->fullname.' ('.$approvalRequest->manager->employee_id.')';
             $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->value('layer');
             return response()->json(['name' => $name, 'layer' => $approvalLayer]);
         }
