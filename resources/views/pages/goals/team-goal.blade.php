@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-flex align-items-center justify-content-end mb-4">
-          <a href="{{ route('goals.form', Auth::user()->employee_id) }}" class="btn btn-primary px-4 shadow">Create Goal</a>
+          {{-- <a href="{{ route('goals.form', Auth::user()->employee_id) }}" class="btn btn-primary px-4 shadow">Create Goal</a> --}}
         </div>
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
           <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">All Task</button>

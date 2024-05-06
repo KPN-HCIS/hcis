@@ -375,6 +375,7 @@ class TeamGoalController extends Controller
         if ($approvalRequest) {
             $name = $approvalRequest->manager->fullname.' ('.$approvalRequest->manager->employee_id.')';
             $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->value('layer');
+            dd($approvalLayer);
             return response()->json(['name' => $name, 'layer' => $approvalLayer]);
         }
 

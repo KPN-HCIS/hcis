@@ -34,14 +34,17 @@
               <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Goals {{ $year }}</h6>
-                    <div class="dropdown no-arrow">
+                    @if ($row->request->status == 'Pending' && count($row->request->approval) == 0)
+                        <a href="{{ route('goals.edit', $row->request->goal->id) }}" class="dropdown"><i class="fas fa-edit"></i></a>
+                    @endif
+                    {{-- <div class="dropdown no-arrow">
                         <a href="#" id="dropdownMenuLink" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i></a>
                         <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
                             @if ($row->request->status == 'Pending' && count($row->request->approval) == 0)
                                 <a href="{{ route('goals.edit', $row->request->goal->id) }}" class="dropdown-item">Edit</a>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="card-body">
                     @if ($formData)
