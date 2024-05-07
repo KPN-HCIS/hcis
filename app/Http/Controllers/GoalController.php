@@ -221,7 +221,7 @@ class GoalController extends Controller
         // Iterasi melalui input untuk mendapatkan data KPI
         foreach ($kpis as $index => $kpi) {
             // Memastikan ada nilai untuk semua input terkait
-            if ($submit_status=='Draft' || isset($targets[$index], $uoms[$index], $custom_uoms[$index], $weightages[$index], $types[$index])) {
+            if ($submit_status=='Draft' || isset($targets[$index], $uoms[$index], $weightages[$index], $types[$index])) {
                 // Simpan data KPI ke dalam array dengan nomor indeks sebagai kunci
                 if($custom_uoms[$index]){
                     $customuom = $custom_uoms[$index];
@@ -328,7 +328,7 @@ class GoalController extends Controller
         // Iterasi melalui input untuk mendapatkan data KPI
         foreach ($kpis as $index => $kpi) {
             // Memastikan ada nilai untuk semua input terkait
-            if ($submit_status=='Draft' || isset($targets[$index], $uoms[$index], $custom_uoms[$index], $weightages[$index], $types[$index])) {
+            if ($submit_status=='Draft' || isset($targets[$index], $uoms[$index], $weightages[$index], $types[$index])) {
                 // Simpan data KPI ke dalam array dengan nomor indeks sebagai kunci
                 if($custom_uoms[$index]){
                     $customuom = $custom_uoms[$index];

@@ -27,6 +27,12 @@ class GoalExport implements FromView, WithStyles
     {
         $query = ApprovalRequest::query();
 
+        if (Auth()->user()->isApprover() && (!auth()->user()->hasRole('superadmin') || !auth()->user()->hasRole('admin'))){
+            $query->whereHas('approvalLayer', function ($query) {
+                $query->where('approver_id', Auth()->user()->employee_id)
+                ->orWhere('employee_id', Auth()->user()->employee_id);
+            });
+        }
         // Apply filters if they are provided
         if ($this->groupCompany) {
             $query->whereHas('employee', function ($query) {
@@ -46,7 +52,7 @@ class GoalExport implements FromView, WithStyles
             });
         }
 
-        $goals = $query->with(['employee', 'manager', 'goal', 'initiated'])->get();
+        $goals = $query->with(['employee', 'manager', 'goal', 'initiated', 'approvalLayer'])->get();
 
         return view('exports.goal', [
             'goals' => $goals

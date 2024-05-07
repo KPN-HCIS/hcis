@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59bd4209fe0c0f917500e78d12fc9a22",
+    "content-hash": "a242ba0a0263717b118ec263a1b52ab5",
     "packages": [
         {
             "name": "brick/math",
@@ -3725,6 +3725,48 @@
             "time": "2024-03-02T08:59:25+00:00"
         },
         {
+            "name": "select2/select2",
+            "version": "4.0.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/select2/select2.git",
+                "reference": "45f2b83ceed5231afa7b3d5b12b58ad335edd82e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/select2/select2/zipball/45f2b83ceed5231afa7b3d5b12b58ad335edd82e",
+                "reference": "45f2b83ceed5231afa7b3d5b12b58ad335edd82e",
+                "shasum": ""
+            },
+            "type": "component",
+            "extra": {
+                "component": {
+                    "scripts": [
+                        "dist/js/select2.js"
+                    ],
+                    "styles": [
+                        "dist/css/select2.css"
+                    ],
+                    "files": [
+                        "dist/js/select2.js",
+                        "dist/js/i18n/*.js",
+                        "dist/css/select2.css"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Select2 is a jQuery based replacement for select boxes.",
+            "homepage": "https://select2.org/",
+            "support": {
+                "issues": "https://github.com/select2/select2/issues",
+                "source": "https://github.com/select2/select2/tree/4.0.13"
+            },
+            "time": "2020-01-28T05:01:22+00:00"
+        },
+        {
             "name": "spatie/laravel-permission",
             "version": "6.7.0",
             "source": {
@@ -6155,6 +6197,52 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.2.7"
             },
             "time": "2023-12-08T13:03:43+00:00"
+        },
+        {
+            "name": "ttskch/select2-bootstrap4-theme",
+            "version": "1.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ttskch/select2-bootstrap4-theme.git",
+                "reference": "03fe405b21e4f8165a617b2b269346b1ffdc3619"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ttskch/select2-bootstrap4-theme/zipball/03fe405b21e4f8165a617b2b269346b1ffdc3619",
+                "reference": "03fe405b21e4f8165a617b2b269346b1ffdc3619",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Takashi Kanemoto",
+                    "email": "ttskch@gmail.com"
+                }
+            ],
+            "description": "Select2 v4 theme for Bootstrap4",
+            "keywords": [
+                "bootstrap",
+                "bootstrap4",
+                "css",
+                "scss",
+                "select2",
+                "theme"
+            ],
+            "support": {
+                "issues": "https://github.com/ttskch/select2-bootstrap4-theme/issues",
+                "source": "https://github.com/ttskch/select2-bootstrap4-theme/tree/1.5.2"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/paypalme/ttskch",
+                    "type": "custom"
+                }
+            ],
+            "time": "2021-01-28T07:02:26+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -9746,5 +9834,5 @@
         "php": "^8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

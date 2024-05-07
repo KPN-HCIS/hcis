@@ -76,8 +76,8 @@ class SsoController extends Controller
             $request->session()->regenerate();
 
             // Redirect ke halaman setelah login
-            Alert::success('Welcome '.Auth::user()->name, 'You have successfully logged in via Darwinbox!')->showConfirmButton('OK');
-            return redirect()->intended(route('home', absolute: false));
+            // Alert::success('Welcome '.Auth::user()->name, 'You have successfully logged in via Darwinbox!')->showConfirmButton('OK');
+            return redirect()->intended(route('goals', absolute: false));
             
         }else{
             Alert::error('Login Failed, Please Contact Administrator')->showConfirmButton('OK');

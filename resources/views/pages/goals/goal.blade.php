@@ -51,7 +51,7 @@
                                             <a href="{{ route('goals.edit', $row->request->goal->id) }}" class="btn btn-outline-secondary btn-sm btn-circle font-weight-medium"><i class="fas fa-edit"></i></a>
                                             @endif
                                             @else
-                                            @if ($row->request->current_approval_layer_id == Auth::user()->employee_id && $row->request->status === 'Pending')
+                                            @if ($row->request->current_approval_id == Auth::user()->employee_id && $row->request->status === 'Pending')
                                                 <a href="#" class="btn btn-outline-primary btn-sm badge-pill font-weight-medium px-4" data-toggle="modal" data-target="#modalApproval{{ $row->request->goal->id }}">Act</a>
                                             @else
                                                 <a href="#" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $row->request->goal->id }}"><i class="fas fa-eye"></i></a>

@@ -203,9 +203,9 @@
                                         <td>
                                             <select class="form-control w-75" name="type_1" id="type_1" required>
                                                 <option value="">Select</option>
-                                                <option value="Higher is Better" selected>Higher is Better</option>
-                                                <option value="Lower is Better">Lower is Better</option>
-                                                <option value="Exact Value">Exact Value</option>
+                                                <option value="Higher is better" selected>Higher is better</option>
+                                                <option value="Lower is better">Lower is better</option>
+                                                <option value="Exact value">Exact value</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -227,9 +227,9 @@
                                         <td>
                                             <select class="form-control w-75" name="type_1" id="type_1" required>
                                                 <option value="">Select</option>
-                                                <option value="Higher is Better" selected>Higher is Better</option>
-                                                <option value="Lower is Better">Lower is Better</option>
-                                                <option value="Exact Value">Exact Value</option>
+                                                <option value="Higher is better" selected>Higher is better</option>
+                                                <option value="Lower is better">Lower is better</option>
+                                                <option value="Exact value">Exact value</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -251,9 +251,9 @@
                                         <td>
                                             <select class="form-control w-75" name="type_1" id="type_1" required>
                                                 <option value="">Select</option>
-                                                <option value="Higher is Better" selected>Higher is Better</option>
-                                                <option value="Lower is Better">Lower is Better</option>
-                                                <option value="Exact Value">Exact Value</option>
+                                                <option value="Higher is better" selected>Higher is better</option>
+                                                <option value="Lower is better">Lower is better</option>
+                                                <option value="Exact value">Exact value</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -275,9 +275,9 @@
                                         <td>
                                             <select class="form-control w-75" name="type_1" id="type_1" required>
                                                 <option value="">Select</option>
-                                                <option value="Higher is Better" selected>Higher is Better</option>
-                                                <option value="Lower is Better">Lower is Better</option>
-                                                <option value="Exact Value">Exact Value</option>
+                                                <option value="Higher is better" selected>Higher is better</option>
+                                                <option value="Lower is better">Lower is better</option>
+                                                <option value="Exact value">Exact value</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -299,9 +299,9 @@
                                         <td>
                                             <select class="form-control w-75" name="type_1" id="type_1" required>
                                                 <option value="">Select</option>
-                                                <option value="Higher is Better" selected>Higher is Better</option>
-                                                <option value="Lower is Better">Lower is Better</option>
-                                                <option value="Exact Value">Exact Value</option>
+                                                <option value="Higher is better" selected>Higher is better</option>
+                                                <option value="Lower is better">Lower is better</option>
+                                                <option value="Exact value">Exact value</option>
                                             </select>
                                         </td>
                                     </tr>
