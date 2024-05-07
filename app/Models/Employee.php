@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Employee extends Model
 {
     use HasFactory;
+    
+    protected $fillable = [
+        // Kolom-kolom lainnya,
+        'access_menu',
+    ];
 
     public function user()
     {

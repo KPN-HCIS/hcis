@@ -18,10 +18,12 @@
                                 <th>NIK</th>
                                 <th>Name</th>
                                 <th>PT</th>
-                                <th>Locations</th>
                                 <th>BU</th>
-                                <th>Email</th>  
-                                <th>layer</th>                                   
+                                <th>Layer</th>
+                                <th>Superior</th>
+                                <th>L1</th>
+                                <th>L2</th>
+                                <th>L3</th>                                   
                                 <th>Actions</th>
                               </tr>
                           </thead>
@@ -31,12 +33,14 @@
                               <tr>
                                     <td>{{ $loop->index + 1 }}</td>
                                     <td>{{ $approvalLayer->employee_id }}</td>
-                                    <td>{{ $approvalLayer->view_employee->fullname }}</td>
-                                    <td>{{ $approvalLayer->view_employee->contribution_level_code }}</td>
-                                    <td>{{ $approvalLayer->view_employee->office_area." (".$approvalLayer->view_employee->group_company.")" }}</td>
-                                    <td>{{ $approvalLayer->view_employee->group_company }}</td>
-                                    <td>{{ $approvalLayer->view_employee->email }}</td>
-                                    <td>{{ $employeeCount }}</td>
+                                    <td>{{ $approvalLayer->fullname }}</td>
+                                    <td>{{ $approvalLayer->contribution_level_code }}</td>
+                                    <td>{{ $approvalLayer->group_company }}</td>
+                                    <td>{{ $approvalLayer->layer }}</td>
+                                    <td>{{ $approvalLayer->directname }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                               </tr>
                               @endforeach
