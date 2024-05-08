@@ -38,19 +38,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{--<div class="row my-2">
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="type">Employee Type</label>
-                                        <select name="employee_type" class="form-control bg-light">
-                                            <option value="Permanent">Permanent</option>
-                                            <option value="Contract">Contract</option>
-                                            <option value="Probation">Probation</option>
-                                            <option value="Service Bond">Service Bond</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>--}}
                             <div class="row my-2">
                                 <div class="col-md-10">
                                     <div class="form-group">
