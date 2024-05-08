@@ -3,96 +3,52 @@ $(document).ready(function () {
     $("#tableInitiate").DataTable();
 });
 
-// tippy("#approval.badge-warning", {
-//     content: "L1 Manager: Douglas McGee",
-//     placement: "right",
-// });
 $(document).ready(function () {
-    let tooltipInitialized = false; // Flag to track tooltip initialization
+    let popoverInitialized = false; // Flag to track popover initialization
 
-    // Function to initialize tippy tooltip
-    function initializeTooltip(name, layer) {
-        tippy("#approval.badge-warning", {
-            content: `Manager L${layer}: ${name}`,
-            placement: "right",
-        });
+    // Function to initialize Bootstrap popover
+    function initializePopover(name, layer, element) {
+        $(element)
+            .popover({
+                title: `Manager L${layer}`,
+                content: name,
+                trigger: "focus", // Show popover manually
+                placement: "auto", // Auto placement (adjusts as needed)
+            })
+            .popover("show"); // Show the popover immediately
     }
 
-    // Function to fetch tooltip content and initialize tooltip
-    function fetchAndInitializeTooltip(id) {
-        if (!tooltipInitialized) {
+    // Function to fetch popover content and initialize popover
+    function fetchAndInitializePopover(id, element) {
+        if (!popoverInitialized) {
             let url = `/get-tooltip-content?id=${id}`;
             fetch(url)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error("Failed to fetch tooltip content");
+                        throw new Error("Failed to fetch popover content");
                     }
                     return response.json();
                 })
                 .then((data) => {
                     const name = data.name;
                     const layer = data.layer;
-                    // Initialize tooltip with retrieved content
-                    initializeTooltip(name, layer);
-                    tooltipInitialized = true; // Update flag
+                    // Initialize popover with retrieved content
+                    initializePopover(name, layer, element);
+                    popoverInitialized = true; // Update flag
                 })
                 .catch((error) => {
-                    console.error("Error fetching tooltip content:", error);
+                    console.error("Error fetching popover content:", error);
                 });
         }
     }
 
-    // Attach tooltip initialization when #approval.badge-warning is hovered
-    $(document).on("mouseenter", "#approval.badge-warning", function () {
+    // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
+    $(document).on("click", "#approval.badge-warning", function (event) {
+        event.preventDefault();
         var id = $(this).data("id");
 
-        fetchAndInitializeTooltip(id); // Call the function to fetch and initialize tooltip
-        $(this).off("mouseenter"); // Remove the event listener after initialization
-    });
-});
-
-// My-Approval -------
-$(document).ready(function () {
-    let tooltipInitialized = false; // Flag to track tooltip initialization
-
-    // Function to initialize tippy tooltip
-    function initializeTooltip(name, layer) {
-        tippy("#myApproval.badge-warning", {
-            content: `Manager L${layer}: ${name}`,
-            placement: "right",
-        });
-    }
-
-    // Function to fetch tooltip content and initialize tooltip
-    function fetchAndInitializeTooltip(id) {
-        if (!tooltipInitialized) {
-            let url = `/get-tooltip-content?id=${id}`;
-            fetch(url)
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch tooltip content");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    const name = data.name;
-                    const layer = data.layer;
-                    // Initialize tooltip with retrieved content
-                    initializeTooltip(name, layer);
-                    tooltipInitialized = true; // Update flag
-                })
-                .catch((error) => {
-                    console.error("Error fetching tooltip content:", error);
-                });
-        }
-    }
-
-    // Attach tooltip initialization when #approval.badge-warning is hovered
-    $(document).on("mouseenter", "#myApproval.badge-warning", function () {
-        var id = $(this).data("id");
-
-        fetchAndInitializeTooltip(id); // Call the function to fetch and initialize tooltip
-        $(this).off("mouseenter"); // Remove the event listener after initialization
+        fetchAndInitializePopover(id, this); // Call the function to fetch and initialize popover
+        $(this).off("click"); // Remove the event listener after initialization
     });
 });
 

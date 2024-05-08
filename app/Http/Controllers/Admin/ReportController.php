@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\GoalExport;
 use App\Http\Controllers\Controller;
 use App\Models\ApprovalRequest;
 use App\Models\Company;
 use App\Models\Location;
+use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -89,6 +93,44 @@ class ReportController extends Controller
         } else {
             return ''; // You might want to handle other report types accordingly
         }
+    }
+
+    public function generateReportExcel(Request $request)
+    {
+        // Logika untuk generate report
+        
+        $reportType = $request->export_report_type;
+        $groupCompany = $request->export_group_company;
+        $company = $request->export_company;
+        $location = $request->export_location;
+
+        $directory = 'report/excel'; // Direktori tempat file akan disimpan
+        $date = now()->format('dmY');
+        $reportName = 'Nama Report';
+        $fileName = $reportType.'_'.$date.'.xlsx'; // Nama file yang akan disimpan
+
+        if($reportType==='Goal'){
+            $export = new GoalExport($groupCompany, $location, $company);
+            $fileContent = Excel::download($export, $fileName)->getFile();
+        }
+        return false;
+
+        // Mengecek dan membuat direktori jika belum ada
+        if (!Storage::disk('public')->exists($directory)) {
+            Storage::disk('public')->makeDirectory($directory, 0755, true); // Buat direktori dengan izin 0755 (opsional)
+        }
+
+        // Menyimpan file ke dalam direktori yang sudah ada
+        Storage::disk('public')->put($directory . '/' . $fileName, $fileContent);
+
+        // Simpan informasi report ke dalam database
+        $filePath = $directory . '/' . $fileName;
+        $report = new Report();
+        $report->name = $reportName;
+        $report->file_path = $filePath;
+        $report->save();
+
+        return redirect()->back()->with('success', 'Report berhasil di-generate dan disimpan.');
     }
 
 }

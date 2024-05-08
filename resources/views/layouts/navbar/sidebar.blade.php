@@ -17,11 +17,13 @@
     </div>
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item">
-    <a class="nav-link" href="{{ route('home') }}">
-        <i class="fas fa-fw fa-chart-pie"></i>
-        <span>Dashboard</span></a>
-    </li>
+    @if (auth()->user()->hasRole('superadmin'))
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('home') }}">
+                <i class="fas fa-fw fa-chart-pie"></i>
+            <span>Dashboard</span></a>
+        </li>
+    @endif
 
     {{-- <li class="nav-item">
         <a class="nav-link" href="{{ route('tasks') }}">

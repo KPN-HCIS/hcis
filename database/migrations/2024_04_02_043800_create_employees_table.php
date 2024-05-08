@@ -29,6 +29,8 @@ return new class extends Migration
             $table->enum('employee_type', ['Permanent', 'Contract', 'Probation', 'Service Bond']);
             $table->string('unit', 255);
             $table->date('date_of_joining');
+            $table->string('contribution_level_code')->nullable();
+            $table->json('access_menu')->nullable();
             $table->timestamps();
             $table->softDeletes();
             

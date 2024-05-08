@@ -14,19 +14,11 @@
             </div>
             <form id="admin_report_filter" action="" method="POST">
                 @csrf
+                <input type="hidden" name="report_type" id="report_type">
                 <div class="modal-body">
                     <div class="container-fluid py-3">
                         <!-- Content Row -->
                         <div class="container-card">
-                            <div class="d-sm-flex">
-                                <div class="form-group">
-                                    <label for="report_type">Report Type:</label>
-                                    <select class="form-control" name="report_type" id="report_type">
-                                    <option value="">select report</option>
-                                    <option value="Goal">Goal</option>
-                                    </select>
-                                </div> 
-                            </div>
                             <div class="d-sm-flex">
                                 <div class="form-group">
                                     <label for="group_company">Group Company</label>
