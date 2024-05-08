@@ -1,3 +1,5 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+
 <x-app-layout>
     @section('title', 'Schedule')
     <x-slot name="content">
@@ -28,6 +30,17 @@
                             <div class="row my-2">
                                 <div class="col-md-5">
                                     <div class="form-group">
+                                        <label for="type">Event Type</label>
+                                        <select name="event_type" class="form-control bg-light">
+                                            <option value="goals_setting">Goals Setting</option>
+                                            <option value="pa_year_end">Year End</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            {{--<div class="row my-2">
+                                <div class="col-md-5">
+                                    <div class="form-group">
                                         <label for="type">Employee Type</label>
                                         <select name="employee_type" class="form-control bg-light">
                                             <option value="Permanent">Permanent</option>
@@ -35,6 +48,66 @@
                                             <option value="Probation">Probation</option>
                                             <option value="Service Bond">Service Bond</option>
                                         </select>
+                                    </div>
+                                </div>
+                            </div>--}}
+                            <div class="row my-2">
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <label for="type">Employee Type</label>
+                                        <select name="employee_type[]" class="form-control bg-light select2" multiple>
+                                            <option value="Permanent">Permanent</option>
+                                            <option value="Contract">Contract</option>
+                                            <option value="Probation">Probation</option>
+                                            <option value="Service Bond">Service Bond</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <label for="type">Bisnis Unit</label>
+                                        <select name="bisnis_unit[]" class="form-control bg-light select2" multiple>
+                                            <option value="KPN Corporation">KPN Corporation</option>
+                                            <option value="KPN Plantations">KPN Plantations</option>
+                                            <option value="Downstream">Downstream</option>
+                                            <option value="Property">Property</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <label for="type">Filter Company:</label>
+                                        <select class="form-control bg-light select2" name="company_filter[]" multiple>
+                                            <option value="">Select Company...</option>
+                                            @foreach($companies as $company)
+                                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level_code." (".$company->contribution_level.")" }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <label for="type">Filter Locations:</label>
+                                        <select class="form-control bg-light select2" name="location_filter[]" multiple>
+                                            <option value="">Select location...</option>
+                                            @foreach($locations as $location)
+                                                <option value="{{ $location->work_area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="start">Last Join Date</label>
+                                        <input type="date" name="last_join_date" class="form-control bg-light" id="start" placeholder="mm/dd/yyyy">
                                     </div>
                                 </div>
                             </div>
@@ -116,5 +189,12 @@
             }
         });
         document.getElementById('repeatDaysSelected').value = repeatDaysSelected.join(',');
+    });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
     });
 </script>
