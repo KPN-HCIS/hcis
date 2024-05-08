@@ -43,7 +43,7 @@ $(document).ready(function () {
     }
 
     // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
-    $(document).on("click", "#approval.badge-warning", function (event) {
+    $(document).on("click", "a[id^='approval']", function (event) {
         event.preventDefault();
         var id = $(this).data("id");
 

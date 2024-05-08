@@ -38,7 +38,7 @@
                                 <tr>
                                     <td>{{ $row->request->employee->fullname }}</td>
                                     <td>{{ $row->request->goal->category }}</td>
-                                    <td class="px-5"><a href="#" id="approval" data-toggle="tooltip" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->request->goal->form_status == 'Draft' ? 'Draft':$row->request->status }}</a></td>
+                                    <td class="px-5"><a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->request->goal->form_status == 'Draft' ? 'Draft':$row->request->status }}</a></td>
                                     <td class="text-center">{{ $row->request->created_at }}</td>
                                     <td class="text-center">{{ $row->request->employee->fullname }}</td>
                                     <td class="text-center">{{ $row->request->updated_at }}</td>
