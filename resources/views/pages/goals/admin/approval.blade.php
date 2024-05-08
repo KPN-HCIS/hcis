@@ -17,7 +17,7 @@
             <h1 class="h3">Approval Goals</h1>
         </div>
         @foreach ($data as $index => $row)
-        <form id="goalApprovalForm" action="{{ route('approval.goal') }}" method="post">
+        <form id="goalApprovalAdminForm" action="{{ route('admin.approval.goal') }}" method="post">
             @csrf
             <input type="hidden" name="id" value="{{ $row->request->goal->id }}">
             <input type="hidden" name="employee_id" value="{{ $row->request->employee_id }}">
@@ -42,19 +42,19 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="kpi">KPI</label>
-                                        <textarea name="kpi[]" class="form-control" required>{{ $data['kpi'] }}</textarea>
+                                        <textarea name="kpi[]" class="form-control" readonly>{{ $data['kpi'] }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="target">Target</label>
-                                        <input type="text" name="target[]" value="{{ $data['target'] }}" class="form-control" required>
+                                        <input type="text" name="target[]" value="{{ $data['target'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="uom">UoM</label>
-                                        <input type="text" name="uom[]" id="uom" value="{{ $data['uom'] }}" class="form-control" required>
+                                        <input type="text" name="uom[]" id="uom" value="{{ $data['uom'] }}" class="form-control" readonly>
                                         <input 
                                             type="text" 
                                             name="custom_uom[]" 
@@ -65,21 +65,21 @@
                                             @if ($data['uom'] !== 'Other') 
                                                 style="display: none;" 
                                             @endif 
-                                            required
+                                            readonly
                                         >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="type">Type</label>
-                                        <input type="text" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" required>
+                                        <input type="text" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="weightage">Weightage</label>
                                         <div class="input-group">
-                                            <input name="weightage[]" class="form-control" value="{{ $data['weightage'] }}" required>
+                                            <input name="weightage[]" class="form-control" value="{{ $data['weightage'] }}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -105,7 +105,7 @@
                 @endif                
             </div>
         </form>
-        <form id="goalSendbackForm" action="{{ route('sendback.goal') }}" method="post">
+        <form id="goalSendbackForm" action="{{ route('admin.sendback.goal') }}" method="post">
             @csrf
             <input type="hidden" name="request_id" id="request_id">
             <input type="hidden" name="sendto" id="sendto">
@@ -137,7 +137,7 @@
                 </div>
                 <div class="align-item-center justify-content-between text-center mb-4">
                     <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3 rounded-pill">Cancel</a>
-                    <a href="#" onclick="confirmAprroval()" class="btn btn-primary rounded-pill px-4">Approve</a>
+                    <a href="#" onclick="confirmAprrovalAdmin()" class="btn btn-primary rounded-pill px-4">Approve</a>
                 </div>
           </div>
         </form>

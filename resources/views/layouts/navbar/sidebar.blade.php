@@ -56,7 +56,7 @@
             <span>Calibration</span></a>
     </li> --}}
     <li class="nav-item">
-        @if (auth()->user()->isApprover() || auth()->user()->hasRole('superadmin') || auth()->user()->hasRole('admin'))
+        @if (auth()->user()->isApprover())
             <a class="nav-link" href="{{ url('/reports') }}">
                 <i class="fas fa-fw fa-file-alt"></i>
                 <span>Reports</span>
@@ -89,6 +89,18 @@
                 {{-- <a class="collapse-item" href="{{ route('roles') }}">Role</a> --}}
             </div>
         </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('/admin/goals') }}">
+            <i class="fas fa-fw fa-flag-checkered"></i>
+            <span>Goals</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('/admin/reports') }}">
+            <i class="fas fa-fw fa-file-alt"></i>
+            <span>Reports</span>
+        </a>
     </li>
     
     <!-- Divider -->

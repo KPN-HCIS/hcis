@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\GoalController as AdminGoalController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\SendbackController as AdminSendbackController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -12,7 +15,6 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ExportExcelController;
-use App\Http\Controllers\GoalController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LayerController;
 use App\Http\Controllers\ReportController;
@@ -93,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/team-goals/form/{id}', [TeamGoalController::class, 'create'])->name('team-goals.form');
     Route::post('/team-goals/submit', [TeamGoalController::class, 'store'])->name('team-goals.submit');
     Route::get('/team-goals/edit/{id}', [TeamGoalController::class, 'edit'])->name('team-goals.edit');
+    Route::get('/team-goals/approval/{id}', [TeamGoalController::class, 'approval'])->name('team-goals.approval');
     // Route::post('/goals/update', [TeamGoalController::class, 'update'])->name('goals.update');
     Route::get('/get-tooltip-content', [TeamGoalController::class, 'getTooltipContent']);
     Route::get('/units-of-measurement', [TeamGoalController::class, 'unitOfMeasurement']);
@@ -113,6 +116,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/export', [ExportExcelController::class, 'export'])->name('export');
     // Route::get('/export/goals', [ReportController::class, 'exportGoal'])->name('export.goal');
     Route::post('/get-report-content', [ReportController::class, 'getReportContent']);
+    
     Route::get('/changes-group-company', [ReportController::class, 'changesGroupCompany']);
     Route::get('/changes-company', [ReportController::class, 'changesCompany']);
     
@@ -141,7 +145,7 @@ Route::middleware('auth')->group(function () {
     
 });
 
-Route::group(['middleware' => ['role:admin|superadmin']],function(){
+Route::middleware(['auth', 'role:admin|superadmin'])->group(function () {
 	//Employee
     Route::get('/employees', [EmployeeController::class, 'employee'])->name('employees');
     Route::get('/employee/filter', 'EmployeeController@filterEmployees')->name('employee.filter');
@@ -162,6 +166,30 @@ Route::group(['middleware' => ['role:admin|superadmin']],function(){
 
     // Roles
     Route::get('/roles', [RoleController::class, 'role'])->name('roles');
+
+    // Approval-Admin
+    Route::post('/admin/approval/goal', [AdminGoalController::class, 'store'])->name('admin.approval.goal');
+
+    Route::get('/admin/approval/goal/{id}', [AdminGoalController::class, 'create'])->name('admin.create.approval.goal');
+
+    // Goals - Admin
+    Route::get('/admin/goals', [AdminGoalController::class, 'index'])->name('admin.goals');
+
+    Route::post('/admin/goal-content', [AdminGoalController::class, 'getGoalContent']);
+
+    // Sendback
+    Route::post('/admin/sendback/goal', [AdminSendbackController::class, 'store'])->name('admin.sendback.goal');
+
+    // Reports
+    Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports');
+
+    Route::get('/admin/get-report-content/{reportType}', [AdminReportController::class, 'getReportContent']);
+
+    Route::post('/admin/get-report-content', [AdminReportController::class, 'getReportContent']);
+    
+    Route::get('/admin/changes-group-company', [AdminReportController::class, 'changesGroupCompany']);
+    Route::get('/admin/changes-company', [AdminReportController::class, 'changesCompany']);
+
 });
 
 Route::fallback(function () {

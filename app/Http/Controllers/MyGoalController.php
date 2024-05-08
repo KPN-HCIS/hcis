@@ -381,23 +381,4 @@ class MyGoalController extends Controller
 
     }
 
-    public function sendback(Request $request, ApprovalRequest $approval)
-    {
-        $sendbackTo = $request->input('sendback_to');
-
-        if ($sendbackTo === 'creator') {
-            // Kirim kembali ke pembuat form (creator)
-            $creator = $approval->user; // Pembuat form
-            $previousApprovers = $creator->creatorApproverLayer->flatMap(function ($layer) {
-                return $layer->previousApprovers;
-            });
-        } elseif ($sendbackTo === 'previous_approver') {
-            // Kirim kembali ke atasan sebelumnya
-            $previousApprovers = $approval->user->previousApprovers;
-        }
-
-        // Lakukan sesuatu dengan daftar previous_approvers, seperti menampilkannya di view
-        return view('approval.sendback', compact('previousApprovers'));
-    }
-
 }

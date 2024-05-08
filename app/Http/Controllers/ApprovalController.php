@@ -47,6 +47,7 @@ class ApprovalController extends Controller
         $uoms = $request->input('uom', []);
         $weightages = $request->input('weightage', []);
         $types = $request->input('type', []);
+        $custom_uoms = $request->input('custom_uom', []);
 
         // Menyiapkan aturan validasi
         $rules = [
@@ -85,12 +86,19 @@ class ApprovalController extends Controller
             // Memastikan ada nilai untuk semua input terkait
             if (isset($targets[$index], $uoms[$index], $weightages[$index], $types[$index])) {
                 // Simpan data KPI ke dalam array dengan nomor indeks sebagai kunci
+                if($custom_uoms[$index]){
+                    $customuom = $custom_uoms[$index];
+                }else{
+                    $customuom = null;
+                }
+
                 $kpiData[$index] = [
                     'kpi' => $kpi,
                     'target' => $targets[$index],
                     'uom' => $uoms[$index],
                     'weightage' => $weightages[$index],
-                    'type' => $types[$index]
+                    'type' => $types[$index],
+                    'custom_uom' => $customuom
                 ];
 
                 $index++;
@@ -116,8 +124,6 @@ class ApprovalController extends Controller
 
         }
         $snapshot->save();
-        
-        
 
         $model = Goal::find($request->id);
         $model->form_data = $jsonData;
@@ -144,12 +150,13 @@ class ApprovalController extends Controller
             $approval = new Approval;
             $approval->request_id = $approvalRequest->id;
             $approval->approver_id = Auth::user()->employee_id;
+            $approval->created_by = Auth::user()->id;
             $approval->status = $status;
             $approval->messages = $request->messages;
             // Set other attributes as needed
         }
         $approval->save();
             
-        return redirect()->route('goals');
+        return redirect()->route('team-goals');
     }
 }

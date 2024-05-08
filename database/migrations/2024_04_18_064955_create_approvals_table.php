@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('approver_id');
             $table->enum('status', ['Approved','Rejected']);
             $table->text('messages')->nullable();
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -83,11 +83,6 @@ class TeamGoalController extends Controller
         return view('pages.goals.team-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
        
     }
-    function show($id) {
-        $data = Goal::find($id);
-        
-        return view('pages.goals.modal', compact('data')); //modal body hilang ketika modal show bentrok dengan view goal
-    }
     
     function create($id) {
 
@@ -164,6 +159,67 @@ class TeamGoalController extends Controller
 
             return view('pages.goals.edit', compact('goal', 'formCount', 'link', 'data', 'uomOption', 'selectedUoM', 'typeOption', 'selectedType'));
         }
+
+    }
+
+    function approval($id) {
+
+        // Mengambil data pengajuan berdasarkan employee_id atau manager_id
+        $datas = ApprovalRequest::with(['employee', 'goal', 'manager', 'approval' => function ($query) {
+            $query->with('approverName'); // Load nested relationship
+        }])->where('form_id', $id)->get();
+
+        $data = [];
+        
+        foreach ($datas as $request) {
+            // Memeriksa status form dan pembuatnya
+            if ($request->goal->form_status != 'Draft' || $request->created_by == Auth::user()->id) {
+                // Mengambil nilai fullname dari relasi approverName
+                if ($request->approval->first()) {
+                    $approverName = $request->approval->first();
+                    $dataApprover = $approverName->approverName->fullname;
+                }else{
+                    $dataApprover = '';
+                }
+        
+                // Buat objek untuk menyimpan data request dan approver fullname
+                $dataItem = new stdClass();
+
+                $dataItem->request = $request;
+                $dataItem->approver_name = $dataApprover;
+              
+
+                // Tambahkan objek $dataItem ke dalam array $data
+                $data[] = $dataItem;
+                
+            }
+        }
+        
+        // dd($data);
+
+        $formData = [];
+        if($datas->isNotEmpty()){
+            $formData = json_decode($datas->first()->goal->form_data, true);
+        }
+
+        $path = storage_path('../resources/goal.json');
+
+        // Check if the JSON file exists
+        if (!File::exists($path)) {
+            // Handle the situation where the JSON file doesn't exist
+            abort(500, 'JSON file does not exist.');
+        }
+
+        // Read the contents of the JSON file
+        $options = json_decode(File::get($path), true);
+
+        $uomOption = $options['UoM'];
+        $typeOption = $options['Type'];
+
+        $link = 'goals';
+
+        // dd($data);
+        return view('pages.goals.approval', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
 
     }
 
@@ -386,25 +442,6 @@ class TeamGoalController extends Controller
         $uom = file_get_contents(storage_path('../resources/goal.json'));
         // dd($uom);
         return response()->json(json_decode($uom, true));
-    }
-
-    public function sendback(Request $request, ApprovalRequest $approval)
-    {
-        $sendbackTo = $request->input('sendback_to');
-
-        if ($sendbackTo === 'creator') {
-            // Kirim kembali ke pembuat form (creator)
-            $creator = $approval->user; // Pembuat form
-            $previousApprovers = $creator->creatorApproverLayer->flatMap(function ($layer) {
-                return $layer->previousApprovers;
-            });
-        } elseif ($sendbackTo === 'previous_approver') {
-            // Kirim kembali ke atasan sebelumnya
-            $previousApprovers = $approval->user->previousApprovers;
-        }
-
-        // Lakukan sesuatu dengan daftar previous_approvers, seperti menampilkannya di view
-        return view('approval.sendback', compact('previousApprovers'));
     }
 
 }

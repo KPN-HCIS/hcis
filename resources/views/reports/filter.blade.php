@@ -27,41 +27,6 @@
                                     </select>
                                 </div> 
                             </div>
-                            @if (auth()->user()->hasRole('superadmin') || auth()->user()->hasRole('admin'))
-                            <div class="d-sm-flex">
-                                <div class="form-group">
-                                    <label for="group_company">Group Company</label>
-                                    <select class="form-control" name="group_company" id="group_company">
-                                        <option value="">- select group company -</option>
-                                        @foreach ($groupCompanies as $groupCompany)
-                                        <option value="{{ $groupCompany }}">{{ $groupCompany }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> 
-                            </div>
-                            <div class="flex">
-                                <div class="form-group">
-                                    <label for="company">Company</label>
-                                    <select class="form-control select2" name="company" id="company">
-                                        <option value="">- select company -</option>
-                                        @foreach ($companies as $company)
-                                        <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> 
-                            </div>
-                            <div class="flex">
-                                <div class="form-group">
-                                    <label for="location">Location</label>
-                                    <select class="form-control select2" name="location" id="location">
-                                        <option value="">- select location -</option>
-                                        @foreach ($locations as $location)
-                                        <option value="{{ $location->work_area }}">{{ $location->area.' ('.$location->company_name.')' }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> 
-                            </div>  
-                            @endif
                         </div>
                     </div>
                 </div>

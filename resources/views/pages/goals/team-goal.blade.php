@@ -52,7 +52,7 @@
                                             @endif
                                             @else
                                             @if ($row->request->current_approval_id == Auth::user()->employee_id && $row->request->status === 'Pending')
-                                                <a href="#" class="btn btn-outline-primary btn-sm badge-pill font-weight-medium px-4" data-toggle="modal" data-target="#modalApproval{{ $row->request->goal->id }}">Act</a>
+                                                <a href="{{ route('team-goals.approval', $row->request->form_id) }}" class="btn btn-outline-primary btn-sm badge-pill font-weight-medium px-4">Act</a>
                                             @else
                                                 <a href="#" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $row->request->goal->id }}"><i class="fas fa-eye"></i></a>
                                             @endif
@@ -60,7 +60,6 @@
                                     </td>
                                     @if ($data)
                                     @include('pages.goals.detail')
-                                    @include('pages.goals.approval')
                                     @endif
                                 </tr>
                                 @endforeach
