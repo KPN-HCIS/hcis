@@ -13,7 +13,8 @@ $(document).ready(function () {
         $(element)
             .popover({
                 content: `Manager L${layer} : ${name}`,
-                trigger: "manual", // Show popover manually
+                // trigger: "manual", // Show popover manually
+                trigger: "focus",
                 placement: "left", // Auto placement (adjusts as needed)
             })
             .popover("show"); // Show the popover immediately
@@ -30,7 +31,6 @@ $(document).ready(function () {
         // Check if the current id is the same as the previousPopoverId
         if (id === previousPopoverId && popoverInitialized) {
             // If same id and popover is already initialized, return early
-            console.log("Popover already initialized for this ID.");
             return;
         }
 
