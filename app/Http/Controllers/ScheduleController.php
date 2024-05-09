@@ -60,7 +60,7 @@ class ScheduleController extends Controller
         $model->save();
 
         $today = now();
-        if($model->start_date <= $today){
+        if($model->start_date <= $today && $model->end_date >= $today){
             $query = Employee::query();
 
             if ($model->location_filter) {
@@ -130,6 +130,11 @@ class ScheduleController extends Controller
 
         $model->schedule_name       = $req->schedule_name;
         $model->employee_type       = $req->employee_type;
+        $model->bisnis_unit         = $req->bisnis_unit;
+        $model->company_filter      = $req->company_filter;
+        $model->location_filter     = $req->location_filter;
+
+        $model->last_join_date      = $req->last_join_date;
         $model->start_date          = $req->start_date;
         $model->end_date            = $req->end_date;
         $model->checkbox_reminder   = isset($req->checkbox_reminder) ? $req->checkbox_reminder : 0;
@@ -143,14 +148,97 @@ class ScheduleController extends Controller
         }
 
         $model->save();
+        
+        $query = Employee::query();
 
-        return redirect("schedules")->with('success', 'Data berhasil diupdate.');
+        if ($model->location_filter) {
+            $query->whereIn('work_area_code', explode(',', $model->location_filter));
+        }
+
+        if ($model->company_filter) {
+            $query->whereIn('contribution_level_code', explode(',', $model->company_filter));
+        }
+
+        if ($model->bisnis_unit) {
+            $query->whereIn('group_company', explode(',', $model->bisnis_unit));
+        }
+
+        if ($model->employee_type) {
+            $query->whereIn('employee_type', explode(',', $model->employee_type));
+        }
+
+        $employeesToUpdate = $query->where('date_of_joining', '<=', $model->last_join_date)->get();
+
+        $today = now();
+        if($model->start_date <= $today && $model->end_date >= $today){
+            $access_menu = 1;
+        }else{
+            $access_menu = 0;
+        }
+
+        foreach ($employeesToUpdate as $employee) {
+            $accessMenuJson = json_decode($employee->access_menu, true);
+
+            if (empty($accessMenuJson) || $accessMenuJson===null) {
+                $accessMenuJson = ['goals' => $access_menu];
+            } else {
+                $accessMenuJson['goals'] = $access_menu;
+            }
+
+            $updatedAccessMenu = json_encode($accessMenuJson);
+            
+            $employee->access_menu = $updatedAccessMenu;
+            $employee->save();
+        }
+
+        Alert::success('Success');
+        return redirect()->intended(route('schedules', absolute: false));
     }
     public function softDelete(Request $request, $id)
     {
+        $today = date('Y-m-d');
         $schedule = Schedule::findOrFail($id);
+        
+        if($schedule->start_date <= $today && $schedule->end_date >= $today){
+            $query = Employee::query();
+
+            if ($schedule->location_filter) {
+                $query->whereIn('work_area_code', explode(',', $schedule->location_filter));
+            }
+
+            if ($schedule->company_filter) {
+                $query->whereIn('contribution_level_code', explode(',', $schedule->company_filter));
+            }
+
+            if ($schedule->bisnis_unit) {
+                $query->whereIn('group_company', explode(',', $schedule->bisnis_unit));
+            }
+
+            if ($schedule->employee_type) {
+                $query->whereIn('employee_type', explode(',', $schedule->employee_type));
+            }
+
+            $employeesToUpdate = $query->where('date_of_joining', '<=', $schedule->last_join_date)->get();
+
+            foreach ($employeesToUpdate as $employee) {
+                $accessMenuJson = json_decode($employee->access_menu, true);
+
+                if (empty($accessMenuJson) || $accessMenuJson===null) {
+                    $accessMenuJson = ['goals' => 0];
+                } else {
+                    $accessMenuJson['goals'] = 0;
+                }
+
+                $updatedAccessMenu = json_encode($accessMenuJson);
+                
+                $employee->access_menu = $updatedAccessMenu;
+                $employee->save();
+            }
+        }
+
         $schedule->delete(); // Memanggil metode delete() untuk soft delete
 
-        return response()->json(['message' => 'Data berhasil dihapus']);
+        Alert::success('Success');
+        return redirect()->intended(route('schedules', absolute: false));
     }
 }
