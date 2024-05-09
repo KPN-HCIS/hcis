@@ -5,23 +5,35 @@ $(document).ready(function () {
 
 $(document).ready(function () {
     let popoverInitialized = false; // Flag to track popover initialization
+    let previousPopoverId = null; // Variable to store the ID of the previously triggered popover
+    let popoverTimeout = null; // Variable to store the timeout for hiding the popover
 
-    // Function to initialize Bootstrap popover
+    // Function to initialize Bootstrap popover with delay
     function initializePopover(name, layer, element) {
         $(element)
             .popover({
-                title: `Manager L${layer}`,
-                content: name,
-                trigger: "focus", // Show popover manually
-                placement: "auto", // Auto placement (adjusts as needed)
+                content: `Manager L${layer} : ${name}`,
+                trigger: "manual", // Show popover manually
+                placement: "left", // Auto placement (adjusts as needed)
             })
             .popover("show"); // Show the popover immediately
 
-        $(element).off("click");
+        // Set a timeout to hide the popover after 1.5 seconds
+        popoverTimeout = setTimeout(function () {
+            $(element).popover("hide"); // Hide the popover
+            popoverInitialized = false; // Reset popoverInitialized flag
+        }, 2000); // 1500 milliseconds = 1.5 seconds
     }
 
     // Function to fetch popover content and initialize popover
     function fetchAndInitializePopover(id, element) {
+        // Check if the current id is the same as the previousPopoverId
+        if (id === previousPopoverId && popoverInitialized) {
+            // If same id and popover is already initialized, return early
+            console.log("Popover already initialized for this ID.");
+            return;
+        }
+
         let url = `/get-tooltip-content?id=${id}`;
         fetch(url)
             .then((response) => {
@@ -36,6 +48,7 @@ $(document).ready(function () {
                 // Initialize popover with retrieved content
                 initializePopover(name, layer, element);
                 popoverInitialized = true; // Update flag
+                previousPopoverId = id; // Update the previousPopoverId with the current ID
             })
             .catch((error) => {
                 console.error("Error fetching popover content:", error);
@@ -47,7 +60,13 @@ $(document).ready(function () {
         event.preventDefault();
         var id = $(this).data("id");
 
-        fetchAndInitializePopover(id, this); // Call the function to fetch and initialize popover
+        // Call fetchAndInitializePopover function to fetch and initialize popover
+        fetchAndInitializePopover(id, this);
+    });
+
+    // Function to cancel popover timeout when popover is manually closed
+    $(document).on("hidden.bs.popover", function () {
+        clearTimeout(popoverTimeout); // Clear the timeout
     });
 });
 
