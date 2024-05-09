@@ -1,3 +1,4 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
 <x-app-layout>
     @section('title', 'Schedule')
     <x-slot name="content">
@@ -21,8 +22,16 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="name">Schedule Name</label>
-                                        <input type="text" class="form-control bg-light" placeholder="Enter name.." id="name" name="schedule_name" value="{{ $model->schedule_name }}">
-                                        <input type="hidden" class="form-control bg-light" placeholder="Enter name.." id="id_schedule" name="id_schedule" value="{{ $model->id }}">
+                                        <input type="text" class="form-control bg-light" placeholder="Enter name.." id="name" name="schedule_name" value="{{ $model->schedule_name }}" readonly>
+                                        <input type="hidden" class="form-control bg-light" placeholder="Enter name.." id="id_schedule" name="id_schedule" value="{{ $model->id }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="type">Event Type</label>
+                                            <input type="text" class="form-control bg-light" id="event_type" name="event_type" value="Goals Setting" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -30,12 +39,39 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="type">Employee Type</label>
-                                        <select name="employee_type" class="form-control bg-light">
-                                            <option value="Permanent" {{ $model->employee_type == 'Permanent' ? 'selected' : '' }}>Permanent</option>
-                                            <option value="Contract" {{ $model->employee_type == 'Contract' ? 'selected' : '' }}>Contract</option>
-                                            <option value="Probation" {{ $model->employee_type == 'Probation' ? 'selected' : '' }}>Probation</option>
-                                            <option value="Service Bond" {{ $model->employee_type == 'Service Bond' ? 'selected' : '' }}>Service Bond</option>
-                                        </select>
+                                            <input type="text" class="form-control bg-light" id="employee_type" name="employee_type" value="{{ $model->employee_type }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <label for="type">Bisnis Unit</label>
+                                        <input type="text" class="form-control bg-light" id="bisnis_unit" name="bisnis_unit" value="{{ $model->bisnis_unit }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <label for="type">Filter Company:</label>
+                                            <input type="text" class="form-control bg-light" id="company_filter" name="company_filter" value="{{ $model->company_filter }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <label for="type">Filter Locations:</label>
+                                            <input type="text" class="form-control bg-light" id="location_filter" name="location_filter" value="{{ $model->location_filter }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="start">Last Join Date</label>
+                                        <input type="date" name="last_join_date" class="form-control bg-light" id="start" value="{{ $model->last_join_date }}" placeholder="mm/dd/yyyy">
                                     </div>
                                 </div>
                             </div>
@@ -118,5 +154,11 @@
             }
         });
         document.getElementById('repeatDaysSelected').value = repeatDaysSelected.join(',');
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
     });
 </script>
