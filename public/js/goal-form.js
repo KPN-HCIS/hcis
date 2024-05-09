@@ -196,7 +196,8 @@ function validate(submitType) {
 
     if (sum != 100 && submitType === "submit_form") {
         Swal.fire({
-            title: "The total weightage must be 100%",
+            title: "Submit failed",
+            html: `Your current weightage is ${sum}%, <br>Please adjust to reach the total weightage of 100%`,
             confirmButtonColor: "#3085d6",
             icon: "error",
             // If confirmed, proceed with form submission
@@ -245,7 +246,7 @@ function setSubmitType(submitType) {
     if (!validateWeightage(submitType)) {
         return false; // Stop submission if required fields are empty
     }
-    if (!validate()) {
+    if (!validate(submitType)) {
         return false; // Stop submission if required fields are empty
     }
     return confirmSubmission(submitType);
@@ -313,12 +314,12 @@ function updateWeightageSummary() {
     // Display the total sum in a summary element
     var summaryElement = document.getElementById("totalWeightage");
 
-    if (totalSum !== 100) {
+    if (totalSum != 100) {
         summaryElement.classList.remove("text-success");
         summaryElement.classList.add("text-danger"); // Add text-danger class
         // Add or update a sibling element to display the additional message
         if (summaryElement) {
-            summaryElement.textContent = totalSum.toFixed(0) + "% (from 100%)";
+            summaryElement.textContent = totalSum.toFixed(0) + "% of 100%";
         }
     } else {
         summaryElement.classList.remove("text-danger"); // Remove text-danger class

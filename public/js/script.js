@@ -16,30 +16,30 @@ $(document).ready(function () {
                 placement: "auto", // Auto placement (adjusts as needed)
             })
             .popover("show"); // Show the popover immediately
+
+        $(element).off("click");
     }
 
     // Function to fetch popover content and initialize popover
     function fetchAndInitializePopover(id, element) {
-        if (!popoverInitialized) {
-            let url = `/get-tooltip-content?id=${id}`;
-            fetch(url)
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch popover content");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    const name = data.name;
-                    const layer = data.layer;
-                    // Initialize popover with retrieved content
-                    initializePopover(name, layer, element);
-                    popoverInitialized = true; // Update flag
-                })
-                .catch((error) => {
-                    console.error("Error fetching popover content:", error);
-                });
-        }
+        let url = `/get-tooltip-content?id=${id}`;
+        fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch popover content");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                const name = data.name;
+                const layer = data.layer;
+                // Initialize popover with retrieved content
+                initializePopover(name, layer, element);
+                popoverInitialized = true; // Update flag
+            })
+            .catch((error) => {
+                console.error("Error fetching popover content:", error);
+            });
     }
 
     // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
@@ -48,7 +48,6 @@ $(document).ready(function () {
         var id = $(this).data("id");
 
         fetchAndInitializePopover(id, this); // Call the function to fetch and initialize popover
-        $(this).off("click"); // Remove the event listener after initialization
     });
 });
 
@@ -86,10 +85,9 @@ $(document).ready(function () {
 });
 
 function logout() {
-    let timerInterval;
     Swal.fire({
-        title: "Logout Confirmation",
-        text: "Are you sure you want to logout?",
+        title: "Confirm Logout",
+        text: "Are you sure you want to log out?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#4e73df",
@@ -98,17 +96,15 @@ function logout() {
         cancelButtonText: "Cancel",
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire({
-                title: "You have been logged out.",
-                icon: "success",
-                timer: 1500,
+            window.location.href = "/logout";
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
                 showConfirmButton: false,
-                willClose: () => {
-                    clearInterval(timerInterval);
-                },
-            }).then(() => {
-                // Redirect to the route success page after the user clicks "OK"
-                window.location.href = "/logout";
+            });
+            Toast.fire({
+                icon: "success",
+                title: "You are now logged out.",
             });
         }
     });

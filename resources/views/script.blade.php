@@ -32,3 +32,21 @@
 <script src="{{ asset('assets/js/sweetalert2@11.js') }}"></script>
 
 <script src="{{ asset('js/script.js') }}"></script>
+
+@if(Session::has('toast'))
+<script>
+    const toastData = {!! json_encode(Session::get('toast')) !!};
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+    });
+
+    Toast.fire({
+        icon: toastData.type,
+        title: toastData.message
+    });
+</script>
+@endif

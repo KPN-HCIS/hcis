@@ -7,21 +7,11 @@
         <div class="d-sm-flex">
           <div class="form-group">
               <label for="report_type">Select Report:</label>
-              <select class="form-control" onchange="reportType(this.value)">
+              <select class="form-control" onchange="adminReportType(this.value)">
               <option value="">- select -</option>
               <option value="Goal">Goal</option>
               </select>
           </div> 
-      </div>
-      <div class="form-group ml-md-auto d-flex justify-content-end">
-        <form id="exportForm" action="{{ route('export') }}" method="POST">
-          @csrf
-          <input type="hidden" name="export_report_type" id="export_report_type">
-          <input type="hidden" name="export_group_company" id="export_group_company">
-          <input type="hidden" name="export_company" id="export_company">
-          <input type="hidden" name="export_location" id="export_location">
-          <a id="export" onclick="exportExcel()" class="btn btn-outline-secondary px-4 shadow disabled"><i class="fas fa-arrow-circle-down"></i> Download</a>
-        </form>
       </div>
       </div>
       <div class="d-sm-flex align-items-end mb-2">
@@ -38,6 +28,16 @@
               <a href="#" class="input-group-text btn btn-light bg-white" data-toggle="modal" data-target="#modalFilter"><i class="fas fa-filter"></i></a>
             </div>
           </div>
+        </div>
+        <div class="form-group ml-md-auto d-flex justify-content-end">
+          <form id="exportForm" action="{{ route('export') }}" method="POST">
+            @csrf
+            <input type="hidden" name="export_report_type" id="export_report_type">
+            <input type="hidden" name="export_group_company" id="export_group_company">
+            <input type="hidden" name="export_company" id="export_company">
+            <input type="hidden" name="export_location" id="export_location">
+            <a id="export" onclick="exportExcel()" class="btn btn-outline-secondary px-4 shadow disabled"><i class="fas fa-arrow-circle-down"></i> Download</a>
+          </form>
         </div>
       </div>
       
