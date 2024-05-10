@@ -6,6 +6,7 @@ use App\Exports\GoalExport;
 use App\Http\Controllers\Controller;
 use App\Models\ApprovalRequest;
 use App\Models\Company;
+use App\Models\Employee;
 use App\Models\Location;
 use App\Models\Report;
 use Illuminate\Http\Request;
@@ -54,7 +55,6 @@ class ReportController extends Controller
     
     public function getReportContent(Request $request)
     {
-        // Get the authenticated user's employee_id
         $user = Auth::user();
         $employeeId = $user->employee_id;
         $report_type = $request->report_type;
@@ -65,35 +65,54 @@ class ReportController extends Controller
         $filters = compact('report_type', 'group_company', 'location', 'company');
 
         // Start building the query
-        $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated']);
-
-        // Apply filters based on request parameters
-        if ($request->filled('group_company')) {
-            $query->whereHas('employee', function ($query) use ($group_company) {
-                $query->where('group_company', $group_company);
-            });
-        }
-        if ($request->filled('location')) {
-            $query->whereHas('employee', function ($query) use ($location) {
-                $query->where('work_area_code', $location);
-            });
-        }
-
-        if ($request->filled('company')) {
-            $query->whereHas('employee', function ($query) use ($company) {
-                $query->where('contribution_level_code', $company);
-            });
-        }
-
-        // Fetch the data based on the constructed query
-        $data = $query->get();
-        // Determine the report type and return the appropriate view
         if ($report_type === 'Goal') {
-            return view('reports.admin.goal', compact('data'));
+            $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated']);
+
+            if ($group_company) {
+                $query->whereHas('employee', function ($query) use ($group_company) {
+                    $query->where('group_company', $group_company)->orderBy('fullname');
+                });
+            }
+            if ($location) {
+                $query->whereHas('employee', function ($query) use ($location) {
+                    $query->where('work_area_code', $location);
+                });
+            }
+            if ($company) {
+                $query->whereHas('employee', function ($query) use ($company) {
+                    $query->where('contribution_level_code', $company);
+                });
+            }
+
+            // Apply employee filters
+            $data = $query->get();
+            $route = 'reports.admin.goal';
+        } elseif ($report_type === 'Employee') {
+            $query = Employee::query()->orderBy('fullname'); // Start with Employee model
+
+            if ($group_company) {
+                    $query->where('group_company', $group_company)->orderBy('fullname');
+            }
+            if ($location) {
+                    $query->where('work_area_code', $location);
+            }
+            if ($company) {
+                    $query->where('contribution_level_code', $company);
+            }
+
+            $data = $query->get();
+            $route = 'reports.admin.employee';
         } else {
-            return ''; // You might want to handle other report types accordingly
+            $data = collect(); // Empty collection for unknown report types
+            return false;
         }
+
+        
+        $link = 'reports';
+
+        return view($route, compact('data', 'link', 'filters'));
     }
+
 
     public function generateReportExcel(Request $request)
     {

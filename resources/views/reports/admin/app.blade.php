@@ -10,6 +10,7 @@
               <select class="form-control" onchange="adminReportType(this.value)">
               <option value="">- select -</option>
               <option value="Goal">Goal</option>
+              <option value="Employee">Employee</option>
               </select>
           </div> 
       </div>

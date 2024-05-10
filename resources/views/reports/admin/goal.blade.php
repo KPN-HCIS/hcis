@@ -3,7 +3,7 @@
       <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover" id="reportGoalsTable" width="100%" cellspacing="0">
+                <table class="table table-hover" id="adminReportTable" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr class="text-center">
                             <th>Employees</th>

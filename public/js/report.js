@@ -14,7 +14,7 @@ function adminReportType(val) {
             exportButton.removeClass("disabled"); // Enable export button
             $("#modalFilter").modal("hide");
 
-            const reportGoalsTable = $("#reportGoalsTable").DataTable({
+            const reportGoalsTable = $("#adminReportTable").DataTable({
                 dom: "lrtip",
                 pageLength: 50,
             });
@@ -25,9 +25,7 @@ function adminReportType(val) {
         error: function (xhr, status, error) {
             console.error("Error fetching report content:", error);
             // Optionally display an error message to the user
-            reportContentDiv.html(
-                "Error get report content. Please try again."
-            );
+            reportContentDiv.html("");
         },
     });
     return; // Prevent default form submission
@@ -59,9 +57,7 @@ function reportType(val) {
         error: function (xhr, status, error) {
             console.error("Error fetching report content:", error);
             // Optionally display an error message to the user
-            reportContentDiv.html(
-                "Error get report content. Please try again."
-            );
+            reportContentDiv.html("");
         },
     });
     return; // Prevent default form submission

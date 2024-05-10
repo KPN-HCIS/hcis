@@ -15,7 +15,7 @@ $(document).ready(function () {
                 content: `Manager L${layer} : ${name}`,
                 // trigger: "manual", // Show popover manually
                 trigger: "focus",
-                placement: "left", // Auto placement (adjusts as needed)
+                placement: "top", // Auto placement (adjusts as needed)
             })
             .popover("show"); // Show the popover immediately
 
@@ -23,7 +23,8 @@ $(document).ready(function () {
         popoverTimeout = setTimeout(function () {
             $(element).popover("hide"); // Hide the popover
             popoverInitialized = false; // Reset popoverInitialized flag
-        }, 2000); // 1500 milliseconds = 1.5 seconds
+            $(element).blur();
+        }, 1500); // 1500 milliseconds = 1.5 seconds
     }
 
     // Function to fetch popover content and initialize popover
@@ -202,7 +203,6 @@ $(document).ready(function () {
     // Submit form event handler
     reportForm.on("submit", function (event) {
         event.preventDefault(); // Prevent default form submission behavior
-
         const formData = reportForm.serialize(); // Serialize form data
 
         // Send AJAX request to fetch and display report content
@@ -215,7 +215,7 @@ $(document).ready(function () {
                 exportButton.removeClass("disabled"); // Enable export button
                 $("#modalFilter").modal("hide");
 
-                const reportGoalsTable = $("#reportGoalsTable").DataTable({
+                const reportGoalsTable = $("#adminReportTable").DataTable({
                     dom: "lrtip",
                     pageLength: 50,
                 });
