@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', 'Goals')
+    @section('title', $link)
     <x-slot name="content">
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -29,8 +29,9 @@
         </div>
         <!-- Content Row -->
         <div id="goal_content">
-            @yield('goal_content')
+          @include('pages.goals.admin.goal')
         </div>
+
         @include('pages.goals.admin.filter')
     </div>
     

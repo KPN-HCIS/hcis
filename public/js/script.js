@@ -1,5 +1,15 @@
 $(document).ready(function () {
     $("#taskTable").DataTable();
+
+    const goalTable = $("#goalTable").DataTable({
+        dom: "lrtip",
+        pageLength: 50,
+    });
+
+    $("#customsearch").keyup(function () {
+        goalTable.search($(this).val()).draw();
+    });
+
     $("#tableInitiate").DataTable();
 });
 
@@ -264,12 +274,12 @@ $(document).ready(function () {
                 exportButton.removeClass("disabled"); // Enable export button
                 $("#modalFilter").modal("hide");
 
-                const taskTable = $("#taskTable").DataTable({
+                const goalTable = $("#goalTable").DataTable({
                     dom: "lrtip",
                     pageLength: 50,
                 });
                 customsearch.keyup(function () {
-                    taskTable.search($(this).val()).draw();
+                    goalTable.search($(this).val()).draw();
                 });
             },
             error: function (xhr, status, error) {
@@ -348,3 +358,21 @@ $(document).ready(function () {
         theme: "bootstrap4",
     });
 });
+
+function getPermissionData(id) {
+    const subContent = $("#subContent");
+    // Send AJAX request to fetch and display report content
+    $.ajax({
+        url: "/admin/get-permission", // Endpoint URL to fetch report content
+        method: "GET",
+        data: { roleId: id }, // Send serialized form data
+        success: function (data) {
+            subContent.html(data); // Update report content
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching data:", error);
+            // Optionally display an error message to the user
+            subContent.html("Error fetching data. Please try again.");
+        },
+    });
+}

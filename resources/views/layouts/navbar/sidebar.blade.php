@@ -86,9 +86,9 @@
         <div id="collapseSettings" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="{{ route('schedules') }}">Schedule</a>
-                <a class="collapse-item" href="{{ route('employees') }}">Employee</a>
+                {{-- <a class="collapse-item" href="{{ route('employees') }}">Employee</a> --}}
                 <a class="collapse-item" href="{{ route('layer') }}">Layer</a>
-                {{-- <a class="collapse-item" href="{{ route('roles') }}">Role</a> --}}
+                <a class="collapse-item" href="{{ route('roles') }}">Role</a>
             </div>
         </div>
     </li>

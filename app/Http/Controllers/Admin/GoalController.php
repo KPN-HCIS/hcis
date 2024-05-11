@@ -55,9 +55,7 @@ class GoalController extends Controller
                 // Buat objek untuk menyimpan data request dan approver fullname
                 $dataItem = new stdClass();
 
-                $dataItem->request = $request;
-                $dataItem->approver_name = $dataApprover;
-              
+                $dataItem = $request;              
 
                 // Tambahkan objek $dataItem ke dalam array $data
                 $data[] = $dataItem;
@@ -86,8 +84,8 @@ class GoalController extends Controller
         $uomOption = $options['UoM'];
         $typeOption = $options['Type'];
 
-        $link = 'goals';
-        
+        $link = 'Goals';
+
         return view('pages.goals.admin.app', compact('data', 'link', 'formData', 'locations', 'companies', 'groupCompanies'));
        
     }
@@ -146,7 +144,7 @@ class GoalController extends Controller
         $uomOption = $options['UoM'];
         $typeOption = $options['Type'];
 
-        $link = 'goals';
+        $link = 'Goals';
 
         // dd($data);
         return view('pages.goals.admin.approval', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
