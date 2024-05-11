@@ -170,6 +170,7 @@ Route::middleware(['auth', 'role:admin|superadmin'])->group(function () {
     Route::get('/admin/roles/create', [RoleController::class, 'create'])->name('roles.create');
     Route::get('/admin/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
     Route::get('/admin/get-permission', [RoleController::class, 'getPermission'])->name('getPermission');
+    Route::post('/admin/assign-user', [RoleController::class, 'assignUser'])->name('assign.user');
 
     // Approval-Admin
     Route::post('/admin/approval/goal', [AdminGoalController::class, 'store'])->name('admin.approval.goal');

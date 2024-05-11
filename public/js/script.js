@@ -368,6 +368,9 @@ function getPermissionData(id) {
         data: { roleId: id }, // Send serialized form data
         success: function (data) {
             subContent.html(data); // Update report content
+            $(".select2").select2({
+                theme: "bootstrap4",
+            });
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
