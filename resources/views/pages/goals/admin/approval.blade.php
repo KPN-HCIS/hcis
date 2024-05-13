@@ -125,6 +125,7 @@
             @endif
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <div class="align-item-center mb-4">
+                    @can('sendbackgoal')
                     <div class="dropleft">
                     <a class="btn btn-outline-info px-4 rounded-pill" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
                         <div class="dropdown-menu shadow-sm">
@@ -133,7 +134,8 @@
                             <a class="dropdown-item" href="#" onclick="sendBack('{{ $item->request_id }}','{{ $item->approver_id }}','{{ $item->approverName->fullname }}')">{{ $item->approverName->fullname.' '.$item->approver_id }}</a>
                         @endforeach
                         </div> 
-                    </div>           
+                    </div>
+                    @endcan
                 </div>
                 <div class="align-item-center justify-content-between text-center mb-4">
                     <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3 rounded-pill">Cancel</a>
