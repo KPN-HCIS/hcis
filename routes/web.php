@@ -150,6 +150,8 @@ Route::group(['middleware' => ['role:admin|superadmin']],function(){
 
     // layer
     Route::get('/layer', [LayerController::class, 'layer'])->name('layer');
+    Route::post('/update-layer', [LayerController::class, 'updatelayer'])->name('update-layer');
+    
 
     // Roles
     Route::get('/roles', [RoleController::class, 'role'])->name('roles');
