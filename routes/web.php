@@ -158,6 +158,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['permission:viewlayer'])->group(function () {
         // layer
         Route::get('/layer', [LayerController::class, 'layer'])->name('layer');
+        Route::post('/update-layer', [LayerController::class, 'updatelayer'])->name('update-layer');
     });
     
     // Route::middleware(['permission:viewrole'])->group(function () {
@@ -196,9 +197,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/employee/filter', [EmployeeController::class, 'filterEmployees'])->name('employee.filter');
     });
 });
-
-
-
 
 
 Route::fallback(function () {
