@@ -90,7 +90,9 @@
                 @can('viewschedule')
                     <a class="collapse-item" href="{{ route('schedules') }}">Schedule</a>
                 @endcan
+                @can('viewlayer')
                     <a class="collapse-item" href="{{ route('layer') }}">Layer</a>
+                @endcan
                 @can('viewrole')
                     <a class="collapse-item" href="{{ route('roles') }}">Role</a>
                 @endcan
