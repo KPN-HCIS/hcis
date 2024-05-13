@@ -10,6 +10,7 @@ use App\Models\RoleHasPermission;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Spatie\Permission\PermissionRegistrar;
 
 class RoleController extends Controller
 {
@@ -202,6 +203,8 @@ class RoleController extends Controller
                 $rolepermission->save();
             }
         }
+
+        app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return redirect()->route('roles')->with('success', 'Role updates successfully!');
     }
