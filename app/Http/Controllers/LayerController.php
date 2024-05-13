@@ -7,6 +7,7 @@ use App\Models\ApprovalLayer;
 use App\Models\User;
 use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class LayerController extends Controller
 {
@@ -15,10 +16,10 @@ class LayerController extends Controller
         //$approvalLayers = ApprovalLayer::with('view_employee')->get();
         $approvalLayers = DB::table('approval_layers as al')
         ->select('al.employee_id', 'emp.fullname', 'emp.job_level', 'emp.contribution_level_code', 'emp.group_company')
-        ->selectRaw("GROUP_CONCAT(al.layer ORDER BY al.layer DESC SEPARATOR '|') AS layers")
-        ->selectRaw("GROUP_CONCAT(al.approver_id ORDER BY al.layer DESC SEPARATOR '|') AS approver_ids")
-        ->selectRaw("GROUP_CONCAT(emp1.fullname ORDER BY al.layer DESC SEPARATOR '|') AS approver_names")
-        ->selectRaw("GROUP_CONCAT(emp1.job_level ORDER BY al.layer DESC SEPARATOR '|') AS approver_job_levels")
+        ->selectRaw("GROUP_CONCAT(al.layer ORDER BY al.layer ASC SEPARATOR '|') AS layers")
+        ->selectRaw("GROUP_CONCAT(al.approver_id ORDER BY al.layer ASC SEPARATOR '|') AS approver_ids")
+        ->selectRaw("GROUP_CONCAT(emp1.fullname ORDER BY al.layer ASC SEPARATOR '|') AS approver_names")
+        ->selectRaw("GROUP_CONCAT(emp1.job_level ORDER BY al.layer ASC SEPARATOR '|') AS approver_job_levels")
         ->leftJoin('employees as emp', 'emp.employee_id', '=', 'al.employee_id')
         ->leftJoin('employees as emp1', 'emp1.employee_id', '=', 'al.approver_id')
         ->groupBy('al.employee_id', 'emp.fullname', 'emp.job_level', 'emp.contribution_level_code', 'emp.group_company')
@@ -41,23 +42,28 @@ class LayerController extends Controller
     function updatelayer(Request $req) {
         $employeeId = $req->input('employee_id');
         $nikApps = $req->input('nik_app');
-    
-        // Lakukan validasi jika diperlukan
-    
-        // Hapus data lama untuk employee_id tertentu
+        $jumlahNikApp = count($nikApps);
+
         ApprovalLayer::where('employee_id', $employeeId)->delete();
-    
-        // Simpan data yang baru
-        foreach ($nikApps as $nikApp) {
-            // Pisahkan `nik_app` menjadi `approver_id` dan `layer`
-            list($approverId, $layer) = explode('_', $nikApp);
-            
-            // Buat entri baru untuk setiap `nik_app`
-            ApprovalLayer::create([
-                'employee_id' => $employeeId,
-                'approver_id' => $approverId,
-                'layer' => $layer
-            ]);
+
+        //$cek="";
+        $layer=1;
+        for ($jml=0; $jml < $jumlahNikApp; $jml++) {
+            $approverId = $nikApps[$jml];
+
+            if($approverId<>''){
+                ApprovalLayer::create([
+                    'employee_id' => $employeeId,
+                    'approver_id' => $approverId,
+                    'layer' => $layer
+                ]);    
+            }
+            //$cek=$cek.''.$approverId.'-'.$layer.'||';
+            $layer++;
         }
+
+        Alert::success('Success');
+        return redirect()->intended(route('layer', absolute: false));
+        //dd($cek);
     }
 }

@@ -70,7 +70,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Employee</h5>
+                <h5 class="modal-title" id="editModalLabel">Update Superior</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -80,7 +80,7 @@
                 <form id="editForm" action="{{ route('update-layer') }}" method="POST">
                     @csrf
                     <input type="hidden" name="employee_id" id="employee_id">
-                    <div class="form-group">
+                    <div class="form-group" style="display: none;">
                         <label for="employee_id">Employee ID:</label>
                         <input type="text" class="form-control" id="employeeId" name="employee_id" readonly>
                     </div>
@@ -92,12 +92,11 @@
                     <div class="input-group margin" id="viewlayer">
                         
                     </div>
-                    
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="submit" class="btn btn-primary" form="editForm">Save changes</button>
             </div>
         </div>
     </div>
@@ -196,48 +195,19 @@ function applyLocationFilter(table) {
         var appNames = appName.split('|');
 
         $('#viewlayer').empty();
-
-        for (var i = 0; i < apps.length; i++) {
-            var selectOptions = '';
+        $('#nikAppInputs').empty();
+        var layer = 1;
+        for (var i = 0; i < (apps.length+3); i++) {
+            var selectOptions = '<option value="">- Select -</option>';
             for (var j = 0; j < employees.length; j++) {
                 var selected = (employees[j].employee_id == apps[i]) ? 'selected' : '';
                 selectOptions += '<option value="' + employees[j].employee_id + '" ' + selected + '>' + employees[j].fullname + '</option>';
             }
 
-            $('#viewlayer').append('<div class="input-group margin"><div class="input-group-btn"><button type="button" class="btn btn-info">Layer ' + layers[i] + '</button></div><select name="nik_app[]" class="form-control">' + selectOptions + '</select></div>');
+            $('#viewlayer').append('<div class="row mb-2"><div class="col-md"><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Layer ' + layer + '</span></div><select name="nik_app[]" class="form-control">' + selectOptions + '</select></div></div></div>');
+            layer++;
         }
 
         $('#editModal').modal('show');
     }
-
-    $(document).ready(function() {
-    // AJAX request to update layer
- 
-    $('#editForm').submit(function(event) {
-        event.preventDefault(); // Prevent default form submission
-
-        var nik_app = [];
-        $('select[name="nik_app[]"]').each(function() {
-            nik_app.push($(this).val());
-        });
-
-        $.ajax({
-            type: 'POST',
-            url: '{{ route("update-layer") }}',
-            data: {
-                employee_id: $('#employee_id').val(),
-                nik_app: nik_app
-            },
-            success: function(response) {
-                // Handle success response
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-                alert('Terjadi kesalahan saat memperbarui data.');
-            }
-        });
-    });
-});
 </script>
