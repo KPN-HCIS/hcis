@@ -359,6 +359,27 @@ $(document).ready(function () {
     });
 });
 
+function getAssignmentData(id) {
+    const subContent = $("#subContent");
+    // Send AJAX request to fetch and display report content
+    $.ajax({
+        url: "/admin/get-assignment", // Endpoint URL to fetch report content
+        method: "GET",
+        data: { roleId: id }, // Send serialized form data
+        success: function (data) {
+            subContent.html(data); // Update report content
+            $(".select2").select2({
+                theme: "bootstrap4",
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching data:", error);
+            // Optionally display an error message to the user
+            subContent.html("Error fetching data. Please try again.");
+        },
+    });
+}
+
 function getPermissionData(id) {
     const subContent = $("#subContent");
     // Send AJAX request to fetch and display report content
@@ -368,9 +389,6 @@ function getPermissionData(id) {
         data: { roleId: id }, // Send serialized form data
         success: function (data) {
             subContent.html(data); // Update report content
-            $(".select2").select2({
-                theme: "bootstrap4",
-            });
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);

@@ -113,6 +113,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->primary([$pivotPermission, $pivotRole], 'role_has_permissions_permission_id_role_id_primary');
+            $table->timestamps();
         });
 
         app('cache')

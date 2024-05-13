@@ -143,59 +143,63 @@ Route::middleware('auth')->group(function () {
     Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
     
-});
+    // ============================ Administrator ===================================
 
-Route::middleware(['auth', 'role:admin|superadmin'])->group(function () {
-	//Employee
-    Route::get('/employees', [EmployeeController::class, 'employee'])->name('employees');
-    Route::get('/employee/filter', 'EmployeeController@filterEmployees')->name('employee.filter');
-
-    // Schedule
-    Route::get('/schedules', [ScheduleController::class, 'schedule'])->name('schedules');
-    Route::get('/schedules/form', [ScheduleController::class, 'form'])->name('schedules-form');
-    Route::post('/save-schedule', [ScheduleController::class, 'save'])->name('save-schedule');
-    Route::get('/edit-schedule/{id}', [ScheduleController::class, 'edit'])->name('edit-schedule');
-    Route::post('/update-schedule', [ScheduleController::class, 'update'])->name('update-schedule');
-    Route::delete('/schedule/{id}', [ScheduleController::class, 'softDelete'])->name('soft-delete-schedule');
-
-    // Assignments
-    Route::get('/assignments', [AssignmentController::class, 'assignment'])->name('assignments');
-
-    // layer
-    Route::get('/layer', [LayerController::class, 'layer'])->name('layer');
-
-    // Roles
-    Route::get('/admin/roles', [RoleController::class, 'index'])->name('roles');
-    Route::get('/admin/roles/assign', [RoleController::class, 'assign'])->name('roles.assign');
-    Route::get('/admin/roles/create', [RoleController::class, 'create'])->name('roles.create');
-    Route::get('/admin/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
-    Route::get('/admin/get-permission', [RoleController::class, 'getPermission'])->name('getPermission');
-    Route::post('/admin/assign-user', [RoleController::class, 'assignUser'])->name('assign.user');
-
-    // Approval-Admin
-    Route::post('/admin/approval/goal', [AdminGoalController::class, 'store'])->name('admin.approval.goal');
-
-    Route::get('/admin/approval/goal/{id}', [AdminGoalController::class, 'create'])->name('admin.create.approval.goal');
-
-    // Goals - Admin
-    Route::get('/admin/goals', [AdminGoalController::class, 'index'])->name('admin.goals');
-
-    Route::post('/admin/goal-content', [AdminGoalController::class, 'getGoalContent']);
-
-    // Sendback
-    Route::post('/admin/sendback/goal', [AdminSendbackController::class, 'store'])->name('admin.sendback.goal');
-
-    // Reports
-    Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports');
-
-    Route::get('/admin/get-report-content/{reportType}', [AdminReportController::class, 'getReportContent']);
-
-    Route::post('/admin/get-report-content', [AdminReportController::class, 'getReportContent']);
+    Route::middleware(['permission:viewschedule'])->group(function () {
+        // Schedule
+        Route::get('/schedules', [ScheduleController::class, 'schedule'])->name('schedules');
+        Route::get('/schedules/form', [ScheduleController::class, 'form'])->name('schedules-form');
+        Route::post('/save-schedule', [ScheduleController::class, 'save'])->name('save-schedule');
+        Route::get('/edit-schedule/{id}', [ScheduleController::class, 'edit'])->name('edit-schedule');
+        Route::post('/update-schedule', [ScheduleController::class, 'update'])->name('update-schedule');
+        Route::delete('/schedule/{id}', [ScheduleController::class, 'softDelete'])->name('soft-delete-schedule');
+    });
     
-    Route::get('/admin/changes-group-company', [AdminReportController::class, 'changesGroupCompany']);
-    Route::get('/admin/changes-company', [AdminReportController::class, 'changesCompany']);
-
+    Route::middleware(['permission:viewlayer'])->group(function () {
+        // layer
+        Route::get('/layer', [LayerController::class, 'layer'])->name('layer');
+    });
+    
+    // Route::middleware(['permission:viewrole'])->group(function () {
+        // Roles
+        Route::get('/admin/roles', [RoleController::class, 'index'])->name('roles');
+        Route::post('/admin/roles/submit', [RoleController::class, 'store'])->name('roles.store');
+        Route::post('/admin/roles/update', [RoleController::class, 'update'])->name('roles.update');
+        Route::get('/admin/roles/assign', [RoleController::class, 'assign'])->name('roles.assign');
+        Route::get('/admin/roles/create', [RoleController::class, 'create'])->name('roles.create');
+        Route::get('/admin/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
+        Route::get('/admin/get-assignment', [RoleController::class, 'getAssignment'])->name('getAssignment');
+        Route::get('/admin/get-permission', [RoleController::class, 'getPermission'])->name('getPermission');
+        Route::post('/admin/assign-user', [RoleController::class, 'assignUser'])->name('assign.user');
+    // });
+    
+    Route::middleware(['permission:viewgoal'])->group(function () {
+        // Approval-Admin
+        Route::post('/admin/approval/goal', [AdminGoalController::class, 'store'])->name('admin.approval.goal');
+        Route::get('/admin/approval/goal/{id}', [AdminGoalController::class, 'create'])->name('admin.create.approval.goal');
+        // Goals - Admin
+        Route::get('/admin/goals', [AdminGoalController::class, 'index'])->name('admin.goals');
+        Route::post('/admin/goal-content', [AdminGoalController::class, 'getGoalContent']);
+        // Sendback
+        Route::post('/admin/sendback/goal', [AdminSendbackController::class, 'store'])->name('admin.sendback.goal');
+    });
+    
+    Route::middleware(['permission:viewreport'])->group(function () {
+        // Reports
+        Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports');
+        Route::get('/admin/get-report-content/{reportType}', [AdminReportController::class, 'getReportContent']);
+        Route::post('/admin/get-report-content', [AdminReportController::class, 'getReportContent']);
+        Route::get('/admin/changes-group-company', [AdminReportController::class, 'changesGroupCompany']);
+        Route::get('/admin/changes-company', [AdminReportController::class, 'changesCompany']);
+        //Employee
+        Route::get('/employees', [EmployeeController::class, 'employee'])->name('employees');
+        Route::get('/employee/filter', [EmployeeController::class, 'filterEmployees'])->name('employee.filter');
+    });
 });
+
+
+
+
 
 Route::fallback(function () {
     return view('errors.404');

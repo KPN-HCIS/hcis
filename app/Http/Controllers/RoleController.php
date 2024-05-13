@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\ModelHasRole;
+use App\Models\Permission;
 use App\Models\Role;
+use App\Models\RoleHasPermission;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -33,11 +36,13 @@ class RoleController extends Controller
 
         return view('pages.roles.assign', compact('roles', 'link', 'active'));
     }
-    function create() {        
+    function create() {    
+        $permissions = Permission::all();
+
         $link = $this->link;
         $active = 'create';
 
-        return view('pages.roles.create', compact('link', 'active'));
+        return view('pages.roles.create', compact('link', 'active', 'permissions'));
     }
     function manage() {
         $roles = Role::all();
@@ -47,7 +52,7 @@ class RoleController extends Controller
 
         return view('pages.roles.manage', compact('roles', 'link', 'active'));
     }
-    function getPermission(Request $request) {
+    function getAssignment(Request $request) {
 
         $roleId = $request->input('roleId');
 
@@ -61,6 +66,21 @@ class RoleController extends Controller
         $active = 'manage';
         // dd($roles);
         return view('pages.roles.assignform', compact('roles', 'link', 'active', 'users', 'roleId'));
+    }
+    function getPermission(Request $request) {
+
+        $roleId = $request->input('roleId');
+
+        $roles = Role::with(['permissions'])->where('id', $roleId)->get();
+        // $permissions = Permission::all();
+
+        $permissions = Permission::leftJoin('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
+            ->select('permissions.id', 'permissions.name', 'role_has_permissions.permission_id as role_permission_id')->orderBy('permissions.id')
+            ->get();
+
+        $link = $this->link;
+        $active = 'create';
+        return view('pages.roles.manageform', compact('link', 'active', 'roles', 'permissions', 'roleId'));
     }
 
     public function assignUser(Request $request)
@@ -97,5 +117,92 @@ class RoleController extends Controller
 
         // Optionally, you can redirect back to the form or another page after saving
         return redirect()->back()->with('success', 'Users saved successfully!');
+    }
+
+    public function store(Request $request): RedirectResponse
+
+    {
+        $roleName = $request->roleName;
+        $guardName = 'web';
+
+        $existingRole = Role::where('name', $roleName)->first();
+
+        if ($existingRole) {
+            // Role with the same name already exists, handle accordingly (e.g., show error message)
+            return redirect()->back()->with('error', 'Role with the same name already exists.');
+        }
+
+        $permissions = [
+            'adminMenu' => 9, // 9 = adminmenu
+            'goalView' => $request->input('goalView', false), // Use false as default value if not set
+            'goalApproval' => $request->input('goalApproval', false),
+            'goalSendback' => $request->input('goalSendback', false),
+            'reportView' => $request->input('reportView', false),
+            'settingView' => $request->input('settingView', false),
+            'scheduleView' => $request->input('scheduleView', false),
+            'layerView' => $request->input('layerView', false),
+            'roleView' => $request->input('roleView', false),
+        ];
+
+        // Build permission_id string
+        $permission_id = '';
+
+        $role = new Role;
+        $role->name = $roleName;
+        $role->guard_name = $guardName;
+        $role->save();
+
+        // Loop through permissions and create new permission records
+        foreach ($permissions as $key) {
+            if ($key) {
+                // Create a new permission record
+                $rolepermission = new RoleHasPermission;
+                $rolepermission->role_id = $role->id;
+                $rolepermission->permission_id = $key;
+                $rolepermission->save();
+            }
+        }
+
+        return redirect()->route('roles')->with('success', 'Role created successfully!');
+    }
+
+    public function update(Request $request): RedirectResponse
+
+    {
+        $roleId = $request->roleId;
+
+        $deleteRolePermission = RoleHasPermission::where('role_id', $roleId)->delete();
+
+        if (!$deleteRolePermission) {
+            return redirect()->route('roles')->with('error', 'Failed to update permissions!');
+        }
+
+        $permissions = [
+            'adminMenu' => 9, // 9 = adminmenu
+            'goalView' => $request->input('goalView', false), // Use false as default value if not set
+            'goalApproval' => $request->input('goalApproval', false),
+            'goalSendback' => $request->input('goalSendback', false),
+            'reportView' => $request->input('reportView', false),
+            'settingView' => $request->input('settingView', false),
+            'scheduleView' => $request->input('scheduleView', false),
+            'layerView' => $request->input('layerView', false),
+            'roleView' => $request->input('roleView', false),
+        ];
+
+        // Build permission_id string
+        $permission_id = '';
+
+        // Loop through permissions and create new permission records
+        foreach ($permissions as $key) {
+            if ($key) {
+                // Create a new permission record
+                $rolepermission = new RoleHasPermission;
+                $rolepermission->role_id = $roleId;
+                $rolepermission->permission_id = $key;
+                $rolepermission->save();
+            }
+        }
+
+        return redirect()->route('roles')->with('success', 'Role updates successfully!');
     }
 }

@@ -71,12 +71,14 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('superadmin')))
+    @if(auth()->check())
+    @can('adminmenu')
+        
     <div class="sidebar-heading">
         Admin
     </div>
 
-    
+    @can('viewsetting')
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSettings"
             aria-expanded="true" aria-controls="collapseSettings">
@@ -85,28 +87,39 @@
         </a>
         <div id="collapseSettings" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('schedules') }}">Schedule</a>
+                @can('viewschedule')
+                    <a class="collapse-item" href="{{ route('schedules') }}">Schedule</a>
+                @endcan
+                    <a class="collapse-item" href="{{ route('layer') }}">Layer</a>
+                @can('viewrole')
+                    <a class="collapse-item" href="{{ route('roles') }}">Role</a>
+                @endcan
                 {{-- <a class="collapse-item" href="{{ route('employees') }}">Employee</a> --}}
-                <a class="collapse-item" href="{{ route('layer') }}">Layer</a>
-                <a class="collapse-item" href="{{ route('roles') }}">Role</a>
             </div>
         </div>
     </li>
+    @endcan
+    @can('viewgoal')
     <li class="nav-item">
         <a class="nav-link" href="{{ url('/admin/goals') }}">
             <i class="fas fa-fw fa-flag-checkered"></i>
             <span>Goals</span>
         </a>
     </li>
+    @endcan
+    @can('viewreport')
     <li class="nav-item">
         <a class="nav-link" href="{{ url('/admin/reports') }}">
             <i class="fas fa-fw fa-file-alt"></i>
             <span>Reports</span>
         </a>
     </li>
+    @endcan
+    
     
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
+    @endcan
     @endif
 
     <!-- Sidebar Toggler (Sidebar) -->

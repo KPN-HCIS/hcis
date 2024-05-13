@@ -10,6 +10,11 @@
             <a class="btn btn-outline-primary rounded-pill btn-sm px-4 mr-3 {{ $active=='assign' ? 'active':'' }}" href="{{ route('roles.assign') }}">Assign Users</a>
         </div>
         <!-- Content Row -->
+        @if(session('success'))
+            <div class="alert alert-success mt-3">
+                {{ session('success') }}
+            </div>
+        @endif
         @yield('content')
         <div id="subContent"></div>
     </div>

@@ -5,7 +5,7 @@
     <div class="d-sm-flex">
       <div class="form-group">
           <label for="report_type">Permission Group:</label>
-          <select class="form-control" name="permission_name" onchange="getPermissionData(this.value)">
+          <select class="form-control" name="permission_name" onchange="getAssignmentData(this.value)">
           <option value="">Select Permission Group</option>
           @foreach ($roles as $role)
             <option value="{{ $role->id }}">{{ $role->name }}</option>
