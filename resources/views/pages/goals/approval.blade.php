@@ -21,7 +21,7 @@
             @csrf
             <input type="hidden" name="id" value="{{ $row->request->goal->id }}">
             <input type="hidden" name="employee_id" value="{{ $row->request->employee_id }}">
-            <input type="text" name="current_approver_id" value="{{ $row->request->current_approval_id }}">
+            <input type="hidden" name="current_approver_id" value="{{ $row->request->current_approval_id }}">
               <div class="d-sm-flex align-items-center mb-4">
                     <h4>{{ $row->request->employee->fullname }} / <span class="font-weight-light">{{ $row->request->employee->employee_id }}</span></h4>
               </div>
