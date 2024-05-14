@@ -4,9 +4,14 @@
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <!-- Page Heading -->
-        <div class="d-flex align-items-center justify-content-end mb-4">
-          <a href="{{ route('goals.form', Auth::user()->employee_id) }}" class="btn btn-primary px-4 shadow">Create Goal</a>
+        <div class="d-flex align-items-center justify-content-end mb-4" >
+            @if($goals == 1)
+                <a href="{{ route('goals.form', Auth::user()->employee_id) }}" class="btn btn-primary px-4 shadow">Create Goal</a>
+            @else
+                <button type="button" class="btn btn-primary px-4 shadow" disabled>Create Goal</button>
+            @endif
         </div>
+        
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
           <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">All Task</button>
           <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">Active</button>

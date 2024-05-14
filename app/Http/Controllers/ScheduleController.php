@@ -233,12 +233,14 @@ class ScheduleController extends Controller
                 
                 $employee->access_menu = $updatedAccessMenu;
                 $employee->save();
+
+                
             }
         }
+        // Memanggil metode delete() untuk soft delete
+        $schedule->delete();
 
-        $schedule->delete(); // Memanggil metode delete() untuk soft delete
-
-        Alert::success('Success');
-        return redirect()->intended(route('schedules', absolute: false));
+        //Alert::success('Success');
+        //return redirect()->intended(route('schedules', absolute: false));
     }
 }

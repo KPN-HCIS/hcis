@@ -79,8 +79,13 @@ class GoalController extends Controller
         $typeOption = $options['Type'];
 
         $link = 'goals';
+
+        $employee = Employee::where('employee_id',Auth::user()->employee_id)->first();
+
+        $access_menu = json_decode($employee->access_menu, true);
+        $goals = $access_menu['goals'] ?? null;
         
-        return view('pages.goals.goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
+        return view('pages.goals.goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals'));
        
     }
     function show($id) {
