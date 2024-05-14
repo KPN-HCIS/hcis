@@ -35,7 +35,7 @@ class GoalController extends Controller
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
         
         // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        $datas = ApprovalRequest::with(['employee', 'goal', 'approval' => function ($query) {
+        $datas = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
             $query->with('approverName'); // Load nested relationship
         }])->get();
         

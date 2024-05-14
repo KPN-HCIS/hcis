@@ -20,9 +20,10 @@ $(document).ready(function () {
 
     // Function to initialize Bootstrap popover with delay
     function initializePopover(name, layer, element) {
+        const contents = layer ? `Manager L${layer} : ${name}` : name;
         $(element)
             .popover({
-                content: `Manager L${layer} : ${name}`,
+                content: contents,
                 // trigger: "manual", // Show popover manually
                 trigger: "focus",
                 placement: "top", // Auto placement (adjusts as needed)

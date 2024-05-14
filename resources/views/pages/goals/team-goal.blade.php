@@ -25,11 +25,11 @@
                             <thead class="thead-light">
                                 <tr class="text-center">
                                     <th>Employees</th>
-                                    <th>Category</th>
                                     <th>Approval Status</th>
                                     <th>Initiated On</th>
                                     <th>Initiated By</th>
                                     <th>Last Updated On</th>
+                                    <th>Updated By</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -37,24 +37,24 @@
                                 @foreach ($data as $row)
                                 <tr>
                                     <td>{{ $row->request->employee->fullname }}</td>
-                                    <td>{{ $row->request->goal->category }}</td>
-                                    <td class="px-5"><a href="#" id="approval{{ $row->request->employee_id }}" data-toggle="tooltip" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->request->goal->form_status == 'Draft' ? 'Draft':$row->request->status }}</a></td>
+                                    <td class="px-5"><a href="javascript:void(0)" id="approval{{ $row->request->employee_id }}" data-toggle="tooltip" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? ($row->request->sendback_to ? 'Waiting For Revision' : 'Waiting For Approval' ) : $row->request->status) }}</a></td>
                                     <td class="text-center">{{ $row->request->created_at }}</td>
                                     <td class="text-center">{{ $row->request->employee->fullname }}</td>
                                     <td class="text-center">{{ $row->request->updated_at }}</td>
+                                    <td class="text-center">{{ $row->request->updatedBy ? $row->request->updatedBy->name.' ('.$row->request->updatedBy->employee_id.')' : '-' }}</td>
                                     <td class="text-center">
                                         @if ($row->request->employee_id == Auth::user()->employee_id)
                                             @if ($row->request->goal->form_status == 'submitted' || $row->request->goal->form_status == 'Approved')
-                                            <a href="#" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $row->request->goal->id }}"><i class="fas fa-eye"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $row->request->goal->id }}"><i class="fas fa-eye"></i></a>
                                             @endif
                                             @if ($row->request->status == 'Pending' && count($row->request->approval) == 0)
                                             <a href="{{ route('goals.edit', $row->request->goal->id) }}" class="btn btn-outline-secondary btn-sm btn-circle font-weight-medium"><i class="fas fa-edit"></i></a>
                                             @endif
                                             @else
-                                            @if ($row->request->current_approval_id == Auth::user()->employee_id && $row->request->status === 'Pending')
+                                            @if ($row->request->current_approval_id == Auth::user()->employee_id && $row->request->status === 'Pending' && $row->request->sendback_to == Auth::user()->employee_id)
                                                 <a href="{{ route('team-goals.approval', $row->request->form_id) }}" class="btn btn-outline-primary btn-sm badge-pill font-weight-medium px-4">Act</a>
                                             @else
-                                                <a href="#" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $row->request->goal->id }}"><i class="fas fa-eye"></i></a>
+                                                <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $row->request->goal->id }}"><i class="fas fa-eye"></i></a>
                                             @endif
                                         @endif
                                     </td>

@@ -33,13 +33,13 @@ class SendbackController extends Controller
 
         $model = ApprovalRequest::find($request->request_id);
         $model->current_approval_id = $sendto;
-        $model->sendback_messages = $request->messages;
+        $model->sendback_messages = $request->sendback_message;
         $model->updated_by = Auth::user()->id;
         
         $model->save();
 
         // Kirim respons JSON ke JavaScript
-        return redirect()->route('goals');        
+        return redirect()->route('team-goals');        
 
     }
 }

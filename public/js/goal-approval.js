@@ -1,4 +1,83 @@
+function checkEmptyFields() {
+    const alertField = $(".mandatory-field");
+    var requiredInputs = document.querySelectorAll(
+        "input[required], select[required]"
+    );
+    for (var i = 0; i < requiredInputs.length; i++) {
+        if (requiredInputs[i].value.trim() === "") {
+            Swal.fire({
+                title: "Please fill out all empty fields!",
+                confirmButtonColor: "#3085d6",
+                icon: "error",
+                // If confirmed, proceed with form submission
+            });
+            alertField.removeAttr("hidden");
+            return false; // Prevent form submission
+        }
+    }
+    return true; // All required fields are filled
+}
+
+function validate() {
+    var weight = document.querySelectorAll('input[name="weightage[]"]');
+    var sum = 0;
+    for (var i = 0; i < weight.length; i++) {
+        sum += parseInt(weight[i].value) || 0; // Parse input value to integer, default to 0 if NaN
+    }
+
+    if (sum != 100) {
+        Swal.fire({
+            title: "Submit failed",
+            html: `Your current weightage is ${sum}%, <br>Please adjust to reach the total weightage of 100%`,
+            confirmButtonColor: "#3085d6",
+            icon: "error",
+            // If confirmed, proceed with form submission
+        });
+        return false; // Prevent form submission
+    }
+
+    return true; // Allow form submission
+}
+
+function validateWeightage() {
+    // Get all input elements with name="weightage[]"
+    var weightageInputs = document.getElementsByName("weightage[]");
+
+    // Iterate through each input element
+    for (var i = 0; i < weightageInputs.length; i++) {
+        var input = weightageInputs[i];
+
+        // Get the value of the input (convert to number)
+        var value = parseFloat(input.value);
+
+        // Check if value is below 5%
+        if (value < 5) {
+            // Display alert message
+            Swal.fire({
+                title: "The weightage cannot lower than 5%",
+                confirmButtonColor: "#3085d6",
+                icon: "error",
+                // If confirmed, proceed with form submission
+            });
+            weightageInputs.focus();
+            return false; // Prevent form submission
+        }
+    }
+
+    return true; // All weightages are valid
+}
+
 function confirmAprroval() {
+    if (!checkEmptyFields()) {
+        return false; // Stop submission if required fields are empty
+    }
+    if (!validateWeightage()) {
+        return false; // Stop submission if required fields are empty
+    }
+    if (!validate()) {
+        return false; // Stop submission if required fields are empty
+    }
+
     let title1;
     let title2;
     let text;

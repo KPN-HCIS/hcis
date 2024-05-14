@@ -25,12 +25,12 @@ class TeamGoalController extends Controller
         $user = Auth::user()->employee_id;
         
         // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        $datas = ApprovalRequest::with(['employee', 'goal', 'approval' => function ($query) {
+        $datas = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
             $query->with('approverName'); // Load nested relationship
         }])->whereHas('approvalLayer', function ($query) use ($user) {
             $query->where('employee_id', $user)->orWhere('approver_id', $user);
         })->where('employee_id', '!=', Auth::user()->employee_id)->get();
-        
+
         $data = [];
         
         foreach ($datas as $request) {
@@ -426,14 +426,18 @@ class TeamGoalController extends Controller
 
     public function getTooltipContent(Request $request)
     {
-        $approvalRequest = ApprovalRequest::with(['manager'])->where('employee_id', $request->id)->first();
-        
-        if ($approvalRequest) {
-            $name = $approvalRequest->manager->fullname.' ('.$approvalRequest->manager->employee_id.')';
-            $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->value('layer');
+        $approvalRequest = ApprovalRequest::with(['manager', 'employee'])->where('employee_id', $request->id)->first();
 
-            return response()->json(['name' => $name, 'layer' => $approvalLayer]);
+        if($approvalRequest){
+            if ($approvalRequest->sendback_to == $approvalRequest->employee->employee_id) {
+                $name = $approvalRequest->employee->fullname.' ('.$approvalRequest->employee->employee_id.')';
+                $approvalLayer = '';
+            }else{
+                $name = $approvalRequest->manager->fullname.' ('.$approvalRequest->manager->employee_id.')';
+                $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->value('layer');
+            }
         }
+        return response()->json(['name' => $name, 'layer' => $approvalLayer]);
 
     }
 

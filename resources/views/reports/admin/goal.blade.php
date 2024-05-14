@@ -25,7 +25,7 @@
                           <td class="text-center">
                             <span class="badge {{ $row->goal->form_status == 'Approved' ? 'badge-success' : 'badge-secondary'}} badge-pil px-3">{{ $row->goal->form_status }}</span></td>
                           <td class="text-center">
-                            <a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="approval-link badge {{ $row->status === 'Approved' ? 'badge-success' : 'badge-warning'}} badge-pil px-3">{{ $row->status }}</a>
+                            <a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="approval-link badge {{ $row->status === 'Approved' ? 'badge-success' : 'badge-warning'}} badge-pil px-3">{{ $row->status == 'Pending' ? 'Waiting For Approval' : $row->status }}</a>
                           </td>
                           <td class="text-center">{{ $row->created_at }}</td>
                           <td class="text-center">{{ $row->initiated->name }}<br>{{ $row->initiated->employee_id }}</td>

@@ -9,9 +9,9 @@
         <th>UoM</th>
         <th>Weightage</th>
         <th>Type</th>
-        <th>Status</th>
+        <th>Form Status</th>
         <th>Approval Status</th>
-        <th>Approver</th>
+        <th>Current Approver</th>
         <th>Initiated By</th>
     </tr>
     </thead>
@@ -32,7 +32,7 @@
                     <td>{{ $item['weightage'] }}</td>
                     <td>{{ $item['type'] }}</td>
                     <td>{{ $row->goal->form_status }}</td>
-                    <td>{{ $row->status }}</td>
+                    <td>{{ $row->status=='Pending'? ($row->sendback_to ? 'Waiting For Revision' : 'Waiting For Approval') : $row->status }}</td>
                     <td>{{ $row->manager->fullname.' '.$row->manager->employee_id }}</td>
                     <td>{{ $row->initiated->name.' '.$row->initiated->employee_id }}</td>
                 </tr>

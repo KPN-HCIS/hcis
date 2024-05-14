@@ -12,6 +12,10 @@
     </div>
     @endif
 
+    <div class="alert alert-danger mandatory-field" hidden='false'>
+        All fields is mandatory.
+    </div>
+
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
             <h1 class="h3">Approval Goals</h1>
@@ -54,7 +58,7 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="uom">UoM</label>
-                                        <input type="text" name="uom[]" id="uom" value="{{ $data['uom'] }}" class="form-control" required>
+                                        <input type="text" name="uom[]" id="uom" value="{{ $data['uom'] }}" class="form-control" readonly>
                                         <input 
                                             type="text" 
                                             name="custom_uom[]" 
@@ -65,14 +69,14 @@
                                             @if ($data['uom'] !== 'Other') 
                                                 style="display: none;" 
                                             @endif 
-                                            required
+                                            readonly
                                         >
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="type">Type</label>
-                                        <input type="text" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" required>
+                                        <input type="text" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -105,6 +109,9 @@
                 @endif                
             </div>
         </form>
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center justify-content-center mb-3"><h5>Total Weightage : <span class="font-weight-bold text-success" id="totalWeightage">100%</span></h5></div>
+        </div>
         <form id="goalSendbackForm" action="{{ route('sendback.goal') }}" method="post">
             @csrf
             <input type="hidden" name="request_id" id="request_id">
@@ -123,19 +130,15 @@
                 </div>
             </div>
             @endif
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <div class="align-item-center mb-4">
-                    <div class="dropleft">
-                    <a class="btn btn-outline-info px-4 rounded-pill" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
+            <div class="d-sm-flex align-items-center justify-content-end mb-4">
+                <div class="align-item-center justify-content-between text-center mb-4">
+                    <a class="btn btn-info px-4 mr-3 rounded-pill" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
                         <div class="dropdown-menu shadow-sm">
                         <a class="dropdown-item" href="#" onclick="sendBack('{{ $row->request->id }}','{{ $row->request->employee->employee_id }}','{{ $row->request->employee->fullname }}')">{{ $row->request->employee->fullname .' '.$row->request->employee->employee_id }}</a>
                         @foreach ($row->request->approval as $item)
                             <a class="dropdown-item" href="#" onclick="sendBack('{{ $item->request_id }}','{{ $item->approver_id }}','{{ $item->approverName->fullname }}')">{{ $item->approverName->fullname.' '.$item->approver_id }}</a>
                         @endforeach
                         </div> 
-                    </div>           
-                </div>
-                <div class="align-item-center justify-content-between text-center mb-4">
                     <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3 rounded-pill">Cancel</a>
                     <a href="#" onclick="confirmAprroval()" class="btn btn-primary rounded-pill px-4">Approve</a>
                 </div>

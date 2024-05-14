@@ -7,11 +7,11 @@
                     <thead class="thead-light">
                         <tr class="text-center">
                             <th>Employees</th>
-                            <th>Category</th>
                             <th>Approval Status</th>
                             <th>Initiated On</th>
                             <th>Initiated By</th>
                             <th>Last Updated On</th>
+                            <th>Updated By</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -19,11 +19,11 @@
                         @foreach ($data as $row)
                         <tr>
                             <td>{{ $row->employee->fullname }}</td>
-                            <td>{{ $row->goal->category }}</td>
-                            <td class="px-5"><a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="badge {{ $row->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->goal->form_status == 'Draft' ? 'Draft':$row->status }}</a></td>
+                            <td class="px-5"><a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="badge {{ $row->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->goal->form_status == 'Draft' ? 'Draft': ($row->status == 'Pending' ? 'Waiting For Approval' : $row->status) }}</a></td>
                             <td class="text-center">{{ $row->created_at }}</td>
                             <td class="text-center">{{ $row->employee->fullname }}</td>
                             <td class="text-center">{{ $row->updated_at }}</td>
+                            <td class="text-center">{{ $row->updatedBy ? $row->updatedBy->name.' ('.$row->updatedBy->employee_id.')' : '-' }}</td>
                             <td class="text-center">
                               @if ( $row->status === 'Pending')
                                 @can('approvalgoal')

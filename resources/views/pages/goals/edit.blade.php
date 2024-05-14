@@ -12,6 +12,10 @@
     </div>
     @endif
 
+    <div class="alert alert-danger mandatory-field" hidden='false'>
+        All fields is mandatory.
+    </div>
+
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
             <h1 class="h3">Edit Goals</h1>
@@ -115,7 +119,7 @@
             </div>
             <div class="d-flex align-items-center justify-content-center mb-3">
                 @if ($goal->form_status=='Draft')
-                <button type="submit" name="save_draft" class="btn btn-outline-info save-draft mr-3" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>  
+                <button type="submit" name="save_draft" class="btn btn-info save-draft mr-3" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>  
                 @endif
                 <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3">Cancel</a>
                 <button type="submit" name="submit_form" class="btn btn-primary px-4 shadow" onclick="return setSubmitType('submit_form')">Submit</button>

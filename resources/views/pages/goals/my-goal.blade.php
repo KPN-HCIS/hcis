@@ -18,9 +18,9 @@
                         <option value="2024">2024</option>
                     </select>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <button class="btn btn-primary">Apply</button>
-                </div>
+                </div> --}}
             </div>
         </form>
         @foreach ($data as $row)
@@ -35,17 +35,47 @@
                 <div class="card-header py-3 d-flex align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Goals {{ $year }}</h6>
                     @if ($row->request->status == 'Pending' && count($row->request->approval) == 0)
-                        <a href="{{ route('goals.edit', $row->request->goal->id) }}" class="dropdown"><i class="fas fa-edit"></i></a>
+                        <button class="btn btn-primary px-3" href="{{ route('goals.edit', $row->request->goal->id) }}">Edit</button>
                     @endif
-                    {{-- <div class="dropdown no-arrow">
-                        <a href="#" id="dropdownMenuLink" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i></a>
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                            @if ($row->request->status == 'Pending' && count($row->request->approval) == 0)
-                                <a href="{{ route('goals.edit', $row->request->goal->id) }}" class="dropdown-item">Edit</a>
-                            @endif
-                        </div>
-                    </div> --}}
                 </div>
+                <div class="card-header">
+                    <div class="row p-2">
+                        <div class="col-lg col-sm-12 p-2">
+                            <label class="font-weight-bold">Initiated By :</label>
+                            <p>{{ $row->request->initiated->name.' ('.$row->request->initiated->employee_id.')' }}</p>
+                        </div>
+                        <div class="col-lg col-sm-12 p-2">
+                            <label class="font-weight-bold">Initiated Date :</label>
+                            <p>{{ $row->request->created_at }}</p>
+                        </div>
+                        <div class="col-lg col-sm-12 p-2">
+                            <label class="font-weight-bold">Last Updated On :</label>
+                            <p>{{ $row->request->updated_at }}</p>
+                        </div>
+                        <div class="col-lg col-sm-12 p-2">
+                            <label class="font-weight-bold">Adjusted By :</label>
+                            <p>{{ $row->request->updatedBy ? $row->request->updatedBy->name.' ('.$row->request->updatedBy->employee_id.')' : '-' }}</p>
+                        </div>
+                        <div class="col-lg col-sm-12 p-2">
+                            <label class="font-weight-bold">Status :</label>
+                            <div>
+                                <a href="javascript:void(0)" id="{{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? '' : 'approval'}}{{ $row->request->employee_id }}" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill px-3 py-2">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? ($row->request->sendback_to == $row->request->employee_id ? 'Waiting Self Revision' : 'Waiting For Approval' ) : $row->request->status) }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if ($row->request->sendback_messages && $row->request->sendback_to == $row->request->employee_id)
+                <div class="card-header" style="background-color: lightyellow">
+                    <div class="row p-2">
+                        <div class="col-lg col-sm-12 p-2">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Sendback Message :</label>
+                                <p>{{ $row->request->sendback_messages }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
                 <div class="card-body">
                     @if ($formData)
                     @foreach ($formData as $index => $data)
@@ -86,33 +116,6 @@
                     @else
                         <p>No form data available.</p>
                     @endif 
-                </div>
-                <div class="card-footer">
-                    <div class="row p-2">
-                        <div class="col-lg col-sm-12 p-2">
-                            <label class="font-weight-bold">Initiated By :</label>
-                            <p>{{ $row->request->initiated->name.' ('.$row->request->initiated->employee_id.')' }}</p>
-                        </div>
-                        <div class="col-lg col-sm-12 p-2">
-                            <label class="font-weight-bold">Initiated On :</label>
-                            <p>{{ $row->request->created_at }}</p>
-                        </div>
-                        <div class="col-lg col-sm-12 p-2">
-                            <label class="font-weight-bold">Last Updated On :</label>
-                            <p>{{ $row->request->updated_at }}</p>
-                        </div>
-                        <div class="col-lg col-sm-12 p-2">
-                            <label class="font-weight-bold">Adjusted By :</label>
-                            <p>{{ $row->request->adjusted ? $row->request->adjusted->name : '-' }}</p>
-                        </div>
-                        <div class="col-lg col-sm-12 p-2">
-                            <label class="font-weight-bold">Status :</label>
-                            <div>
-                                <a href="#" id="approval{{ $row->request->employee_id }}" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill px-3 py-2">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? 'Waiting for approval' : $row->request->status) }}</a>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
             </div>

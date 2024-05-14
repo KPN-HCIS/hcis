@@ -167,6 +167,7 @@ var firstSelect = $("#uom"); // Assuming your first select has an ID "uom1"
 populateUoMSelect(firstSelect);
 
 function checkEmptyFields(submitType) {
+    const alertField = $(".mandatory-field");
     if (submitType === "submit_form") {
         var requiredInputs = document.querySelectorAll(
             "input[required], select[required]"
@@ -179,6 +180,7 @@ function checkEmptyFields(submitType) {
                     icon: "error",
                     // If confirmed, proceed with form submission
                 });
+                alertField.removeAttr("hidden");
                 return false; // Prevent form submission
             }
         }

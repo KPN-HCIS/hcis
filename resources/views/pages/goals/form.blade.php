@@ -12,6 +12,10 @@
     </div>
     @endif
 
+        <div class="alert alert-danger mandatory-field hidden">
+            {{ session('error') }}
+        </div>
+
         <!-- Page Heading -->
         <div class="d-flex align-items-center justify-content-start mb-4">
         </div>
@@ -96,7 +100,7 @@
             <input type="hidden" name="submit_type" id="submitType" value=""> <!-- Hidden input to store the button clicked -->
             <div class="d-flex align-items-center justify-content-center mb-3"><h5>Total Weightage : <span class="font-weight-bold" id="totalWeightage">-</span></h5></div>
             <div class="d-flex align-items-center justify-content-center mb-3">
-                <button type="submit" name="save_draft" class="btn btn-outline-info save-draft mr-3" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>
+                <button type="submit" name="save_draft" class="btn btn-info save-draft mr-3" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>
                 <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3">Cancel</a>
                 <button type="submit" name="submit_form" class="btn btn-primary px-4 shadow" onclick="return setSubmitType('submit_form')">Submit</button>
             </div>
