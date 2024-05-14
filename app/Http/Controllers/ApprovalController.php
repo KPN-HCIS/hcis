@@ -23,11 +23,11 @@ class ApprovalController extends Controller
 
         $nextLayer = ApprovalLayer::where('approver_id', $request->current_approver_id)
                                     ->where('employee_id', $request->employee_id)->max('layer');
-        dd($nextLayer);
+
         // Cari approver_id pada layer selanjutnya
         $nextApprover = ApprovalLayer::where('layer', $nextLayer + 1)
                                       ->value('approver_id');
-
+$nextApprover;
         if (!$nextApprover) {
             $approver = $request->current_approver_id;
             $statusRequest = 'Approved';
