@@ -6,21 +6,22 @@
         <!-- Page Heading -->
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h1 class="h2">Your Goals</h1>
-            <a href="{{ route('goals.form', Auth::user()->employee_id) }}" class="btn btn-primary px-4 shadow">Create Goals</a>
+            <a href="{{ route('goals.form', Auth::user()->employee_id) }}" class="btn btn-primary px-4 shadow {{{ $goals ? '' : 'disabled' }}}">Create Goals</a>
         </div>
-        <form action="{{ route('goals') }}" method="GET">
+        <form id="formYearGoal" action="{{ route('goals') }}" method="GET">
+            @php
+                $filterYear = request('filterYear');
+            @endphp
             <div class="d-flex align-items-end">
                 <div class="form-group mr-3">
                     <label for="filterYear">Year</label>
-                    <select name="filterYear" id="filterYear" class="form-control border-secondary" @style('width: 120px')>
-                        <option value="">- select -</option>
-                        <option value="2023">2023</option>
-                        <option value="2024">2024</option>
+                    <select name="filterYear" id="filterYear" onchange="yearGoal()" class="form-control border-secondary" @style('width: 120px')>
+                        <option value="">select all</option>
+                        @foreach ($selectYear as $year)
+                            <option value="{{ $year->year }}" {{ $year->year == $filterYear ? 'selected' : '' }}>{{ $year->year }}</option>
+                        @endforeach
                     </select>
                 </div>
-                {{-- <div class="form-group">
-                    <button class="btn btn-primary">Apply</button>
-                </div> --}}
             </div>
         </form>
         @foreach ($data as $row)
@@ -32,13 +33,13 @@
         <div class="row">
             <div class="col-md-12">
               <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Goals {{ $year }}</h6>
                     @if ($row->request->status == 'Pending' && count($row->request->approval) == 0)
                         <button class="btn btn-primary px-3" href="{{ route('goals.edit', $row->request->goal->id) }}">Edit</button>
                     @endif
                 </div>
-                <div class="card-header">
+                <div class="card-body">
                     <div class="row p-2">
                         <div class="col-lg col-sm-12 p-2">
                             <label class="font-weight-bold">Initiated By :</label>
@@ -59,7 +60,7 @@
                         <div class="col-lg col-sm-12 p-2">
                             <label class="font-weight-bold">Status :</label>
                             <div>
-                                <a href="javascript:void(0)" id="{{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? '' : 'approval'}}{{ $row->request->employee_id }}" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill px-3 py-2">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? ($row->request->sendback_to == $row->request->employee_id ? 'Waiting Self Revision' : 'Waiting For Approval' ) : $row->request->status) }}</a>
+                                <a href="javascript:void(0)" id="{{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? '' : 'approval'}}{{ $row->request->employee_id }}" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill px-3 py-2">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? ($row->request->sendback_to == $row->request->employee_id ? 'Waiting For Revision' : 'Waiting For Approval' ) : $row->request->status) }}</a>
                             </div>
                         </div>
                     </div>
@@ -69,53 +70,60 @@
                     <div class="row p-2">
                         <div class="col-lg col-sm-12 p-2">
                             <div class="form-group">
-                                <label class="font-weight-bold">Sendback Message :</label>
+                                <label class="font-weight-bold">Revision Notes :</label>
                                 <p>{{ $row->request->sendback_messages }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 @endif
-                <div class="card-body">
-                    @if ($formData)
-                    @foreach ($formData as $index => $data)
-                    <div class="row mb-3 p-2">
-                        <div class="col-lg col-sm-12 p-2">
-                            <div class="form-group">
-                                <label class="font-weight-bold">KPI {{ $index + 1 }}</label>
-                                <p>{{ $data['kpi'] }}</p>
-                            </div>
-                        </div>
-                        <div class="col-lg col-sm-12 p-2">
-                            <div class="form-group">
-                                <label class="font-weight-bold">Target</label>
-                                <p>{{ $data['target'] }}</p>
-                            </div>
-                        </div>
-                        <div class="col-lg col-sm-12 p-2">
-                            <div class="form-group">
-                                <label class="font-weight-bold">UoM</label>
-                                <p>{{ $data['uom'] }}</p>
-                            </div>
-                        </div>
-                        <div class="col-lg col-sm-12 p-2">
-                            <div class="form-group">
-                                <label class="font-weight-bold">Type</label>
-                                <p>{{ $data['type'] }}</p>
-                            </div>
-                        </div>
-                        <div class="col-lg col-sm-12 p-2">
-                            <div class="form-group">
-                                <label class="font-weight-bold">Weightage</label>
-                                <p>{{ $data['weightage'] }}%</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="dropdown-divider"></div>
-                    @endforeach
-                    @else
-                        <p>No form data available.</p>
-                    @endif 
+                <div class="card-body p-0">
+                    <table class="table table-striped table-bordered m-0">
+                        <tbody>
+                        @if ($formData)
+                        @foreach ($formData as $index => $data)
+                            <tr>
+                                <td  scope="row">
+                                    <div class="row mb-3 p-2">
+                                        <div class="col-lg col-sm-12 p-2">
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">KPI {{ $index + 1 }}</label>
+                                                <p>{{ $data['kpi'] }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg col-sm-12 p-2">
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">Target</label>
+                                                <p>{{ $data['target'] }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg col-sm-12 p-2">
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">UoM</label>
+                                                <p>{{ $data['uom'] }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg col-sm-12 p-2">
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">Type</label>
+                                                <p>{{ $data['type'] }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg col-sm-12 p-2">
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">Weightage</label>
+                                                <p>{{ $data['weightage'] }}%</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                            @else
+                            <p>No form data available.</p>
+                            @endif 
+                        </tbody>
+                    </table>
                 </div>
             </div>
             </div>

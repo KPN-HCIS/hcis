@@ -12,8 +12,9 @@
                   <input type="text" id="employee_name" class="form-control" placeholder="Search employee.." hidden>
               </div>
             </div>
-            <form id="goal_filter_form" action="" method="POST">
+            <form id="behalf_filter_form" action="" method="POST">
                 @csrf
+                <input type="hidden" name="filter_category" id="filter_category">
                 <div class="modal-body">
                     <div class="container-fluid py-3">
                         <!-- Content Row -->

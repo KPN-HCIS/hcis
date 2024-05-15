@@ -25,7 +25,7 @@
           <input type="hidden" class="form-control" name="users_id" value="{{ Auth::user()->id }}">
           <input type="hidden" class="form-control" name="approver_id" value="{{ $data->approver_id }}">
           <input type="hidden" class="form-control" name="employee_id" value="{{ $data->employee_id }}">
-          <input type="hidden" class="form-control" name="category" value="Goals Setting">
+          <input type="hidden" class="form-control" name="category" value="Goals">
           @endforeach
           <!-- Content Row -->
           <div class="container-card">

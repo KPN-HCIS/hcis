@@ -4,10 +4,21 @@
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <!-- Page Heading -->
+        <form id="categoryForm" action="{{ route('admin.onbehalf.content') }}" method="GET">
+            <div class="d-flex align-items-end">
+                <div class="form-group mr-3">
+                    <label for="category">Year</label>
+                    <select name="category" id="category" onchange="changeCategory(this.value)" class="form-control" @style('width: 120px')>
+                        <option value="">select all</option>
+                        <option value="Goals">Goals</option>
+                        <option value="Performance">Performance</option>
+                    </select>
+                </div>
+            </div>
+        </form>
         <div class="d-flex align-items-end mb-2 pt-3">
-          {{-- <a href="{{ route('goals.form', Auth::user()->employee_id) }}" class="btn btn-primary px-4 shadow">Create Goal</a> --}}
           <div class="form-group mr-4 d-md-block d-none">
-            <a href="#" class="btn btn-outline-secondary" data-toggle="modal" data-target="#modalFilter"><i class="fas fa-filter"></i></a>
+            <a href="#" class="btn btn-outline-secondary" data-toggle="modal" data-target="#modalFilter"><i style="font-size: 0.85rem" class="fas fa-filter"></i> Filters</a>
           </div>
           <div class="form-group">
             <div class="input-group">
@@ -28,11 +39,9 @@
           <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">Completed</button>
         </div>
         <!-- Content Row -->
-        <div id="goal_content">
-          @include('pages.goals.admin.goal')
-        </div>
+        <div id="contentOnBehalf"></div>
 
-        @include('pages.goals.admin.filter')
+        @include('pages.onbehalfs.filter')
     </div>
     
     </x-slot>

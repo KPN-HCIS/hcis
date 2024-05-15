@@ -252,53 +252,6 @@ $(document).ready(function () {
     });
 });
 
-// ===== Goal Filter =====
-$(document).ready(function () {
-    const reportForm = $("#goal_filter_form");
-    const exportButton = $("#export");
-    const reportContentDiv = $("#goal_content");
-    const customsearch = $("#customsearch");
-
-    // Submit form event handler
-    reportForm.on("submit", function (event) {
-        event.preventDefault(); // Prevent default form submission behavior
-
-        const formData = reportForm.serialize(); // Serialize form data
-
-        // Send AJAX request to fetch and display report content
-        $.ajax({
-            url: "/admin/goal-content", // Endpoint URL to fetch report content
-            method: "POST",
-            data: formData, // Send serialized form data
-            success: function (data) {
-                reportContentDiv.html(data); // Update report content
-                exportButton.removeClass("disabled"); // Enable export button
-                $("#modalFilter").modal("hide");
-
-                const goalTable = $("#goalTable").DataTable({
-                    dom: "lrtip",
-                    pageLength: 50,
-                });
-                customsearch.keyup(function () {
-                    goalTable.search($(this).val()).draw();
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error("Error fetching data:", error);
-                // Optionally display an error message to the user
-                reportContentDiv.html("Error fetching data. Please try again.");
-            },
-        });
-    });
-
-    // Optional: Add event listener for exportButton if needed
-    exportButton.on("click", function () {
-        const reportContent = reportContentDiv.html();
-        // Code here to handle exporting the report content
-        // console.log("Exporting report content:", reportContent);
-    });
-});
-
 $(document).ready(function () {
     $("#group_company").change(function () {
         const selectedGroupCompany = $(this).val();
@@ -398,3 +351,75 @@ function getPermissionData(id) {
         },
     });
 }
+
+function yearGoal() {
+    $("#formYearGoal").submit();
+}
+
+function changeCategory(val) {
+    $("#filter_category").val(val);
+    const content = $("#contentOnBehalf");
+    const categoryForm = $("#categoryForm");
+    const formData = categoryForm.serialize();
+    const customsearch = $("#customsearch");
+    $.ajax({
+        url: categoryForm.attr("action"), // Use the form's action attribute to determine the URL
+        method: categoryForm.attr("method"), // Use the form's method attribute to determine the method
+        data: formData, // Send serialized form data
+        success: function (data) {
+            content.html(data); // Update report content
+
+            const reportGoalsTable = $("#onBehalfTable").DataTable({
+                dom: "lrtip",
+                pageLength: 50,
+            });
+            customsearch.keyup(function () {
+                reportGoalsTable.search($(this).val()).draw();
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching report content:", error);
+            // Optionally display an error message to the user
+            content.html("");
+        },
+    });
+
+    return false;
+}
+
+// ===== Goal Filter =====
+$(document).ready(function () {
+    const reportForm = $("#behalf_filter_form");
+    const reportContentDiv = $("#contentOnBehalf");
+    const customsearch = $("#customsearch");
+
+    // Submit form event handler
+    reportForm.on("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission behavior
+
+        const formData = reportForm.serialize(); // Serialize form data
+
+        // Send AJAX request to fetch and display report content
+        $.ajax({
+            url: "/admin/onbehalf/content", // Endpoint URL to fetch report content
+            method: "POST",
+            data: formData, // Send serialized form data
+            success: function (data) {
+                reportContentDiv.html(data);
+
+                const onBehalfTable = $("#onBehalfTable").DataTable({
+                    dom: "lrtip",
+                    pageLength: 50,
+                });
+                customsearch.keyup(function () {
+                    onBehalfTable.search($(this).val()).draw();
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data:", error);
+                // Optionally display an error message to the user
+                reportContentDiv.html("Error fetching data. Please try again.");
+            },
+        });
+    });
+});

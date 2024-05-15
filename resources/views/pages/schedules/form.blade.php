@@ -32,7 +32,7 @@
                                     <div class="form-group">
                                         <label for="type">Event Type</label>
                                         <select name="event_type" class="form-control bg-light">
-                                            <option value="goals_setting">Goals Setting</option>
+                                            <option value="goals">Goals</option>
                                             <option value="pa_year_end">Year End</option>
                                         </select>
                                     </div>
