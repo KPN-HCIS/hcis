@@ -66,7 +66,7 @@
     </div>
 
 <!-- Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+<div class="modal fade" id="editModal" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -88,6 +88,16 @@
                         <label for="fullname">Full Name:</label>
                         <input type="text" class="form-control" id="fullname" name="fullname" readonly>
                     </div>
+                    <div class="form-group">
+                        <label for="fullname">cek:</label>
+                        <select class="form-control select2" name="asd" id="asd">
+                            <option value="test1">Ahmad Dhani</option>
+                            <option value="test2">Berlian</option>
+                            <option value="test3">Cici</option>
+                            <option value="test4">Dede</option>
+                            <option value="test5">Erlang</option>
+                        </select>
+                    </div>
                     <hr>
                     <div class="input-group margin" id="viewlayer">
                         
@@ -104,6 +114,7 @@
 
 </x-slot>
 </x-app-layout>
+
 <script>
     $(document).ready(function() {
         $('.open-edit-modal').on('click', function() {
@@ -190,9 +201,17 @@ function applyLocationFilter(table) {
         $('#employeeId').val(employeeId);
         $('#fullname').val(fullName);
 
-        var apps = app.split('|');
-        var layers = layer.split('|');
-        var appNames = appName.split('|');
+        if (app.includes('|')) {
+            // Jika nilai app mengandung karakter '|', lakukan pemisahan
+            apps = app.split('|');
+            layers = layer.split('|');
+            appNames = appName.split('|');
+        } else {
+            // Jika tidak mengandung karakter '|', gunakan nilai langsung
+            apps = [app]; // Ubah ke array untuk konsistensi
+            layers = [layer];
+            appNames = [appName];
+        }
 
         $('#viewlayer').empty();
         $('#nikAppInputs').empty();
@@ -201,13 +220,13 @@ function applyLocationFilter(table) {
             var selectOptions = '<option value="">- Select -</option>';
             for (var j = 0; j < employees.length; j++) {
                 var selected = (employees[j].employee_id == apps[i]) ? 'selected' : '';
-                selectOptions += '<option value="' + employees[j].employee_id + '" ' + selected + '>' + employees[j].fullname + '</option>';
+                selectOptions += '<option value="' + employees[j].employee_id + '" ' + selected + '>' + employees[j].fullname +' - '+ employees[j].employee_id + '</option>';
             }
 
-            $('#viewlayer').append('<div class="row mb-2"><div class="col-md"><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Layer ' + layer + '</span></div><select name="nik_app[]" class="form-control">' + selectOptions + '</select></div></div></div>');
+            $('#viewlayer').append('<div class="input-group mb-2"><div class="input-group-prepend"><span class="input-group-text">Layer ' + layer + '</span></div><select name="nik_app[]" class="form-control select2" style="width:380px">' + selectOptions + '</select></div>');
             layer++;
         }
-
+        $('.select2').select2();
         $('#editModal').modal('show');
     }
 </script>

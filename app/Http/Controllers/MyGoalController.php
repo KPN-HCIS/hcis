@@ -97,7 +97,7 @@ class MyGoalController extends Controller
         $access_menu = json_decode($employee->access_menu, true);
         $goals = $access_menu['goals'] ?? null;
         
-        return view('pages.goals.goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals'));
+        return view('pages.goals.my-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals'));
        
     }
     function show($id) {
