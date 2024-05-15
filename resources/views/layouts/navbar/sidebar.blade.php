@@ -17,11 +17,13 @@
     </div>
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item">
-    <a class="nav-link" href="{{ route('home') }}">
-        <i class="fas fa-fw fa-chart-pie"></i>
-        <span>Dashboard</span></a>
-    </li>
+    @if (auth()->user()->hasRole('superadmin'))
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('home') }}">
+                <i class="fas fa-fw fa-chart-pie"></i>
+            <span>Dashboard</span></a>
+        </li>
+    @endif
 
     {{-- <li class="nav-item">
         <a class="nav-link" href="{{ route('tasks') }}">
@@ -29,10 +31,20 @@
             <span>Tasks</span></a>
     </li> --}}
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('goals') }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGoals"
+            aria-expanded="true" aria-controls="collapseGoals">
             <i class="fas fa-fw fa-flag-checkered"></i>
             <span>Goals</span>
         </a>
+        <div id="collapseGoals" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{ route('goals') }}">My Goals</a>
+                @if(auth()->user()->isApprover())
+                <a class="collapse-item" href="{{ route('team-goals') }}">Team Goals</a>
+                @endif
+                {{-- <a class="collapse-item" href="{{ route('roles') }}">Role</a> --}}
+            </div>
+        </div>
     </li>
     
     {{-- <li class="nav-item">
@@ -46,7 +58,7 @@
             <span>Calibration</span></a>
     </li> --}}
     <li class="nav-item">
-        @if (auth()->user()->isApprover() || auth()->user()->hasRole('superadmin') || auth()->user()->hasRole('admin'))
+        @if (auth()->user()->isApprover())
             <a class="nav-link" href="{{ url('/reports') }}">
                 <i class="fas fa-fw fa-file-alt"></i>
                 <span>Reports</span>
@@ -59,30 +71,57 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('superadmin')))
+    @if(auth()->check())
+    @can('adminmenu')
+        
     <div class="sidebar-heading">
         Admin
     </div>
 
-    
+    @can('viewsetting')
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-            aria-expanded="true" aria-controls="collapsePages">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSettings"
+            aria-expanded="true" aria-controls="collapseSettings">
             <i class="fas fa-fw fa-cog"></i>
             <span>Settings</span>
         </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div id="collapseSettings" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{{ route('schedules') }}">Schedule</a>
-                <a class="collapse-item" href="{{ route('employees') }}">Employee</a>
-                <a class="collapse-item" href="{{ route('layer') }}">Layer</a>
-                {{-- <a class="collapse-item" href="{{ route('roles') }}">Role</a> --}}
+                @can('viewschedule')
+                    <a class="collapse-item" href="{{ route('schedules') }}">Schedule</a>
+                @endcan
+                @can('viewlayer')
+                    <a class="collapse-item" href="{{ route('layer') }}">Layer</a>
+                @endcan
+                @can('viewrole')
+                    <a class="collapse-item" href="{{ route('roles') }}">Role</a>
+                @endcan
+                {{-- <a class="collapse-item" href="{{ route('employees') }}">Employee</a> --}}
             </div>
         </div>
     </li>
+    @endcan
+    @can('viewgoal')
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('/admin/goals') }}">
+            <i class="fas fa-fw fa-flag-checkered"></i>
+            <span>Goals</span>
+        </a>
+    </li>
+    @endcan
+    @can('viewreport')
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('/admin/reports') }}">
+            <i class="fas fa-fw fa-file-alt"></i>
+            <span>Reports</span>
+        </a>
+    </li>
+    @endcan
+    
     
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
+    @endcan
     @endif
 
     <!-- Sidebar Toggler (Sidebar) -->

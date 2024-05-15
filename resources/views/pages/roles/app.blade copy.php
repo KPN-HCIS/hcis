@@ -1,13 +1,13 @@
 <x-app-layout>
-@section('title', 'Goals')
+@section('title', $link)
 <x-slot name="content">
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
-          <button class="btn btn-outline-primary rounded-pill btn-sm px-4 mr-3">Create Role</button>
-          <button class="btn btn-outline-primary rounded-pill btn-sm px-4 mr-3">Manage Role</button>
-          <button class="btn btn-outline-primary rounded-pill btn-sm px-4 mr-3">Assign Users</button>
+            <a class="btn btn-outline-primary rounded-pill btn-sm px-4 mr-3" href="#">Create Role</a>
+            <a class="btn btn-outline-primary rounded-pill btn-sm px-4 mr-3" href="#">Manage Role</a>
+            <a class="btn btn-outline-primary rounded-pill btn-sm px-4 mr-3" href="{{ route('roles.assign') }}">Assign Users</a>
         </div>
         <form class="d-sm-flex align-items-center justify-content-between mb-4">
             <div class="form-group">

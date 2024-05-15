@@ -239,8 +239,5 @@ class ScheduleController extends Controller
         }
         // Memanggil metode delete() untuk soft delete
         $schedule->delete();
-
-        //Alert::success('Success');
-        //return redirect()->intended(route('schedules', absolute: false));
     }
 }

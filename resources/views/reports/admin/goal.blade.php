@@ -3,7 +3,7 @@
       <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover" id="reportGoalsTable" width="100%" cellspacing="0">
+                <table class="table table-hover" id="adminReportTable" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr class="text-center">
                             <th>Employees</th>
@@ -25,7 +25,7 @@
                           <td class="text-center">
                             <span class="badge {{ $row->goal->form_status == 'Approved' ? 'badge-success' : 'badge-secondary'}} badge-pil px-3">{{ $row->goal->form_status }}</span></td>
                           <td class="text-center">
-                            <a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="badge {{ $row->status === 'Approved' ? 'badge-success' : ( $row->sendback_to ? 'badge-secondary' : 'badge-warning' ) }} badge-pil px-3">{{ $row->status == 'Pending' ? ($row->sendback_to ? 'Waiting For Revision' : 'Waiting For Approval') : $row->status }}</a>
+                            <a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="approval-link badge {{ $row->status === 'Approved' ? 'badge-success' : 'badge-warning'}} badge-pil px-3">{{ $row->status == 'Pending' ? 'Waiting For Approval' : $row->status }}</a>
                           </td>
                           <td class="text-center">{{ $row->created_at }}</td>
                           <td class="text-center">{{ $row->initiated->name }}<br>{{ $row->initiated->employee_id }}</td>

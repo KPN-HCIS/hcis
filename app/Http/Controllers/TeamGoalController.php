@@ -18,19 +18,19 @@ use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use stdClass;
 
-class GoalController extends Controller
+class TeamGoalController extends Controller
 {
     function index() {
         
         $user = Auth::user()->employee_id;
         
         // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        $datas = ApprovalRequest::with(['employee', 'goal', 'approval' => function ($query) {
+        $datas = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
             $query->with('approverName'); // Load nested relationship
         }])->whereHas('approvalLayer', function ($query) use ($user) {
             $query->where('employee_id', $user)->orWhere('approver_id', $user);
-        })->get();
-        
+        })->where('employee_id', '!=', Auth::user()->employee_id)->get();
+
         $data = [];
         
         foreach ($datas as $request) {
@@ -79,19 +79,9 @@ class GoalController extends Controller
         $typeOption = $options['Type'];
 
         $link = 'goals';
-
-        $employee = Employee::where('employee_id',Auth::user()->employee_id)->first();
-
-        $access_menu = json_decode($employee->access_menu, true);
-        $goals = $access_menu['goals'] ?? null;
         
-        return view('pages.goals.goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals'));
+        return view('pages.goals.team-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
        
-    }
-    function show($id) {
-        $data = Goal::find($id);
-        
-        return view('pages.goals.modal', compact('data')); //modal body hilang ketika modal show bentrok dengan view goal
     }
     
     function create($id) {
@@ -169,6 +159,67 @@ class GoalController extends Controller
 
             return view('pages.goals.edit', compact('goal', 'formCount', 'link', 'data', 'uomOption', 'selectedUoM', 'typeOption', 'selectedType'));
         }
+
+    }
+
+    function approval($id) {
+
+        // Mengambil data pengajuan berdasarkan employee_id atau manager_id
+        $datas = ApprovalRequest::with(['employee', 'goal', 'manager', 'approval' => function ($query) {
+            $query->with('approverName'); // Load nested relationship
+        }])->where('form_id', $id)->get();
+
+        $data = [];
+        
+        foreach ($datas as $request) {
+            // Memeriksa status form dan pembuatnya
+            if ($request->goal->form_status != 'Draft' || $request->created_by == Auth::user()->id) {
+                // Mengambil nilai fullname dari relasi approverName
+                if ($request->approval->first()) {
+                    $approverName = $request->approval->first();
+                    $dataApprover = $approverName->approverName->fullname;
+                }else{
+                    $dataApprover = '';
+                }
+        
+                // Buat objek untuk menyimpan data request dan approver fullname
+                $dataItem = new stdClass();
+
+                $dataItem->request = $request;
+                $dataItem->approver_name = $dataApprover;
+              
+
+                // Tambahkan objek $dataItem ke dalam array $data
+                $data[] = $dataItem;
+                
+            }
+        }
+        
+        // dd($data);
+
+        $formData = [];
+        if($datas->isNotEmpty()){
+            $formData = json_decode($datas->first()->goal->form_data, true);
+        }
+
+        $path = storage_path('../resources/goal.json');
+
+        // Check if the JSON file exists
+        if (!File::exists($path)) {
+            // Handle the situation where the JSON file doesn't exist
+            abort(500, 'JSON file does not exist.');
+        }
+
+        // Read the contents of the JSON file
+        $options = json_decode(File::get($path), true);
+
+        $uomOption = $options['UoM'];
+        $typeOption = $options['Type'];
+
+        $link = 'goals';
+
+        // dd($data);
+        return view('pages.goals.approval', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
 
     }
 
@@ -278,7 +329,7 @@ class GoalController extends Controller
 
         // Beri respon bahwa data berhasil disimpan
         // return response()->json(['message' => 'Data saved successfully'], 200);
-        return redirect('goals');
+            return redirect('team-goals');
     }
 
     function update(Request $request) {
@@ -369,18 +420,24 @@ class GoalController extends Controller
         
         $snapshot->save();
 
-        return redirect('goals');
+            return redirect('team-goals');
+
     }
 
-    public function getTooltipContent()
+    public function getTooltipContent(Request $request)
     {
-        $approvalRequest = ApprovalRequest::with(['manager'])->first();
-        
-        if ($approvalRequest) {
-            $name = $approvalRequest->manager->fullname;
-            $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->value('layer');
-            return response()->json(['name' => $name, 'layer' => $approvalLayer]);
+        $approvalRequest = ApprovalRequest::with(['manager', 'employee'])->where('employee_id', $request->id)->first();
+
+        if($approvalRequest){
+            if ($approvalRequest->sendback_to == $approvalRequest->employee->employee_id) {
+                $name = $approvalRequest->employee->fullname.' ('.$approvalRequest->employee->employee_id.')';
+                $approvalLayer = '';
+            }else{
+                $name = $approvalRequest->manager->fullname.' ('.$approvalRequest->manager->employee_id.')';
+                $approvalLayer = ApprovalLayer::where('employee_id', $approvalRequest->employee_id)->where('approver_id', $approvalRequest->current_approval_id)->value('layer');
+            }
         }
+        return response()->json(['name' => $name, 'layer' => $approvalLayer]);
 
     }
 
@@ -389,25 +446,6 @@ class GoalController extends Controller
         $uom = file_get_contents(storage_path('../resources/goal.json'));
         // dd($uom);
         return response()->json(json_decode($uom, true));
-    }
-
-    public function sendback(Request $request, ApprovalRequest $approval)
-    {
-        $sendbackTo = $request->input('sendback_to');
-
-        if ($sendbackTo === 'creator') {
-            // Kirim kembali ke pembuat form (creator)
-            $creator = $approval->user; // Pembuat form
-            $previousApprovers = $creator->creatorApproverLayer->flatMap(function ($layer) {
-                return $layer->previousApprovers;
-            });
-        } elseif ($sendbackTo === 'previous_approver') {
-            // Kirim kembali ke atasan sebelumnya
-            $previousApprovers = $approval->user->previousApprovers;
-        }
-
-        // Lakukan sesuatu dengan daftar previous_approvers, seperti menampilkannya di view
-        return view('approval.sendback', compact('previousApprovers'));
     }
 
 }

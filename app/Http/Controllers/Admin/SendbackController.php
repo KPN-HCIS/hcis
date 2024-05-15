@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Approval;
 use App\Models\ApprovalRequest;
+use App\Models\ApprovalSnapshots;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +20,10 @@ class SendbackController extends Controller
         ->orderBy('id') // Urutkan berdasarkan ID (secara default akan urutkan dari yang terkecil)
         ->first();
 
+        $approval_id = Approval::where('request_id', $request->request_id)->where('approver_id', $request->sendto)->value('id');
+
+        $approver_ids = Approval::where('request_id', $request->request_id)->where('id', '>=', $approval_id)->pluck('approver_id')->toArray();
+        // dd($approver_ids);
         if ($checkRequest->employee_id == $request->sendto) {
             $approval = Approval::where('request_id', $request->request_id);
             $approval->delete();
@@ -27,6 +33,11 @@ class SendbackController extends Controller
                 $sendto = $checkRequest->current_approval_id;
             }
         }else{
+            $approval = Approval::where('id', '>=', $approval_id)->where('request_id', $request->request_id);
+            $approval->delete();
+
+            $approvalSnapshot = ApprovalSnapshots::whereIn('employee_id', $approver_ids)->where('form_id', $request->form_id);
+            $approvalSnapshot->delete();
             $sendto = $request->sendto;
         }
 
@@ -39,7 +50,7 @@ class SendbackController extends Controller
         $model->save();
 
         // Kirim respons JSON ke JavaScript
-        return redirect()->route('team-goals');        
+        return redirect()->route('admin.goals');        
 
     }
 }

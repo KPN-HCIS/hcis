@@ -12,16 +12,12 @@
     </div>
     @endif
 
-    <div class="alert alert-danger mandatory-field" hidden='false'>
-        All fields is mandatory.
-    </div>
-
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
             <h1 class="h3">Approval Goals</h1>
         </div>
         @foreach ($data as $index => $row)
-        <form id="goalApprovalForm" action="{{ route('approval.goal') }}" method="post">
+        <form id="goalApprovalAdminForm" action="{{ route('admin.approval.goal') }}" method="post">
             @csrf
             <input type="hidden" name="id" value="{{ $row->request->goal->id }}">
             <input type="hidden" name="employee_id" value="{{ $row->request->employee_id }}">
@@ -46,13 +42,13 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="kpi">KPI</label>
-                                        <textarea name="kpi[]" class="form-control" required>{{ $data['kpi'] }}</textarea>
+                                        <textarea name="kpi[]" class="form-control" readonly>{{ $data['kpi'] }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="target">Target</label>
-                                        <input type="text" name="target[]" value="{{ $data['target'] }}" class="form-control" required>
+                                        <input type="text" name="target[]" value="{{ $data['target'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -83,7 +79,7 @@
                                     <div class="form-group">
                                         <label for="weightage">Weightage</label>
                                         <div class="input-group">
-                                            <input name="weightage[]" class="form-control" value="{{ $data['weightage'] }}" required>
+                                            <input name="weightage[]" class="form-control" value="{{ $data['weightage'] }}" readonly>
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -109,10 +105,7 @@
                 @endif                
             </div>
         </form>
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <div class="d-flex align-items-center justify-content-center mb-3"><h5>Total Weightage : <span class="font-weight-bold text-success" id="totalWeightage">100%</span></h5></div>
-        </div>
-        <form id="goalSendbackForm" action="{{ route('sendback.goal') }}" method="post">
+        <form id="goalSendbackForm" action="{{ route('admin.sendback.goal') }}" method="post">
             @csrf
             <input type="hidden" name="request_id" id="request_id">
             <input type="hidden" name="sendto" id="sendto">
@@ -130,17 +123,23 @@
                 </div>
             </div>
             @endif
-            <div class="d-sm-flex align-items-center justify-content-end mb-4">
-                <div class="align-item-center justify-content-between text-center mb-4">
-                    <a class="btn btn-info px-4 mr-3 rounded-pill" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <div class="align-item-center mb-4">
+                    @can('sendbackgoal')
+                    <div class="dropleft">
+                    <a class="btn btn-info px-4 rounded-pill" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
                         <div class="dropdown-menu shadow-sm">
                         <a class="dropdown-item" href="#" onclick="sendBack('{{ $row->request->id }}','{{ $row->request->employee->employee_id }}','{{ $row->request->employee->fullname }}')">{{ $row->request->employee->fullname .' '.$row->request->employee->employee_id }}</a>
                         @foreach ($row->request->approval as $item)
                             <a class="dropdown-item" href="#" onclick="sendBack('{{ $item->request_id }}','{{ $item->approver_id }}','{{ $item->approverName->fullname }}')">{{ $item->approverName->fullname.' '.$item->approver_id }}</a>
                         @endforeach
                         </div> 
+                    </div>
+                    @endcan
+                </div>
+                <div class="align-item-center justify-content-between text-center mb-4">
                     <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3 rounded-pill">Cancel</a>
-                    <a href="#" onclick="confirmAprroval()" class="btn btn-primary rounded-pill px-4">Approve</a>
+                    <a href="#" onclick="confirmAprrovalAdmin()" class="btn btn-primary rounded-pill px-4">Approve</a>
                 </div>
           </div>
         </form>

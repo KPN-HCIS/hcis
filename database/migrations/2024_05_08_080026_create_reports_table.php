@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('approvals', function (Blueprint $table) {
+        Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('request_id');
-            $table->string('approver_id');
-            $table->enum('status', ['Approved','Rejected']);
-            $table->text('messages')->nullable();
+            $table->string('name'); // Nama report
+            $table->string('file_path'); // Path atau URL file report
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('approvals');
+        Schema::dropIfExists('reports');
     }
 };

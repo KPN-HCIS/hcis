@@ -38,5 +38,9 @@ class ApprovalRequest extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id')->select(['id', 'employee_id', 'name']);
     }
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by', 'id')->select(['id','employee_id', 'name']);
+    }
 
 }

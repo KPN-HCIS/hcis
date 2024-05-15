@@ -1,50 +1,84 @@
 $(document).ready(function () {
     $("#taskTable").DataTable();
+
+    const goalTable = $("#goalTable").DataTable({
+        dom: "lrtip",
+        pageLength: 50,
+    });
+
+    $("#customsearch").keyup(function () {
+        goalTable.search($(this).val()).draw();
+    });
+
     $("#tableInitiate").DataTable();
 });
 
-// tippy("#approval.badge-warning", {
-//     content: "L1 Manager: Douglas McGee",
-//     placement: "right",
-// });
 $(document).ready(function () {
-    let tooltipInitialized = false; // Flag to track tooltip initialization
+    let popoverInitialized = false; // Flag to track popover initialization
+    let previousPopoverId = null; // Variable to store the ID of the previously triggered popover
+    let popoverTimeout = null; // Variable to store the timeout for hiding the popover
 
-    // Function to initialize tippy tooltip
-    function initializeTooltip(name, layer) {
-        tippy("#approval.badge-warning", {
-            content: `Manager L${layer}: ${name}`,
-            placement: "right",
-        });
+    // Function to initialize Bootstrap popover with delay
+    function initializePopover(name, layer, element) {
+        const contents = layer ? `Manager L${layer} : ${name}` : name;
+        $(element)
+            .popover({
+                content: contents,
+                // trigger: "manual", // Show popover manually
+                trigger: "focus",
+                placement: "top", // Auto placement (adjusts as needed)
+            })
+            .popover("show"); // Show the popover immediately
+
+        // Set a timeout to hide the popover after 1.5 seconds
+        popoverTimeout = setTimeout(function () {
+            $(element).popover("hide"); // Hide the popover
+            popoverInitialized = false; // Reset popoverInitialized flag
+            $(element).blur();
+        }, 1500); // 1500 milliseconds = 1.5 seconds
     }
 
-    // Function to fetch tooltip content and initialize tooltip
-    function fetchAndInitializeTooltip() {
-        if (!tooltipInitialized) {
-            fetch("/get-tooltip-content")
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch tooltip content");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    const name = data.name;
-                    const layer = data.layer;
-                    // Initialize tooltip with retrieved content
-                    initializeTooltip(name, layer);
-                    tooltipInitialized = true; // Update flag
-                })
-                .catch((error) => {
-                    console.error("Error fetching tooltip content:", error);
-                });
+    // Function to fetch popover content and initialize popover
+    function fetchAndInitializePopover(id, element) {
+        // Check if the current id is the same as the previousPopoverId
+        if (id === previousPopoverId && popoverInitialized) {
+            // If same id and popover is already initialized, return early
+            return;
         }
+
+        let url = `/get-tooltip-content?id=${id}`;
+        fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch popover content");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                const name = data.name;
+                const layer = data.layer;
+                // Initialize popover with retrieved content
+                initializePopover(name, layer, element);
+                popoverInitialized = true; // Update flag
+                previousPopoverId = id; // Update the previousPopoverId with the current ID
+            })
+            .catch((error) => {
+                console.error("Error fetching popover content:", error);
+            });
     }
 
-    // Attach tooltip initialization when #approval.badge-warning is hovered
-    $(document).on("mouseenter", "#approval.badge-warning", function () {
-        fetchAndInitializeTooltip(); // Call the function to fetch and initialize tooltip
-        $(this).off("mouseenter"); // Remove the event listener after initialization
+    // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
+    $(document).on("click", "a[id^='approval']", function (event) {
+        event.preventDefault();
+        var id = $(this).data("id");
+
+        // Call fetchAndInitializePopover function to fetch and initialize popover
+        fetchAndInitializePopover(id, this);
+    });
+
+    // Function to cancel popover timeout when popover is manually closed
+    $(document).on("hidden.bs.popover", function () {
+        clearTimeout(popoverTimeout); // Clear the timeout
     });
 });
 
@@ -82,10 +116,9 @@ $(document).ready(function () {
 });
 
 function logout() {
-    let timerInterval;
     Swal.fire({
-        title: "Logout Confirmation",
-        text: "Are you sure you want to logout?",
+        title: "Confirm Logout",
+        text: "Are you sure you want to log out?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#4e73df",
@@ -94,17 +127,15 @@ function logout() {
         cancelButtonText: "Cancel",
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire({
-                title: "You have been logged out.",
-                icon: "success",
-                timer: 1500,
+            window.location.href = "/logout";
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
                 showConfirmButton: false,
-                willClose: () => {
-                    clearInterval(timerInterval);
-                },
-            }).then(() => {
-                // Redirect to the route success page after the user clicks "OK"
-                window.location.href = "/logout";
+            });
+            Toast.fire({
+                icon: "success",
+                title: "You are now logged out.",
             });
         }
     });
@@ -175,6 +206,100 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
+    const reportForm = $("#admin_report_filter");
+    const exportButton = $("#export");
+    const reportContentDiv = $("#report_content");
+    const customsearch = $("#customsearch");
+
+    // Submit form event handler
+    reportForm.on("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission behavior
+        const formData = reportForm.serialize(); // Serialize form data
+
+        // Send AJAX request to fetch and display report content
+        $.ajax({
+            url: "/admin/get-report-content", // Endpoint URL to fetch report content
+            method: "POST",
+            data: formData, // Send serialized form data
+            success: function (data) {
+                reportContentDiv.html(data); // Update report content
+                exportButton.removeClass("disabled"); // Enable export button
+                $("#modalFilter").modal("hide");
+
+                const reportGoalsTable = $("#adminReportTable").DataTable({
+                    dom: "lrtip",
+                    pageLength: 50,
+                });
+                customsearch.keyup(function () {
+                    reportGoalsTable.search($(this).val()).draw();
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching report content:", error);
+                // Optionally display an error message to the user
+                reportContentDiv.html(
+                    "Error fetching report content. Please try again."
+                );
+            },
+        });
+    });
+
+    // Optional: Add event listener for exportButton if needed
+    exportButton.on("click", function () {
+        const reportContent = reportContentDiv.html();
+        // Code here to handle exporting the report content
+        // console.log("Exporting report content:", reportContent);
+    });
+});
+
+// ===== Goal Filter =====
+$(document).ready(function () {
+    const reportForm = $("#goal_filter_form");
+    const exportButton = $("#export");
+    const reportContentDiv = $("#goal_content");
+    const customsearch = $("#customsearch");
+
+    // Submit form event handler
+    reportForm.on("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission behavior
+
+        const formData = reportForm.serialize(); // Serialize form data
+
+        // Send AJAX request to fetch and display report content
+        $.ajax({
+            url: "/admin/goal-content", // Endpoint URL to fetch report content
+            method: "POST",
+            data: formData, // Send serialized form data
+            success: function (data) {
+                reportContentDiv.html(data); // Update report content
+                exportButton.removeClass("disabled"); // Enable export button
+                $("#modalFilter").modal("hide");
+
+                const goalTable = $("#goalTable").DataTable({
+                    dom: "lrtip",
+                    pageLength: 50,
+                });
+                customsearch.keyup(function () {
+                    goalTable.search($(this).val()).draw();
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data:", error);
+                // Optionally display an error message to the user
+                reportContentDiv.html("Error fetching data. Please try again.");
+            },
+        });
+    });
+
+    // Optional: Add event listener for exportButton if needed
+    exportButton.on("click", function () {
+        const reportContent = reportContentDiv.html();
+        // Code here to handle exporting the report content
+        // console.log("Exporting report content:", reportContent);
+    });
+});
+
+$(document).ready(function () {
     $("#group_company").change(function () {
         const selectedGroupCompany = $(this).val();
 
@@ -196,7 +321,18 @@ $(document).ready(function () {
                 });
             },
             error: function (xhr, status, error) {
-                console.error("Error fetching data:", error);
+                if (xhr.status === 401) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Your Session is Ended",
+                        text: "Login first.",
+                    }).then(() => {
+                        // Redirect to the home page after the SweetAlert is dismissed
+                        window.location.href = "/"; // Adjust the home page URL as needed
+                    });
+                } else {
+                    console.error("Error fetching data:", error);
+                }
             },
         });
     });
@@ -223,3 +359,42 @@ $(document).ready(function () {
         theme: "bootstrap4",
     });
 });
+
+function getAssignmentData(id) {
+    const subContent = $("#subContent");
+    // Send AJAX request to fetch and display report content
+    $.ajax({
+        url: "/admin/get-assignment", // Endpoint URL to fetch report content
+        method: "GET",
+        data: { roleId: id }, // Send serialized form data
+        success: function (data) {
+            subContent.html(data); // Update report content
+            $(".select2").select2({
+                theme: "bootstrap4",
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching data:", error);
+            // Optionally display an error message to the user
+            subContent.html("Error fetching data. Please try again.");
+        },
+    });
+}
+
+function getPermissionData(id) {
+    const subContent = $("#subContent");
+    // Send AJAX request to fetch and display report content
+    $.ajax({
+        url: "/admin/get-permission", // Endpoint URL to fetch report content
+        method: "GET",
+        data: { roleId: id }, // Send serialized form data
+        success: function (data) {
+            subContent.html(data); // Update report content
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching data:", error);
+            // Optionally display an error message to the user
+            subContent.html("Error fetching data. Please try again.");
+        },
+    });
+}

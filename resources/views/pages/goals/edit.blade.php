@@ -12,21 +12,16 @@
     </div>
     @endif
 
+    <div class="alert alert-danger mandatory-field" hidden='false'>
+        All fields is mandatory.
+    </div>
+
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
+            <h1 class="h3">Edit Goals</h1>
         </div>
         <form id="goalForm" action="{{ route('goals.update') }}" method="POST">
-        <div class="d-sm-flex align-items-center justify-content-{{ $goal->form_status=='Draft' ? 'between' : 'end' }} mb-4">
-            @csrf
-            <input type="hidden" name="submit_type" id="submitType" value=""> <!-- Hidden input to store the button clicked -->
-            @if ($goal->form_status=='Draft')
-            <button type="submit" name="save_draft" class="btn btn-outline-secondary btn-sm rounded-pill save-draft" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>
-            @endif
-            <div class="d-flex align-items-center">
-                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary px-4 mr-3">Cancel</a>
-                <button type="submit" name="submit_form" class="btn btn-primary px-4 shadow" onclick="return setSubmitType('submit_form')">Submit</button>
-            </div>
-        </div>
+        @csrf
           <input type="hidden" class="form-control" name="id" value="{{ $goal->id }}">
           <input type="hidden" class="form-control" name="employee_id" value="{{ $goal->employee_id }}">
           <input type="hidden" class="form-control" name="category" value="Goals Setting">
@@ -41,7 +36,7 @@
                     <div class="row mx-auto">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="kpi">KPI</label>
+                                <label for="kpi">KPI {{ $index + 1 }}</label>
                                 <textarea name="kpi[]" id="kpi" class="form-control">{{ $row['kpi'] }}</textarea>
                             </div>
                         </div>
@@ -82,18 +77,6 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label for="weightage">Weightage</label>
-                                <div class="input-group">
-                                    <input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ $row['weightage'] }}" required>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                </div>                                  
-                            </div>
-                            {{ $errors->first("weightage") }}
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
                                 <label for="type">Type</label>
                                 <select class="form-control" name="type[]" id="type" required>
                                     <option value="">Select</option>
@@ -108,14 +91,39 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="weightage">Weightage</label>
+                                <div class="input-group">
+                                    <input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ $row['weightage'] }}" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>                                  
+                            </div>
+                            {{ $errors->first("weightage") }}
+                        </div>
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
-        <input type="hidden" id="count" value="{{ $formCount-1 }}">
+        <input type="hidden" id="count" value="{{ $formCount }}">
         <div class="col-md-2">
             <a class="btn btn-outline-primary badge-pill px-4 mt-2 mb-4" onclick="addField('edit')"><i class="fas fa-plus"></i> Add KPI</a>
+        </div>
+        <div class="d-sm-flex align-items-end justify-content-between mb-4">
+            <input type="hidden" name="submit_type" id="submitType" value=""> <!-- Hidden input to store the button clicked -->
+            <div class="d-flex inline align-items-center justify-content-center mb-3">
+                <h5 class="text-center">Total Weightage : <span class="font-weight-bold text-success" id="totalWeightage">{{ $goal->form_status == "Draft" ? "" : "100%" }}</span></h5>
+            </div>
+            <div class="d-flex align-items-center justify-content-center mb-3">
+                @if ($goal->form_status=='Draft')
+                <button type="submit" name="save_draft" class="btn btn-info save-draft mr-3" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>  
+                @endif
+                <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3">Cancel</a>
+                <button type="submit" name="submit_form" class="btn btn-primary px-4 shadow" onclick="return setSubmitType('submit_form')">Submit</button>
+            </div>
         </div>
         </form>
     </div>

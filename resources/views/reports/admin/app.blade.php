@@ -7,12 +7,13 @@
         <div class="d-sm-flex">
           <div class="form-group">
               <label for="report_type">Select Report:</label>
-              <select class="form-control" onchange="reportType(this.value)">
+              <select class="form-control" onchange="adminReportType(this.value)">
               <option value="">- select -</option>
               <option value="Goal">Goal</option>
+              <option value="Employee">Employee</option>
               </select>
           </div> 
-        </div>
+      </div>
       </div>
       <div class="d-sm-flex align-items-end mb-2">
         <div class="form-group mr-4 d-md-block d-none">
@@ -44,7 +45,7 @@
       <div id="report_content">
           @yield('report_content')
       </div>
-      @include('reports.filter')
+      @include('reports.admin.filter')
     </div>
     <!-- Content -->
   </x-slot>
