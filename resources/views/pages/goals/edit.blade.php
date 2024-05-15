@@ -24,7 +24,7 @@
         @csrf
           <input type="hidden" class="form-control" name="id" value="{{ $goal->id }}">
           <input type="hidden" class="form-control" name="employee_id" value="{{ $goal->employee_id }}">
-          <input type="hidden" class="form-control" name="category" value="Goals Setting">
+          <input type="hidden" class="form-control" name="category" value="Goals">
           <!-- Content Row -->
         <div class="container-card">
         @foreach ($data as $index => $row)

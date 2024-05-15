@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\Admin\GoalController as AdminGoalController;
+use App\Http\Controllers\Admin\OnBehalfController as AdminOnBehalfController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SendbackController as AdminSendbackController;
 use App\Http\Controllers\ApprovalController;
-use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -27,8 +26,6 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use Illuminate\Support\Facades\Route;
-use Spatie\Permission\Middleware\RoleMiddleware;
-use App\Http\Middleware\EnsureUserHasRole;
 
 Route::get('/', function () {
     return redirect('home');
@@ -161,7 +158,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-layer', [LayerController::class, 'updatelayer'])->name('update-layer');
     });
     
-    // Route::middleware(['permission:viewrole'])->group(function () {
+    Route::middleware(['permission:viewrole'])->group(function () {
         // Roles
         Route::get('/admin/roles', [RoleController::class, 'index'])->name('roles');
         Route::post('/admin/roles/submit', [RoleController::class, 'store'])->name('roles.store');
@@ -172,15 +169,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/get-assignment', [RoleController::class, 'getAssignment'])->name('getAssignment');
         Route::get('/admin/get-permission', [RoleController::class, 'getPermission'])->name('getPermission');
         Route::post('/admin/assign-user', [RoleController::class, 'assignUser'])->name('assign.user');
-    // });
+    });
     
-    Route::middleware(['permission:viewgoal'])->group(function () {
+    Route::middleware(['permission:viewonbehalf'])->group(function () {
         // Approval-Admin
-        Route::post('/admin/approval/goal', [AdminGoalController::class, 'store'])->name('admin.approval.goal');
-        Route::get('/admin/approval/goal/{id}', [AdminGoalController::class, 'create'])->name('admin.create.approval.goal');
+        Route::post('/admin/approval/goal', [AdminOnBehalfController::class, 'store'])->name('admin.approval.goal');
+        Route::get('/admin/approval/goal/{id}', [AdminOnBehalfController::class, 'create'])->name('admin.create.approval.goal');
         // Goals - Admin
-        Route::get('/admin/goals', [AdminGoalController::class, 'index'])->name('admin.goals');
-        Route::post('/admin/goal-content', [AdminGoalController::class, 'getGoalContent']);
+        Route::get('/admin/onbehalf', [AdminOnBehalfController::class, 'index'])->name('admin.onbehalf');
+        Route::get('/admin/onbehalf/content', [AdminOnBehalfController::class, 'getOnBehalfContent'])->name('admin.onbehalf.content');
+        Route::post('/admin/onbehalf/content', [AdminOnBehalfController::class, 'getOnBehalfContent']);
+        Route::post('/admin/goal-content', [AdminOnBehalfController::class, 'getGoalContent']);
         // Sendback
         Route::post('/admin/sendback/goal', [AdminSendbackController::class, 'store'])->name('admin.sendback.goal');
     });

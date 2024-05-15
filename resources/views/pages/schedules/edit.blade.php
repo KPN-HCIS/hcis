@@ -31,7 +31,7 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="type">Event Type</label>
-                                            <input type="text" class="form-control bg-light" id="event_type" name="event_type" value="Goals Setting" readonly>
+                                            <input type="text" class="form-control bg-light" id="event_type" name="event_type" value="Goals" readonly>
                                     </div>
                                 </div>
                             </div>

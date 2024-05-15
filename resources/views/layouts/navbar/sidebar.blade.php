@@ -101,11 +101,11 @@
         </div>
     </li>
     @endcan
-    @can('viewgoal')
+    @can('viewonbehalf')
     <li class="nav-item">
-        <a class="nav-link" href="{{ url('/admin/goals') }}">
-            <i class="fas fa-fw fa-flag-checkered"></i>
-            <span>Goals</span>
+        <a class="nav-link" href="{{ url('/admin/onbehalf') }}">
+            <i class="fas fa-fw fa-user-friends"></i>
+            <span>On Behalf</span>
         </a>
     </li>
     @endcan

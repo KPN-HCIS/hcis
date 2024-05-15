@@ -50,7 +50,7 @@ class SendbackController extends Controller
         $model->save();
 
         // Kirim respons JSON ke JavaScript
-        return redirect()->route('admin.goals');        
+        return redirect()->route('admin.onbehalf');        
 
     }
 }

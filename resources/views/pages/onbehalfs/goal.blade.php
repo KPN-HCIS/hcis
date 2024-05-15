@@ -3,7 +3,7 @@
       <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="goalTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="onBehalfTable" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr class="text-center">
                             <th>Employees</th>
@@ -36,7 +36,7 @@
                               @endif
                             </td>
                             @if ($data)
-                            @include('pages.goals.admin.detail')
+                            @include('pages.onbehalfs.detail')
                             @endif
                         </tr>
                         @endforeach

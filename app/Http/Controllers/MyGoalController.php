@@ -9,6 +9,7 @@ use App\Models\ApprovalSnapshots;
 use App\Models\Employee;
 use App\Models\Goal;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -34,7 +35,7 @@ class MyGoalController extends Controller
         ->whereHas('approvalLayer', function ($query) use ($user) {
             $query->where('employee_id', $user)->orWhere('approver_id', $user);
         })
-        ->where('employee_id', Auth::user()->employee_id);
+        ->where('employee_id', $user);
 
         // Apply additional filtering based on the selected year
         if (!empty($filterYear)) {
@@ -92,12 +93,20 @@ class MyGoalController extends Controller
 
         $link = 'goals';
 
-        $employee = Employee::where('employee_id',Auth::user()->employee_id)->first();
+        $employee = Employee::where('employee_id', $user)->first();
 
         $access_menu = json_decode($employee->access_menu, true);
+
         $goals = $access_menu['goals'] ?? null;
+
+        $selectYear = ApprovalRequest::where('employee_id', $user)->select('created_at')->get();
+
+        $selectYear->transform(function ($req) {
+            $req->year = Carbon::parse($req->created_at)->format('Y');
+            return $req;
+        });
         
-        return view('pages.goals.my-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals'));
+        return view('pages.goals.my-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals', 'selectYear'));
        
     }
     function show($id) {

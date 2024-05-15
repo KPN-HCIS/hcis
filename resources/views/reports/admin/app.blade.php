@@ -42,9 +42,7 @@
         </div>
       </div>
       
-      <div id="report_content">
-          @yield('report_content')
-      </div>
+      <div id="report_content"></div>
       @include('reports.admin.filter')
     </div>
     <!-- Content -->

@@ -23,71 +23,97 @@ use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use stdClass;
 
-class GoalController extends Controller
+class OnBehalfController extends Controller
 {
     function index() {
-        
+
         $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
-        $groupCompanies = Location::select('company_name')
-        ->orderBy('company_name')
-        ->distinct()
-        ->pluck('company_name');
+
+        $groupCompanies = Location::select('company_name')->orderBy('company_name')->distinct()->pluck('company_name');
+
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
         
-        // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        $datas = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
-            $query->with('approverName'); // Load nested relationship
-        }])->get();
-        
-        $data = [];
-        
-        foreach ($datas as $request) {
-            // Memeriksa status form dan pembuatnya
-            if ($request->goal->form_status != 'Draft' || $request->created_by == Auth::user()->id) {
-                // Mengambil nilai fullname dari relasi approverName
-                if ($request->approval->first()) {
-                    $approverName = $request->approval->first();
-                    $dataApprover = $approverName->approverName->fullname;
-                }else{
-                    $dataApprover = '';
-                }
-        
-                // Buat objek untuk menyimpan data request dan approver fullname
-                $dataItem = new stdClass();
+        $link = 'Goals';
 
-                $dataItem = $request;              
+        return view('pages.onbehalfs.app', compact('link', 'locations', 'companies', 'groupCompanies'));
+       
+    }
 
-                // Tambahkan objek $dataItem ke dalam array $data
-                $data[] = $dataItem;
-                
-            }
-        }
-        
-        // dd($data);
+    public function getOnBehalfContent(Request $request)
+    {
+        $category = $request->input('category');
 
-        $formData = [];
-        if($datas->isNotEmpty()){
-            $formData = json_decode($datas->first()->goal->form_data, true);
-        }
+        $filterCategory = $request->input('filter_category');
 
-        $path = storage_path('../resources/goal.json');
+        $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
 
-        // Check if the JSON file exists
-        if (!File::exists($path)) {
-            // Handle the situation where the JSON file doesn't exist
-            abort(500, 'JSON file does not exist.');
-        }
+        $groupCompanies = Location::select('company_name')->orderBy('company_name')->distinct()->pluck('company_name');
 
-        // Read the contents of the JSON file
-        $options = json_decode(File::get($path), true);
+        $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        $uomOption = $options['UoM'];
-        $typeOption = $options['Type'];
+        $group_company = $request->input('group_company');
+        $location = $request->input('location');
+        $company = $request->input('company');
+
+        $filters = compact('group_company', 'location', 'company');
 
         $link = 'Goals';
 
-        return view('pages.goals.admin.app', compact('data', 'link', 'formData', 'locations', 'companies', 'groupCompanies'));
-       
+        $data = [];
+
+        
+        if ($category || $filterCategory) {
+            // Mengambil data pengajuan berdasarkan employee_id atau manager_id
+            $datas = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
+                $query->with('approverName'); // Load nested relationship
+            }]);
+            // Apply filters based on request parameters
+            if ($request->filled('group_company')) {
+                $datas->whereHas('employee', function ($datas) use ($group_company) {
+                    $datas->where('group_company', $group_company);
+                });
+            }
+            if ($request->filled('location')) {
+                $datas->whereHas('employee', function ($datas) use ($location) {
+                    $datas->where('work_area_code', $location);
+                });
+            }
+    
+            if ($request->filled('company')) {
+                $datas->whereHas('employee', function ($datas) use ($company) {
+                    $datas->where('contribution_level_code', $company);
+                });
+            }
+    
+            $datas = $datas->get();
+            
+            foreach ($datas as $request) {
+                // Memeriksa status form dan pembuatnya
+                if ($request->goal->form_status != 'Draft' || $request->created_by == Auth::user()->id) {
+                    // Mengambil nilai fullname dari relasi approverName
+                    if ($request->approval->first()) {
+                        $approverName = $request->approval->first();
+                        $dataApprover = $approverName->approverName->fullname;
+                    }else{
+                        $dataApprover = '';
+                    }
+                    // Buat objek untuk menyimpan data request dan approver fullname
+                    $dataItem = new stdClass();
+                    $dataItem = $request;              
+                    // Tambahkan objek $dataItem ke dalam array $data
+                    $data[] = $dataItem;
+                    
+                }
+            }
+        }
+
+        if ($category == 'Goals' || $filterCategory == 'Goals') {
+            return view('pages.onbehalfs.goal', compact('data', 'link', 'locations', 'companies', 'groupCompanies'));
+        } elseif ($category == 'Performance' || $filterCategory == 'Goals') {
+            return view('pages.onbehalfs.performance', compact('data', 'link', 'locations', 'companies', 'groupCompanies'));
+        } else {
+            return ''; // Or return a default view/content
+        }
     }
 
     function create($id) {
@@ -147,7 +173,7 @@ class GoalController extends Controller
         $link = 'Goals';
 
         // dd($data);
-        return view('pages.goals.admin.approval', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
+        return view('pages.onbehalfs.approval', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
 
     }
     
@@ -292,7 +318,7 @@ class GoalController extends Controller
         }
         $approval->save();
             
-        return redirect()->route('admin.goals');
+        return redirect()->route('admin.onbehalf');
     }
 
     public function unitOfMeasurement()
@@ -369,7 +395,7 @@ class GoalController extends Controller
         // Fetch the data based on the constructed query
         $data = $query->get();
         // Determine the report type and return the appropriate view
-            return view('pages.goals.admin.goal', compact('data', 'uomOption', 'typeOption'));
+            return view('pages.onbehalfs.goal', compact('data', 'uomOption', 'typeOption'));
         
     }
 
