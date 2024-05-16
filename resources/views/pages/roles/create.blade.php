@@ -33,7 +33,7 @@
             <label for="roleName">Restrict Company (Keeping blank means no restrictions)</label>
             <select class="form-control select2" name="contribution_level_code[]" multiple="multiple">
               @foreach ($companies as $company)
-                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level }}</option>
+                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level.' ('.$company->contribution_level_code.')' }}</option>
               @endforeach
             </select>
           </div>
