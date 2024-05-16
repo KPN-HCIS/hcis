@@ -12,7 +12,7 @@
     </div>
     @endif
 
-        <div class="alert alert-danger mandatory-field hidden">
+        <div class="alert alert-danger mandatory-field" hidden>
             {{ session('error') }}
         </div>
 

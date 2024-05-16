@@ -12,7 +12,7 @@
     </div>
     @endif
 
-    <div class="alert alert-danger mandatory-field hidden">
+    <div class="alert alert-danger mandatory-field" hidden>
         {{ session('error') }}
     </div>
 
@@ -37,13 +37,13 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="kpi">KPI {{ $index + 1 }}</label>
-                                <textarea name="kpi[]" id="kpi" class="form-control">{{ $row['kpi'] }}</textarea>
+                                <textarea name="kpi[]" id="kpi" class="form-control" required>{{ $row['kpi'] }}</textarea>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="target">Target</label>
-                                <input type="text" name="target[]" value="{{ $row['target'] }}" id="target" class="form-control">
+                                <input type="text" name="target[]" value="{{ $row['target'] }}" id="target" class="form-control" required>
                             </div>
                         </div>
                         <div class="col-md-2">
