@@ -23,7 +23,7 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="name">Schedule Name</label>
-                                        <input type="text" class="form-control bg-light" placeholder="Enter name.." id="name" name="schedule_name">
+                                        <input type="text" class="form-control bg-light" placeholder="Enter name.." id="name" name="schedule_name" required>
                                     </div>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="start">Last Join Date</label>
-                                        <input type="date" name="last_join_date" class="form-control bg-light" id="start" placeholder="mm/dd/yyyy">
+                                        <input type="date" name="last_join_date" class="form-control bg-light" id="start" placeholder="mm/dd/yyyy" required>
                                     </div>
                                 </div>
                             </div>
@@ -102,13 +102,13 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="start">Start Date</label>
-                                        <input type="date" name="start_date" class="form-control bg-light" id="start" placeholder="mm/dd/yyyy">
+                                        <input type="date" name="start_date" class="form-control bg-light" id="start" placeholder="mm/dd/yyyy" required>
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="end">End Date</label>
-                                        <input type="date" name="end_date" class="form-control bg-light" id="end" placeholder="mm/dd/yyyy">
+                                        <input type="date" name="end_date" class="form-control bg-light" id="end" placeholder="mm/dd/yyyy" required>
                                     </div>
                                 </div>
                             </div>
@@ -123,23 +123,43 @@
                                 </div>
                             </div>
                             <div class="reminders" hidden>
-                                <div class="row">
-                                    <div class="col-md">
-                                        <label for="repeatDays">Repeat On</label>
+                                <div class="row my-2">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="inputState">Reminder By</label>
+                                            <select id="inputState" name="inputState" class="form-control" onchange="toggleDivs()">
+                                                <option value="repeaton" selected>Repeat On</option>
+                                                <option value="beforeenddate">Before End Date</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="btn-group w-75" id="repeatDays" role="group" aria-label="Repeat Days">
-                                            <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button">Mon</button>
-                                            <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button">Tue</button>
-                                            <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button">Wed</button>
-                                            <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button">Thu</button>
-                                            <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button">Fri</button>
-                                            <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button">Sat</button>
-                                            <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button">Sun</button>
-                                            <button type="button" class="btn btn-primary btn-sm" id="select-all">Select All</button>
-                                        </div>          
+                                
+                                <div id="repeaton">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="btn-group w-75" id="repeatDays" role="group" aria-label="Repeat Days">
+                                                <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button">Mon</button>
+                                                <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button">Tue</button>
+                                                <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button">Wed</button>
+                                                <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button">Thu</button>
+                                                <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button">Fri</button>
+                                                <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button">Sat</button>
+                                                <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button">Sun</button>
+                                                <button type="button" class="btn btn-primary btn-sm" id="select-all">Select All</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row" id="beforeenddate" style="display: none;">
+                                    <div class="col-md-4">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" name="before_end_date" oninput="validateInput(this)">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">Days</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row my-4">
@@ -177,6 +197,25 @@
         });
         document.getElementById('repeatDaysSelected').value = repeatDaysSelected.join(',');
     });
+
+    function toggleDivs() {
+        var selectBox = document.getElementById("inputState");
+        var repeatOnDiv = document.getElementById("repeaton");
+        var beforeEndDateDiv = document.getElementById("beforeenddate");
+        
+        if (selectBox.value === "repeaton") {
+            repeatOnDiv.style.display = "block";
+            beforeEndDateDiv.style.display = "none";
+        } else {
+            repeatOnDiv.style.display = "none";
+            beforeEndDateDiv.style.display = "block";
+        }
+    }
+
+    function validateInput(input) {
+        //input.value = input.value.replace(/[^0-9,]/g, '');
+        input.value = input.value.replace(/[^0-9]/g, '');
+    }
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>

@@ -100,24 +100,42 @@
                                 </div>
                             </div>
                             <div class="reminders" @if ($model->checkbox_reminder == 0) hidden @endif>
-                                <div class="row">
-                                    <div class="col-md">
-                                        <label for="repeatDays">Repeat On</label>
+                                <div class="row my-2">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="inputState">Reminder By</label>
+                                            <select id="inputState" name="inputState" class="form-control" onchange="toggleDivs()">
+                                                <option value="repeaton" @if ($model->inputState == 'repeaton') selected @endif>Repeat On</option>
+                                                <option value="beforeenddate" @if ($model->inputState == 'beforeenddate') selected @endif>Before End Date</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="btn-group w-75" id="repeatDays" role="group" aria-label="Repeat Days">
-                                            @php $repeat_days = $repeat_days = explode(',', $model->repeat_days); @endphp
-                                            <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button {{ in_array('Mon', $repeat_days) ? 'active' : '' }}">Mon</button>
-                                            <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button {{ in_array('Tue', $repeat_days) ? 'active' : '' }}">Tue</button>
-                                            <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button {{ in_array('Wed', $repeat_days) ? 'active' : '' }}">Wed</button>
-                                            <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button {{ in_array('Thu', $repeat_days) ? 'active' : '' }}">Thu</button>
-                                            <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button {{ in_array('Fri', $repeat_days) ? 'active' : '' }}">Fri</button>
-                                            <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button {{ in_array('Sat', $repeat_days) ? 'active' : '' }}">Sat</button>
-                                            <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button {{ in_array('Sun', $repeat_days) ? 'active' : '' }}">Sun</button>
-                                            <button type="button" class="btn btn-primary btn-sm" id="select-all">Select All</button>
-                                        </div>          
+                                <div id="repeaton" style="display: @if ($model->inputState == 'beforeenddate') none @endif">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="btn-group w-75" id="repeatDays" role="group" aria-label="Repeat Days">
+                                                @php $repeat_days = $repeat_days = explode(',', $model->repeat_days); @endphp
+                                                <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button {{ in_array('Mon', $repeat_days) ? 'active' : '' }}">Mon</button>
+                                                <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button {{ in_array('Tue', $repeat_days) ? 'active' : '' }}">Tue</button>
+                                                <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button {{ in_array('Wed', $repeat_days) ? 'active' : '' }}">Wed</button>
+                                                <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button {{ in_array('Thu', $repeat_days) ? 'active' : '' }}">Thu</button>
+                                                <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button {{ in_array('Fri', $repeat_days) ? 'active' : '' }}">Fri</button>
+                                                <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button {{ in_array('Sat', $repeat_days) ? 'active' : '' }}">Sat</button>
+                                                <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button {{ in_array('Sun', $repeat_days) ? 'active' : '' }}">Sun</button>
+                                                <button type="button" class="btn btn-primary btn-sm" id="select-all">Select All</button>
+                                            </div>          
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="beforeenddate" style="display: @if ($model->inputState == 'repeaton') none @endif">
+                                    <div class="col-md-4">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" name="before_end_date" oninput="validateInput(this)" value="{{ $model->before_end_date }}">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">Days</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row my-4">
@@ -155,6 +173,24 @@
         });
         document.getElementById('repeatDaysSelected').value = repeatDaysSelected.join(',');
     });
+    function toggleDivs() {
+        var selectBox = document.getElementById("inputState");
+        var repeatOnDiv = document.getElementById("repeaton");
+        var beforeEndDateDiv = document.getElementById("beforeenddate");
+        
+        if (selectBox.value === "repeaton") {
+            repeatOnDiv.style.display = "block";
+            beforeEndDateDiv.style.display = "none";
+        } else {
+            repeatOnDiv.style.display = "none";
+            beforeEndDateDiv.style.display = "block";
+        }
+    }
+
+    function validateInput(input) {
+        //input.value = input.value.replace(/[^0-9,]/g, '');
+        input.value = input.value.replace(/[^0-9]/g, '');
+    }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>

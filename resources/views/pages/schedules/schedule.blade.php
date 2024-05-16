@@ -38,7 +38,7 @@
                                     <td>{{ $schedule->start_date }}</td>
                                     <td>{{ $schedule->end_date }}</td>
                                     <td>@if($schedule->checkbox_reminder == '1') Yes @else No @endif</td>
-                                    <td>{{ $schedule->repeat_days }}</td>
+                                    <td>@if($schedule->repeat_days<>'') {{ $schedule->repeat_days }} @else {{ $schedule->before_end_date.' Days Before End Date' }} @endif</td>
                                     <td>{{ $schedule->messages }}</td>
                                     <!--<td><span class="badge badge-success badge-pill w-100">Active</span></td>-->
                                     <td class="text-center">
