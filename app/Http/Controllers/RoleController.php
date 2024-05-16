@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Employee;
+use App\Models\Location;
 use App\Models\ModelHasRole;
 use App\Models\Permission;
 use App\Models\Role;
@@ -40,10 +42,16 @@ class RoleController extends Controller
     function create() {    
         $permissions = Permission::all();
 
+        $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
+
+        $groupCompanies = Location::select('company_name')->orderBy('company_name')->distinct()->pluck('company_name');
+
+        $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
+
         $link = $this->link;
         $active = 'create';
 
-        return view('pages.roles.create', compact('link', 'active', 'permissions'));
+        return view('pages.roles.create', compact('link', 'active', 'permissions', 'locations', 'groupCompanies', 'companies'));
     }
     function manage() {
         $roles = Role::all();
@@ -57,6 +65,12 @@ class RoleController extends Controller
 
         $roleId = $request->input('roleId');
 
+        $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
+
+        $groupCompanies = Location::select('company_name')->orderBy('company_name')->distinct()->pluck('company_name');
+
+        $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
+
         // $roles = Role::with(['modelHasRole'])->where('id', $roleId)->get();
         $roles = ModelHasRole::with(['role'])->whereHas('role', function ($query) use ($roleId) {
             $query->where('id', $roleId);
@@ -66,22 +80,26 @@ class RoleController extends Controller
         $link = $this->link;
         $active = 'manage';
         // dd($roles);
-        return view('pages.roles.assignform', compact('roles', 'link', 'active', 'users', 'roleId'));
+        return view('pages.roles.assignform', compact('roles', 'link', 'active', 'users', 'roleId', 'locations', 'groupCompanies', 'companies'));
     }
     function getPermission(Request $request) {
 
         $roleId = $request->input('roleId');
 
         $roles = Role::with(['permissions'])->where('id', $roleId)->get();
-        // $permissions = Permission::all();
 
-        $permissions = Permission::leftJoin('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
-            ->select('permissions.id', 'permissions.name', 'role_has_permissions.permission_id as role_permission_id')->orderBy('permissions.id')
-            ->get();
+        $permissions = Permission::pluck('name')->toArray();
+
+        $permissionNames = Permission::leftJoin('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
+        ->where('role_id', $roleId)
+        ->pluck('permissions.name')
+        ->toArray();
+
+        // dd($permissionNames);
 
         $link = $this->link;
         $active = 'create';
-        return view('pages.roles.manageform', compact('link', 'active', 'roles', 'permissions', 'roleId'));
+        return view('pages.roles.manageform', compact('link', 'active', 'roles', 'permissions', 'permissionNames', 'roleId'));
     }
 
     public function assignUser(Request $request)
@@ -126,6 +144,19 @@ class RoleController extends Controller
         $roleName = $request->roleName;
         $guardName = 'web';
 
+        $groupCompany = $request->input('group_company', []);
+        $company = $request->input('contribution_level_code', []);
+        $location = $request->input('work_area_code', []);
+
+        $data = [
+            'work_area_code' => empty($location) ? null : $location,
+            'group_company' => empty($groupCompany) ? null : $groupCompany,
+            'contribution_level_code' => empty($company) ? null : $company,
+        ];
+        
+        // Konversi ke JSON format
+        $restriction = json_encode($data);
+
         $existingRole = Role::where('name', $roleName)->first();
 
         if ($existingRole) {
@@ -151,6 +182,7 @@ class RoleController extends Controller
         $role = new Role;
         $role->name = $roleName;
         $role->guard_name = $guardName;
+        $role->restriction = $restriction;
         $role->save();
 
         // Loop through permissions and create new permission records

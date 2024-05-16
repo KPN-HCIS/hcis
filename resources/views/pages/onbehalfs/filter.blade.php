@@ -19,11 +19,10 @@
                     <div class="container-fluid py-3">
                         <!-- Content Row -->
                         <div class="container-card">
-                            <div class="d-sm-flex">
+                            <div class="flex">
                                 <div class="form-group">
                                     <label for="group_company">Group Company</label>
-                                    <select class="form-control" name="group_company" id="group_company">
-                                        <option value="">- select group company -</option>
+                                    <select class="form-control select2" name="group_company[]" id="group_company" multiple>
                                         @foreach ($groupCompanies as $groupCompany)
                                         <option value="{{ $groupCompany }}">{{ $groupCompany }}</option>
                                         @endforeach
@@ -33,10 +32,10 @@
                             <div class="flex">
                                 <div class="form-group">
                                     <label for="company">Company</label>
-                                    <select class="form-control select2" name="company" id="company">
+                                    <select class="form-control select2" name="company[]" id="company" multiple>
                                         <option value="">- select company -</option>
                                         @foreach ($companies as $company)
-                                        <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level }}</option>
+                                        <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level }} ({{ $company->contribution_level_code }})</option>
                                         @endforeach
                                     </select>
                                 </div> 
@@ -44,7 +43,7 @@
                             <div class="flex">
                                 <div class="form-group">
                                     <label for="location">Location</label>
-                                    <select class="form-control select2" name="location" id="location">
+                                    <select class="form-control select2" name="location[]" id="location" multiple>
                                         <option value="">- select location -</option>
                                         @foreach ($locations as $location)
                                         <option value="{{ $location->work_area }}">{{ $location->area.' ('.$location->company_name.')' }}</option>

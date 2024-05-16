@@ -325,6 +325,7 @@ function getAssignmentData(id) {
             $(".select2").select2({
                 theme: "bootstrap4",
             });
+            $("#modalFilter").modal("hide");
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -343,6 +344,10 @@ function getPermissionData(id) {
         data: { roleId: id }, // Send serialized form data
         success: function (data) {
             subContent.html(data); // Update report content
+            $(".select2").select2({
+                theme: "bootstrap4",
+            });
+            $("#modalFilter").modal("hide");
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -414,6 +419,7 @@ $(document).ready(function () {
                 customsearch.keyup(function () {
                     onBehalfTable.search($(this).val()).draw();
                 });
+                $("#modalFilter").modal("hide");
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching data:", error);

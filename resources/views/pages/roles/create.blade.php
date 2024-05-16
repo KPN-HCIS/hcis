@@ -8,14 +8,50 @@
 @endif
   <form action="{{ route('roles.store') }}" method="POST">
     @csrf
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-3">
       <div class="form-group">
           <label for="roleName">Role Name</label>
           <input class="form-control" type="text" name="roleName" placeholder="Enter role name.." required>
+        </div>
+        <button class="btn btn-primary px-4">Create Role</button>
       </div>
-      <button class="btn btn-primary px-4">Create Role</button>
-    </div>
-    <div class="row">
+      <div class="row mb-3">
+        <div class="col-md-8">
+          <div class="form-group">
+            <label for="roleName">Restrict Group Company (Keeping blank means no restrictions)</label>
+            <select class="form-control select2" name="group_company[]" multiple="multiple">
+              @foreach ($groupCompanies as $groupCompany)
+                <option value="{{ $groupCompany }}">{{ $groupCompany }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-8">
+          <div class="form-group">
+            <label for="roleName">Restrict Company (Keeping blank means no restrictions)</label>
+            <select class="form-control select2" name="contribution_level_code[]" multiple="multiple">
+              @foreach ($companies as $company)
+                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-8">
+          <div class="form-group">
+            <label for="roleName">Restrict Location (Keeping blank means no restrictions)</label>
+            <select class="form-control select2" name="work_area_code[]" multiple="multiple">
+              @foreach ($locations as $location)
+                <option value="{{ $location->work_area }}">{{ $location->area.' ('.$location->company_name.')' }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+      </div>
+    <div class="row mb-4">
       <div class="col-md-3 mb-3">
         <div class="list-group" id="list-tab" role="tablist">
           <a class="list-group-item list-group-item-action active" id="list-goal-list" data-toggle="list" href="#list-goal" role="tab" aria-controls="goal">Goals</a>
