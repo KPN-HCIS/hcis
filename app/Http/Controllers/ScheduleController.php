@@ -50,11 +50,23 @@ class ScheduleController extends Controller
         $model->checkbox_reminder   = isset($req->checkbox_reminder) ? $req->checkbox_reminder : 0;
 
         if ($req->checkbox_reminder == 1) {
+            
+            $model->inputState = $req->inputState;
+            
+            if ($req->inputState == 'repeaton') {
+                $model->repeat_days = $req->repeat_days_selected;
+                $model->before_end_date = null;
+            } elseif ($req->inputState == 'beforeenddate') {
+                $model->repeat_days = null;
+                $model->before_end_date = $req->before_end_date;
+            }
+            
             $model->messages = $req->messages;
-            $model->repeat_days = $req->repeat_days_selected;
         } else {
             $model->messages = null;
             $model->repeat_days = null;
+            $model->inputState = null;
+            $model->before_end_date = null;
         }
 
         $model->save();
@@ -129,10 +141,10 @@ class ScheduleController extends Controller
         $model = Schedule::find($req->id_schedule);
 
         $model->schedule_name       = $req->schedule_name;
-        $model->employee_type       = $req->employee_type;
-        $model->bisnis_unit         = $req->bisnis_unit;
-        $model->company_filter      = $req->company_filter;
-        $model->location_filter     = $req->location_filter;
+        $model->employee_type       = !empty($req->employee_type) ? $req->employee_type : '';
+        $model->bisnis_unit         = !empty($req->bisnis_unit) ? $req->bisnis_unit : '';
+        $model->company_filter      = !empty($req->company_filter) ? $req->company_filter : '';
+        $model->location_filter     = !empty($req->location_filter) ? $req->location_filter : '';
 
         $model->last_join_date      = $req->last_join_date;
         $model->start_date          = $req->start_date;
@@ -140,11 +152,23 @@ class ScheduleController extends Controller
         $model->checkbox_reminder   = isset($req->checkbox_reminder) ? $req->checkbox_reminder : 0;
 
         if ($req->checkbox_reminder == 1) {
+            
+            $model->inputState = $req->inputState;
+            
+            if ($req->inputState == 'repeaton') {
+                $model->repeat_days = $req->repeat_days_selected;
+                $model->before_end_date = null;
+            } elseif ($req->inputState == 'beforeenddate') {
+                $model->repeat_days = null;
+                $model->before_end_date = $req->before_end_date;
+            }
+            
             $model->messages = $req->messages;
-            $model->repeat_days = $req->repeat_days_selected;
         } else {
             $model->messages = null;
             $model->repeat_days = null;
+            $model->inputState = null;
+            $model->before_end_date = null;
         }
 
         $model->save();
