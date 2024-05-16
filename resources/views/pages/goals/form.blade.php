@@ -12,9 +12,9 @@
     </div>
     @endif
 
-        <div class="alert alert-danger mandatory-field" hidden>
-            {{ session('error') }}
-        </div>
+    <div class="alert alert-danger mandatory-field" hidden='false'>
+        All fields is mandatory.
+    </div>
 
         <!-- Page Heading -->
         <div class="d-flex align-items-center justify-content-start mb-4">
