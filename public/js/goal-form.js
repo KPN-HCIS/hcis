@@ -105,9 +105,9 @@ function addField(val) {
                 '<label for="type">Type</label>' +
                 '<select class="form-control" name="type[]" id="type" required>' +
                 '<option value="">- Select -</option>' +
-                '<option value="Higher is better">Higher is better</option>' +
-                '<option value="Lower is better">Lower is better</option>' +
-                '<option value="Exact value">Exact value</option>' +
+                '<option value="Higher Better">Higher Better</option>' +
+                '<option value="Lower Better">Lower Better</option>' +
+                '<option value="Exact Value">Exact Value</option>' +
                 "</select>" +
                 "</div>" +
                 "</div>" +

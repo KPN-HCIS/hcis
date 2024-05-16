@@ -134,6 +134,8 @@ class RoleController extends Controller
             }
         }
 
+        app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
+
         // Optionally, you can redirect back to the form or another page after saving
         return redirect()->back()->with('success', 'Users saved successfully!');
     }
@@ -195,6 +197,8 @@ class RoleController extends Controller
                 $rolepermission->save();
             }
         }
+
+        app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return redirect()->route('roles')->with('success', 'Role created successfully!');
     }
