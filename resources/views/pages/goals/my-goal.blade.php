@@ -36,7 +36,7 @@
                 <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Goals {{ $year }}</h6>
                     @if ($row->request->status == 'Pending' && count($row->request->approval) == 0)
-                        <button class="btn btn-primary px-3" href="{{ route('goals.edit', $row->request->goal->id) }}">Edit</button>
+                        <a class="btn btn-primary px-3" href="{{ route('goals.edit', $row->request->goal->id) }}">Edit</a>
                     @endif
                 </div>
                 <div class="card-body">
