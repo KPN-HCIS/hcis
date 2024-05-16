@@ -12,8 +12,8 @@
     </div>
     @endif
 
-    <div class="alert alert-danger mandatory-field" hidden='false'>
-        All fields is mandatory.
+    <div class="alert alert-danger mandatory-field hidden">
+        {{ session('error') }}
     </div>
 
         <!-- Page Heading -->
