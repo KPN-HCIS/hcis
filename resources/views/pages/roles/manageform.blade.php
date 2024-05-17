@@ -10,13 +10,27 @@
       </div>
     </div>
   </div>
+  {{-- @foreach ($restriction as $key => $value)
+  <input type="text" value="{{ $value }}">
+  @endforeach --}}
+  @foreach ($roles as $role)
+  @php
+      // Decode the JSON string
+      $restriction = json_decode($role->restriction, true);
+  @endphp
+  @endforeach
+      
   <div class="row mb-3">
     <div class="col-md-8">
       <div class="form-group">
         <label for="roleName">Restrict Group Company (Keeping blank means no restrictions)</label>
-        <select class="form-control select2" name="group_company[]" multiple="multiple">
-          
-        </select>
+        @if(is_array($restriction) && isset($restriction['group_company']))
+            <select class="form-control select2" name="group_company[]" multiple="multiple">
+              @foreach ($groupCompanies as $groupCompany)
+                  <option value="{{ $groupCompany }}" {{ isset($restriction['group_company']) && in_array($groupCompany, $restriction['group_company']) ? 'selected' : '' }}>{{ $groupCompany }}</option>
+              @endforeach
+            </select>
+        @endif
       </div>
     </div>
   </div>
@@ -25,7 +39,9 @@
       <div class="form-group">
         <label for="roleName">Restrict Company (Keeping blank means no restrictions)</label>
         <select class="form-control select2" name="contribution_level_code[]" multiple="multiple">
-          
+            @foreach ($companies as $company)
+                <option value="{{ $company->contribution_level_code }}" {{ isset($restriction['contribution_level_code']) && in_array($company->contribution_level_code, $restriction['contribution_level_code']) ? 'selected' : '' }}>{{ $company->contribution_level.' ('.$company->contribution_level_code.')' }}</option>
+            @endforeach
         </select>
       </div>
     </div>
@@ -34,9 +50,11 @@
     <div class="col-md-8">
       <div class="form-group">
         <label for="roleName">Restrict Location (Keeping blank means no restrictions)</label>
-        <select class="form-control select2" name="work_area_code[]" multiple="multiple">
-          
-        </select>
+          <select class="form-control select2" name="work_area_code[]" multiple="multiple">
+            @foreach ($locations as $location)
+                <option value="{{ $location->work_area }}" {{ isset($restriction['work_area_code']) && in_array($location->work_area, $restriction['work_area_code']) ? 'selected' : '' }}>{{ $location->area.' ('.$location->company_name.')' }}</option>
+            @endforeach
+          </select>
       </div>
     </div>
   </div>
@@ -61,7 +79,6 @@
                 </ul>
                 <div class="tab-pane fade p-3 active show" id="list-goal-accessibility" role="tabpanel" aria-labelledby="goal-accessibility">
                   <div class="form-check mb-3">
-                    {{-- <input type="text" value="{{ $permissionNames[0].','.$permissionNames[1].','.$permissionNames[2].','.$permissionNames[3].','.$permissionNames[4].','.$permissionNames[5].','.$permissionNames[6].','.$permissionNames[7] }}"> --}}
                     <input class="form-check-input" type="checkbox" value="{{ $permissions[0] }}" name="goalView" {{ isset($permissionNames[0]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="goalView">
                       View

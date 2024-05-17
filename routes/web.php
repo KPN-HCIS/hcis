@@ -158,7 +158,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-layer', [LayerController::class, 'updatelayer'])->name('update-layer');
     });
     
-    // Route::middleware(['permission:viewrole'])->group(function () {
+    Route::middleware(['permission:viewrole'])->group(function () {
         // Roles
         Route::get('/admin/roles', [RoleController::class, 'index'])->name('roles');
         Route::post('/admin/roles/submit', [RoleController::class, 'store'])->name('roles.store');
@@ -169,7 +169,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/get-assignment', [RoleController::class, 'getAssignment'])->name('getAssignment');
         Route::get('/admin/get-permission', [RoleController::class, 'getPermission'])->name('getPermission');
         Route::post('/admin/assign-user', [RoleController::class, 'assignUser'])->name('assign.user');
-    // });
+    });
     
     Route::middleware(['permission:viewonbehalf'])->group(function () {
         // Approval-Admin

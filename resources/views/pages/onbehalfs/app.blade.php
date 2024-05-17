@@ -33,10 +33,11 @@
           </div>
         </div>
         <div class="d-sm-flex align-items-center justify-content-start mb-3">
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">All Task</button>
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">Draft</button>
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">On Progress</button>
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">Completed</button>
+          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="all">All Task</button>
+          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="draft">Draft</button>
+          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="waiting for revision">Waiting For Revision</button>
+          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="waiting for approval">Waiting For Approval</button>
+          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="approved">Approved</button>
         </div>
         <!-- Content Row -->
         <div id="contentOnBehalf"></div>

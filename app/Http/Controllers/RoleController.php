@@ -98,6 +98,12 @@ class RoleController extends Controller
 
         $roles = Role::with(['permissions'])->where('id', $roleId)->get();
 
+        $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
+
+        $groupCompanies = Location::select('company_name')->orderBy('company_name')->distinct()->pluck('company_name');
+
+        $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
+
         $permissions = Permission::orderBy('name')->pluck('name')->toArray();
 
         $permissionNames = Permission::leftJoin('role_has_permissions', function($join) use ($roleId) {
@@ -112,7 +118,7 @@ class RoleController extends Controller
         
         $link = $this->link;
         $active = 'create';
-        return view('pages.roles.manageform', compact('link', 'active', 'roles', 'permissions', 'permissionNames', 'roleId'));
+        return view('pages.roles.manageform', compact('link', 'active', 'roles', 'permissions', 'permissionNames', 'roleId', 'locations', 'groupCompanies', 'companies'));
     }
 
     public function assignUser(Request $request)

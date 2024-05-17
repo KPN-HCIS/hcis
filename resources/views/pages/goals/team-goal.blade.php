@@ -3,12 +3,41 @@
     <x-slot name="content">
     <!-- Begin Page Content -->
     <div class="container-fluid">
-        <div class="d-sm-flex align-items-center justify-content-start mb-4">
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">All Task</button>
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">Active</button>
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">Draft</button>
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">Completed</button>
-          <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3">Revoked</button>
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h1 class="h2">Team Goals</h1>
+        </div>
+        <div class="d-sm-flex align-items-center justify-content-start mb-3">
+            <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="all">All Task</button>
+            <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="draft">Draft</button>
+            <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="waiting for revision">Waiting For Revision</button>
+            <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="waiting for approval">Waiting For Approval</button>
+            <button class="btn btn-outline-primary badge-pill btn-sm px-4 mb-2 mr-3 filter-btn" data-id="approved">Approved</button>
+        </div>
+        <div class="d-sm-flex align-items-end mb-2">
+            <div class="form-group mr-4 d-md-block d-none">
+            <a href="#" class="btn btn-outline-secondary" data-toggle="modal" data-target="#modalFilter"><i class="fas fa-filter"></i></a>
+            </div>
+            <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                </div>
+                <input type="text" name="customsearch" id="customsearch" class="form-control border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
+                <div class="d-sm-none input-group-append">
+                <a href="#" class="input-group-text btn btn-light bg-white" data-toggle="modal" data-target="#modalFilter"><i class="fas fa-filter"></i></a>
+                </div>
+            </div>
+            </div>
+            <div class="form-group ml-md-auto d-flex justify-content-end">
+            <form id="exportForm" action="{{ route('export') }}" method="POST">
+                @csrf
+                <input type="hidden" name="export_report_type" id="export_report_type">
+                <input type="hidden" name="export_group_company" id="export_group_company">
+                <input type="hidden" name="export_company" id="export_company">
+                <input type="hidden" name="export_location" id="export_location">
+                <a id="export" onclick="exportExcel()" class="btn btn-outline-secondary px-4 shadow disabled"><i class="fas fa-arrow-circle-down"></i> Download</a>
+            </form>
+            </div>
         </div>
         <!-- Content Row -->
         <div class="row">
@@ -17,7 +46,7 @@
               <div class="card shadow mb-4">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="taskTable" width="100%" cellspacing="0">
+                        <table class="table table-bordered" id="teamGoalsTable" width="100%" cellspacing="0">
                             <thead class="thead-light">
                                 <tr class="text-center">
                                     <th>Employees</th>
