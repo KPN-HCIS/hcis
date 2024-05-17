@@ -128,7 +128,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" id="beforeenddate" style="display: @if ($model->inputState == 'repeaton') none @endif">
+                                <div class="row" id="beforeenddate" style="display: @if ($model->inputState == 'repeaton' || $model->checkbox_reminder == 0) none @endif">
                                     <div class="col-md-4">
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control" name="before_end_date" oninput="validateInput(this)" value="{{ $model->before_end_date }}">

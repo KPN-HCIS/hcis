@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\Employee;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
+use App\Jobs\SendReminderScheduleEmailJob;
 
 class ScheduleController extends Controller
 {
@@ -119,6 +120,12 @@ class ScheduleController extends Controller
                 $employee->save();
             }
         }
+        //tes email
+        $email = "eriton.dewa@kpn-corp.com";
+        $name = "Eriton";
+        $message = $req->messages;
+
+        dispatch(new SendReminderScheduleEmailJob($email, $name, $message));
         
         Alert::success('Success');
         return redirect()->intended(route('schedules', absolute: false));
@@ -214,6 +221,12 @@ class ScheduleController extends Controller
             $employee->access_menu = $updatedAccessMenu;
             $employee->save();
         }
+        //tes email
+        $email = "eriton.dewa@kpn-corp.com";
+        $name = "Eriton";
+        $message = $req->messages;
+
+        dispatch(new SendReminderScheduleEmailJob($email, $name, $message));
 
         Alert::success('Success');
         return redirect()->intended(route('schedules', absolute: false));
@@ -257,8 +270,6 @@ class ScheduleController extends Controller
                 
                 $employee->access_menu = $updatedAccessMenu;
                 $employee->save();
-
-                
             }
         }
         // Memanggil metode delete() untuk soft delete
