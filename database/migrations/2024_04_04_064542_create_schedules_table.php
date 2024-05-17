@@ -14,14 +14,22 @@ return new class extends Migration
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
             $table->string('schedule_name', 100);
-            $table->string('employee_type', 15);
+            $table->string('event_type', 100);
+            $table->text('employee_type')->nullable();
+            $table->text('bisnis_unit')->nullable();
+            $table->text('company_filter')->nullable();
+            $table->text('location_filter')->nullable();
+            $table->date('last_join_date');
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('checkbox_reminder')->default(0);
+            $table->string('inputState', 50)->nullable();
             $table->string('repeat_days', 50)->nullable();
+            $table->string('before_end_date', 100)->nullable();
             $table->text('messages')->nullable();            
             $table->timestamps();
             $table->softDeletes();
+
         });
     }
 
