@@ -88,7 +88,7 @@
                         <label for="fullname">Full Name:</label>
                         <input type="text" class="form-control" id="fullname" name="fullname" readonly>
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="fullname">cek:</label>
                         <select class="form-control select2" name="asd" id="asd">
                             <option value="test1">Ahmad Dhani</option>
@@ -97,7 +97,7 @@
                             <option value="test4">Dede</option>
                             <option value="test5">Erlang</option>
                         </select>
-                    </div>
+                    </div> --}}
                     <hr>
                     <div class="input-group margin" id="viewlayer">
                         
@@ -161,7 +161,7 @@
 </script>
 <script>
 $(document).ready(function() {
-    
+
     // Apply filter when location dropdown value changes
     $('#locationFilter').on('change', function() {
         applyLocationFilter(table);
