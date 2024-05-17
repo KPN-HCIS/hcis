@@ -33,6 +33,7 @@ class SendbackController extends Controller
 
         $model = ApprovalRequest::find($request->request_id);
         $model->current_approval_id = $sendto;
+        $model->status = $request->sendback;
         $model->sendback_messages = $request->sendback_message;
         $model->updated_by = Auth::user()->id;
         

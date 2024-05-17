@@ -12,9 +12,7 @@
     </div>
     @endif
 
-    <div class="alert alert-danger mandatory-field" hidden='false'>
-        All fields is mandatory.
-    </div>
+    <div class="mandatory-field"></div>
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
             <h1 class="h3">Edit Goals</h1>
@@ -108,9 +106,18 @@
             @endforeach
         </div>
         <input type="hidden" id="count" value="{{ $formCount }}">
+        
         <div class="col-md-2">
             <a class="btn btn-outline-primary badge-pill px-4 mt-2 mb-4" onclick="addField('edit')"><i class="fas fa-plus"></i> Add KPI</a>
         </div>
+        @if ($approvalRequest->sendback_messages)
+            <div class="d-flex align-items-center my-3">
+                <div class="form-group w-100">
+                    <label>Sendback Messages</label>
+                    <textarea class="form-control" @disabled(true)>{{ $approvalRequest->sendback_messages }}</textarea>
+                </div>
+            </div>
+        @endif
         <div class="d-sm-flex align-items-end justify-content-between mb-4">
             <input type="hidden" name="submit_type" id="submitType" value=""> <!-- Hidden input to store the button clicked -->
             <div class="d-flex inline align-items-center justify-content-center mb-3">

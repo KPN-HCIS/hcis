@@ -12,10 +12,7 @@
     </div>
     @endif
 
-    <div class="alert alert-danger mandatory-field" hidden='false'>
-        All fields is mandatory.
-    </div>
-
+    <div class="mandatory-field"></div>
         <!-- Page Heading -->
         <div class="d-flex align-items-center justify-content-start mb-4">
         </div>
@@ -93,7 +90,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-lg-2">
             <a class="btn btn-outline-primary badge-pill px-4 mt-2 mb-4" onclick="addField('input')"><i class="fas fa-plus"></i> Add KPI</a>
         </div>
         <div class="d-sm-flex align-items-end justify-content-between mb-4">

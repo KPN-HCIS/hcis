@@ -61,20 +61,20 @@
                 </ul>
                 <div class="tab-pane fade p-3 active show" id="list-goal-accessibility" role="tabpanel" aria-labelledby="goal-accessibility">
                   <div class="form-check mb-3">
-                    <input type="text" value="{{ $permissionsNames[0] }}">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[0] }}" name="goalView" {{ $permissionNames[0] ? 'checked' : '' }}>
+                    {{-- <input type="text" value="{{ $permissionNames[0].','.$permissionNames[1].','.$permissionNames[2].','.$permissionNames[3].','.$permissionNames[4].','.$permissionNames[5].','.$permissionNames[6].','.$permissionNames[7] }}"> --}}
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[0] }}" name="goalView" {{ isset($permissionNames[0]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="goalView">
                       View
                     </label>
                   </div>
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[1] }}" name="goalApproval" {{ $permissionNames[1] ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[1] }}" name="goalApproval" {{ isset($permissionNames[1]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="goalApproval">
                       Initiate Approval
                     </label>
                   </div>                                                
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[2] }}" name="goalSendback" {{ $permissionNames[2] ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[2] }}" name="goalSendback" {{ isset($permissionNames[2]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="goalSendback">
                       Sendback Approval
                     </label>
@@ -89,7 +89,7 @@
                 </ul>
                 <div class="tab-pane fade p-3 active show" id="list-report-accessibility" role="tabpanel" aria-labelledby="report-accessibility">
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[3] }}" name="reportView" {{ $permissionNames[3] ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[3] }}" name="reportView" {{ isset($permissionNames[3]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="reportView">
                       View
                     </label>
@@ -104,25 +104,25 @@
                 </ul>
                 <div class="tab-pane fade p-3 active show" id="list-setting-accessibility" role="tabpanel" aria-labelledby="setting-accessibility">
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[4] }}" name="settingView" {{ $permissionNames[4] ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[4] }}" name="settingView" {{ isset($permissionNames[4]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="settingView">
                       View
                     </label>
                   </div>
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[5] }}" name="scheduleView" {{ $permissions[5] ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[5] }}" name="scheduleView" {{ isset($permissionNames[5]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="scheduleView">
                       Schedule Settings
                     </label>
                   </div>                                                
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[6] }}" name="layerView" {{ $permissions[6] ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[6] }}" name="layerView" {{ isset($permissionNames[6]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="layerView">
                       Layer Settings
                     </label>
                   </div>
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[7] }}" name="roleView" {{ $permissions[7] ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[7] }}" name="roleView" {{ $permissionNames[7] ? 'checked' : '' }}>
                     <label class="form-check-label" for="roleView">
                       Role Permission Settings
                     </label>

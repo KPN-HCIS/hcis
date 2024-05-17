@@ -33,6 +33,10 @@ class RoleController extends Controller
     }
     function assign() {
         $roles = Role::all();
+
+        if (Auth()->user()->roles->first()->name != 'superadmin') {
+            $roles = $roles->where('name', '!=', 'superadmin');
+        }
         
         $link = $this->link;
         $active = 'assign';
@@ -54,7 +58,12 @@ class RoleController extends Controller
         return view('pages.roles.create', compact('link', 'active', 'permissions', 'locations', 'groupCompanies', 'companies'));
     }
     function manage() {
+
         $roles = Role::all();
+
+        if (Auth()->user()->roles->first()->name != 'superadmin') {
+            $roles = $roles->where('name', '!=', 'superadmin');
+        }
         
         $link = $this->link;
         $active = 'manage';
@@ -75,6 +84,7 @@ class RoleController extends Controller
         $roles = ModelHasRole::with(['role'])->whereHas('role', function ($query) use ($roleId) {
             $query->where('id', $roleId);
         })->get();
+        
         $users = User::select('id', 'name')->get();
         
         $link = $this->link;
@@ -88,15 +98,18 @@ class RoleController extends Controller
 
         $roles = Role::with(['permissions'])->where('id', $roleId)->get();
 
-        $permissions = Permission::pluck('name')->toArray();
+        $permissions = Permission::orderBy('name')->pluck('name')->toArray();
 
-        $permissionNames = Permission::leftJoin('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
-        ->where('role_id', $roleId)
-        ->pluck('permissions.name')
+        $permissionNames = Permission::leftJoin('role_has_permissions', function($join) use ($roleId) {
+            $join->on('role_has_permissions.permission_id', '=', 'permissions.id')
+                ->where('role_has_permissions.role_id', '=', $roleId);
+        })
+        ->select('permissions.id', 'permissions.name', 'role_has_permissions.role_id')
+        ->whereBetween('permissions.id', [1, 9])
+        ->orderBy('permissions.name')
+        ->pluck('role_has_permissions.role_id')
         ->toArray();
-
-        // dd($permissionNames);
-
+        
         $link = $this->link;
         $active = 'create';
         return view('pages.roles.manageform', compact('link', 'active', 'roles', 'permissions', 'permissionNames', 'roleId'));

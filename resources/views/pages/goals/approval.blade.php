@@ -12,9 +12,7 @@
     </div>
     @endif
 
-    <div class="alert alert-danger mandatory-field" hidden='false'>
-        All fields is mandatory.
-    </div>
+    <div class="mandatory-field"></div>
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-start mb-4">
@@ -116,6 +114,7 @@
             @csrf
             <input type="hidden" name="request_id" id="request_id">
             <input type="hidden" name="sendto" id="sendto">
+            <input type="hidden" name="sendback" id="sendback" value="Sendback">
             <textarea @style('display: none') name="sendback_message" id="sendback_message"></textarea>
             <input type="hidden" name="form_id" value="{{ $row->request->form_id }}">
             
@@ -140,7 +139,7 @@
                         @endforeach
                         </div> 
                     <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3 rounded-pill">Cancel</a>
-                    <a href="#" onclick="confirmAprroval()" class="btn btn-primary rounded-pill px-4">Approve</a>
+                    <a href="javascript:void(0)" onclick="confirmAprroval()" class="btn btn-primary rounded-pill px-4">Approve</a>
                 </div>
           </div>
         </form>
@@ -149,5 +148,5 @@
     </x-slot>
 </x-app-layout>
 
-<script src="{{ asset('js/goal-form.js') }}"></script>
+{{-- <script src="{{ asset('js/goal-form.js') }}"></script> --}}
 <script src="{{ asset('js/goal-approval.js') }}"></script>
