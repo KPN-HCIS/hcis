@@ -135,7 +135,8 @@ class ApprovalController extends Controller
         $approvalRequest->status = $statusRequest;
         $approvalRequest->updated_by = Auth::user()->id;
         $approvalRequest->messages = $request->messages;
-        $approvalRequest->sendback_messages = "";
+        $approvalRequest->sendback_messages = null;
+        $approvalRequest->sendback_to = null;
         // Set other attributes as needed
         $approvalRequest->save();
 

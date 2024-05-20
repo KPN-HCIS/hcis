@@ -11,7 +11,7 @@
             <div class="card shadow mb-4">
               <div class="card-body">
                   <div class="table-responsive">
-                      <table class="table table-hover" id="taskTable" width="100%" cellspacing="0">
+                      <table class="table table-hover" id="layerTable" width="100%" cellspacing="0">
                           <thead class="thead-light">
                               <tr class="text-center">
                                 <th>#</th>
@@ -88,6 +88,16 @@
                         <label for="fullname">Full Name:</label>
                         <input type="text" class="form-control" id="fullname" name="fullname" readonly>
                     </div>
+                    {{-- <div class="form-group">
+                        <label for="fullname">cek:</label>
+                        <select class="form-control select2" name="asd" id="asd">
+                            <option value="test1">Ahmad Dhani</option>
+                            <option value="test2">Berlian</option>
+                            <option value="test3">Cici</option>
+                            <option value="test4">Dede</option>
+                            <option value="test5">Erlang</option>
+                        </select>
+                    </div> --}}
                     <hr>
                     <div class="input-group margin" id="viewlayer">
                         
@@ -151,8 +161,6 @@
 </script>
 <script>
 $(document).ready(function() {
-    // Initialize DataTable
-    var table = $('#taskTable').DataTable();
 
     // Apply filter when location dropdown value changes
     $('#locationFilter').on('change', function() {

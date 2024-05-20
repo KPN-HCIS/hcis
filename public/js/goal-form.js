@@ -71,7 +71,7 @@ function addField(val) {
         $(wrapper).append(
             '<div class="card col-md-12 mb-4 shadow-sm">' +
                 ' <div class="card-header border-0 p-0 bg-white d-flex align-items-center justify-content-between"><h1 class="rotate-n-45 text-primary"><i class="fas fa-angle-up p-0"></i></h1><a class="btn btn-danger btn-sm btn-circle remove_field"><i class="fas fa-times"></i></a></div>' +
-                '<div class="card-body pt-0">' +
+                '<div class="card-body p-0">' +
                 '<div class="row mx-auto">' +
                 '<div class="col-md-4">' +
                 '<div class="form-group">' +
@@ -105,9 +105,9 @@ function addField(val) {
                 '<label for="type">Type</label>' +
                 '<select class="form-control" name="type[]" id="type" required>' +
                 '<option value="">- Select -</option>' +
-                '<option value="Higher is better">Higher is better</option>' +
-                '<option value="Lower is better">Lower is better</option>' +
-                '<option value="Exact value">Exact value</option>' +
+                '<option value="Higher Better">Higher Better</option>' +
+                '<option value="Lower Better">Lower Better</option>' +
+                '<option value="Exact Value">Exact Value</option>' +
                 "</select>" +
                 "</div>" +
                 "</div>" +
@@ -168,9 +168,17 @@ populateUoMSelect(firstSelect);
 
 function checkEmptyFields(submitType) {
     const alertField = $(".mandatory-field");
+    alertField.html(`
+        <div id="alertField" class="alert alert-danger alert-dismissible fade" role="alert" hidden>
+            <strong>All fields are mandatory.</strong> Please check the fields below.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `);
     if (submitType === "submit_form") {
         var requiredInputs = document.querySelectorAll(
-            "input[required], select[required]"
+            "input[required], select[required], textarea[required]"
         );
         for (var i = 0; i < requiredInputs.length; i++) {
             if (requiredInputs[i].value.trim() === "") {
@@ -178,9 +186,12 @@ function checkEmptyFields(submitType) {
                     title: "Please fill out all empty fields!",
                     confirmButtonColor: "#3085d6",
                     icon: "error",
-                    // If confirmed, proceed with form submission
+                    didClose: () => {
+                        // Show the alert field after the SweetAlert2 modal is closed
+                        var alertField = $("#alertField");
+                        alertField.removeAttr("hidden").addClass("show");
+                    },
                 });
-                alertField.removeAttr("hidden");
                 return false; // Prevent form submission
             }
         }

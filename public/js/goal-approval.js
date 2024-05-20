@@ -1,7 +1,15 @@
 function checkEmptyFields() {
     const alertField = $(".mandatory-field");
+    alertField.html(`
+        <div id="alertField" class="alert alert-danger alert-dismissible fade" role="alert" hidden>
+            <strong>All fields are mandatory.</strong> Please check the fields below.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `);
     var requiredInputs = document.querySelectorAll(
-        "input[required], select[required]"
+        "input[required], select[required], textarea[required]"
     );
     for (var i = 0; i < requiredInputs.length; i++) {
         if (requiredInputs[i].value.trim() === "") {
@@ -9,9 +17,12 @@ function checkEmptyFields() {
                 title: "Please fill out all empty fields!",
                 confirmButtonColor: "#3085d6",
                 icon: "error",
-                // If confirmed, proceed with form submission
+                didClose: () => {
+                    // Show the alert field after the SweetAlert2 modal is closed
+                    var alertField = $("#alertField");
+                    alertField.removeAttr("hidden").addClass("show");
+                },
             });
-            alertField.removeAttr("hidden");
             return false; // Prevent form submission
         }
     }
@@ -194,4 +205,49 @@ function sendBack(id, nik, name) {
     });
 
     return false;
+}
+
+// Function to calculate and display the sum of weightage inputs
+function updateWeightageSummary() {
+    // Get all input elements with name="weightage[]"
+    var weightageInputs = document.getElementsByName("weightage[]");
+    var totalSum = 0;
+
+    // Iterate through each input element
+    for (var i = 0; i < weightageInputs.length; i++) {
+        var input = weightageInputs[i];
+
+        // Get the value of the input (convert to number)
+        var value = parseFloat(input.value);
+
+        // Check if the value is a valid number and within the allowed range
+        if (!isNaN(value) && value >= 5 && value <= 100) {
+            totalSum += value; // Add valid value to total sum
+        }
+    }
+
+    // Display the total sum in a summary element
+    var summaryElement = document.getElementById("totalWeightage");
+
+    if (totalSum != 100) {
+        summaryElement.classList.remove("text-success");
+        summaryElement.classList.add("text-danger"); // Add text-danger class
+        // Add or update a sibling element to display the additional message
+        if (summaryElement) {
+            summaryElement.textContent = totalSum.toFixed(0) + "% of 100%";
+        }
+    } else {
+        summaryElement.classList.remove("text-danger"); // Remove text-danger class
+        summaryElement.classList.add("text-success"); // Remove text-danger class
+        // Hide the message element if totalSum is 100
+        if (summaryElement) {
+            summaryElement.textContent = totalSum.toFixed(0) + "%";
+        }
+    }
+}
+
+// Add event listener for keyup event on all weightage inputs
+var weightageInputs = document.getElementsByName("weightage[]");
+for (var i = 0; i < weightageInputs.length; i++) {
+    weightageInputs[i].addEventListener("keyup", updateWeightageSummary);
 }

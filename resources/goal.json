@@ -87,6 +87,6 @@
         "Other": ["Other"]
     },
     "Type": {
-        "Type": ["Higher is better", "Lower is better", "Exact value"]
+        "Type": ["Higher Better", "Lower Better", "Exact Value"]
     }
 }

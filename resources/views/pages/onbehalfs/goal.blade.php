@@ -19,7 +19,7 @@
                         @foreach ($data as $row)
                         <tr>
                             <td>{{ $row->employee->fullname }}</td>
-                            <td class="px-5"><a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="badge {{ $row->goal->form_status == 'Draft' ? 'badge-secondary' : ($row->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->goal->form_status == 'Draft' ? 'Draft': ($row->status == 'Pending' ? 'Waiting For Approval' : $row->status) }}</a></td>
+                            <td class="px-5"><a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="badge {{ $row->goal->form_status == 'Draft' || $row->status == 'Sendback' ? 'badge-secondary' : ($row->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill w-100">{{ $row->goal->form_status == 'Draft' ? 'Draft': ($row->status == 'Pending' ? 'Waiting For Approval' : ($row->status == 'Sendback' ? 'Waiting For Revision' : $row->status)) }}</a></td>
                             <td class="text-center">{{ $row->created_at }}</td>
                             <td class="text-center">{{ $row->employee->fullname }}</td>
                             <td class="text-center">{{ $row->updated_at }}</td>

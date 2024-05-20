@@ -1,5 +1,24 @@
 $(document).ready(function () {
-    $("#taskTable").DataTable();
+    const teamGoalsTable = $("#teamGoalsTable").DataTable();
+
+    $(".filter-btn").on("click", function () {
+        const filterValue = $(this).data("id");
+        console.log(filterValue);
+
+        if (filterValue === "all") {
+            teamGoalsTable.search("").draw(); // Clear the search for 'All Task'
+        } else {
+            teamGoalsTable.search(filterValue).draw();
+        }
+    });
+
+    $("#assignTable").DataTable();
+
+    $("#employeeTable").DataTable();
+
+    $("#layerTable").DataTable();
+
+    $("#scheduleTable").DataTable();
 
     const goalTable = $("#goalTable").DataTable({
         dom: "lrtip",
@@ -325,6 +344,7 @@ function getAssignmentData(id) {
             $(".select2").select2({
                 theme: "bootstrap4",
             });
+            $("#modalFilter").modal("hide");
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -343,6 +363,10 @@ function getPermissionData(id) {
         data: { roleId: id }, // Send serialized form data
         success: function (data) {
             subContent.html(data); // Update report content
+            $(".select2").select2({
+                theme: "bootstrap4",
+            });
+            $("#modalFilter").modal("hide");
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -369,12 +393,23 @@ function changeCategory(val) {
         success: function (data) {
             content.html(data); // Update report content
 
-            const reportGoalsTable = $("#onBehalfTable").DataTable({
+            const onBehalfTable = $("#onBehalfTable").DataTable({
                 dom: "lrtip",
                 pageLength: 50,
             });
             customsearch.keyup(function () {
-                reportGoalsTable.search($(this).val()).draw();
+                onBehalfTable.search($(this).val()).draw();
+            });
+
+            $(".filter-btn").on("click", function () {
+                const filterValue = $(this).data("id");
+                console.log(filterValue);
+
+                if (filterValue === "all") {
+                    onBehalfTable.search("").draw(); // Clear the search for 'All Task'
+                } else {
+                    onBehalfTable.search(filterValue).draw();
+                }
             });
         },
         error: function (xhr, status, error) {
@@ -414,6 +449,8 @@ $(document).ready(function () {
                 customsearch.keyup(function () {
                     onBehalfTable.search($(this).val()).draw();
                 });
+                // Event listener for filter buttons
+                $("#modalFilter").modal("hide");
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching data:", error);

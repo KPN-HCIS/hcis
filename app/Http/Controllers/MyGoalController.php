@@ -155,6 +155,8 @@ class MyGoalController extends Controller
         $goals = Goal::with(['approvalRequest'])->where('id', $id)->get();
         $goal =  $goals->first();
 
+        $approvalRequest = ApprovalRequest::where('form_id', $goal->id)->first();
+
         $link = 'goals';
 
         $path = storage_path('../resources/goal.json');
@@ -188,7 +190,7 @@ class MyGoalController extends Controller
 
             $data = json_decode($goal->form_data, true);
 
-            return view('pages.goals.edit', compact('goal', 'formCount', 'link', 'data', 'uomOption', 'selectedUoM', 'typeOption', 'selectedType'));
+            return view('pages.goals.edit', compact('goal', 'formCount', 'link', 'data', 'uomOption', 'selectedUoM', 'typeOption', 'selectedType', 'approvalRequest'));
         }
 
     }
@@ -383,6 +385,13 @@ class MyGoalController extends Controller
         $goal->form_status = $status;
         
         $goal->save();
+
+        $approval = ApprovalRequest::where('form_id', $request->id)->first();
+        $approval->status = 'Pending';
+        $approval->sendback_messages = null;
+        $approval->sendback_to = null;
+        // Set other attributes as needed
+        $approval->save();
 
         $snapshot =  ApprovalSnapshots::where('form_id', $request->id)->where('employee_id', $request->employee_id)->first();
         $snapshot->form_data = $jsonData;

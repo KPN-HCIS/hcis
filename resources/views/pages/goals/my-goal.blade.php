@@ -35,8 +35,8 @@
               <div class="card shadow mb-4">
                 <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Goals {{ $year }}</h6>
-                    @if ($row->request->status == 'Pending' && count($row->request->approval) == 0)
-                        <button class="btn btn-primary px-3" href="{{ route('goals.edit', $row->request->goal->id) }}">Edit</button>
+                    @if ($row->request->status == 'Pending' && count($row->request->approval) == 0 || $row->request->sendback_to == $row->request->employee_id)
+                        <a class="btn btn-primary px-3" href="{{ route('goals.edit', $row->request->goal->id) }}">Edit</a>
                     @endif
                 </div>
                 <div class="card-body">
@@ -60,7 +60,7 @@
                         <div class="col-lg col-sm-12 p-2">
                             <label class="font-weight-bold">Status :</label>
                             <div>
-                                <a href="javascript:void(0)" id="{{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? '' : 'approval'}}{{ $row->request->employee_id }}" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill px-3 py-2">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? ($row->request->sendback_to == $row->request->employee_id ? 'Waiting For Revision' : 'Waiting For Approval' ) : $row->request->status) }}</a>
+                                <a href="javascript:void(0)" id="{{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? '' : 'approval'}}{{ $row->request->employee_id }}" data-id="{{ $row->request->employee_id }}" class="badge {{ $row->request->goal->form_status == 'Draft' || $row->request->sendback_to == $row->request->employee_id ? 'badge-secondary' : ($row->request->status === 'Approved' ? 'badge-success' : 'badge-warning')}} badge-pill px-3 py-2">{{ $row->request->goal->form_status == 'Draft' ? 'Draft': ($row->request->status == 'Pending' ? 'Waiting For Approval' : ($row->request->sendback_to == $row->request->employee_id ? 'Waiting For Revision' : $row->request->status)) }}</a>
                             </div>
                         </div>
                     </div>
