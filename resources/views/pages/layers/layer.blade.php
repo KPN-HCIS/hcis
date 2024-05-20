@@ -224,7 +224,9 @@ function applyLocationFilter(table) {
             $('#viewlayer').append('<div class="input-group mb-2"><div class="input-group-prepend"><span class="input-group-text">Layer ' + layer + '</span></div><select name="nik_app[]" class="form-control select2" style="width:380px">' + selectOptions + '</select></div>');
             layer++;
         }
-        $('.select2').select2();
+        $('.select2').select2({
+                theme: "bootstrap4",
+            });
         $('#editModal').modal('show');
     }
 </script>

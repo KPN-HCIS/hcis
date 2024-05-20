@@ -61,7 +61,7 @@
   <div class="row mb-4">
     <div class="col-md-3 mb-3">
       <div class="list-group" id="list-tab" role="tablist">
-        <a class="list-group-item list-group-item-action active" id="list-goal-list" data-toggle="list" href="#list-goal" role="tab" aria-controls="goal">Goals</a>
+        <a class="list-group-item list-group-item-action active" id="list-onBehalf-list" data-toggle="list" href="#list-onBehalf" role="tab" aria-controls="onBehalf">On Behalfs</a>
         <a class="list-group-item list-group-item-action" id="list-report-list" data-toggle="list" href="#list-report" role="tab" aria-controls="report">Reports</a>
         <a class="list-group-item list-group-item-action" id="list-setting-list" data-toggle="list" href="#list-setting" role="tab" aria-controls="setting">Settings</a>
       </div>
@@ -71,28 +71,29 @@
         <div class="card-body">
           <div class="row">
             <div class="tab-content" id="nav-tabContent">
-              <div class="tab-pane fade active show" id="list-goal" role="tabpanel" aria-labelledby="list-goal-list">
+              <div class="tab-pane fade active show" id="list-onBehalf" role="tabpanel" aria-labelledby="list-onBehalf-list">
                 <ul class="nav">
                   <li class="nav-item">
-                    <a class="nav-link" id="goal-accessibility" data-toggle="list" href="#list-goal-accessibility" role="tab" aria-controls="goal">Accessibility</a>
+                    <a class="nav-link" id="onBehalf-accessibility" data-toggle="list" href="#list-onBehalf-accessibility" role="tab" aria-controls="onBehalf">Accessibility</a>
                   </li>
                 </ul>
-                <div class="tab-pane fade p-3 active show" id="list-goal-accessibility" role="tabpanel" aria-labelledby="goal-accessibility">
+                <div class="tab-pane fade p-3 active show" id="list-onBehalf-accessibility" role="tabpanel" aria-labelledby="onBehalf-accessibility">
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[0] }}" name="goalView" {{ isset($permissionNames[0]) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="goalView">
+                    <input type="hidden" name="adminMenu" value="{{ 9 }}">
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[0] }}" name="onBehalfView" {{ isset($permissionNames[0]) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="onBehalfView">
                       View
                     </label>
                   </div>
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[1] }}" name="goalApproval" {{ isset($permissionNames[1]) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="goalApproval">
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[1] }}" name="onBehalfApproval" {{ isset($permissionNames[1]) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="onBehalfApproval">
                       Initiate Approval
                     </label>
                   </div>                                                
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[2] }}" name="goalSendback" {{ isset($permissionNames[2]) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="goalSendback">
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[2] }}" name="onBehalfSendback" {{ isset($permissionNames[2]) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="onBehalfSendback">
                       Sendback Approval
                     </label>
                   </div>
