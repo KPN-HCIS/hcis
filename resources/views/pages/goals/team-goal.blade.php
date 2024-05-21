@@ -64,7 +64,6 @@
                                     $subordinates = $row->request->subordinates;
                                     $firstSubordinate = $subordinates->isNotEmpty() ? $subordinates->first() : null;
                                     $formStatus = $firstSubordinate ? $firstSubordinate->goal->form_status : null;
-                                    $formId = $firstSubordinate ? $firstSubordinate->goal->form_id : null;
                                     $goalId = $firstSubordinate ? $firstSubordinate->goal->id : null;
                                     $goalData = $firstSubordinate ? $firstSubordinate->goal['form_data'] : null;
                                     $createdAt = $firstSubordinate ? $firstSubordinate->created_at : null;
@@ -90,7 +89,7 @@
                                             @endif
                                             @else
                                             @if ($approverId == Auth::user()->employee_id && $status === 'Pending' || $sendbackTo == Auth::user()->employee_id && $status === 'Sendback' || !$subordinates->isNotEmpty())
-                                                <a href="{{ route('team-goals.approval', $formId) }}" class="btn btn-outline-primary btn-sm badge-pill font-weight-medium px-4">Act</a>
+                                                <a href="{{ route('team-goals.approval', $goalId) }}" class="btn btn-outline-primary btn-sm badge-pill font-weight-medium px-4">Act</a>
                                             @else
                                                 <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $goalId }}"><i class="fas fa-eye"></i></a>
                                             @endif
