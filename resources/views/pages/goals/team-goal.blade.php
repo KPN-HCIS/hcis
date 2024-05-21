@@ -83,7 +83,7 @@
                                     <td class="text-center">{{ $updatedAt }}</td>
                                     <td class="text-center">{{ $updatedBy ? $updatedBy->name.' ('.$updatedBy->employee_id.')' : '-' }}</td>
                                     <td class="text-center">
-                                        @if ($row->request->employee->employee_id == Auth::user()->employee_id || !$subordinates->isNotEmpty())
+                                        @if ($row->request->employee->employee_id == Auth::user()->employee_id || !$subordinates->isNotEmpty() || $formStatus == 'Draft')
                                             @if ($formStatus == 'submitted' || $formStatus == 'Approved')
                                             <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $goalId }}"><i class="fas fa-eye"></i></a>
                                             @endif
