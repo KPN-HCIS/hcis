@@ -89,7 +89,7 @@
                                             <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $goalId }}"><i class="fas fa-eye"></i></a>
                                             @endif
                                             @else
-                                            @if ($approverId == Auth::user()->employee_id && $status === 'Pending' || $sendbackTo == Auth::user()->employee_id && $status === 'Sendback')
+                                            @if ($approverId == Auth::user()->employee_id && $status === 'Pending' || $sendbackTo == Auth::user()->employee_id && $status === 'Sendback' || !$subordinates->isNotEmpty())
                                                 <a href="{{ route('team-goals.approval', $formId) }}" class="btn btn-outline-primary btn-sm badge-pill font-weight-medium px-4">Act</a>
                                             @else
                                                 <a href="javascript:void(0)" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $goalId }}"><i class="fas fa-eye"></i></a>
