@@ -56,7 +56,7 @@ class TeamGoalController extends Controller
                 $firstSubordinate = $request->subordinates->first();
         
                 // Check form status and created_by conditions
-                if ($firstSubordinate->created_by == Auth::user()->id) {
+                if ($firstSubordinate->goal->form_status == 'Draft' || $firstSubordinate->created_by == Auth::user()->id) {
                     
                     // Check if approval relation exists and has elements
                     if ($firstSubordinate->approval->isNotEmpty()) {
