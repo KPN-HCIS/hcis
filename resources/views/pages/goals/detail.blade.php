@@ -1,4 +1,4 @@
-<div class="modal fade" id="modalDetail{{ $row->request->goal->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="modalDetail{{ $goalId }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl mt-2" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -21,7 +21,7 @@
                   <!-- Content Row -->
                   <div class="container-card">
                     @php
-                        $formData = json_decode($row->request->goal['form_data'], true);
+                        $formData = json_decode($goalData, true);
                     @endphp
                     @if ($formData)
                     @foreach ($formData as $index => $data)

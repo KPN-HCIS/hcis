@@ -226,7 +226,7 @@ class RoleController extends Controller
 
     {
         $roleId = $request->roleId;
-        $deleteRolePermission = RoleHasPermission::where('role_id', $roleId)->delete();
+        // $deleteRolePermission = RoleHasPermission::where('role_id', $roleId)->delete();
 
         $groupCompany = $request->input('group_company', []);
         $company = $request->input('contribution_level_code', []);

@@ -90,6 +90,7 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" id="count" value="{{ 1 }}">
         <div class="col-lg-2">
             <a class="btn btn-outline-primary badge-pill px-4 mt-2 mb-4" onclick="addField('input')"><i class="fas fa-plus"></i> Add KPI</a>
         </div>
