@@ -24,13 +24,11 @@
     <div class="col-md-8">
       <div class="form-group">
         <label for="roleName">Restrict Group Company (Keeping blank means no restrictions)</label>
-        @if(is_array($restriction) && isset($restriction['group_company']))
             <select class="form-control select2" name="group_company[]" multiple="multiple">
               @foreach ($groupCompanies as $groupCompany)
                   <option value="{{ $groupCompany }}" {{ isset($restriction['group_company']) && in_array($groupCompany, $restriction['group_company']) ? 'selected' : '' }}>{{ $groupCompany }}</option>
               @endforeach
             </select>
-        @endif
       </div>
     </div>
   </div>
