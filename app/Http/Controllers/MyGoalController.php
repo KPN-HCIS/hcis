@@ -44,6 +44,8 @@ class MyGoalController extends Controller
 
         $datas = $datasQuery->get();
 
+        $adjustByManager = ApprovalLayer::where('approver_id', $datas->first()->updatedBy->employee_id)->where('employee_id', $datas->first()->employee_id)->first();
+        
         $data = [];
         
         foreach ($datas as $request) {
@@ -104,7 +106,7 @@ class MyGoalController extends Controller
             return $req;
         });
         
-        return view('pages.goals.my-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals', 'selectYear'));
+        return view('pages.goals.my-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals', 'selectYear', 'adjustByManager'));
        
     }
     function show($id) {

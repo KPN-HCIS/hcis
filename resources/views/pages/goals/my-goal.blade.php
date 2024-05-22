@@ -55,7 +55,7 @@
                         </div>
                         <div class="col-lg col-sm-12 p-2">
                             <label class="font-weight-bold">Adjusted By :</label>
-                            <p>{{ $row->request->updatedBy ? $row->request->updatedBy->name.' '.$row->request->updatedBy->employee_id : '-' }}{{ $row->request->adjustedBy ? ' (Admin)': '' }}</p>
+                            <p>{{ $row->request->updatedBy ? $row->request->updatedBy->name.' '.$row->request->updatedBy->employee_id : '-' }}{{ $row->request->adjustedBy && empty($adjustByManager) ? ' (Admin)': '' }}</p>
                         </div>
                         <div class="col-lg col-sm-12 p-2">
                             <label class="font-weight-bold">Status :</label>

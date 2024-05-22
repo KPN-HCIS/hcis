@@ -24,21 +24,6 @@ class TeamGoalController extends Controller
         
         $user = Auth::user()->employee_id;
         
-        // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        // ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
-        //     $query->with('approverName'); // Load nested relationship
-        // }])->whereHas('approvalLayer', function ($query) use ($user) {
-        //     $query->where('employee_id', $user)->orWhere('approver_id', $user);
-        // })->where('employee_id', '!=', Auth::user()->employee_id)->get();
-
-        // $datas = Employee::with(['approvalRequest' => function ($query) {
-        //     $query->with(['approvalLayer'=> function ($query) {
-        //         $query->where('approver_id', Auth::user()->employee_id);
-        //     },'goal', 'updatedBy', 'approval' => function ($query) {
-        //         $query->with('approverName');
-        //     }]);
-        // }])->where('employee_id', '!=', Auth::user()->employee_id)->get();
-
         $datas = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
                 $query->with('approverName');
@@ -89,8 +74,7 @@ class TeamGoalController extends Controller
                 $formData = '';
             }
         }
-        // dd($data);
-
+        
         $path = storage_path('../resources/goal.json');
 
         // Check if the JSON file exists
