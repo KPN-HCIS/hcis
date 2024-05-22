@@ -62,10 +62,6 @@ Route::middleware('guest')->group(function () {
     
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
                     ->name('password.email');
-<<<<<<< HEAD
-    
-=======
->>>>>>> 4684ba2e668462c8d2516bc898c62954dc9cd19a
     Route::get('/fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
     
 });
