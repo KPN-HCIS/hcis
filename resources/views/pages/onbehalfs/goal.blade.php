@@ -26,7 +26,7 @@
                             <td class="text-center">{{ $row->updatedBy ? $row->updatedBy->name.' ('.$row->updatedBy->employee_id.')' : '-' }}</td>
                             <td class="text-center">
                               @if ( $row->status === 'Pending')
-                                @can('approvalgoal')
+                                @can('approvalonbehalf')
                                   <a href="{{ route('admin.create.approval.goal', $row->form_id) }}" class="btn btn-outline-primary btn-sm badge-pill font-weight-medium px-4">Act</a>
                                 @else
                                   <a href="#" class="btn btn-outline-secondary btn-sm btn-circle" data-toggle="modal" data-target="#modalDetail{{ $row->goal->id }}"><i class="fas fa-eye"></i></a>
