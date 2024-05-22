@@ -45,6 +45,9 @@ class EmployeeExport implements FromView, WithStyles
         }
 
         $data = $query->get();
+        foreach ($data as $employee) {
+            $employee->access_menu = json_decode($employee->access_menu, true);
+        }
 
         return view('exports.employee', compact('data'));
     }

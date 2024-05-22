@@ -10,6 +10,7 @@ function adminReportType(val) {
         method: "POST",
         data: formData, // Send serialized form data
         success: function (data) {
+            //alert(data);
             reportContentDiv.html(data); // Update report content
             exportButton.removeClass("disabled"); // Enable export button
             $("#modalFilter").modal("hide");

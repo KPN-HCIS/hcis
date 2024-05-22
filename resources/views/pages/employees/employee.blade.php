@@ -41,9 +41,7 @@
                                 <th>Locations</th>
                                 <th>BU</th>
                                 <th>Email</th>
-                                <th>L1</th>
-                                <th>L2</th>                                    
-                                <th>Actions</th>
+                                <th>Menu Goals</th>
                               </tr>
                           </thead>
                           <tbody>
@@ -63,15 +61,7 @@
                                     <td>{{ $employee->office_area." (".$employee->group_company.")" }}</td>
                                     <td>{{ $employee->group_company }}</td>
                                     <td>{{ $employee->email }}</td>
-                                    <td>{{ $employee->manager_l1_id }}</td>
-                                    <td>{{ $employee->manager_l2_id }}</td>
-
-                                    <!--<td><span class="badge badge-success badge-pill w-100">Active</span></td>-->
-                                    <td class="text-center">
-                                        <a href="" class="btn btn-sm btn-circle btn-outline-primary" title="Edit" ><i class="fas fa-edit"></i></a>
-                                        
-                                        <a class="btn btn-sm btn-circle btn-outline-danger" title="Delete" onclick="handleDelete(this)" data-id=""><i class="fas fa-trash-alt"></i></a>
-                                    </td>
+                                    <td></td>
                               </tr>
                               @endforeach
                           </tbody>

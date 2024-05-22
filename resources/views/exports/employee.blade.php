@@ -13,8 +13,7 @@
         <th>Location</th>
         <th>Group Company</th>
         <th>Email</th>
-        <th>L1 Manager</th>
-        <th>L2 Manager</th>
+        <th>Menu Goals</th>
     </tr>
     </thead>
     <tbody>
@@ -32,8 +31,7 @@
             <td>{{ $row->office_area }}</td>
             <td>{{ $row->group_company }}</td>
             <td>{{ $row->email }}</td>
-            <td>{{ $row->manager_l1_id }}</td>
-            <td>{{ $row->manager_l2_id }}</td>
+            <td>{{ isset($row->access_menu['goals']) && $row->access_menu['goals'] == 1 ? 'yes' : 'no' }}</td>
         </tr>
     @endforeach
     </tbody>
