@@ -9,7 +9,6 @@
                         <th>#</th>
                         <th>NIK</th>
                         <th>Name</th>
-                        <th>Gender</th>
                         <th>DOJ</th>
                         <th>Type</th>
                         <th>Unit</th>
@@ -18,37 +17,43 @@
                         <th>PT</th>
                         <th>Locations</th>
                         <th>BU</th>
-                        <th>Email</th>
-                        <th>L1</th>
-                        <th>L2</th>                                    
-                        <th>Actions</th>
+                        <th>Goals Menu</th>
                         </tr>
                     </thead>
                     <tbody>
-
+                    
                     @foreach($data as $row)
+                    @php
+                        $unitParts = explode('(', $row->unit);
+                        $unitWithoutBrackets = trim($unitParts[0]);
+
+                        $designationParts = explode('(', $row->designation);
+                        $desgWithoutBrackets = trim($designationParts[0]);
+
+                    @endphp
                         <tr>
                             <td>{{ $loop->index + 1 }}</td>
                             <td>{{ $row->employee_id }}</td>
                             <td>{{ $row->fullname }}</td>
-                            <td>{{ $row->gender }}</td>
                             <td>{{ $row->date_of_joining }}</td>
                             <td>{{ $row->employee_type }}</td>
-                            <td>{{ $row->unit }}</td>
-                            <td>{{ $row->designation }}</td>
+                            <td>{{ $unitWithoutBrackets }}</td>
+                            <td>{{ $desgWithoutBrackets }}</td>
                             <td>{{ $row->job_level }}</td>
                             <td>{{ $row->contribution_level_code }}</td>
-                            <td>{{ $row->office_area." (".$row->group_company.")" }}</td>
+                            <td>{{ $row->office_area }}</td>
                             <td>{{ $row->group_company }}</td>
-                            <td>{{ $row->email }}</td>
-                            <td>{{ $row->manager_l1_id }}</td>
-                            <td>{{ $row->manager_l2_id }}</td>
-
-                            <!--<td><span class="badge badge-success badge-pill w-100">Active</span></td>-->
-                            <td class="text-center">
-                                <a href="" class="btn btn-sm btn-circle btn-outline-primary" title="Edit" ><i class="fas fa-edit"></i></a>
-                                
-                                <a class="btn btn-sm btn-circle btn-outline-danger" title="Delete" onclick="handleDelete(this)" data-id=""><i class="fas fa-trash-alt"></i></a>
+                            <td>
+                                @php
+                                    $hasGoals = isset($row->access_menu['goals']) && $row->access_menu['goals'] == 1;
+                                @endphp
+                                <p>
+                                    @if ($hasGoals)
+                                        <i class="fa fa-check-circle" style="color: green;"></i>
+                                    @else
+                                        <i class="fa fa-minus-circle" style="color: red;"></i>
+                                    @endif
+                                </p>
                             </td>
                         </tr>
                         @endforeach

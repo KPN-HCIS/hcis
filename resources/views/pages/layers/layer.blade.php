@@ -213,20 +213,44 @@ function applyLocationFilter(table) {
 
         $('#viewlayer').empty();
         $('#nikAppInputs').empty();
-        var layer = 1;
-        for (var i = 0; i < (apps.length+3); i++) {
+        var layerIndex = 1;
+
+        for (var i = 0; i < (apps.length + 3); i++) {
             var selectOptions = '<option value="">- Select -</option>';
             for (var j = 0; j < employees.length; j++) {
                 var selected = (employees[j].employee_id == apps[i]) ? 'selected' : '';
-                selectOptions += '<option value="' + employees[j].employee_id + '" ' + selected + '>' + employees[j].fullname +' - '+ employees[j].employee_id + '</option>';
+                selectOptions += '<option value="' + employees[j].employee_id + '" ' + selected + '>' + employees[j].fullname + ' - ' + employees[j].employee_id + '</option>';
             }
 
-            $('#viewlayer').append('<div class="input-group mb-2"><div class="input-group-prepend"><span class="input-group-text">Layer ' + layer + '</span></div><select name="nik_app[]" class="form-control select2" style="width:380px">' + selectOptions + '</select></div>');
-            layer++;
+            var disabled = (i > apps.length) ? 'disabled' : ''; // Disable additional layers initially
+            $('#viewlayer').append('<div class="input-group mb-2"><div class="input-group-prepend"><span class="input-group-text">Layer ' + layerIndex + '</span></div><select name="nik_app[]" class="form-control select2" style="width:380px" ' + disabled + '>' + selectOptions + '</select></div>');
+            layerIndex++;
         }
+
+        // Initialize Select2
         $('.select2').select2({
-                theme: "bootstrap4",
+            dropdownParent: $('#editModal')
+        });
+
+        // Add change event listener to enable the next layer only if the current one is selected
+        $('#viewlayer .select2').each(function (index) {
+            $(this).on('change', function () {
+                if ($(this).val() !== '') {
+                    // Enable the next select element if current selection is not empty
+                    for (var i = index + 2; i < $('#viewlayer .select2').length; i++) {
+                        if(i === index + 2){
+                            $('#viewlayer .select2').eq(i).val('').prop('disabled', false).trigger('change');
+                        }
+                    }
+                } else {
+                    // Disable the subsequent select elements if the current one is cleared
+                    for (var i = index + 2; i < $('#viewlayer .select2').length; i++) {
+                        $('#viewlayer .select2').eq(i).val('').prop('disabled', true).trigger('change');
+                    }
+                }
             });
+        });
+
         $('#editModal').modal('show');
     }
 </script>
