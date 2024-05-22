@@ -48,7 +48,7 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="target">Target</label>
-                                        <input type="text" name="target[]" value="{{ $data['target'] }}" class="form-control" readonly>
+                                        <input type="number" name="target[]" value="{{ $data['target'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -72,7 +72,7 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="type">Type</label>
-                                        <input type="number" oninput="validateDigits(this)" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" readonly>
+                                        <input type="text" oninput="validateDigits(this)" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
