@@ -23,6 +23,7 @@ use App\Http\Controllers\SendbackController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use Illuminate\Support\Facades\Route;
@@ -62,6 +63,7 @@ Route::middleware('guest')->group(function () {
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
                     ->name('password.email');
     
+    Route::get('/fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
     
 });
 
@@ -137,8 +139,11 @@ Route::middleware('auth')->group(function () {
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
-                ->name('logout');
+    Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    // Route::get('/starter', [HomeController::class, 'starter']);
+    // Route::get('{first}/{second}', [HomeController::class, 'secondLevel'])->name('second');
+    // Route::get('{any}', [HomeController::class, 'root'])->name('any');
     
     // ============================ Administrator ===================================
 
