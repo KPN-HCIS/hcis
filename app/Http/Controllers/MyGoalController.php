@@ -29,7 +29,7 @@ class MyGoalController extends Controller
         $filterYear = $request->input('filterYear');
         
         // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        $datasQuery = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'initiated', 'manager', 'approval' => function ($query) {
+        $datasQuery = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'adjustedBy', 'initiated', 'manager', 'approval' => function ($query) {
             $query->with('approverName'); // Load nested relationship
         }])
         ->whereHas('approvalLayer', function ($query) use ($user) {
@@ -69,8 +69,6 @@ class MyGoalController extends Controller
                 
             }
         }
-        
-        // dd($data);
 
         $formData = [];
         if($datas->isNotEmpty()){
