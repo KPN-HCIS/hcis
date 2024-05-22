@@ -101,13 +101,16 @@ class ReportController extends Controller
             }
 
             $data = $query->get();
+            foreach ($data as $employee) {
+                $employee->access_menu = json_decode($employee->access_menu, true);
+            }
             $route = 'reports.admin.employee';
         } else {
             $data = collect(); // Empty collection for unknown report types
             return false;
         }
 
-        
+
         $link = 'reports';
 
         return view($route, compact('data', 'link', 'filters'));
