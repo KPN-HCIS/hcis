@@ -104,7 +104,7 @@ class RoleController extends Controller
 
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        $permissions = Permission::orderBy('name')->pluck('name')->toArray();
+        $permissions = Permission::orderBy('id')->pluck('id')->toArray();
 
         $permissionNames = Permission::leftJoin('role_has_permissions', function($join) use ($roleId) {
             $join->on('role_has_permissions.permission_id', '=', 'permissions.id')
@@ -186,10 +186,10 @@ class RoleController extends Controller
         }
 
         $permissions = [
-            'adminMenu' => 9, // 9 = adminmenu
-            'goalView' => $request->input('goalView', false), // Use false as default value if not set
-            'goalApproval' => $request->input('goalApproval', false),
-            'goalSendback' => $request->input('goalSendback', false),
+            'adminMenu' => $request->input('adminMenu', false), // 9 = adminmenu
+            'onBehalfView' => $request->input('onBehalfView', false), // Use false as default value if not set
+            'onBehalfApproval' => $request->input('onBehalfApproval', false),
+            'onBehalfSendback' => $request->input('onBehalfSendback', false),
             'reportView' => $request->input('reportView', false),
             'settingView' => $request->input('settingView', false),
             'scheduleView' => $request->input('scheduleView', false),
@@ -226,18 +226,27 @@ class RoleController extends Controller
 
     {
         $roleId = $request->roleId;
+        
+        RoleHasPermission::where('role_id', $roleId)->delete();
 
-        $deleteRolePermission = RoleHasPermission::where('role_id', $roleId)->delete();
+        $groupCompany = $request->input('group_company', []);
+        $company = $request->input('contribution_level_code', []);
+        $location = $request->input('work_area_code', []);
 
-        if (!$deleteRolePermission) {
-            return redirect()->route('roles')->with('error', 'Failed to update permissions!');
-        }
+        $data = [
+            'work_area_code' => empty($location) ? null : $location,
+            'group_company' => empty($groupCompany) ? null : $groupCompany,
+            'contribution_level_code' => empty($company) ? null : $company,
+        ];
+        
+        // // Konversi ke JSON format
+        $restriction = json_encode($data);
 
         $permissions = [
-            'adminMenu' => 9, // 9 = adminmenu
-            'goalView' => $request->input('goalView', false), // Use false as default value if not set
-            'goalApproval' => $request->input('goalApproval', false),
-            'goalSendback' => $request->input('goalSendback', false),
+            'adminMenu' => $request->input('adminMenu', false), // 9 = adminmenu
+            'onBehalfView' => $request->input('onBehalfView', false), // Use false as default value if not set
+            'onBehalfApproval' => $request->input('onBehalfApproval', false),
+            'onBehalfSendback' => $request->input('onBehalfSendback', false),
             'reportView' => $request->input('reportView', false),
             'settingView' => $request->input('settingView', false),
             'scheduleView' => $request->input('scheduleView', false),
@@ -247,6 +256,10 @@ class RoleController extends Controller
 
         // Build permission_id string
         $permission_id = '';
+
+        $role = Role::find($roleId);
+        $role->restriction = $restriction;
+        $role->save();
 
         // Loop through permissions and create new permission records
         foreach ($permissions as $key) {

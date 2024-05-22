@@ -425,10 +425,6 @@ class OnBehalfController extends Controller
         $permissionLocations = $this->permissionLocations;
         $permissionCompanies = $this->permissionCompanies;
         $permissionGroupCompanies = $this->permissionGroupCompanies;
-        
-        $locations = $this->locations;
-        $companies = $this->companies;
-        $groupCompanies = $this->groupCompanies;
 
         $group_company = $request->input('group_company', []);
         $location = $request->input('location', []);
@@ -454,23 +450,6 @@ class OnBehalfController extends Controller
                 }
             }
         });
-
-        // Apply filters based on request parameters
-        if ($groupCompanies->isNotEmpty()){
-            $query->whereHas('employee', function ($query) use ($groupCompanies) {
-                $query->whereIn('group_company', $groupCompanies);
-            });
-        }
-        if ($companies->isNotEmpty()){
-            $query->whereHas('employee', function ($query) use ($companies) {
-                $query->whereIn('contribution_level_code', $companies);
-            });
-        }
-        if ($locations->isNotEmpty()){
-            $query->whereHas('employee', function ($query) use ($locations) {
-                $query->whereIn('work_area_code', $locations);
-            });
-        }
 
         if (!empty($group_company)) {
             $query->whereHas('employee', function ($query) use ($group_company) {

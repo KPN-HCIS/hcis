@@ -251,3 +251,9 @@ var weightageInputs = document.getElementsByName("weightage[]");
 for (var i = 0; i < weightageInputs.length; i++) {
     weightageInputs[i].addEventListener("keyup", updateWeightageSummary);
 }
+
+function validateDigits(input) {
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
+}

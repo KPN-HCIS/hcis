@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->unique();
             $table->string('employee_id');
             $table->string('category');
-            $table->json('form_data')->nullable();
+            $table->json('form_data');
             $table->enum('form_status', ['Draft', 'Submitted', 'Approved', 'Rejected']);
             $table->timestamps();
             $table->softDeletes();

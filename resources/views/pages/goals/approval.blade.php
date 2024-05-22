@@ -131,8 +131,9 @@
             @endif
             <div class="d-sm-flex align-items-center justify-content-end mb-4">
                 <div class="align-item-center justify-content-between text-center mb-4">
-                    <a class="btn btn-info px-4 mr-3 rounded-pill" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
+                    <a class="btn btn-dark px-4 mr-3 rounded-pill" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
                         <div class="dropdown-menu shadow-sm">
+                        <h6 class="dropdown-header dark">Select person below :</h6>
                         <a class="dropdown-item" href="#" onclick="sendBack('{{ $row->request->id }}','{{ $row->request->employee->employee_id }}','{{ $row->request->employee->fullname }}')">{{ $row->request->employee->fullname .' '.$row->request->employee->employee_id }}</a>
                         @foreach ($row->request->approval as $item)
                             <a class="dropdown-item" href="#" onclick="sendBack('{{ $item->request_id }}','{{ $item->approver_id }}','{{ $item->approverName->fullname }}')">{{ $item->approverName->fullname.' '.$item->approver_id }}</a>
