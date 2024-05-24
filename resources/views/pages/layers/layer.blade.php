@@ -3,7 +3,9 @@
     <x-slot name="content">
     <!-- Begin Page Content -->
     <div class="container-fluid">       
-        
+        <div class="d-sm-flex align-items-center justify-content-end mb-4">
+            <button type="button" class="btn btn-primary open-import-modal" title="Edit">Import Layer</button>
+        </div>
         <!-- Content Row -->
         <div class="row">
           <div class="col-md-12">
@@ -18,6 +20,7 @@
                                 <th>NIK</th>
                                 <th>Name</th>
                                 <th>PT</th>
+                                <th>Area</th>
                                 <th>BU</th>
                                 <th>Superior</th>                                 
                                 <th>Actions</th>
@@ -35,6 +38,7 @@
                                     <td>{{ $approvalLayer->employee_id }}</td>
                                     <td>{{ $approvalLayer->fullname }}</td>
                                     <td>{{ $approvalLayer->contribution_level_code }}</td>
+                                    <td>{{ $approvalLayer->office_area }}</td>
                                     <td>{{ $approvalLayer->group_company }}</td>
                                     <td>
                                         @php
@@ -88,16 +92,6 @@
                         <label for="fullname">Full Name:</label>
                         <input type="text" class="form-control" id="fullname" name="fullname" readonly>
                     </div>
-                    {{-- <div class="form-group">
-                        <label for="fullname">cek:</label>
-                        <select class="form-control select2" name="asd" id="asd">
-                            <option value="test1">Ahmad Dhani</option>
-                            <option value="test2">Berlian</option>
-                            <option value="test3">Cici</option>
-                            <option value="test4">Dede</option>
-                            <option value="test5">Erlang</option>
-                        </select>
-                    </div> --}}
                     <hr>
                     <div class="input-group margin" id="viewlayer">
                         
@@ -107,6 +101,33 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary" form="editForm">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- importModal -->
+<div class="modal fade" id="importModal" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Import Superior</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="importForm" action="{{ route('import-layer') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="excelFile">Upload Excel File</label>
+                        <input type="file" class="form-control-file" id="excelFile" name="excelFile" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="importForm">Import Data</button>
             </div>
         </div>
     </div>
@@ -123,6 +144,13 @@
             $('#editModal').modal('show');
         });
     });
+    $(document).ready(function() {
+        $('.open-import-modal').on('click', function() {
+            // var employeeId = $(this).data('employee-id');
+            // $('#employeeId').text(employeeId);
+            $('#importModal').modal('show');
+        });
+    });
 </script>
 <script>
     // Periksa apakah ada pesan sukses
@@ -133,32 +161,7 @@
         alert(successMessage);
     }
 </script>
-<script>
-        function handleDelete(element) {
-            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                var scheduleId = element.getAttribute('data-id');
 
-                fetch('/schedule/' + scheduleId, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Terjadi kesalahan saat menghapus data.');
-                    }
-                    location.reload();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menghapus data.');
-                });
-            }
-        }
-    
-</script>
 <script>
 $(document).ready(function() {
 

@@ -156,6 +156,7 @@ Route::middleware('auth')->group(function () {
         // layer
         Route::get('/layer', [LayerController::class, 'layer'])->name('layer');
         Route::post('/update-layer', [LayerController::class, 'updatelayer'])->name('update-layer');
+        Route::post('/import-layer', [LayerController::class, 'importLayer'])->name('import-layer');
     });
     
     Route::middleware(['permission:viewrole'])->group(function () {

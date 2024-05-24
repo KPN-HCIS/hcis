@@ -165,5 +165,12 @@ return [
 
         // Custom Schedule Service Provider
         App\Providers\ScheduleServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+    ],
+    'aliases' => [
+        // Other aliases
+        'Auth' => Illuminate\Support\Facades\Auth::class,
+        'Session' => Illuminate\Support\Facades\Session::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 ];
