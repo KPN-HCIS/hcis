@@ -40,7 +40,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="target">Target</label>
-                                <input type="text" name="target[]" value="{{ $row['target'] }}" id="target" class="form-control" required>
+                                <input type="number" oninput="validateDigits(this)" name="target[]" value="{{ $row['target'] }}" id="target" class="form-control" required>
                             </div>
                         </div>
                         <div class="col-md-2">

@@ -25,44 +25,71 @@ class TeamGoalController extends Controller
         $user = Auth::user()->employee_id;
         
         // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        $datas = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
-            $query->with('approverName'); // Load nested relationship
-        }])->whereHas('approvalLayer', function ($query) use ($user) {
-            $query->where('employee_id', $user)->orWhere('approver_id', $user);
-        })->where('employee_id', '!=', Auth::user()->employee_id)->get();
+        // ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
+        //     $query->with('approverName'); // Load nested relationship
+        // }])->whereHas('approvalLayer', function ($query) use ($user) {
+        //     $query->where('employee_id', $user)->orWhere('approver_id', $user);
+        // })->where('employee_id', '!=', Auth::user()->employee_id)->get();
+
+        // $datas = Employee::with(['approvalRequest' => function ($query) {
+        //     $query->with(['approvalLayer'=> function ($query) {
+        //         $query->where('approver_id', Auth::user()->employee_id);
+        //     },'goal', 'updatedBy', 'approval' => function ($query) {
+        //         $query->with('approverName');
+        //     }]);
+        // }])->where('employee_id', '!=', Auth::user()->employee_id)->get();
+
+        $datas = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
+            $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
+                $query->with('approverName');
+            }])->whereHas('approvalLayer', function ($query) use ($user) {
+                $query->where('employee_id', $user)->orWhere('approver_id', $user);
+            });
+        }])->where('approver_id', Auth::user()->employee_id)->get();
 
         $data = [];
-        
+        $formData = [];
+
         foreach ($datas as $request) {
-            // Memeriksa status form dan pembuatnya
-            if ($request->goal->form_status != 'Draft' || $request->created_by == Auth::user()->id) {
-                // Mengambil nilai fullname dari relasi approverName
-                if ($request->approval->first()) {
-                    $approverName = $request->approval->first();
-                    $dataApprover = $approverName->approverName->fullname;
-                }else{
-                    $dataApprover = '';
-                }
+            // Check if subordinates is not empty and has elements
+            if ($request->subordinates->isNotEmpty()) {
+                $firstSubordinate = $request->subordinates->first();
         
-                // Buat objek untuk menyimpan data request dan approver fullname
+                // Check form status and created_by conditions
+                if ($firstSubordinate->created_by != Auth::user()->id) {
+                    
+                    // Check if approval relation exists and has elements
+                    if ($firstSubordinate->approval->isNotEmpty()) {
+                        $approverName = $firstSubordinate->approval->first();
+                        $dataApprover = $approverName->approverName->fullname;
+                    } else {
+                        $dataApprover = '';
+                    }
+        
+                    // Create object to store request and approver fullname
+                    $dataItem = new stdClass();
+                    $dataItem->request = $request;
+                    $dataItem->approver_name = $dataApprover;
+        
+                    // Add object to array $data
+                    $data[] = $dataItem;
+
+                    $formData = json_decode($firstSubordinate->goal->form_data, true);
+                }
+            } else {
+                // Handle case when subordinates is empty
+                // Create object with empty or default values
                 $dataItem = new stdClass();
-
                 $dataItem->request = $request;
-                $dataItem->approver_name = $dataApprover;
-              
-
-                // Tambahkan objek $dataItem ke dalam array $data
+                $dataItem->approver_name = ''; // or some default value
+        
+                // Add object to array $data
                 $data[] = $dataItem;
-                
+
+                $formData = '';
             }
         }
-        
         // dd($data);
-
-        $formData = [];
-        if($datas->isNotEmpty()){
-            $formData = json_decode($datas->first()->goal->form_data, true);
-        }
 
         $path = storage_path('../resources/goal.json');
 

@@ -42,7 +42,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="target">Target</label>
-                                <input type="text" name="target[]" value="{{ old('target.0') }}" id="target" class="form-control" required>
+                                <input  type="number" pattern="\d{1,10}" oninput="validateDigits(this)" name="target[]" value="{{ old('target.0') }}" id="target" class="form-control" required>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -90,6 +90,7 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" id="count" value="{{ 1 }}">
         <div class="col-lg-2">
             <a class="btn btn-outline-primary badge-pill px-4 mt-2 mb-4" onclick="addField('input')"><i class="fas fa-plus"></i> Add KPI</a>
         </div>

@@ -16,6 +16,60 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
+    protected $groupCompanies;
+    protected $companies;
+    protected $locations;
+    protected $permissionGroupCompanies;
+    protected $permissionCompanies;
+    protected $permissionLocations;
+    protected $roles;
+
+    public function __construct()
+    {
+        $this->roles = Auth()->user()->roles;
+        
+        $restrictionData = [];
+        if(!is_null($this->roles)){
+            $restrictionData = json_decode($this->roles->first()->restriction, true);
+        }
+        
+        $this->permissionGroupCompanies = $restrictionData['group_company'] ?? [];
+        $this->permissionCompanies = $restrictionData['contribution_level_code'] ?? [];
+        $this->permissionLocations = $restrictionData['work_area_code'] ?? [];
+
+        $groupCompanyCodes = $restrictionData['group_company'] ?? [];
+
+        $this->groupCompanies = Location::select('company_name')
+            ->when(!empty($groupCompanyCodes), function ($query) use ($groupCompanyCodes) {
+                return $query->whereIn('company_name', $groupCompanyCodes);
+            })
+            ->orderBy('company_name')->distinct()->pluck('company_name');
+
+        $workAreaCodes = $restrictionData['work_area_code'] ?? [];
+
+        $this->locations = Location::select('company_name', 'area', 'work_area')
+            ->when(!empty($workAreaCodes) || !empty($groupCompanyCodes), function ($query) use ($workAreaCodes, $groupCompanyCodes) {
+                return $query->where(function ($query) use ($workAreaCodes, $groupCompanyCodes) {
+                    if (!empty($workAreaCodes)) {
+                        $query->whereIn('work_area', $workAreaCodes);
+                    }
+                    if (!empty($groupCompanyCodes)) {
+                        $query->orWhereIn('company_name', $groupCompanyCodes);
+                    }
+                });
+            })
+            ->orderBy('area')
+            ->get();
+
+        $companyCodes = $restrictionData['contribution_level_code'] ?? [];
+
+        $this->companies = Company::select('contribution_level', 'contribution_level_code')
+            ->when(!empty($companyCodes), function ($query) use ($companyCodes) {
+                return $query->whereIn('contribution_level_code', $companyCodes);
+            })
+            ->orderBy('contribution_level_code')->get();
+    }
+    
     function index() {
         $link = 'reports';
 
@@ -61,6 +115,9 @@ class ReportController extends Controller
         $group_company = $request->input('group_company');
         $location = $request->input('location');
         $company = $request->input('company');
+        $permissionLocations = $this->permissionLocations;
+        $permissionCompanies = $this->permissionCompanies;
+        $permissionGroupCompanies = $this->permissionGroupCompanies;
 
         $filters = compact('report_type', 'group_company', 'location', 'company');
 
@@ -68,21 +125,37 @@ class ReportController extends Controller
         if ($report_type === 'Goal') {
             $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated']);
 
-            if ($group_company) {
+            if (!empty($group_company)) {
                 $query->whereHas('employee', function ($query) use ($group_company) {
                     $query->where('group_company', $group_company)->orderBy('fullname');
                 });
             }
-            if ($location) {
+            if (!empty($location)) {
                 $query->whereHas('employee', function ($query) use ($location) {
                     $query->where('work_area_code', $location);
                 });
             }
-            if ($company) {
+            if (!empty($company)) {
                 $query->whereHas('employee', function ($query) use ($company) {
                     $query->where('contribution_level_code', $company);
                 });
             }
+
+            $criteria = [
+                'work_area_code' => $permissionLocations,
+                'group_company' => $permissionGroupCompanies,
+                'contribution_level_code' => $permissionCompanies,
+            ];
+    
+            $query->where(function ($query) use ($criteria) {
+                foreach ($criteria as $key => $value) {
+                    if ($value !== null && !empty($value)) {
+                        $query->orWhereHas('employee', function ($subquery) use ($key, $value) {
+                            $subquery->whereIn($key, $value);
+                        });
+                    }
+                }
+            });
 
             // Apply employee filters
             $data = $query->get();
@@ -90,15 +163,29 @@ class ReportController extends Controller
         } elseif ($report_type === 'Employee') {
             $query = Employee::query()->orderBy('fullname'); // Start with Employee model
 
-            if ($group_company) {
+            if (!empty($group_company)) {
                     $query->where('group_company', $group_company)->orderBy('fullname');
             }
-            if ($location) {
+            if (!empty($location)) {
                     $query->where('work_area_code', $location);
             }
-            if ($company) {
+            if (!empty($company)) {
                     $query->where('contribution_level_code', $company);
             }
+
+            $criteria = [
+                'work_area_code' => $permissionLocations,
+                'group_company' => $permissionGroupCompanies,
+                'contribution_level_code' => $permissionCompanies,
+            ];
+    
+            $query->where(function ($query) use ($criteria) {
+                foreach ($criteria as $key => $value) {
+                    if ($value !== null && !empty($value)) {
+                        $query->whereIn($key, $value);
+                    }
+                }
+            });
 
             $data = $query->get();
             foreach ($data as $employee) {

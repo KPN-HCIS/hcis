@@ -19,11 +19,7 @@ class SendbackController extends Controller
         $firstApproval = $checkRequest->approval()
         ->orderBy('id') // Urutkan berdasarkan ID (secara default akan urutkan dari yang terkecil)
         ->first();
-
-        $approval_id = Approval::where('request_id', $request->request_id)->where('approver_id', $request->sendto)->value('id');
-
-        $approver_ids = Approval::where('request_id', $request->request_id)->where('id', '>=', $approval_id)->pluck('approver_id')->toArray();
-        // dd($approver_ids);
+        
         if ($checkRequest->employee_id == $request->sendto) {
             $approval = Approval::where('request_id', $request->request_id);
             $approval->delete();
@@ -33,6 +29,10 @@ class SendbackController extends Controller
                 $sendto = $checkRequest->current_approval_id;
             }
         }else{
+            $approval_id = Approval::where('request_id', $request->request_id)->where('approver_id', $request->sendto)->value('id');
+
+            $approver_ids = Approval::where('request_id', $request->request_id)->where('id', '>=', $approval_id)->pluck('approver_id')->toArray();
+
             $approval = Approval::where('id', '>=', $approval_id)->where('request_id', $request->request_id);
             $approval->delete();
 
@@ -44,6 +44,8 @@ class SendbackController extends Controller
 
         $model = ApprovalRequest::find($request->request_id);
         $model->current_approval_id = $sendto;
+        $model->sendback_to = $request->sendto;
+        $model->status = $request->sendback;
         $model->sendback_messages = $request->sendback_message;
         $model->updated_by = Auth::user()->id;
         

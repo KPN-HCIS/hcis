@@ -101,6 +101,7 @@
                                             <div class="form-group">
                                                 <label class="font-weight-bold">UoM</label>
                                                 <p>{{ $data['uom'] }}</p>
+                                                <p>{{ is_null($data['custom_uom']) ? '': $data['custom_uom'] }}</p>
                                             </div>
                                         </div>
                                         <div class="col-lg col-sm-12 p-2">

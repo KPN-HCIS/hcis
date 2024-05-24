@@ -7,7 +7,7 @@
         <form id="categoryForm" action="{{ route('admin.onbehalf.content') }}" method="GET">
             <div class="d-flex align-items-end">
                 <div class="form-group mr-3">
-                    <label for="category">Year</label>
+                    <label for="category">Select Category :</label>
                     <select name="category" id="category" onchange="changeCategory(this.value)" class="form-control" @style('width: 120px')>
                         <option value="">select all</option>
                         <option value="Goals">Goals</option>

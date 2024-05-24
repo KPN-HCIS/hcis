@@ -83,7 +83,7 @@ function addField(val) {
                 "</div>" +
                 '<div class="col-md-2">' +
                 '<div class="form-group">' +
-                '<label for="target">Target</label><input type="text" name="target[]" id="target" class="form-control" required>' +
+                '<label for="target">Target</label><input type="number" oninput="validateDigits(this)" name="target[]" id="target" class="form-control" required>' +
                 "</div>" +
                 "</div>" +
                 '<div class="col-md-2">' +
@@ -348,4 +348,10 @@ function updateWeightageSummary() {
 var weightageInputs = document.getElementsByName("weightage[]");
 for (var i = 0; i < weightageInputs.length; i++) {
     weightageInputs[i].addEventListener("keyup", updateWeightageSummary);
+}
+
+function validateDigits(input) {
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
 }
