@@ -44,7 +44,7 @@ class MyGoalController extends Controller
 
         $datas = $datasQuery->get();
 
-        if ($datas->first()->updatedBy) {    
+        if (!empty($datas->first()->updatedBy)) {    
             $adjustByManager = ApprovalLayer::where('approver_id', $datas->first()->updatedBy->employee_id)->where('employee_id', $datas->first()->employee_id)->first();
         } else {
             $adjustByManager = null;
