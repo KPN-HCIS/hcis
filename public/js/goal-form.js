@@ -143,7 +143,7 @@ function addField(val) {
         }
     } else {
         Swal.fire({
-            title: "Oops, you've exceeded the maximum KPI inputs",
+            title: "Oops, you've reached the maximum number of KPI",
             icon: "error",
             confirmButtonColor: "#3085d6",
             confirmButtonText: "OK",
