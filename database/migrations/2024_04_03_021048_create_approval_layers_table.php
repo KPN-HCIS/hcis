@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('employee_id');
             $table->string('approver_id');
-            $table->enum('layer', ['1','2','3','4','5']);
+            $table->enum('layer', ['1','2','3','4','5','6','7','8','9']);
+            $table->string('updated_by');
             $table->timestamps();
         });
     }

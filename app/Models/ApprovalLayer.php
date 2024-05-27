@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ApprovalLayer extends Model
 {
     use HasFactory;
-    protected $fillable = ['employee_id', 'approver_id', 'layer'];
+    protected $fillable = ['employee_id', 'approver_id', 'layer', 'updated_by'];
 
     public function employee()
     {
