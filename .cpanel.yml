@@ -1,15 +1,15 @@
 ---
 deployment:
   tasks:
-    # - export DEPLOYPATH=/home/hcispanel/laravel/
-    - export DEPLOYPATH=/home/hcis2460/laravel/
+    - export DEPLOYPATH=/home/hcispanel/laravel/
+    # - export DEPLOYPATH=/home/hcis2460/laravel/
 
     # Copy essential Laravel application directories to deployment path
     - /bin/cp -r app bootstrap config database routes resources $DEPLOYPATH
 
     # Copy public assets to the public_html directory
-    # - /bin/cp -r public/assets public/css public/img public/js public/vendor /home/hcispanel/public_html/
-    - /bin/cp -r public/assets public/css public/img public/js public/vendor /home/hcis2460/public_html/
+    - /bin/cp -r public/assets public/css public/img public/images public/js public/scss public/vendor /home/hcispanel/public_html/hcis.live
+    # - /bin/cp -r public/assets public/css public/img public/js public/vendor /home/hcis2460/public_html/
 
     # Change directory to the deployment path
     - cd $DEPLOYPATH
@@ -18,5 +18,5 @@ deployment:
     # - composer install --no-dev --optimize-autoloader
 
     # Clear Laravel application cache
-    - php artisan optimize
-    - php artisan cache:clear
+    # - php artisan optimize
+    - php artisan optimize:clear
