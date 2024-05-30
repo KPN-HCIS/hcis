@@ -133,7 +133,7 @@
                     </div> --}}
                     <div class="form-group">
                         <label for="fullname"><br>Download Templete here : </label>
-                        <a href="{{ asset('files/template.xls') }}" download>Download</a>
+                        <a href="{{ asset('files/template.xls') }}" download>Import_Excel</a>
                     </div>
                 </form>
             </div>
