@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ApprovalLayer;
+use App\Models\ApprovalLayer; 
+use App\Models\ApprovalRequest;
+use App\Models\Approval;
 use App\Models\User;
 use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
@@ -77,8 +79,30 @@ class LayerController extends Controller
                     'layer' => $layer,
                     'updated_by' => $userId
                 ]);    
+
+                if($layer===1){
+                    $cekApprovalRequest = ApprovalRequest::where('employee_id', $employeeId)
+                                         ->where('status', ['pending', 'sendback'])
+                                         ->get();
+
+                    if ($cekApprovalRequest->isNotEmpty()) {
+                        $approvalRequestIds = $cekApprovalRequest->pluck('id');
+                
+                        DB::transaction(function() use ($employeeId, $approverId, $approvalRequestIds) {
+                            ApprovalRequest::where('employee_id', $employeeId)
+                                           ->where('status', ['pending', 'sendback'])
+                                           ->update([
+                                               'current_approval_id' => $approverId,
+                                               'updated_by' => null,
+                                               'updated_at' => null
+                                           ]);
+                
+                            Approval::whereIn('request_id', $approvalRequestIds)
+                                    ->delete();
+                        });
+                    }
+                }
             }
-            //$cek=$cek.''.$approverId.'-'.$layer.'||';
             $layer++;
         }
 
