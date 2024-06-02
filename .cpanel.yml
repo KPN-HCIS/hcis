@@ -1,0 +1,22 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/hcispanel/hc-pm/
+
+    # Copy essential Laravel application directories to deployment path
+    # - /bin/cp -r app bootstrap config database routes resources $DEPLOYPATH
+
+    # Copy public assets to the public_html directory
+    # - /bin/cp -r public/assets public/css public/img public/images public/js public/scss public/vendor public/build /home/hcispanel/public_html/hcis.live
+
+    # Change directory to the deployment path
+    - cd $DEPLOYPATH
+
+    # Install production dependencies using Composer
+    - composer install --no-dev --optimize-autoloader
+
+    # Run database migrations (for first deployment)
+    - php artisan migrate --force
+
+    # Clear Laravel application cache
+    - php artisan optimize
