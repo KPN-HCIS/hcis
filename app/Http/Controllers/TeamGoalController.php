@@ -64,15 +64,71 @@ class TeamGoalController extends Controller
             });
         });
 
-        $notasks = ApprovalLayer::with(['employee','subordinates'])
-        ->where('approver_id', Auth::user()->employee_id)
+        // $tasks = ApprovalLayer::with([
+        //     'employee',
+        //     'subordinates' => function ($query) use ($user) {
+        //         $query->with([
+        //             'goal', 
+        //             'updatedBy', 
+        //             'approval' => function ($query) {
+        //                 $query->with('approverName');
+        //             }
+        //         ])->whereHas('approvalLayer', function ($query) use ($user) {
+        //             $query->where('employee_id', $user)->orWhere('approver_id', $user);
+        //         });
+        //     }
+        // ])
+        // ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
+        // ->leftJoin('schedules', function($join) {
+        //     $join->on('employees.employee_type', '=', 'schedules.employee_type')
+        //         ->whereRaw('FIND_IN_SET(employees.group_company, schedules.bisnis_unit)')
+        //         ->where(function($query) {
+        //             $query->whereRaw('(schedules.company_filter IS NULL OR schedules.company_filter = "")')
+        //                   ->orWhereRaw('FIND_IN_SET(employees.company_name, schedules.company_filter)');
+        //         })
+        //         ->where(function($query) {
+        //             $query->whereRaw('(schedules.location_filter IS NULL OR schedules.location_filter = "")')
+        //                   ->orWhereRaw('FIND_IN_SET(employees.work_area_code, schedules.location_filter)');
+        //         });
+        // })
+        // ->whereColumn('employees.date_of_joining', '<', 'schedules.last_join_date')
+        // ->whereNull('schedules.deleted_at')
+        // ->whereHas('subordinates')
+        // ->where('approval_layers.approver_id', $user)
+        // ->select('approval_layers.*', 'employees.date_of_joining', 'schedules.last_join_date')
+        // ->distinct()
+        // ->get();
+
+        $notasks = ApprovalLayer::with(['employee', 'subordinates'])
+        ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
+        ->leftJoin('schedules', function($join) {
+            $join->on('employees.employee_type', '=', 'schedules.employee_type')
+                ->whereRaw('FIND_IN_SET(employees.group_company, schedules.bisnis_unit)')
+                ->where(function($query) {
+                    $query->whereRaw('(schedules.company_filter IS NULL OR schedules.company_filter = "")')
+                        ->orWhereRaw('FIND_IN_SET(employees.company_name, schedules.company_filter)');
+                })
+                ->where(function($query) {
+                    $query->whereRaw('(schedules.location_filter IS NULL OR schedules.location_filter = "")')
+                        ->orWhereRaw('FIND_IN_SET(employees.work_area_code, schedules.location_filter)');
+                });
+        })
+        ->whereColumn('employees.date_of_joining', '<', 'schedules.last_join_date')
+        ->whereNull('schedules.deleted_at')
+        ->where('approval_layers.approver_id', $user)
         ->whereDoesntHave('subordinates', function ($query) use ($user) {
-            $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
-                $query->with('approverName');
-            }])->whereHas('approvalLayer', function ($query) use ($user) {
+            $query->with([
+                'goal', 
+                'updatedBy', 
+                'approval' => function ($query) {
+                    $query->with('approverName');
+                }
+            ])->whereHas('approvalLayer', function ($query) use ($user) {
                 $query->where('employee_id', $user)->orWhere('approver_id', $user);
             });
         })
+        ->select('approval_layers.*', 'employees.date_of_joining', 'schedules.last_join_date')
+        ->distinct()
         ->get();
 
         $notasks->map(function($item) {
