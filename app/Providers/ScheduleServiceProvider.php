@@ -21,6 +21,7 @@ class ScheduleServiceProvider extends ServiceProvider
      */
     public function boot(Schedule $schedule)
     {
-        $schedule->command(FetchAndStoreEmployees::class)->dailyAt('10:00');
+        $schedule->command(FetchAndStoreEmployees::class)->dailyAt('12:00');
+        //$schedule->command('fetch:employees')->everyFiveMinutes();
     }
 }
