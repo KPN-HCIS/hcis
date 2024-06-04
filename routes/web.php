@@ -37,6 +37,8 @@ Route::get('/home', function () {
 
 Route::get('dbauth', [SsoController::class, 'dbauth']);
 
+Route::get('fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
@@ -60,9 +62,7 @@ Route::middleware('guest')->group(function () {
     Route::get('reset-password-email', [PasswordResetLinkController::class, 'selfResetView']);
     
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-                    ->name('password.email');
-    Route::get('/fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
-    
+                    ->name('password.email');    
 });
 
 

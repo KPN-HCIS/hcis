@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Employee;
+use App\Models\User;
+use App\Models\ApprovalLayer;
 use App\Models\Location;
 use Illuminate\Support\Facades\Http;
 
@@ -47,6 +49,16 @@ class EmployeeController extends Controller
 
         // Simpan data ke database
         foreach ($employees as $employee) {
+            User::updateOrCreate(
+                ['employee_id' => $employee['employee_id']],
+                [
+                    'id' => $employee['user_unique_id'],
+                    'employee_id' => $employee['employee_id'],
+                    'name' => $employee['full_name'],
+                    'email' => $employee['company_email_id']
+                ]
+            );
+
             Employee::updateOrCreate(
                 ['employee_id' => $employee['employee_id']], // Kondisi untuk update
                 [
@@ -70,6 +82,24 @@ class EmployeeController extends Controller
                     'users_id' => $employee['user_unique_id']
                 ]
             );
+
+            $approvalLayerExists = ApprovalLayer::where('employee_id', $employee['employee_id'])->exists();
+
+            // If not exists, insert two records
+            if (!$approvalLayerExists) {
+                ApprovalLayer::create([
+                    'employee_id' => $employee['employee_id'],
+                    'approver_id' => $employee['direct_manager_employee_id'],
+                    'layer' => '1'
+                ]);
+
+                ApprovalLayer::create([
+                    'employee_id' => $employee['employee_id'],
+                    'approver_id' => $employee['l2_manager_employee_id'],
+                    'layer' => '2'
+                ]);
+            }
+
             $number_data++;
         }
 
