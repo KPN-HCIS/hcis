@@ -79,7 +79,7 @@
                         <h6 class="my-0 fw-normal">{{ auth()->user()->employee_id }}</h6>
                     </span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown mt-2">
 
                     <!-- item-->
                     <a href="{{ route('second', ['auth', 'lock-screen']) }}" class="dropdown-item">
