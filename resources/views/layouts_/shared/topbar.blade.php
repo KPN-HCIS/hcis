@@ -4,7 +4,7 @@
         <div class="d-flex align-items-center gap-lg-2 gap-1">
 
             <!-- Topbar Brand Logo -->
-            <div class="logo-topbar">
+            <div class="logo-topbar d-none">
                 <!-- Logo light -->
                 <a href="/" class="logo-light">
                     <span class="logo-lg">
@@ -43,7 +43,7 @@
         </div>
 
         <ul class="topbar-menu d-flex align-items-center gap-3">
-            <li class="dropdown d-lg-none">
+            <li class="dropdown d-none">
                 <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     <i class="ri-search-line fs-22"></i>
                 </a>
@@ -54,14 +54,14 @@
                 </div>
             </li>
 
-            <li class="d-none d-sm-inline-block">
+            <li class="d-none">
                 <div class="nav-link" id="light-dark-mode" data-bs-toggle="tooltip" data-bs-placement="left" title="Theme Mode">
                     <i class="ri-moon-line fs-22"></i>
                 </div>
             </li>
 
 
-            <li class="d-none d-md-inline-block">
+            <li class="d-none">
                 <a class="nav-link" href="" data-toggle="fullscreen">
                     <i class="ri-fullscreen-line fs-22"></i>
                 </a>
