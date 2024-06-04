@@ -66,18 +66,22 @@
                         <li>
                             <a href="{{ route('goals') }}">My Goals</a>
                         </li>
+                        @if(auth()->user()->isApprover())
                         <li>
                             <a href="{{ route('team-goals') }}">Team Goals</a>
                         </li>
+                        @endif
                     </ul>
                 </div>
             </li>
+            @if (auth()->user()->isApprover())
             <li class="side-nav-item">
                 <a href="{{ url('/reports') }}" class="side-nav-link">
                     <i class="ri-file-text-line"></i>
                     <span> Reports </span>
                 </a>
             </li>
+            @endif
 
             @if(auth()->check())
             @can('adminmenu')
