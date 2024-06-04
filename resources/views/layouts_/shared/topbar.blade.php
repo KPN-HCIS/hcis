@@ -1,6 +1,6 @@
 <!-- ========== Topbar Start ========== -->
 <div class="navbar-custom">
-    <div class="topbar container-fluid">
+    <div class="topbar container-fluid p-0">
         <div class="d-flex align-items-center gap-lg-2 gap-1">
 
             <!-- Topbar Brand Logo -->
@@ -72,7 +72,7 @@
                     <span class="account-user-avatar">
                         <img src="{{ asset('img/profiles/user.png') }}" alt="user-image" width="32" class="rounded-circle">
                     </span>
-                    <span class="d-flex flex-column gap-1 d-none">
+                    <span class="d-flex flex-column gap-1">
                         <h5 class="my-0">
                             {{ auth()->user()->name }}
                         </h5>
