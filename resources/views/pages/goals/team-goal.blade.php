@@ -53,7 +53,6 @@
                                 <input type="hidden" name="export_group_company" id="export_group_company">
                                 <input type="hidden" name="export_company" id="export_company">
                                 <input type="hidden" name="export_location" id="export_location">
-                                {{-- <a id="export" onclick="exportExcel()" class="btn btn-outline-secondary px-4 shadow disabled"><i class="fas fa-arrow-circle-down"></i> Download</a> --}}
                             </form>
                             </div>
                         </div>
@@ -164,7 +163,7 @@
                                 <form id="exportNotInitiatedForm" action="{{ route('team-goals.notInitiated') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="employee_id" id="employee_id" value="{{ Auth()->user()->employee_id }}">
-                                    <button id="report-button" type="submit" class="btn btn-sm btn-outline-secondary rounded-pill float-end {{ $notasks ? '':'d-none' }}"><i class="ri-download-cloud-2-line me-1"></i><span>Report</span></button>
+                                    <button id="report-button" type="submit" class="btn btn-sm btn-outline-secondary rounded-pill float-end {{ isNotEmpty($notasks) ? '':'d-none' }}"><i class="ri-download-cloud-2-line me-1"></i><span>Report</span></button>
                                 </form>
                                 <!-- task -->
                                 @foreach ($notasks as $index => $notask)
