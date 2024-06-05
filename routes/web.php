@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/export/report-emp', [ExportExcelController::class, 'exportreportemp'])->name('export.reportemp');
 
     Route::post('/export', [ExportExcelController::class, 'export'])->name('export');
+    Route::post('/notInitiatedReport', [ExportExcelController::class, 'notInitiated'])->name('team-goals.notInitiated');
     // Route::get('/export/goals', [ReportController::class, 'exportGoal'])->name('export.goal');
     Route::post('/get-report-content', [ReportController::class, 'getReportContent'])->name('reports.content');
     

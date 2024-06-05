@@ -53,7 +53,7 @@
                                 <input type="hidden" name="export_group_company" id="export_group_company">
                                 <input type="hidden" name="export_company" id="export_company">
                                 <input type="hidden" name="export_location" id="export_location">
-                                <a id="export" onclick="exportExcel()" class="btn btn-outline-secondary px-4 shadow disabled"><i class="fas fa-arrow-circle-down"></i> Download</a>
+                                {{-- <a id="export" onclick="exportExcel()" class="btn btn-outline-secondary px-4 shadow disabled"><i class="fas fa-arrow-circle-down"></i> Download</a> --}}
                             </form>
                             </div>
                         </div>
@@ -161,6 +161,11 @@
                     <div class="collapse show" id="noDataTasks">
                         <div class="card mb-0 d-flex">
                             <div class="card-body align-items-center" id="task-container-2">
+                                <form id="exportNotInitiatedForm" action="{{ route('team-goals.notInitiated') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="employee_id" id="employee_id" value="{{ Auth()->user()->employee_id }}">
+                                    <button id="report-button" type="submit" class="btn btn-sm btn-outline-secondary rounded-pill float-end {{ $notasks ? '':'d-none' }}"><i class="ri-download-cloud-2-line me-1"></i><span>Report</span></button>
+                                </form>
                                 <!-- task -->
                                 @foreach ($notasks as $index => $notask)
                                 @php
@@ -179,17 +184,17 @@
                                     $sendbackTo = $firstSubordinate ? $firstSubordinate->sendback_to : null;
                                 @endphp
                                 <div class="row mt-2 mb-2 task-card" data-status="no data">
-                                    <div class="col-lg p-2 me-3">
+                                    <div class="col-sm-12 col-md p-2">
                                         <div id="tooltip-container">
                                             <img src="{{ asset('img/profiles/user.png') }}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom"  data-bs-original-title="Initiated By {{ $notask->employee->fullname.' ('.$notask->employee->employee_id.')' }}">
                                             {{ $notask->employee->fullname }} <span class="text-muted">{{ $notask->employee->employee_id }}</span>
                                         </div>
                                     </div>
-                                    <div class="col-lg p-2 me-3">
+                                    <div class="col-sm-12 col-md p-2">
                                         <div class="h5 me-2 align-items-center">Date Of Joining :</div>
                                         <span class="align-items-center text-muted">{{ $notask->formatted_doj }}</span>
                                     </div>
-                                    <div class="col-lg p-2 me-3">
+                                    <div class="col-sm-12 col-md p-2">
                                         <div class="h5 me-2 align-items-center">Status :</div>
                                         <div><a href="javascript:void(0)" id="approval{{ $employeeId }}" data-toggle="tooltip" data-id="{{ $employeeId }}" class="badge bg-dark-subtle text-dark rounded-pill py-1 px-2">No Data</a></div>
                                     </div>
@@ -259,8 +264,10 @@
             taskCards.forEach(function(card) {
                 const cardContent = card.textContent.toLowerCase();
                 if (cardContent.includes(searchValue)) {
-                    card.style.display = "block";
+                    card.style.display = "";
+                    $('#report-button').css('display', 'block');
                 } else {
+                    $('#report-button').css('display', 'none');
                     card.style.display = "none";
                 }
             });
@@ -268,11 +275,6 @@
             // Menampilkan pesan jika tidak ada hasil pencarian
             const noDataMessage = document.getElementById("no-data-2");
             const visibleCards = document.querySelectorAll(".task-card[style='display: block;']");
-            if (visibleCards.length === 0) {
-                noDataMessage.style.display = "block";
-            } else {
-                noDataMessage.style.display = "none";
-            }
         });
     });
 </script>

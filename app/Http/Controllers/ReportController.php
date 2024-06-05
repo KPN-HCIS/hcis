@@ -87,12 +87,12 @@ class ReportController extends Controller
             // Format created_at
             $createdDate = Carbon::parse($item->created_at);
 
-                $item->formatted_created_at = $createdDate->format('d M Y g:ia');
+                $item->formatted_created_at = $createdDate->format('d M Y');
 
             // Format updated_at
             $updatedDate = Carbon::parse($item->updated_at);
 
-                $item->formatted_updated_at = $updatedDate->format('d M Y g:ia');
+                $item->formatted_updated_at = $updatedDate->format('d M Y');
         });
         // Determine the report type and return the appropriate view
         if ($report_type === 'Goal') {
