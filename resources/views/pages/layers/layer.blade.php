@@ -26,6 +26,18 @@
                 </div>
             </div>
         </div>    
+        <div class="row">
+            <div class="col-md-auto">
+              <div class="mb-3">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text bg-white border-dark-subtle"><i class="ri-search-line"></i></span>
+                  </div>
+                  <input type="text" name="customsearch" id="customsearch" class="form-control  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
+                </div>
+              </div>
+            </div>
+        </div>
         <!-- Content Row -->
         <div class="row">
           <div class="col-md-12">

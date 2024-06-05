@@ -13,10 +13,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $("#assignTable").DataTable();
     $("#employeeTable").DataTable();
-    $("#layerTable").DataTable();
     $("#historyTable").DataTable();
-    $("#scheduleTable").DataTable();
     $("#tableInitiate").DataTable();
+
+    const layerTable = $("#layerTable").DataTable({
+        dom: "lrtip",
+        pageLength: 50,
+    });
+
+    const scheduleTable = $("#scheduleTable").DataTable({
+        dom: "lrtip",
+        pageLength: 50,
+    });
 
     const goalTable = $("#goalTable").DataTable({
         dom: "lrtip",
@@ -25,6 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $("#customsearch").on("keyup", function () {
         goalTable.search($(this).val()).draw();
+        layerTable.search($(this).val()).draw();
+        scheduleTable.search($(this).val()).draw();
     });
 });
 
