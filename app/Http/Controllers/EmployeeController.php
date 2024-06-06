@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\ApprovalLayer;
 use App\Models\Location;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class EmployeeController extends Controller
 {
@@ -104,5 +106,62 @@ class EmployeeController extends Controller
         }
 
         return response()->json(['message' => $number_data.' Employees data successfully saved']);
+    }
+    public function updateEmployeeAccessMenu()
+    {
+        $today = Carbon::today()->format('Y-m-d');
+
+        // Get schedules with start_date or end_date equals today
+        $schedules = DB::table('schedules')
+            ->where(function($query) use ($today) {
+                $query->where('start_date', $today)
+                      ->orWhere('end_date', $today);
+            })
+            ->whereNull('deleted_at')
+            ->get();
+
+            foreach ($schedules as $schedule) {
+                if ($schedule->start_date == $today) {
+                    // Update employees' access_menu to {"goals":1}
+                    $this->updateEmployees($schedule, ['goals' => 1]);
+                }
+    
+                if ($schedule->end_date == $today) {
+                    // Update employees' access_menu to {"goals":0}
+                    $this->updateEmployees($schedule, ['goals' => 0]);
+                }
+            }
+
+        return 'Employee access menu updated successfully.';
+    }
+    protected function updateEmployees($schedule, $accessMenu)
+    {
+        $query = DB::table('employees');
+
+        if ($schedule->employee_type) {
+            $query->where('employee_type', $schedule->employee_type);
+        }
+
+        if ($schedule->bisnis_unit) {
+            $query->whereIn('group_company', explode(',', $schedule->bisnis_unit));
+        }
+
+        if ($schedule->company_filter) {
+            $query->whereIn('contribution_level_code', explode(',', $schedule->company_filter));
+        }
+
+        if ($schedule->location_filter) {
+            $query->whereIn('work_area_code', explode(',', $schedule->location_filter));
+        }
+
+        if ($schedule->last_join_date) {
+            $query->where('date_of_joining', '<=', $schedule->last_join_date);
+        }
+
+        //$query->update(['access_menu' => json_encode($accessMenu)]);
+        $query->update([
+            'access_menu' => json_encode($accessMenu),
+            'updated_at' => Carbon::now()  // Update the updated_at column
+        ]);
     }
 }
