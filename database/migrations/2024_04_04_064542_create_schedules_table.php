@@ -26,7 +26,8 @@ return new class extends Migration
             $table->string('inputState', 50)->nullable();
             $table->string('repeat_days', 50)->nullable();
             $table->string('before_end_date', 100)->nullable();
-            $table->text('messages')->nullable();            
+            $table->text('messages')->nullable();    
+            $table->string('created_by', 20)->nullable();        
             $table->timestamps();
             $table->softDeletes();
 

@@ -10,12 +10,14 @@ use App\Models\Employee;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Jobs\SendReminderScheduleEmailJob;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
     function schedule() {
         $link = 'schedule';
-        $schedules = Schedule::all();
+        $schedules = Schedule::with('createdBy')->get();
+        //dd($schedules);
         return view('pages.schedules.schedule', [
             'link' => $link,
             'schedules' => $schedules,
@@ -37,7 +39,7 @@ class ScheduleController extends Controller
         //dd($req);
         //$model = schedule::find($req->id);
         $model = new schedule;
-
+        $userId = Auth::id();
         $model->schedule_name       = $req->schedule_name;
         $model->event_type          = $req->event_type;
         //$model->employee_type       = $req->employee_type;
@@ -49,6 +51,7 @@ class ScheduleController extends Controller
         $model->start_date          = $req->start_date;
         $model->end_date            = $req->end_date;
         $model->checkbox_reminder   = isset($req->checkbox_reminder) ? $req->checkbox_reminder : 0;
+        $model->created_by          = $userId;
 
         if ($req->checkbox_reminder == 1) {
             
@@ -72,54 +75,61 @@ class ScheduleController extends Controller
 
         $model->save();
 
+        $query = Employee::query();
+
+        if ($model->location_filter) {
+            $query->whereIn('work_area_code', explode(',', $model->location_filter));
+        }
+
+        if ($model->company_filter) {
+            $query->whereIn('contribution_level_code', explode(',', $model->company_filter));
+        }
+
+        if ($model->bisnis_unit) {
+            $query->whereIn('group_company', explode(',', $model->bisnis_unit));
+        }
+
+        if ($model->employee_type) {
+            $query->whereIn('employee_type', explode(',', $model->employee_type));
+        }
+
+        $employeesToUpdate = $query->get();
+        // $employeesToUpdate = $query->where('date_of_joining', '<=', $model->last_join_date)->get();
+
         $today = now();
         if($model->start_date <= $today && $model->end_date >= $today){
-            $query = Employee::query();
-
-            if ($model->location_filter) {
-                $query->whereIn('work_area_code', explode(',', $model->location_filter));
-            }
-
-            if ($model->company_filter) {
-                $query->whereIn('contribution_level_code', explode(',', $model->company_filter));
-            }
-
-            if ($model->bisnis_unit) {
-                $query->whereIn('group_company', explode(',', $model->bisnis_unit));
-            }
-
-            if ($model->employee_type) {
-                $query->whereIn('employee_type', explode(',', $model->employee_type));
-            }
-
-            $employeesToUpdate = $query->where('date_of_joining', '<=', $model->last_join_date)->get();
-            //dd($employeesToUpdate);
-
-            //dd($query->toSql()); // Menampilkan SQL yang dihasilkan oleh kueri
-            //dd($query->getBindings()); // Menampilkan nilai yang diikat ke kueri
-
-            // Mengupdate setiap karyawan yang ditemukan
-            foreach ($employeesToUpdate as $employee) {
-                // Mendapatkan nilai JSON yang ada dalam access_menu
-                $accessMenuJson = json_decode($employee->access_menu, true);
-
-                // Memeriksa apakah access_menu kosong
-                if (empty($accessMenuJson) || $accessMenuJson===null) {
-                    // Jika kosong, atur access_menu menjadi {{ goals:1 }}
-                    $accessMenuJson = ['goals' => 1];
-                } else {
-                    // Jika tidak kosong, perbarui nilai khusus dalam objek JSON
-                    $accessMenuJson['goals'] = 1;
-                }
-
-                // Mengonversi kembali objek JSON ke format string
-                $updatedAccessMenu = json_encode($accessMenuJson);
-                
-                // Mengisi access_menu dengan nilai yang telah diperbarui
-                $employee->access_menu = $updatedAccessMenu;
-                $employee->save();
-            }
+            $access_menu = 1;
+        }else{
+            $access_menu = 0;
         }
+
+        foreach ($employeesToUpdate as $employee) {
+            if($employee->date_of_joining <= $model->last_join_date){
+                $doj=1;
+            }else{
+                $doj=0;
+            }
+
+            $accessMenuJson = json_decode($employee->access_menu, true);
+
+            if (!isset($accessMenuJson['doj'])) {
+                $accessMenuJson['goals'] = $access_menu;
+            }else{
+                $accessMenuJson = ['goals' => $access_menu];
+            }
+
+            if (!isset($accessMenuJson['doj'])) {
+                $accessMenuJson['doj'] = $doj;
+            }else{
+                $accessMenuJson = ['doj' => $doj];
+            }
+            
+            $updatedAccessMenu = json_encode($accessMenuJson);
+            
+            $employee->access_menu = $updatedAccessMenu;
+            $employee->save();
+        }
+        
         //tes email
         $email = "eriton.dewa@kpn-corp.com";
         $name = "Eriton";
@@ -198,7 +208,8 @@ class ScheduleController extends Controller
             $query->whereIn('employee_type', explode(',', $model->employee_type));
         }
 
-        $employeesToUpdate = $query->where('date_of_joining', '<=', $model->last_join_date)->get();
+        //$employeesToUpdate = $query->where('date_of_joining', '<=', $model->last_join_date)->get();
+        $employeesToUpdate = $query->get();
 
         $today = now();
         if($model->start_date <= $today && $model->end_date >= $today){
@@ -208,12 +219,24 @@ class ScheduleController extends Controller
         }
 
         foreach ($employeesToUpdate as $employee) {
+            if($employee->date_of_joining <= $model->last_join_date){
+                $doj=1;
+            }else{
+                $doj=0;
+            }
+
             $accessMenuJson = json_decode($employee->access_menu, true);
 
-            if (empty($accessMenuJson) || $accessMenuJson===null) {
-                $accessMenuJson = ['goals' => $access_menu];
-            } else {
+            if (!isset($accessMenuJson['doj'])) {
                 $accessMenuJson['goals'] = $access_menu;
+            }else{
+                $accessMenuJson = ['goals' => $access_menu];
+            }
+
+            if (!isset($accessMenuJson['doj'])) {
+                $accessMenuJson['doj'] = $doj;
+            }else{
+                $accessMenuJson = ['doj' => $doj];
             }
 
             $updatedAccessMenu = json_encode($accessMenuJson);
