@@ -11,14 +11,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    $("#assignTable").DataTable();
-    $("#employeeTable").DataTable();
-    $("#historyTable").DataTable();
-    $("#tableInitiate").DataTable();
+    $("#assignTable").DataTable({
+        initComplete: function (settings, json) {
+            hideLoader();
+        },
+    });
+    $("#employeeTable").DataTable({
+        initComplete: function (settings, json) {
+            hideLoader();
+        },
+    });
+    $("#historyTable").DataTable({
+        initComplete: function (settings, json) {
+            hideLoader();
+        },
+    });
+    $("#tableInitiate").DataTable({
+        initComplete: function (settings, json) {
+            hideLoader();
+        },
+    });
 
     const layerTable = $("#layerTable").DataTable({
         dom: "lrtip",
         pageLength: 50,
+        initComplete: function (settings, json) {
+            hideLoader();
+        },
     });
 
     const scheduleTable = $("#scheduleTable").DataTable({
@@ -500,3 +519,15 @@ function yearGoal() {
 $(".select2").select2({
     theme: "bootstrap-5",
 });
+
+function showLoader() {
+    $("#preloader").show();
+}
+
+function hideLoader() {
+    $("#preloader").hide();
+}
+
+window.onload = function () {
+    hideLoader();
+};

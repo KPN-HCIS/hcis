@@ -12,6 +12,7 @@
 <body>
     <div class="wrapper">
 
+        @include('loader')
         @include('layouts_.shared/topbar')
 
         @include('layouts_.shared/left-sidebar')

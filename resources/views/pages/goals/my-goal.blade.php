@@ -161,7 +161,7 @@
         <script src="{{ asset('js/goal-approval.js') }}"></script>
         @if(Session::has('error'))
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function () {                
                 Swal.fire({
                     icon: "error",
                     title: "Cannot create goals",
