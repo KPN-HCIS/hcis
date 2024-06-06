@@ -230,7 +230,7 @@ class MyGoalController extends Controller
                 $selectedUoM[$index] = $row['uom'] ?? '';
                 $selectedType[$index] = $row['type'] ?? '';
                 $weigthage[$index] = $row['weightage'] ?? '';
-                $totalWeightages += $weigthage[$index];
+                $totalWeightages += (int)$weigthage[$index];
             }
 
 
