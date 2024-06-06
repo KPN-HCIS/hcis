@@ -16,7 +16,8 @@ class ScheduleController extends Controller
 {
     function schedule() {
 
-        $link = 'schedule';
+        $parentLink = 'Settings';
+        $link = 'Schedule';
         $schedules = Schedule::with('createdBy')->get();
 
         return view('pages.schedules.schedule', [
