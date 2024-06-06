@@ -141,7 +141,7 @@
                     </label>
                   </div>
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="{{ $permissions[7] }}" name="roleView" {{ $permissionNames[7] ? 'checked' : '' }}>
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[7] }}" name="roleView" {{ isset($permissionNames[7]) ? 'checked' : '' }}>
                     <label class="form-check-label" for="roleView">
                       Role Permission Settings
                     </label>

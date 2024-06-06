@@ -115,11 +115,13 @@ class RoleController extends Controller
             $join->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id', '=', $roleId);
         })
-        ->select('permissions.id', 'permissions.name', 'role_has_permissions.role_id')
-        ->whereBetween('permissions.id', [1, 9])
-        ->orderBy('permissions.name')
-        ->pluck('role_has_permissions.role_id')
+        ->select('permissions.id', 'permissions.name', 'role_has_permissions.permission_id')
+        // ->whereBetween('permissions.id', [1, 9])
+        ->orderBy('permissions.id')
+        ->pluck('role_has_permissions.permission_id')
         ->toArray();
+
+        // dd($permissionNames);
         
         $parentLink = $this->link;
         $link = "Create";

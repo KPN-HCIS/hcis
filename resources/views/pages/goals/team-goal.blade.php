@@ -63,7 +63,7 @@
                 <div class="mt-3 p-2 bg-info bg-opacity-10 rounded shadow">
                     <h5 class="m-0 pb-2">
                         <a class="text-dark d-block" data-bs-toggle="collapse" href="#dataTasks" role="button" aria-expanded="false" aria-controls="dataTasks">
-                            <i class="ri-arrow-down-s-line fs-18"></i>Initiated <span class="text-muted">({{ count($data) }})</span>
+                            <i class="ri-arrow-down-s-line fs-18"></i>Initiated <span class="text-muted">({{ count($tasks) }})</span>
                         </a>
                     </h5>
                     @foreach ($data as $row)
@@ -159,7 +159,7 @@
                 
                     <div class="collapse show" id="noDataTasks">
                         <div class="card mb-0 d-flex">
-                            <div class="card-body align-items-center" id="task-container-2">
+                            <div class="card-header pb-0">
                                 <form id="exportNotInitiatedForm" action="{{ route('team-goals.notInitiated') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="employee_id" id="employee_id" value="{{ Auth()->user()->employee_id }}">
@@ -167,6 +167,8 @@
                                         <button id="report-button" type="submit" class="btn btn-sm btn-outline-secondary rounded-pill float-end"><i class="ri-download-cloud-2-line me-1"></i><span>Report</span></button>
                                     @endif
                                 </form>
+                            </div>
+                            <div class="card-body align-items-center pt-0" id="task-container-2">
                                 <!-- task -->
                                 @foreach ($notasks as $index => $notask)
                                 @php

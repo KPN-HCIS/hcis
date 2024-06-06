@@ -81,6 +81,8 @@ class ReportController extends Controller
             });
         }
 
+        $query->whereYear('created_at', now()->year);
+        
         // Fetch the data based on the constructed query
         $data = $query->get();
         $data->map(function($item) {

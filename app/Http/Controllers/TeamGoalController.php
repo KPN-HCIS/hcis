@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\UserExport;
 use App\Models\ApprovalLayer;
 use App\Models\ApprovalRequest;
 use App\Models\ApprovalSnapshots;
 use App\Models\Employee;
 use App\Models\Goal;
-use App\Models\Schedule;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,16 +31,19 @@ class TeamGoalController extends Controller
                 $query->where('employee_id', $user)->orWhere('approver_id', $user);
             });
         }])->where('approver_id', Auth::user()->employee_id)->get();
-
-        $schedule = Schedule::where('end_date', '>', today())->get();
         
         $tasks = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
                 $query->with('approverName');
             }])->whereHas('approvalLayer', function ($query) use ($user) {
                 $query->where('employee_id', $user)->orWhere('approver_id', $user);
-            });
-        }])->whereHas('subordinates')->where('approver_id', Auth::user()->employee_id)->get();
+            })->whereYear('created_at', now()->year);
+        }])
+        ->leftJoin('approval_requests', 'approval_layers.employee_id', '=', 'approval_requests.employee_id')
+        ->select('approval_layers.employee_id', 'approval_layers.approver_id', 'approval_layers.layer', 'approval_requests.created_at')
+        ->whereYear('approval_requests.created_at', now()->year)
+        ->whereHas('subordinates')->where('approver_id', Auth::user()->employee_id)
+        ->get();
 
         $tasks->each(function($item) {
             $item->subordinates->map(function($subordinate) {
@@ -82,19 +83,21 @@ class TeamGoalController extends Controller
         ->whereNull('schedules.deleted_at')
         ->where('approval_layers.approver_id', $user)
         ->whereDoesntHave('subordinates', function ($query) use ($user) {
-            $query->with([
-                'goal', 
-                'updatedBy', 
-                'approval' => function ($query) {
-                    $query->with('approverName');
-                }
-            ])->whereHas('approvalLayer', function ($query) use ($user) {
-                $query->where('employee_id', $user)->orWhere('approver_id', $user);
-            });
+            $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+                ->with([
+                    'goal', 
+                    'updatedBy', 
+                    'approval' => function ($query) {
+                        $query->with('approverName');
+                    }
+                ])->whereHas('approvalLayer', function ($query) use ($user) {
+                    $query->where('employee_id', $user)->orWhere('approver_id', $user);
+                });
         })
         ->select('approval_layers.*', 'employees.date_of_joining', 'schedules.last_join_date')
         ->distinct()
         ->get();
+
 
         $notasks->map(function($item) {
             // Format created_at
