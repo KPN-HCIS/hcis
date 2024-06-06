@@ -77,7 +77,7 @@
                                             @endif
                                         @endif
                                     </td>
-                                    <td>{{ $schedule->createdBy->name }}</td>
+                                    <td>{{ isset($schedule->createdBy->name) ? $schedule->createdBy->name : '-' }}</td>
                                     <!--<td><span class="badge badge-success badge-pill w-100">Active</span></td>-->
                                     <td class="text-center">
                                         <a href="{{ route('edit-schedule', $schedule->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
