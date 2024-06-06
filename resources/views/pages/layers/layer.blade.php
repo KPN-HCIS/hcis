@@ -1,19 +1,50 @@
-<x-app-layout>
-    @section('title', 'Layer')
-    <x-slot name="content">
+@extends('layouts_.vertical', ['page_title' => 'Layers'])
+
+@section('css')
+@endsection
+
+@section('content')
     <!-- Begin Page Content -->
-    <div class="container-fluid">       
-        <div class="d-sm-flex align-items-center justify-content-end mb-4">
-            <button type="button" class="btn btn-primary open-import-modal" title="Edit">Import Layer</button>
+    <div class="container-fluid"> 
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item">{{ $parentLink }}</li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg">
+                <div class="mb-3 text-end">
+                    <button type="button" class="btn btn-primary rounded-pill open-import-modal" title="Import">Import Layer</button>
+                </div>
+            </div>
+        </div>    
+        <div class="row">
+            <div class="col-md-auto">
+              <div class="mb-3">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text bg-white border-dark-subtle"><i class="ri-search-line"></i></span>
+                  </div>
+                  <input type="text" name="customsearch" id="customsearch" class="form-control  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
+                </div>
+              </div>
+            </div>
         </div>
         <!-- Content Row -->
         <div class="row">
           <div class="col-md-12">
-
             <div class="card shadow mb-4">
               <div class="card-body">
                   <div class="table-responsive">
-                      <table class="table table-hover" id="layerTable" width="100%" cellspacing="0">
+                      <table class="table dt-responsive table-hover" id="layerTable" width="100%" cellspacing="0">
                           <thead class="thead-light">
                               <tr class="text-center">
                                 <th>#</th>
@@ -49,17 +80,17 @@
                                             {{ "L".$layer }} : {{ $approverNamesArray[$index] }}<br>
                                         @endforeach
                                     </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-circle btn-outline-primary open-edit-modal"
-                                        data-employee-id="{{ $approvalLayer->employee_id }}"
-                                        data-fullname="{{ $approvalLayer->fullname }}"
-                                        data-app="{{ $approvalLayer->approver_ids }}"
-                                        data-layer="{{ $approvalLayer->layers }}"
-                                        data-app-name="{{ $approvalLayer->approver_names }}"
-                                        title="Edit"><i class="fas fa-edit"></i></button>
-                                        <button type="button" class="btn btn-sm btn-circle btn-outline-success open-view-modal"
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm rounded-pill btn-primary open-edit-modal mb-1"
+                                        data-bs-employee-id="{{ $approvalLayer->employee_id }}"
+                                        data-bs-fullname="{{ $approvalLayer->fullname }}"
+                                        data-bs-app="{{ $approvalLayer->approver_ids }}"
+                                        data-bs-layer="{{ $approvalLayer->layers }}"
+                                        data-bs-app-name="{{ $approvalLayer->approver_names }}"
+                                        title="Edit"><i class="ri-edit-box-line"></i></button>
+                                        <button type="button" class="btn btn-sm rounded-pill btn-success open-view-modal mb-1"
                                             onclick="viewHistory('{{ $approvalLayer->employee_id }}')">
-                                            <i class="fas fa-history"></i>
+                                            <i class="ri-history-line"></i>
                                         </button>
                                     </td>
                               </tr>
@@ -78,32 +109,27 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Update Superior</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h4 class="modal-title" id="editModalLabel">Update Superior</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- Form for editing employee details -->
                 <form id="editForm" action="{{ route('update-layer') }}" method="POST">
                     @csrf
                     <input type="hidden" name="employee_id" id="employee_id">
-                    <div class="form-group" style="display: none;">
-                        <label for="employee_id">Employee ID:</label>
-                        <input type="text" class="form-control" id="employeeId" name="employee_id" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="fullname">Full Name:</label>
-                        <input type="text" class="form-control" id="fullname" name="fullname" readonly>
+                    <div class="row">
+                        <label class="col-auto col-form-label">Employee:</label>
+                        <div class="col">
+                            <input type="text" class="form-control" id="fullname" name="fullname" readonly>
+                        </div>
                     </div>
                     <hr>
-                    <div class="input-group margin" id="viewlayer">
-                        
+                    <div id="viewlayer">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary" form="editForm">Save changes</button>
             </div>
         </div>
@@ -115,30 +141,32 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importModalLabel">Import Superior</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h4 class="modal-title" id="importModalLabel">Import Superior</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="importForm" action="{{ route('import-layer') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="form-group">
-                        <label for="excelFile">Upload Excel File</label>
-                        <input type="file" class="form-control-file" id="excelFile" name="excelFile" required>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-4 mt-2">
+                                <label class="form-label" for="excelFile">Upload Excel File</label>
+                                <input type="file" class="form-control" id="excelFile" name="excelFile" required>
+                            </div>
+                        </div>
                     </div>
-                    {{-- <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="excelFile" name="excelFile" required>
-                        <label class="custom-file-label" for="validatedCustomFile">Upload Excel File...</label>
-                    </div> --}}
-                    <div class="form-group">
-                        <label for="fullname"><br>Download Templete here : </label>
-                        <a href="{{ asset('files/template.xls') }}" download>Import_Excel</a>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-2">
+                                <label class="form-label" for="fullname">Download Templete here : </label>
+                                <a href="{{ asset('files/template.xls') }}" class="badge-outline-primary rounded-pill p-1" download><i class="ri-file-text-line me-1"></i>Import_Excel_Template</a>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary" form="importForm">Import Data</button>
             </div>
         </div>
@@ -150,13 +178,11 @@
     <div class="modal-dialog" role="document" style="max-width: 60%">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewModalLabel">View History</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h4 class="modal-title" id="viewModalLabel">View History</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <table class="table table-hover" id="historyTable" width="100%" cellspacing="0">
+                <table class="table dt-responsive table-hover" id="historyTable" width="100%" cellspacing="0">
                     <thead class="thead-light">
                         <tr class="text-center">
                             <th>#</th>
@@ -172,34 +198,30 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
+@endsection
 
-
-</x-slot>
-</x-app-layout>
-
+@push('scripts')
 <script>
     $(document).ready(function() {
         $('.open-edit-modal').on('click', function() {
-            var employeeId = $(this).data('employee-id');
+            var employeeId = $(this).data('bsEmployee-id');
             $('#employeeId').text(employeeId);
             $('#editModal').modal('show');
         });
     });
     $(document).ready(function() {
         $('.open-import-modal').on('click', function() {
-            // var employeeId = $(this).data('employee-id');
             // $('#employeeId').text(employeeId);
             $('#importModal').modal('show');
         });
     });
     $(document).ready(function() {
         $('.open-view-modal').on('click', function() {
-            // var employeeId = $(this).data('employee-id');
             // $('#employeeId').text(employeeId);
             $('#viewModal').modal('show');
         });
@@ -261,9 +283,9 @@ $(document).ready(function() {
     });
 
     // Apply filter when table is redrawn (e.g., when navigating to next page)
-    table.on('draw.dt', function() {
-        applyLocationFilter(table);
-    });
+    // table.on('draw.dt', function() {
+    //     applyLocationFilter(table);
+    // });
 });
 
 function applyLocationFilter(table) {
@@ -276,11 +298,12 @@ function applyLocationFilter(table) {
 <script>
     $(document).ready(function() {
         $('.open-edit-modal').on('click', function() {
-            var employeeId = $(this).data('employee-id');
-            var fullname = $(this).data('fullname');
-            var app = $(this).data('app');
-            var layer = $(this).data('layer');
-            var appname = $(this).data('app-name');
+            var employeeId = $(this).data('bsEmployee-id');
+            var fullname = $(this).data('bsFullname');
+            var app = $(this).data('bsApp');
+            
+            var layer = $(this).data('bsLayer');
+            var appname = $(this).data('bsApp-name');
 
             // populateModal(employeeId, fullname, app, layer, appname);
             populateModal(employeeId, fullname, app, layer, appname, {!! json_encode($employees) !!});
@@ -290,7 +313,7 @@ function applyLocationFilter(table) {
     function populateModal(employeeId, fullName, app, layer, appName, employees) {
         $('#employee_id').val(employeeId);
         $('#employeeId').val(employeeId);
-        $('#fullname').val(fullName);
+        $('#fullname').val(fullName+' - '+employeeId);
 
         if (app.includes('|')) {
             // Jika nilai app mengandung karakter '|', lakukan pemisahan
@@ -309,20 +332,22 @@ function applyLocationFilter(table) {
         var layerIndex = 1;
 
         for (var i = 0; i < (apps.length + 3); i++) {
-            var selectOptions = '<option value="">- Select -</option>';
+            var selectOptions = "<option></option>";
             for (var j = 0; j < employees.length; j++) {
-                var selected = (employees[j].employee_id == apps[i]) ? 'selected' : '';
+                var selected = (employees[j].employee_id == apps[i]) ? 'selected' : 'Select Employee';
                 selectOptions += '<option value="' + employees[j].employee_id + '" ' + selected + '>' + employees[j].fullname + ' - ' + employees[j].employee_id + '</option>';
             }
 
             var disabled = (i > apps.length) ? 'disabled' : ''; // Disable additional layers initially
-            $('#viewlayer').append('<div class="input-group mb-2"><div class="input-group-prepend"><span class="input-group-text">Layer ' + layerIndex + '</span></div><select name="nik_app[]" class="form-control select2" style="width:380px" ' + disabled + '>' + selectOptions + '</select></div>');
+            $('#viewlayer').append('<div class="row mb-2"><label class="col-2 col-form-label">Layer ' + layerIndex + '</label><div class="col"><select name="nik_app[]" class="form-select select2"' + disabled + '>' + selectOptions + '</select></div></div>');
             layerIndex++;
         }
 
         // Initialize Select2
         $('.select2').select2({
-            dropdownParent: $('#editModal')
+            dropdownParent: $('#editModal'),
+            placeholder: 'Select Layer Name',
+            theme: "bootstrap-5",
         });
 
         // Add change event listener to enable the next layer only if the current one is selected
@@ -347,3 +372,4 @@ function applyLocationFilter(table) {
         $('#editModal').modal('show');
     }
 </script>
+@endpush

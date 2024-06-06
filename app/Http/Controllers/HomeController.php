@@ -20,4 +20,42 @@ class HomeController extends Controller
         ]);
     }
 
+    function starter() {
+        $link = 'starter';
+
+        return view('pages.starter', [
+            'link' => $link
+        ]);
+    }
+
+    public function secondLevel(Request $request, $first, $second)
+    {
+        if ($first == "assets")
+            return redirect('home');
+
+
+    return view($first .'.'. $second);
+    }
+
+    public function thirdLevel(Request $request, $first, $second, $third)
+    {
+        if ($first == "assets")
+            return redirect('home');
+
+
+    return view($first .'.'. $second .'.'. $third);
+    }
+
+    public function root(Request $request, $first)
+    {
+
+        $mode = $request->query('mode');
+        $demo = $request->query('demo');
+     
+        if ($first == "assets")
+            return redirect('home');
+
+        return view($first);
+    }
+
 }

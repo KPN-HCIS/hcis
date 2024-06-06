@@ -13,7 +13,6 @@ function adminReportType(val) {
             //alert(data);
             reportContentDiv.html(data); // Update report content
             exportButton.removeClass("disabled"); // Enable export button
-            $("#modalFilter").modal("hide");
 
             const reportGoalsTable = $("#adminReportTable").DataTable({
                 dom: "lrtip",
@@ -21,6 +20,16 @@ function adminReportType(val) {
             });
             customsearch.keyup(function () {
                 reportGoalsTable.search($(this).val()).draw();
+            });
+
+            $(".filter-btn").on("click", function () {
+                const filterValue = $(this).data("id");
+
+                if (filterValue === "all") {
+                    reportGoalsTable.search("").draw(); // Clear the search for 'All Task'
+                } else {
+                    reportGoalsTable.search(filterValue).draw();
+                }
             });
         },
         error: function (xhr, status, error) {
@@ -33,7 +42,7 @@ function adminReportType(val) {
 }
 function reportType(val) {
     $("#report_type").val(val);
-    const reportForm = $("#filter_form");
+    const reportForm = $("#report_filter");
     const exportButton = $("#export");
     const reportContentDiv = $("#report_content");
     const customsearch = $("#customsearch");
@@ -45,7 +54,6 @@ function reportType(val) {
         success: function (data) {
             reportContentDiv.html(data); // Update report content
             exportButton.removeClass("disabled"); // Enable export button
-            $("#modalFilter").modal("hide");
 
             const reportGoalsTable = $("#reportGoalsTable").DataTable({
                 dom: "lrtip",
@@ -53,6 +61,16 @@ function reportType(val) {
             });
             customsearch.keyup(function () {
                 reportGoalsTable.search($(this).val()).draw();
+            });
+
+            $(".filter-btn").on("click", function () {
+                const filterValue = $(this).data("id");
+
+                if (filterValue === "all") {
+                    reportGoalsTable.search("").draw(); // Clear the search for 'All Task'
+                } else {
+                    reportGoalsTable.search(filterValue).draw();
+                }
             });
         },
         error: function (xhr, status, error) {

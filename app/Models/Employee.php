@@ -44,5 +44,10 @@ class Employee extends Model
     {
         return $this->hasMany(ApprovalLayer::class, 'creator_id', 'id');
     }
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class, 'bisnis_unit', 'group_company')
+                ->whereRaw("FIND_IN_SET('bisnis_unit', group_company)");
+    }
 
 }

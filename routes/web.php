@@ -23,6 +23,7 @@ use App\Http\Controllers\SendbackController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use Illuminate\Support\Facades\Route;
@@ -31,9 +32,11 @@ Route::get('/', function () {
     return redirect('home');
 });
 
-Route::get('/home', function () {
-    return view('pages.home');
-})->middleware(['auth', 'verified'])->name('home');
+// Route::get('/home', function () {
+//     return view('pages.home');
+// })->middleware(['auth', 'verified', 'role:superadmin'])->name('home');
+
+Route::get('/home', [MyGoalController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
 
 Route::get('dbauth', [SsoController::class, 'dbauth']);
 
@@ -112,8 +115,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/export/report-emp', [ExportExcelController::class, 'exportreportemp'])->name('export.reportemp');
 
     Route::post('/export', [ExportExcelController::class, 'export'])->name('export');
+    Route::post('/notInitiatedReport', [ExportExcelController::class, 'notInitiated'])->name('team-goals.notInitiated');
+    Route::post('/initiatedReport', [ExportExcelController::class, 'initiated'])->name('team-goals.initiated');
     // Route::get('/export/goals', [ReportController::class, 'exportGoal'])->name('export.goal');
-    Route::post('/get-report-content', [ReportController::class, 'getReportContent']);
+    Route::post('/get-report-content', [ReportController::class, 'getReportContent'])->name('reports.content');
     
     Route::get('/changes-group-company', [ReportController::class, 'changesGroupCompany']);
     Route::get('/changes-company', [ReportController::class, 'changesCompany']);
@@ -138,18 +143,19 @@ Route::middleware('auth')->group(function () {
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
-                ->name('logout');
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::get('{first}/{second}', [HomeController::class, 'secondLevel'])->name('second');
     
     // ============================ Administrator ===================================
 
     Route::middleware(['permission:viewschedule'])->group(function () {
         // Schedule
         Route::get('/schedules', [ScheduleController::class, 'schedule'])->name('schedules');
-        Route::get('/schedules/form', [ScheduleController::class, 'form'])->name('schedules-form');
-        Route::post('/save-schedule', [ScheduleController::class, 'save'])->name('save-schedule');
-        Route::get('/edit-schedule/{id}', [ScheduleController::class, 'edit'])->name('edit-schedule');
-        Route::post('/update-schedule', [ScheduleController::class, 'update'])->name('update-schedule');
+        Route::get('/schedules-form', [ScheduleController::class, 'form'])->name('schedules.form');
+        Route::post('/schedule-save', [ScheduleController::class, 'save'])->name('save-schedule');
+        Route::get('/schedule/edit/{id}', [ScheduleController::class, 'edit'])->name('edit-schedule');
+        Route::post('/schedule', [ScheduleController::class, 'update'])->name('update-schedule');
         Route::delete('/schedule/{id}', [ScheduleController::class, 'softDelete'])->name('soft-delete-schedule');
     });
     
@@ -163,14 +169,14 @@ Route::middleware('auth')->group(function () {
     
     Route::middleware(['permission:viewrole'])->group(function () {
         // Roles
-        Route::get('/admin/roles', [RoleController::class, 'index'])->name('roles');
+        Route::get('/roles', [RoleController::class, 'index'])->name('roles');
         Route::post('/admin/roles/submit', [RoleController::class, 'store'])->name('roles.store');
         Route::post('/admin/roles/update', [RoleController::class, 'update'])->name('roles.update');
         Route::get('/admin/roles/assign', [RoleController::class, 'assign'])->name('roles.assign');
         Route::get('/admin/roles/create', [RoleController::class, 'create'])->name('roles.create');
         Route::get('/admin/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
-        Route::get('/admin/get-assignment', [RoleController::class, 'getAssignment'])->name('getAssignment');
-        Route::get('/admin/get-permission', [RoleController::class, 'getPermission'])->name('getPermission');
+        Route::get('/admin/roles/get-assignment', [RoleController::class, 'getAssignment'])->name('getAssignment');
+        Route::get('/admin/roles/get-permission', [RoleController::class, 'getPermission'])->name('getPermission');
         Route::post('/admin/assign-user', [RoleController::class, 'assignUser'])->name('assign.user');
     });
     
@@ -179,9 +185,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/approval/goal', [AdminOnBehalfController::class, 'store'])->name('admin.approval.goal');
         Route::get('/admin/approval/goal/{id}', [AdminOnBehalfController::class, 'create'])->name('admin.create.approval.goal');
         // Goals - Admin
-        Route::get('/admin/onbehalf', [AdminOnBehalfController::class, 'index'])->name('admin.onbehalf');
-        Route::get('/admin/onbehalf/content', [AdminOnBehalfController::class, 'getOnBehalfContent'])->name('admin.onbehalf.content');
-        Route::post('/admin/onbehalf/content', [AdminOnBehalfController::class, 'getOnBehalfContent']);
+        Route::get('/onbehalf', [AdminOnBehalfController::class, 'index'])->name('onbehalf');
+        Route::post('/admin/onbehalf/content', [AdminOnBehalfController::class, 'getOnBehalfContent'])->name('admin.onbehalf.content');
         Route::post('/admin/goal-content', [AdminOnBehalfController::class, 'getGoalContent']);
         // Sendback
         Route::post('/admin/sendback/goal', [AdminSendbackController::class, 'store'])->name('admin.sendback.goal');
@@ -189,7 +194,8 @@ Route::middleware('auth')->group(function () {
     
     Route::middleware(['permission:viewreport'])->group(function () {
         // Reports
-        Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports');
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+        Route::get('/reports-admin', [AdminReportController::class, 'index'])->name('admin.reports');
         Route::get('/admin/get-report-content/{reportType}', [AdminReportController::class, 'getReportContent']);
         Route::post('/admin/get-report-content', [AdminReportController::class, 'getReportContent']);
         Route::get('/admin/changes-group-company', [AdminReportController::class, 'changesGroupCompany']);

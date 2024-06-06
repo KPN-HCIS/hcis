@@ -15,21 +15,25 @@ use Illuminate\Support\Facades\Auth;
 class ScheduleController extends Controller
 {
     function schedule() {
+
         $link = 'schedule';
         $schedules = Schedule::with('createdBy')->get();
-        //dd($schedules);
+
         return view('pages.schedules.schedule', [
             'link' => $link,
+            'parentLink' => $parentLink,
             'schedules' => $schedules,
         ]);
     }
     function form() {
-        $link = 'schedule';
+        $parentLink = 'Schedules';
+        $link = 'Create';
         $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level_code')->get();
         
         return view('pages.schedules.form', [
             'link' => $link,
+            'parentLink' => $parentLink,
             'locations' => $locations,
             'companies' => $companies,
         ]);
@@ -142,7 +146,8 @@ class ScheduleController extends Controller
     }
     function edit($id)
     {
-        $link = 'schedule';
+        $parentLink = 'Schedule';
+        $link = 'Edit';
         $model = Schedule::find($id);
  
         if(!$model)
@@ -150,6 +155,7 @@ class ScheduleController extends Controller
 
             return view('pages.schedules.edit', [
                 'link' => $link,
+                'parentLink' => $parentLink,
                 'model' => $model,
             ]);
     }

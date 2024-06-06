@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\Employee;
 use App\Models\Location;
 use App\Models\Report;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -71,7 +72,8 @@ class ReportController extends Controller
     }
     
     function index() {
-        $link = 'reports';
+        $parentLink = 'Admin';
+        $link = 'Reports';
 
         $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
         $groupCompanies = Location::select('company_name')
@@ -80,9 +82,7 @@ class ReportController extends Controller
         ->pluck('company_name');
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        return view('reports.admin.app', compact('locations', 'companies', 'groupCompanies'),  [
-            'link' => $link
-        ]);
+        return view('reports-admin.app', compact('locations', 'companies', 'groupCompanies', 'link', 'parentLink'));
     }
 
     public function changesGroupCompany(Request $request)
@@ -112,9 +112,9 @@ class ReportController extends Controller
         $user = Auth::user();
         $employeeId = $user->employee_id;
         $report_type = $request->report_type;
-        $group_company = $request->input('group_company');
-        $location = $request->input('location');
-        $company = $request->input('company');
+        $group_company = $request->input('group_company', []);
+        $location = $request->input('location', []);
+        $company = $request->input('company', []);
         $permissionLocations = $this->permissionLocations;
         $permissionCompanies = $this->permissionCompanies;
         $permissionGroupCompanies = $this->permissionGroupCompanies;
@@ -127,17 +127,17 @@ class ReportController extends Controller
 
             if (!empty($group_company)) {
                 $query->whereHas('employee', function ($query) use ($group_company) {
-                    $query->where('group_company', $group_company)->orderBy('fullname');
+                    $query->whereIn('group_company', $group_company)->orderBy('fullname');
                 });
             }
             if (!empty($location)) {
                 $query->whereHas('employee', function ($query) use ($location) {
-                    $query->where('work_area_code', $location);
+                    $query->whereIn('work_area_code', $location);
                 });
             }
             if (!empty($company)) {
                 $query->whereHas('employee', function ($query) use ($company) {
-                    $query->where('contribution_level_code', $company);
+                    $query->whereIn('contribution_level_code', $company);
                 });
             }
 
@@ -159,18 +159,31 @@ class ReportController extends Controller
 
             // Apply employee filters
             $data = $query->get();
-            $route = 'reports.admin.goal';
+
+            $data->map(function($item) {
+                // Format created_at
+                $createdDate = Carbon::parse($item->created_at);
+
+                    $item->formatted_created_at = $createdDate->format('d M Y g:ia');
+    
+                // Format updated_at
+                $updatedDate = Carbon::parse($item->updated_at);
+
+                    $item->formatted_updated_at = $updatedDate->format('d M Y g:ia');
+            });
+
+            $route = 'reports-admin.goal';
         } elseif ($report_type === 'Employee') {
             $query = Employee::query()->orderBy('fullname'); // Start with Employee model
 
             if (!empty($group_company)) {
-                    $query->where('group_company', $group_company)->orderBy('fullname');
+                    $query->whereIn('group_company', $group_company)->orderBy('fullname');
             }
             if (!empty($location)) {
-                    $query->where('work_area_code', $location);
+                    $query->whereIn('work_area_code', $location);
             }
             if (!empty($company)) {
-                    $query->where('contribution_level_code', $company);
+                    $query->whereIn('contribution_level_code', $company);
             }
 
             $criteria = [
@@ -191,7 +204,7 @@ class ReportController extends Controller
             foreach ($data as $employee) {
                 $employee->access_menu = json_decode($employee->access_menu, true);
             }
-            $route = 'reports.admin.employee';
+            $route = 'reports-admin.employee';
         } else {
             $data = collect(); // Empty collection for unknown report types
             return false;

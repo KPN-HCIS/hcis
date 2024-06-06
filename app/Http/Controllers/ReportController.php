@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\ApprovalRequest;
 use App\Models\Company;
 use App\Models\Location;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
     function index() {
-        $link = 'reports';
+        $link = 'Reports';
 
         $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
         $groupCompanies = Location::select('company_name')
@@ -35,7 +36,7 @@ class ReportController extends Controller
         // Check if a specific group company is selected
         if ($selectedGroupCompany) {
             // Filter locations by the selected group company
-            $locationsQuery->where('company_name', $selectedGroupCompany);
+            $locationsQuery->whereIn('company_name', $selectedGroupCompany);
         }
 
         // Fetch locations based on the modified query
@@ -65,26 +66,39 @@ class ReportController extends Controller
         // Apply filters based on request parameters
         if ($request->filled('group_company')) {
             $query->whereHas('employee', function ($query) use ($group_company) {
-                $query->where('group_company', $group_company);
+                $query->whereIn('group_company', $group_company);
             });
         }
         if ($request->filled('location')) {
             $query->whereHas('employee', function ($query) use ($location) {
-                $query->where('work_area_code', $location);
+                $query->whereIn('work_area_code', $location);
             });
         }
 
         if ($request->filled('company')) {
             $query->whereHas('employee', function ($query) use ($company) {
-                $query->where('contribution_level_code', $company);
+                $query->whereIn('contribution_level_code', $company);
             });
         }
 
+        $query->whereYear('created_at', now()->year);
+        
         // Fetch the data based on the constructed query
         $data = $query->get();
+        $data->map(function($item) {
+            // Format created_at
+            $createdDate = Carbon::parse($item->created_at);
+
+                $item->formatted_created_at = $createdDate->format('d M Y');
+
+            // Format updated_at
+            $updatedDate = Carbon::parse($item->updated_at);
+
+                $item->formatted_updated_at = $updatedDate->format('d M Y');
+        });
         // Determine the report type and return the appropriate view
         if ($report_type === 'Goal') {
-            return view('reports.goal', compact('data'));
+            return view('reports.goal', compact('data'))->render();
         } else {
             return ''; // You might want to handle other report types accordingly
         }

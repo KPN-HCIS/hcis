@@ -42,5 +42,9 @@ class ApprovalRequest extends Model
     {
         return $this->belongsTo(User::class, 'updated_by', 'id')->select(['id','employee_id', 'name']);
     }
+    public function adjustedBy()
+    {
+        return $this->belongsTo(ModelHasRole::class, 'updated_by', 'model_id')->select(['model_id']);
+    }
 
 }

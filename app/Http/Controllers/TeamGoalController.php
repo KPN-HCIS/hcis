@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\UserExport;
 use App\Models\ApprovalLayer;
 use App\Models\ApprovalRequest;
 use App\Models\ApprovalSnapshots;
 use App\Models\Employee;
 use App\Models\Goal;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -24,21 +24,6 @@ class TeamGoalController extends Controller
         
         $user = Auth::user()->employee_id;
         
-        // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        // ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
-        //     $query->with('approverName'); // Load nested relationship
-        // }])->whereHas('approvalLayer', function ($query) use ($user) {
-        //     $query->where('employee_id', $user)->orWhere('approver_id', $user);
-        // })->where('employee_id', '!=', Auth::user()->employee_id)->get();
-
-        // $datas = Employee::with(['approvalRequest' => function ($query) {
-        //     $query->with(['approvalLayer'=> function ($query) {
-        //         $query->where('approver_id', Auth::user()->employee_id);
-        //     },'goal', 'updatedBy', 'approval' => function ($query) {
-        //         $query->with('approverName');
-        //     }]);
-        // }])->where('employee_id', '!=', Auth::user()->employee_id)->get();
-
         $datas = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
                 $query->with('approverName');
@@ -46,7 +31,101 @@ class TeamGoalController extends Controller
                 $query->where('employee_id', $user)->orWhere('approver_id', $user);
             });
         }])->where('approver_id', Auth::user()->employee_id)->get();
+        
+        $tasks = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
+            $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
+                $query->with('approverName');
+            }])->whereHas('approvalLayer', function ($query) use ($user) {
+                $query->where('employee_id', $user)->orWhere('approver_id', $user);
+            })->whereYear('created_at', now()->year);
+        }])
+        ->leftJoin('approval_requests', 'approval_layers.employee_id', '=', 'approval_requests.employee_id')
+        ->select('approval_layers.employee_id', 'approval_layers.approver_id', 'approval_layers.layer', 'approval_requests.created_at')
+        ->whereYear('approval_requests.created_at', now()->year)
+        ->whereHas('subordinates')->where('approver_id', Auth::user()->employee_id)
+        ->get();
 
+        $tasks->each(function($item) {
+            $item->subordinates->map(function($subordinate) {
+                // Format created_at
+                $createdDate = Carbon::parse($subordinate->created_at);
+                if ($createdDate->isToday()) {
+                    $subordinate->formatted_created_at = 'Today ' . $createdDate->format('g:i A');
+                } else {
+                    $subordinate->formatted_created_at = $createdDate->format('d M Y');
+                }
+    
+                // Format updated_at
+                $updatedDate = Carbon::parse($subordinate->updated_at);
+                if ($updatedDate->isToday()) {
+                    $subordinate->formatted_updated_at = 'Today ' . $updatedDate->format('g:i A');
+                } else {
+                    $subordinate->formatted_updated_at = $updatedDate->format('d M Y');
+                }
+            });
+        });
+
+        // $notasks = ApprovalLayer::with(['employee', 'subordinates'])
+        // ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
+        // ->leftJoin('schedules', function($join) {
+        //     $join->on('employees.employee_type', '=', 'schedules.employee_type')
+        //         ->whereRaw('FIND_IN_SET(employees.group_company, schedules.bisnis_unit)')
+        //         ->where(function($query) {
+        //             $query->whereRaw('(schedules.company_filter IS NULL OR schedules.company_filter = "")')
+        //                 ->orWhereRaw('FIND_IN_SET(employees.company_name, schedules.company_filter)');
+        //         })
+        //         ->where(function($query) {
+        //             $query->whereRaw('(schedules.location_filter IS NULL OR schedules.location_filter = "")')
+        //                 ->orWhereRaw('FIND_IN_SET(employees.work_area_code, schedules.location_filter)');
+        //         });
+        // })
+        // ->whereColumn('employees.date_of_joining', '<', 'schedules.last_join_date')
+        // ->whereNull('schedules.deleted_at')
+        // ->where('approval_layers.approver_id', $user)
+        // ->whereDoesntHave('subordinates', function ($query) use ($user) {
+        //     $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+        //         ->with([
+        //             'goal', 
+        //             'updatedBy', 
+        //             'approval' => function ($query) {
+        //                 $query->with('approverName');
+        //             }
+        //         ])->whereHas('approvalLayer', function ($query) use ($user) {
+        //             $query->where('employee_id', $user)->orWhere('approver_id', $user);
+        //         });
+        // })
+        // ->select('approval_layers.*', 'employees.date_of_joining', 'schedules.last_join_date')
+        // ->distinct()
+        // ->get();
+
+        $notasks = ApprovalLayer::with(['employee', 'subordinates'])
+        ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
+        ->where('approval_layers.approver_id', $user)
+        ->whereDoesntHave('subordinates', function ($query) use ($user) {
+            $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+                ->with([
+                    'goal', 
+                    'updatedBy', 
+                    'approval' => function ($query) {
+                        $query->with('approverName');
+                    }
+                ])->whereHas('approvalLayer', function ($query) use ($user) {
+                    $query->where('employee_id', $user)->orWhere('approver_id', $user);
+                });
+        })
+        ->select('approval_layers.*', 'employees.access_menu')
+        ->whereJsonContains('access_menu->doj', 1)
+        ->get();
+
+        $notasks->map(function($item) {
+            // Format created_at
+            $doj = Carbon::parse($item->employee->date_of_joining);
+
+                $item->formatted_doj = $doj->format('d M Y');
+                
+            return $item;
+        });
+        
         $data = [];
         $formData = [];
 
@@ -89,8 +168,7 @@ class TeamGoalController extends Controller
                 $formData = '';
             }
         }
-        // dd($data);
-
+        
         $path = storage_path('../resources/goal.json');
 
         // Check if the JSON file exists
@@ -105,9 +183,10 @@ class TeamGoalController extends Controller
         $uomOption = $options['UoM'];
         $typeOption = $options['Type'];
 
-        $link = 'goals';
+        $parentLink = 'Goals';
+        $link = 'Team Goals';
         
-        return view('pages.goals.team-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
+        return view('pages.goals.team-goal', compact('data', 'tasks', 'notasks', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
        
     }
     
@@ -117,13 +196,13 @@ class TeamGoalController extends Controller
         
         if ($goal->isNotEmpty()) {
             // User ID doesn't match the condition, show error message
-            Alert::error('You have already initiated Goals.')->autoClose(2000);
+            Alert::error('You already initiated Goals.')->autoClose(2000);
             return redirect()->back(); // Redirect back with error message
         }
 
         $layer = ApprovalLayer::where('employee_id', $id)->where('layer', 1)->get();  
         if (!$layer->first()) {
-            Alert::error("Goal cannot be created", "There's no direct manager assigned in your position!")->showConfirmButton('OK');
+            Alert::error("Cannot create goals", "Theres no direct manager assigned in your position!")->showConfirmButton('OK');
             return redirect()->back();
         }
         // dd($layer);
@@ -140,7 +219,7 @@ class TeamGoalController extends Controller
 
         $uomOption = $uomOptions['UoM'];
         
-        $link = 'goals';
+        $link = 'Goals';
 
         return view('pages.goals.form', compact('layer', 'link', 'uomOption'));
 
@@ -151,7 +230,7 @@ class TeamGoalController extends Controller
         $goals = Goal::with(['approvalRequest'])->where('id', $id)->get();
         $goal =  $goals->first();
 
-        $link = 'goals';
+        $link = 'Goals';
 
         $path = storage_path('../resources/goal.json');
 
@@ -243,10 +322,11 @@ class TeamGoalController extends Controller
         $uomOption = $options['UoM'];
         $typeOption = $options['Type'];
 
-        $link = 'goals';
+        $parentLink = 'Goals';
+        $link = 'Approval';
 
         // dd($data);
-        return view('pages.goals.approval', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
+        return view('pages.goals.approval', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
 
     }
 

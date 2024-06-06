@@ -1,6 +1,9 @@
-<x-app-layout>
-    @section('title', 'Goals')
-    <x-slot name="content">
+@extends('layouts_.vertical', ['page_title' => 'On Behalf'])
+
+@section('css')
+@endsection
+
+@section('content')
     <!-- Begin Page Content -->
     <div class="container-fluid">
         
@@ -13,8 +16,18 @@
     @endif
 
         <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-start mb-4">
-            <h1 class="h3">Approval Goals</h1>
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('goals') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
         </div>
         @foreach ($data as $index => $row)
         <form id="goalApprovalAdminForm" action="{{ route('admin.approval.goal') }}" method="post">
@@ -23,7 +36,7 @@
             <input type="hidden" name="employee_id" value="{{ $row->request->employee_id }}">
             <input type="hidden" name="current_approver_id" value="{{ $row->request->current_approval_id }}">
               <div class="d-sm-flex align-items-center mb-4">
-                    <h4>{{ $row->request->employee->fullname }} / <span class="font-weight-light">{{ $row->request->employee->employee_id }}</span></h4>
+                    <h4 class="me-1">{{ $row->request->employee->fullname }}</h4><span class="text-muted h4">{{ $row->request->employee->employee_id }}</span>
               </div>
               <!-- Content Row -->
               <div class="container-card">
@@ -33,12 +46,11 @@
                 @if ($formData)
                 @foreach ($formData as $index => $data)
                     <div class="card col-md-12 mb-4 shadow-sm">
-                        <div class="card-header border-0 p-0 bg-white d-flex align-items-center justify-content-start">
-                            {{-- <span>#{{ $index + 1 }}</span> --}}
-                            <h1 class="rotate-n-45 text-primary"><i class="fa fa-angle-up p-0"></i></h1>
+                        <div class="card-header bg-white pb-0">
+                            <h4>KPI {{ $index + 1 }}</h4>
                         </div>
-                        <div class="card-body pt-0">
-                            <div class="row mx-auto">
+                        <div class="card-body">
+                            <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="kpi">KPI</label>
@@ -72,7 +84,7 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="type">Type</label>
-                                        <input type="number" oninput="validateDigits(this)" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" readonly>
+                                        <input type="text" oninput="validateDigits(this)" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -94,10 +106,12 @@
                         </div>
                     </div>
                 @endforeach
-                <div class="d-flex align-items-center mt-4 mb-2">
-                    <div class="form-group w-100">
-                        <label for="messages">Messages*</label>
-                        <textarea name="messages" id="messages{{ $row->request->id }}" class="form-control" placeholder="Enter messages..">{{ $row->request->messages }}</textarea>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label class="form-label" for="messages">Messages*</label>
+                            <textarea name="messages" id="messages{{ $row->request->id }}" class="form-control" placeholder="Enter messages..">{{ $row->request->messages }}</textarea>
+                        </div>
                     </div>
                 </div>
                 @else
@@ -117,37 +131,38 @@
             
             <input type="hidden" name="employee_id" value="{{ $row->request->employee_id }}">
             @if ($row->request->sendback_messages)
-            <div class="d-flex align-items-center mt-4">
-                <div class="form-group w-100">
-                    <label>Sendback Messages</label>
-                    <textarea class="form-control" @disabled(true)>{{ $row->request->sendback_messages }}</textarea>
+            <div class="row">
+                <div class="col-auto">
+                    <div class="mb-3">
+                        <label class="form-label">Sendback Messages</label>
+                        <textarea class="form-control" @disabled(true)>{{ $row->request->sendback_messages }}</textarea>
+                    </div>
                 </div>
             </div>
             @endif
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <div class="align-item-center mb-4">
-                    @can('sendbackonbehalf')
-                    <div class="dropleft">
-                    <a class="btn btn-dark px-4 rounded-pill" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Send back</a>
-                        <div class="dropdown-menu shadow-sm m-2">
-                        <h6 class="dropdown-header dark">Select person below :</h6>
-                        <a class="dropdown-item" href="#" onclick="sendBack('{{ $row->request->id }}','{{ $row->request->employee->employee_id }}','{{ $row->request->employee->fullname }}')">{{ $row->request->employee->fullname .' '.$row->request->employee->employee_id }}</a>
-                        @foreach ($row->request->approval as $item)
-                            <a class="dropdown-item" href="#" onclick="sendBack('{{ $item->request_id }}','{{ $item->approver_id }}','{{ $item->approverName->fullname }}')">{{ $item->approverName->fullname.' '.$item->approver_id }}</a>
-                        @endforeach
-                        </div> 
+            <div class="row">
+                <div class="col-lg">
+                    <div class="text-center text-lg-end">
+                        @can('sendbackonbehalf')
+                        <a class="btn btn-info px-2 rounded-pill me-2" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">Send back</a>
+                            <div class="dropdown-menu shadow-sm m-2">
+                            <h6 class="dropdown-header dark">Select person below :</h6>
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="sendBack('{{ $row->request->id }}','{{ $row->request->employee->employee_id }}','{{ $row->request->employee->fullname }}')">{{ $row->request->employee->fullname .' '.$row->request->employee->employee_id }}</a>
+                            @foreach ($row->request->approval as $item)
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="sendBack('{{ $item->request_id }}','{{ $item->approver_id }}','{{ $item->approverName->fullname }}')">{{ $item->approverName->fullname.' '.$item->approver_id }}</a>
+                            @endforeach
+                            </div> 
+                        @endcan
+                        <a href="{{ url()->previous() }}" class="btn btn-danger px-2 me-2 rounded-pill">Cancel</a>
+                        <a href="javascript:void(0)" onclick="confirmAprrovalAdmin()" class="btn btn-primary px-2 rounded-pill">Approve</a>
                     </div>
-                    @endcan
                 </div>
-                <div class="align-item-center justify-content-between text-center mb-4">
-                    <a href="{{ url()->previous() }}" class="btn btn-danger px-4 mr-3 rounded-pill">Cancel</a>
-                    <a href="#" onclick="confirmAprrovalAdmin()" class="btn btn-primary rounded-pill px-4">Approve</a>
-                </div>
-          </div>
+            </div>
         </form>
         @endforeach
     </div>
-    </x-slot>
-</x-app-layout>
+    @endsection
 
-<script src="{{ asset('js/goal-approval.js') }}"></script>
+    @push('scripts')
+        <script src="{{ asset('js/goal-approval.js') }}"></script>
+    @endpush

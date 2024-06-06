@@ -38,7 +38,7 @@ function validate() {
 
     if (sum != 100) {
         Swal.fire({
-            title: "Submit failed",
+            title: "Submission failed",
             html: `Your current weightage is ${sum}%, <br>Please adjust to reach the total weightage of 100%`,
             confirmButtonColor: "#3085d6",
             icon: "error",
@@ -106,6 +106,7 @@ function confirmAprroval() {
         confirmButtonColor: "#4e73df",
         cancelButtonColor: "#d33",
         confirmButtonText: confirmText,
+        reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById("goalApprovalForm").submit();
@@ -139,6 +140,7 @@ function confirmAprrovalAdmin() {
         confirmButtonColor: "#4e73df",
         cancelButtonColor: "#d33",
         confirmButtonText: confirmText,
+        reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById("goalApprovalAdminForm").submit();
@@ -174,6 +176,7 @@ function sendBack(id, nik, name) {
         confirmButtonColor: "#4e73df",
         cancelButtonColor: "#d33",
         confirmButtonText: confirmText,
+        reverseButtons: true,
         input: "textarea",
         nputLabel: "Message",
         inputPlaceholder: "Type your message here...",

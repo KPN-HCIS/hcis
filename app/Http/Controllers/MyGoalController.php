@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -21,6 +22,19 @@ use stdClass;
 
 class MyGoalController extends Controller
 {
+    function formatDate($date)
+    {
+        // Parse the date using Carbon
+        $carbonDate = Carbon::parse($date);
+
+        // Check if the date is today
+        if ($carbonDate->isToday()) {
+            return 'Today ' . $carbonDate->format('ga');
+        } else {
+            return $carbonDate->format('d M ga');
+        }
+    }
+
     function index(Request $request) {
         
         $user = Auth::user()->employee_id;
@@ -29,7 +43,7 @@ class MyGoalController extends Controller
         $filterYear = $request->input('filterYear');
         
         // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        $datasQuery = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'initiated', 'manager', 'approval' => function ($query) {
+        $datasQuery = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'adjustedBy', 'initiated', 'manager', 'approval' => function ($query) {
             $query->with('approverName'); // Load nested relationship
         }])
         ->whereHas('approvalLayer', function ($query) use ($user) {
@@ -44,9 +58,35 @@ class MyGoalController extends Controller
 
         $datas = $datasQuery->get();
 
+        $formattedData = $datas->map(function($item) {
+            // Format created_at
+            $createdDate = Carbon::parse($item->created_at);
+            if ($createdDate->isToday()) {
+                $item->formatted_created_at = 'Today ' . $createdDate->format('g:i A');
+            } else {
+                $item->formatted_created_at = $createdDate->format('d M Y');
+            }
+    
+            // Format updated_at
+            $updatedDate = Carbon::parse($item->updated_at);
+            if ($updatedDate->isToday()) {
+                $item->formatted_updated_at = 'Today ' . $updatedDate->format('g:i A');
+            } else {
+                $item->formatted_updated_at = $updatedDate->format('d M Y');
+            }
+    
+            return $item;
+        });
+
+        if (!empty($datas->first()->updatedBy)) {    
+            $adjustByManager = ApprovalLayer::where('approver_id', $datas->first()->updatedBy->employee_id)->where('employee_id', $datas->first()->employee_id)->first();
+        } else {
+            $adjustByManager = null;
+        }
+        
         $data = [];
         
-        foreach ($datas as $request) {
+        foreach ($formattedData as $request) {
             // Memeriksa status form dan pembuatnya
             if ($request->goal->form_status != 'Draft' || $request->created_by == Auth::user()->id) {
                 // Mengambil nilai fullname dari relasi approverName
@@ -57,9 +97,10 @@ class MyGoalController extends Controller
                     $dataApprover = '';
                 }
         
+                
                 // Buat objek untuk menyimpan data request dan approver fullname
                 $dataItem = new stdClass();
-
+                
                 $dataItem->request = $request;
                 $dataItem->approver_name = $dataApprover;
               
@@ -69,8 +110,6 @@ class MyGoalController extends Controller
                 
             }
         }
-        
-        // dd($data);
 
         $formData = [];
         if($datas->isNotEmpty()){
@@ -91,7 +130,8 @@ class MyGoalController extends Controller
         $uomOption = $options['UoM'];
         $typeOption = $options['Type'];
 
-        $link = 'goals';
+        $parentLink = 'Goals';
+        $link = 'My Goals';
 
         $employee = Employee::where('employee_id', $user)->first();
 
@@ -106,7 +146,7 @@ class MyGoalController extends Controller
             return $req;
         });
         
-        return view('pages.goals.my-goal', compact('data', 'link', 'formData', 'uomOption', 'typeOption','goals', 'selectYear'));
+        return view('pages.goals.my-goal', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption','goals', 'selectYear', 'adjustByManager'));
        
     }
     function show($id) {
@@ -118,19 +158,19 @@ class MyGoalController extends Controller
     function create($id) {
 
         $goal = Goal::where('employee_id', $id)->get(); 
-        
+        $year = Carbon::now()->year;
         if ($goal->isNotEmpty()) {
             // User ID doesn't match the condition, show error message
-            Alert::error('You have already initiated Goals.')->autoClose(2000);
+            Session::flash('error', "You already initiated Goals for $year.");
             return redirect()->back(); // Redirect back with error message
         }
 
         $layer = ApprovalLayer::where('employee_id', $id)->where('layer', 1)->get();  
         if (!$layer->first()) {
-            Alert::error("Goal cannot be created", "There's no direct manager assigned in your position!")->showConfirmButton('OK');
+            Session::flash('error', "Theres no direct manager assigned in your position!");
             return redirect()->back();
         }
-        // dd($layer);
+
         $path = storage_path('../resources/goal.json');
 
         // Check if the JSON file exists
@@ -144,9 +184,10 @@ class MyGoalController extends Controller
 
         $uomOption = $uomOptions['UoM'];
         
-        $link = 'goals';
+        $parentLink = 'Goals';
+        $link = 'Create';
 
-        return view('pages.goals.form', compact('layer', 'link', 'uomOption'));
+        return view('pages.goals.form', compact('layer', 'link', 'parentLink', 'uomOption'));
 
     }
 
@@ -157,7 +198,8 @@ class MyGoalController extends Controller
 
         $approvalRequest = ApprovalRequest::where('form_id', $goal->id)->first();
 
-        $link = 'goals';
+        $parentLink = 'Goals';
+        $link = 'Edit';
 
         $path = storage_path('../resources/goal.json');
 
@@ -169,7 +211,6 @@ class MyGoalController extends Controller
 
         if(!$goal){
             return redirect()->route('goals');
-            // $goal = Goal::where('id', $data->goal->id)->get();  
         }else{
             // Read the contents of the JSON file
             $formData = json_decode($goal->form_data, true);
@@ -182,15 +223,20 @@ class MyGoalController extends Controller
 
             $selectedUoM = [];
             $selectedType = [];
+            $weigthage = [];
+            $totalWeightages = 0;
             
             foreach ($formData as $index => $row) {
                 $selectedUoM[$index] = $row['uom'] ?? '';
                 $selectedType[$index] = $row['type'] ?? '';
+                $weigthage[$index] = $row['weightage'] ?? '';
+                $totalWeightages += (int)$weigthage[$index];
             }
+
 
             $data = json_decode($goal->form_data, true);
 
-            return view('pages.goals.edit', compact('goal', 'formCount', 'link', 'data', 'uomOption', 'selectedUoM', 'typeOption', 'selectedType', 'approvalRequest'));
+            return view('pages.goals.edit', compact('goal', 'formCount', 'link', 'data', 'uomOption', 'selectedUoM', 'typeOption', 'selectedType', 'approvalRequest', 'totalWeightages', 'parentLink'));
         }
 
     }

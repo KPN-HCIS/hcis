@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Auth;
 class LayerController extends Controller
 {
     function layer() {
-        $link = 'approval_layers';
+        $parentLink = 'Settings';
+        $link = 'Layers';
         //$approvalLayers = ApprovalLayer::with('view_employee')->get();
         $approvalLayers = DB::table('approval_layers as al')
         ->select('al.employee_id', 'emp.fullname', 'emp.job_level', 'emp.contribution_level_code', 'emp.group_company', 'emp.office_area')
@@ -39,6 +40,7 @@ class LayerController extends Controller
 
     $employeeCount = $approvalLayers->unique('employee_id')->count();
         return view('pages.layers.layer', [
+            'parentLink' => $parentLink,
             'link' => $link,
             'approvalLayers' => $approvalLayers,
             'employeeCount' => $employeeCount,

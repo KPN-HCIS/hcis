@@ -1,37 +1,47 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+@extends('layouts_.vertical', ['page_title' => 'Schedule'])
 
-<x-app-layout>
-    @section('title', 'Schedule')
-    <x-slot name="content">
+@section('css')
+@endsection
+
+@section('content')
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <!-- Page Heading -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('schedules') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
+        </div>
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-8">
-                <div class="card-header bg-white justify-content-start">
-                    <div class="form-inline text-lg mr-4">
-                        <a href="{{ route('schedules') }}" class="close mr-3">
-                            <span aria-hidden="true">&times;</span>
-                        </a>
-                        <span class="modal-title" id="viewFormEmployeeLabel">Schedule</span>
-                    </div>
+                <div class="card-header d-flex bg-white justify-content-between">
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Schedule</h4>
+                    <a href="{{ route('schedules') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
-                    <div class="container-fluid py-3">
+                    <div class="container-fluid">
                         <form id="scheduleForm" method="post" action="{{ route('save-schedule') }}">@csrf
                             <div class="row my-2">
                                 <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="name">Schedule Name</label>
+                                    <div class="mb-2">
+                                        <label class="form-label" for="name">Schedule Name</label>
                                         <input type="text" class="form-control bg-light" placeholder="Enter name.." id="name" name="schedule_name" required>
                                     </div>
                                 </div>
                             </div>
                             <div class="row my-2">
                                 <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="type">Event Type</label>
-                                        <select name="event_type" class="form-control bg-light">
+                                    <div class="mb-2">
+                                        <label class="form-label" for="type">Event Type</label>
+                                        <select name="event_type" class="form-select bg-light">
                                             <option value="goals">Goals</option>
                                             <option value="pa_year_end">Year End</option>
                                         </select>
@@ -40,9 +50,9 @@
                             </div>
                             <div class="row my-2">
                                 <div class="col-md-10">
-                                    <div class="form-group">
-                                        <label for="type">Employee Type</label>
-                                        <select name="employee_type[]" class="form-control bg-light select2" multiple>
+                                    <div class="mb-2">
+                                        <label class="form-label" for="type">Employee Type</label>
+                                        <select name="employee_type[]" class="form-select bg-light select2" multiple>
                                             <option value="Permanent">Permanent</option>
                                             <option value="Contract">Contract</option>
                                             <option value="Probation">Probation</option>
@@ -53,9 +63,9 @@
                             </div>
                             <div class="row my-2">
                                 <div class="col-md-10">
-                                    <div class="form-group">
-                                        <label for="type">Bisnis Unit</label>
-                                        <select name="bisnis_unit[]" class="form-control bg-light select2" multiple>
+                                    <div class="mb-2">
+                                        <label class="form-label" for="type">Bisnis Unit</label>
+                                        <select name="bisnis_unit[]" class="form-select bg-light select2" multiple>
                                             <option value="KPN Corporation">KPN Corporation</option>
                                             <option value="KPN Plantations">KPN Plantations</option>
                                             <option value="Downstream">Downstream</option>
@@ -66,9 +76,9 @@
                             </div>
                             <div class="row my-2">
                                 <div class="col-md-10">
-                                    <div class="form-group">
-                                        <label for="type">Filter Company:</label>
-                                        <select class="form-control bg-light select2" name="company_filter[]" multiple>
+                                    <div class="mb-2">
+                                        <label class="form-label" for="type">Filter Company:</label>
+                                        <select class="form-select bg-light select2" name="company_filter[]" multiple>
                                             <option value="">Select Company...</option>
                                             @foreach($companies as $company)
                                                 <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level_code." (".$company->contribution_level.")" }}</option>
@@ -79,9 +89,9 @@
                             </div>
                             <div class="row my-2">
                                 <div class="col-md-10">
-                                    <div class="form-group">
-                                        <label for="type">Filter Locations:</label>
-                                        <select class="form-control bg-light select2" name="location_filter[]" multiple>
+                                    <div class="mb-2">
+                                        <label class="form-label" for="type">Filter Locations:</label>
+                                        <select class="form-select bg-light select2" name="location_filter[]" multiple>
                                             <option value="">Select location...</option>
                                             @foreach($locations as $location)
                                                 <option value="{{ $location->work_area }}">{{ $location->area." (".$location->company_name.")" }}</option>
@@ -92,22 +102,22 @@
                             </div>
                             <div class="row my-2">
                                 <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="start">Last Join Date</label>
+                                    <div class="mb-2">
+                                        <label class="form-label" for="start">Last Join Date</label>
                                         <input type="date" name="last_join_date" class="form-control bg-light" id="start" placeholder="mm/dd/yyyy" required>
                                     </div>
                                 </div>
                             </div>
                             <div class="row my-2">
                                 <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="start">Start Date</label>
+                                    <div class="mb-2">
+                                        <label class="form-label" for="start">Start Date</label>
                                         <input type="date" name="start_date" class="form-control bg-light" id="start" placeholder="mm/dd/yyyy" required>
                                     </div>
                                 </div>
                                 <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label for="end">End Date</label>
+                                    <div class="mb-2">
+                                        <label class="form-label" for="end">End Date</label>
                                         <input type="date" name="end_date" class="form-control bg-light" id="end" placeholder="mm/dd/yyyy" required>
                                     </div>
                                 </div>
@@ -117,7 +127,7 @@
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" id="checkbox_reminder" name="checkbox_reminder" value="1">
-                                            <label class="custom-control-label" for="checkbox_reminder">Reminder</label>
+                                            <label class="form-label" class="custom-control-label" for="checkbox_reminder">Reminder</label>
                                         </div>
                                     </div>
                                 </div>
@@ -125,9 +135,9 @@
                             <div class="reminders" hidden>
                                 <div class="row my-2">
                                     <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="inputState">Reminder By</label>
-                                            <select id="inputState" name="inputState" class="form-control" onchange="toggleDivs()">
+                                        <div class="mb-2">
+                                            <label class="form-label" for="inputState">Reminder By</label>
+                                            <select id="inputState" name="inputState" class="form-select" onchange="toggleDivs()">
                                                 <option value="repeaton" selected>Repeat On</option>
                                                 <option value="beforeenddate">Before End Date</option>
                                             </select>
@@ -137,8 +147,17 @@
                                 
                                 <div id="repeaton">
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="btn-group w-75" id="repeatDays" role="group" aria-label="Repeat Days">
+                                        <div class="col-12 col-md-auto">
+                                            <div class="btn-group-vertical mb-2 d-flex d-md-none" role="group" aria-label="Vertical button group">
+                                                <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button">Monday</button>
+                                                <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button">Tuesday</button>
+                                                <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button">Wednesday</button>
+                                                <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button">Thursday</button>
+                                                <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button">Friday</button>
+                                                <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button">Saturday</button>
+                                                <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button">Sunday</button>
+                                            </div>
+                                            <div class="btn-group mb-2 d-none d-md-flex" role="group" aria-label="Vertical button group">
                                                 <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button">Mon</button>
                                                 <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button">Tue</button>
                                                 <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button">Wed</button>
@@ -146,8 +165,10 @@
                                                 <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button">Fri</button>
                                                 <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button">Sat</button>
                                                 <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button">Sun</button>
-                                                <button type="button" class="btn btn-primary btn-sm" id="select-all">Select All</button>
                                             </div>
+                                        </div>
+                                        <div class="col-md-auto text-end">
+                                            <button type="button" class="btn btn-outline-primary btn-sm mb-2" id="select-all">Select All</button>
                                         </div>
                                     </div>
                                 </div>
@@ -164,17 +185,18 @@
                                 </div>
                                 <div class="row my-4">
                                     <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label for="messages">Messages</label>
+                                        <div class="mb-2">
+                                            <label class="form-label" for="messages">Messages</label>
                                             <textarea name="messages" id="messages" rows="5" class="form-control bg-light" placeholder="Enter message.."></textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md d-sm-flex justify-content-end">
+                                <div class="col-md d-md-flex justify-content-end text-center">
                                     <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                                    <button type="submit" class="btn btn-primary shadow px-4">Submit</button>
+                                    <a href="{{ route('schedules') }}" type="button" class="btn btn-danger rounded-pill shadow px-4 me-2">Cancel</a>
+                                    <button type="submit" class="btn btn-primary rounded-pill shadow px-4">Submit</button>
                                 </div>
                             </div>
                         </form>
@@ -183,9 +205,9 @@
             </div>
         </div>
     </div>
-    </x-slot>
-</x-app-layout>
+@endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
+@push('scripts')
 <script>
     document.getElementById('scheduleForm').addEventListener('submit', function() {
         var repeatDaysButtons = document.getElementsByName('repeat_days[]');
@@ -221,6 +243,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('.select2').select2();
+        $('.select2').select2({
+            theme: "bootstrap-5",
+        });
     });
 </script>
+@endpush

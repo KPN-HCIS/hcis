@@ -21,15 +21,16 @@ class RoleController extends Controller
 
     function __construct()
     {
-        $this->link = 'Role';
+        $this->link = 'Roles';
     }
 
     function index() {
 
+        $parentLink = "Settings";
         $link = $this->link;
         $active = '';
 
-        return view('pages.roles.app', compact('link', 'active'));
+        return view('pages.roles.app', compact('link', 'parentLink', 'active'));
     }
     function assign() {
         $roles = Role::all();
@@ -38,10 +39,11 @@ class RoleController extends Controller
             $roles = $roles->where('name', '!=', 'superadmin');
         }
         
-        $link = $this->link;
+        $parentLink = $this->link;
+        $link = "Assign";
         $active = 'assign';
 
-        return view('pages.roles.assign', compact('roles', 'link', 'active'));
+        return view('pages.roles.assign', compact('roles', 'link', 'parentLink', 'active'));
     }
     function create() {    
         $permissions = Permission::all();
@@ -52,10 +54,11 @@ class RoleController extends Controller
 
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        $link = $this->link;
+        $parentLink = $this->link;
+        $link = "Create";
         $active = 'create';
 
-        return view('pages.roles.create', compact('link', 'active', 'permissions', 'locations', 'groupCompanies', 'companies'));
+        return view('pages.roles.create', compact('link', 'parentLink', 'active', 'permissions', 'locations', 'groupCompanies', 'companies'));
     }
     function manage() {
 
@@ -65,10 +68,11 @@ class RoleController extends Controller
             $roles = $roles->where('name', '!=', 'superadmin');
         }
         
-        $link = $this->link;
+        $parentLink = $this->link;
+        $link = "Manage";
         $active = 'manage';
 
-        return view('pages.roles.manage', compact('roles', 'link', 'active'));
+        return view('pages.roles.manage', compact('roles', 'link', 'parentLink', 'active'));
     }
     function getAssignment(Request $request) {
 
@@ -87,10 +91,11 @@ class RoleController extends Controller
         
         $users = User::select('id', 'name')->get();
         
-        $link = $this->link;
+        $parentLink = $this->link;
+        $link = "Manage";
         $active = 'manage';
         // dd($roles);
-        return view('pages.roles.assignform', compact('roles', 'link', 'active', 'users', 'roleId', 'locations', 'groupCompanies', 'companies'));
+        return view('pages.roles.assignform', compact('roles', 'link', 'parentLink', 'active', 'users', 'roleId', 'locations', 'groupCompanies', 'companies'));
     }
     function getPermission(Request $request) {
 
@@ -110,15 +115,18 @@ class RoleController extends Controller
             $join->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id', '=', $roleId);
         })
-        ->select('permissions.id', 'permissions.name', 'role_has_permissions.role_id')
-        ->whereBetween('permissions.id', [1, 9])
-        ->orderBy('permissions.name')
-        ->pluck('role_has_permissions.role_id')
+        ->select('permissions.id', 'permissions.name', 'role_has_permissions.permission_id')
+        // ->whereBetween('permissions.id', [1, 9])
+        ->orderBy('permissions.id')
+        ->pluck('role_has_permissions.permission_id')
         ->toArray();
+
+        // dd($permissionNames);
         
-        $link = $this->link;
+        $parentLink = $this->link;
+        $link = "Create";
         $active = 'create';
-        return view('pages.roles.manageform', compact('link', 'active', 'roles', 'permissions', 'permissionNames', 'roleId', 'locations', 'groupCompanies', 'companies'));
+        return view('pages.roles.manageform', compact('link', 'parentLink', 'active', 'roles', 'permissions', 'permissionNames', 'roleId', 'locations', 'groupCompanies', 'companies'));
     }
 
     public function assignUser(Request $request)

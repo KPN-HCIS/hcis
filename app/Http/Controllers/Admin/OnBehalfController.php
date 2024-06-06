@@ -13,6 +13,7 @@ use App\Models\Employee;
 use App\Models\Goal;
 use App\Models\Location;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -81,13 +82,14 @@ class OnBehalfController extends Controller
     
     function index() {
 
+        $parentLink = 'Admin';
         $link = 'On Behalf';
 
         $locations = $this->locations;
         $companies = $this->companies;
         $groupCompanies = $this->groupCompanies;
 
-        return view('pages.onbehalfs.app', compact('link', 'locations', 'companies', 'groupCompanies'));
+        return view('pages.onbehalfs.app', compact('link', 'parentLink', 'locations', 'companies', 'groupCompanies'));
        
     }
 
@@ -107,6 +109,7 @@ class OnBehalfController extends Controller
 
         $filters = compact('group_company', 'location', 'company');
 
+        $parentLink = 'Admin';
         $link = 'On Behalf';
 
         $data = [];
@@ -150,8 +153,21 @@ class OnBehalfController extends Controller
                     $datas->whereIn('contribution_level_code', $company);
                 });
             }
-    
+            
             $datas = $datas->get();
+            
+            $datas->map(function($item) {
+                // Format created_at
+                $createdDate = Carbon::parse($item->created_at);
+
+                    $item->formatted_created_at = $createdDate->format('d M Y g:ia');
+    
+                // Format updated_at
+                $updatedDate = Carbon::parse($item->updated_at);
+
+                    $item->formatted_updated_at = $updatedDate->format('d M Y g:ia');
+
+                });
             
             foreach ($datas as $request) {
                 // Memeriksa status form dan pembuatnya
@@ -178,9 +194,9 @@ class OnBehalfController extends Controller
         $groupCompanies = $this->groupCompanies;
 
         if ($category == 'Goals' || $filterCategory == 'Goals') {
-            return view('pages.onbehalfs.goal', compact('data', 'link', 'locations', 'companies', 'groupCompanies'));
+            return view('pages.onbehalfs.goal', compact('data', 'link', 'parentLink', 'locations', 'companies', 'groupCompanies'));
         } elseif ($category == 'Performance' || $filterCategory == 'Goals') {
-            return view('pages.onbehalfs.performance', compact('data', 'link', 'locations', 'companies', 'groupCompanies'));
+            return view('pages.onbehalfs.performance', compact('data', 'link', 'parentLink', 'locations', 'companies', 'groupCompanies'));
         } else {
             return ''; // Or return a default view/content
         }
@@ -240,10 +256,11 @@ class OnBehalfController extends Controller
         $uomOption = $options['UoM'];
         $typeOption = $options['Type'];
 
+        $parentLink = 'Admin';
         $link = 'On Behalf';
 
         // dd($data);
-        return view('pages.onbehalfs.approval', compact('data', 'link', 'formData', 'uomOption', 'typeOption'));
+        return view('pages.onbehalfs.approval', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
 
     }
     
@@ -256,8 +273,7 @@ class OnBehalfController extends Controller
                                     ->where('employee_id', $request->employee_id)->max('layer');
 
         // Cari approver_id pada layer selanjutnya
-        $nextApprover = ApprovalLayer::where('layer', $nextLayer + 1)
-                                      ->value('approver_id');
+        $nextApprover = ApprovalLayer::where('layer', $nextLayer + 1)->where('employee_id', $request->employee_id)->value('approver_id');
 
         if (!$nextApprover) {
             $approver = $request->current_approver_id;
@@ -388,7 +404,7 @@ class OnBehalfController extends Controller
         }
         $approval->save();
             
-        return redirect()->route('admin.onbehalf');
+        return redirect()->route('onbehalf');
     }
 
     public function unitOfMeasurement()

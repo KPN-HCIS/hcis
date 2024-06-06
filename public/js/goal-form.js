@@ -11,7 +11,7 @@ function otherUom(index) {
         inputField.prop("required", false); // Remove required attribute
     }
 }
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
     // Get the value of the hidden input
     var managerId = $('input[name="manager_id"]').val();
 
@@ -29,11 +29,6 @@ $(document).ready(function () {
         });
     }
 });
-
-var wrapper = $(".container-card"); // Fields wrapper
-
-var x = 1; // initial text box count
-var index = $("#count").val();
 
 // Function to fetch UoM data and populate select element
 function populateUoMSelect(select) {
@@ -59,111 +54,151 @@ function populateUoMSelect(select) {
         });
 }
 
-function addField(val) {
+document.addEventListener("DOMContentLoaded", function () {
+    var x = 1;
     var count = $("#count").val();
+    var wrapper = $(".container-card"); // Fields wrapper
+    var index = document.getElementById("count").value;
 
-    var max_fields = val === "input" ? 9 : 10 - count; // maximum input boxes allowed
-    // on add input button click
-    if (x <= max_fields) {
-        // max input box allowed
-        x++; // text box increment
-        index++; // text box increment
-        $(wrapper).append(
-            '<div class="card col-md-12 mb-4 shadow-sm">' +
-                ' <div class="card-header border-0 p-0 bg-white d-flex align-items-center justify-content-between"><h1 class="rotate-n-45 text-primary"><i class="fas fa-angle-up p-0"></i></h1><a class="btn btn-danger btn-sm btn-circle remove_field"><i class="fas fa-times"></i></a></div>' +
-                '<div class="card-body p-0">' +
-                '<div class="row mx-auto">' +
-                '<div class="col-md-4">' +
-                '<div class="form-group">' +
-                '<label for="kpi">KPI ' +
-                (index ? index : x) +
-                "</label>" +
-                '<textarea name="kpi[]" id="kpi" class="form-control" required></textarea>' +
-                "</div>" +
-                "</div>" +
-                '<div class="col-md-2">' +
-                '<div class="form-group">' +
-                '<label for="target">Target</label><input type="number" oninput="validateDigits(this)" name="target[]" id="target" class="form-control" required>' +
-                "</div>" +
-                "</div>" +
-                '<div class="col-md-2">' +
-                '<div class="form-group">' +
-                '<label for="uom">UoM</label>' +
-                '<select class="form-control select2" name="uom[]" id="uom' +
-                index +
-                '"onchange="otherUom(' +
-                index +
-                ')" title="Unit of Measure" required>' +
-                '<option value="">- Select -</option>' +
-                '</select><input type="text" name="custom_uom[]" id="custom_uom' +
-                index +
-                '" class="form-control mt-2" placeholder="Enter UoM" style="display: none" placeholder="Enter UoM">' +
-                "</div>" +
-                "</div>" +
-                '<div class="col-md-2">' +
-                '<div class="form-group">' +
-                '<label for="type">Type</label>' +
-                '<select class="form-control" name="type[]" id="type" required>' +
-                '<option value="">- Select -</option>' +
-                '<option value="Higher Better">Higher Better</option>' +
-                '<option value="Lower Better">Lower Better</option>' +
-                '<option value="Exact Value">Exact Value</option>' +
-                "</select>" +
-                "</div>" +
-                "</div>" +
-                '<div class="col-md-2">' +
-                '<div class="form-group">' +
-                '<label for="weightage">Weightage</label>' +
-                '<div class="input-group">' +
-                '<input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ old("weightage") }}" required>' +
-                '<div class="input-group-append">' +
-                '<span class="input-group-text">%</span>' +
-                "</div>" +
-                "</div>" +
-                "</div>" +
-                "</div>" +
-                "</div>" +
-                "</div>" +
-                "</div>"
-        ); // add input box
-        // Populate UoM select for the newly added field
-        var newSelect = $("#uom" + index); // Assuming your select has an ID like "uom1", "uom2", ...
-        populateUoMSelect(newSelect);
+    function addField(val) {
+        var max_fields = val === "input" ? 9 : 10 - count; // maximum input boxes allowed
 
-        $(".select2").select2({
-            theme: "bootstrap4",
-        });
+        if (x <= max_fields) {
+            // max input box allowed
+            x++; // text box increment
+            index++; // text box increment
 
-        var weightageInputs = document.getElementsByName("weightage[]");
-        for (var i = 0; i < weightageInputs.length; i++) {
-            weightageInputs[i].addEventListener(
-                "keyup",
-                updateWeightageSummary
-            );
+            $(wrapper).append(
+                '<div class="card col-md-12 mb-3 shadow-sm">' +
+                    "<div class='card-body'><div class='row card-title fs-16 mb-3'><div class='col'><h5>Goal " +
+                    (index ? index : x) +
+                    "</h5></div>" +
+                    "<div class='col-auto'><a class='btn-close remove_field' type='button'></a></div></div>" +
+                    '<div class="row mt-2">' +
+                    '<div class="col-md-4 mb-3">' +
+                    '<label class="form-label" for="kpi">KPI ' +
+                    "</label>" +
+                    '<textarea name="kpi[]" id="kpi" class="form-control" required></textarea>' +
+                    "</div>" +
+                    '<div class="col-md-2 mb-3">' +
+                    '<label class="form-label" for="target">Target</label><input type="number" oninput="validateDigits(this)" name="target[]" id="target" class="form-control" required>' +
+                    "</div>" +
+                    '<div class="col-md-2 mb-3">' +
+                    '<label class="form-label" for="uom">UoM</label>' +
+                    '<select class="form-select select2" name="uom[]" id="uom' +
+                    index +
+                    '" onchange="otherUom(' +
+                    index +
+                    ')" title="Unit of Measure" required>' +
+                    '<option value="">- Select -</option>' +
+                    '</select><input type="text" name="custom_uom[]" id="custom_uom' +
+                    index +
+                    '" class="form-control mt-2" placeholder="Enter UoM" style="display: none" placeholder="Enter UoM">' +
+                    "</div>" +
+                    '<div class="col-md-2 mb-3">' +
+                    '<label class="form-label" for="type">Type</label>' +
+                    '<select class="form-select" name="type[]" id="type" required>' +
+                    '<option value="">- Select -</option>' +
+                    '<option value="Higher Better">Higher Better</option>' +
+                    '<option value="Lower Better">Lower Better</option>' +
+                    '<option value="Exact Value">Exact Value</option>' +
+                    "</select>" +
+                    "</div>" +
+                    '<div class="col-md-2 mb-3">' +
+                    '<label class="form-label" for="weightage">Weightage</label>' +
+                    '<div class="input-group">' +
+                    '<input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ old("weightage") }}" required>' +
+                    '<div class="input-group-append">' +
+                    '<span class="input-group-text">%</span>' +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>"
+            ); // add input box
+
+            // Populate UoM select for the newly added field
+            var newSelect = $("#uom" + index); // Assuming your select has an ID like "uom1", "uom2", ...
+            populateUoMSelect(newSelect);
+
+            $(".select2").select2({
+                theme: "bootstrap-5",
+            });
+
+            var weightageInputs = document.getElementsByName("weightage[]");
+            for (var i = 0; i < weightageInputs.length; i++) {
+                weightageInputs[i].addEventListener(
+                    "keyup",
+                    updateWeightageSummary
+                );
+            }
+        } else {
+            Swal.fire({
+                title: "Oops, you've reached the maximum number of KPI",
+                icon: "error",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK",
+            });
         }
-    } else {
-        Swal.fire({
-            title: "Oops, you've exceeded the maximum KPI inputs",
-            icon: "error",
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "OK",
-        });
     }
-}
 
-$(wrapper).on("click", ".remove_field", function (e) {
-    e.preventDefault();
+    $(wrapper).on("click", ".remove_field", function (e) {
+        e.preventDefault();
 
-    // Find the last card within the wrapper and remove it
-    $(wrapper)
-        .children(".card")
-        .last() // Select the last (most recently added) card
-        .remove();
+        // Find the last card within the wrapper and remove it
+        $(wrapper).children(".card").last().remove();
+        // Select the last (most recently added) card
 
-    x--; // Decrement the text box count
+        x--; // Decrement the text box count
+        index--;
+
+        // updateWeightageSummary;
+        // Get all input elements with name="weightage[]"
+        var weightageInputs = document.getElementsByName("weightage[]");
+        var totalSum = 0;
+
+        // Iterate through each input element
+        for (var i = 0; i < weightageInputs.length; i++) {
+            var input = weightageInputs[i];
+
+            // Get the value of the input (convert to number)
+            var value = parseFloat(input.value);
+
+            // Check if the value is a valid number and within the allowed range
+            if (!isNaN(value) && value >= 5 && value <= 100) {
+                totalSum += value; // Add valid value to total sum
+            }
+        }
+
+        // Display the total sum in a summary element
+        var summaryElement = document.getElementById("totalWeightage");
+
+        if (totalSum != 100) {
+            summaryElement.classList.remove("text-success");
+            summaryElement.classList.add("text-danger"); // Add text-danger class
+            // Add or update a sibling element to display the additional message
+            if (summaryElement) {
+                summaryElement.textContent = totalSum.toFixed(0) + "% of 100%";
+            }
+        } else {
+            summaryElement.classList.remove("text-danger"); // Remove text-danger class
+            summaryElement.classList.add("text-success"); // Remove text-danger class
+            // Hide the message element if totalSum is 100
+            if (summaryElement) {
+                summaryElement.textContent = totalSum.toFixed(0) + "%";
+            }
+        }
+    });
+
+    var addButton = document.getElementById("addButton");
+    addButton.addEventListener("click", function () {
+        var dataId = addButton.getAttribute("data-id");
+        addField(dataId); // Add an empty input field
+    });
 });
 
-var firstSelect = $("#uom"); // Assuming your first select has an ID "uom1"
+var firstSelect = document.getElementById("uom"); // Assuming your first select has an ID "uom1"
 populateUoMSelect(firstSelect);
 
 function checkEmptyFields(submitType) {
@@ -171,9 +206,7 @@ function checkEmptyFields(submitType) {
     alertField.html(`
         <div id="alertField" class="alert alert-danger alert-dismissible fade" role="alert" hidden>
             <strong>All fields are mandatory.</strong> Please check the fields below.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `);
     if (submitType === "submit_form") {
@@ -209,7 +242,7 @@ function validate(submitType) {
 
     if (sum != 100 && submitType === "submit_form") {
         Swal.fire({
-            title: "Submit failed",
+            title: "Submission failed",
             html: `Your current weightage is ${sum}%, <br>Please adjust to reach the total weightage of 100%`,
             confirmButtonColor: "#3085d6",
             icon: "error",
@@ -279,7 +312,8 @@ function confirmSubmission(submitType) {
     } else {
         title1 = "Do you want to submit?";
         title2 = "KPI submitted successfuly!";
-        text = "You won't be able to revert this!";
+        text =
+            "You can still change it as long as the manager hasn't approved it yet";
         confirmText = "Submit";
     }
 
@@ -290,6 +324,7 @@ function confirmSubmission(submitType) {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: confirmText,
+        reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById("goalForm").submit();
@@ -355,3 +390,7 @@ function validateDigits(input) {
         input.value = input.value.slice(0, 10);
     }
 }
+
+$(".select2").select2({
+    theme: "bootstrap-5",
+});

@@ -15,17 +15,17 @@ class DbController extends Controller
     // Step 2: Decrypt using base64
     $decodedData = base64_decode($dataValue);
 
+    // Get the XOR key from the configuration
+    $key = config('app.xor_key');
+
     // Step 3: Decrypt using XOR with the provided key
-    $xoredData = $this->xorDecrypt($decodedData, '8888888');
+    $xoredData = $this->xorDecrypt($decodedData, $key);
 
     // Step 4: Decrypt using base64 again
     $finalData = base64_decode($xoredData);
 
     // $finalData now contains the decrypted JSON payload
     $decodedPayload = json_decode($finalData, true);
-
-    // Dump and die to inspect the decrypted payload
-    dd($finalData);
 
     // Use the decrypted payload as needed in your logic
     // For example:
