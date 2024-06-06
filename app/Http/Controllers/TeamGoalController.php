@@ -65,22 +65,41 @@ class TeamGoalController extends Controller
             });
         });
 
+        // $notasks = ApprovalLayer::with(['employee', 'subordinates'])
+        // ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
+        // ->leftJoin('schedules', function($join) {
+        //     $join->on('employees.employee_type', '=', 'schedules.employee_type')
+        //         ->whereRaw('FIND_IN_SET(employees.group_company, schedules.bisnis_unit)')
+        //         ->where(function($query) {
+        //             $query->whereRaw('(schedules.company_filter IS NULL OR schedules.company_filter = "")')
+        //                 ->orWhereRaw('FIND_IN_SET(employees.company_name, schedules.company_filter)');
+        //         })
+        //         ->where(function($query) {
+        //             $query->whereRaw('(schedules.location_filter IS NULL OR schedules.location_filter = "")')
+        //                 ->orWhereRaw('FIND_IN_SET(employees.work_area_code, schedules.location_filter)');
+        //         });
+        // })
+        // ->whereColumn('employees.date_of_joining', '<', 'schedules.last_join_date')
+        // ->whereNull('schedules.deleted_at')
+        // ->where('approval_layers.approver_id', $user)
+        // ->whereDoesntHave('subordinates', function ($query) use ($user) {
+        //     $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+        //         ->with([
+        //             'goal', 
+        //             'updatedBy', 
+        //             'approval' => function ($query) {
+        //                 $query->with('approverName');
+        //             }
+        //         ])->whereHas('approvalLayer', function ($query) use ($user) {
+        //             $query->where('employee_id', $user)->orWhere('approver_id', $user);
+        //         });
+        // })
+        // ->select('approval_layers.*', 'employees.date_of_joining', 'schedules.last_join_date')
+        // ->distinct()
+        // ->get();
+
         $notasks = ApprovalLayer::with(['employee', 'subordinates'])
         ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
-        ->leftJoin('schedules', function($join) {
-            $join->on('employees.employee_type', '=', 'schedules.employee_type')
-                ->whereRaw('FIND_IN_SET(employees.group_company, schedules.bisnis_unit)')
-                ->where(function($query) {
-                    $query->whereRaw('(schedules.company_filter IS NULL OR schedules.company_filter = "")')
-                        ->orWhereRaw('FIND_IN_SET(employees.company_name, schedules.company_filter)');
-                })
-                ->where(function($query) {
-                    $query->whereRaw('(schedules.location_filter IS NULL OR schedules.location_filter = "")')
-                        ->orWhereRaw('FIND_IN_SET(employees.work_area_code, schedules.location_filter)');
-                });
-        })
-        ->whereColumn('employees.date_of_joining', '<', 'schedules.last_join_date')
-        ->whereNull('schedules.deleted_at')
         ->where('approval_layers.approver_id', $user)
         ->whereDoesntHave('subordinates', function ($query) use ($user) {
             $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
@@ -94,10 +113,9 @@ class TeamGoalController extends Controller
                     $query->where('employee_id', $user)->orWhere('approver_id', $user);
                 });
         })
-        ->select('approval_layers.*', 'employees.date_of_joining', 'schedules.last_join_date')
-        ->distinct()
+        ->select('approval_layers.*', 'employees.access_menu')
+        ->whereJsonContains('access_menu->doj', 1)
         ->get();
-
 
         $notasks->map(function($item) {
             // Format created_at

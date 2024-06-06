@@ -61,15 +61,28 @@
         <div class="row px-2">
             <div class="col-lg-12 p-0">
                 <div class="mt-3 p-2 bg-info bg-opacity-10 rounded shadow">
-                    <h5 class="m-0 pb-2">
-                        <a class="text-dark d-block" data-bs-toggle="collapse" href="#dataTasks" role="button" aria-expanded="false" aria-controls="dataTasks">
-                            <i class="ri-arrow-down-s-line fs-18"></i>Initiated <span class="text-muted">({{ count($tasks) }})</span>
-                        </a>
-                    </h5>
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <h5 class="m-0 w-100">
+                                <a class="text-dark d-block" data-bs-toggle="collapse" href="#dataTasks" role="button" aria-expanded="false" aria-controls="dataTasks">
+                                    <i class="ri-arrow-down-s-line fs-18"></i>Initiated <span class="text-muted">({{ count($tasks) }})</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="col-auto">
+                            <form id="exportInitiatedForm" action="{{ route('team-goals.initiated') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="employee_id" id="employee_id" value="{{ Auth()->user()->employee_id }}">
+                                @if (count($tasks))
+                                    <button id="report-button" type="submit" class="btn btn-sm btn-outline-info rounded-pill float-end"><i class="ri-download-cloud-2-line me-1"></i><span>Download</span></button>
+                                @endif
+                            </form>
+                        </div>
+                    </div>
                     @foreach ($data as $row)
                     @endforeach
                     <div class="collapse show" id="dataTasks">
-                        <div class="card mb-0">
+                        <div class="card mb-0 mt-2">
                             <div class="card-body" id="task-container-1">
                                 <!-- task -->
                                 @foreach ($tasks as $index => $task)
@@ -151,24 +164,28 @@
                     </div> <!-- end .collapse-->
                 </div>
                 <div class="mt-3 p-2 bg-secondary bg-opacity-10 rounded shadow">
-                    <h5 class="m-0 pb-2">
-                        <a class="text-dark d-block" data-bs-toggle="collapse" href="#noDataTasks" role="button" aria-expanded="false" aria-controls="noDataTasks">
-                            <i class="ri-arrow-down-s-line fs-18"></i>Not Initiated <span class="text-muted">({{ count($notasks) }})</span>
-                        </a>
-                    </h5>
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <h5 class="m-0 w-100">
+                                <a class="text-dark d-block" data-bs-toggle="collapse" href="#noDataTasks" role="button" aria-expanded="false" aria-controls="noDataTasks">
+                                    <i class="ri-arrow-down-s-line fs-18"></i>Not Initiated <span class="text-muted">({{ count($notasks) }})</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="col-auto">
+                            <form id="exportNotInitiatedForm" action="{{ route('team-goals.notInitiated') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="employee_id" id="employee_id" value="{{ Auth()->user()->employee_id }}">
+                                @if (count($notasks))
+                                    <button id="report-button" type="submit" class="btn btn-sm btn-outline-secondary rounded-pill float-end"><i class="ri-download-cloud-2-line me-1"></i><span>Download</span></button>
+                                @endif
+                            </form>
+                        </div>
+                    </div>
                 
                     <div class="collapse show" id="noDataTasks">
-                        <div class="card mb-0 d-flex">
-                            <div class="card-header pb-0">
-                                <form id="exportNotInitiatedForm" action="{{ route('team-goals.notInitiated') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="employee_id" id="employee_id" value="{{ Auth()->user()->employee_id }}">
-                                    @if (count($notasks))
-                                        <button id="report-button" type="submit" class="btn btn-sm btn-outline-secondary rounded-pill float-end"><i class="ri-download-cloud-2-line me-1"></i><span>Report</span></button>
-                                    @endif
-                                </form>
-                            </div>
-                            <div class="card-body align-items-center pt-0" id="task-container-2">
+                        <div class="card mt-2 mb-0 d-flex">
+                            <div class="card-body align-items-center" id="task-container-2">
                                 <!-- task -->
                                 @foreach ($notasks as $index => $notask)
                                 @php

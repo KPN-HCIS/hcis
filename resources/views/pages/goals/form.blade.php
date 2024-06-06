@@ -49,19 +49,19 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label class="form-label" for="kpi">KPI {{ $index + 1 }}</label>
                                 <textarea name="kpi[]" id="kpi" class="form-control" required>{{ old('kpi.0') }}</textarea>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label class="form-label" for="target">Target</label>
                                 <input  type="number" pattern="\d{1,10}" oninput="validateDigits(this)" name="target[]" value="{{ old('target.0') }}" id="target" class="form-control" required>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label class="form-label" for="uom">UoM</label>
                                 <select class="form-select select2 max-w-full" name="uom[]" id="uom{{ $index }}" onchange="otherUom('{{ $index }}')" title="Unit of Measure" required>
                                     <option value="">- Select -</option>
@@ -79,7 +79,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label class="form-label" for="type">Type</label>
                                 <select class="form-select" name="type[]" id="type" required>
                                     <option value="">- Select -</option>
@@ -90,7 +90,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label class="form-label" for="weightage">Weightage</label>
                                 <div class="input-group">
                                     <input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ old('weightage.0') }}" required>

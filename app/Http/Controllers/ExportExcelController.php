@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\EmployeeDetailExport;
 use App\Exports\EmployeeExport;
 use App\Exports\GoalExport;
+use App\Exports\InitiatedExport;
 use App\Exports\NotInitiatedExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -37,6 +38,15 @@ class ExportExcelController extends Controller
 
         $data = new NotInitiatedExport($employee_id);
         return Excel::download($data, 'employee_not_initiated_goals.xlsx');
+
+    }
+
+    public function initiated(Request $request) 
+    {
+        $employee_id = $request->employee_id;
+
+        $data = new InitiatedExport($employee_id);
+        return Excel::download($data, 'employee_initiated_goals.xlsx');
 
     }
 

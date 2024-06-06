@@ -45,64 +45,74 @@
                   <div class="card-body">
                       <h5 class="card-title fs-16 mb-3">Goal {{ $index + 1 }}</h5>
                       <div class="row mt-2">
-                          <div class="col-md-4 mb-3">
-                              <label class="form-label" for="kpi">KPI</label>
-                              <textarea name="kpi[]" id="kpi" class="form-control" required>{{ $row['kpi'] }}</textarea>
+                          <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="kpi">KPI</label>
+                                <textarea name="kpi[]" id="kpi" class="form-control" required>{{ $row['kpi'] }}</textarea>
+                            </div>
                           </div>
-                          <div class="col-md-2 mb-3">
-                              <label class="form-label" for="target">Target</label>
-                              <input type="number" oninput="validateDigits(this)" name="target[]" value="{{ $row['target'] }}" id="target" class="form-control" required>
+                          <div class="col-md-2">
+                              <div class="mb-3">
+                                <label class="form-label" for="target">Target</label>
+                                <input type="number" oninput="validateDigits(this)" name="target[]" value="{{ $row['target'] }}" id="target" class="form-control" required>
+                            </div>
                           </div>
-                          <div class="col-md-2 mb-3">
-                              <label class="form-label" for="uom">UoM</label>
-                              <select class="form-select select2 max-w-full" name="uom[]" id="uom{{ $index }}" onchange="otherUom('{{ $index }}')" title="Unit of Measure" required>
-                                  <option value="">- Select -</option>
-                                  @foreach ($uomOption as $label => $options)
-                                  <optgroup label="{{ $label }}">
-                                      @foreach ($options as $option)
-                                          <option value="{{ $option }}"
-                                              {{ $selectedUoM[$index] === $option ? 'selected' : '' }}>
-                                              {{ $option }}
-                                          </option>
-                                      @endforeach
-                                  </optgroup>
-                                  @endforeach
-                              </select>
-                              <input 
-                                  type="text" 
-                                  name="custom_uom[]" 
-                                  id="custom_uom{{ $index }}" 
-                                  class="form-control mt-2" 
-                                  value="{{ $row['custom_uom'] }}" 
-                                  placeholder="Enter UoM" 
-                                  @if ($selectedUoM[$index] !== 'Other') 
-                                      style="display: none;" 
-                                  @endif 
-                              >
+                          <div class="col-md-2">
+                            <div class="mb-3">
+                                <label class="form-label" for="uom">UoM</label>
+                                <select class="form-select select2 max-w-full" name="uom[]" id="uom{{ $index }}" onchange="otherUom('{{ $index }}')" title="Unit of Measure" required>
+                                    <option value="">- Select -</option>
+                                    @foreach ($uomOption as $label => $options)
+                                    <optgroup label="{{ $label }}">
+                                        @foreach ($options as $option)
+                                            <option value="{{ $option }}"
+                                                {{ $selectedUoM[$index] === $option ? 'selected' : '' }}>
+                                                {{ $option }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                    @endforeach
+                                </select>
+                                <input 
+                                    type="text" 
+                                    name="custom_uom[]" 
+                                    id="custom_uom{{ $index }}" 
+                                    class="form-control mt-2" 
+                                    value="{{ $row['custom_uom'] }}" 
+                                    placeholder="Enter UoM" 
+                                    @if ($selectedUoM[$index] !== 'Other') 
+                                        style="display: none;" 
+                                    @endif 
+                                >
+                            </div>
                           </div>
-                          <div class="col-md-2 mb-3">
-                              <label class="form-label" for="type">Type</label>
-                              <select class="form-select" name="type[]" id="type" required>
-                                  <option value="">Select</option>
-                                  @foreach ($typeOption as $label => $options)
-                                      @foreach ($options as $option)
-                                          <option value="{{ $option }}"
-                                              {{ $selectedType[$index] === $option ? 'selected' : '' }}>
-                                              {{ $option }}
-                                          </option>
-                                      @endforeach
-                                  @endforeach
-                              </select>
+                          <div class="col-md-2">
+                            <div class="mb-3">
+                                <label class="form-label" for="type">Type</label>
+                                <select class="form-select" name="type[]" id="type" required>
+                                    <option value="">Select</option>
+                                    @foreach ($typeOption as $label => $options)
+                                        @foreach ($options as $option)
+                                            <option value="{{ $option }}"
+                                                {{ $selectedType[$index] === $option ? 'selected' : '' }}>
+                                                {{ $option }}
+                                            </option>
+                                        @endforeach
+                                    @endforeach
+                                </select>
+                            </div>
                           </div>
-                          <div class="col-md-2 mb-3">
-                              <label class="form-label" for="weightage">Weightage</label>
-                              <div class="input-group flex-nowrap ">
-                                  <input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ $row['weightage'] }}" required>
-                                  <div class="input-group-append">
-                                      <span class="input-group-text">%</span>
-                                  </div>
-                              </div>                                  
-                              {{ $errors->first("weightage") }}
+                          <div class="col-md-2">
+                            <div class="mb-3">
+                                <label class="form-label" for="weightage">Weightage</label>
+                                <div class="input-group flex-nowrap ">
+                                    <input type="number" min="5" max="100" class="form-control" name="weightage[]" value="{{ $row['weightage'] }}" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>                                  
+                                {{ $errors->first("weightage") }}
+                            </div>
                           </div>
                       </div>
                   </div>
