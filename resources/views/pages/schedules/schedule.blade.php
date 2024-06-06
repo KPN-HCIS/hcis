@@ -55,7 +55,7 @@
                                   <th>To</th>
                                   <th>Reminder</th>
                                   <th>Days</th>
-                                  <th>Messages</th>
+                                  <th>Created By</th>
                                   <th>Actions</th>
                               </tr>
                           </thead>
@@ -77,7 +77,7 @@
                                             @endif
                                         @endif
                                     </td>
-                                    <td>{{ $schedule->messages }}</td>
+                                    <td>{{ $schedule->createdBy->name }}</td>
                                     <!--<td><span class="badge badge-success badge-pill w-100">Active</span></td>-->
                                     <td class="text-center">
                                         <a href="{{ route('edit-schedule', $schedule->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>

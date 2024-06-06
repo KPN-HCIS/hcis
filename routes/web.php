@@ -41,6 +41,7 @@ Route::get('/home', [MyGoalController::class, 'index'])->middleware(['auth', 've
 Route::get('dbauth', [SsoController::class, 'dbauth']);
 
 Route::get('fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
+Route::get('updmenu-employees', [EmployeeController::class, 'updateEmployeeAccessMenu']);
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
