@@ -173,4 +173,5 @@ return [
         'Session' => Illuminate\Support\Facades\Session::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
+    'xor_key' => env('XOR_KEY'),
 ];
