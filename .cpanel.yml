@@ -21,4 +21,4 @@ deployment:
     # - php artisan migrate --force
 
     # Clear Laravel application cache
-    - php artisan optimize
+    - php artisan optimize:clear
