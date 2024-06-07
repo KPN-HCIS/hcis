@@ -339,7 +339,8 @@ function applyLocationFilter(table) {
             }
 
             var disabled = (i > apps.length) ? 'disabled' : ''; // Disable additional layers initially
-            $('#viewlayer').append('<div class="row mb-2"><label class="col-2 col-form-label">Layer ' + layerIndex + '</label><div class="col"><select name="nik_app[]" class="form-select select2"' + disabled + '>' + selectOptions + '</select></div></div>');
+            var required = (i == 0) ? 'required' : '';
+            $('#viewlayer').append('<div class="row mb-2"><label class="col-2 col-form-label">Layer ' + layerIndex + '</label><div class="col"><select name="nik_app[]" class="form-select select2"' + disabled + ' ' + required + '>' + selectOptions + '</select></div></div>');
             layerIndex++;
         }
 
@@ -348,6 +349,7 @@ function applyLocationFilter(table) {
             dropdownParent: $('#editModal'),
             placeholder: 'Select Layer Name',
             theme: "bootstrap-5",
+            allowClear: true
         });
 
         // Add change event listener to enable the next layer only if the current one is selected
