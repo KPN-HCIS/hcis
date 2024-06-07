@@ -43,17 +43,17 @@
                             <td>{{ $row->contribution_level_code }}</td>
                             <td>{{ $row->office_area }}</td>
                             <td>{{ $row->group_company }}</td>
-                            <td>
+                            <td class="text-center">
                                 @php
                                     $hasGoals = isset($row->access_menu['goals']) && $row->access_menu['goals'] == 1;
                                 @endphp
-                                <p>
+                                <h4>
                                     @if ($hasGoals)
-                                        <i class="ri-checkbox-circle-line" style="color: green;"></i>
+                                        <i class="ri-checkbox-circle-fill" style="color: green;"></i>
                                     @else
-                                        <i class="ri-indeterminate-circle-line" style="color: red;"></i>
+                                        <i class="ri-indeterminate-circle-fill" style="color: red;"></i>
                                     @endif
-                                </p>
+                                </h4>
                             </td>
                         </tr>
                         @endforeach
