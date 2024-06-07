@@ -175,7 +175,7 @@
 
 <!-- view history -->
 <div class="modal fade" id="viewModal" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document" style="max-width: 60%">
+    <div class="modal-dialog modal-full-width" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="viewModalLabel">View History</h4>
