@@ -118,7 +118,7 @@
                     @csrf
                     <input type="hidden" name="employee_id" id="employee_id">
                     <div class="row">
-                        <label class="col-auto col-form-label">Employee:</label>
+                        <label class="col-auto col-form-label">Employee</label>
                         <div class="col">
                             <input type="text" class="form-control" id="fullname" name="fullname" readonly>
                         </div>
@@ -340,7 +340,7 @@ function applyLocationFilter(table) {
 
             var disabled = (i > apps.length) ? 'disabled' : ''; // Disable additional layers initially
             var required = (i == 0) ? 'required' : '';
-            $('#viewlayer').append('<div class="row mb-2"><label class="col-2 col-form-label">Layer ' + layerIndex + '</label><div class="col"><select name="nik_app[]" class="form-select select2"' + disabled + ' ' + required + '>' + selectOptions + '</select></div></div>');
+            $('#viewlayer').append('<div class="row mb-2"><label class="col-md-2 col-form-label">Layer ' + layerIndex + '</label><div class="col"><select name="nik_app[]" class="form-select select2"' + disabled + ' ' + required + '>' + selectOptions + '</select></div></div>');
             layerIndex++;
         }
 
@@ -349,6 +349,7 @@ function applyLocationFilter(table) {
             dropdownParent: $('#editModal'),
             placeholder: 'Select Layer Name',
             theme: "bootstrap-5",
+            width: '100%',
             allowClear: true
         });
 
