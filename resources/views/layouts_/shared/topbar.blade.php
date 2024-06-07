@@ -70,7 +70,7 @@
             <li class="dropdown">
                 <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     <span class="account-user-avatar">
-                        <img src="{{ asset('img/profiles/user.png') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" alt="user-image" width="32" class="rounded-circle">
+                        <img src="{{ asset('img/profiles/user.png') }}?v={{ config('app.version') }}" alt="user-image" width="32" class="rounded-circle">
                     </span>
                     <span class="d-flex flex-column gap-1">
                         <h5 class="my-0">

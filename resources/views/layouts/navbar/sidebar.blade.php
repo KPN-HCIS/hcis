@@ -3,7 +3,7 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('home') }}">
         <div class="sidebar-brand-icon">
-            <img @style('width: 30px;') src="{{ asset('img/logos/kpn.png') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" alt="kpn logo">
+            <img @style('width: 30px;') src="{{ asset('img/logos/kpn.png') }}?v={{ config('app.version') }}" alt="kpn logo">
         </div>
         <div class="sidebar-brand-text mx-3">Performance Management</div>
     </a>

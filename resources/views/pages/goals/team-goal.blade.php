@@ -106,7 +106,7 @@
                                         <div class="row mb-2">
                                             <div class="col-sm-6 mb-2 mb-sm-0">
                                                 <div id="tooltip-container">
-                                                    <img src="{{ asset('img/profiles/user.png') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom"  data-bs-original-title="Initiated By {{ $task->employee->fullname.' ('.$task->employee->employee_id.')' }}">
+                                                    <img src="{{ asset('img/profiles/user.png') }}?v={{ config('app.version') }}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom"  data-bs-original-title="Initiated By {{ $task->employee->fullname.' ('.$task->employee->employee_id.')' }}">
                                                     {{ $task->employee->fullname }} <span class="text-muted">{{ $task->employee->employee_id }}</span>
                                                 </div>
                                             </div> <!-- end col -->
@@ -206,7 +206,7 @@
                                 <div class="row mt-2 mb-2 task-card" data-status="no data">
                                     <div class="col-sm-12 col-md p-2">
                                         <div id="tooltip-container">
-                                            <img src="{{ asset('img/profiles/user.png') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom"  data-bs-original-title="Initiated By {{ $notask->employee->fullname.' ('.$notask->employee->employee_id.')' }}">
+                                            <img src="{{ asset('img/profiles/user.png') }}?v={{ config('app.version') }}" alt="image" class="avatar-xs rounded-circle me-1" data-bs-container="#tooltip-container" data-bs-toggle="tooltip" data-bs-placement="bottom"  data-bs-original-title="Initiated By {{ $notask->employee->fullname.' ('.$notask->employee->employee_id.')' }}">
                                             {{ $notask->employee->fullname }} <span class="text-muted">{{ $notask->employee->employee_id }}</span>
                                         </div>
                                     </div>
@@ -236,7 +236,7 @@
         </div>
 @endsection
 @push('scripts')
-<script src="{{ asset('js/goal-approval.js') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}"></script>
+<script src="{{ asset('js/goal-approval.js') }}?v={{ config('app.version') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const filterButtons = document.querySelectorAll('.filter-btn');

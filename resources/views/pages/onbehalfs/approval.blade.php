@@ -164,5 +164,5 @@
     @endsection
 
     @push('scripts')
-        <script src="{{ asset('js/goal-approval.js') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}"></script>
+        <script src="{{ asset('js/goal-approval.js') }}?v={{ config('app.version') }}"></script>
     @endpush

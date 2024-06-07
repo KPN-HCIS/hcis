@@ -159,7 +159,7 @@
                         <div class="col">
                             <div class="mb-2">
                                 <label class="form-label" for="fullname">Download Templete here : </label>
-                                <a href="{{ asset('files/template.xls') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" class="badge-outline-primary rounded-pill p-1" download><i class="ri-file-text-line me-1"></i>Import_Excel_Template</a>
+                                <a href="{{ asset('files/template.xls') }}?v={{ config('app.version') }}" class="badge-outline-primary rounded-pill p-1" download><i class="ri-file-text-line me-1"></i>Import_Excel_Template</a>
                             </div>
                         </div>
                     </div>
