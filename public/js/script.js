@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
         initComplete: function (settings, json) {
             hideLoader();
         },
+        dom: "frtip",
     });
     $("#tableInitiate").DataTable({
         initComplete: function (settings, json) {
