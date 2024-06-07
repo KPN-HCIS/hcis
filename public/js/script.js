@@ -1,8 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    hideLoader();
-});
-
-document.addEventListener("DOMContentLoaded", function () {
     const teamGoalsTable = new DataTable("#teamGoalsTable");
 
     $(".filter-btn").on("click", function () {
@@ -531,3 +527,7 @@ function showLoader() {
 function hideLoader() {
     $("#preloader").hide();
 }
+
+window.onload = function () {
+    hideLoader();
+};
