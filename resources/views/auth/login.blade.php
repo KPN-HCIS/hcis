@@ -4,17 +4,17 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/ico" href="{{ asset('favicon.ico') }}" />
+    <link rel="icon" type="image/ico" href="{{ asset('favicon.ico') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" />
     <title>Performance Management</title>
     <!-- Fonts and icons -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- Nucleo Icons -->
-    <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/nucleo-icons.css') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/nucleo-svg.css') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" rel="stylesheet" />
     <!-- Main Styling -->
-    <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css?v=1.0.5') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css?v=1.0.5') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" rel="stylesheet" />
 
     <!-- Nepcha Analytics (nepcha.com) -->
     <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
@@ -30,7 +30,7 @@
             <div class="flex items-center lg:justify-between justify-center w-full p-0 pl-6 mx-auto flex-wrap-inherit">
                     <span class="text-sm overflow-hidden lg-max:max-h-0 basis-full flex lg:basis-auto whitespace-nowrap font-bold text-slate-700" > Performance Management </span>
                     <div class="py-2.375 mr-4 items-center flex">
-                        <img src="{{ asset('img/logos/logokpn.png') }}" alt="" class="h-6">
+                        <img src="{{ asset('img/logos/logokpn.png') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" alt="" class="h-6">
                     </div>
             </div>
             
@@ -110,7 +110,7 @@
     </footer>
   </body>
   <!-- plugin for scrollbar  -->
-  <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}" async></script>
+  <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" async></script>
   <!-- main script file  -->
-  <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js?v=1.0.5') }}" async></script>
+  <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js?v=1.0.5') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}" async></script>
 </html>

@@ -173,6 +173,5 @@
     </div>
 @endsection
 @push('scripts')
-    {{-- <script src="{{ asset('js/goal-form.js') }}"></script> --}}
-    <script src="{{ asset('js/goal-approval.js') }}"></script>
+    <script src="{{ asset('js/goal-approval.js') }}?v={{ trim(exec('git rev-parse --short HEAD')) }}"></script>
 @endpush
