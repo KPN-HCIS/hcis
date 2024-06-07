@@ -256,8 +256,8 @@ class OnBehalfController extends Controller
         $uomOption = $options['UoM'];
         $typeOption = $options['Type'];
 
-        $parentLink = 'Admin';
-        $link = 'On Behalf';
+        $parentLink = 'On Behalf';
+        $link = 'Approval';
 
         // dd($data);
         return view('pages.onbehalfs.approval', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
