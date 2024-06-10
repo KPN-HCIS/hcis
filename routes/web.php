@@ -172,6 +172,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/roles', [RoleController::class, 'index'])->name('roles');
         Route::post('/admin/roles/submit', [RoleController::class, 'store'])->name('roles.store');
         Route::post('/admin/roles/update', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('/admin/roles/delete/{id}', [RoleController::class, 'destroy'])->name('roles.delete');
         Route::get('/admin/roles/assign', [RoleController::class, 'assign'])->name('roles.assign');
         Route::get('/admin/roles/create', [RoleController::class, 'create'])->name('roles.create');
         Route::get('/admin/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');

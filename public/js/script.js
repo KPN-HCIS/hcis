@@ -168,8 +168,8 @@ function logout() {
         text: "Are you sure you want to log out?",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#4e73df",
-        cancelButtonColor: "#e74a3b",
+        confirmButtonColor: "#3e60d5",
+        cancelButtonColor: "#f15776",
         confirmButtonText: "Yes, logout",
         cancelButtonText: "Cancel",
         reverseButtons: true,
@@ -532,3 +532,20 @@ function hideLoader() {
 window.onload = function () {
     hideLoader();
 };
+
+function deleteRole() {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3e60d5",
+        cancelButtonColor: "#f15776",
+        confirmButtonText: "Yes, delete it!",
+        reverseButtons: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById("delete-role-form").submit();
+        }
+    });
+}

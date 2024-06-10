@@ -284,4 +284,24 @@ class RoleController extends Controller
 
         return redirect()->route('roles')->with('success', 'Role updates successfully!');
     }
+
+    public function destroy($id): RedirectResponse
+
+    {
+        $role = Role::find($id);
+
+        if ($role) {
+
+            $role->delete();
+        
+            RoleHasPermission::where('role_id', $id)->delete();
+            ModelHasRole::where('role_id', $id)->delete();
+
+            app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
+    
+            return redirect()->route('roles')->with('success', 'Role deleted successfully!');
+        }
+        return redirect()->route('roles')->with('error', 'Role not found.');
+
+    }
 }

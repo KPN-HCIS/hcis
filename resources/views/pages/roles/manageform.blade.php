@@ -1,13 +1,22 @@
 @if ($roleId)
-<form action="{{ route('roles.update') }}" method="POST">
-  @csrf
-  <div class="card">
-    <div class="card-body">
-      <input type="hidden" name="roleId" value="{{ $roleId }}">
-      <div class="row">
-        <div class="col-md">
-          <div class="mb-4 text-end">
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md">
+        <div class="mb-4 text-end">
+          <form id="delete-role-form" action="{{ route('roles.delete', $roleId) }}" method="POST">
+            <a href="javascript:void(0)" onclick="deleteRole();" class="btn btn-outline-danger rounded-pill px-4 me-2">Delete</a>
+            @csrf
+            @method('DELETE')
+          </form>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="mb-4 text-end">
+          <form action="{{ route('roles.update') }}" method="POST">
+            @csrf
             <button type="submit" class="btn btn-primary rounded-pill px-4">Update</button>
+            <input type="hidden" name="roleId" value="{{ $roleId }}">
           </div>
         </div>
       </div>

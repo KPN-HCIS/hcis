@@ -210,7 +210,6 @@ class ReportController extends Controller
             return false;
         }
 
-
         $link = 'reports';
 
         return view($route, compact('data', 'link', 'filters'));

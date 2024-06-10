@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
             Swal.fire({
                 title: "Oops, you've reached the maximum number of KPI",
                 icon: "error",
-                confirmButtonColor: "#3085d6",
+                confirmButtonColor: "#3e60d5",
                 confirmButtonText: "OK",
             });
         }
@@ -218,7 +218,7 @@ function checkEmptyFields(submitType) {
             if (requiredInputs[i].value.trim() === "") {
                 Swal.fire({
                     title: "Please fill out all empty fields!",
-                    confirmButtonColor: "#3085d6",
+                    confirmButtonColor: "#3e60d5",
                     icon: "error",
                     didClose: () => {
                         // Show the alert field after the SweetAlert2 modal is closed
@@ -245,7 +245,7 @@ function validate(submitType) {
         Swal.fire({
             title: "Submission failed",
             html: `Your current weightage is ${sum}%, <br>Please adjust to reach the total weightage of 100%`,
-            confirmButtonColor: "#3085d6",
+            confirmButtonColor: "#3e60d5",
             icon: "error",
             // If confirmed, proceed with form submission
         });
@@ -271,7 +271,7 @@ function validateWeightage(submitType) {
             // Display alert message
             Swal.fire({
                 title: "The weightage cannot lower than 5%",
-                confirmButtonColor: "#3085d6",
+                confirmButtonColor: "#3e60d5",
                 icon: "error",
                 // If confirmed, proceed with form submission
             });
@@ -322,8 +322,8 @@ function confirmSubmission(submitType) {
         title: title1,
         text: text,
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
+        confirmButtonColor: "#3e60d5",
+        cancelButtonColor: "#f15776",
         confirmButtonText: confirmText,
         reverseButtons: true,
     }).then((result) => {
