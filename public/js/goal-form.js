@@ -8,6 +8,7 @@ function otherUom(index) {
         inputField.prop("required", true); // Set input as required
     } else {
         inputField.hide(); // Hide the input field
+        inputField.val("");
         inputField.prop("required", false); // Remove required attribute
     }
 }

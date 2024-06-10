@@ -158,10 +158,10 @@
     </div>
     @endsection
     @push('scripts')
-        <script src="{{ asset('js/goal-approval.js') }}"></script>
+        <script src="{{ asset('js/goal-approval.js') }}?v={{ config('app.version') }}"></script>
         @if(Session::has('error'))
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function () {                
                 Swal.fire({
                     icon: "error",
                     title: "Cannot create goals",

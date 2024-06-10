@@ -156,5 +156,5 @@
     @endsection
 
     @push('scripts')
-        <script src="{{ asset('js/goal-form.js') }}"></script>
+        <script src="{{ asset('js/goal-form.js') }}?v={{ config('app.version') }}"></script>
     @endpush

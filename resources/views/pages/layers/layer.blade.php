@@ -118,7 +118,7 @@
                     @csrf
                     <input type="hidden" name="employee_id" id="employee_id">
                     <div class="row">
-                        <label class="col-auto col-form-label">Employee:</label>
+                        <label class="col-auto col-form-label">Employee</label>
                         <div class="col">
                             <input type="text" class="form-control" id="fullname" name="fullname" readonly>
                         </div>
@@ -159,7 +159,7 @@
                         <div class="col">
                             <div class="mb-2">
                                 <label class="form-label" for="fullname">Download Templete here : </label>
-                                <a href="{{ asset('files/template.xls') }}" class="badge-outline-primary rounded-pill p-1" download><i class="ri-file-text-line me-1"></i>Import_Excel_Template</a>
+                                <a href="{{ asset('files/template.xls') }}?v={{ config('app.version') }}" class="badge-outline-primary rounded-pill p-1" download><i class="ri-file-text-line me-1"></i>Import_Excel_Template</a>
                             </div>
                         </div>
                     </div>
@@ -175,7 +175,7 @@
 
 <!-- view history -->
 <div class="modal fade" id="viewModal" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document" style="max-width: 60%">
+    <div class="modal-dialog modal-full-width" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="viewModalLabel">View History</h4>
@@ -341,7 +341,8 @@ function applyLocationFilter(table) {
             }
 
             var disabled = (i > apps.length) ? 'disabled' : ''; // Disable additional layers initially
-            $('#viewlayer').append('<div class="row mb-2"><label class="col-2 col-form-label">Layer ' + layerIndex + '</label><div class="col"><select name="nik_app[]" class="form-select select2"' + disabled + '>' + selectOptions + '</select></div></div>');
+            var required = (i == 0) ? 'required' : '';
+            $('#viewlayer').append('<div class="row mb-2"><label class="col-md-2 col-form-label">Layer ' + layerIndex + '</label><div class="col"><select name="nik_app[]" class="form-select select2"' + disabled + ' ' + required + '>' + selectOptions + '</select></div></div>');
             layerIndex++;
         }
 
@@ -351,6 +352,8 @@ function applyLocationFilter(table) {
             placeholder: 'Select Layer Name',
             allowClear:true,
             theme: "bootstrap-5",
+            width: '100%',
+            allowClear: true
         });
 
         // Add change event listener to enable the next layer only if the current one is selected

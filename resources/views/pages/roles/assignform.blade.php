@@ -19,7 +19,7 @@
                     }
                 }
               @endphp
-              <option value="{{ $user->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $user->name }}</option>
+              <option value="{{ $user->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $user->fullname.' - '.$user->designation }}</option>
             @endforeach
           </select>
         </div>

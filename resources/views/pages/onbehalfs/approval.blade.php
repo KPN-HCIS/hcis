@@ -21,7 +21,7 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('goals') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('onbehalf') }}">{{ $parentLink }}</a></li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -35,8 +35,11 @@
             <input type="hidden" name="id" value="{{ $row->request->goal->id }}">
             <input type="hidden" name="employee_id" value="{{ $row->request->employee_id }}">
             <input type="hidden" name="current_approver_id" value="{{ $row->request->current_approval_id }}">
-              <div class="d-sm-flex align-items-center mb-4">
-                    <h4 class="me-1">{{ $row->request->employee->fullname }}</h4><span class="text-muted h4">{{ $row->request->employee->employee_id }}</span>
+              <div class="d-sm-flex align-items-center mb-3 mt-3">
+                    <h4 class="me-1">Employee : <u>{{ $row->request->employee->fullname }}</u></h4><span class="text-muted h4"><u>{{ $row->request->employee->employee_id }}</u></span>
+              </div>
+              <div class="d-sm-flex align-items-center mb-2">
+                    <h4 class="me-1">On Behalf as : <u>{{ $row->request->manager->fullname }}</u></h4><span class="text-muted h4"><u>{{ $row->request->manager->employee_id }}</u></span>
               </div>
               <!-- Content Row -->
               <div class="container-card">
@@ -52,20 +55,20 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="kpi">KPI</label>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="kpi">KPI</label>
                                         <textarea name="kpi[]" class="form-control" readonly>{{ $data['kpi'] }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="target">Target</label>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="target">Target</label>
                                         <input type="text" name="target[]" value="{{ $data['target'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="uom">UoM</label>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="uom">UoM</label>
                                         <input type="text" name="uom[]" id="uom" value="{{ $data['uom'] }}" class="form-control" readonly>
                                         <input 
                                             type="text" 
@@ -82,14 +85,14 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="type">Type</label>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="type">Type</label>
                                         <input type="text" oninput="validateDigits(this)" name="type[]" id="type" value="{{ $data['type'] }}" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="weightage">Weightage</label>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="weightage">Weightage</label>
                                         <div class="input-group">
                                             <input name="weightage[]" class="form-control" value="{{ $data['weightage'] }}" readonly>
                                             <div class="input-group-append">
@@ -164,5 +167,5 @@
     @endsection
 
     @push('scripts')
-        <script src="{{ asset('js/goal-approval.js') }}"></script>
+        <script src="{{ asset('js/goal-approval.js') }}?v={{ config('app.version') }}"></script>
     @endpush
