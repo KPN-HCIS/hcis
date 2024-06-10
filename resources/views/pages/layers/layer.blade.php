@@ -207,6 +207,7 @@
 
 @push('scripts')
 <script>
+    
     $(document).ready(function() {
         $('.open-import-modal').on('click', function() {
             // $('#employeeId').text(employeeId);
@@ -289,20 +290,27 @@ function applyLocationFilter(table) {
 }
 </script>
 <script>
-    $(document).on('click', '.open-edit-modal', function () {
-            var employeeId = $(this).data('bsEmployee-id');
-            var fullname = $(this).data('bsFullname');
-            var app = $(this).data('bsApprover');
-
-            $('#employeeId').text(employeeId);
-            
-            var layer = $(this).data('bsLayer');
-            var appName = $(this).data('bsApprover-name');
-            
-            // populateModal(employeeId, fullname, app, layer, appname);
-            populateModal(employeeId, fullname, app, layer, appName, {!! json_encode($employees) !!});
-
-        });
+    // $(document).ready(function() {
+    //     $('.open-edit-modal').on('click', function() {
+    //         var employeeId = $(this).data('bsEmployee-id');
+    //         $('#employeeId').text(employeeId);
+    //         $('#editModal').modal('show');
+    //     });
+    // });
+    $(document).on('click', '.open-edit-modal', function() {
+        var employeeId = $(this).data('bsEmployee-id');
+        
+        var fullname = $(this).data('bsFullname');
+        var app = $(this).data('bsApp');
+        $('#employeeId').text(employeeId);
+        
+        
+        var layer = $(this).data('bsLayer');
+        var appname = $(this).data('bsApp-name');
+        
+        // populateModal(employeeId, fullname, app, layer, appname);
+        populateModal(employeeId, fullname, app, layer, appname, {!! json_encode($employees) !!});
+    });
 
     function populateModal(employeeId, fullName, app, layer, appName, employees) {
 
@@ -343,6 +351,7 @@ function applyLocationFilter(table) {
         $('.select2').select2({
             dropdownParent: $('#editModal'),
             placeholder: 'Select Layer Name',
+            allowClear:true,
             theme: "bootstrap-5",
             width: '100%',
             allowClear: true
