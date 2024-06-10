@@ -34,7 +34,7 @@ class LayerController extends Controller
         ->get();
 
         $employees = Employee::select('employee_id', 'fullname')
-        ->where('job_level', '>', '4A')
+        ->whereNotIn('job_level', ['2A', '2B', '2C', '2D', '3A', '3B','4A'])
         ->orderBy('fullname', 'asc')
         ->get();
 
