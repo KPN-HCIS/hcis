@@ -84,9 +84,9 @@
                                         <button type="button" class="btn btn-sm rounded-pill btn-primary open-edit-modal mb-1"
                                         data-bs-employee-id="{{ $approvalLayer->employee_id }}"
                                         data-bs-fullname="{{ $approvalLayer->fullname }}"
-                                        data-bs-approver="{{ $approvalLayer->approver_ids }}"
+                                        data-bs-app="{{ $approvalLayer->approver_ids }}"
                                         data-bs-layer="{{ $approvalLayer->layers }}"
-                                        data-bs-approver-name="{{ $approvalLayer->approver_names }}"
+                                        data-bs-app-name="{{ $approvalLayer->approver_names }}"
                                         title="Edit"><i class="ri-edit-box-line"></i></button>
                                         <button type="button" class="btn btn-sm rounded-pill btn-success open-view-modal mb-1"
                                             onclick="viewHistory('{{ $approvalLayer->employee_id }}')">
@@ -290,13 +290,6 @@ function applyLocationFilter(table) {
 }
 </script>
 <script>
-    // $(document).ready(function() {
-    //     $('.open-edit-modal').on('click', function() {
-    //         var employeeId = $(this).data('bsEmployee-id');
-    //         $('#employeeId').text(employeeId);
-    //         $('#editModal').modal('show');
-    //     });
-    // });
     $(document).on('click', '.open-edit-modal', function() {
         var employeeId = $(this).data('bsEmployee-id');
         
@@ -318,7 +311,8 @@ function applyLocationFilter(table) {
         $('#employeeId').val(employeeId);
         $('#fullname').val(fullName+' - '+employeeId);
 
-        if (typeof app === 'string' && app.indexOf("|") !== -1) {
+        // if (typeof app === 'string' && app.indexOf("|") !== -1) {
+        if (app.includes('|')) {
             // Jika nilai app mengandung karakter '|', lakukan pemisahan
             apps = app.split('|');
             layers = layer.split('|');
