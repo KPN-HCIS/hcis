@@ -84,9 +84,9 @@
                                         <button type="button" class="btn btn-sm rounded-pill btn-primary open-edit-modal mb-1"
                                         data-bs-employee-id="{{ $approvalLayer->employee_id }}"
                                         data-bs-fullname="{{ $approvalLayer->fullname }}"
-                                        data-bs-app="{{ $approvalLayer->approver_ids }}"
+                                        data-bs-approver="{{ $approvalLayer->approver_ids }}"
                                         data-bs-layer="{{ $approvalLayer->layers }}"
-                                        data-bs-app-name="{{ $approvalLayer->approver_names }}"
+                                        data-bs-approver-name="{{ $approvalLayer->approver_names }}"
                                         title="Edit"><i class="ri-edit-box-line"></i></button>
                                         <button type="button" class="btn btn-sm rounded-pill btn-success open-view-modal mb-1"
                                             onclick="viewHistory('{{ $approvalLayer->employee_id }}')">
@@ -208,13 +208,6 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        $('.open-edit-modal').on('click', function() {
-            var employeeId = $(this).data('bsEmployee-id');
-            $('#employeeId').text(employeeId);
-            $('#editModal').modal('show');
-        });
-    });
-    $(document).ready(function() {
         $('.open-import-modal').on('click', function() {
             // $('#employeeId').text(employeeId);
             $('#importModal').modal('show');
@@ -296,26 +289,28 @@ function applyLocationFilter(table) {
 }
 </script>
 <script>
-    $(document).ready(function() {
-        $('.open-edit-modal').on('click', function() {
+    $(document).on('click', '.open-edit-modal', function () {
             var employeeId = $(this).data('bsEmployee-id');
             var fullname = $(this).data('bsFullname');
-            var app = $(this).data('bsApp');
+            var app = $(this).data('bsApprover');
+
+            $('#employeeId').text(employeeId);
             
             var layer = $(this).data('bsLayer');
-            var appname = $(this).data('bsApp-name');
-
+            var appName = $(this).data('bsApprover-name');
+            
             // populateModal(employeeId, fullname, app, layer, appname);
-            populateModal(employeeId, fullname, app, layer, appname, {!! json_encode($employees) !!});
+            populateModal(employeeId, fullname, app, layer, appName, {!! json_encode($employees) !!});
+
         });
-    });
 
     function populateModal(employeeId, fullName, app, layer, appName, employees) {
+
         $('#employee_id').val(employeeId);
         $('#employeeId').val(employeeId);
         $('#fullname').val(fullName+' - '+employeeId);
 
-        if (app.includes('|')) {
+        if (typeof app === 'string' && app.indexOf("|") !== -1) {
             // Jika nilai app mengandung karakter '|', lakukan pemisahan
             apps = app.split('|');
             layers = layer.split('|');

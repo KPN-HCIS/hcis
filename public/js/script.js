@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const onBehalfTable = $("#onBehalfTable").DataTable({
                     dom: "lrtip",
-                    pageLength: 50,
+                    pageLength: 25,
                 });
                 customsearch.on("keyup", function () {
                     onBehalfTable.search($(this).val()).draw();
@@ -389,7 +389,7 @@ function changeCategory(val) {
 
             const onBehalfTable = $("#onBehalfTable").DataTable({
                 dom: "lrtip",
-                pageLength: 50,
+                pageLength: 25,
             });
             customsearch.keyup(function () {
                 onBehalfTable.search($(this).val()).draw();
