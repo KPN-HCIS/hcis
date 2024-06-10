@@ -58,13 +58,10 @@
                               </tr>
                           </thead>
                           <tbody>
-                            @php 
-                                $no=1;
-                            @endphp
-                            @foreach($approvalLayers as $approvalLayer)
+                            @foreach($approvalLayers as $index => $approvalLayer)
                                 <tr>
                                     <td>
-                                        {{ $no++ }}
+                                        {{ $index + 1 }}
                                     </td>
                                     <td>{{ $approvalLayer->employee_id }}</td>
                                     <td>{{ $approvalLayer->fullname }}</td>
