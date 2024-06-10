@@ -11,7 +11,6 @@
       <div class="col-md">
         <div class="mb-4 text-end">
             <a href="javascript:void(0)" onclick="deleteRole();" class="btn btn-outline-danger rounded-pill px-4 me-2">Delete</a>
-          </form>
         </div>
       </div>
         <input type="hidden" name="roleId" value="{{ $roleId }}">
