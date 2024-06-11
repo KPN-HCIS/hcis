@@ -5,7 +5,7 @@
 
 @section('content')
     <!-- Begin Page Content -->
-    <div class="container-fluid">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box">
@@ -30,34 +30,39 @@
                       </div>
                     </div>
                   </div>
-                    <div class="row">
-                        <div class="col-lg-auto">
-                          <div class="mb-3">
-                              <div class="form-group">
-                              <div class="input-group">
-                                  <div class="input-group-prepend">
-                                  <span class="input-group-text bg-white"><i class="ri-search-line"></i></span>
-                                  </div>
-                                  <input type="text" name="customsearch" id="customsearch" class="form-control border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
-                                  <div class="d-sm-none input-group-append">
-                                    </div>
-                              </div>
-                            </div>
+                  <form id="formYearGoal" action="{{ route('team-goals') }}" method="GET">
+                    <div class="row align-items-end">
+                        @php
+                            $filterYear = request('filterYear');
+                        @endphp
+                        <div class="col-sm col-md">
+                            <div class="mb-3">
+                                <label class="form-label" for="filterYear">Year</label>
+                                <select name="filterYear" id="filterYear" onchange="yearGoal()" class="form-select" @style('width: 120px')>
+                                    <option value="">select all</option>
+                                    @foreach ($selectYear as $year)
+                                        <option value="{{ $year->year }}" {{ $year->year == $filterYear ? 'selected' : '' }}>{{ $year->year }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                        <div class="col">
-                        <div class="form-group ml-md-auto d-flex justify-content-end">
-                            <form id="exportForm" action="{{ route('export') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="export_report_type" id="export_report_type">
-                                <input type="hidden" name="export_group_company" id="export_group_company">
-                                <input type="hidden" name="export_company" id="export_company">
-                                <input type="hidden" name="export_location" id="export_location">
-                            </form>
+                        <div class="col-sm col-md-auto">
+                            <div class="mb-3">
+                                <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white"><i class="ri-search-line"></i></span>
+                                    </div>
+                                    <input type="text" name="customsearch" id="customsearch" class="form-control border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
+                                    <div class="d-sm-none input-group-append">
+                                    </div>
+                                </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-      </div>
+                </form>
+            </div>
         <div class="row px-2">
             <div class="col-lg-12 p-0">
                 <div class="mt-3 p-2 bg-info bg-opacity-10 rounded shadow">

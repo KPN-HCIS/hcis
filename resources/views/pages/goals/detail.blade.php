@@ -12,7 +12,7 @@
           <div class="container-fluid py-3">
               <form action="" method="post">
                   <div class="d-sm-flex align-items-center mb-3">
-                        <h4 class="me-1">{{ $row->request->employee->fullname }}</h4><span class="text-muted h4">{{ $row->request->employee->employee_id }}</span>
+                        <h4 class="me-1">{{ $task->employee->fullname }}</h4><span class="text-muted h4">{{ $task->employee->employee_id }}</span>
                   </div>
                   <!-- Content Row -->
                   <div class="container-card">

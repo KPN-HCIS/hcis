@@ -185,8 +185,15 @@ class TeamGoalController extends Controller
 
         $parentLink = 'Goals';
         $link = 'Team Goals';
+
+        $selectYear = ApprovalRequest::where('employee_id', $user)->select('created_at')->get();
+
+        $selectYear->transform(function ($req) {
+            $req->year = Carbon::parse($req->created_at)->format('Y');
+            return $req;
+        });
         
-        return view('pages.goals.team-goal', compact('data', 'tasks', 'notasks', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
+        return view('pages.goals.team-goal', compact('data', 'tasks', 'notasks', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption', 'selectYear'));
        
     }
     

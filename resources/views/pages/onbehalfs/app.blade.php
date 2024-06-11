@@ -27,7 +27,7 @@
                 <div class="mb-3">
                   <label class="form-label" for="category">Select Category :</label>
                   <select name="category" id="category" onchange="changeCategory(this.value)" class="form-select border-dark-subtle" @style('width: 120px')>
-                      <option value="">select all</option>
+                      <option value="">- select -</option>
                       <option value="Goals">Goals</option>
                       <option value="Performance">Performance</option>
                   </select>

@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
-    $(document).on("click", "a[id^='approval']", function (event) {
+    $(document).on("click mouseenter", "a[id^='approval']", function (event) {
         event.preventDefault();
 
         var id = $(this).data("id");
