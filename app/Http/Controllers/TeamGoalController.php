@@ -20,9 +20,12 @@ use stdClass;
 
 class TeamGoalController extends Controller
 {
-    function index() {
+    function index(Request $request) {
         
         $user = Auth::user()->employee_id;
+
+        // Retrieve the selected year from the request
+        $filterYear = $request->input('filterYear');
         
         $datas = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
@@ -32,7 +35,7 @@ class TeamGoalController extends Controller
             });
         }])->where('approver_id', Auth::user()->employee_id)->get();
         
-        $tasks = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
+        $task = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
                 $query->with('approverName');
             }])->whereHas('approvalLayer', function ($query) use ($user) {
@@ -42,8 +45,14 @@ class TeamGoalController extends Controller
         ->leftJoin('approval_requests', 'approval_layers.employee_id', '=', 'approval_requests.employee_id')
         ->select('approval_layers.employee_id', 'approval_layers.approver_id', 'approval_layers.layer', 'approval_requests.created_at')
         ->whereYear('approval_requests.created_at', now()->year)
-        ->whereHas('subordinates')->where('approver_id', Auth::user()->employee_id)
-        ->get();
+        ->whereHas('subordinates')->where('approver_id', Auth::user()->employee_id);
+
+        // Apply additional filtering based on the selected year
+        if (!empty($filterYear)) {
+            $task->whereYear('created_at', $filterYear);
+        }
+
+        $tasks = $task->get();
 
         $tasks->each(function($item) {
             $item->subordinates->map(function($subordinate) {
@@ -98,7 +107,7 @@ class TeamGoalController extends Controller
         // ->distinct()
         // ->get();
 
-        $notasks = ApprovalLayer::with(['employee', 'subordinates'])
+        $notask = ApprovalLayer::with(['employee', 'subordinates'])
         ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
         ->where('approval_layers.approver_id', $user)
         ->whereDoesntHave('subordinates', function ($query) use ($user) {
@@ -114,8 +123,13 @@ class TeamGoalController extends Controller
                 });
         })
         ->select('approval_layers.*', 'employees.access_menu')
-        ->whereJsonContains('access_menu->doj', 1)
-        ->get();
+        ->whereJsonContains('access_menu->doj', 1);
+
+        if (!empty($filterYear)) {
+            $notask->whereYear('created_at', $filterYear);
+        }
+
+        $notasks = $notask->get();
 
         $notasks->map(function($item) {
             // Format created_at
