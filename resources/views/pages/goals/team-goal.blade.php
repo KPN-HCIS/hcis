@@ -40,7 +40,6 @@
                                 <label class="form-label" for="filterYear">Year</label>
                                 <select name="filterYear" id="filterYear" onchange="yearGoal()" class="form-select" @style('width: 120px')>
                                     <option value="">select all</option>
-                                    <option value="2023">2023</option>
                                     @foreach ($selectYear as $year)
                                         <option value="{{ $year->year }}" {{ $year->year == $filterYear ? 'selected' : '' }}>{{ $year->year }}</option>
                                     @endforeach
