@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
             $(element).popover("hide"); // Hide the popover
             popoverInitialized = false; // Reset popoverInitialized flag
             $(element).blur();
-        }, 1000); // 1500 milliseconds = 1.5 seconds
+        }, 1500); // 1500 milliseconds = 1.5 seconds
     }
 
     // Function to fetch popover content and initialize popover
@@ -113,8 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
-    $(document).on("click", "a[id^='approval']", function (event) {
-        event.preventDefault();
+    $(document).on("click mouseenter", "a[id^='approval']", function () {
+        $('[data-toggle="popover"]').popover("hide");
 
         var id = $(this).data("id");
 

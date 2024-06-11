@@ -215,7 +215,7 @@ class TeamGoalController extends Controller
             Alert::error("Cannot create goals", "Theres no direct manager assigned in your position!")->showConfirmButton('OK');
             return redirect()->back();
         }
-        // dd($layer);
+
         $path = storage_path('../resources/goal.json');
 
         // Check if the JSON file exists
@@ -311,8 +311,6 @@ class TeamGoalController extends Controller
             }
         }
         
-        // dd($data);
-
         $formData = [];
         if($datas->isNotEmpty()){
             $formData = json_decode($datas->first()->goal->form_data, true);
@@ -335,7 +333,6 @@ class TeamGoalController extends Controller
         $parentLink = 'Goals';
         $link = 'Approval';
 
-        // dd($data);
         return view('pages.goals.approval', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
 
     }
@@ -561,7 +558,6 @@ class TeamGoalController extends Controller
     public function unitOfMeasurement()
     {
         $uom = file_get_contents(storage_path('../resources/goal.json'));
-        // dd($uom);
         return response()->json(json_decode($uom, true));
     }
 
