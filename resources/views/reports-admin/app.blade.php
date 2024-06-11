@@ -96,6 +96,22 @@
                   <div class="row">
                       <div class="col">
                           <div class="mb-3">
+                            @php
+                                $filterYear = request('filterYear');
+                            @endphp
+                              <label class="form-label" for="filterYear">Year</label>
+                              <select name="filterYear" id="filterYear" class="form-select" @style('width: 120px')>
+                                  <option value="">select all</option>
+                                  @foreach ($selectYear as $year)
+                                      <option value="{{ $year->year }}" {{ $year->year == $filterYear ? 'selected' : '' }}>{{ $year->year }}</option>
+                                  @endforeach
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col">
+                          <div class="mb-3">
                               <label class="form-label" for="group_company">Group Company</label>
                               <select class="form-select select2" name="group_company[]" id="group_company" multiple>
                                   @foreach ($groupCompanies as $groupCompany)

@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $(document).on("click mouseenter", "a[id^='approval']", function () {
         $('[data-toggle="popover"]').popover("hide");
 
-        var id = $(this).data("id");
+        var id = $(this).data("bsId");
 
         // Call fetchAndInitializePopover function to fetch and initialize popover
         fetchAndInitializePopover(id, this);

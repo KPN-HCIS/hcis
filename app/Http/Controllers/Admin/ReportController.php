@@ -71,7 +71,7 @@ class ReportController extends Controller
             ->orderBy('contribution_level_code')->get();
     }
     
-    function index() {
+    function index(Request $request) {
         $parentLink = 'Admin';
         $link = 'Reports';
 
@@ -82,7 +82,14 @@ class ReportController extends Controller
         ->pluck('company_name');
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        return view('reports-admin.app', compact('locations', 'companies', 'groupCompanies', 'link', 'parentLink'));
+        $selectYear = ApprovalRequest::select('created_at')->get();
+
+        $selectYear->transform(function ($req) {
+            $req->year = Carbon::parse($req->created_at)->format('Y');
+            return $req;
+        });
+
+        return view('reports-admin.app', compact('locations', 'companies', 'groupCompanies', 'link', 'parentLink', 'selectYear'));
     }
 
     public function changesGroupCompany(Request $request)

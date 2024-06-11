@@ -37,11 +37,11 @@
                     </div>
                   </div>
                   <div class="row">
-                    {{-- <div class="col-lg-auto d-none d-lg-inline">
+                    <div class="col-lg-auto d-none d-lg-inline">
                       <div class="mb-3">
                         <button class="input-group-text bg-white border-dark-subtle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i class="ri-filter-line me-1"></i>Filters</button>
                       </div>
-                    </div> --}}
+                    </div>
                     <div class="col-lg-4">
                       <div class="input-group flex-nowrap mb-3">
                         <label class="input-group-text border-dark-subtle" for="customsearch"><i class="ri-search-line"></i></label>
@@ -94,34 +94,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="mb-3">
-                                <label class="form-label" for="group_company">Group Company</label>
-                                <select class="form-select select2" name="group_company[]" id="group_company" multiple>
-                                    @foreach ($groupCompanies as $groupCompany)
-                                    <option value="{{ $groupCompany }}">{{ $groupCompany }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="mb-3">
-                                <label class="form-label" for="company">Company</label>
-                                <select class="form-select select2" name="company[]" id="company" multiple>
-                                    @foreach ($companies as $company)
-                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="mb-3">
-                                <label class="form-label" for="location">Location</label>
-                                <select class="form-select select2" name="location[]" id="location" multiple>
-                                    @foreach ($locations as $location)
-                                    <option value="{{ $location->work_area }}">{{ $location->area.' ('.$location->company_name.')' }}</option>
+                              @php
+                                  $filterYear = request('filterYear');
+                              @endphp
+                                <label class="form-label" for="filterYear">Year</label>
+                                <select name="filterYear" id="filterYear" class="form-select" @style('width: 120px')>
+                                    <option value="">select all</option>
+                                    @foreach ($selectYear as $year)
+                                        <option value="{{ $year->year }}" {{ $year->year == $filterYear ? 'selected' : '' }}>{{ $year->year }}</option>
                                     @endforeach
                                 </select>
                             </div>
