@@ -101,7 +101,7 @@ class ScheduleController extends Controller
         $employeesToUpdate = $query->get();
         // $employeesToUpdate = $query->where('date_of_joining', '<=', $model->last_join_date)->get();
 
-        $today = now();
+        $today = date('Y-m-d');
         if($model->start_date <= $today && $model->end_date >= $today){
             $access_menu = 1;
         }else{
@@ -117,7 +117,7 @@ class ScheduleController extends Controller
 
             $accessMenuJson = json_decode($employee->access_menu, true);
 
-            if (!isset($accessMenuJson['doj'])) {
+            if (!isset($accessMenuJson['goals'])) {
                 $accessMenuJson['goals'] = $access_menu;
             }else{
                 $accessMenuJson = ['goals' => $access_menu];
@@ -218,7 +218,7 @@ class ScheduleController extends Controller
         //$employeesToUpdate = $query->where('date_of_joining', '<=', $model->last_join_date)->get();
         $employeesToUpdate = $query->get();
 
-        $today = now();
+        $today = date('Y-m-d');
         if($model->start_date <= $today && $model->end_date >= $today){
             $access_menu = 1;
         }else{
@@ -234,7 +234,7 @@ class ScheduleController extends Controller
 
             $accessMenuJson = json_decode($employee->access_menu, true);
 
-            if (!isset($accessMenuJson['doj'])) {
+            if (!isset($accessMenuJson['goals'])) {
                 $accessMenuJson['goals'] = $access_menu;
             }else{
                 $accessMenuJson = ['goals' => $access_menu];

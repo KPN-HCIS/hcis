@@ -87,7 +87,7 @@
                                         data-bs-app="{{ $approvalLayer->approver_ids }}"
                                         data-bs-layer="{{ $approvalLayer->layers }}"
                                         data-bs-app-name="{{ $approvalLayer->approver_names }}"
-                                        title="Edit-1"><i class="ri-edit-box-line"></i></button>
+                                        title="Edit"><i class="ri-edit-box-line"></i></button>
                                         <button type="button" class="btn btn-sm rounded-pill btn-success open-view-modal mb-1" title="History"
                                             onclick="viewHistory('{{ $approvalLayer->employee_id }}')">
                                             <i class="ri-history-line"></i>
