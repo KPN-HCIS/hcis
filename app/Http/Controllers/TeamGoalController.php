@@ -104,8 +104,8 @@ class TeamGoalController extends Controller
         $notasks = ApprovalLayer::with(['employee', 'subordinates'])
         ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
         ->where('approval_layers.approver_id', $user)
-        ->whereDoesntHave('subordinates', function ($query) use ($user) {
-            $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+        ->whereDoesntHave('subordinates', function ($query) use ($user, $filterYear) {
+            $query->whereYear('created_at', $filterYear) // Add this line to filter by the current year
                 ->with([
                     'goal', 
                     'updatedBy', 
