@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
             $(element).popover("hide"); // Hide the popover
             popoverInitialized = false; // Reset popoverInitialized flag
             $(element).blur();
-        }, 500); // 1500 milliseconds = 1.5 seconds
+        }, 1000); // 1500 milliseconds = 1.5 seconds
     }
 
     // Function to fetch popover content and initialize popover
