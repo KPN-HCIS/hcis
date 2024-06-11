@@ -71,7 +71,17 @@
       </div>
     </div>
   </div>
-      <div id="report_content"></div>
+      <div id="report_content">
+        <div class="row">
+          <div class="col-md-12">
+          <div class="card shadow mb-4">
+              <div class="card-body">
+                  {{ __('No Report Found. Please Select Report') }}
+              </div>
+          </div>
+          </div>
+        </div>
+      </div>
 
       <div class="offcanvas offcanvas-end" tabindex="-1"  id="offcanvasRight" aria-labelledby="offcanvasRightLabel" aria-modal="false" role="dialog">
           <div class="offcanvas-header">

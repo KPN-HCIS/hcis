@@ -217,6 +217,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const formData = reportForm.serialize(); // Serialize form data
 
+        showLoader();
+
         // Send AJAX request to fetch and display report content
         $.ajax({
             url: "/get-report-content", // Endpoint URL to fetch report content
@@ -245,6 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         reportGoalsTable.search(filterValue).draw();
                     }
                 });
+                hideLoader();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
@@ -274,6 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
     reportForm.on("submit", function (event) {
         event.preventDefault(); // Prevent default form submission behavior
         const formData = reportForm.serialize(); // Serialize form data
+        showLoader();
 
         // Send AJAX request to fetch and display report content
         $.ajax({
@@ -303,6 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         reportGoalsTable.search(filterValue).draw();
                     }
                 });
+                hideLoader();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
@@ -331,6 +336,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.on("submit", function (event) {
         event.preventDefault(); // Prevent default form submission behavior
         const formData = form.serialize();
+        showLoader();
 
         // Send AJAX request to fetch and display report content
         $.ajax({
@@ -359,6 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         onBehalfTable.search(filterValue).draw();
                     }
                 });
+                hideLoader();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
@@ -378,6 +385,8 @@ function changeCategory(val) {
     const contentOnBehalf = $("#contentOnBehalf");
     const customsearch = $("#customsearch");
     const formData = form.serialize();
+
+    showLoader();
 
     $.ajax({
         url: "/admin/onbehalf/content", // Endpoint URL to fetch report content
@@ -404,6 +413,7 @@ function changeCategory(val) {
                     onBehalfTable.search(filterValue).draw();
                 }
             });
+            hideLoader();
         },
         error: function (xhr, status, error) {
             console.error("Error fetching report content:", error);

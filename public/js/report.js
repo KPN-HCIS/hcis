@@ -5,6 +5,7 @@ function adminReportType(val) {
     const reportContentDiv = $("#report_content");
     const customsearch = $("#customsearch");
     const formData = reportForm.serialize();
+    showLoader();
     $.ajax({
         url: "/admin/get-report-content", // Endpoint URL to fetch report content
         method: "POST",
@@ -31,6 +32,8 @@ function adminReportType(val) {
                     reportGoalsTable.search(filterValue).draw();
                 }
             });
+
+            hideLoader();
         },
         error: function (xhr, status, error) {
             console.error("Error fetching report content:", error);
@@ -47,6 +50,7 @@ function reportType(val) {
     const reportContentDiv = $("#report_content");
     const customsearch = $("#customsearch");
     const formData = reportForm.serialize();
+    showLoader();
     $.ajax({
         url: "/get-report-content", // Endpoint URL to fetch report content
         method: "POST",
@@ -72,6 +76,7 @@ function reportType(val) {
                     reportGoalsTable.search(filterValue).draw();
                 }
             });
+            hideLoader();
         },
         error: function (xhr, status, error) {
             console.error("Error fetching report content:", error);

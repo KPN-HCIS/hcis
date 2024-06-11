@@ -198,7 +198,7 @@ class OnBehalfController extends Controller
         } elseif ($category == 'Performance' || $filterCategory == 'Goals') {
             return view('pages.onbehalfs.performance', compact('data', 'link', 'parentLink', 'locations', 'companies', 'groupCompanies'));
         } else {
-            return ''; // Or return a default view/content
+            return view('pages.onbehalfs.empty');
         }
     }
 

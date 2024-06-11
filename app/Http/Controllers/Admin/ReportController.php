@@ -207,7 +207,7 @@ class ReportController extends Controller
             $route = 'reports-admin.employee';
         } else {
             $data = collect(); // Empty collection for unknown report types
-            return false;
+            $route = 'reports-admin.empty';
         }
 
         $link = 'reports';

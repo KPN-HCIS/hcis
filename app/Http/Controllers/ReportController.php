@@ -100,7 +100,7 @@ class ReportController extends Controller
         if ($report_type === 'Goal') {
             return view('reports.goal', compact('data'))->render();
         } else {
-            return ''; // You might want to handle other report types accordingly
+            return view('reports.empty')->render();
         }
     }
 
