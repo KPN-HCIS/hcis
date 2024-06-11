@@ -25,7 +25,7 @@ class TeamGoalController extends Controller
         $user = Auth::user()->employee_id;
 
         // Retrieve the selected year from the request
-        $filterYear = $request->input('filterYear');
+        $filterYear = $request->input('filterYear') ? $request->input('filterYear') : now()->year;
         
         $datas = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
@@ -35,24 +35,18 @@ class TeamGoalController extends Controller
             });
         }])->where('approver_id', Auth::user()->employee_id)->get();
         
-        $task = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
+        $tasks = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user, $filterYear){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
                 $query->with('approverName');
             }])->whereHas('approvalLayer', function ($query) use ($user) {
                 $query->where('employee_id', $user)->orWhere('approver_id', $user);
-            })->whereYear('created_at', now()->year);
+            })->whereYear('created_at', $filterYear);
         }])
         ->leftJoin('approval_requests', 'approval_layers.employee_id', '=', 'approval_requests.employee_id')
         ->select('approval_layers.employee_id', 'approval_layers.approver_id', 'approval_layers.layer', 'approval_requests.created_at')
-        ->whereYear('approval_requests.created_at', now()->year)
-        ->whereHas('subordinates')->where('approver_id', Auth::user()->employee_id);
-
-        // Apply additional filtering based on the selected year
-        if (!empty($filterYear)) {
-            $task->whereYear('created_at', $filterYear);
-        }
-
-        $tasks = $task->get();
+        ->whereYear('approval_requests.created_at', $filterYear)
+        ->whereHas('subordinates')->where('approver_id', Auth::user()->employee_id)
+        ->get();
 
         $tasks->each(function($item) {
             $item->subordinates->map(function($subordinate) {
@@ -92,7 +86,7 @@ class TeamGoalController extends Controller
         // ->whereNull('schedules.deleted_at')
         // ->where('approval_layers.approver_id', $user)
         // ->whereDoesntHave('subordinates', function ($query) use ($user) {
-        //     $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+        //     $query->whereYear('created_at', $filterYear) // Add this line to filter by the current year
         //         ->with([
         //             'goal', 
         //             'updatedBy', 
@@ -107,11 +101,11 @@ class TeamGoalController extends Controller
         // ->distinct()
         // ->get();
 
-        $notask = ApprovalLayer::with(['employee', 'subordinates'])
+        $notasks = ApprovalLayer::with(['employee', 'subordinates'])
         ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
         ->where('approval_layers.approver_id', $user)
-        ->whereDoesntHave('subordinates', function ($query) use ($user) {
-            $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+        ->whereDoesntHave('subordinates', function ($query) use ($user, $filterYear) {
+            $query->whereYear('created_at', $filterYear) // Add this line to filter by the current year
                 ->with([
                     'goal', 
                     'updatedBy', 
@@ -123,13 +117,8 @@ class TeamGoalController extends Controller
                 });
         })
         ->select('approval_layers.*', 'employees.access_menu')
-        ->whereJsonContains('access_menu->doj', 1);
-
-        if (!empty($filterYear)) {
-            $notask->whereYear('created_at', $filterYear);
-        }
-
-        $notasks = $notask->get();
+        ->whereJsonContains('access_menu->doj', 1)
+        ->get();
 
         $notasks->map(function($item) {
             // Format created_at
