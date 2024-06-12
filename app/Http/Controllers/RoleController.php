@@ -89,7 +89,7 @@ class RoleController extends Controller
             $query->where('id', $roleId);
         })->get();
         
-        $users = Employee::select('id', 'fullname', 'designation')->get();
+        $users = Employee::select('id', 'fullname', 'employee_id', 'designation')->get();
         
         $parentLink = $this->link;
         $link = "Manage";
