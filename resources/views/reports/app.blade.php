@@ -46,9 +46,9 @@
                       <div class="input-group flex-nowrap mb-3">
                         <label class="input-group-text border-dark-subtle" for="customsearch"><i class="ri-search-line"></i></label>
                         <input type="text" name="customsearch" id="customsearch" class="form-control border-dark-subtle" placeholder="search.." aria-label="search" aria-describedby="search">
-                        {{-- <div class="d-lg-none input-group-append">
+                        <div class="d-lg-none input-group-append">
                           <button class="input-group-text bg-white border-dark-subtle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><i class="ri-filter-line"></i></button>
-                        </div> --}}
+                        </div>
                       </div>
                     </div>
                   </div>

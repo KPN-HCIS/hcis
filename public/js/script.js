@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 reportContentDiv.html(data); // Update report content with the returned HTML
                 exportButton.removeClass("disabled"); // Enable export button
                 $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").removeClass("show");
+                $(".offcanvas-backdrop").remove();
 
                 const reportGoalsTable = $("#reportGoalsTable").DataTable({
                     dom: "lrtip",
@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 reportContentDiv.html(data); // Update report content
                 exportButton.removeClass("disabled"); // Enable export button
                 $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").removeClass("show");
+                $(".offcanvas-backdrop").remove();
 
                 const reportGoalsTable = $("#adminReportTable").DataTable({
                     dom: "lrtip",
@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (data) {
                 contentOnBehalf.html(data); // Update report content
                 $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").removeClass("show");
+                $(".offcanvas-backdrop").remove();
 
                 const onBehalfTable = $("#onBehalfTable").DataTable({
                     dom: "lrtip",
