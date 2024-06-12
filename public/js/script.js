@@ -228,8 +228,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 reportContentDiv.html(data); // Update report content with the returned HTML
                 exportButton.removeClass("disabled"); // Enable export button
 
-                $("#offcanvas-cancel").click();
-
                 const reportGoalsTable = $("#reportGoalsTable").DataTable({
                     dom: "lrtip",
                     pageLength: 50,
@@ -248,6 +246,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
                 hideLoader();
+
+                $("#offcanvas-cancel").click();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
@@ -288,8 +288,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 reportContentDiv.html(data); // Update report content
                 exportButton.removeClass("disabled"); // Enable export button
 
-                $("#offcanvas-cancel").click();
-
                 const reportGoalsTable = $("#adminReportTable").DataTable({
                     dom: "lrtip",
                     pageLength: 50,
@@ -308,6 +306,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
                 hideLoader();
+
+                $("#offcanvas-cancel").click();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
@@ -346,8 +346,6 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (data) {
                 contentOnBehalf.html(data); // Update report content
 
-                $("#offcanvas-cancel").click();
-
                 const onBehalfTable = $("#onBehalfTable").DataTable({
                     dom: "lrtip",
                     pageLength: 25,
@@ -366,6 +364,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
                 hideLoader();
+
+                $("#offcanvas-cancel").click();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
