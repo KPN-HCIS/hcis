@@ -82,7 +82,7 @@ class ReportController extends Controller
         ->pluck('company_name');
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        $selectYear = ApprovalRequest::select('created_at')->get();
+        $selectYear = ApprovalRequest::select('created_at')->distinct()->get();
 
         $selectYear->transform(function ($req) {
             $req->year = Carbon::parse($req->created_at)->format('Y');
