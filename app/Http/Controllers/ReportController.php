@@ -98,9 +98,15 @@ class ReportController extends Controller
         }
 
         $query->whereYear('created_at', $filterYear);
+
+        $query->whereHas('approvalLayer', function ($query) use ($employeeId) {
+            $query->where('employee_id', $employeeId)
+                  ->orWhere('approver_id', $employeeId);
+        });
         
         // Fetch the data based on the constructed query
         $data = $query->get();
+
         $data->map(function($item) {
             // Format created_at
             $createdDate = Carbon::parse($item->created_at);
