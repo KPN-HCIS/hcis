@@ -59,63 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    let popoverInitialized = false; // Flag to track popover initialization
-    let previousPopoverId = null; // Variable to store the ID of the previously triggered popover
-    let popoverTimeout = null; // Variable to store the timeout for hiding the popover
-
-    // Function to initialize Bootstrap popover with delay
-    function initializePopover(name, layer, element) {
-        const contents = layer ? `Manager L${layer} : ${name}` : name;
-        $(element)
-            .popover({
-                content: contents,
-                placement: "top", // Auto placement (adjusts as needed)
-            })
-            .popover("show"); // Show the popover immediately
-
-        // Set a timeout to hide the popover after 1.5 seconds
-        popoverTimeout = setTimeout(function () {
-            $(element).popover("hide"); // Hide the popover
-            popoverInitialized = false; // Reset popoverInitialized flag
-            $(element).blur();
-        }, 1000); // 1500 milliseconds = 1.5 seconds
-    }
-
-    // Function to fetch popover content and initialize popover
-    function fetchAndInitializePopover(id, element) {
-        let url = `/get-tooltip-content?id=${id}`;
-        fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch popover content");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                const name = data.name;
-                const layer = data.layer;
-                // Initialize popover with retrieved content
-                initializePopover(name, layer, element);
-                popoverInitialized = true; // Update flag
-                previousPopoverId = id; // Update the previousPopoverId with the current ID
-            })
-            .catch((error) => {
-                console.error("Error fetching popover content:", error);
-            });
-    }
-
-    // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
-    $(document).on("click mouseenter", "a[id^='approval']", function () {
-        // $('[data-bs-toggle="popover"]').popover("hide");
-
-        var id = $(this).data("bsId");
-
-        // Call fetchAndInitializePopover function to fetch and initialize popover
-        fetchAndInitializePopover(id, this);
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
     // Function to handle "Select All" button click
     $("#select-all").on("click", function () {
         $(".day-button").toggleClass("active");
