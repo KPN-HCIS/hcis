@@ -12,6 +12,7 @@ use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -82,7 +83,10 @@ class ReportController extends Controller
         ->pluck('company_name');
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        $selectYear = ApprovalRequest::select('created_at')->distinct()->get();
+        $selectYear = ApprovalRequest::select(DB::raw('YEAR(created_at) as year'))
+        ->distinct()
+        ->orderBy('year')
+        ->get();
 
         $selectYear->transform(function ($req) {
             $req->year = Carbon::parse($req->created_at)->format('Y');
