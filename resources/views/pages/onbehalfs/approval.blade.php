@@ -156,7 +156,7 @@
                             @endforeach
                             </div> 
                         @endcan
-                        <a href="{{ url()->previous() }}" class="btn btn-danger px-2 me-2 rounded-pill">Cancel</a>
+                        <a href="{{ route('onbehalf') }}" class="btn btn-danger px-2 me-2 rounded-pill">Cancel</a>
                         <a href="javascript:void(0)" onclick="confirmAprrovalAdmin()" class="btn btn-primary px-2 rounded-pill">Approve</a>
                     </div>
                 </div>

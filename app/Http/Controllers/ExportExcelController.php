@@ -19,9 +19,30 @@ class ExportExcelController extends Controller
         $groupCompany = $request->export_group_company;
         $company = $request->export_company;
         $location = $request->export_location;
+        $admin = 0;
 
         if($reportType==='Goal'){
-            $goal = new GoalExport($groupCompany, $location, $company);
+            $goal = new GoalExport($groupCompany, $location, $company, $admin);
+            return Excel::download($goal, 'goals.xlsx');
+        }
+        if($reportType==='Employee'){
+            $employee = new EmployeeExport($groupCompany, $location, $company);
+            return Excel::download($employee, 'employee.xlsx');
+        }
+        return;
+
+    }
+
+    public function exportAdmin(Request $request) 
+    {
+        $reportType = $request->export_report_type;
+        $groupCompany = $request->export_group_company;
+        $company = $request->export_company;
+        $location = $request->export_location;
+        $admin = 1;
+
+        if($reportType==='Goal'){
+            $goal = new GoalExport($groupCompany, $location, $company, $admin);
             return Excel::download($goal, 'goals.xlsx');
         }
         if($reportType==='Employee'){

@@ -29,8 +29,8 @@
                     <label class="form-label" for="report_type">Select Report:</label>
                     <select class="form-select border-dark-subtle" onchange="adminReportType(this.value)">
                     <option value="">- select -</option>
-                    <option value="Goal">Goal</option>
-                    <option value="Employee">Employee</option>
+                    <option value="Goal">Detailed Goals</option>
+                    <option value="Employee">Goal Menu Access</option>
                     </select>
                   </div>
                 </div>
@@ -58,7 +58,7 @@
         </div>
         <div class="col-lg-auto">
           <div class="mb-2 text-end">
-            <form id="exportForm" action="{{ route('export') }}" method="POST">
+            <form id="exportForm" action="{{ route('admin.export') }}" method="POST">
               @csrf
               <input type="hidden" name="export_report_type" id="export_report_type">
               <input type="hidden" name="export_group_company" id="export_group_company">

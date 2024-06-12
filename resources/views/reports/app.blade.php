@@ -31,7 +31,7 @@
                           <label class="form-label" for="report_type">Select Report</label>
                           <select class="form-select border-dark-subtle" onchange="reportType(this.value)">
                           <option value="">- select -</option>
-                          <option value="Goal">Goal</option>
+                          <option value="Goal">Detailed Goals</option>
                           </select>
                       </div> 
                     </div>
