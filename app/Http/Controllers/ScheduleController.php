@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Jobs\SendReminderScheduleEmailJob;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+
 
 class ScheduleController extends Controller
 {
@@ -140,7 +144,7 @@ class ScheduleController extends Controller
         $name = "Eriton";
         $message = $req->messages;
 
-        dispatch(new SendReminderScheduleEmailJob($email, $name, $message));
+        //dispatch(new SendReminderScheduleEmailJob($email, $name, $message));
         
         Alert::success('Success');
         return redirect()->intended(route('schedules', absolute: false));
@@ -256,7 +260,7 @@ class ScheduleController extends Controller
         $name = "Eriton";
         $message = $req->messages;
 
-        dispatch(new SendReminderScheduleEmailJob($email, $name, $message));
+        //dispatch(new SendReminderScheduleEmailJob($email, $name, $message));
 
         Alert::success('Success');
         return redirect()->intended(route('schedules', absolute: false));
@@ -304,5 +308,57 @@ class ScheduleController extends Controller
         }
         // Memanggil metode delete() untuk soft delete
         $schedule->delete();
+    }
+    function reminderDailySchedules() {
+        $today = date('Y-m-d');
+        $dayOfWeek = now()->format('D');
+
+        //disini berisi variabel $schedules untuk get data didalamnya
+        $schedules = DB::table('schedules')
+            ->where('start_date', '<=', $today)
+            ->where('end_date', '>=', $today)
+            ->whereNull('deleted_at')
+            ->get();
+        
+        foreach ($schedules as $schedule) {
+            // Ambil data dari tabel employees yang sesuai dengan filter di tabel schedules
+            $sendReminder = false;
+
+            if ($schedule->inputState == 'beforeenddate') {
+                $reminderStartDate = Carbon::parse($schedule->end_date)->subDays($schedule->before_end_date);
+                if (Carbon::today()->between($reminderStartDate, Carbon::parse($schedule->end_date))) {
+                    $sendReminder = true;
+                }
+            } elseif ($schedule->inputState == 'repeaton') {
+                $repeatDays = explode(',', $schedule->repeat_days);
+                if (in_array($dayOfWeek, $repeatDays)) {
+                    $sendReminder = true;
+                }
+            }
+
+            if ($sendReminder) {
+                $employees = DB::table('employees')
+                    ->leftJoin('goals', 'employees.employee_id', '=', 'goals.employee_id')
+                    ->whereNull('goals.employee_id')
+                    ->where('employees.employee_type', $schedule->employee_type)
+                    ->where('employees.group_company', $schedule->bisnis_unit)
+                    ->where('employees.contribution_level_code', $schedule->company_filter)
+                    ->where('employees.work_area_code', $schedule->location_filter)
+                    ->where('employees.date_of_joining', '<=', $schedule->last_join_date)
+                    ->select('employees.*')
+                    ->get();
+
+                // Kirim email
+                foreach ($employees as $employee) {
+                    //$email = $employee->email;
+                    $email = 'eriton.dewa@kpn-corp.com';
+                    $name = $employee->fullname;
+                    $message = $schedule->messages;
+
+                    dispatch(new SendReminderScheduleEmailJob($email, $name, $message));
+                    //echo "penerima : $email <br>nama : $name <br>isi email : $message <br>";
+                }
+            }
+        }
     }
 }
