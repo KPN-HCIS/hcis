@@ -8,21 +8,14 @@
 <div class="card">
   <div class="card-body">
     <div class="row">
-      <div class="col-md">
+      <div class="col">
+        <input type="hidden" name="roleId" value="{{ $roleId }}">
         <div class="mb-4 text-end">
             <a href="javascript:void(0)" onclick="deleteRole();" class="btn btn-outline-danger rounded-pill px-4 me-2">Delete</a>
+          <button type="submit" class="btn btn-primary rounded-pill px-4">Update</button>
         </div>
       </div>
-        <input type="hidden" name="roleId" value="{{ $roleId }}">
-        <div class="col-auto">
-          <div class="mb-4 text-end">
-            <button type="submit" class="btn btn-primary rounded-pill px-4">Update</button>
-          </div>
-        </div>
-      </div>
-      {{-- @foreach ($restriction as $key => $value)
-      <input type="text" value="{{ $value }}">
-      @endforeach --}}
+    </div>
       @foreach ($roles as $role)
       @php
           // Decode the JSON string
