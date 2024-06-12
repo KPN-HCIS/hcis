@@ -69,8 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
         $(element)
             .popover({
                 content: contents,
-                // trigger: "manual", // Show popover manually
-                trigger: "focus",
                 placement: "top", // Auto placement (adjusts as needed)
             })
             .popover("show"); // Show the popover immediately
@@ -114,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
     $(document).on("click mouseenter", "a[id^='approval']", function () {
-        $('[data-toggle="popover"]').popover("hide");
+        // $('[data-bs-toggle="popover"]').popover("hide");
 
         var id = $(this).data("bsId");
 

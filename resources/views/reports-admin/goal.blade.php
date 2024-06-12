@@ -36,7 +36,7 @@
                           <td class="text-center">
                             <span class="badge {{ $row->goal->form_status == 'Approved' ? 'bg-success' : 'bg-secondary'}} rounded-pill px-3">{{ $row->goal->form_status }}</span></td>
                           <td class="text-center">
-                            <a href="javascript:void(0)" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-bs-id="{{ $row->employee_id }}" class="badge {{ $row->status === 'Approved' ? 'bg-success' : ( $row->status=='Sendback' ? 'bg-secondary' : 'bg-warning' ) }} rounded-pil px-1">{{ $row->status == 'Pending' ? 'Waiting For Approval' : ( $row->status=='Sendback'? 'Waiting For Revision' : $row->status) }}</a>
+                            <a href="javascript:void(0)" id="approval{{ $row->employee_id }}" data-bs-toggle="popover" data-bs-id="{{ $row->employee_id }}" class="badge {{ $row->status === 'Approved' ? 'bg-success' : ( $row->status=='Sendback' ? 'bg-secondary' : 'bg-warning' ) }} rounded-pil px-1">{{ $row->status == 'Pending' ? 'Waiting For Approval' : ( $row->status=='Sendback'? 'Waiting For Revision' : $row->status) }}</a>
                           </td>
                           <td class="text-center">{{ $row->formatted_created_at }}</td>
                           <td>{{ $row->initiated->name }}<br>{{ $row->initiated->employee_id }}</td>
