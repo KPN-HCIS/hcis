@@ -36,7 +36,7 @@
                           <td class="text-center">
                             <span class="badge {{ $row->goal->form_status == 'Approved' ? 'bg-success' : 'bg-secondary'}} rounded-pil px-1">{{ $row->goal->form_status }}</span></td>
                           <td class="text-center">
-                            <a href="#" id="approval{{ $row->employee_id }}" data-bs-toggle="popover" data-bs-id="{{ $row->employee_id }}" class="badge {{ $row->status === 'Approved' ? 'bg-success' : ( $row->status=='Sendback' ? 'bg-secondary' : 'bg-warning' ) }} rounded-pil px-1">{{ $row->status == 'Pending' ? 'Waiting For Approval' : ( $row->status=='Sendback'? 'Waiting For Revision' : $row->status) }}</a>
+                            <a href="javascript:void(0)" data-bs-id="{{ $row->employee_id }}" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ $row->approvalLayer ? 'Manager L'.$row->approvalLayer.' : '.$row->name : $row->name }}" class="badge {{ $row->status === 'Approved' ? 'bg-success' : ( $row->status=='Sendback' ? 'bg-secondary' : 'bg-warning' ) }} rounded-pil px-1">{{ $row->status == 'Pending' ? 'Waiting For Approval' : ( $row->status=='Sendback'? 'Waiting For Revision' : $row->status) }}</a>
                           </td>
                           <td class="text-center">{{ $row->formatted_created_at }}</td>
                           <td class="text-center">{{ $row->initiated->name }}<br>{{ $row->initiated->employee_id }}</td>

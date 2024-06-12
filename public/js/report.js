@@ -37,6 +37,8 @@ function adminReportType(val) {
                 }
             });
 
+            $('[data-bs-toggle="popover"]').popover();
+
             hideLoader();
         },
         error: function (xhr, status, error) {
@@ -84,6 +86,9 @@ function reportType(val) {
                     reportGoalsTable.search(filterValue).draw();
                 }
             });
+
+            $('[data-bs-toggle="popover"]').popover();
+
             hideLoader();
         },
         error: function (xhr, status, error) {

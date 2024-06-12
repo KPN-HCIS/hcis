@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApprovalLayer;
 use App\Models\ApprovalRequest;
 use App\Models\Company;
 use App\Models\Location;
@@ -117,6 +118,19 @@ class ReportController extends Controller
             $updatedDate = Carbon::parse($item->updated_at);
 
                 $item->formatted_updated_at = $updatedDate->format('d M Y');
+
+            // Determine name and approval layer
+            if ($item->sendback_to == $item->employee->employee_id) {
+                $item->name = $item->employee->fullname . ' (' . $item->employee->employee_id . ')';
+                $item->approvalLayer = '';
+            } else {
+                $item->name = $item->manager->fullname . ' (' . $item->manager->employee_id . ')';
+                $item->approvalLayer = ApprovalLayer::where('employee_id', $item->employee_id)
+                                                    ->where('approver_id', $item->current_approval_id)
+                                                    ->value('layer');
+            }
+
+            return $item;
         });
 
         // Determine the report type and return the appropriate view

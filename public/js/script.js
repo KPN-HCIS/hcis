@@ -78,17 +78,11 @@ document.addEventListener("DOMContentLoaded", function () {
             $(element).popover("hide"); // Hide the popover
             popoverInitialized = false; // Reset popoverInitialized flag
             $(element).blur();
-        }, 1500); // 1500 milliseconds = 1.5 seconds
+        }, 1000); // 1500 milliseconds = 1.5 seconds
     }
 
     // Function to fetch popover content and initialize popover
     function fetchAndInitializePopover(id, element) {
-        // Check if the current id is the same as the previousPopoverId
-        if (id === previousPopoverId && popoverInitialized) {
-            // If same id and popover is already initialized, return early
-            return;
-        }
-
         let url = `/get-tooltip-content?id=${id}`;
         fetch(url)
             .then((response) => {
@@ -118,11 +112,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Call fetchAndInitializePopover function to fetch and initialize popover
         fetchAndInitializePopover(id, this);
-    });
-
-    // Function to cancel popover timeout when popover is manually closed
-    $(document).on("hidden.bs.popover", function () {
-        clearTimeout(popoverTimeout); // Clear the timeout
     });
 });
 
