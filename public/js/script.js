@@ -227,8 +227,8 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (data) {
                 reportContentDiv.html(data); // Update report content with the returned HTML
                 exportButton.removeClass("disabled"); // Enable export button
-                $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").remove();
+
+                $("#offcanvas-cancel").click();
 
                 const reportGoalsTable = $("#reportGoalsTable").DataTable({
                     dom: "lrtip",
@@ -287,8 +287,8 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (data) {
                 reportContentDiv.html(data); // Update report content
                 exportButton.removeClass("disabled"); // Enable export button
-                $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").remove();
+
+                $("#offcanvas-cancel").click();
 
                 const reportGoalsTable = $("#adminReportTable").DataTable({
                     dom: "lrtip",
@@ -345,8 +345,8 @@ document.addEventListener("DOMContentLoaded", function () {
             data: formData, // Send serialized form data
             success: function (data) {
                 contentOnBehalf.html(data); // Update report content
-                $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").remove();
+
+                $("#offcanvas-cancel").click();
 
                 const onBehalfTable = $("#onBehalfTable").DataTable({
                     dom: "lrtip",

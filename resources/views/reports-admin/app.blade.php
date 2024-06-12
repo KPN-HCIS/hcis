@@ -148,7 +148,7 @@
             </form>
           </div> <!-- end offcanvas-body-->
           <div class="offcanvas-footer p-3 text-end">
-            <a class="btn btn-outline-secondary me-2" data-bs-dismiss="modal">Cancel</a>
+            <button type="button" id="offcanvas-cancel" class="btn btn-outline-secondary me-2" data-bs-dismiss="offcanvas">Cancel</button>
             <button type="submit" class="btn btn-primary" form="admin_report_filter">Apply</button>
           </div>
       </div>
