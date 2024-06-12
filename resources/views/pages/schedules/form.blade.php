@@ -70,6 +70,8 @@
                                             <option value="KPN Plantations">KPN Plantations</option>
                                             <option value="Downstream">Downstream</option>
                                             <option value="Property">Property</option>
+                                            <option value="Cement">Cement</option>
+                                            <option value="KPN Sugar">KPN Sugar</option>
                                         </select>
                                     </div>
                                 </div>

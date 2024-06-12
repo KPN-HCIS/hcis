@@ -22,7 +22,7 @@ class ScheduleServiceProvider extends ServiceProvider
     public function boot(Schedule $schedule)
     {
         $schedule->command('fetch:employees')->dailyAt('00:10');
-        // $schedule->command('fetch:employees')->everyFiveMinutes();
         $schedule->command('update:employee-access-menu')->dailyAt('00:01');
+        $schedule->command('app:reminderSchedules')->dailyAt('08:00');
     }
 }
