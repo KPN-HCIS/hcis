@@ -325,7 +325,13 @@ function applyLocationFilter(table) {
         $('#nikAppInputs').empty();
         var layerIndex = 1;
 
-        for (var i = 0; i < (apps.length + 3); i++) {
+        if((apps.length+3)>6){
+            var maxlayer = 6;
+        }else{
+            var maxlayer = (apps.length+3);
+        }
+
+        for (var i = 0; i < maxlayer; i++) {
             var selectOptions = "<option></option>";
             for (var j = 0; j < employees.length; j++) {
                 var selected = (employees[j].employee_id == apps[i]) ? 'selected' : 'Select Employee';
