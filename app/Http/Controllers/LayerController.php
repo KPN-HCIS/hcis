@@ -156,9 +156,22 @@ class LayerController extends Controller
         //dd($userId);
         // Import data baru
         //Excel::import(new ApprovalLayerImport, $request->file('excelFile'));
-        Excel::import(new ApprovalLayerImport($userId), $request->file('excelFile'));
+        // Excel::import(new ApprovalLayerImport($userId), $request->file('excelFile'));
 
-        return back()->with('success', 'Data imported successfully.');
+        // return back()->with('success', 'Data imported successfully.');
+        $import = new ApprovalLayerImport($userId);
+        Excel::import($import, $request->file('excelFile'));
+
+        // Ambil ID karyawan yang memiliki layer lebih dari 6
+        $invalidEmployees = $import->getInvalidEmployees();
+
+        // Format pesan umpan balik
+        $message = 'Data imported successfully.';
+        if (!empty($invalidEmployees)) {
+            $message .= '\nThe following employee IDs have layers greater than 6 and were not imported: \n' . implode(', ', $invalidEmployees);
+        }
+
+        return back()->with('success', $message);
     }
 
     public function show(Request $request)
