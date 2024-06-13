@@ -105,6 +105,8 @@
                                     $sendbackTo = $firstSubordinate ? $firstSubordinate->sendback_to : null;
                                     $employeeId = $firstSubordinate ? $firstSubordinate->employee_id : null;
                                     $sendbackTo = $firstSubordinate ? $firstSubordinate->sendback_to : null;
+                                    $employeeName = $firstSubordinate ? $firstSubordinate->name : null;
+                                    $approvalLayer = $firstSubordinate ? $firstSubordinate->approvalLayer : null;
                                 @endphp
                                 <div class="row mt-2 mb-2 task-card" data-status="{{ $formStatus == 'Draft' ? 'draft' : ($status == 'Pending' ? 'waiting for approval' : ($subordinates->isNotEmpty() ? ($status == 'Sendback' ? 'waiting for revision' : strtolower($status)) : 'no data')) }}">
                                     <div class="col">
@@ -135,7 +137,7 @@
                                             </div>
                                             <div class="col-lg col-sm-12 p-2">
                                                 <h5>Status</h5>
-                                                <a href="javascript:void(0)" class="badge {{ $subordinates->isNotEmpty() ? ($formStatus == 'Draft' || $status == 'Sendback' ? 'bg-dark-subtle text-dark' : ($status === 'Approved' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning')) : 'bg-dark-subtle text-secondary'}} rounded-pill py-1 px-2">{{ $formStatus == 'Draft' ? 'Draft': ($status == 'Pending' ? 'Waiting For Approval' : ($subordinates->isNotEmpty() ? ($status == 'Sendback' ? 'Waiting For Revision' : $status) : 'No Data')) }}</a>
+                                                <a href="javascript:void(0)" data-bs-id="{{ $task->employee_id }}" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ $approvalLayer ? 'Manager L'.$approvalLayer.' : '.$employeeName : $employeeName }}" class="badge {{ $subordinates->isNotEmpty() ? ($formStatus == 'Draft' || $status == 'Sendback' ? 'bg-dark-subtle text-dark' : ($status === 'Approved' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning')) : 'bg-dark-subtle text-secondary'}} rounded-pill py-1 px-2">{{ $formStatus == 'Draft' ? 'Draft': ($status == 'Pending' ? 'Waiting For Approval' : ($subordinates->isNotEmpty() ? ($status == 'Sendback' ? 'Waiting For Revision' : $status) : 'No Data')) }}</a>
                                             </div>
                                         </div>
                                     </div>
