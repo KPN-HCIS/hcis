@@ -65,6 +65,19 @@ class TeamGoalController extends Controller
                 } else {
                     $subordinate->formatted_updated_at = $updatedDate->format('d M Y');
                 }
+                
+                // Determine name and approval layer
+                if ($subordinate->sendback_to == $subordinate->employee->employee_id) {
+                    $subordinate->name = $subordinate->employee->fullname . ' (' . $subordinate->employee->employee_id . ')';
+                    $subordinate->approvalLayer = '';
+                } else {
+                    $subordinate->name = $subordinate->manager->fullname . ' (' . $subordinate->manager->employee_id . ')';
+                    $subordinate->approvalLayer = ApprovalLayer::where('employee_id', $subordinate->employee_id)
+                                                            ->where('approver_id', $subordinate->current_approval_id)
+                                                            ->value('layer');
+                }
+
+                return $subordinate;
             });
         });
 
