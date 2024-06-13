@@ -135,7 +135,7 @@
                                             </div>
                                             <div class="col-lg col-sm-12 p-2">
                                                 <h5>Status</h5>
-                                                <a href="javascript:void(0)" data-bs-id="{{ $subordinates->employee_id }}" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ $subordinates->approvalLayer ? 'Manager L'.$subordinates->approvalLayer.' : '.$subordinates->name : $subordinates->name }}" class="badge {{ $subordinates->isNotEmpty() ? ($formStatus == 'Draft' || $status == 'Sendback' ? 'bg-dark-subtle text-dark' : ($status === 'Approved' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning')) : 'bg-dark-subtle text-secondary'}} rounded-pill py-1 px-2">{{ $formStatus == 'Draft' ? 'Draft': ($status == 'Pending' ? 'Waiting For Approval' : ($subordinates->isNotEmpty() ? ($status == 'Sendback' ? 'Waiting For Revision' : $status) : 'No Data')) }}</a>
+                                                <a href="javascript:void(0)" class="badge {{ $subordinates->isNotEmpty() ? ($formStatus == 'Draft' || $status == 'Sendback' ? 'bg-dark-subtle text-dark' : ($status === 'Approved' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning')) : 'bg-dark-subtle text-secondary'}} rounded-pill py-1 px-2">{{ $formStatus == 'Draft' ? 'Draft': ($status == 'Pending' ? 'Waiting For Approval' : ($subordinates->isNotEmpty() ? ($status == 'Sendback' ? 'Waiting For Revision' : $status) : 'No Data')) }}</a>
                                             </div>
                                         </div>
                                     </div>
