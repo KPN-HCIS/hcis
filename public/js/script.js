@@ -343,6 +343,9 @@ function changeCategory(val) {
                     onBehalfTable.search(filterValue).draw();
                 }
             });
+
+            $('[data-bs-toggle="popover"]').popover();
+
             hideLoader();
         },
         error: function (xhr, status, error) {
