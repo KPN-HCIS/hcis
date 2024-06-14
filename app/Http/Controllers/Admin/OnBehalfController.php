@@ -167,6 +167,19 @@ class OnBehalfController extends Controller
 
                     $item->formatted_updated_at = $updatedDate->format('d M Y g:ia');
 
+                // Determine name and approval layer
+                if ($item->sendback_to == $item->employee->employee_id) {
+                    $item->name = $item->employee->fullname . ' (' . $item->employee->employee_id . ')';
+                    $item->approvalLayer = '';
+                } else {
+                    $item->name = $item->manager->fullname . ' (' . $item->manager->employee_id . ')';
+                    $item->approvalLayer = ApprovalLayer::where('employee_id', $item->employee_id)
+                                                        ->where('approver_id', $item->current_approval_id)
+                                                        ->value('layer');
+                }
+
+                return $item;
+
                 });
             
             foreach ($datas as $request) {
@@ -235,8 +248,6 @@ class OnBehalfController extends Controller
             }
         }
         
-        // dd($data);
-
         $formData = [];
         if($datas->isNotEmpty()){
             $formData = json_decode($datas->first()->goal->form_data, true);
@@ -259,7 +270,6 @@ class OnBehalfController extends Controller
         $parentLink = 'On Behalf';
         $link = 'Approval';
 
-        // dd($data);
         return view('pages.onbehalfs.approval', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
 
     }

@@ -183,7 +183,7 @@ class ReportController extends Controller
 
                     $item->formatted_updated_at = $updatedDate->format('d M Y g:ia');
 
-                    // Determine name and approval layer
+                // Determine name and approval layer
                 if ($item->sendback_to == $item->employee->employee_id) {
                     $item->name = $item->employee->fullname . ' (' . $item->employee->employee_id . ')';
                     $item->approvalLayer = '';

@@ -30,7 +30,8 @@
                         @foreach ($data as $row)
                         <tr>
                             <td>{{ $row->employee->fullname }}</td>
-                            <td class="px-5 text-center"><a href="#" id="approval{{ $row->employee_id }}" data-toggle="tooltip" data-id="{{ $row->employee_id }}" class="badge {{ $row->goal->form_status == 'Draft' || $row->status == 'Sendback' ? 'bg-secondary' : ($row->status === 'Approved' ? 'bg-success' : 'bg-warning')}} rounded-pill px-2">{{ $row->goal->form_status == 'Draft' ? 'Draft': ($row->status == 'Pending' ? 'Waiting For Approval' : ($row->status == 'Sendback' ? 'Waiting For Revision' : $row->status)) }}</a></td>
+                            <td class="px-5 text-center">
+                              <a href="javascript:void(0)" data-bs-id="{{ $row->employee_id }}" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ $row->approvalLayer ? 'Manager L'.$row->approvalLayer.' : '.$row->name : $row->name }}" class="badge {{ $row->goal->form_status == 'Draft' || $row->status == 'Sendback' ? 'bg-secondary' : ($row->status === 'Approved' ? 'bg-success' : 'bg-warning')}} rounded-pill px-2">{{ $row->goal->form_status == 'Draft' ? 'Draft': ($row->status == 'Pending' ? 'Waiting For Approval' : ($row->status == 'Sendback' ? 'Waiting For Revision' : $row->status)) }}</a></td>
                             <td class="text-center">{{ $row->formatted_created_at }}</td>
                             <td>{{ $row->employee->fullname }}</td>
                             <td class="text-center">{{ $row->formatted_updated_at }}</td>
