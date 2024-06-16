@@ -425,6 +425,29 @@ function getAssignmentData(id) {
                 theme: "bootstrap-5",
             });
             $("#modalFilter").modal("hide");
+            $("#submitButton").on("click", function (e) {
+                e.preventDefault();
+                const form = $("#assignForm").get(0);
+                const submitButton = $("#submitButton");
+                const spinner = submitButton.find(".spinner-border");
+
+                if (form.checkValidity()) {
+                    // Disable submit button
+                    submitButton.prop("disabled", true);
+                    submitButton.addClass("disabled");
+
+                    // Remove d-none class from spinner if it exists
+                    if (spinner.length) {
+                        spinner.removeClass("d-none");
+                    }
+
+                    // Submit form
+                    form.submit();
+                } else {
+                    // If the form is not valid, trigger HTML5 validation messages
+                    form.reportValidity();
+                }
+            });
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -447,6 +470,29 @@ function getPermissionData(id) {
                 theme: "bootstrap-5",
             });
             $("#modalFilter").modal("hide");
+            $("#submitButton").on("click", function (e) {
+                e.preventDefault();
+                const form = $("#roleForm").get(0);
+                const submitButton = $("#submitButton");
+                const spinner = submitButton.find(".spinner-border");
+
+                if (form.checkValidity()) {
+                    // Disable submit button
+                    submitButton.prop("disabled", true);
+                    submitButton.addClass("disabled");
+
+                    // Remove d-none class from spinner if it exists
+                    if (spinner.length) {
+                        spinner.removeClass("d-none");
+                    }
+
+                    // Submit form
+                    form.submit();
+                } else {
+                    // If the form is not valid, trigger HTML5 validation messages
+                    form.reportValidity();
+                }
+            });
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -477,6 +523,9 @@ window.onload = function () {
 };
 
 function deleteRole() {
+    const submitButton = $(event.target).closest(".btn-outline-danger");
+    const spinner = submitButton.find(".spinner-border");
+
     Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -488,6 +537,11 @@ function deleteRole() {
         reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
+            submitButton.prop("disabled", true);
+            submitButton.addClass("disabled");
+            if (spinner.length) {
+                spinner.removeClass("d-none");
+            }
             document.getElementById("delete-role-form").submit();
         }
     });
