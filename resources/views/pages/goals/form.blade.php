@@ -119,7 +119,7 @@
             <div class="col-md-auto d-md-flex align-items-center justify-content-center text-center mb-3">
                 <button type="submit" name="save_draft" class="btn btn-info rounded-pill save-draft me-2" onclick="return setSubmitType('save_draft')"><i class="ri-save-line d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>
                 <a href="{{ url()->previous() }}" class="btn btn-danger rounded-pill me-2">Cancel</a>
-                <button type="submit" name="submit_form" class="btn btn-primary rounded-pill shadow" onclick="return setSubmitType('submit_form')">Submit</button>
+                <button type="submit" id="submitButton" name="submit_form" class="btn btn-primary rounded-pill shadow" onclick="return setSubmitType('submit_form')"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Submit</button>
             </div>
         </div>
         </form>

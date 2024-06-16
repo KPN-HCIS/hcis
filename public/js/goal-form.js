@@ -305,6 +305,9 @@ function confirmSubmission(submitType) {
     let text;
     let confirmText;
 
+    const submitButton = $("#submitButton");
+    const spinner = submitButton.find(".spinner-border");
+
     if (submitType === "save_draft") {
         title1 = "Do you want to save this form?";
         title2 = "Form saved successfuly!";
@@ -328,6 +331,15 @@ function confirmSubmission(submitType) {
         reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
+            // Disable submit button
+            submitButton.prop("disabled", true);
+            submitButton.addClass("disabled");
+
+            // Remove d-none class from spinner if it exists
+            if (spinner.length) {
+                spinner.removeClass("d-none");
+            }
+
             document.getElementById("goalForm").submit();
             Swal.fire({
                 title: title2,

@@ -2,7 +2,7 @@
 <div class="card">
   <div class="card-body">
 
-    <form action="{{ route('assign.user') }}" method="POST">
+    <form id="assignForm" action="{{ route('assign.user') }}" method="POST">
       @csrf
       <input type="hidden" name="role_id" value="{{ $roleId }}">
       <div class="row mb-3">
@@ -26,7 +26,7 @@
       </div>
       <div class="row">
         <div class="col-lg-auto text-end">
-          <button type="submit" class="btn btn-primary rounded-pill px-3">Save</button>
+          <button type="submit" id="submitButton" class="btn btn-primary rounded-pill px-3"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Save</button>
         </div>
       </div>
     </form>

@@ -127,7 +127,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="editForm">Save changes</button>
+                <button type="submit" id="submitButton" class="btn btn-primary"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Save changes</button>
             </div>
         </div>
     </div>
@@ -375,5 +375,29 @@ function applyLocationFilter(table) {
 
         $('#editModal').modal('show');
     }
+
+    $('#submitButton').on('click', function(e) {
+      e.preventDefault();
+      const form = $('#editForm').get(0);
+      const submitButton = $('#submitButton');
+      const spinner = submitButton.find(".spinner-border");
+
+      if (form.checkValidity()) {
+        // Disable submit button
+        submitButton.prop('disabled', true);
+        submitButton.addClass("disabled");
+
+        // Remove d-none class from spinner if it exists
+        if (spinner.length) {
+            spinner.removeClass("d-none");
+        }
+
+        // Submit form
+        form.submit();
+      } else {
+          // If the form is not valid, trigger HTML5 validation messages
+          form.reportValidity();
+      }
+    });
 </script>
 @endpush

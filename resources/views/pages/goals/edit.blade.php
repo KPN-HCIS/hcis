@@ -147,7 +147,7 @@
                     <button type="submit" name="save_draft" class="btn btn-info save-draft me-3 rounded-pill" onclick="return setSubmitType('save_draft')"><i class="fas fa-save d-sm-none"></i><span class="d-sm-block d-none">Save as Draft</span></button>  
                     @endif
                     <a href="{{ url()->previous() }}" class="btn btn-danger px-3 me-2 rounded-pill">Cancel</a>
-                    <button type="submit" name="submit_form" class="btn btn-primary px-3 rounded-pill shadow" onclick="return setSubmitType('submit_form')">Submit</button>
+                    <button type="submit" id="submitButton" name="submit_form" class="btn btn-primary px-3 rounded-pill shadow" onclick="return setSubmitType('submit_form')"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Submit</button>
                 </div>
             </div>
         </div>

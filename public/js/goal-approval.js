@@ -94,6 +94,9 @@ function confirmAprroval() {
     let text;
     let confirmText;
 
+    const submitButton = $("#submitButton");
+    const spinner = submitButton.find(".spinner-border");
+
     title1 = "Do you want to submit?";
     title2 = "KPI submitted successfuly!";
     text = "You won't be able to revert this!";
@@ -109,6 +112,15 @@ function confirmAprroval() {
         reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
+            // Disable submit button
+            submitButton.prop("disabled", true);
+            submitButton.addClass("disabled");
+
+            // Remove d-none class from spinner if it exists
+            if (spinner.length) {
+                spinner.removeClass("d-none");
+            }
+
             document.getElementById("goalApprovalForm").submit();
             Swal.fire({
                 title: title2,
@@ -128,6 +140,9 @@ function confirmAprrovalAdmin() {
     let text;
     let confirmText;
 
+    const submitButton = $("#submitButton");
+    const spinner = submitButton.find(".spinner-border");
+
     title1 = "Do you want to submit?";
     title2 = "KPI submitted successfuly!";
     text = "You won't be able to revert this!";
@@ -143,6 +158,14 @@ function confirmAprrovalAdmin() {
         reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
+            // Disable submit button
+            submitButton.prop("disabled", true);
+            submitButton.addClass("disabled");
+
+            // Remove d-none class from spinner if it exists
+            if (spinner.length) {
+                spinner.removeClass("d-none");
+            }
             document.getElementById("goalApprovalAdminForm").submit();
             Swal.fire({
                 title: title2,

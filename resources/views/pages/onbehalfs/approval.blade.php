@@ -157,7 +157,7 @@
                             </div> 
                         @endcan
                         <a href="{{ route('onbehalf') }}" class="btn btn-danger px-2 me-2 rounded-pill">Cancel</a>
-                        <a href="javascript:void(0)" onclick="confirmAprrovalAdmin()" class="btn btn-primary px-2 rounded-pill">Approve</a>
+                        <a href="javascript:void(0)" id="submitButton" onclick="confirmAprrovalAdmin()" class="btn btn-primary px-2 rounded-pill"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Approve</a>
                     </div>
                 </div>
             </div>
