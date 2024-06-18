@@ -44,6 +44,13 @@ Route::get('fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployee
 Route::get('updmenu-employees', [EmployeeController::class, 'updateEmployeeAccessMenu']);
 Route::get('daily-schedules', [ScheduleController::class, 'reminderDailySchedules']);
 
+Route::get('/test-email', function () {
+    $messages = '<p>This is a test message with <strong>bold</strong> text.</p>';
+    $name = 'John Doe';
+
+    return view('email.reminderschedule', compact('messages', 'name'));
+});
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');

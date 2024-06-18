@@ -189,7 +189,9 @@
                                     <div class="col-md-8">
                                         <div class="mb-2">
                                             <label class="form-label" for="messages">Messages</label>
-                                            <textarea name="messages" id="messages" rows="5" class="form-control bg-light" placeholder="Enter message.."></textarea>
+                                            <div id="editor-container" class="form-control bg-light" style="height: 200px;"></div>
+                                            <textarea name="messages" id="messages" class="d-none"></textarea>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -211,6 +213,13 @@
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
 <script>
+    var quill = new Quill('#editor-container', {
+        theme: 'snow'
+    });
+
+    document.getElementById('scheduleForm').addEventListener('submit', function() {
+        document.querySelector('textarea[name=messages]').value = quill.root.innerHTML;
+    });
     document.getElementById('scheduleForm').addEventListener('submit', function() {
         var repeatDaysButtons = document.getElementsByName('repeat_days[]');
         var repeatDaysSelected = [];
@@ -242,7 +251,6 @@
     }
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
         $('.select2').select2({

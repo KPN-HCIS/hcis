@@ -10,6 +10,7 @@
 <script src="{{ asset('assets/js/tippy.min.js') }}?v={{ config('app.version') }}"></script>
 
 <script src="{{ asset('js/script.js') }}?v={{ config('app.version') }}"></script>
+<script src="{{ asset('js/quill.min.js') }}?v={{ config('app.version') }}"></script>
 
 <script src="{{ asset('js/report.js') }}?v={{ config('app.version') }}"></script>
 
