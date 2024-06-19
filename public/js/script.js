@@ -193,7 +193,6 @@ document.addEventListener("DOMContentLoaded", function () {
     exportButton.on("click", function () {
         const reportContent = reportContentDiv.html();
         // Code here to handle exporting the report content
-        // console.log("Exporting report content:", reportContent);
     });
 });
 
@@ -253,7 +252,6 @@ document.addEventListener("DOMContentLoaded", function () {
     exportButton.on("click", function () {
         const reportContent = reportContentDiv.html();
         // Code here to handle exporting the report content
-        // console.log("Exporting report content:", reportContent);
     });
 });
 

@@ -19,8 +19,6 @@ class EnsureUserHasRole
         $user = $request->user();
         // return $next($request);
 
-        //dd($user->roles()->pluck('name'));
-        
         // Periksa apakah pengguna memiliki peran yang sesuai
         if ($user && ($user->hasRole('admin') || $user->hasRole('superadmin'))) {
             // Jika pengguna memiliki peran yang sesuai, lanjutkan ke tindakan selanjutnya

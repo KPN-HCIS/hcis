@@ -420,7 +420,7 @@ class OnBehalfController extends Controller
     public function unitOfMeasurement()
     {
         $uom = file_get_contents(storage_path('../resources/goal.json'));
-        // dd($uom);
+
         return response()->json(json_decode($uom, true));
     }
 

@@ -94,7 +94,6 @@ class RoleController extends Controller
         $parentLink = $this->link;
         $link = "Manage";
         $active = 'manage';
-        // dd($roles);
         return view('pages.roles.assignform', compact('roles', 'link', 'parentLink', 'active', 'users', 'roleId', 'locations', 'groupCompanies', 'companies'));
     }
     function getPermission(Request $request) {
@@ -120,8 +119,6 @@ class RoleController extends Controller
         ->orderBy('permissions.id')
         ->pluck('role_has_permissions.permission_id')
         ->toArray();
-
-        // dd($permissionNames);
         
         $parentLink = $this->link;
         $link = "Create";

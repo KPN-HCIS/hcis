@@ -10,8 +10,6 @@ class DbController extends Controller
 
     $dataValue = $req->query('data');
 
-    // dd($dataValue);
-
     // Step 2: Decrypt using base64
     $decodedData = base64_decode($dataValue);
 

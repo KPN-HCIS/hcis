@@ -144,7 +144,6 @@ class LayerController extends Controller
 
         Alert::success('Success');
         return redirect()->intended(route('layer', absolute: false));
-        //dd($cek);
     }
 
     public function importLayer(Request $request)
@@ -182,12 +181,10 @@ class LayerController extends Controller
                     'updated_at' => $layer->updated_at,
                 ]);
             }
-            //dd($employeeIds);
             // Hapus data lama
             ApprovalLayer::whereIn('employee_id', $employeeIds)->delete();
         }
         $userId = Auth::id();
-        //dd($userId);
         // Import data baru
         //Excel::import(new ApprovalLayerImport, $request->file('excelFile'));
         // Excel::import(new ApprovalLayerImport($userId), $request->file('excelFile'));

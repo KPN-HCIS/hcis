@@ -208,8 +208,6 @@ class TeamGoalController extends Controller
             $req->year = Carbon::parse($req->created_at)->format('Y');
             return $req;
         });
-
-        // dd($tasks);
         
         return view('pages.goals.team-goal', compact('data', 'tasks', 'notasks', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption', 'selectYear'));
        
