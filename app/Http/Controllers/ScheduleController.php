@@ -20,6 +20,7 @@ class ScheduleController extends Controller
 {
     function schedule() {
 
+        $userId = Auth::id();
         $parentLink = 'Settings';
         $link = 'Schedule';
         $schedules = Schedule::with('createdBy')->get();
@@ -28,6 +29,7 @@ class ScheduleController extends Controller
             'link' => $link,
             'parentLink' => $parentLink,
             'schedules' => $schedules,
+            'userId' => $userId,
         ]);
     }
     function form() {
