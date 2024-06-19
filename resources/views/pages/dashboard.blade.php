@@ -1,5 +1,5 @@
 <x-app-layout>
-@section('title', 'Home')
+@section('title', 'Dashboard')
     <!-- Begin Page Content -->
     <x-slot name="content">
     <div class="container-fluid">

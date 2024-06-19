@@ -29,14 +29,12 @@ use App\Http\Controllers\TeamGoalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('home');
+    return redirect('goals');
 });
 
-// Route::get('/home', function () {
-//     return view('pages.home');
-// })->middleware(['auth', 'verified', 'role:superadmin'])->name('home');
-
-Route::get('/home', [MyGoalController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
+Route::get('/dashboard', function () {
+    return view('pages.dashboard');
+})->middleware(['auth', 'verified', 'role:superadmin'])->name('dashboard');
 
 Route::get('dbauth', [SsoController::class, 'dbauth']);
 
