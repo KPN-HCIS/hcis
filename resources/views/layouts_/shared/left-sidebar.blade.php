@@ -2,7 +2,7 @@
 <div class="leftside-menu">
 
     <!-- Brand Logo Light -->
-    <a href="{{ route('home') }}" class="logo logo-light">
+    <a href="{{ Url('/') }}" class="logo logo-light">
         <span class="logo-lg">
             <img src="/images/logo.png" alt="logo">
         </span>
@@ -12,7 +12,7 @@
     </a>
 
     <!-- Brand Logo Dark -->
-    <a href="{{ route('home') }}" class="logo logo-dark">
+    <a href="{{ Url('/') }}" class="logo logo-dark">
         <span class="logo-lg">
             <img src="/images/logo-dark.png" alt="logo">
         </span>
