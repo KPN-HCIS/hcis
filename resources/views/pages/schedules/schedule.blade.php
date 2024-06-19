@@ -80,9 +80,11 @@
                                     <td>{{ isset($schedule->createdBy->name) ? $schedule->createdBy->name : '-' }}</td>
                                     <!--<td><span class="badge badge-success badge-pill w-100">Active</span></td>-->
                                     <td class="text-center">
-                                        <a href="{{ route('edit-schedule', $schedule->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                        
-                                        <a class="btn btn-sm rounded-pill btn-danger" title="Delete" onclick="handleDelete(this)" data-id="{{ $schedule->id }}"><i class="ri-delete-bin-line"></i></a>
+                                        @if($schedule->created_by == $userId)
+                                            <a href="{{ route('edit-schedule', $schedule->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                            
+                                            <a class="btn btn-sm rounded-pill btn-danger" title="Delete" onclick="handleDelete(this)" data-id="{{ $schedule->id }}"><i class="ri-delete-bin-line"></i></a>
+                                        @endif
                                     </td>
                               </tr>
                               @endforeach
