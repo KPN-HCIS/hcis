@@ -203,8 +203,7 @@ Route::middleware('auth')->group(function () {
     });
     
     Route::middleware(['permission:viewreport'])->group(function () {
-        // Reports
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+        
         Route::get('/reports-admin', [AdminReportController::class, 'index'])->name('admin.reports');
         Route::get('/admin/get-report-content/{reportType}', [AdminReportController::class, 'getReportContent']);
         Route::post('/admin/get-report-content', [AdminReportController::class, 'getReportContent']);
