@@ -36,8 +36,8 @@
                         <td>{{ $item['weightage'] }}</td>
                         <td>{{ $item['type'] }}</td>
                         <td>{{ $subordinate->goal->form_status }}</td>
-                        <td>{{ $subordinate->status=='Pending'? ($subordinate->sendback_to ? 'Waiting For Revision' : 'Waiting For Approval') : $subordinate->status }}</td>
-                        <td>{{ $subordinate->status=='Sendback' && $subordinate->sendback_to == $subordinate->employee_id ? '-' : $subordinate->manager->fullname }}</td>
+                        <td>{{ $subordinate->status=='Pending'? ($subordinate->sendback_to ? 'Waiting For Revision' : ($subordinate->goal->category=='Draft'? 'Not Started' : 'Waiting For Approval')) : $subordinate->status }}</td>
+                        <td>{{ $subordinate->status=='Sendback' && $subordinate->sendback_to == $subordinate->employee_id || $subordinate->goal->category=='Draft' ? '-' : $subordinate->manager->fullname }}</td>
                         <td>{{ $subordinate->manager->employee_id }}</td>
                         <td>{{ $subordinate->initiated->name }}</td>
                         <td>{{ $subordinate->initiated->employee_id }}</td>
