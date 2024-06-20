@@ -27,7 +27,7 @@ class EnsureUserHasRole
             // Jika pengguna tidak memiliki peran yang sesuai, arahkan pengguna kembali dengan pesan kesalahan
             //return Redirect::to('/home')->withErrors('You do not have permission to access this page.');
             Alert::error('You do not have permission to access this page.')->showConfirmButton('OK');
-            return redirect()->intended(route('home', absolute: false));
+            return redirect()->intended(url('/'));
         }
     }
 }

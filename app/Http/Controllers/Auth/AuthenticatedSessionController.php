@@ -35,7 +35,7 @@ class AuthenticatedSessionController extends Controller
                 "type" => "success",
                 "message" => "You're logged in."
             ]);
-            return redirect()->intended(route('home', [], false));
+            return redirect()->intended(url('/'));
         } else {
             Alert::error('Error', 'Email or password is incorrect.')->showConfirmButton('OK');
             return redirect()->back();

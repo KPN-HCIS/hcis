@@ -33,7 +33,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('pages.dashboard');
+    return view('dashboard');
 })->middleware(['auth', 'verified', 'role:superadmin'])->name('dashboard');
 
 Route::get('dbauth', [SsoController::class, 'dbauth']);
