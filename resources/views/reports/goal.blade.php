@@ -34,7 +34,7 @@
                             <a href="#" class="btn btn-light btn-sm rounded-pill font-weight-medium" data-bs-toggle="modal" data-bs-target="#modalDetail{{ $row->goal->id }}"><i class="ri-search-line"></i></a>
                           </td>
                           <td class="text-center">
-                            <span class="badge {{ $row->goal->form_status == 'Approved' ? 'bg-success' : ($row->goal->form_status == 'Draft' ? 'badge-outline-secondary' : 'bg-secondary')}} rounded-pill px-3">{{ $row->goal->form_status == 'Draft' ? 'Not Submitted' : $row->goal->form_status }}</span></td>
+                            <span class="badge {{ $row->goal->form_status == 'Approved' ? 'bg-success' : ($row->goal->form_status == 'Draft' ? 'badge-outline-secondary' : 'bg-secondary')}} rounded-pill px-1">{{ $row->goal->form_status == 'Draft' ? 'Not Submitted' : $row->goal->form_status }}</span></td>
                           <td class="text-center">
                             <a href="javascript:void(0)" data-bs-id="{{ $row->employee_id }}" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ $row->goal->form_status=='Draft' ? 'Draft' : ($row->approvalLayer ? 'Manager L'.$row->approvalLayer.' : '.$row->name : $row->name) }}" class="badge {{ $row->status === 'Approved' ? 'bg-success' : ( $row->status=='Sendback' || $row->goal->form_status=='Draft' ? 'bg-secondary' : 'bg-warning' ) }} rounded-pil px-1">{{ $row->status == 'Pending' ? ($row->goal->form_status=='Draft' ? 'Draft' : 'Waiting For Approval') : ( $row->status=='Sendback'? 'Waiting For Revision' : $row->status) }}</a>
                           </td>
