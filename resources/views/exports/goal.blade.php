@@ -35,7 +35,7 @@
                     <td>{{ $item['type'] }}</td>
                     <td>{{ $row->goal->form_status }}</td>
                     <td>{{ $row->status=='Pending'? ($row->sendback_to ? 'Waiting For Revision' : 'Waiting For Approval') : $row->status }}</td>
-                    <td>{{ $row->status=='Pending' && $row->sendback_to == $row->employee_id ? '' : $row->manager->fullname }}</td>
+                    <td>{{ $row->status=='Sendback' && $row->sendback_to == $row->employee_id ? '' : $row->manager->fullname }}</td>
                     <td>{{ $row->manager->employee_id }}</td>
                     <td>{{ $row->initiated->name }}</td>
                     <td>{{ $row->initiated->employee_id }}</td>
