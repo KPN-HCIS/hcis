@@ -20,9 +20,12 @@ use stdClass;
 
 class TeamGoalController extends Controller
 {
-    function index() {
+    function index(Request $request) {
         
         $user = Auth::user()->employee_id;
+
+        // Retrieve the selected year from the request
+        $filterYear = $request->input('filterYear') ? $request->input('filterYear') : now()->year;
         
         $datas = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
@@ -32,16 +35,16 @@ class TeamGoalController extends Controller
             });
         }])->where('approver_id', Auth::user()->employee_id)->get();
         
-        $tasks = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user){
+        $tasks = ApprovalLayer::with(['employee','subordinates' => function ($query) use ($user, $filterYear){
             $query->with(['goal', 'updatedBy', 'approval' => function ($query) {
                 $query->with('approverName');
             }])->whereHas('approvalLayer', function ($query) use ($user) {
                 $query->where('employee_id', $user)->orWhere('approver_id', $user);
-            })->whereYear('created_at', now()->year);
+            })->whereYear('created_at', $filterYear);
         }])
         ->leftJoin('approval_requests', 'approval_layers.employee_id', '=', 'approval_requests.employee_id')
         ->select('approval_layers.employee_id', 'approval_layers.approver_id', 'approval_layers.layer', 'approval_requests.created_at')
-        ->whereYear('approval_requests.created_at', now()->year)
+        ->whereYear('approval_requests.created_at', $filterYear)
         ->whereHas('subordinates')->where('approver_id', Auth::user()->employee_id)
         ->get();
 
@@ -62,6 +65,19 @@ class TeamGoalController extends Controller
                 } else {
                     $subordinate->formatted_updated_at = $updatedDate->format('d M Y');
                 }
+                
+                // Determine name and approval layer
+                if ($subordinate->sendback_to == $subordinate->employee->employee_id) {
+                    $subordinate->name = $subordinate->employee->fullname . ' (' . $subordinate->employee->employee_id . ')';
+                    $subordinate->approvalLayer = '';
+                } else {
+                    $subordinate->name = $subordinate->manager->fullname . ' (' . $subordinate->manager->employee_id . ')';
+                    $subordinate->approvalLayer = ApprovalLayer::where('employee_id', $subordinate->employee_id)
+                                                            ->where('approver_id', $subordinate->current_approval_id)
+                                                            ->value('layer');
+                }
+
+                return $subordinate;
             });
         });
 
@@ -83,7 +99,7 @@ class TeamGoalController extends Controller
         // ->whereNull('schedules.deleted_at')
         // ->where('approval_layers.approver_id', $user)
         // ->whereDoesntHave('subordinates', function ($query) use ($user) {
-        //     $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+        //     $query->whereYear('created_at', $filterYear) // Add this line to filter by the current year
         //         ->with([
         //             'goal', 
         //             'updatedBy', 
@@ -101,8 +117,8 @@ class TeamGoalController extends Controller
         $notasks = ApprovalLayer::with(['employee', 'subordinates'])
         ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
         ->where('approval_layers.approver_id', $user)
-        ->whereDoesntHave('subordinates', function ($query) use ($user) {
-            $query->whereYear('created_at', now()->year) // Add this line to filter by the current year
+        ->whereDoesntHave('subordinates', function ($query) use ($user, $filterYear) {
+            $query->whereYear('created_at', $filterYear) // Add this line to filter by the current year
                 ->with([
                     'goal', 
                     'updatedBy', 
@@ -185,8 +201,15 @@ class TeamGoalController extends Controller
 
         $parentLink = 'Goals';
         $link = 'Team Goals';
+
+        $selectYear = ApprovalRequest::where('employee_id', $user)->select('created_at')->get();
+
+        $selectYear->transform(function ($req) {
+            $req->year = Carbon::parse($req->created_at)->format('Y');
+            return $req;
+        });
         
-        return view('pages.goals.team-goal', compact('data', 'tasks', 'notasks', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
+        return view('pages.goals.team-goal', compact('data', 'tasks', 'notasks', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption', 'selectYear'));
        
     }
     
@@ -205,7 +228,7 @@ class TeamGoalController extends Controller
             Alert::error("Cannot create goals", "Theres no direct manager assigned in your position!")->showConfirmButton('OK');
             return redirect()->back();
         }
-        // dd($layer);
+
         $path = storage_path('../resources/goal.json');
 
         // Check if the JSON file exists
@@ -301,8 +324,6 @@ class TeamGoalController extends Controller
             }
         }
         
-        // dd($data);
-
         $formData = [];
         if($datas->isNotEmpty()){
             $formData = json_decode($datas->first()->goal->form_data, true);
@@ -325,7 +346,6 @@ class TeamGoalController extends Controller
         $parentLink = 'Goals';
         $link = 'Approval';
 
-        // dd($data);
         return view('pages.goals.approval', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption'));
 
     }
@@ -551,7 +571,6 @@ class TeamGoalController extends Controller
     public function unitOfMeasurement()
     {
         $uom = file_get_contents(storage_path('../resources/goal.json'));
-        // dd($uom);
         return response()->json(json_decode($uom, true));
     }
 

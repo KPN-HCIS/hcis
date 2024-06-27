@@ -15,24 +15,27 @@ class GoalExport implements FromView, WithStyles
     protected $groupCompany;
     protected $location;
     protected $company;
+    protected $admin;
 
-    public function __construct($groupCompany, $location, $company)
+    public function __construct($groupCompany, $location, $company, $admin)
     {
         $this->groupCompany = $groupCompany;
         $this->location = $location;
         $this->company = $company;
+        $this->admin = $admin;
     }
 
     public function view(): View
     {
         $query = ApprovalRequest::query();
 
-        if (Auth()->user()->isApprover() && (!auth()->user()->hasRole('superadmin') || !auth()->user()->hasRole('admin'))){
+        if (!$this->admin) {
             $query->whereHas('approvalLayer', function ($query) {
                 $query->where('approver_id', Auth()->user()->employee_id)
                 ->orWhere('employee_id', Auth()->user()->employee_id);
             });
         }
+
         // Apply filters if they are provided
         if ($this->groupCompany) {
             $query->whereHas('employee', function ($query) {

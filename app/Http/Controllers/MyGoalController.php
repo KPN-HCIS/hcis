@@ -36,28 +36,30 @@ class MyGoalController extends Controller
     }
 
     function index(Request $request) {
-        
         $user = Auth::user()->employee_id;
-
+    
         // Retrieve the selected year from the request
         $filterYear = $request->input('filterYear');
         
-        // Mengambil data pengajuan berdasarkan employee_id atau manager_id
-        $datasQuery = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'adjustedBy', 'initiated', 'manager', 'approval' => function ($query) {
-            $query->with('approverName'); // Load nested relationship
-        }])
+        // Retrieve approval requests
+        $datasQuery = ApprovalRequest::with([
+            'employee', 'goal', 'updatedBy', 'adjustedBy', 'initiated', 'manager', 
+            'approval' => function ($query) {
+                $query->with('approverName'); // Load nested relationship
+            }
+        ])
         ->whereHas('approvalLayer', function ($query) use ($user) {
             $query->where('employee_id', $user)->orWhere('approver_id', $user);
         })
         ->where('employee_id', $user);
-
+    
         // Apply additional filtering based on the selected year
         if (!empty($filterYear)) {
             $datasQuery->whereYear('created_at', $filterYear);
         }
-
+    
         $datas = $datasQuery->get();
-
+    
         $formattedData = $datas->map(function($item) {
             // Format created_at
             $createdDate = Carbon::parse($item->created_at);
@@ -75,11 +77,24 @@ class MyGoalController extends Controller
                 $item->formatted_updated_at = $updatedDate->format('d M Y');
             }
     
+            // Determine name and approval layer
+            if ($item->sendback_to == $item->employee->employee_id) {
+                $item->name = $item->employee->fullname . ' (' . $item->employee->employee_id . ')';
+                $item->approvalLayer = '';
+            } else {
+                $item->name = $item->manager->fullname . ' (' . $item->manager->employee_id . ')';
+                $item->approvalLayer = ApprovalLayer::where('employee_id', $item->employee_id)
+                                                    ->where('approver_id', $item->current_approval_id)
+                                                    ->value('layer');
+            }
+    
             return $item;
         });
-
-        if (!empty($datas->first()->updatedBy)) {    
-            $adjustByManager = ApprovalLayer::where('approver_id', $datas->first()->updatedBy->employee_id)->where('employee_id', $datas->first()->employee_id)->first();
+    
+        if (!empty($datas->first()->updatedBy)) {
+            $adjustByManager = ApprovalLayer::where('approver_id', $datas->first()->updatedBy->employee_id)
+                                            ->where('employee_id', $datas->first()->employee_id)
+                                            ->first();
         } else {
             $adjustByManager = null;
         }
@@ -87,67 +102,59 @@ class MyGoalController extends Controller
         $data = [];
         
         foreach ($formattedData as $request) {
-            // Memeriksa status form dan pembuatnya
+            // Check form status and creator
             if ($request->goal->form_status != 'Draft' || $request->created_by == Auth::user()->id) {
-                // Mengambil nilai fullname dari relasi approverName
+                // Get fullname from approverName relation
+                $dataApprover = '';
                 if ($request->approval->first()) {
                     $approverName = $request->approval->first();
                     $dataApprover = $approverName->approverName->fullname;
-                }else{
-                    $dataApprover = '';
                 }
-        
-                
-                // Buat objek untuk menyimpan data request dan approver fullname
+    
+                // Create an object to store request data and approver fullname
                 $dataItem = new stdClass();
-                
                 $dataItem->request = $request;
                 $dataItem->approver_name = $dataApprover;
-              
-
-                // Tambahkan objek $dataItem ke dalam array $data
+                $dataItem->name = $request->name;  // Add the name
+                $dataItem->approvalLayer = $request->approvalLayer;  // Add the approval layer
+    
+                // Add the data item to the array
                 $data[] = $dataItem;
-                
             }
         }
-
+    
         $formData = [];
-        if($datas->isNotEmpty()){
+        if ($datas->isNotEmpty()) {
             $formData = json_decode($datas->first()->goal->form_data, true);
         }
-
+    
         $path = storage_path('../resources/goal.json');
-
+    
         // Check if the JSON file exists
         if (!File::exists($path)) {
-            // Handle the situation where the JSON file doesn't exist
             abort(500, 'JSON file does not exist.');
         }
-
+    
         // Read the contents of the JSON file
         $options = json_decode(File::get($path), true);
-
+    
         $uomOption = $options['UoM'];
         $typeOption = $options['Type'];
-
+    
         $parentLink = 'Goals';
         $link = 'My Goals';
-
+    
         $employee = Employee::where('employee_id', $user)->first();
-
         $access_menu = json_decode($employee->access_menu, true);
-
         $goals = $access_menu['goals'] ?? null;
-
+    
         $selectYear = ApprovalRequest::where('employee_id', $user)->select('created_at')->get();
-
         $selectYear->transform(function ($req) {
             $req->year = Carbon::parse($req->created_at)->format('Y');
             return $req;
         });
-        
-        return view('pages.goals.my-goal', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption','goals', 'selectYear', 'adjustByManager'));
-       
+    
+        return view('pages.goals.my-goal', compact('data', 'link', 'parentLink', 'formData', 'uomOption', 'typeOption', 'goals', 'selectYear', 'adjustByManager'));
     }
     function show($id) {
         $data = Goal::find($id);

@@ -9,7 +9,7 @@
 <div class="card">
   <div class="card-body">
 
-    <form action="{{ route('roles.store') }}" method="POST">
+    <form id="roleForm" action="{{ route('roles.store') }}" method="POST">
       @csrf
       <div class="row">
         <div class="col-md">
@@ -59,7 +59,7 @@
       </div>
       <div class="col-auto">
         <div class="mb-2 text-end">
-          <button class="btn btn-primary rounded-pill">Create Role</button>
+          <button type="submit" id="submitButton" class="btn btn-primary rounded-pill"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Create Role</button>
         </div>
       </div>
     </div>
@@ -165,3 +165,31 @@
   </div>
 </div>
 @endsection
+
+@push('scripts')
+  <script>
+    $('#submitButton').on('click', function(e) {
+      e.preventDefault();
+      const form = $('#roleForm').get(0);
+      const submitButton = $('#submitButton');
+      const spinner = submitButton.find(".spinner-border");
+
+      if (form.checkValidity()) {
+        // Disable submit button
+        submitButton.prop('disabled', true);
+        submitButton.addClass("disabled");
+
+        // Remove d-none class from spinner if it exists
+        if (spinner.length) {
+            spinner.removeClass("d-none");
+        }
+
+        // Submit form
+        form.submit();
+      } else {
+          // If the form is not valid, trigger HTML5 validation messages
+          form.reportValidity();
+      }
+    });
+  </script>
+@endpush

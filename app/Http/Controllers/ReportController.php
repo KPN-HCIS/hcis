@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApprovalLayer;
 use App\Models\ApprovalRequest;
 use App\Models\Company;
 use App\Models\Location;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
     function index() {
         $link = 'Reports';
+
+        $user = Auth::user()->employee_id;
 
         $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
         $groupCompanies = Location::select('company_name')
@@ -21,7 +25,17 @@ class ReportController extends Controller
         ->pluck('company_name');
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        return view('reports.app', compact('locations', 'companies', 'groupCompanies'),  [
+        $selectYear = ApprovalRequest::select(DB::raw('YEAR(created_at) as year'))
+        ->distinct()
+        ->orderBy('year')
+        ->get();
+
+        $selectYear->transform(function ($req) {
+            $req->year = Carbon::parse($req->created_at)->format('Y');
+            return $req;
+        });
+
+        return view('reports.app', compact('locations', 'companies', 'groupCompanies', 'selectYear'),  [
             'link' => $link
         ]);
     }
@@ -52,6 +66,9 @@ class ReportController extends Controller
     {
         // Get the authenticated user's employee_id
         $user = Auth::user();
+
+        $filterYear = $request->input('filterYear') ? $request->input('filterYear') : now()->year;
+
         $employeeId = $user->employee_id;
         $report_type = $request->report_type;
         $group_company = $request->input('group_company');
@@ -81,10 +98,16 @@ class ReportController extends Controller
             });
         }
 
-        $query->whereYear('created_at', now()->year);
+        $query->whereYear('created_at', $filterYear);
+
+        $query->whereHas('approvalLayer', function ($query) use ($employeeId) {
+            $query->where('employee_id', $employeeId)
+                  ->orWhere('approver_id', $employeeId);
+        });
         
         // Fetch the data based on the constructed query
         $data = $query->get();
+
         $data->map(function($item) {
             // Format created_at
             $createdDate = Carbon::parse($item->created_at);
@@ -95,12 +118,26 @@ class ReportController extends Controller
             $updatedDate = Carbon::parse($item->updated_at);
 
                 $item->formatted_updated_at = $updatedDate->format('d M Y');
+
+            // Determine name and approval layer
+            if ($item->sendback_to == $item->employee->employee_id) {
+                $item->name = $item->employee->fullname . ' (' . $item->employee->employee_id . ')';
+                $item->approvalLayer = '';
+            } else {
+                $item->name = $item->manager->fullname . ' (' . $item->manager->employee_id . ')';
+                $item->approvalLayer = ApprovalLayer::where('employee_id', $item->employee_id)
+                                                    ->where('approver_id', $item->current_approval_id)
+                                                    ->value('layer');
+            }
+
+            return $item;
         });
+
         // Determine the report type and return the appropriate view
         if ($report_type === 'Goal') {
             return view('reports.goal', compact('data'))->render();
         } else {
-            return ''; // You might want to handle other report types accordingly
+            return view('reports.empty')->render();
         }
     }
 

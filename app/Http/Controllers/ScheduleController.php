@@ -87,7 +87,6 @@ class ScheduleController extends Controller
     }
     function save(Request $req) {
         $link = 'schedule';
-        //dd($req);
         //$model = schedule::find($req->id);
         $model = new schedule;
         $userId = Auth::id();

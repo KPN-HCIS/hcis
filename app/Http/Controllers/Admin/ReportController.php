@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\GoalExport;
 use App\Http\Controllers\Controller;
+use App\Models\ApprovalLayer;
 use App\Models\ApprovalRequest;
 use App\Models\Company;
 use App\Models\Employee;
@@ -12,6 +13,7 @@ use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -71,7 +73,7 @@ class ReportController extends Controller
             ->orderBy('contribution_level_code')->get();
     }
     
-    function index() {
+    function index(Request $request) {
         $parentLink = 'Admin';
         $link = 'Reports';
 
@@ -82,7 +84,17 @@ class ReportController extends Controller
         ->pluck('company_name');
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        return view('reports-admin.app', compact('locations', 'companies', 'groupCompanies', 'link', 'parentLink'));
+        $selectYear = ApprovalRequest::select(DB::raw('YEAR(created_at) as year'))
+        ->distinct()
+        ->orderBy('year')
+        ->get();
+
+        $selectYear->transform(function ($req) {
+            $req->year = Carbon::parse($req->created_at)->format('Y');
+            return $req;
+        });
+
+        return view('reports-admin.app', compact('locations', 'companies', 'groupCompanies', 'link', 'parentLink', 'selectYear'));
     }
 
     public function changesGroupCompany(Request $request)
@@ -170,6 +182,19 @@ class ReportController extends Controller
                 $updatedDate = Carbon::parse($item->updated_at);
 
                     $item->formatted_updated_at = $updatedDate->format('d M Y g:ia');
+
+                // Determine name and approval layer
+                if ($item->sendback_to == $item->employee->employee_id) {
+                    $item->name = $item->employee->fullname . ' (' . $item->employee->employee_id . ')';
+                    $item->approvalLayer = '';
+                } else {
+                    $item->name = $item->manager->fullname . ' (' . $item->manager->employee_id . ')';
+                    $item->approvalLayer = ApprovalLayer::where('employee_id', $item->employee_id)
+                                                        ->where('approver_id', $item->current_approval_id)
+                                                        ->value('layer');
+                }
+
+                return $item;
             });
 
             $route = 'reports-admin.goal';
@@ -207,9 +232,8 @@ class ReportController extends Controller
             $route = 'reports-admin.employee';
         } else {
             $data = collect(); // Empty collection for unknown report types
-            return false;
+            $route = 'reports-admin.empty';
         }
-
 
         $link = 'reports';
 
@@ -225,6 +249,7 @@ class ReportController extends Controller
         $groupCompany = $request->export_group_company;
         $company = $request->export_company;
         $location = $request->export_location;
+        $admin = 1;
 
         $directory = 'report/excel'; // Direktori tempat file akan disimpan
         $date = now()->format('dmY');
@@ -232,7 +257,7 @@ class ReportController extends Controller
         $fileName = $reportType.'_'.$date.'.xlsx'; // Nama file yang akan disimpan
 
         if($reportType==='Goal'){
-            $export = new GoalExport($groupCompany, $location, $company);
+            $export = new GoalExport($groupCompany, $location, $company, $admin);
             $fileContent = Excel::download($export, $fileName)->getFile();
         }
         return false;

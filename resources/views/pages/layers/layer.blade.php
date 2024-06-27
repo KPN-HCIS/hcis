@@ -58,13 +58,10 @@
                               </tr>
                           </thead>
                           <tbody>
-                            @php 
-                                $no=1;
-                            @endphp
-                            @foreach($approvalLayers as $approvalLayer)
+                            @foreach($approvalLayers as $index => $approvalLayer)
                                 <tr>
                                     <td>
-                                        {{ $no++ }}
+                                        {{ $index + 1 }}
                                     </td>
                                     <td>{{ $approvalLayer->employee_id }}</td>
                                     <td>{{ $approvalLayer->fullname }}</td>
@@ -130,7 +127,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="editForm">Save changes</button>
+                <button type="submit" id="submitButton" class="btn btn-primary"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Save changes</button>
             </div>
         </div>
     </div>
@@ -167,7 +164,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" form="importForm">Import Data</button>
+                <button type="submit" id="importButton" class="btn btn-primary"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Import Data</button>
             </div>
         </div>
     </div>
@@ -290,13 +287,6 @@ function applyLocationFilter(table) {
 }
 </script>
 <script>
-    // $(document).ready(function() {
-    //     $('.open-edit-modal').on('click', function() {
-    //         var employeeId = $(this).data('bsEmployee-id');
-    //         $('#employeeId').text(employeeId);
-    //         $('#editModal').modal('show');
-    //     });
-    // });
     $(document).on('click', '.open-edit-modal', function() {
         var employeeId = $(this).data('bsEmployee-id');
         
@@ -313,10 +303,12 @@ function applyLocationFilter(table) {
     });
 
     function populateModal(employeeId, fullName, app, layer, appName, employees) {
+
         $('#employee_id').val(employeeId);
         $('#employeeId').val(employeeId);
         $('#fullname').val(fullName+' - '+employeeId);
 
+        // if (typeof app === 'string' && app.indexOf("|") !== -1) {
         if (app.includes('|')) {
             // Jika nilai app mengandung karakter '|', lakukan pemisahan
             apps = app.split('|');
@@ -383,5 +375,52 @@ function applyLocationFilter(table) {
 
         $('#editModal').modal('show');
     }
+
+    $('#submitButton').on('click', function(e) {
+      e.preventDefault();
+      const form = $('#editForm').get(0);
+      const submitButton = $('#submitButton');
+      const spinner = submitButton.find(".spinner-border");
+
+      if (form.checkValidity()) {
+        // Disable submit button
+        submitButton.prop('disabled', true);
+        submitButton.addClass("disabled");
+
+        // Remove d-none class from spinner if it exists
+        if (spinner.length) {
+            spinner.removeClass("d-none");
+        }
+
+        // Submit form
+        form.submit();
+      } else {
+          // If the form is not valid, trigger HTML5 validation messages
+          form.reportValidity();
+      }
+    });
+    $('#importButton').on('click', function(e) {
+      e.preventDefault();
+      const form = $('#importForm').get(0);
+      const submitButton = $('#importButton');
+      const spinner = submitButton.find(".spinner-border");
+
+      if (form.checkValidity()) {
+        // Disable submit button
+        submitButton.prop('disabled', true);
+        submitButton.addClass("disabled");
+
+        // Remove d-none class from spinner if it exists
+        if (spinner.length) {
+            spinner.removeClass("d-none");
+        }
+
+        // Submit form
+        form.submit();
+      } else {
+          // If the form is not valid, trigger HTML5 validation messages
+          form.reportValidity();
+      }
+    });
 </script>
 @endpush

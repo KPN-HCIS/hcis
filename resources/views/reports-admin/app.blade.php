@@ -29,8 +29,8 @@
                     <label class="form-label" for="report_type">Select Report:</label>
                     <select class="form-select border-dark-subtle" onchange="adminReportType(this.value)">
                     <option value="">- select -</option>
-                    <option value="Goal">Goal</option>
-                    <option value="Employee">Employee</option>
+                    <option value="Goal">Detailed Goals</option>
+                    <option value="Employee">Goal Menu Access</option>
                     </select>
                   </div>
                 </div>
@@ -58,7 +58,7 @@
         </div>
         <div class="col-lg-auto">
           <div class="mb-2 text-end">
-            <form id="exportForm" action="{{ route('export') }}" method="POST">
+            <form id="exportForm" action="{{ route('admin.export') }}" method="POST">
               @csrf
               <input type="hidden" name="export_report_type" id="export_report_type">
               <input type="hidden" name="export_group_company" id="export_group_company">
@@ -71,7 +71,17 @@
       </div>
     </div>
   </div>
-      <div id="report_content"></div>
+      <div id="report_content">
+        <div class="row">
+          <div class="col-md-12">
+          <div class="card shadow mb-4">
+              <div class="card-body">
+                  {{ __('No Report Found. Please Select Report') }}
+              </div>
+          </div>
+          </div>
+        </div>
+      </div>
 
       <div class="offcanvas offcanvas-end" tabindex="-1"  id="offcanvasRight" aria-labelledby="offcanvasRightLabel" aria-modal="false" role="dialog">
           <div class="offcanvas-header">
@@ -83,6 +93,22 @@
             <form id="admin_report_filter" action="{{ url('admin/get-report-content') }}" method="POST">
               @csrf
               <input type="hidden" id="report_type" name="report_type">
+                  <div class="row">
+                      <div class="col">
+                          <div class="mb-3">
+                            @php
+                                $filterYear = request('filterYear');
+                            @endphp
+                              <label class="form-label" for="filterYear">Year</label>
+                              <select name="filterYear" id="filterYear" class="form-select" @style('width: 120px')>
+                                  <option value="">select all</option>
+                                  @foreach ($selectYear as $year)
+                                      <option value="{{ $year->year }}" {{ $year->year == $filterYear ? 'selected' : '' }}>{{ $year->year }}</option>
+                                  @endforeach
+                              </select>
+                          </div>
+                      </div>
+                  </div>
                   <div class="row">
                       <div class="col">
                           <div class="mb-3">
@@ -122,7 +148,7 @@
             </form>
           </div> <!-- end offcanvas-body-->
           <div class="offcanvas-footer p-3 text-end">
-            <a class="btn btn-outline-secondary me-2" data-bs-dismiss="modal">Cancel</a>
+            <button type="button" id="offcanvas-cancel" class="btn btn-outline-secondary me-2" data-bs-dismiss="offcanvas">Cancel</button>
             <button type="submit" class="btn btn-primary" form="admin_report_filter">Apply</button>
           </div>
       </div>

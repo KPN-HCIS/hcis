@@ -59,76 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    let popoverInitialized = false; // Flag to track popover initialization
-    let previousPopoverId = null; // Variable to store the ID of the previously triggered popover
-    let popoverTimeout = null; // Variable to store the timeout for hiding the popover
-
-    // Function to initialize Bootstrap popover with delay
-    function initializePopover(name, layer, element) {
-        const contents = layer ? `Manager L${layer} : ${name}` : name;
-        $(element)
-            .popover({
-                content: contents,
-                // trigger: "manual", // Show popover manually
-                trigger: "focus",
-                placement: "top", // Auto placement (adjusts as needed)
-            })
-            .popover("show"); // Show the popover immediately
-
-        // Set a timeout to hide the popover after 1.5 seconds
-        popoverTimeout = setTimeout(function () {
-            $(element).popover("hide"); // Hide the popover
-            popoverInitialized = false; // Reset popoverInitialized flag
-            $(element).blur();
-        }, 1500); // 1500 milliseconds = 1.5 seconds
-    }
-
-    // Function to fetch popover content and initialize popover
-    function fetchAndInitializePopover(id, element) {
-        // Check if the current id is the same as the previousPopoverId
-        if (id === previousPopoverId && popoverInitialized) {
-            // If same id and popover is already initialized, return early
-            return;
-        }
-
-        let url = `/get-tooltip-content?id=${id}`;
-        fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch popover content");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                const name = data.name;
-                const layer = data.layer;
-                // Initialize popover with retrieved content
-                initializePopover(name, layer, element);
-                popoverInitialized = true; // Update flag
-                previousPopoverId = id; // Update the previousPopoverId with the current ID
-            })
-            .catch((error) => {
-                console.error("Error fetching popover content:", error);
-            });
-    }
-
-    // Attach popover initialization when #approval.badge-warning is clicked (for mobile)
-    $(document).on("click", "a[id^='approval']", function (event) {
-        event.preventDefault();
-
-        var id = $(this).data("id");
-
-        // Call fetchAndInitializePopover function to fetch and initialize popover
-        fetchAndInitializePopover(id, this);
-    });
-
-    // Function to cancel popover timeout when popover is manually closed
-    $(document).on("hidden.bs.popover", function () {
-        clearTimeout(popoverTimeout); // Clear the timeout
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
     // Function to handle "Select All" button click
     $("#select-all").on("click", function () {
         $(".day-button").toggleClass("active");
@@ -168,8 +98,8 @@ function logout() {
         text: "Are you sure you want to log out?",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#4e73df",
-        cancelButtonColor: "#e74a3b",
+        confirmButtonColor: "#3e60d5",
+        cancelButtonColor: "#f15776",
         confirmButtonText: "Yes, logout",
         cancelButtonText: "Cancel",
         reverseButtons: true,
@@ -217,6 +147,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const formData = reportForm.serialize(); // Serialize form data
 
+        showLoader();
+
         // Send AJAX request to fetch and display report content
         $.ajax({
             url: "/get-report-content", // Endpoint URL to fetch report content
@@ -225,8 +157,6 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (data) {
                 reportContentDiv.html(data); // Update report content with the returned HTML
                 exportButton.removeClass("disabled"); // Enable export button
-                $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").removeClass("show");
 
                 const reportGoalsTable = $("#reportGoalsTable").DataTable({
                     dom: "lrtip",
@@ -245,6 +175,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         reportGoalsTable.search(filterValue).draw();
                     }
                 });
+                hideLoader();
+
+                $("#offcanvas-cancel").click();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
@@ -260,7 +193,6 @@ document.addEventListener("DOMContentLoaded", function () {
     exportButton.on("click", function () {
         const reportContent = reportContentDiv.html();
         // Code here to handle exporting the report content
-        // console.log("Exporting report content:", reportContent);
     });
 });
 
@@ -274,6 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
     reportForm.on("submit", function (event) {
         event.preventDefault(); // Prevent default form submission behavior
         const formData = reportForm.serialize(); // Serialize form data
+        showLoader();
 
         // Send AJAX request to fetch and display report content
         $.ajax({
@@ -283,8 +216,6 @@ document.addEventListener("DOMContentLoaded", function () {
             success: function (data) {
                 reportContentDiv.html(data); // Update report content
                 exportButton.removeClass("disabled"); // Enable export button
-                $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").removeClass("show");
 
                 const reportGoalsTable = $("#adminReportTable").DataTable({
                     dom: "lrtip",
@@ -303,6 +234,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         reportGoalsTable.search(filterValue).draw();
                     }
                 });
+                hideLoader();
+
+                $("#offcanvas-cancel").click();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
@@ -318,7 +252,6 @@ document.addEventListener("DOMContentLoaded", function () {
     exportButton.on("click", function () {
         const reportContent = reportContentDiv.html();
         // Code here to handle exporting the report content
-        // console.log("Exporting report content:", reportContent);
     });
 });
 
@@ -331,6 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
     form.on("submit", function (event) {
         event.preventDefault(); // Prevent default form submission behavior
         const formData = form.serialize();
+        showLoader();
 
         // Send AJAX request to fetch and display report content
         $.ajax({
@@ -339,12 +273,10 @@ document.addEventListener("DOMContentLoaded", function () {
             data: formData, // Send serialized form data
             success: function (data) {
                 contentOnBehalf.html(data); // Update report content
-                $("#offcanvasRight").removeClass("show");
-                $(".offcanvas-backdrop").removeClass("show");
 
                 const onBehalfTable = $("#onBehalfTable").DataTable({
                     dom: "lrtip",
-                    pageLength: 50,
+                    pageLength: 25,
                 });
                 customsearch.on("keyup", function () {
                     onBehalfTable.search($(this).val()).draw();
@@ -359,6 +291,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         onBehalfTable.search(filterValue).draw();
                     }
                 });
+                hideLoader();
+
+                $("#offcanvas-cancel").click();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching report content:", error);
@@ -379,6 +314,8 @@ function changeCategory(val) {
     const customsearch = $("#customsearch");
     const formData = form.serialize();
 
+    showLoader();
+
     $.ajax({
         url: "/admin/onbehalf/content", // Endpoint URL to fetch report content
         method: "POST",
@@ -389,7 +326,7 @@ function changeCategory(val) {
 
             const onBehalfTable = $("#onBehalfTable").DataTable({
                 dom: "lrtip",
-                pageLength: 50,
+                pageLength: 25,
             });
             customsearch.keyup(function () {
                 onBehalfTable.search($(this).val()).draw();
@@ -404,6 +341,10 @@ function changeCategory(val) {
                     onBehalfTable.search(filterValue).draw();
                 }
             });
+
+            $('[data-bs-toggle="popover"]').popover();
+
+            hideLoader();
         },
         error: function (xhr, status, error) {
             console.error("Error fetching report content:", error);
@@ -482,6 +423,29 @@ function getAssignmentData(id) {
                 theme: "bootstrap-5",
             });
             $("#modalFilter").modal("hide");
+            $("#submitButton").on("click", function (e) {
+                e.preventDefault();
+                const form = $("#assignForm").get(0);
+                const submitButton = $("#submitButton");
+                const spinner = submitButton.find(".spinner-border");
+
+                if (form.checkValidity()) {
+                    // Disable submit button
+                    submitButton.prop("disabled", true);
+                    submitButton.addClass("disabled");
+
+                    // Remove d-none class from spinner if it exists
+                    if (spinner.length) {
+                        spinner.removeClass("d-none");
+                    }
+
+                    // Submit form
+                    form.submit();
+                } else {
+                    // If the form is not valid, trigger HTML5 validation messages
+                    form.reportValidity();
+                }
+            });
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -504,6 +468,29 @@ function getPermissionData(id) {
                 theme: "bootstrap-5",
             });
             $("#modalFilter").modal("hide");
+            $("#submitButton").on("click", function (e) {
+                e.preventDefault();
+                const form = $("#roleForm").get(0);
+                const submitButton = $("#submitButton");
+                const spinner = submitButton.find(".spinner-border");
+
+                if (form.checkValidity()) {
+                    // Disable submit button
+                    submitButton.prop("disabled", true);
+                    submitButton.addClass("disabled");
+
+                    // Remove d-none class from spinner if it exists
+                    if (spinner.length) {
+                        spinner.removeClass("d-none");
+                    }
+
+                    // Submit form
+                    form.submit();
+                } else {
+                    // If the form is not valid, trigger HTML5 validation messages
+                    form.reportValidity();
+                }
+            });
         },
         error: function (xhr, status, error) {
             console.error("Error fetching data:", error);
@@ -532,3 +519,28 @@ function hideLoader() {
 window.onload = function () {
     hideLoader();
 };
+
+function deleteRole() {
+    const submitButton = $(event.target).closest(".btn-outline-danger");
+    const spinner = submitButton.find(".spinner-border");
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3e60d5",
+        cancelButtonColor: "#f15776",
+        confirmButtonText: "Yes, delete it!",
+        reverseButtons: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            submitButton.prop("disabled", true);
+            submitButton.addClass("disabled");
+            if (spinner.length) {
+                spinner.removeClass("d-none");
+            }
+            document.getElementById("delete-role-form").submit();
+        }
+    });
+}

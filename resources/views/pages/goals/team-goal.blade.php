@@ -5,7 +5,7 @@
 
 @section('content')
     <!-- Begin Page Content -->
-    <div class="container-fluid">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box">
@@ -30,34 +30,39 @@
                       </div>
                     </div>
                   </div>
-                    <div class="row">
-                        <div class="col-lg-auto">
-                          <div class="mb-3">
-                              <div class="form-group">
-                              <div class="input-group">
-                                  <div class="input-group-prepend">
-                                  <span class="input-group-text bg-white"><i class="ri-search-line"></i></span>
-                                  </div>
-                                  <input type="text" name="customsearch" id="customsearch" class="form-control border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
-                                  <div class="d-sm-none input-group-append">
-                                    </div>
-                              </div>
-                            </div>
+                  <form id="formYearGoal" action="{{ route('team-goals') }}" method="GET">
+                    <div class="row align-items-end">
+                        @php
+                            $filterYear = request('filterYear');
+                        @endphp
+                        <div class="col-sm col-md">
+                            <div class="mb-3">
+                                <label class="form-label" for="filterYear">Year</label>
+                                <select name="filterYear" id="filterYear" onchange="yearGoal()" class="form-select" @style('width: 120px')>
+                                    <option value="">select all</option>
+                                    @foreach ($selectYear as $year)
+                                        <option value="{{ $year->year }}" {{ $year->year == $filterYear ? 'selected' : '' }}>{{ $year->year }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                        <div class="col">
-                        <div class="form-group ml-md-auto d-flex justify-content-end">
-                            <form id="exportForm" action="{{ route('export') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="export_report_type" id="export_report_type">
-                                <input type="hidden" name="export_group_company" id="export_group_company">
-                                <input type="hidden" name="export_company" id="export_company">
-                                <input type="hidden" name="export_location" id="export_location">
-                            </form>
+                        <div class="col-sm col-md-auto">
+                            <div class="mb-3">
+                                <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white"><i class="ri-search-line"></i></span>
+                                    </div>
+                                    <input type="text" name="customsearch" id="customsearch" class="form-control border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
+                                    <div class="d-sm-none input-group-append">
+                                    </div>
+                                </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-      </div>
+                </form>
+            </div>
         <div class="row px-2">
             <div class="col-lg-12 p-0">
                 <div class="mt-3 p-2 bg-info bg-opacity-10 rounded shadow">
@@ -100,6 +105,8 @@
                                     $sendbackTo = $firstSubordinate ? $firstSubordinate->sendback_to : null;
                                     $employeeId = $firstSubordinate ? $firstSubordinate->employee_id : null;
                                     $sendbackTo = $firstSubordinate ? $firstSubordinate->sendback_to : null;
+                                    $employeeName = $firstSubordinate ? $firstSubordinate->name : null;
+                                    $approvalLayer = $firstSubordinate ? $firstSubordinate->approvalLayer : null;
                                 @endphp
                                 <div class="row mt-2 mb-2 task-card" data-status="{{ $formStatus == 'Draft' ? 'draft' : ($status == 'Pending' ? 'waiting for approval' : ($subordinates->isNotEmpty() ? ($status == 'Sendback' ? 'waiting for revision' : strtolower($status)) : 'no data')) }}">
                                     <div class="col">
@@ -130,7 +137,7 @@
                                             </div>
                                             <div class="col-lg col-sm-12 p-2">
                                                 <h5>Status</h5>
-                                                <a href="javascript:void(0)" id="approval{{ $employeeId }}" data-toggle="tooltip" data-id="{{ $employeeId }}" class="badge {{ $subordinates->isNotEmpty() ? ($formStatus == 'Draft' || $status == 'Sendback' ? 'bg-dark-subtle text-dark' : ($status === 'Approved' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning')) : 'bg-dark-subtle text-secondary'}} rounded-pill py-1 px-2">{{ $formStatus == 'Draft' ? 'Draft': ($status == 'Pending' ? 'Waiting For Approval' : ($subordinates->isNotEmpty() ? ($status == 'Sendback' ? 'Waiting For Revision' : $status) : 'No Data')) }}</a>
+                                                <a href="javascript:void(0)" data-bs-id="{{ $task->employee_id }}" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ $formStatus == 'Draft' ? 'Draft' : ($approvalLayer ? 'Manager L'.$approvalLayer.' : '.$employeeName : $employeeName) }}" class="badge {{ $subordinates->isNotEmpty() ? ($formStatus == 'Draft' || $status == 'Sendback' ? 'bg-dark-subtle text-dark' : ($status === 'Approved' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning')) : 'bg-dark-subtle text-secondary'}} rounded-pill py-1 px-2">{{ $formStatus == 'Draft' ? 'Draft': ($status == 'Pending' ? 'Waiting For Approval' : ($subordinates->isNotEmpty() ? ($status == 'Sendback' ? 'Waiting For Revision' : $status) : 'No Data')) }}</a>
                                             </div>
                                         </div>
                                     </div>

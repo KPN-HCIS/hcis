@@ -19,9 +19,33 @@ use Illuminate\Support\Facades\Auth;
 class LayerController extends Controller
 {
     function layer() {
+
+        $roles = Auth()->user()->roles;
+
+        $restrictionData = [];
+        if(!is_null($roles)){
+            $restrictionData = json_decode($roles->first()->restriction, true);
+        }
+        
+        $permissionGroupCompanies = $restrictionData['group_company'] ?? [];
+        $permissionCompanies = $restrictionData['contribution_level_code'] ?? [];
+        $permissionLocations = $restrictionData['work_area_code'] ?? [];
+
+        $criteria = [
+            'work_area_code' => $permissionLocations,
+            'group_company' => $permissionGroupCompanies,
+            'contribution_level_code' => $permissionCompanies,
+        ];
+
         $parentLink = 'Settings';
         $link = 'Layers';
-        //$approvalLayers = ApprovalLayer::with('view_employee')->get();
+
+        foreach ($criteria as $key => $value) {
+            if (!is_array($value)) {
+                $criteria[$key] = (array) $value;
+            }
+        }
+        
         $approvalLayers = DB::table('approval_layers as al')
         ->select('al.employee_id', 'emp.fullname', 'emp.job_level', 'emp.contribution_level_code', 'emp.group_company', 'emp.office_area')
         ->selectRaw("GROUP_CONCAT(al.layer ORDER BY al.layer ASC SEPARATOR '|') AS layers")
@@ -31,6 +55,16 @@ class LayerController extends Controller
         ->leftJoin('employees as emp', 'emp.employee_id', '=', 'al.employee_id')
         ->leftJoin('employees as emp1', 'emp1.employee_id', '=', 'al.approver_id')
         ->groupBy('al.employee_id', 'emp.fullname', 'emp.job_level', 'emp.contribution_level_code', 'emp.group_company', 'emp.office_area')
+        ->orderBy('emp.fullname')
+        ->when(!empty($criteria), function ($query) use ($criteria) {
+            $query->where(function ($query) use ($criteria) {
+                foreach ($criteria as $key => $values) {
+                    if (!empty($values)) {
+                        $query->whereIn("emp.$key", $values);
+                    }
+                }
+            });
+        })
         ->get();
 
         $employees = Employee::select('employee_id', 'fullname')
@@ -110,7 +144,6 @@ class LayerController extends Controller
 
         Alert::success('Success');
         return redirect()->intended(route('layer', absolute: false));
-        //dd($cek);
     }
 
     public function importLayer(Request $request)
@@ -148,12 +181,10 @@ class LayerController extends Controller
                     'updated_at' => $layer->updated_at,
                 ]);
             }
-            //dd($employeeIds);
             // Hapus data lama
             ApprovalLayer::whereIn('employee_id', $employeeIds)->delete();
         }
         $userId = Auth::id();
-        //dd($userId);
         // Import data baru
         //Excel::import(new ApprovalLayerImport, $request->file('excelFile'));
         // Excel::import(new ApprovalLayerImport($userId), $request->file('excelFile'));

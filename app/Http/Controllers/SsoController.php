@@ -28,7 +28,6 @@ class SsoController extends Controller
     $decryptedData = base64_decode($decryptedDataxor);
 
     $decryptedDataArray = json_decode($decryptedData, true);
-    //dd($decryptedDataArray);
 
     $email = $decryptedDataArray['email'];
     $token = $decryptedDataArray['token'];

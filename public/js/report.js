@@ -5,6 +5,12 @@ function adminReportType(val) {
     const reportContentDiv = $("#report_content");
     const customsearch = $("#customsearch");
     const formData = reportForm.serialize();
+    showLoader();
+    if (val) {
+        exportButton.removeClass("disabled"); // Enable export button
+    } else {
+        exportButton.addClass("disabled"); // Enable export button
+    }
     $.ajax({
         url: "/admin/get-report-content", // Endpoint URL to fetch report content
         method: "POST",
@@ -12,7 +18,6 @@ function adminReportType(val) {
         success: function (data) {
             //alert(data);
             reportContentDiv.html(data); // Update report content
-            exportButton.removeClass("disabled"); // Enable export button
 
             const reportGoalsTable = $("#adminReportTable").DataTable({
                 dom: "lrtip",
@@ -31,6 +36,10 @@ function adminReportType(val) {
                     reportGoalsTable.search(filterValue).draw();
                 }
             });
+
+            $('[data-bs-toggle="popover"]').popover();
+
+            hideLoader();
         },
         error: function (xhr, status, error) {
             console.error("Error fetching report content:", error);
@@ -47,13 +56,18 @@ function reportType(val) {
     const reportContentDiv = $("#report_content");
     const customsearch = $("#customsearch");
     const formData = reportForm.serialize();
+    showLoader();
+    if (val) {
+        exportButton.removeClass("disabled"); // Enable export button
+    } else {
+        exportButton.addClass("disabled"); // Enable export button
+    }
     $.ajax({
         url: "/get-report-content", // Endpoint URL to fetch report content
         method: "POST",
         data: formData, // Send serialized form data
         success: function (data) {
             reportContentDiv.html(data); // Update report content
-            exportButton.removeClass("disabled"); // Enable export button
 
             const reportGoalsTable = $("#reportGoalsTable").DataTable({
                 dom: "lrtip",
@@ -72,6 +86,10 @@ function reportType(val) {
                     reportGoalsTable.search(filterValue).draw();
                 }
             });
+
+            $('[data-bs-toggle="popover"]').popover();
+
+            hideLoader();
         },
         error: function (xhr, status, error) {
             console.error("Error fetching report content:", error);

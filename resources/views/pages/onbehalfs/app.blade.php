@@ -27,7 +27,7 @@
                 <div class="mb-3">
                   <label class="form-label" for="category">Select Category :</label>
                   <select name="category" id="category" onchange="changeCategory(this.value)" class="form-select border-dark-subtle" @style('width: 120px')>
-                      <option value="">select all</option>
+                      <option value="">- select -</option>
                       <option value="Goals">Goals</option>
                       <option value="Performance">Performance</option>
                   </select>
@@ -57,7 +57,17 @@
         </div>
       </div>
         <!-- Content Row -->
-        <div id="contentOnBehalf"></div>
+        <div id="contentOnBehalf">
+          <div class="row">
+            <div class="col-md-12">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    {{ __('No Report Found. Please Select Report') }}
+                </div>
+            </div>
+            </div>
+          </div>
+        </div>
 
         <div class="offcanvas offcanvas-end" tabindex="-1"  id="offcanvasRight" aria-labelledby="offcanvasRightLabel" aria-modal="false" role="dialog">
         <div class="offcanvas-header">

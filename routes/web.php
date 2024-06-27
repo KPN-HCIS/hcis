@@ -29,14 +29,12 @@ use App\Http\Controllers\TeamGoalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('home');
+    return redirect('goals');
 });
 
-// Route::get('/home', function () {
-//     return view('pages.home');
-// })->middleware(['auth', 'verified', 'role:superadmin'])->name('home');
-
-Route::get('/home', [MyGoalController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified', 'role:superadmin'])->name('dashboard');
 
 Route::get('dbauth', [SsoController::class, 'dbauth']);
 
@@ -123,6 +121,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/export/report-emp', [ExportExcelController::class, 'exportreportemp'])->name('export.reportemp');
 
     Route::post('/export', [ExportExcelController::class, 'export'])->name('export');
+    Route::post('/admin-export', [ExportExcelController::class, 'exportAdmin'])->name('admin.export');
     Route::post('/notInitiatedReport', [ExportExcelController::class, 'notInitiated'])->name('team-goals.notInitiated');
     Route::post('/initiatedReport', [ExportExcelController::class, 'initiated'])->name('team-goals.initiated');
     // Route::get('/export/goals', [ReportController::class, 'exportGoal'])->name('export.goal');
@@ -180,6 +179,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/roles', [RoleController::class, 'index'])->name('roles');
         Route::post('/admin/roles/submit', [RoleController::class, 'store'])->name('roles.store');
         Route::post('/admin/roles/update', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('/admin/roles/delete/{id}', [RoleController::class, 'destroy'])->name('roles.delete');
         Route::get('/admin/roles/assign', [RoleController::class, 'assign'])->name('roles.assign');
         Route::get('/admin/roles/create', [RoleController::class, 'create'])->name('roles.create');
         Route::get('/admin/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
@@ -201,8 +201,7 @@ Route::middleware('auth')->group(function () {
     });
     
     Route::middleware(['permission:viewreport'])->group(function () {
-        // Reports
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+        
         Route::get('/reports-admin', [AdminReportController::class, 'index'])->name('admin.reports');
         Route::get('/admin/get-report-content/{reportType}', [AdminReportController::class, 'getReportContent']);
         Route::post('/admin/get-report-content', [AdminReportController::class, 'getReportContent']);

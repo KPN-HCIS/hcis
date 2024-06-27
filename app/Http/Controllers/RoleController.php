@@ -89,12 +89,11 @@ class RoleController extends Controller
             $query->where('id', $roleId);
         })->get();
         
-        $users = Employee::select('id', 'fullname', 'designation')->get();
+        $users = Employee::select('id', 'fullname', 'employee_id', 'designation')->where('work_area_code', 'OU001')->get();
         
         $parentLink = $this->link;
         $link = "Manage";
         $active = 'manage';
-        // dd($roles);
         return view('pages.roles.assignform', compact('roles', 'link', 'parentLink', 'active', 'users', 'roleId', 'locations', 'groupCompanies', 'companies'));
     }
     function getPermission(Request $request) {
@@ -120,8 +119,6 @@ class RoleController extends Controller
         ->orderBy('permissions.id')
         ->pluck('role_has_permissions.permission_id')
         ->toArray();
-
-        // dd($permissionNames);
         
         $parentLink = $this->link;
         $link = "Create";
@@ -283,5 +280,25 @@ class RoleController extends Controller
         app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return redirect()->route('roles')->with('success', 'Role updates successfully!');
+    }
+
+    public function destroy($id): RedirectResponse
+
+    {
+        $role = Role::find($id);
+
+        if ($role) {
+
+            $role->delete();
+        
+            RoleHasPermission::where('role_id', $id)->delete();
+            ModelHasRole::where('role_id', $id)->delete();
+
+            app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
+    
+            return redirect()->route('roles')->with('success', 'Role deleted successfully!');
+        }
+        return redirect()->route('roles')->with('error', 'Role not found.');
+
     }
 }

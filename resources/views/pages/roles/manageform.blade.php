@@ -1,19 +1,21 @@
 @if ($roleId)
-<form action="{{ route('roles.update') }}" method="POST">
+<form id="delete-role-form" action="{{ route('roles.delete', $roleId) }}" method="POST" style="display: none">
   @csrf
-  <div class="card">
-    <div class="card-body">
-      <input type="hidden" name="roleId" value="{{ $roleId }}">
-      <div class="row">
-        <div class="col-md">
-          <div class="mb-4 text-end">
-            <button type="submit" class="btn btn-primary rounded-pill px-4">Update</button>
-          </div>
+  @method('DELETE')
+</form>
+<form id="roleForm" action="{{ route('roles.update') }}" method="POST">
+  @csrf
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      <div class="col">
+        <input type="hidden" name="roleId" value="{{ $roleId }}">
+        <div class="mb-4 text-end">
+            <a href="javascript:void(0)" onclick="deleteRole();" class="btn btn-outline-danger rounded-pill px-4 me-2"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Delete</a>
+          <button type="submit" id="submitButton" class="btn btn-primary rounded-pill px-4"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Update</button>
         </div>
       </div>
-      {{-- @foreach ($restriction as $key => $value)
-      <input type="text" value="{{ $value }}">
-      @endforeach --}}
+    </div>
       @foreach ($roles as $role)
       @php
           // Decode the JSON string
