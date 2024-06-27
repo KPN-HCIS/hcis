@@ -8,7 +8,7 @@
                 <!-- Logo light -->
                 <a href="/" class="logo-light">
                     <span class="logo-lg">
-                        <img src="/images/logo.png" alt="logo">
+                        <img src="{{ asset(mix('resources/images/logo.png')) }}" alt="logo">
                     </span>
                     <span class="logo-sm">
                         <img src="/images/logo-sm.png" alt="small logo">
