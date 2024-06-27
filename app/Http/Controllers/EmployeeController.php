@@ -67,7 +67,7 @@ class EmployeeController extends Controller
             // Simpan data ke database
             foreach ($employees as $employee) {
                 User::updateOrCreate(
-                    ['email' => $employee['company_email_id']],
+                    ['employee_id' => $employee['employee_id']],
                     [
                         'id' => $employee['user_unique_id'],
                         'employee_id' => $employee['employee_id'],

@@ -66,12 +66,15 @@
                                     <div class="mb-2">
                                         <label class="form-label" for="type">Bisnis Unit</label>
                                         <select name="bisnis_unit[]" class="form-select bg-light select2" multiple>
-                                            <option value="KPN Corporation">KPN Corporation</option>
+                                            {{-- <option value="KPN Corporation">KPN Corporation</option>
                                             <option value="KPN Plantations">KPN Plantations</option>
                                             <option value="Downstream">Downstream</option>
                                             <option value="Property">Property</option>
                                             <option value="Cement">Cement</option>
-                                            <option value="KPN Sugar">KPN Sugar</option>
+                                            <option value="KPN Sugar">KPN Sugar</option> --}}
+                                            @foreach($allowedGroupCompanies as $allowedGroupCompanie)
+                                                <option value="{{ $allowedGroupCompanie }}">{{ $allowedGroupCompanie }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

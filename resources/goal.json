@@ -1,90 +1,84 @@
 {
     "UoM": {
-        "Time": ["Hour (h)", "Minute (min)", "Second (s)"],
-        "Length": [
-            "Centimeter (cm)",
-            "Meter (m)",
-            "Kilometer (km)",
-            "Inch (in)",
-            "Foot (ft)",
-            "Mile (mi)"
+        "Time": ["Day (d)", "Month", "Year (yr)"],
+        "Quantity": [
+            "Unit",
+            "Number"
         ],
-        "Weight": ["Gram (g)", "Kilogram (kg)", "Pound (lb)", "Ounce (oz)"],
-        "Volume": [
-            "Liter (L)",
-            "Milliliter (mL)",
-            "Cubic Meter (m³)",
-            "Cubic Foot (ft³)",
-            "Gallon (gal)",
-            "Pint (pt)"
+        "Area": [
+            "Hectare (ha)",
+            "Square Meter (m²)"
+        ],
+        "Weight/Volume": [
+            "Kilogram (kg)",
+            "Metric ton (t)",
+            "Liter (L)"
+        ],
+        "Production Rate": [
+            "Unit per Hour (unit/h)",
+            "Item per Minute (item/min)",
+            "Ton per Hour (t/h)"
+        ],
+        "Currency": [
+            "Rupiah (Rp)",
+            "Dollar ($)",
+            "Euro (€)",
+            "Pound Sterling (£)",
+            "Yen (¥)",
+            "Rupee (₹)"
         ],
         "Speed": [
             "Kilometer per Hour (km/h)",
             "Meter per Second (m/s)",
             "Mile per Hour (mph)"
         ],
-        "Quantity": ["Piece (pcs)", "Package (pkg)", "Box (box)"],
         "Temperature": [
             "Degree Celsius (°C)",
             "Degree Fahrenheit (°F)",
             "Kelvin (K)"
         ],
-        "Area": [
-            "Square Meter (m²)",
-            "Square Kilometer (km²)",
-            "Hectare (ha)",
-            "Square Foot (ft²)",
-            "Acre (ac)"
-        ],
-        "Capacity": [
-            "Megabyte (MB)",
-            "Gigabyte (GB)",
-            "Terabyte (TB)",
-            "Kilobyte (KB)"
-        ],
-        "Price": [
-            "Dollar ($)",
-            "Euro (€)",
-            "Pound Sterling (£)",
-            "Yen (¥)",
-            "Rupee (₹)"
-        ],
-        "Storage Capacity": [
-            "Megabyte (MB)",
-            "Gigabyte (GB)",
-            "Terabyte (TB)",
-            "Kilobyte (KB)"
-        ],
-        "Production Rate": [
-            "Unit per Hour (unit/h)",
-            "Item per Minute (item/min)"
-        ],
-        "Energy Consumption": [
+        "Energy": [
             "Kilowatt-hour (kWh)",
+            "Megajoule (MJ)",
+            "Kilojoule (kJ)",
             "Joule (J)",
+            "Kilocalorie (kcal)",
             "Calorie (cal)"
         ],
-        "Expenditure Rate": [
-            "Dollar per Month ($/month)",
-            "Dollar per Year ($/year)",
-            "Dollar per Unit ($/unit)"
+        "Power": [
+            "Kilowatt (kW)",
+            "Watt (W)",
+            "Horsepower (hp)"
         ],
-        "Profit": ["Percentage (%)", "Dollar ($)"],
-        "Income": [
-            "Dollar ($)",
-            "Pound Sterling (£)",
-            "Euro (€)",
-            "Yen (¥)",
-            "Rupee (₹)"
+        "Frequency": [
+            "Gigahertz (GHz)",
+            "Megahertz (MHz)",
+            "Kilohertz (kHz)",
+            "Hertz (Hz)"
         ],
-        "Frequency": ["Hertz (Hz)", "Megahertz (MHz)", "Gigahertz (GHz)"],
         "Fuel Consumption": [
-            "Liter per 100 Kilometer (L/100km)",
-            "Miles per Gallon (mpg)",
-            "Kilometer per Liter (km/L)"
+            "Kilometer per Liter (km/L)",
+            "Liter per 100 Kilometer (L/100km)"
         ],
-        "Quality": ["Scale 1-10", "Rating (rating)"],
-        "Other": ["Other"]
+        "Storage Capacity": [
+            "Terabyte (TB)",
+            "Megabyte (MB)",
+            "Gigabyte (GB)",
+            "Kilobyte (KB)"
+        ],
+        "Other": [
+            "Percent (%)",
+            "Dollar per Year ($/year)",
+            "Dollar per Month ($/month)",
+            "Dollar per Unit ($/unit)",
+            "Rupiah per Year (Rp/year)",
+            "Rupiah per Month (Rp/month)",
+            "Rupiah per Unit ($/unit)",
+            "Event",
+            "Person",
+            "Scale A-E",
+            "Other"
+        ]
     },
     "Type": {
         "Type": ["Higher Better", "Lower Better", "Exact Value"]
