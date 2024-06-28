@@ -3,7 +3,7 @@
   @csrf
   @method('DELETE')
 </form>
-<form id="roleForm" action="{{ route('roles.update') }}" method="POST">
+<form id="roleForm" action="{{ route('roles.update', [], true) }}" method="POST">
   @csrf
 <div class="card">
   <div class="card-body">
