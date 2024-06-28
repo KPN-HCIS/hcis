@@ -220,7 +220,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" id="submit" class="btn btn-primary rounded-pill"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Save Guidline</button>
+                        <button type="button" id="submit" class="btn btn-primary rounded-pill"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Save Guideline</button>
                     </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
