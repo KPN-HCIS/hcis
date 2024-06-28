@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportExcelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LayerController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\SendbackController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
@@ -32,9 +34,7 @@ Route::get('/', function () {
     return redirect('goals');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', 'role:superadmin'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:superadmin'])->name('dashboard');
 
 Route::get('dbauth', [SsoController::class, 'dbauth']);
 
@@ -153,6 +153,10 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::get('{first}/{second}', [HomeController::class, 'secondLevel'])->name('second');
+
+    Route::get('/guides', [GuideController::class, 'index'])->name('guides');
+    Route::post('/guides', [GuideController::class, 'store'])->name('upload.guide');
+    Route::delete('/guides-delete/{id}', [GuideController::class, 'destroy'])->name('delete.guide');
     
     // ============================ Administrator ===================================
 

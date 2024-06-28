@@ -71,6 +71,7 @@
           <div class="list-group" id="list-tab" role="tablist">
             <a class="list-group-item list-group-item-action active" id="list-onBehalf-list" data-bs-toggle="list" href="#list-onBehalf" role="tab" aria-controls="onBehalf">On Behalfs</a>
             <a class="list-group-item list-group-item-action" id="list-report-list" data-bs-toggle="list" href="#list-report" role="tab" aria-controls="report">Reports</a>
+            <a class="list-group-item list-group-item-action" id="list-guide-list" data-bs-toggle="list" href="#list-guide" role="tab" aria-controls="guide">Guideline</a>
             <a class="list-group-item list-group-item-action" id="list-setting-list" data-bs-toggle="list" href="#list-setting" role="tab" aria-controls="setting">Settings</a>
           </div>
         </div>
@@ -90,7 +91,7 @@
                         <input type="hidden" name="adminMenu" value="{{ 9 }}">
                         <input class="form-check-input" type="checkbox" id="onBehalfView" value="{{ $permissions[0]->id }}" name="onBehalfView">
                         <label class="form-check-label" for="onBehalfView">
-                          View
+                          View On Behalfs
                         </label>
                       </div>
                       <div class="form-check mb-3">
@@ -117,7 +118,28 @@
                       <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="reportView" value="{{ $permissions[3]->id }}" name="reportView">
                         <label class="form-check-label" for="reportView">
-                          View
+                          View Reports
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="list-guide" role="tabpanel" aria-labelledby="list-guide-list">
+                    <ul class="nav">
+                      <li class="nav-item">
+                        <a class="nav-link" id="guide-accessibility" data-bs-toggle="list" href="#list-guide-accessibility" role="tab" aria-controls="guide">Accessibility</a>
+                      </li>
+                    </ul>
+                    <div class="tab-pane fade p-3 active show" id="list-guide-accessibility" role="tabpanel" aria-labelledby="guide-accessibility">
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="addGuide" value="{{ $permissions[9]->id }}" name="addGuide">
+                        <label class="form-check-label" for="addGuide">
+                          Add file
+                        </label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="removeGuide" value="{{ $permissions[10]->id }}" name="removeGuide">
+                        <label class="form-check-label" for="removeGuide">
+                          Remove file
                         </label>
                       </div>
                     </div>
@@ -132,7 +154,7 @@
                       <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="settingView" value="{{ $permissions[4]->id }}" name="settingView">
                         <label class="form-check-label" for="settingView">
-                          View
+                          View Settings
                         </label>
                       </div>
                       <div class="form-check mb-3">
