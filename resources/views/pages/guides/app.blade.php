@@ -225,5 +225,5 @@
     </div>
 @endsection
 @section('script')
-    @vite(['public/js/guide.js'])
+    <script src="{{ asset('js/guide.js') }}"></script>
 @endsection
