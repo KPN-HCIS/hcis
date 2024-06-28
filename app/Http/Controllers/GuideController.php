@@ -37,7 +37,7 @@ class GuideController extends Controller
         if ($request->file('files')) {
             $file = $request->file('files');
             $filename = time() . '_' . $fileName; // $file->getClientOriginalName()
-            $path = $file->storeAs('uploads', $filename, 'public');
+            $path = $file->storeAs('uploads', $filename.'.pdf', 'public');
             $fileSize = $file->getSize();
 
             $model =  new Guide;
@@ -71,7 +71,7 @@ class GuideController extends Controller
 
             $guide->updated_by = Auth::user()->id;
             $guide->save();
-            
+
             $guide->delete();
     
             return redirect()->route('guides')->with('success', 'File deleted successfully!');

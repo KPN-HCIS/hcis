@@ -34,7 +34,7 @@
 
     </div>
 
-    @include('layouts_.shared/right-sidebar')
+    {{-- @include('layouts_.shared/right-sidebar') --}}
     @vite(['resources/js/app.js', 'resources/js/layout.js'])
     @include('layouts_.shared/footer-script')
     @yield('script')

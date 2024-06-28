@@ -102,6 +102,7 @@
                                     </div>
                                 </div>
                                 @endforeach
+                                @if (!auth()->user()->roles->isEmpty())  
                                 @foreach ($dataAdmin as $admin)
                                 <div class="card mb-1 shadow-none border">
                                     <div class="p-2">
@@ -133,6 +134,7 @@
                                     </div>
                                 </div>
                                 @endforeach
+                                @endif
                             @else
                             <p>No data available.</p>
                             @endif
