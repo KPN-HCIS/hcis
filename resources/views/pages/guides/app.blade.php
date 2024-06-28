@@ -226,6 +226,6 @@
         </div><!-- /.modal-dialog -->
     </div>
 @endsection
-@push('scripts')
+{{-- @push('scripts')
     <script src="{{ asset('js/guide.js') }}"></script>
-@endpush
+@endpush --}}
