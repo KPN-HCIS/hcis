@@ -14,8 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
-use App\Models\Role;
-use App\Models\ModelHasRole;
+
 
 class ScheduleController extends Controller
 {
@@ -36,44 +35,7 @@ class ScheduleController extends Controller
     function form() {
         $parentLink = 'Schedules';
         $link = 'Create';
-        // $cek=auth()->user()->hasRole();
-        // $cek=(auth()->user()->roles);
-        // $userId = Auth::id();
-        $roles = Role::all();
-        $groupCompanies = Employee::getUniqueGroupCompanies();
-        // dd($cek);
-        
-        $allowedGroupCompanies = [];
-
-        foreach ($roles as $role) {
-            $restriction = json_decode($role->restriction, true);
-
-            $addAllCompanies = false;
-
-            // Jika 'group_company' adalah string 'null', tambahkan semua group_company
-            if ($restriction['group_company'] === null) {
-                $addAllCompanies = true;
-            } elseif (is_array($restriction['group_company'])) {
-                // Jika 'group_company' adalah array
-                foreach ($restriction['group_company'] as $company) {
-                    // Jika group_company ini ada di list $groupCompanies dan belum ada di allowedGroupCompanies
-                    if (in_array($company, $groupCompanies->toArray()) && !in_array($company, $allowedGroupCompanies)) {
-                        // Tambahkan ke allowedGroupCompanies
-                        $allowedGroupCompanies[] = $company;
-                    }
-                }
-            } elseif (in_array($restriction['group_company'], $groupCompanies->toArray())) {
-                // Jika 'group_company' adalah satu nilai dan ada di list $groupCompanies
-                $allowedGroupCompanies[] = $restriction['group_company'];
-            }
-
-            if ($addAllCompanies) {
-                $allowedGroupCompanies = $groupCompanies->toArray();
-                break; 
-            }
-        }
-        // dd($allowedGroupCompanies);
-        // $groupCompanies = Employee::getUniqueGroupCompanies();
+        $allowedGroupCompanies = Employee::getUniqueGroupCompanies();
         $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level_code')->get();
         
@@ -87,6 +49,7 @@ class ScheduleController extends Controller
     }
     function save(Request $req) {
         $link = 'schedule';
+        //dd($req);
         //$model = schedule::find($req->id);
         $model = new schedule;
         $userId = Auth::id();
@@ -386,6 +349,7 @@ class ScheduleController extends Controller
                     ->where('employees.contribution_level_code', $schedule->company_filter)
                     ->where('employees.work_area_code', $schedule->location_filter)
                     ->where('employees.date_of_joining', '<=', $schedule->last_join_date)
+                    ->whereNotIn('employees.job_level', ['9B', '10A', '10B'])
                     ->select('employees.*')
                     ->get();
 
