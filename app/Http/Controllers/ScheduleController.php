@@ -35,6 +35,7 @@ class ScheduleController extends Controller
     function form() {
         $parentLink = 'Schedules';
         $link = 'Create';
+        $allowedGroupCompanies = Employee::getUniqueGroupCompanies();
         $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level_code')->get();
         
@@ -43,10 +44,12 @@ class ScheduleController extends Controller
             'parentLink' => $parentLink,
             'locations' => $locations,
             'companies' => $companies,
+            'allowedGroupCompanies' => $allowedGroupCompanies,
         ]);
     }
     function save(Request $req) {
         $link = 'schedule';
+        //dd($req);
         //$model = schedule::find($req->id);
         $model = new schedule;
         $userId = Auth::id();
@@ -346,6 +349,7 @@ class ScheduleController extends Controller
                     ->where('employees.contribution_level_code', $schedule->company_filter)
                     ->where('employees.work_area_code', $schedule->location_filter)
                     ->where('employees.date_of_joining', '<=', $schedule->last_join_date)
+                    ->whereNotIn('employees.job_level', ['9B', '10A', '10B'])
                     ->select('employees.*')
                     ->get();
 

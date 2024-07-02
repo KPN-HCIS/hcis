@@ -49,5 +49,11 @@ class Employee extends Model
         return $this->belongsTo(Schedule::class, 'bisnis_unit', 'group_company')
                 ->whereRaw("FIND_IN_SET('bisnis_unit', group_company)");
     }
-
+    public static function getUniqueGroupCompanies()
+    {
+        // Ambil data group_company yang unik dari tabel employee
+        return self::select('group_company')
+            ->distinct()
+            ->pluck('group_company');
+    }
 }
