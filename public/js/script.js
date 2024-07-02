@@ -84,10 +84,10 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#checkbox_reminder").on("change", function () {
         if ($(this).is(":checked")) {
             $(".reminders").removeAttr("hidden");
-            $("#messages").attr("required", true);
+            // $("#messages").attr("required", "required");
         } else {
             $(".reminders").attr("hidden", true);
-            $("#messages").removeAttr("required");
+            // $("#messages").removeAttr("required");
         }
     });
 });
