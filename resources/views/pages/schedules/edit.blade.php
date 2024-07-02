@@ -123,6 +123,7 @@
                                 <div id="repeaton" style="display: @if ($model->inputState == 'beforeenddate') none @endif">
                                     <div class="row">
                                         <div class="col-12 col-md-auto">
+                                            @php $repeat_days = $repeat_days = explode(',', $model->repeat_days); @endphp
                                             <div class="btn-group mb-2 d-block d-md-flex" role="group" aria-label="Vertical button group">
                                                 <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button {{ in_array('Mon', $repeat_days) ? 'active' : '' }}">Mon</button>
                                                 <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button {{ in_array('Tue', $repeat_days) ? 'active' : '' }}">Tue</button>
