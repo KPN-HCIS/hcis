@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ApprovalLayerImport;
 use Illuminate\Support\Facades\Log;
 use App\Models\ApprovalLayerBackup;
+use App\Models\Goal;
 use Illuminate\Support\Facades\Auth;
 
 class LayerController extends Controller
@@ -88,6 +89,8 @@ class LayerController extends Controller
         $jumlahNikApp = count($nikApps);
         $userId = Auth::id();
 
+        $approvalRequest = Goal::select('id')->where('employee_id', $employeeId)->first();
+
         $approvalLayersToDelete = ApprovalLayer::where('employee_id', $employeeId)->get();
 
         foreach ($approvalLayersToDelete as $layer) {
@@ -117,15 +120,15 @@ class LayerController extends Controller
                 ]);    
 
                 if($layer===1){
-                    $cekApprovalRequest = ApprovalRequest::where('employee_id', $employeeId)
+                    $cekApprovalRequest = ApprovalRequest::where('form_id', $approvalRequest->id)
                                          ->where('status', ['pending', 'sendback'])
                                          ->get();
 
                     if ($cekApprovalRequest->isNotEmpty()) {
                         $approvalRequestIds = $cekApprovalRequest->pluck('id');
                 
-                        DB::transaction(function() use ($employeeId, $approverId, $approvalRequestIds) {
-                            ApprovalRequest::where('employee_id', $employeeId)
+                        DB::transaction(function() use ($approvalRequest, $approverId, $approvalRequestIds) {
+                            ApprovalRequest::where('form_id', $approvalRequest->id)
                                            ->where('status', ['pending', 'sendback'])
                                            ->update([
                                                'current_approval_id' => $approverId,

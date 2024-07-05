@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('approval_requests', function (Blueprint $table) {
             $table->id();
             $table->string('form_id')->unique(); // uuid from submitted form table
+            $table->string('category', 30); // uuid from submitted form table
             $table->string('current_approval_id');
             $table->string('employee_id');
             $table->enum('status', ['Pending','Approved','Sendback'])->default('Pending');
