@@ -128,7 +128,7 @@ class LayerController extends Controller
 
                 if($layer===1){
                     $cekApprovalRequest = ApprovalRequest::where('category', $this->category)
-                                         ->where('employeeId', $employeeId)
+                                         ->where('employee_id', $employeeId)
                                          ->where('status', ['pending', 'sendback'])
                                          ->get();
 
@@ -137,7 +137,7 @@ class LayerController extends Controller
                 
                         DB::transaction(function() use ($employeeId, $approverId, $approvalRequestIds) {
                             ApprovalRequest::where('category', $this->category)
-                                           ->where('employeeId', $employeeId)
+                                           ->where('employee_id', $employeeId)
                                            ->where('status', ['pending', 'sendback'])
                                            ->update([
                                                'current_approval_id' => $approverId,
