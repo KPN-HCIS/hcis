@@ -19,6 +19,13 @@ use Illuminate\Support\Facades\Auth;
 
 class LayerController extends Controller
 {
+    protected $category;
+
+    public function __construct()
+    {
+        $this->category = 'Goals';
+    }
+
     function layer() {
 
         $roles = Auth()->user()->roles;
@@ -120,15 +127,17 @@ class LayerController extends Controller
                 ]);    
 
                 if($layer===1){
-                    $cekApprovalRequest = ApprovalRequest::where('form_id', $approvalRequest->id)
+                    $cekApprovalRequest = ApprovalRequest::where('category', $this->category)
+                                         ->where('employeeId', $employeeId)
                                          ->where('status', ['pending', 'sendback'])
                                          ->get();
 
                     if ($cekApprovalRequest->isNotEmpty()) {
                         $approvalRequestIds = $cekApprovalRequest->pluck('id');
                 
-                        DB::transaction(function() use ($approvalRequest, $approverId, $approvalRequestIds) {
-                            ApprovalRequest::where('form_id', $approvalRequest->id)
+                        DB::transaction(function() use ($employeeId, $approverId, $approvalRequestIds) {
+                            ApprovalRequest::where('category', $this->category)
+                                           ->where('employeeId', $employeeId)
                                            ->where('status', ['pending', 'sendback'])
                                            ->update([
                                                'current_approval_id' => $approverId,
