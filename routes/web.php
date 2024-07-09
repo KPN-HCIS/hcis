@@ -26,6 +26,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MyAppraisalController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use Illuminate\Support\Facades\Route;
@@ -103,9 +104,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/team-goals/submit', [TeamGoalController::class, 'store'])->name('team-goals.submit');
     Route::get('/team-goals/edit/{id}', [TeamGoalController::class, 'edit'])->name('team-goals.edit');
     Route::get('/team-goals/approval/{id}', [TeamGoalController::class, 'approval'])->name('team-goals.approval');
-    // Route::post('/goals/update', [TeamGoalController::class, 'update'])->name('goals.update');
     Route::get('/get-tooltip-content', [TeamGoalController::class, 'getTooltipContent']);
     Route::get('/units-of-measurement', [TeamGoalController::class, 'unitOfMeasurement']);
+
+    // My Appraisals
+    Route::get('/appraisals', [MyAppraisalController::class, 'index'])->name('appraisals');
+    Route::get('/appraisals-360', [MyAppraisalController::class, 'index'])->name('appraisals-360');
+    
+    Route::get('/appraisals/create/{id}', [MyAppraisalController::class, 'create'])->name('form.appraisal');
+    Route::post('/appraisals', [MyAppraisalController::class, 'store'])->name('form.submit');
     
     // Approval
     Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
