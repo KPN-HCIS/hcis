@@ -55,13 +55,13 @@
             </li>
             @endif
             <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarGoals" aria-expanded="false" aria-controls="sidebarGoals" class="side-nav-link">
+                <a data-bs-toggle="collapse" href="#sidebarEmail" aria-expanded="false" aria-controls="sidebarEmail" class="side-nav-link">
                     <i class="ri-star-line"></i>
                     {{-- <span class="badge bg-success float-end">2</span> --}}
                     <span> Goals </span>
                     <span class="menu-arrow"></span>
                 </a>
-                <div class="collapse" id="sidebarGoals">
+                <div class="collapse" id="sidebarEmail">
                     <ul class="side-nav-second-level">
                         <li>
                             <a href="{{ route('goals') }}">My Goals</a>
@@ -71,24 +71,6 @@
                             <a href="{{ route('team-goals') }}">Team Goals</a>
                         </li>
                         @endif
-                    </ul>
-                </div>
-            </li>
-            <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarAppraisal" aria-expanded="false" aria-controls="sidebarAppraisal" class="side-nav-link">
-                    <i class="ri-star-line"></i>
-                    {{-- <span class="badge bg-success float-end">2</span> --}}
-                    <span> Appraisal </span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="sidebarAppraisal">
-                    <ul class="side-nav-second-level">
-                        <li>
-                            <a href="{{ route('appraisals') }}">My Appraisal</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('appraisals-360') }}">Appraisal 360&deg;</a>
-                        </li>
                     </ul>
                 </div>
             </li>
