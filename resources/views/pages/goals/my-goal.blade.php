@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-auto">
                     <div class="mb-3">
-                        <a href="{{ route('goals.form', Auth::user()->employee_id) }}" class="btn rounded-pill {{ $goals ? 'btn-primary shadow' : 'btn-secondary-subtle disabled' }}">Create Goals</a>
+                        <a href="{{ $goals ? route('goals.form', Auth::user()->employee_id) : '#' }}" class="btn rounded-pill {{ $goals ? 'btn-primary shadow' : 'btn-secondary-subtle disabled' }}">Create Goals</a>
                     </div>
                 </div>
             </div>
