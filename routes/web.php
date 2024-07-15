@@ -26,6 +26,8 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
+use App\Http\Controllers\ReimburseController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -37,6 +39,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified', 'role:superadmin'])->name('dashboard');
 
 Route::get('dbauth', [SsoController::class, 'dbauth']);
+Route::get('sourcermb/dbauth', [SsoController::class, 'dbauthReimburse']);
 
 Route::get('fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
 Route::get('updmenu-employees', [EmployeeController::class, 'updateEmployeeAccessMenu']);
@@ -87,6 +90,12 @@ Route::middleware('auth')->group(function () {
 
     // Tasks
     Route::get('/tasks', [TaskController::class, 'task'])->name('tasks');
+
+    // My Reimbursement
+    Route::get('/reimbursements', [ReimburseController::class, 'reimbursements'])->name('reimbursements');
+    Route::get('/cashadvanced', [ReimburseController::class, 'cashadvanced'])->name('cashadvanced');
+    Route::get('/cashadvanced/form', [ReimburseController::class, 'cashadvancedCreate'])->name('cashadvanced.form');
+    
 
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');

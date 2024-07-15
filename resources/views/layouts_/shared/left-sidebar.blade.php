@@ -1,6 +1,6 @@
 <!-- ========== Left Sidebar Start ========== -->
 <div class="leftside-menu">
-
+    @if(session('system') == 'kpnpm')
     <!-- Brand Logo Light -->
     <a href="{{ Url('/') }}" class="logo logo-light">
         <span class="logo-lg">
@@ -20,7 +20,27 @@
             <img src="/images/logo-sm.png" alt="small logo">
         </span>
     </a>
+    @else
+    <!-- Brand Logo Light -->
+    <a href="" class="logo logo-light">
+        <span class="logo-lg">
+            <img src="/images/logo_hcis_ori.png" alt="logo">
+        </span>
+        <span class="logo-sm">
+            <img src="/images/logo-sm_ori.png" alt="small logo">
+        </span>
+    </a>
 
+    <!-- Brand Logo Dark -->
+    <a href="" class="logo logo-dark">
+        <span class="logo-lg">
+            <img src="/images/logo-dark_hcis_ori.png" alt="logo">
+        </span>
+        <span class="logo-sm">
+            <img src="/images/logo-sm_ori.png" alt="small logo">
+        </span>
+    </a>
+    @endif
     <!-- Sidebar Hover Menu Toggle Button -->
     <div class="button-sm-hover" data-bs-toggle="tooltip" data-bs-placement="right" title="Show Full Sidebar">
         <i class="ri-checkbox-blank-circle-line align-middle"></i>
@@ -54,26 +74,34 @@
                 </div>
             </li>
             @endif
-            <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarEmail" aria-expanded="false" aria-controls="sidebarEmail" class="side-nav-link">
-                    <i class="ri-star-line"></i>
-                    {{-- <span class="badge bg-success float-end">2</span> --}}
-                    <span> Goals </span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="sidebarEmail">
-                    <ul class="side-nav-second-level">
-                        <li>
-                            <a href="{{ route('goals') }}">My Goals</a>
-                        </li>
-                        @if(auth()->user()->isApprover())
-                        <li>
-                            <a href="{{ route('team-goals') }}">Team Goals</a>
-                        </li>
-                        @endif
-                    </ul>
-                </div>
-            </li>
+            @if(session('system') == 'kpnpm')
+                <li class="side-nav-item">
+                    <a data-bs-toggle="collapse" href="#sidebarEmail" aria-expanded="false" aria-controls="sidebarEmail" class="side-nav-link">
+                        <i class="ri-star-line"></i>
+                        <span> Goals </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="sidebarEmail">
+                        <ul class="side-nav-second-level">
+                            <li>
+                                <a href="{{ route('goals') }}">My Goals</a>
+                            </li>
+                            @if(auth()->user()->isApprover())
+                            <li>
+                                <a href="{{ route('team-goals') }}">Team Goals</a>
+                            </li>
+                            @endif
+                        </ul>
+                    </div>
+                </li>
+            @elseif(session('system') == 'kpnreimburse')
+                <li class="side-nav-item">
+                    <a href="{{ route('reimbursements') }}"  aria-controls="sidebarEmail" class="side-nav-link">
+                        <i class="ri-star-line"></i>
+                        <span> Reimbursements </span>
+                    </a>
+                </li>
+            @endif
             @if (auth()->user()->isApprover())
             <li class="side-nav-item">
                 <a href="{{ url('/reports') }}" class="side-nav-link">
