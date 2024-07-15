@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
+    protected $category;
+
+    public function __construct()
+    {
+        $this->category = 'Goals';
+    }
+
     function index() {
         $link = 'Reports';
 
@@ -26,8 +33,10 @@ class ReportController extends Controller
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
         $selectYear = ApprovalRequest::select(DB::raw('YEAR(created_at) as year'))
+        ->where('category', $this->category)
         ->distinct()
         ->orderBy('year')
+        
         ->get();
 
         $selectYear->transform(function ($req) {
@@ -78,7 +87,7 @@ class ReportController extends Controller
         $filters = compact('report_type', 'group_company', 'location', 'company');
 
         // Start building the query
-        $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated']);
+        $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated'])->where('category', $this->category);
 
         // Apply filters based on request parameters
         if ($request->filled('group_company')) {

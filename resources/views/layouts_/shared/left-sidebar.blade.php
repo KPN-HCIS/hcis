@@ -105,11 +105,17 @@
             @if (auth()->user()->isApprover())
             <li class="side-nav-item">
                 <a href="{{ url('/reports') }}" class="side-nav-link">
-                    <i class="ri-file-text-line"></i>
+                    <i class="ri-file-chart-line"></i>
                     <span> Reports </span>
                 </a>
             </li>
             @endif
+            <li class="side-nav-item">
+                <a href="{{ url('/guides') }}" class="side-nav-link">
+                    <i class="ri-file-text-line"></i>
+                    <span> User Guide </span>
+                </a>
+            </li>
 
             @if(auth()->check())
             @can('adminmenu')

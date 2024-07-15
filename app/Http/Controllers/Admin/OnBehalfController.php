@@ -33,9 +33,11 @@ class OnBehalfController extends Controller
     protected $permissionCompanies;
     protected $permissionLocations;
     protected $roles;
-
+    protected $category;
+    
     public function __construct()
     {
+        $this->category = 'Goals';
         $this->roles = Auth()->user()->roles;
         
         $restrictionData = [];
@@ -118,7 +120,7 @@ class OnBehalfController extends Controller
             // Mengambil data pengajuan berdasarkan employee_id atau manager_id
             $datas = ApprovalRequest::with(['employee', 'goal', 'updatedBy', 'approval' => function ($query) {
                 $query->with('approverName'); // Load nested relationship
-            }]);
+            }])->where('category', $this->category);
 
             $criteria = [
                 'work_area_code' => $permissionLocations,
@@ -459,7 +461,7 @@ class OnBehalfController extends Controller
         $filters = compact('group_company', 'location', 'company');
 
         // Start building the query
-        $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated']);
+        $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated'])->where('category', $this->category);
 
         $criteria = [
             'work_area_code' => $permissionLocations,

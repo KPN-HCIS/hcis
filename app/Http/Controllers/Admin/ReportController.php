@@ -26,9 +26,11 @@ class ReportController extends Controller
     protected $permissionCompanies;
     protected $permissionLocations;
     protected $roles;
-
+    protected $category;
+    
     public function __construct()
     {
+        $this->category = 'Goals';
         $this->roles = Auth()->user()->roles;
         
         $restrictionData = [];
@@ -87,6 +89,7 @@ class ReportController extends Controller
         $selectYear = ApprovalRequest::select(DB::raw('YEAR(created_at) as year'))
         ->distinct()
         ->orderBy('year')
+        ->where('category', $this->category)
         ->get();
 
         $selectYear->transform(function ($req) {
@@ -135,7 +138,7 @@ class ReportController extends Controller
 
         // Start building the query
         if ($report_type === 'Goal') {
-            $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated']);
+            $query = ApprovalRequest::with(['employee', 'manager', 'goal', 'initiated'])->where('category', $this->category);
 
             if (!empty($group_company)) {
                 $query->whereHas('employee', function ($query) use ($group_company) {

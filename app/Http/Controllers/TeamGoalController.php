@@ -20,6 +20,13 @@ use stdClass;
 
 class TeamGoalController extends Controller
 {
+    protected $category;
+
+    public function __construct()
+    {
+        $this->category = 'Goals';
+    }
+
     function index(Request $request) {
         
         $user = Auth::user()->employee_id;
@@ -80,39 +87,6 @@ class TeamGoalController extends Controller
                 return $subordinate;
             });
         });
-
-        // $notasks = ApprovalLayer::with(['employee', 'subordinates'])
-        // ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
-        // ->leftJoin('schedules', function($join) {
-        //     $join->on('employees.employee_type', '=', 'schedules.employee_type')
-        //         ->whereRaw('FIND_IN_SET(employees.group_company, schedules.bisnis_unit)')
-        //         ->where(function($query) {
-        //             $query->whereRaw('(schedules.company_filter IS NULL OR schedules.company_filter = "")')
-        //                 ->orWhereRaw('FIND_IN_SET(employees.company_name, schedules.company_filter)');
-        //         })
-        //         ->where(function($query) {
-        //             $query->whereRaw('(schedules.location_filter IS NULL OR schedules.location_filter = "")')
-        //                 ->orWhereRaw('FIND_IN_SET(employees.work_area_code, schedules.location_filter)');
-        //         });
-        // })
-        // ->whereColumn('employees.date_of_joining', '<', 'schedules.last_join_date')
-        // ->whereNull('schedules.deleted_at')
-        // ->where('approval_layers.approver_id', $user)
-        // ->whereDoesntHave('subordinates', function ($query) use ($user) {
-        //     $query->whereYear('created_at', $filterYear) // Add this line to filter by the current year
-        //         ->with([
-        //             'goal', 
-        //             'updatedBy', 
-        //             'approval' => function ($query) {
-        //                 $query->with('approverName');
-        //             }
-        //         ])->whereHas('approvalLayer', function ($query) use ($user) {
-        //             $query->where('employee_id', $user)->orWhere('approver_id', $user);
-        //         });
-        // })
-        // ->select('approval_layers.*', 'employees.date_of_joining', 'schedules.last_join_date')
-        // ->distinct()
-        // ->get();
 
         $notasks = ApprovalLayer::with(['employee', 'subordinates'])
         ->leftJoin('employees', 'approval_layers.employee_id', '=', 'employees.employee_id')
@@ -202,7 +176,7 @@ class TeamGoalController extends Controller
         $parentLink = 'Goals';
         $link = 'Team Goals';
 
-        $selectYear = ApprovalRequest::where('employee_id', $user)->select('created_at')->get();
+        $selectYear = ApprovalRequest::where('employee_id', $user)->where('category', $this->category)->select('created_at')->get();
 
         $selectYear->transform(function ($req) {
             $req->year = Carbon::parse($req->created_at)->format('Y');
@@ -448,6 +422,7 @@ class TeamGoalController extends Controller
 
         $approval = new ApprovalRequest();
         $approval->form_id = $model->id;
+        $approval->category = $this->category;
         $approval->employee_id = $request->employee_id;
         $approval->current_approval_id = $request->approver_id;
         $approval->created_by = Auth::user()->id;
@@ -553,7 +528,7 @@ class TeamGoalController extends Controller
 
     public function getTooltipContent(Request $request)
     {
-        $approvalRequest = ApprovalRequest::with(['manager', 'employee'])->where('employee_id', $request->id)->first();
+        $approvalRequest = ApprovalRequest::with(['manager', 'employee'])->where('employee_id', $request->id)->where('category', $this->category)->first();
 
         if($approvalRequest){
             if ($approvalRequest->sendback_to == $approvalRequest->employee->employee_id) {

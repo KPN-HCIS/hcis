@@ -2,7 +2,7 @@
 <div class="card">
   <div class="card-body">
 
-    <form id="assignForm" action="{{ route('assign.user') }}" method="POST">
+    <form id="assignForm" action="{{ route('assign.user', [], true) }}" method="POST">
       @csrf
       <input type="hidden" name="role_id" value="{{ $roleId }}">
       <div class="row mb-3">

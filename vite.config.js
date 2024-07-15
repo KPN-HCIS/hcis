@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import laravel from "laravel-vite-plugin";
+import laravel, { refreshPaths } from "laravel-vite-plugin";
 import path from "path";
 import Swal from "sweetalert2";
 
@@ -121,7 +121,10 @@ export default defineConfig({
                 "bootstrap-timepicker/js/bootstrap-timepicker.min.js",
                 "node_modules/jquery-mask-plugin/dist/jquery.mask.min.js",
             ],
-            refresh: true,
+            refresh: [
+                ...refreshPaths,
+                'app/Livewire/**',
+            ],
         }),
     ],
     build: {

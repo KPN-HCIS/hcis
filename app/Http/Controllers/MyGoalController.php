@@ -22,6 +22,13 @@ use stdClass;
 
 class MyGoalController extends Controller
 {
+    protected $category;
+
+    public function __construct()
+    {
+        $this->category = 'Goals';
+    }
+
     function formatDate($date)
     {
         // Parse the date using Carbon
@@ -51,7 +58,7 @@ class MyGoalController extends Controller
         ->whereHas('approvalLayer', function ($query) use ($user) {
             $query->where('employee_id', $user)->orWhere('approver_id', $user);
         })
-        ->where('employee_id', $user);
+        ->where('employee_id', $user)->where('category', $this->category);
     
         // Apply additional filtering based on the selected year
         if (!empty($filterYear)) {
@@ -148,7 +155,7 @@ class MyGoalController extends Controller
         $access_menu = json_decode($employee->access_menu, true);
         $goals = $access_menu['goals'] ?? null;
     
-        $selectYear = ApprovalRequest::where('employee_id', $user)->select('created_at')->get();
+        $selectYear = ApprovalRequest::where('employee_id', $user)->where('category', $this->category)->select('created_at')->get();
         $selectYear->transform(function ($req) {
             $req->year = Carbon::parse($req->created_at)->format('Y');
             return $req;
@@ -346,6 +353,7 @@ class MyGoalController extends Controller
 
         $approval = new ApprovalRequest();
         $approval->form_id = $model->id;
+        $approval->category = $this->category;
         $approval->employee_id = $request->employee_id;
         $approval->current_approval_id = $request->approver_id;
         $approval->created_by = Auth::user()->id;

@@ -14,10 +14,18 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ApprovalLayerImport;
 use Illuminate\Support\Facades\Log;
 use App\Models\ApprovalLayerBackup;
+use App\Models\Goal;
 use Illuminate\Support\Facades\Auth;
 
 class LayerController extends Controller
 {
+    protected $category;
+
+    public function __construct()
+    {
+        $this->category = 'Goals';
+    }
+
     function layer() {
 
         $roles = Auth()->user()->roles;
@@ -88,6 +96,8 @@ class LayerController extends Controller
         $jumlahNikApp = count($nikApps);
         $userId = Auth::id();
 
+        $approvalRequest = Goal::select('id')->where('employee_id', $employeeId)->first();
+
         $approvalLayersToDelete = ApprovalLayer::where('employee_id', $employeeId)->get();
 
         foreach ($approvalLayersToDelete as $layer) {
@@ -117,7 +127,8 @@ class LayerController extends Controller
                 ]);    
 
                 if($layer===1){
-                    $cekApprovalRequest = ApprovalRequest::where('employee_id', $employeeId)
+                    $cekApprovalRequest = ApprovalRequest::where('category', $this->category)
+                                         ->where('employee_id', $employeeId)
                                          ->where('status', ['pending', 'sendback'])
                                          ->get();
 
@@ -125,7 +136,8 @@ class LayerController extends Controller
                         $approvalRequestIds = $cekApprovalRequest->pluck('id');
                 
                         DB::transaction(function() use ($employeeId, $approverId, $approvalRequestIds) {
-                            ApprovalRequest::where('employee_id', $employeeId)
+                            ApprovalRequest::where('category', $this->category)
+                                           ->where('employee_id', $employeeId)
                                            ->where('status', ['pending', 'sendback'])
                                            ->update([
                                                'current_approval_id' => $approverId,

@@ -89,7 +89,7 @@ class RoleController extends Controller
             $query->where('id', $roleId);
         })->get();
         
-        $users = Employee::select('id', 'fullname', 'employee_id', 'designation')->where('work_area_code', 'OU001')->get();
+        $users = Employee::select('id', 'fullname', 'employee_id', 'designation')->get();
         
         $parentLink = $this->link;
         $link = "Manage";
@@ -200,6 +200,8 @@ class RoleController extends Controller
             'scheduleView' => $request->input('scheduleView', false),
             'layerView' => $request->input('layerView', false),
             'roleView' => $request->input('roleView', false),
+            'addGuide' => $request->input('addGuide', false),
+            'removeGuide' => $request->input('removeGuide', false),
         ];
 
         // Build permission_id string
@@ -257,6 +259,8 @@ class RoleController extends Controller
             'scheduleView' => $request->input('scheduleView', false),
             'layerView' => $request->input('layerView', false),
             'roleView' => $request->input('roleView', false),
+            'addGuide' => $request->input('addGuide', false),
+            'removeGuide' => $request->input('removeGuide', false),
         ];
 
         // Build permission_id string

@@ -66,15 +66,12 @@
                                     <div class="mb-2">
                                         <label class="form-label" for="type">Bisnis Unit</label>
                                         <select name="bisnis_unit[]" class="form-select bg-light select2" multiple>
-                                            {{-- <option value="KPN Corporation">KPN Corporation</option>
+                                            <option value="KPN Corporation">KPN Corporation</option>
                                             <option value="KPN Plantations">KPN Plantations</option>
                                             <option value="Downstream">Downstream</option>
                                             <option value="Property">Property</option>
                                             <option value="Cement">Cement</option>
-                                            <option value="KPN Sugar">KPN Sugar</option> --}}
-                                            @foreach($allowedGroupCompanies as $allowedGroupCompanie)
-                                                <option value="{{ $allowedGroupCompanie }}">{{ $allowedGroupCompanie }}</option>
-                                            @endforeach
+                                            <option value="KPN Sugar">KPN Sugar</option>
                                         </select>
                                     </div>
                                 </div>
@@ -153,16 +150,7 @@
                                 <div id="repeaton">
                                     <div class="row">
                                         <div class="col-12 col-md-auto">
-                                            <div class="btn-group-vertical mb-2 d-flex d-md-none" role="group" aria-label="Vertical button group">
-                                                <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button">Monday</button>
-                                                <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button">Tuesday</button>
-                                                <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button">Wednesday</button>
-                                                <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button">Thursday</button>
-                                                <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button">Friday</button>
-                                                <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button">Saturday</button>
-                                                <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button">Sunday</button>
-                                            </div>
-                                            <div class="btn-group mb-2 d-none d-md-flex" role="group" aria-label="Vertical button group">
+                                            <div class="btn-group mb-2 d-block d-md-flex" role="group" aria-label="Vertical button group">
                                                 <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button">Mon</button>
                                                 <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button">Tue</button>
                                                 <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button">Wed</button>

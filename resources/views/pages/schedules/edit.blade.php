@@ -123,17 +123,8 @@
                                 <div id="repeaton" style="display: @if ($model->inputState == 'beforeenddate') none @endif">
                                     <div class="row">
                                         <div class="col-12 col-md-auto">
-                                            <div class="btn-group-vertical mb-2 d-flex d-md-none" role="group" aria-label="Vertical button group">
-                                                @php $repeat_days = $repeat_days = explode(',', $model->repeat_days); @endphp
-                                                <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button {{ in_array('Mon', $repeat_days) ? 'active' : '' }}">Monday</button>
-                                                <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button {{ in_array('Tue', $repeat_days) ? 'active' : '' }}">Tuesday</button>
-                                                <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button {{ in_array('Wed', $repeat_days) ? 'active' : '' }}">Wednesday</button>
-                                                <button type="button" name="repeat_days[]" value="Thu" class="btn btn-outline-primary btn-sm day-button {{ in_array('Thu', $repeat_days) ? 'active' : '' }}">Thursday</button>
-                                                <button type="button" name="repeat_days[]" value="Fri" class="btn btn-outline-primary btn-sm day-button {{ in_array('Fri', $repeat_days) ? 'active' : '' }}">Friday</button>
-                                                <button type="button" name="repeat_days[]" value="Sat" class="btn btn-outline-primary btn-sm day-button {{ in_array('Sat', $repeat_days) ? 'active' : '' }}">Saturday</button>
-                                                <button type="button" name="repeat_days[]" value="Sun" class="btn btn-outline-primary btn-sm day-button {{ in_array('Sun', $repeat_days) ? 'active' : '' }}">Sunday</button>
-                                            </div>
-                                            <div class="btn-group mb-2 d-none d-md-flex" role="group" aria-label="Vertical button group">
+                                            @php $repeat_days = $repeat_days = explode(',', $model->repeat_days); @endphp
+                                            <div class="btn-group mb-2 d-block d-md-flex" role="group" aria-label="Vertical button group">
                                                 <button type="button" name="repeat_days[]" value="Mon" class="btn btn-outline-primary btn-sm day-button {{ in_array('Mon', $repeat_days) ? 'active' : '' }}">Mon</button>
                                                 <button type="button" name="repeat_days[]" value="Tue" class="btn btn-outline-primary btn-sm day-button {{ in_array('Tue', $repeat_days) ? 'active' : '' }}">Tue</button>
                                                 <button type="button" name="repeat_days[]" value="Wed" class="btn btn-outline-primary btn-sm day-button {{ in_array('Wed', $repeat_days) ? 'active' : '' }}">Wed</button>
