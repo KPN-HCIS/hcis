@@ -6,7 +6,7 @@ window.DataTable = DataTable;
 import Swal from "sweetalert2";
 window.Swal = Swal;
 
-import './plugins/bootstrap-wizard.js';
+//import './plugins/bootstrap-wizard.js';
 import { Tab } from "bootstrap";
 window.Tab = Tab;
 

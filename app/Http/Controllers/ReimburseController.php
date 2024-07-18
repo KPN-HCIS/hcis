@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Company;
+use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 
 class ReimburseController extends Controller
@@ -31,10 +33,14 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
         return view('hcis.reimbursements.cashadv.formCashadv', [
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
         ]);
     }
 }
