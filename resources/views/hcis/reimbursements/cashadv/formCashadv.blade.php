@@ -34,8 +34,38 @@
                             <div class="row my-2">
                                 <div class="col-md-6">
                                     <div class="mb-2">
+                                        <label class="form-label" for="start">Name</label>
+                                        <input type="text" name="name" id="name" value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label" for="start">Unit</label>
+                                        <input type="text" name="unit" id="unit" value="{{ $employee_data->unit }}" class="form-control bg-light" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label" for="start">Grade</label>
+                                        <input type="text" name="grade" id="grade" value="{{ $employee_data->job_level }}" class="form-control bg-light" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
                                         <label class="form-label" for="name">Costing Company</label>
-                                        <input type="text" class="form-control" placeholder="Enter Destination.." id="destination" name="destination" required>
+                                        <select class="form-control select2" id="companyFilter" name="company" required>
+                                            <option value="">Select Company...</option>
+                                            @foreach($companies as $company)
+                                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                            @endforeach
+                                        </select>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -43,12 +73,14 @@
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="name">Destination</label>
-                                        <select class="form-control select2" id="locationFilter" required>
+                                        <select class="form-control select2" id="locationFilter" name="locationFilter" onchange="toggleOthers()" required>
                                             <option value="">Select location...</option>
                                             @foreach($locations as $location)
                                                 <option value="{{ $location->area." (".$location->company_name.")" }}">{{ $location->area." (".$location->company_name.")" }}</option>
                                             @endforeach
+                                            <option value="Others">Others</option>
                                         </select>
+                                        <br><input type="text" name="others_location" id="others_location" class="form-control" placeholder="Other Location" style="display: none;"> 
                                     </div>
                                 </div>
                             </div>
@@ -73,6 +105,20 @@
                                     <div class="mb-2">
                                         <label class="form-label" for="start">End Date</label>
                                         <input type="date" name="end_date" id="end_date" class="form-control" placeholder="mm/dd/yyyy" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label" for="start">Total Days</label>
+                                        <div class="input-group">
+                                            <input class="form-control bg-light" id="totaldays" name="totaldays" type="text" min="0" value="0" readonly>
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">days</span>
+                                            </div>
+                                        </div>
+                                        <input class="form-control" id="perdiem" name="perdiem" type="hidden" value="{{ $perdiem->amount }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -105,25 +151,16 @@
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <div class="mb-2">
-                                                            <label class="form-label" for="name">Total Days</label>
-                                                            <div class="input-group" style="width:50%">
-                                                                <input class="form-control bg-light" name="totaldays" type="text" min="0" value="0" readonly>
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">days</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <label class="form-label" for="name">Allowance</label>
+                                                            <label class="form-label">Allowance (Perdiem)</label>
                                                             <div class="input-group">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">Rp</span>
                                                                 </div>
-                                                                <input class="form-control" name="allowance" type="text" min="0" value="0">
+                                                                <input class="form-control bg-light" name="allowance" id="allowance" type="text" min="0" value="0" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="mb-2">
-                                                            <label class="form-label" for="name">Transportation</label>
+                                                            <label class="form-label">Transportation</label>
                                                             <div class="input-group">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">Rp</span>
@@ -132,7 +169,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="mb-2">
-                                                            <label class="form-label" for="name">Accommodation</label>
+                                                            <label class="form-label">Accommodation</label>
                                                             <div class="input-group">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">Rp</span>
@@ -141,7 +178,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="mb-2">
-                                                            <label class="form-label" for="name">Other</label>
+                                                            <label class="form-label">Other</label>
                                                             <div class="input-group">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">Rp</span>
@@ -150,7 +187,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="mb-2">
-                                                            <label class="form-label" for="name">Total Cash Advanced</label>
+                                                            <label class="form-label">Total Cash Advanced</label>
                                                             <div class="input-group">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">Rp</span>
@@ -175,13 +212,13 @@
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                                                                     <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                                                                        Entertainment Type #1
+                                                                        Entertainment Detail #1
                                                                     </button>
                                                                 </h2>
                                                                 <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Type</label>
+                                                                            <label class="form-label">Entertainment Type</label>
                                                                             <select name="enter_type_1" id="enter_type_1" class="form-select">
                                                                                 <option value="">-</option>
                                                                                 <option value="meal_cost">Meal Cost</option>
@@ -190,7 +227,7 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Fee Detail</label>
+                                                                            <label class="form-label">Entertainment Fee Detail</label>
                                                                             <textarea name="enter_fee_1" id="enter_fee_1" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="input-group">
@@ -205,13 +242,13 @@
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
                                                                     <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                                                                        Entertainment Type #2
+                                                                        Entertainment Detail #2
                                                                     </button>
                                                                 </h2>
                                                                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Type</label>
+                                                                            <label class="form-label">Entertainment Type</label>
                                                                             <select name="enter_type_2" id="enter_type_2" class="form-select">
                                                                                 <option value="">-</option>
                                                                                 <option value="meal_cost">Meal Cost</option>
@@ -220,7 +257,7 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Fee Detail</label>
+                                                                            <label class="form-label">Entertainment Fee Detail</label>
                                                                             <textarea name="enter_fee_2" id="enter_fee_2" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="input-group">
@@ -235,13 +272,13 @@
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="panelsStayOpen-headingThree">
                                                                     <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-                                                                        Entertainment Type #3
+                                                                        Entertainment Detail #3
                                                                     </button>
                                                                 </h2>
                                                                 <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Type</label>
+                                                                            <label class="form-label">Entertainment Type</label>
                                                                             <select name="enter_type_3" id="enter_type_3" class="form-select">
                                                                                 <option value="">-</option>
                                                                                 <option value="meal_cost">Meal Cost</option>
@@ -250,7 +287,7 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Fee Detail</label>
+                                                                            <label class="form-label">Entertainment Fee Detail</label>
                                                                             <textarea name="enter_fee_3" id="enter_fee_3" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="input-group">
@@ -265,13 +302,13 @@
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="panelsStayOpen-headingFour">
                                                                     <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
-                                                                        Entertainment Type #4
+                                                                        Entertainment Detail #4
                                                                     </button>
                                                                 </h2>
                                                                 <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Type</label>
+                                                                            <label class="form-label">Entertainment Type</label>
                                                                             <select name="enter_type_4" id="enter_type_4" class="form-select">
                                                                                 <option value="">-</option>
                                                                                 <option value="meal_cost">Meal Cost</option>
@@ -280,7 +317,7 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Fee Detail</label>
+                                                                            <label class="form-label">Entertainment Fee Detail</label>
                                                                             <textarea name="enter_fee_4" id="enter_fee_4" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="input-group">
@@ -295,13 +332,13 @@
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="panelsStayOpen-headingFive">
                                                                     <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
-                                                                        Entertainment Type #5
+                                                                        Entertainment Detail #5
                                                                     </button>
                                                                 </h2>
                                                                 <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFive">
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Type</label>
+                                                                            <label class="form-label">Entertainment Type</label>
                                                                             <select name="enter_type_5" id="enter_type_5" class="form-select">
                                                                                 <option value="">-</option>
                                                                                 <option value="meal_cost">Meal Cost</option>
@@ -310,7 +347,7 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Entertainment Fee Detail</label>
+                                                                            <label class="form-label">Entertainment Fee Detail</label>
                                                                             <textarea name="enter_fee_5" id="enter_fee_5" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="input-group">
@@ -365,11 +402,61 @@
             ca_e.style.display = "none";
         }
     }
-
+    function toggleOthers() {
+        // ca_type ca_nbt ca_e
+        var locationFilter = document.getElementById("locationFilter");
+        var others_location = document.getElementById("others_location");
+        
+        if (locationFilter.value === "Others") {
+            others_location.style.display = "block";
+        } else{
+            others_location.style.display = "none";
+            others_location.value = "";
+        }
+    }
+      
     function validateInput(input) {
         //input.value = input.value.replace(/[^0-9,]/g, '');
         input.value = input.value.replace(/[^0-9]/g, '');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        const totalDaysInput = document.getElementById('totaldays');
+        const perdiemInput = document.getElementById('perdiem');
+        const allowanceInput = document.getElementById('allowance');
+        const othersLocationInput = document.getElementById('others_location');
+
+        function calculateTotalDays() {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
+                const timeDiff = endDate - startDate;
+                const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                const totalDays = daysDiff > 0 ? daysDiff+1 : 0+1;
+                totalDaysInput.value = totalDays;
+
+                const perdiem = parseFloat(perdiemInput.value) || 0;
+                let allowance = totalDays * perdiem;
+
+                if (othersLocationInput.value.trim() !== '') {
+                    allowance *= 1; // allowance * 50%
+                }else{
+                    allowance *= 0.5;
+                }
+
+                allowanceInput.value = allowance;
+            } else {
+                totalDaysInput.value = 0;
+                allowanceInput.value = 0;
+            }
+        }
+
+        startDateInput.addEventListener('change', calculateTotalDays);
+        endDateInput.addEventListener('change', calculateTotalDays);
+        othersLocationInput.addEventListener('input', calculateTotalDays);
+    });
 </script>
 
 <script>
