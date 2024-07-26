@@ -95,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reimbursements', [ReimburseController::class, 'reimbursements'])->name('reimbursements');
     Route::get('/cashadvanced', [ReimburseController::class, 'cashadvanced'])->name('cashadvanced');
     Route::get('/cashadvanced/form', [ReimburseController::class, 'cashadvancedCreate'])->name('cashadvanced.form');
+    Route::post('/cashadvanced/submit', [ReimburseController::class, 'cashadvancedSubmit'])->name('cashadvanced.submit');
     
 
     // My Goals

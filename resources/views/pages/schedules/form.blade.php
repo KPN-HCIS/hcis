@@ -65,7 +65,7 @@
                                 <div class="col-md-10">
                                     <div class="mb-2">
                                         <label class="form-label" for="type">Bisnis Unit</label>
-                                        <select name="bisnis_unit[]" class="form-select bg-light select2" multiple>
+                                        <select name="bisnis_unit[]" class="form-select bg-light select2" multiple required>
                                             <option value="KPN Corporation">KPN Corporation</option>
                                             <option value="KPN Plantations">KPN Plantations</option>
                                             <option value="Downstream">Downstream</option>

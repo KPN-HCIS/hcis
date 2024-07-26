@@ -20,10 +20,12 @@ return new class extends Migration
             $table->string('unit', 100);
             $table->string('contribution_level_code', 100);
             $table->string('destination', 100);
+            $table->string('others_location', 255)->default('');
             $table->text('ca_needs')->nullable();
             $table->date('start_date');
             $table->date('end_date');
             $table->date('date_required');
+            $table->integer('total_days')->default(0);
             $table->json('detail_ca')->nullable();
             $table->integer('total_ca')->default(0);
             $table->integer('total_real')->default(0);
