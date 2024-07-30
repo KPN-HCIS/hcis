@@ -1,7 +1,7 @@
 @extends('layouts_.vertical', ['page_title' => 'Reimbursements'])
 
 @section('css')
-{{-- <style>
+    {{-- <style>
     .card {
         max-width: 170px; /* Sesuaikan dengan ukuran yang diinginkan */
         margin: 0 auto; /* Center the card horizontally */
@@ -41,21 +41,33 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-    
+
             <div class="col">
+                <a href="{{ route('medical') }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/medical.png" alt="logo">
+                            <h4 class="my-3">Medical</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div> <!-- end col-->
+
+           <div class="col">
+            <a href="{{ route('businessTrip') }}">
                 <div class="card">
                     <div class="card-body">
-                        <img src="/images/menu/medical.png" alt="logo">
-                        <h4 class="my-3">Medical</h4> 
+                        <img src="/images/menu/cashadv.png" alt="logo">
+                        <h4 class="my-3">Business Trip</h4>
                     </div> <!-- end card-body-->
                 </div> <!-- end card-->
-            </div> <!-- end col-->
-    
-            
+            </a>
+        </div> <!-- end col-->
+
+
         </div> <!-- end row -->
     </div>
 @endsection
 
 @push('scripts')
-
 @endpush

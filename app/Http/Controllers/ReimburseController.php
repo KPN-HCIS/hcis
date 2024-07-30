@@ -44,7 +44,7 @@ class ReimburseController extends Controller
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
-        
+
 
         return view('hcis.reimbursements.cashadv.formCashadv', [
             'link' => $link,
@@ -60,8 +60,8 @@ class ReimburseController extends Controller
     function cashadvancedSubmit(Request $req) {
         function getRomanMonth($month) {
             $romanMonths = [
-                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 
-                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X', 
+                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
+                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
                 11 => 'XI', 12 => 'XII'
             ];
             return $romanMonths[$month];
@@ -86,9 +86,9 @@ class ReimburseController extends Controller
         } else {
             $lastNumber = 0;
         }
-    
+
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        $newNoCa = "$newNumber/CA-ACC/$romanMonth/$currentYear";    
+        $newNoCa = "$newNumber/CA-ACC/$romanMonth/$currentYear";
 
         $model = new ca_transaction;
         $model->id = Str::uuid();
@@ -97,7 +97,7 @@ class ReimburseController extends Controller
         $model->no_sppd         = $req->bisnis_numb;
         $model->user_id         = $userId;
         $model->unit            = $req->unit;
-        $model->contribution_level_code   = $req->companyFilter;        
+        $model->contribution_level_code   = $req->companyFilter;
         $model->destination     = $req->locationFilter;
         $model->others_location = $req->others_location;
         $model->ca_needs        = $req->ca_needs;

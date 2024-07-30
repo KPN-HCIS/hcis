@@ -143,7 +143,7 @@
 @section('content')
     <div class="container">
         <!-- Kembali button -->
-        <a href="/dashboard" class="kembali-btn"><i class="bi bi-caret-left-fill"></i> Kembali</a>
+        <a href="/reimbursements" class="kembali-btn"><i class="bi bi-caret-left-fill"></i> Kembali</a>
         <a href="#" class="export"><i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel</a>
 
         <div class="form-container">

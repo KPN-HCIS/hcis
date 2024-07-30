@@ -13,6 +13,8 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\BusinessTripController;
+use App\Http\Controllers\BussinessTripController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportExcelController;
 use App\Http\Controllers\MedicalController;
@@ -142,7 +144,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/changes-company', [ReportController::class, 'changesCompany']);
 
     //Medical
-    Route::get('/medical', [MedicalController::class, 'medical']);
+    Route::get('/medical', [MedicalController::class, 'medical']) -> name('medical');
+
+    //Business Trip
+    Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip']) -> name('businessTrip');
 
     // Authentication
 
