@@ -54,35 +54,35 @@ Route::get('/test-email', function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
-                ->name('register');
+        ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
-                ->name('login');
+        ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-    ->name('password.reset');
+        ->name('password.reset');
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('password.store');
-                
+        ->name('password.store');
+
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-                    ->name('password.request');
-                    
+        ->name('password.request');
+
     Route::get('reset-password-email', [PasswordResetLinkController::class, 'selfResetView']);
-    
+
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-                    ->name('password.email');    
+        ->name('password.email');
 });
 
 
 Route::middleware('auth')->group(function () {
 
     Route::get('reset-self', [PasswordResetLinkController::class, 'selfReset'])
-                ->name('password.reset.self');
+        ->name('password.reset.self');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -96,7 +96,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/cashadvanced', [ReimburseController::class, 'cashadvanced'])->name('cashadvanced');
     Route::get('/cashadvanced/form', [ReimburseController::class, 'cashadvancedCreate'])->name('cashadvanced.form');
     Route::post('/cashadvanced/submit', [ReimburseController::class, 'cashadvancedSubmit'])->name('cashadvanced.submit');
-    
+    Route::get('/cashadvanced/edit/{id}', [ReimburseController::class, 'cashadvancedEdit'])->name('cashadvanced.edit');
+    Route::post('/cashadvanced/update/{id}', [ReimburseController::class, 'cashadvancedUpdate'])->name('cashadvanced.update');
+    Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
+
 
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');
@@ -116,7 +119,7 @@ Route::middleware('auth')->group(function () {
     // Route::post('/goals/update', [TeamGoalController::class, 'update'])->name('goals.update');
     Route::get('/get-tooltip-content', [TeamGoalController::class, 'getTooltipContent']);
     Route::get('/units-of-measurement', [TeamGoalController::class, 'unitOfMeasurement']);
-    
+
     // Approval
     Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
 
@@ -136,25 +139,25 @@ Route::middleware('auth')->group(function () {
     Route::post('/initiatedReport', [ExportExcelController::class, 'initiated'])->name('team-goals.initiated');
     // Route::get('/export/goals', [ReportController::class, 'exportGoal'])->name('export.goal');
     Route::post('/get-report-content', [ReportController::class, 'getReportContent'])->name('reports.content');
-    
+
     Route::get('/changes-group-company', [ReportController::class, 'changesGroupCompany']);
     Route::get('/changes-company', [ReportController::class, 'changesCompany']);
-    
+
     // Authentication
-    
+
     Route::get('verify-email', EmailVerificationPromptController::class)
-                ->name('verification.notice');
+        ->name('verification.notice');
 
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-                ->middleware(['signed', 'throttle:6,1'])
-                ->name('verification.verify');
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-                ->middleware('throttle:6,1')
-                ->name('verification.send');
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
-                ->name('password.confirm');
+        ->name('password.confirm');
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
@@ -167,7 +170,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/guides', [GuideController::class, 'index'])->name('guides');
     Route::post('/guides', [GuideController::class, 'store'])->name('upload.guide');
     Route::delete('/guides-delete/{id}', [GuideController::class, 'destroy'])->name('delete.guide');
-    
+
     // ============================ Administrator ===================================
 
     Route::middleware(['permission:viewschedule'])->group(function () {
@@ -179,7 +182,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/schedule', [ScheduleController::class, 'update'])->name('update-schedule');
         Route::delete('/schedule/{id}', [ScheduleController::class, 'softDelete'])->name('soft-delete-schedule');
     });
-    
+
     Route::middleware(['permission:viewlayer'])->group(function () {
         // layer
         Route::get('/layer', [LayerController::class, 'layer'])->name('layer');
@@ -187,7 +190,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/import-layer', [LayerController::class, 'importLayer'])->name('import-layer');
         Route::post('/history-show', [LayerController::class, 'show'])->name('history-show');
     });
-    
+
     Route::middleware(['permission:viewrole'])->group(function () {
         // Roles
         Route::get('/roles', [RoleController::class, 'index'])->name('roles');
@@ -201,7 +204,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/roles/get-permission', [RoleController::class, 'getPermission'])->name('getPermission');
         Route::post('/admin/assign-user', [RoleController::class, 'assignUser'])->name('assign.user');
     });
-    
+
     Route::middleware(['permission:viewonbehalf'])->group(function () {
         // Approval-Admin
         Route::post('/admin/approval/goal', [AdminOnBehalfController::class, 'store'])->name('admin.approval.goal');
@@ -213,9 +216,9 @@ Route::middleware('auth')->group(function () {
         // Sendback
         Route::post('/admin/sendback/goal', [AdminSendbackController::class, 'store'])->name('admin.sendback.goal');
     });
-    
+
     Route::middleware(['permission:viewreport'])->group(function () {
-        
+
         Route::get('/reports-admin', [AdminReportController::class, 'index'])->name('admin.reports');
         Route::get('/admin/get-report-content/{reportType}', [AdminReportController::class, 'getReportContent']);
         Route::post('/admin/get-report-content', [AdminReportController::class, 'getReportContent']);
@@ -232,4 +235,4 @@ Route::fallback(function () {
     return view('errors.404');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

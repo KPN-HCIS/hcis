@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-md-auto">
               <div class="mb-3">
@@ -61,8 +61,32 @@
                               </tr>
                           </thead>
                           <tbody>
-
-                            
+                            @foreach($transactions as $transaction)
+                            <tr>
+                                  <td>{{ $loop->index + 1 }}</td>
+                                  <td>{{ $transaction->type_ca }}</td>
+                                  <td>{{ $transaction->no_ca }}</td>
+                                  <td>{{ $transaction->employee->fullname }}</td>
+                                  <td>{{ $transaction->unit }}</td>
+                                  <td>{{ $transaction->start_date }}</td>
+                                  <td>{{ $transaction->end_date }}</td>
+                                  <td>{{ $transaction->total_ca }}</td>
+                                  <td>{{ $transaction->total_real }}</td>
+                                  <td>{{ $transaction->total_cost }}</td>
+                                  <td class="text-center">
+                                    @if($transaction->created_by == $userId)
+                                        <a href="{{ route('cashadvanced.edit', $transaction->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                        <form action="{{ route('cashadvanced.delete', $transaction->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button onclick="return confirm('Apakah ingin Menghapu?')" class="btn btn-sm rounded-pill btn-danger" title="Delete">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </form>
+                                        {{-- <a class="btn btn-sm rounded-pill btn-danger" title="Delete" onclick="handleDelete(this)" data-id="{{ $transaction->id }}"></a> --}}
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
                           </tbody>
                       </table>
                   </div>
