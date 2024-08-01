@@ -7,9 +7,6 @@ use Illuminate\Http\Request;
 
 class MedicalController extends Controller
 {
-    // function medical() {
-    //     return view('pages.medical.medical');
-    // }
     public function medical()
     {
         $keluarga = DataKeluarga::orderBy('umur', 'desc')->paginate(5);

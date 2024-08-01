@@ -53,16 +53,16 @@
                 </a>
             </div> <!-- end col-->
 
-           <div class="col">
-            <a href="{{ route('businessTrip') }}">
-                <div class="card">
-                    <div class="card-body">
-                        <img src="/images/menu/cashadv.png" alt="logo">
-                        <h4 class="my-3">Business Trip</h4>
-                    </div> <!-- end card-body-->
-                </div> <!-- end card-->
-            </a>
-        </div> <!-- end col-->
+            <div class="col">
+                <a href="{{ route('businessTrip') }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/business-trip.png" alt="logo">
+                            <h4 class="my-3">Business Trip</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div> <!-- end col-->
 
 
         </div> <!-- end row -->

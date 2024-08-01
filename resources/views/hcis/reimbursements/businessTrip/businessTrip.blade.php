@@ -44,31 +44,108 @@
             border-bottom: 2px solid #000;
         }
 
-        .table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+        /*
+                                                .table tr:nth-child(even) {
+                                                    background-color: #f9f9f9;
+                                                }
 
-        .table tr:hover {
-            background-color: #ddd;
-        }
+                                                .table tr:hover {
+                                                    background-color: #ddd;
+                                                } */
 
         .text-center {
             text-align: center;
+        }
+
+        .badge-med {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 10px;
+            display: inline-block;
+            width: 64px;
+            text-align: center;
+        }
+
+        .badge-success {
+            background-color: green;
+            color: white;
+            font-weight: bold;
+        }
+
+        .badge-danger {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+
+        .badge-pending {
+            background-color: orange;
+            color: black;
+            font-weight: bold;
+        }
+
+        .pagination {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-item {
+            width: 100px;
+            text-align: center;
+        }
+
+        .page-item {
+            width: 100px;
+            text-align: center;
+        }
+
+        .page-link {
+            display: block;
+            padding: 8px 20px;
+            border: 0px;
+
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .page-item.disabled .page-link {
+            background-color: #CCCCCC !important;
+            /* Light grey background for disabled state */
+            color: #888888 !important;
+            /* Darker grey text color for disabled state */
+            cursor: not-allowed;
+            /* Change cursor to indicate disabled */
+            border: 1px solid #CCCCCC !important;
+            /* Match border with background color */
         }
     </style>
 @endsection
 
 @section('content')
     <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item">{{ $parentLink }}</li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
+        </div>
         <div class="row mb-3">
-            <div class="col mt-3">
-                <a href="/reimbursements" class="btn btn-warning btn-action" style="background: #AB2F2B !important; border: 0px;">
+            <div class="col">
+                <a href="/reimbursements" class="btn btn-primary btn-action">
                     <i class="bi bi-caret-left-fill"></i> Kembali
                 </a>
-                <a href="<?php $_SERVER['PHP_SELF']; ?>" class="btn btn-info btn-action">
+                {{-- <a href="/businessTrip" class="btn btn-info btn-action">
                     <i class="bi bi-arrow-clockwise"></i> Refresh
-                </a>
-                <a href="#" class="btn btn-success btn-action">
+                </a> --}}
+                <a href="/businessTrip/form/add" class="btn btn-outline-primary btn-action">
                     <i class="bi bi-plus-circle"></i> Add Data
                 </a>
             </div>
@@ -76,18 +153,29 @@
 
         <div class="card">
             <div class="card-body">
-                <form class="date-range">
+                <form class="date-range mb-3" method="GET" action="{{ route('businessTrip-filterDate') }}">
                     <label for="start-date">Departure Date:</label>
-                    <input type="date" id="start-date" name="start-date" class="form-control" value="2024-07-02">
-                    <label for="end-date">to</label>
-                    <input type="date" id="end-date" name="end-date" class="form-control" value="2024-07-01">
-                    <button type="submit" class="btn btn-primary"
-                        style="background-color: #AB2F2B !important; border:0px;">Generate</button>
+                    <input type="date" id="start-date" name="start-date" class="form-control"
+                        value="{{ request()->query('start-date') }}">
+                    <label for="end-date">To:</label>
+                    <input type="date" id="end-date" name="end-date" class="form-control"
+                        value="{{ request()->query('end-date') }}">
+                    <button type="submit" class="btn btn-primary">Generate</button>
+                    {{-- <a href="{{ route('filterDate') }}" class="btn btn-secondary" style="background-color: #e0e0e0; border:0px;">Reset Filter</a> --}}
                 </form>
-
                 <div class="card mt-4">
                     <div class="card-body">
-                        <h3 class="card-title">Data SPPD</h3>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="card-title">Data SPPD</h3>
+                            <form class="input-group" method="GET" id="searchForm" action="/businessTrip/search"
+                                style="width: 300px;">
+                                <input name="q" type="text" class="form-control" placeholder="Search...">
+                                <button class="btn btn-outline-secondary" style="outline-color: #AB2F2B;"
+                                    type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </form>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead>
@@ -112,40 +200,162 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td colspan="15" class="text-center">No data available in table</td>
-                                    </tr>
+                                    @forelse ($sppd as $idx => $n)
+                                        <tr>
+                                            <th scope="row">{{ $sppd->firstItem() + $idx }}
+                                            </th>
+                                            <td>{{ $n->nama }}</td>
+                                            <td>{{ $n->divisi }}</td>
+                                            <td>{{ $n->no_sppd }}</td>
+                                            <td>{{ $n->mulai }}</td>
+                                            <td>{{ $n->kembali }}</td>
+                                            <td>{{ $n->ca }}</td>
+                                            <td>{{ $n->tiket }}</td>
+                                            <td>{{ $n->hotel }}</td>
+                                            <td>{{ $n->taksi }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge-med
+                                                    @if ($n->status === 'Diterima') badge-success
+                                                    @elseif($n->status === 'Ditolak') badge-danger
+                                                    @elseif($n->status === 'Pending') badge-pending @endif">
+                                                    {{ $n->status }}
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                    <form action="{{ route('export', ['id' => $n->id]) }}"
+                                                        method="GET">
+                                                        <button class="btn btn-outline-primary" type="submit">
+                                                            <i class="bi bi-file-earmark-arrow-down-fill"></i>
+                                                        </button>
+                                                    </form>
+                                            </td>
+                                            <td>
+                                                <form method="POST"
+                                                    action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="status" value="Diterima">
+                                                    <button type="submit" class="btn btn-primary mb-2"
+                                                        onclick="return confirm('Are you sure you want to accept this?')">
+                                                        <i class="bi bi-check-circle-fill"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST"
+                                                    action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="status" value="Ditolak">
+                                                    <button type="submit" class="btn btn-outline-danger mb-2"
+                                                        onclick="return confirm('Are you sure you want to reject this?')">
+                                                        <i class="bi bi-x-circle-fill"></i>
+                                                    </button>
+                                                </form>
+
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="13" class="text-center">No data available in table</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
-
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <select class="form-select" style="width: auto;">
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
+                            <div class="records-per-page">
+                                <select class="form-select" id="recordsPerPage">
+                                    <option value="10" {{ request()->query('per_page') == 10 ? 'selected' : '' }}>10
+                                    </option>
+                                    <option value="25" {{ request()->query('per_page') == 25 ? 'selected' : '' }}>25
+                                    </option>
+                                    <option value="35" {{ request()->query('per_page') == 35 ? 'selected' : '' }}>35
+                                    </option>
+                                    <option value="50" {{ request()->query('per_page') == 50 ? 'selected' : '' }}>50
+                                    </option>
                                 </select>
                                 <span>records per page</span>
                             </div>
-                            <div class="input-group" style="width: 300px;">
-                                <input type="text" class="form-control" placeholder="Search...">
-                                <button class="btn btn-outline-secondary" type="button">
-                                    <i class="bi bi-search"></i>
-                                </button>
+                            <div>
+                                <span>{{ $sppd->count() }} of {{ $sppd->total() }} records</span>
                             </div>
+
+                            <nav aria-label="Page navigation" class="mt-3">
+                                <ul class="pagination justify-content-end">
+                                    @if ($sppd->onFirstPage())
+                                        <li class="page-item disabled">
+                                            <a class="page-link text-primary" href="#" tabindex="-1"><i
+                                                    class="bi bi-caret-left-fill"></i> Previous</a>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link text-primary"
+                                                href="{{ $sppd->appends(['per_page' => request()->query('per_page')])->previousPageUrl() }}"
+                                                tabindex="-1"><i class="bi bi-caret-left-fill"></i> Previous</a>
+                                        </li>
+                                    @endif
+
+                                    @if ($sppd->hasMorePages())
+                                        <li class="page-item">
+                                            <a class="page-link text-primary"
+                                                href="{{ $sppd->appends(['per_page' => request()->query('per_page')])->nextPageUrl() }}">Next
+                                                <i class="bi bi-caret-right-fill"></i></a>
+                                        </li>
+                                    @else
+                                        <li class="page-item disabled">
+                                            <a class="page-link text-primary" href="#" tabindex="-1">Next <i
+                                                    class="bi bi-caret-right-fill"></i> </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </nav>
                         </div>
-                        <nav aria-label="Page navigation" class="mt-3">
-                            <ul class="pagination justify-content-end">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                </li>
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
                     </div>
                 </div>
-            @endsection
+            </div>
+        </div>
+        <script>
+            function getDate() {
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1; // January is 0!
+                var yyyy = today.getFullYear();
+
+                if (dd < 10) {
+                    dd = '0' + dd;
+                }
+
+                if (mm < 10) {
+                    mm = '0' + mm;
+                }
+
+                // Correct date format for input fields
+                var formattedToday = yyyy + '-' + mm + '-' + dd;
+                console.log(formattedToday);
+
+                var startDateElement = document.getElementById("start-date");
+                var endDateElement = document.getElementById("end-date");
+
+                // Only set the value if it's not already set
+                if (!startDateElement.value) {
+                    startDateElement.value = formattedToday;
+                }
+                if (!endDateElement.value) {
+                    endDateElement.value = formattedToday;
+                }
+            }
+
+            // Ensure the DOM is fully loaded before manipulating it
+            document.addEventListener('DOMContentLoaded', function() {
+                getDate();
+            });
+
+
+            document.getElementById('recordsPerPage').addEventListener('change', function() {
+                const perPage = this.value;
+                const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+                window.location.search = `?per_page=${perPage}&page=${currentPage}`;
+            });
+        </script>
+    @endsection

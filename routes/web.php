@@ -148,6 +148,15 @@ Route::middleware('auth')->group(function () {
 
     //Business Trip
     Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip']) -> name('businessTrip');
+    Route::get('/businessTrip/form/add', [BusinessTripController::class, 'businessTripformAdd']) -> name('businessTrip.add');
+    Route::post('/businessTrip/form/post', [BusinessTripController::class, 'businessTripCreate']) -> name('businessTrip.post');
+    Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
+    Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
+    Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
+    Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
+
+    //Export Business Trip excel
+    Route::get('businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
 
     // Authentication
 
