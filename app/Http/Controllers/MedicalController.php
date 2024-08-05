@@ -10,7 +10,11 @@ class MedicalController extends Controller
     public function medical()
     {
         $keluarga = DataKeluarga::orderBy('umur', 'desc')->paginate(5);
-        return view('hcis.reimbursements.medical.medical', ['keluarga' => $keluarga]);
+
+        $parentLink = 'Reimbursement';
+        $link = 'Business Trip';
+
+        return view('hcis.reimbursements.medical.medical', compact('keluarga', 'parentLink', 'link'));
     }
 
 }

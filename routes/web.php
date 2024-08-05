@@ -25,6 +25,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SendbackController;
 use App\Http\Controllers\SsoController;
+use App\Http\Controllers\TaksiController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GuideController;
@@ -145,11 +146,24 @@ Route::middleware('auth')->group(function () {
 
     //Medical
     Route::get('/medical', [MedicalController::class, 'medical']) -> name('medical');
+    //Taksi Form
+    Route::get('/taksi', [TaksiController::class, 'taksi']) -> name('taksi');
+    Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd']) -> name('medical.form.add');
+    Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate']) -> name('medical.form.post');
 
     //Business Trip
     Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip']) -> name('businessTrip');
     Route::get('/businessTrip/form/add', [BusinessTripController::class, 'businessTripformAdd']) -> name('businessTrip.add');
     Route::post('/businessTrip/form/post', [BusinessTripController::class, 'businessTripCreate']) -> name('businessTrip.post');
+    Route::get('/businessTrip/form/update/{id}', [BusinessTripController::class, 'formUpdate']) -> name('businessTrip.update');
+    Route::put('/businessTrip/update/{id}', [BusinessTripController::class, 'update'])->name('update.bt');
+
+    Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
+
+    //pdf bt
+    Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload']) -> name('pdf');
+    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export']) -> name('export');
+
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
@@ -158,8 +172,10 @@ Route::middleware('auth')->group(function () {
     //Export Business Trip excel
     Route::get('businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
 
-    // Authentication
+    //Export Business Trip .pdf
+    Route::get('businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
 
+    // Authentication
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');
 

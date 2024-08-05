@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class BusinessTripController extends Controller
 {
@@ -20,13 +21,61 @@ class BusinessTripController extends Controller
     {
         $perPage = request()->query('per_page', 10);
         $sppd = BusinessTrip::orderBy('mulai', 'asc')->paginate($perPage);
+        $ca = ca_transaction::orderBy('id', 'asc')->first();
 
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'ca'));
     }
 
+    public function delete($id)
+    {
+        $n = BusinessTrip::find($id);
+        if ($n) {
+            $n->delete();
+        }
+        return redirect('businessTrip');
+    }
+    public function formUpdate($id)
+    {
+        $companies = Company::orderBy('contribution_level')->get();
+
+        $n = BusinessTrip::find($id);
+        return view('hcis.reimbursements.businessTrip.editFormBt', ['n' => $n, 'companies' => $companies]);
+    }
+
+    public function update($id, Request $request)
+    {
+        $n = BusinessTrip::find($id);
+        if ($n) {
+            $oldNoSppd = $n->no_sppd;
+            // $n->no_sppd = $oldNoSppd;
+            $n->nama = $request->nama;
+            $n->divisi = $request->divisi;
+            $n->unit_1 = $request->unit_1;
+            $n->atasan_1 = $request->atasan_1;
+            $n->email_1 = $request->email_1;
+            $n->unit_2 = $request->unit_2;
+            $n->email_2 = $request->email_2;
+            $n->no_sppd = $request->no_sppd;
+            $n->mulai = $request->mulai;
+            $n->kembali = $request->kembali;
+            $n->tujuan = $request->tujuan;
+            $n->keperluan = $request->keperluan;
+            $n->bb_perusahaan = $request->bb_perusahaan;
+            $n->norek_krywn = $request->norek_krywn;
+            $n->nama_pemilik_rek = $request->nama_pemilik_rek;
+            $n->nama_bank = $request->nama_bank;
+            $n->ca = $request->ca;
+            $n->tiket = $request->tiket;
+            $n->hotel = $request->hotel;
+            $n->taksi = $request->taksi;
+            $n->no_sppd = $oldNoSppd;
+            $n->save();
+        }
+        return redirect("/businessTrip");
+    }
     public function search(Request $request)
     {
         //search where
@@ -77,20 +126,55 @@ class BusinessTripController extends Controller
         return redirect('/businessTrip');
     }
 
+    // public function export($id)
+    // {
+    //     return Excel::download(new BusinessTripExport($id), 'Business-Trip-' . $id . '.xlsx');
+    // }
+    public function pdfDownload($id)
+    {
+        $data = BusinessTrip::find($id);
+        return view('hcis.reimbursements.businessTrip.export', ['data' => $data]);
+    }
     public function export($id)
     {
-        return Excel::download(new BusinessTripExport($id), 'Business-Trip-' . $id . '.xlsx');
+        $data = BusinessTrip::find($id);
+
+        // Check if data exists
+        if (!$data) {
+            return abort(404, 'Data not found');
+        }
+
+        // Generate the PDF
+        $pdf = PDF::loadView('hcis.reimbursements.businessTrip.bt_pdf', ['data' => $data]);
+
+        // Return the PDF as a stream so it opens in the browser
+        return $pdf->download('Business Trip' . $id . '.pdf');
     }
     public function businessTripformAdd()
     {
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
-        return view('hcis.reimbursements.businessTrip.formBusinessTrip',
-        [
-        'employee_data' => $employee_data,
-        'companies' => $companies,
-    ]);
+        return view(
+            'hcis.reimbursements.businessTrip.formBusinessTrip',
+            [
+                'employee_data' => $employee_data,
+                'companies' => $companies,
+            ]
+        );
+    }
+    public function businessTripformAddUser()
+    {
+        $userId = Auth::id();
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        return view(
+            'hcis.reimbursements.businessTrip.formBusinessTrip',
+            [
+                'employee_data' => $employee_data,
+                'companies' => $companies,
+            ]
+        );
     }
 
     public function businessTripCreate(Request $request)

@@ -110,12 +110,6 @@
             border: 1px solid #CCCCCC !important;
             /* Match border with background color */
         }
-
-        .btn-detail {
-            font-size: 12px !important;
-            padding: 3px 6px !important;
-            border-radius: 3px !important;
-        }
     </style>
 @endsection
 
@@ -184,7 +178,7 @@
                                         <th colspan="4" class="text-center">SPPD</th>
                                         <th rowspan="3">Status</th>
                                         <th rowspan="3">Export</th>
-                                        {{-- <th rowspan="3">Confirm</th> --}}
+                                        <th rowspan="3">Confirm</th>
                                         <th rowspan="3">Action</th>
                                     </tr>
                                     <tr>
@@ -206,63 +200,10 @@
                                             <td>{{ $n->no_sppd }}</td>
                                             <td>{{ $n->mulai }}</td>
                                             <td>{{ $n->kembali }}</td>
-                                            <td>
-                                                @if ($n->ca == 'Ya')
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal"
-                                                        data-ca="{{ json_encode([
-                                                            'no_ca' => $ca->no_ca,
-                                                            'no_sppd' => $ca->no_sppd,
-                                                            'unit' => $n->unit,
-                                                            'destination' => $n->destination,
-                                                            'start_date' => $n->start_date,
-                                                            'end_date' => $n->end_date,
-                                                        ]) }}"
-                                                        data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
-                                                        data-taksi="{{ $n->taksi }}">Detail</button>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($n->tiket == 'Ya')
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
-                                                        data-tiket="{{ json_encode([
-                                                            'no_ca' => $ca->no_ca,
-                                                            'no_sppd' => $ca->no_sppd,
-                                                            'unit' => $n->unit,
-                                                            'destination' => $n->destination,
-                                                            'start_date' => $n->start_date,
-                                                            'end_date' => $n->end_date,
-                                                        ]) }}"
-                                                        data-hotel="{{ $n->hotel }}"
-                                                        data-taksi="{{ $n->taksi }}">Detail</button>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($n->hotel == 'Ya')
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
-                                                        data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
-                                                        data-taksi="{{ $n->taksi }}">Detail</button>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($n->taksi == 'Ya')
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
-                                                        data-tiket="{{ $n->tiket }}"
-                                                        data-hotel="{{ $n->hotel }}"
-                                                        data-taksi="{{ $n->taksi }}">Detail</button>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
+                                            <td>{{ $n->ca }}</td>
+                                            <td>{{ $n->tiket }}</td>
+                                            <td>{{ $n->hotel }}</td>
+                                            <td>{{ $n->taksi }}</td>
                                             <td>
                                                 <span
                                                     class="badge-med
@@ -280,38 +221,49 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                @if ($n->kembali >= getDate())
-                                                    <form method="GET"
-                                                        action="/businessTrip/form/update/{{ $n->id }}"
-                                                        style="display: inline-block;">
-                                                        <button type="submit" class="btn btn-primary"
-                                                            data-toggle="tooltip" title="Edit">
-                                                            <i class="bi bi-card-checklist"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <form method="GET"
-                                                        action="/businessTrip/form/update/{{ $n->id }}"
-                                                        style="display: inline-block;">
-                                                        <button type="submit" class="btn btn-success mb-2"
-                                                            {{ $n->status === 'Diterima' ? 'disabled' : '' }}
-                                                            data-toggle="tooltip" title="Edit">
-                                                            <i class="bi bi-pencil-square"></i>
-                                                        </button>
-                                                    </form>
-                                                    <form id="deleteForm_{{ $n->id }}" method="POST"
-                                                        action="/businessTrip/delete/{{ $n->id }}"
-                                                        style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
+                                                <form method="POST"
+                                                    action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="status" value="Diterima">
+                                                    <button type="submit" class="btn btn-primary mb-2"
+                                                        onclick="return confirm('Are you sure you want to accept this?')">
+                                                        <i class="bi bi-check-circle-fill"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST"
+                                                    action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="status" value="Ditolak">
+                                                    <button type="submit" class="btn btn-outline-danger mb-2"
+                                                        onclick="return confirm('Are you sure you want to reject this?')">
+                                                        <i class="bi bi-x-circle-fill"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form method="GET"
+                                                action="/businessTrip/form/update/{{ $n->id }}"
+                                                style="display: inline-block;">
+                                                <button type="submit" class="btn btn-success mb-2"
+                                                    {{ $n->status === 'Diterima' ? 'disabled' : '' }}
+                                                    data-toggle="tooltip" title="Edit">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </form>
+                                                <form id="deleteForm_{{ $n->id }}" method="POST"
+                                                    action="/businessTrip/delete/{{ $n->id }}"
+                                                    style="display: inline-block;">
+                                                    @csrf
+                                                    @method('DELETE')
 
-                                                        <button type="button" class="btn btn-outline-danger mb-2"
-                                                            onclick="confirmDelete('{{ $n->id }}')"
-                                                            {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
-                                                            <i class="bi bi-trash-fill"></i>
-                                                        </button>
-                                                    </form>
-                                                @endif
+                                                    <button type="button" class="btn btn-outline-danger mb-2"
+                                                        onclick="confirmDelete('{{ $n->id }}')"
+                                                        {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
+                                                        <i class="bi bi-trash-fill"></i>
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @empty
@@ -374,32 +326,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Detail Modal -->
-        <!-- Detail Modal -->
-        <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <h6 id="detailTypeHeader" class="mb-3"></h6>
-                        <div id="detailContent"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script>
             function getDate() {
                 var today = new Date();
@@ -410,6 +336,7 @@
                 if (dd < 10) {
                     dd = '0' + dd;
                 }
+
                 if (mm < 10) {
                     mm = '0' + mm;
                 }
@@ -435,6 +362,7 @@
                 getDate();
             });
 
+
             document.getElementById('recordsPerPage').addEventListener('change', function() {
                 const perPage = this.value;
                 const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
@@ -446,103 +374,5 @@
                     document.getElementById('deleteForm_' + id).submit();
                 }
             }
-
-            $(document).ready(function() {
-                $('.btn-detail').click(function() {
-                    // Get all data
-                    var ca = $(this).data('ca');
-                    var tiket = $(this).data('tiket');
-                    var hotel = $(this).data('hotel');
-                    var taksi = $(this).data('taksi');
-
-                    console.log('Button clicked');
-
-                    // Function to create table HTML
-                    function createTableHtml(data) {
-                        var tableHtml = '<table class="table"><thead><tr>';
-                        // Create table headers
-                        for (var key in data) {
-                            if (data.hasOwnProperty(key)) {
-                                tableHtml += '<th>' + key + '</th>';
-                            }
-                        }
-                        tableHtml += '</tr></thead><tbody>';
-                        // Create table rows
-                        var row = '<tr>';
-                        for (var key in data) {
-                            if (data.hasOwnProperty(key)) {
-                                row += '<td>' + data[key] + '</td>';
-                            }
-                        }
-                        row += '</tr>';
-                        tableHtml += row;
-                        tableHtml += '</tbody></table>';
-                        return tableHtml;
-                    }
-
-
-                    // Clear previous content
-                    $('#detailTypeHeader').text('');
-                    $('#detailContent').empty();
-
-                    // Check and display data based on which button was clicked
-                    if (ca && ca !== 'undefined') {
-                        try {
-                            var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
-                            console.log('CA data:', caData);
-                            $('#detailTypeHeader').text('CA Detail');
-                            $('#detailContent').html(createTableHtml(caData));
-                        } catch (e) {
-                            console.error('Error parsing CA data:', e);
-                            $('#detailContent').html('<p>Error loading CA data</p>');
-                        }
-                    } else if (tiket && tiket !== 'undefined') {
-                        try {
-                            var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
-                            console.log('Ticket data:', tiketData);
-                            $('#detailTypeHeader').text('Ticket Detail');
-                            $('#detailContent').html(createTableHtml(tiketData));
-                        } catch (e) {
-                            console.error('Error parsing Ticket data:', e);
-                            $('#detailContent').html('<p>Error loading Ticket data</p>');
-                        }
-                    } else if (hotel && hotel !== 'undefined') {
-                        try {
-                            var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                            console.log('Hotel data:', hotelData);
-                            $('#detailTypeHeader').text('Hotel Detail');
-                            $('#detailContent').html(createTableHtml(hotelData));
-                        } catch (e) {
-                            console.error('Error parsing Hotel data:', e);
-                            $('#detailContent').html('<p>Error loading Hotel data</p>');
-                        }
-                    } else if (taksi && taksi !== 'undefined') {
-                        try {
-                            var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
-                            console.log('Taxi data:', taksiData);
-                            $('#detailTypeHeader').text('Taxi Detail');
-                            $('#detailContent').html(createTableHtml(taksiData));
-                        } catch (e) {
-                            console.error('Error parsing Taxi data:', e);
-                            $('#detailContent').html('<p>Error loading Taxi data</p>');
-                        }
-                    } else {
-                        $('#detailTypeHeader').text('No Data Available');
-                        $('#detailContent').html('<p>No detail information available.</p>');
-                    }
-
-                    // Ensure the modal is shown
-                    $('#detailModal').modal('show');
-                });
-
-                // Ensure backdrop is removed when modal is hidden
-                $('#detailModal').on('hidden.bs.modal', function() {
-                    $('body').removeClass('modal-open').css({
-                        overflow: '',
-                        padding: ''
-                    });
-                    $('.modal-backdrop').remove();
-                });
-            });
         </script>
     @endsection

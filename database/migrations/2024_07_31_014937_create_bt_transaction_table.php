@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('bt_transaction', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('id_employee');
             $table->string('nama');
             $table->string('no_sppd');
             $table->string('unit_1');
@@ -34,6 +35,10 @@ return new class extends Migration
             $table->string('tiket');
             $table->string('hotel');
             $table->string('taksi');
+            $table->integer('id_ca');
+            $table->integer('id_tiket');
+            $table->integer('id_hotel');
+            $table->integer('id_taksi');
             $table->string('status');
             $table->timestamps();
         });
