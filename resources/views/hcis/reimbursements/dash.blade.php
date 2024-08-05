@@ -30,8 +30,8 @@
     {{-- {{ "Hallo ".$userId." berasal dari system ".session('system') }} --}}
     <br>
     <div class="container-fluid">
-        <div class="row row-cols-1 row-cols-xxl-5 row-cols-lg-3 row-cols-md-2">
-            <div class="col">
+        <div class="row row-cols-1 row-cols-xxl-5 row-cols-lg-3 row-cols-md-2 text-center">
+            <div class="col ">
                 <a href="{{ route('cashadvanced') }}">
                     <div class="card">
                         <div class="card-body">
@@ -41,17 +41,39 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-    
+
             <div class="col">
                 <div class="card">
                     <div class="card-body">
                         <img src="/images/menu/medical.png" alt="logo">
-                        <h4 class="my-3">Medical</h4> 
+                        <h4 class="my-3">Medical</h4>
                     </div> <!-- end card-body-->
                 </div> <!-- end card-->
             </div> <!-- end col-->
-    
-            
+
+            <div class="col">
+                <a href="{{ route('hotel') }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/hotel.png" style="height: 100px" alt="logo">
+                            <h4 class="my-3">Hotel</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div> <!-- end col-->
+
+            <div class="col">
+                <a href="{{ route('ticket') }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/ticket.png" style="height: 100px" alt="logo">
+                            <h4 class="my-3">Ticket</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div>
+
+
         </div> <!-- end row -->
     </div>
 @endsection

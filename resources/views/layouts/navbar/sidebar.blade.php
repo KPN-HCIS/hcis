@@ -46,7 +46,6 @@
             </div>
         </div>
     </li>
-    
     {{-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -65,7 +64,7 @@
             </a>
         @endif
     </li>
-    
+
 
     <!-- Divider -->
     <hr class="sidebar-divider">
@@ -73,7 +72,7 @@
     <!-- Heading -->
     @if(auth()->check())
     @can('adminmenu')
-        
+
     <div class="sidebar-heading">
         Admin
     </div>
@@ -117,8 +116,8 @@
         </a>
     </li>
     @endcan
-    
-    
+
+
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
     @endcan

@@ -33,7 +33,7 @@ use App\Http\Controllers\ReimburseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('goals');
+    return redirect('reimbursements');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:superadmin'])->name('dashboard');
@@ -93,6 +93,9 @@ Route::middleware('auth')->group(function () {
 
     // My Reimbursement
     Route::get('/reimbursements', [ReimburseController::class, 'reimbursements'])->name('reimbursements');
+
+
+    // My Cash Advanced
     Route::get('/cashadvanced', [ReimburseController::class, 'cashadvanced'])->name('cashadvanced');
     Route::get('/cashadvanced/form', [ReimburseController::class, 'cashadvancedCreate'])->name('cashadvanced.form');
     Route::post('/cashadvanced/submit', [ReimburseController::class, 'cashadvancedSubmit'])->name('cashadvanced.submit');
@@ -100,6 +103,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/update/{id}', [ReimburseController::class, 'cashadvancedUpdate'])->name('cashadvanced.update');
     Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
 
+    // My Hotel
+    Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');
+    Route::get('/hotel/form', [ReimburseController::class, 'hotelCreate'])->name('hotel.form');
+    Route::post('/hotel/submit', [ReimburseController::class, 'hotelSubmit'])->name('hotel.submit');
+    Route::get('/hotel/edit/{id}', [ReimburseController::class, 'hotelEdit'])->name('hotel.edit');
+    Route::post('/hotel/update/{id}', [ReimburseController::class, 'hotelUpdate'])->name('hotel.update');
+    Route::post('/hotel/delete/{id}', [ReimburseController::class, 'hotelDelete'])->name('hotel.delete');
+
+    // My Ticket
+    Route::get('/ticket', [ReimburseController::class, 'ticket'])->name('ticket');
+    Route::get('/ticket/form', [ReimburseController::class, 'ticketCreate'])->name('ticket.form');
+    Route::post('/ticket/submit', [ReimburseController::class, 'ticketSubmit'])->name('ticket.submit');
+    Route::get('/ticket/edit/{id}', [ReimburseController::class, 'ticketEdit'])->name('ticket.edit');
+    Route::post('/ticket/update/{id}', [ReimburseController::class, 'ticketUpdate'])->name('ticket.update');
+    Route::post('/ticket/delete/{id}', [ReimburseController::class, 'ticketDelete'])->name('ticket.delete');
 
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');

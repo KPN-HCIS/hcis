@@ -13,6 +13,8 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
 use App\Models\CATransaction;
 use App\Http\Controllers\Log;
+use App\Models\htl_transaction;
+use App\Models\tkt_transaction;
 
 class ReimburseController extends Controller
 {
@@ -281,5 +283,297 @@ class ReimburseController extends Controller
         $model = ca_transaction::find($id);
         $model->delete();
         return redirect()->intended(route('cashadvanced', absolute: false));
+    }
+    public function hotel()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Hotel';
+        $transactions = tkt_transaction::with('employee')->get();
+
+        return view('hcis.reimbursements.hotel.hotel', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'transactions' => $transactions,
+        ]);
+    }
+    function hotelCreate()
+    {
+
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Hotel';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+
+
+        return view('hcis.reimbursements.hotel.formHotel', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+        ]);
+    }
+    public function hotelSubmit(Request $req)
+    {
+        function getRomanMonth_htl($month)
+        {
+            $romanMonths = [
+                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
+                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
+                11 => 'XI', 12 => 'XII'
+            ];
+            return $romanMonths[$month];
+        }
+        $userId = Auth::id();
+        $currentYear = date('Y');
+        $currentMonth = date('n');
+        $romanMonth = getRomanMonth_htl($currentMonth);
+
+        // Ambil nomor urut terakhir dari tahun berjalan menggunakan Eloquent
+        $lastTransaction = htl_transaction::whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->orderBy('no_htl', 'desc')
+            ->first();
+
+        if ($lastTransaction && preg_match('/(\d{3})\/HTL-ACC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_htl, $matches)) {
+            $lastNumber = intval($matches[1]);
+        } else {
+            $lastNumber = 0;
+        }
+
+        $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        $newNoHtl = "$newNumber/HTL-ACC/$romanMonth/$currentYear";
+
+        $model = new htl_transaction;
+        $model->id = Str::uuid();
+        $model->no_htl          = $newNoHtl;
+        $model->no_sppd         = $req->bisnis_numb;
+        $model->user_id         = $userId;
+        $model->unit            = $req->unit;
+        $model->nama_htl        = $req->nama_htl;
+        $model->lokasi_htl      = $req->lokasi_htl;
+        $model->jmlkmr_htl      = $req->jmlkmr_htl;
+        $model->bed_htl         = $req->bed_htl;
+        $model->tgl_masuk_htl   = $req->tgl_masuk_htl;
+        $model->tgl_keluar_htl  = $req->tgl_keluar_htl;
+        $model->total_hari      = $req->totaldays;
+        $model->created_by      = $userId;
+        $model->save();
+
+        Alert::success('Success');
+        session()->flash('message', 'Berhasil di Tambahkan');
+        return redirect()->intended(route('hotel', absolute: false));
+    }
+    function hotelEdit($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $transactions = htl_transaction::findByRouteKey($key);
+
+        return view('hcis.reimbursements.hotel.editHotel', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+        ]);
+    }
+    public function hotelUpdate(Request $req, $key)
+    {
+        $model = htl_transaction::findByRouteKey($key);
+
+        if ($model) {
+            $model->unit            = $req->unit;
+            $model->nama_htl        = $req->nama_htl;
+            $model->lokasi_htl      = $req->lokasi_htl;
+            $model->jmlkmr_htl      = $req->jmlkmr_htl;
+            $model->bed_htl         = $req->bed_htl;
+            $model->tgl_masuk_htl   = $req->tgl_masuk_htl;
+            $model->tgl_keluar_htl  = $req->tgl_keluar_htl;
+            $model->total_hari      = $req->totaldays;
+            $model->save();
+
+            Alert::success('Success');
+            session()->flash('message', 'Edit Berhasil');
+            return redirect()->route('hotel');
+        } else {
+            return redirect()->back()->withErrors(['message' => 'Transaction not found']);
+        }
+    }
+    function hotelDelete($key)
+    {
+        $model = htl_transaction::findByRouteKey($key);
+        $model->delete();
+        return redirect()->intended(route('hotel', absolute: false));
+    }
+    public function ticket()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Ticket';
+        $transactions = tkt_transaction::with('employee')->get();
+
+        return view('hcis.reimbursements.ticket.ticket', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'transactions' => $transactions,
+        ]);
+    }
+    function ticketCreate()
+    {
+
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Ticket';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+
+
+        return view('hcis.reimbursements.ticket.formTicket', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+        ]);
+    }
+    public function ticketSubmit(Request $req)
+    {
+        function getRomanMonth_tkt($month)
+        {
+            $romanMonths = [
+                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
+                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
+                11 => 'XI', 12 => 'XII'
+            ];
+            return $romanMonths[$month];
+        }
+        $userId = Auth::id();
+        $currentYear = date('Y');
+        $currentMonth = date('n');
+        $romanMonth = getRomanMonth_tkt($currentMonth);
+
+        // Ambil nomor urut terakhir dari tahun berjalan menggunakan Eloquent
+        $lastTransaction = tkt_transaction::whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->orderBy('no_tkt', 'desc')
+            ->first();
+
+        if ($lastTransaction && preg_match('/(\d{3})\/TKT-ACC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
+            $lastNumber = intval($matches[1]);
+        } else {
+            $lastNumber = 0;
+        }
+
+        $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        $newNoHtl = "$newNumber/TKT-ACC/$romanMonth/$currentYear";
+
+        $model = new tkt_transaction;
+        $model->id = Str::uuid();
+        $model->no_tkt          = $newNoHtl;
+        $model->no_sppd         = $req->bisnis_numb;
+        $model->user_id         = $userId;
+        $model->unit            = $req->unit;
+        $model->jk_tkt          = $req->jk_tkt;
+        $model->np_tkt          = $req->np_tkt;
+        $model->noktp_tkt       = $req->noktp_tkt;
+        $model->tlp_tkt         = $req->tlp_tkt;
+        $model->jenis_tkt       = $req->jenis_tkt;
+        $model->dari_tkt        = $req->dari_tkt;
+        $model->ke_tkt          = $req->ke_tkt;
+        $model->tgl_brkt_tkt    = $req->tgl_brkt_tkt;
+        $model->jam_brkt_tkt    = $req->jam_brkt_tkt;
+        $model->type_tkt        = $req->type_tkt;
+        $model->tgl_plg_tkt     = $req->tgl_plg_tkt;
+        $model->jam_plg_tkt     = $req->jam_plg_tkt;
+        $model->created_by      = $userId;
+        $model->save();
+
+        Alert::success('Success');
+        session()->flash('message', 'Berhasil di Tambahkan');
+        return redirect()->intended(route('ticket', absolute: false));
+    }
+    function ticketEdit($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Ticket';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $transactions = tkt_transaction::findByRouteKey($key);
+
+        return view('hcis.reimbursements.ticket.editTicket', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+        ]);
+    }
+    public function ticketUpdate(Request $req, $key)
+    {
+        $userId = Auth::id();
+        $model = tkt_transaction::findByRouteKey($key);
+        $model->jk_tkt          = $req->jk_tkt;
+        $model->np_tkt          = $req->np_tkt;
+        $model->noktp_tkt       = $req->noktp_tkt;
+        $model->tlp_tkt         = $req->tlp_tkt;
+        $model->jenis_tkt       = $req->jenis_tkt;
+        $model->dari_tkt        = $req->dari_tkt;
+        $model->ke_tkt          = $req->ke_tkt;
+        $model->tgl_brkt_tkt    = $req->tgl_brkt_tkt;
+        $model->jam_brkt_tkt    = $req->jam_brkt_tkt;
+        $model->type_tkt        = $req->type_tkt;
+        $model->tgl_plg_tkt     = $req->tgl_plg_tkt;
+        $model->jam_plg_tkt     = $req->jam_plg_tkt;
+        $model->created_by      = $userId;
+        $model->save();
+
+        Alert::success('Success');
+        session()->flash('message', 'Berhasil di Edit');
+        return redirect()->intended(route('ticket', absolute: false));
+    }
+    function ticketDelete($key)
+    {
+        $model = tkt_transaction::findByRouteKey($key);
+        $model->delete();
+        return redirect()->intended(route('ticket', absolute: false));
     }
 }
