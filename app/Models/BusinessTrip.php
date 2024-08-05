@@ -11,6 +11,7 @@ class BusinessTrip extends Model
 
     protected $fillable = [
         'id',
+        'user_id',
         'nama',
         'no_sppd',
         'unit_1',
@@ -32,7 +33,12 @@ class BusinessTrip extends Model
         'tiket',
         'hotel',
         'taksi',
+        'id_ca',
+        'id_tiket',
+        'id_hotel',
+        'id_taksi',
         'status',
+
     ];
 
     protected $table = 'bt_transaction';

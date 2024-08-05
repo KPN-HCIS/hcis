@@ -19,9 +19,19 @@ class BusinessTripController extends Controller
 {
     public function businessTrip()
     {
+        $user = Auth::user();
         $perPage = request()->query('per_page', 10);
-        $sppd = BusinessTrip::orderBy('mulai', 'asc')->paginate($perPage);
-        $ca = ca_transaction::orderBy('id', 'asc')->first();
+
+        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate($perPage);
+        // $sppd = BusinessTrip::where('user_id', $user->id)
+        //                 ->orderBy('mulai', 'asc')
+        //                 ->paginate($perPage);
+        // $noSppds = $sppd->pluck('no_sppd')->toArray();
+        // $ca = ca_transaction::where('user_id', $user->id)
+        //                  ->whereIn('no_sppd', $noSppds)
+        //                  ->get();
+        // $caGroupedBySppd = $ca->groupBy('no_sppd');
+        $ca = ca_transaction::where('user_id', $user->id)->first();
 
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
@@ -43,6 +53,27 @@ class BusinessTripController extends Controller
 
         $n = BusinessTrip::find($id);
         return view('hcis.reimbursements.businessTrip.editFormBt', ['n' => $n, 'companies' => $companies]);
+    }
+    public function approval()
+    {
+        $user = Auth::user();
+        $perPage = request()->query('per_page', 10);
+
+        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate($perPage);
+        $ca = ca_transaction::where('user_id', $user->id)->first();
+
+        $parentLink = 'Reimbursement';
+        $link = 'Business Trip';
+
+        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'ca'));
+    }
+
+    public function deklarasi($id)
+    {
+        $companies = Company::orderBy('contribution_level')->get();
+
+        $n = BusinessTrip::find($id);
+        return view('hcis.reimbursements.businessTrip.deklarasi', ['n' => $n, 'companies' => $companies]);
     }
 
     public function update($id, Request $request)
@@ -78,42 +109,51 @@ class BusinessTripController extends Controller
     }
     public function search(Request $request)
     {
-        //search where
+        $user = Auth::user();
         $cari = $request->q;
-        $sppd = BusinessTrip::where('nama', 'like', '%' . $cari . '%')
-            ->orWhere('divisi', 'like', '%' . $cari . '%')
-            ->orWhere('no_sppd', 'like', '%' . $cari . '%')
-            ->orWhere('mulai', 'like', '%' . $cari . '%')
-            ->orWhere('ca', 'like', '%' . $cari . '%')
-            ->orWhere('tiket', 'like', '%' . $cari . '%')
-            ->orWhere('hotel', 'like', '%' . $cari . '%')
-            ->orWhere('taksi', 'like', '%' . $cari . '%')
-            ->orWhere('status', 'like', '%' . $cari . '%')
+        $ca = ca_transaction::where('user_id', $user->id)->first();
+        $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
+            ->where(function ($query) use ($cari) {
+                $query->where('nama', 'like', '%' . $cari . '%')
+                    ->orWhere('divisi', 'like', '%' . $cari . '%')
+                    ->orWhere('no_sppd', 'like', '%' . $cari . '%')
+                    ->orWhere('mulai', 'like', '%' . $cari . '%')
+                    ->orWhere('ca', 'like', '%' . $cari . '%')
+                    ->orWhere('tiket', 'like', '%' . $cari . '%')
+                    ->orWhere('hotel', 'like', '%' . $cari . '%')
+                    ->orWhere('taksi', 'like', '%' . $cari . '%')
+                    ->orWhere('status', 'like', '%' . $cari . '%');
+            })
             ->paginate(10);
 
         $sppd->appends($request->all());
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link'));
+        // return redirect('businessTrip');
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'ca'));
     }
     public function filterDate(Request $request)
     {
+        $user = Auth::user();
+        $ca = ca_transaction::where('user_id', $user->id)->first();
         $startDate = $request->query('start-date');
         $endDate = $request->query('end-date');
 
         if ($startDate && $endDate) {
-            $sppd = BusinessTrip::whereBetween('mulai', [$startDate, $endDate])
+            $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
+                ->whereBetween('mulai', [$startDate, $endDate])
                 ->orderBy('mulai', 'desc')
                 ->paginate(10); // Adjust the pagination as needed
         } else {
-            $sppd = BusinessTrip::orderBy('mulai', 'desc')->paginate(10);
+            $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
+                ->orderBy('mulai', 'desc')
+                ->paginate(10);
         }
-
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'ca'));
     }
 
     public function updatestatus($id, Request $request)
@@ -135,9 +175,12 @@ class BusinessTripController extends Controller
         $data = BusinessTrip::find($id);
         return view('hcis.reimbursements.businessTrip.export', ['data' => $data]);
     }
+
+
     public function export($id)
     {
         $data = BusinessTrip::find($id);
+        $ca = ca_transaction::where('user_id', $id)->first();
 
         // Check if data exists
         if (!$data) {
@@ -145,25 +188,12 @@ class BusinessTripController extends Controller
         }
 
         // Generate the PDF
-        $pdf = PDF::loadView('hcis.reimbursements.businessTrip.bt_pdf', ['data' => $data]);
+        $pdf = PDF::loadView('hcis.reimbursements.businessTrip.bt_pdf', ['data' => $data, 'ca' => $ca]);
 
-        // Return the PDF as a stream so it opens in the browser
         return $pdf->download('Business Trip' . $id . '.pdf');
     }
+
     public function businessTripformAdd()
-    {
-        $userId = Auth::id();
-        $employee_data = Employee::where('id', $userId)->first();
-        $companies = Company::orderBy('contribution_level')->get();
-        return view(
-            'hcis.reimbursements.businessTrip.formBusinessTrip',
-            [
-                'employee_data' => $employee_data,
-                'companies' => $companies,
-            ]
-        );
-    }
-    public function businessTripformAddUser()
     {
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
@@ -180,8 +210,10 @@ class BusinessTripController extends Controller
     public function businessTripCreate(Request $request)
     {
         $noSppd = $this->generateNoSppd();
+        $userId = Auth::id();
         BusinessTrip::create([
             'nama' => $request->nama,
+            'user_id' => $userId,
             'divisi' => $request->divisi,
             'unit_1' => $request->unit_1,
             'atasan_1' => $request->atasan_1,
@@ -219,14 +251,14 @@ class BusinessTripController extends Controller
             ->orderBy('no_sppd', 'desc')
             ->first();
 
-        if ($lastTransaction && preg_match('/(\d{3})\/BT_ACC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/BT-ACC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
         }
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        $newNoSppd = "$newNumber/BT_ACC/$romanMonth/$currentYear";
+        $newNoSppd = "$newNumber/BT-ACC/$romanMonth/$currentYear";
 
         return $newNoSppd;
     }

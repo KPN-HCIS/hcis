@@ -110,6 +110,11 @@
             border: 1px solid #CCCCCC !important;
             /* Match border with background color */
         }
+        .btn-detail {
+            font-size: 12px !important;
+            padding: 3px 6px !important;
+            border-radius: 3px !important;
+        }
     </style>
 @endsection
 
@@ -144,7 +149,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form class="date-range mb-3" method="GET" action="{{ route('businessTrip-filterDate') }}">
+                <form class="date-range mb-3" method="GET" action="{{ route('businessTrip-filterDate.approval') }}">
                     <label for="start-date">Departure Date:</label>
                     <input type="date" id="start-date" name="start-date" class="form-control"
                         value="{{ request()->query('start-date') }}">
@@ -200,10 +205,59 @@
                                             <td>{{ $n->no_sppd }}</td>
                                             <td>{{ $n->mulai }}</td>
                                             <td>{{ $n->kembali }}</td>
-                                            <td>{{ $n->ca }}</td>
-                                            <td>{{ $n->tiket }}</td>
-                                            <td>{{ $n->hotel }}</td>
-                                            <td>{{ $n->taksi }}</td>
+                                            <td>
+                                                @if ($n->ca == 'Ya' && isset($ca))
+                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                        data-target="#detailModal"
+                                                        data-ca="{{ json_encode([
+                                                            'no_ca' => $ca->no_ca,
+                                                            'no_sppd' => $ca->no_sppd,
+                                                            'unit' => $ca->unit,
+                                                            'destination' => $ca->destination,
+                                                            'total_ca' => $ca->total_ca,
+                                                            'total_real' => $ca->total_real,
+                                                            'total_cost' => $ca->total_cost,
+                                                            'start_date' => $ca->start_date,
+                                                            'end_date' => $ca->end_date,
+                                                        ]) }}"
+                                                        data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
+                                                        data-taksi="{{ $n->taksi }}">Detail</button>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($n->tiket == 'Ya')
+                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
+                                                        data-tiket="{{ $n->tiket }}"
+                                                        data-hotel="{{ $n->hotel }}"
+                                                        data-taksi="{{ $n->taksi }}">Detail</button>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($n->hotel == 'Ya')
+                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
+                                                        data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
+                                                        data-taksi="{{ $n->taksi }}">Detail</button>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($n->taksi == 'Ya')
+                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
+                                                        data-tiket="{{ $n->tiket }}"
+                                                        data-hotel="{{ $n->hotel }}"
+                                                        data-taksi="{{ $n->taksi }}">Detail</button>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
                                             <td>
                                                 <span
                                                     class="badge-med

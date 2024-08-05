@@ -123,6 +123,26 @@
                 <label for="file1">SPPD Document</label>
                 <div class="progress-bar"></div>
             </div>
+            <div class="download-item">
+                <input type="checkbox" id="file1" checked>
+                <label for="file1">CA Document</label>
+                <div class="progress-bar"></div>
+            </div>
+            <div class="download-item">
+                <input type="checkbox" id="file1" checked>
+                <label for="file1">Hotel Document</label>
+                <div class="progress-bar"></div>
+            </div>
+            <div class="download-item">
+                <input type="checkbox" id="file1" checked>
+                <label for="file1">Tiket Document</label>
+                <div class="progress-bar"></div>
+            </div>
+            <div class="download-item">
+                <input type="checkbox" id="file1" checked>
+                <label for="file1">Taxi Document</label>
+                <div class="progress-bar"></div>
+            </div>
             <!-- Add more download items as needed -->
             <form action="{{ route('export', ['id' => $data->id]) }}" method="POST">
                 @csrf

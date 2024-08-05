@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bt_transaction', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('id_employee');
+            $table->integer('user_id');
             $table->string('nama');
             $table->string('no_sppd');
             $table->string('unit_1');

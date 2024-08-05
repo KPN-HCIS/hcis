@@ -207,16 +207,19 @@
                                             <td>{{ $n->mulai }}</td>
                                             <td>{{ $n->kembali }}</td>
                                             <td>
-                                                @if ($n->ca == 'Ya')
+                                                @if ($n->ca == 'Ya' && isset($ca))
                                                     <button class="btn btn-secondary btn-detail" data-toggle="modal"
                                                         data-target="#detailModal"
                                                         data-ca="{{ json_encode([
                                                             'no_ca' => $ca->no_ca,
                                                             'no_sppd' => $ca->no_sppd,
-                                                            'unit' => $n->unit,
-                                                            'destination' => $n->destination,
-                                                            'start_date' => $n->start_date,
-                                                            'end_date' => $n->end_date,
+                                                            'unit' => $ca->unit,
+                                                            'destination' => $ca->destination,
+                                                            'total_ca' => $ca->total_ca,
+                                                            'total_real' => $ca->total_real,
+                                                            'total_cost' => $ca->total_cost,
+                                                            'start_date' => $ca->start_date,
+                                                            'end_date' => $ca->end_date,
                                                         ]) }}"
                                                         data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
                                                         data-taksi="{{ $n->taksi }}">Detail</button>
@@ -228,15 +231,7 @@
                                                 @if ($n->tiket == 'Ya')
                                                     <button class="btn btn-secondary btn-detail" data-toggle="modal"
                                                         data-target="#detailModal" data-ca="{{ $n->ca }}"
-                                                        data-tiket="{{ json_encode([
-                                                            'no_ca' => $ca->no_ca,
-                                                            'no_sppd' => $ca->no_sppd,
-                                                            'unit' => $n->unit,
-                                                            'destination' => $n->destination,
-                                                            'start_date' => $n->start_date,
-                                                            'end_date' => $n->end_date,
-                                                        ]) }}"
-                                                        data-hotel="{{ $n->hotel }}"
+                                                        data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
                                                         data-taksi="{{ $n->taksi }}">Detail</button>
                                                 @else
                                                     -
@@ -280,9 +275,12 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                @if ($n->kembali >= getDate())
+                                                @php
+                                                    $today = \Carbon\Carbon::today()->format('Y-m-d');
+                                                @endphp
+                                                @if ($n->kembali >= $today)
                                                     <form method="GET"
-                                                        action="/businessTrip/form/update/{{ $n->id }}"
+                                                        action="/businessTrip/deklarasi/{{ $n->id }}"
                                                         style="display: inline-block;">
                                                         <button type="submit" class="btn btn-primary"
                                                             data-toggle="tooltip" title="Edit">
@@ -376,14 +374,14 @@
         </div>
 
         <!-- Detail Modal -->
-        <!-- Detail Modal -->
         <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            style="border: 0px; border-radius:4px;">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>

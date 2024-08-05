@@ -146,6 +146,7 @@ Route::middleware('auth')->group(function () {
 
     //Medical
     Route::get('/medical', [MedicalController::class, 'medical']) -> name('medical');
+
     //Taksi Form
     Route::get('/taksi', [TaksiController::class, 'taksi']) -> name('taksi');
     Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd']) -> name('medical.form.add');
@@ -158,14 +159,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/businessTrip/form/update/{id}', [BusinessTripController::class, 'formUpdate']) -> name('businessTrip.update');
     Route::put('/businessTrip/update/{id}', [BusinessTripController::class, 'update'])->name('update.bt');
 
+    //APPROVAL BT
+    Route::get('/businessTrip/approval', [BusinessTripController::class, 'approval']) -> name('businessTrip.approval');
+    Route::get('/businessTrip/approval/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate.approval');
+
+    //DEKLARASI BT
+    Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi']) -> name('businessTrip.deklarasi');
+
     Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
 
-    //pdf bt
+    //pdf BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload']) -> name('pdf');
     Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export']) -> name('export');
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
+
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
