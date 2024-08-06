@@ -29,7 +29,7 @@ class EmployeeExport implements FromView, WithStyles
 
     public function view(): View
     {
-        $query = Employee::query();
+        $query = Employee::query()->whereNull('deleted_at');
 
         // Apply filters if they are provided
         if ($this->groupCompany) {

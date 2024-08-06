@@ -53,12 +53,14 @@ return [
         // Custom Schedule Service Provider
         App\Providers\ScheduleServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
     ],
     'aliases' => [
         // Other aliases
         'Auth' => Illuminate\Support\Facades\Auth::class,
         'Session' => Illuminate\Support\Facades\Session::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'PDF' =>  Barryvdh\DomPDF\Facade\Pdf::class,
     ],
     'xor_key' => env('XOR_KEY'),
     'version' => env('APP_VERSION', 'unknown'),

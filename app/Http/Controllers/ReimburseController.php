@@ -32,13 +32,13 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
-        $transactions = CATransaction::with('employee')->get();
-
+        $ca_transactions = ca_transaction::where('user_id', $userId)->get();
+        //dd($ca_transactions);
         return view('hcis.reimbursements.cashadv.cashadv', [
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
-            'transactions' => $transactions,
+            'ca_transactions' => $ca_transactions,
         ]);
     }
     function cashadvancedCreate()
@@ -97,6 +97,9 @@ class ReimburseController extends Controller
         } else {
             $lastNumber = 0;
         }
+
+        $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        $newNoCa = "$newNumber/CA-ACC/$romanMonth/$currentYear";
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         $newNoCa = "$newNumber/CA-ACC/$romanMonth/$currentYear";

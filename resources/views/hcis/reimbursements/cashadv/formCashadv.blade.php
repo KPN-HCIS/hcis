@@ -35,7 +35,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
-                                        <input type="text" name="name" id="name" value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
+                                        <input type="text" name="name" id="name" value="{{ $employee_data->fullname }}" class="form-control bg-light" style="cursor: none;" readonly>
                                     </div>
                                 </div>
                             </div>

@@ -202,7 +202,7 @@ class ReportController extends Controller
 
             $route = 'reports-admin.goal';
         } elseif ($report_type === 'Employee') {
-            $query = Employee::query()->orderBy('fullname'); // Start with Employee model
+            $query = Employee::query()->whereNull('deleted_at')->orderBy('fullname'); // Start with Employee model
 
             if (!empty($group_company)) {
                     $query->whereIn('group_company', $group_company)->orderBy('fullname');
