@@ -16,7 +16,7 @@
 
         .form-header,
         .table-header {
-            background-color: #AB2F2B;
+            background-color: #007bff;
             padding: 10px;
             font-weight: bold;
             margin-bottom: 15px;
@@ -56,7 +56,7 @@
             background-color: #ffffff;
         }
         .keluarga-thead{
-            background-color:#f1c8c69d;
+            background-color:#007bff29;
         }
 
         .jenis-plafond,
@@ -72,16 +72,6 @@
 
         .flex-item {
             width: 48%;
-        }
-
-        .kembali-btn {
-            background-color: #AB2F2B;
-            color: white;
-            padding: 5px 10px;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 20px;
-            border-radius: 4px;
         }
 
         .export {
@@ -119,7 +109,7 @@
 
         .pagination .nextBtn,
         .prevBtn {
-            background-color: #AB2F2B;
+            background-color: #007bff;
             color: white;
             border: none;
             padding: 8px 20px;
@@ -141,10 +131,34 @@
 @endsection
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item">{{ $parentLink }}</li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
+        </div>
         <!-- Kembali button -->
-        <a href="/reimbursements" class="kembali-btn"><i class="bi bi-caret-left-fill"></i> Kembali</a>
-        <a href="#" class="export"><i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel</a>
+        <div class="row mb-3">
+            <div class="col">
+                <a href="/reimbursements" class="btn btn-primary btn-action">
+                    <i class="bi bi-caret-left-fill"></i> Back
+                </a>
+                {{-- <a href="/businessTrip" class="btn btn-info btn-action">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </a> --}}
+                <a href="#" class="btn btn-outline-success btn-action">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel
+                </a>
+            </div>
+        </div>
 
         <div class="form-container">
             <div class="flex-container">

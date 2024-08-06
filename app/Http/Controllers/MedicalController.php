@@ -7,13 +7,14 @@ use Illuminate\Http\Request;
 
 class MedicalController extends Controller
 {
-    // function medical() {
-    //     return view('pages.medical.medical');
-    // }
     public function medical()
     {
         $keluarga = DataKeluarga::orderBy('umur', 'desc')->paginate(5);
-        return view('hcis.reimbursements.medical.medical', ['keluarga' => $keluarga]);
+
+        $parentLink = 'Reimbursement';
+        $link = 'Business Trip';
+
+        return view('hcis.reimbursements.medical.medical', compact('keluarga', 'parentLink', 'link'));
     }
 
 }

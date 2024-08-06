@@ -53,18 +53,27 @@
                 </a>
             </div> <!-- end col-->
 
-           <div class="col">
-            <a href="{{ route('businessTrip') }}">
-                <div class="card">
-                    <div class="card-body">
-                        <img src="/images/menu/cashadv.png" alt="logo">
-                        <h4 class="my-3">Business Trip</h4>
-                    </div> <!-- end card-body-->
-                </div> <!-- end card-->
-            </a>
-        </div> <!-- end col-->
-
-
+            <div class="col">
+                <a href="{{ route('businessTrip') }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/business-trip.png" alt="logo">
+                            <h4 class="my-3">Business Trip</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div> <!-- end col-->
+            <div class="col">
+                <a href="{{ '' }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/business-trip.png" alt="logo" style="width: 100px; height: 100px;">
+                            <h4 class="my-3">Home Trip</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div> <!-- end col-->
+            <div class="col">
         </div> <!-- end row -->
     </div>
 @endsection
