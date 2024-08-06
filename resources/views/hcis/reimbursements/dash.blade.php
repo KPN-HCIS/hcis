@@ -30,8 +30,8 @@
     {{-- {{ "Hallo ".$userId." berasal dari system ".session('system') }} --}}
     <br>
     <div class="container-fluid">
-        <div class="row row-cols-1 row-cols-xxl-5 row-cols-lg-3 row-cols-md-2">
-            <div class="col">
+        <div class="row row-cols-1 row-cols-xxl-5 row-cols-lg-3 row-cols-md-2 text-center">
+            <div class="col ">
                 <a href="{{ route('cashadvanced') }}">
                     <div class="card">
                         <div class="card-body">
@@ -73,7 +73,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            <div class="col">
+            
         </div> <!-- end row -->
     </div>
 @endsection

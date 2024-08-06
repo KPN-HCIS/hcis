@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
+@extends('layouts_.vertical', ['page_title' => 'Hotel'])
 
 @section('css')
 @endsection
@@ -34,7 +34,7 @@
             </div>
             <div class="col">
                 <div class="mb-2 text-end">
-                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-primary rounded-pill shadow">Create CA</a>
+                    <a href="{{ route('hotel.form') }}" class="btn btn-primary rounded-pill shadow">Create CA</a>
                 </div>
             </div>
         </div>
@@ -48,39 +48,50 @@
                           <thead class="thead-light">
                               <tr class="text-center">
                                   <th>No</th>
-                                  <th>Type</th>
-                                  <th>No CA</th>
+                                  <th>No Hotel</th>
+                                  {{-- <th>No SPPD</th> --}}
                                   <th>Requestor</th>
-                                  <th>Company</th>
+                                  <th>Hotel Name</th>
+                                  <th>Location</th>
+                                  <th>Rooms</th>
+                                  <th>Bed Type</th>
                                   <th>Start Date</th>
                                   <th>End Date</th>
-                                  <th>Total CA</th>
-                                  <th>Total Settlement</th>
-                                  <th>Balance</th>
                                   <th>Actions</th>
                               </tr>
                           </thead>
                           <tbody>
-                            
-                            @foreach($ca_transactions as $ca_transaction)
+                            @foreach($transactions as $transaction)
                             <tr>
-                                <td>{{ $loop->index + 1 }}</td>
-                                <td>{{ $ca_transaction->type_ca }}</td>
-                                <td>{{ $ca_transaction->no_ca }}</td>
-                                <td>{{ $ca_transaction->user_id }}</td>
-                                <td>{{ $ca_transaction->contribution_level_code }}</td>
-                                <td>{{ $ca_transaction->start_date }}</td>
-                                <td>{{ $ca_transaction->end_date }}</td>
-                                <td>{{ $ca_transaction->total_ca }}</td>
-                                <td>{{ $ca_transaction->total_real }}</td>
-                                <td>{{ $ca_transaction->total_cost }}</td>
-                                <td class="text-center">
-                                    <a href="{{ route('cashadvanced.form', $ca_transaction->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a> 
-                                    <a class="btn btn-sm rounded-pill btn-danger" title="Delete" onclick="handleDelete(this)" data-id="{{ $ca_transaction->id }}"><i class="ri-delete-bin-line"></i></a>
-                                </td>                               
+                                  <td>{{ $loop->index + 1 }}</td>
+                                  <td>{{ $transaction->no_htl }}</td>
+                                  {{-- <td>{{ $transaction->no_sppd }}</td> --}}
+                                  <td>{{ $transaction->employee->fullname }}</td>
+                                  <td>{{ $transaction->nama_htl }}</td>
+                                  <td>{{ $transaction->lokasi_htl }}</td>
+                                  <td>{{ $transaction->jmlkmr_htl }}</td>
+                                  <td>{{ $transaction->bed_htl }}</td>
+                                  <td>{{ $transaction->tgl_masuk_htl }}</td>
+                                  <td>{{ $transaction->tgl_keluar_htl }}</td>
+                                  <td class="text-center">
+                                    {{-- @if($transaction->created_by == $userId) --}}
+                                        <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                        <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-sm rounded-pill btn-danger" title="Delete">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </form>
+                                    {{-- @endif --}}
+                                </td>
                             </tr>
                             @endforeach
                           </tbody>
+                            @if(session('message'))
+                                <script>
+                                    alert('{{ session('message') }}');
+                                </script>
+                            @endif
                       </table>
                   </div>
               </div>

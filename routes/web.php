@@ -37,7 +37,7 @@ use App\Http\Controllers\ReimburseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('goals');
+    return redirect('reimbursements');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:superadmin'])->name('dashboard');
@@ -58,20 +58,20 @@ Route::get('/test-email', function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
-                ->name('register');
+        ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
-                ->name('login');
+        ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-    ->name('password.reset');
+        ->name('password.reset');
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('password.store');
+        ->name('password.store');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
                     ->name('password.request');
@@ -79,14 +79,14 @@ Route::middleware('guest')->group(function () {
     Route::get('reset-password-email', [PasswordResetLinkController::class, 'selfResetView']);
 
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-                    ->name('password.email');
+        ->name('password.email');
 });
 
 
 Route::middleware('auth')->group(function () {
 
     Route::get('reset-self', [PasswordResetLinkController::class, 'selfReset'])
-                ->name('password.reset.self');
+        ->name('password.reset.self');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -97,10 +97,31 @@ Route::middleware('auth')->group(function () {
 
     // My Reimbursement
     Route::get('/reimbursements', [ReimburseController::class, 'reimbursements'])->name('reimbursements');
+
+
+    // My Cash Advanced
     Route::get('/cashadvanced', [ReimburseController::class, 'cashadvanced'])->name('cashadvanced');
     Route::get('/cashadvanced/form', [ReimburseController::class, 'cashadvancedCreate'])->name('cashadvanced.form');
     Route::post('/cashadvanced/submit', [ReimburseController::class, 'cashadvancedSubmit'])->name('cashadvanced.submit');
+    Route::get('/cashadvanced/edit/{id}', [ReimburseController::class, 'cashadvancedEdit'])->name('cashadvanced.edit');
+    Route::post('/cashadvanced/update/{id}', [ReimburseController::class, 'cashadvancedUpdate'])->name('cashadvanced.update');
+    Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
 
+    // My Hotel
+    Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');
+    Route::get('/hotel/form', [ReimburseController::class, 'hotelCreate'])->name('hotel.form');
+    Route::post('/hotel/submit', [ReimburseController::class, 'hotelSubmit'])->name('hotel.submit');
+    Route::get('/hotel/edit/{id}', [ReimburseController::class, 'hotelEdit'])->name('hotel.edit');
+    Route::post('/hotel/update/{id}', [ReimburseController::class, 'hotelUpdate'])->name('hotel.update');
+    Route::post('/hotel/delete/{id}', [ReimburseController::class, 'hotelDelete'])->name('hotel.delete');
+
+    // My Ticket
+    Route::get('/ticket', [ReimburseController::class, 'ticket'])->name('ticket');
+    Route::get('/ticket/form', [ReimburseController::class, 'ticketCreate'])->name('ticket.form');
+    Route::post('/ticket/submit', [ReimburseController::class, 'ticketSubmit'])->name('ticket.submit');
+    Route::get('/ticket/edit/{id}', [ReimburseController::class, 'ticketEdit'])->name('ticket.edit');
+    Route::post('/ticket/update/{id}', [ReimburseController::class, 'ticketUpdate'])->name('ticket.update');
+    Route::post('/ticket/delete/{id}', [ReimburseController::class, 'ticketDelete'])->name('ticket.delete');
 
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');
@@ -186,18 +207,18 @@ Route::middleware('auth')->group(function () {
 
     // Authentication
     Route::get('verify-email', EmailVerificationPromptController::class)
-                ->name('verification.notice');
+        ->name('verification.notice');
 
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-                ->middleware(['signed', 'throttle:6,1'])
-                ->name('verification.verify');
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-                ->middleware('throttle:6,1')
-                ->name('verification.send');
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
-                ->name('password.confirm');
+        ->name('password.confirm');
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
@@ -275,4 +296,4 @@ Route::fallback(function () {
     return view('errors.404');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
