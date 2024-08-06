@@ -30,7 +30,7 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced.update', encrypt($transactions->id)) }}">@csrf
+                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced.update', $transactions->id) }}">@csrf
                             <div class="row my-2">
                                 <div class="col-md-6">
                                     <div class="mb-2">

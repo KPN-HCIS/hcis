@@ -61,24 +61,40 @@
                               </tr>
                           </thead>
                           <tbody>
-                            
                             @foreach($ca_transactions as $ca_transaction)
-                            <tr>
-                                <td>{{ $loop->index + 1 }}</td>
-                                <td>{{ $ca_transaction->type_ca }}</td>
-                                <td>{{ $ca_transaction->no_ca }}</td>
-                                <td>{{ $ca_transaction->user_id }}</td>
-                                <td>{{ $ca_transaction->contribution_level_code }}</td>
-                                <td>{{ $ca_transaction->start_date }}</td>
-                                <td>{{ $ca_transaction->end_date }}</td>
-                                <td>{{ $ca_transaction->total_ca }}</td>
-                                <td>{{ $ca_transaction->total_real }}</td>
-                                <td>{{ $ca_transaction->total_cost }}</td>
-                                <td class="text-center">
-                                    <a href="{{ route('cashadvanced.form', $ca_transaction->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a> 
-                                    <a class="btn btn-sm rounded-pill btn-danger" title="Delete" onclick="handleDelete(this)" data-id="{{ $ca_transaction->id }}"><i class="ri-delete-bin-line"></i></a>
-                                </td>                               
-                            </tr>
+                                <tr>
+                                    <td>{{ $loop->index + 1 }}</td>
+                                    @if($ca_transaction->type_ca == 'dns')
+                                        <td>Business Trip</td>
+                                    @elseif($ca_transaction->type_ca == 'ndns')
+                                        <td>Non Business Trip</td>
+                                    @elseif($ca_transaction->type_ca == 'entr')
+                                        <td>Entertainment</td>
+                                    @endif
+                                    <td>{{ $ca_transaction->no_ca }}</td>
+                                    <td>{{ $ca_transaction->employee->fullname }}</td>
+                                    <td>{{ $ca_transaction->contribution_level_code }}</td>
+                                    <td>{{ $ca_transaction->formatted_start_date }}</td>
+                                    <td>{{ $ca_transaction->formatted_end_date }}</td>
+                                    <td>{{ $ca_transaction->total_ca }}</td>
+                                    <td>{{ $ca_transaction->total_real }}</td>
+                                    <td>{{ $ca_transaction->total_cost }}</td>
+                                    <td class="text-center">
+                                        <div style="display: {{ $ca_transaction->approval_status == 'Approved' ? 'none' : 'inline-block' }}">
+                                            <a href="{{ route('cashadvanced.edit', $ca_transaction->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit"><i class="ri-edit-box-line"></i></a>
+                                            <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-sm rounded-pill btn-danger" title="Delete">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div style="display: {{ $ca_transaction->approval_status == 'Approved' ? 'inline-block' : 'none' }}">
+                                            <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-sm rounded-pill btn-primary" title="Print"><i class="ri-printer-line"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
                             @endforeach
                           </tbody>
                       </table>
