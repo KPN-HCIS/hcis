@@ -61,8 +61,25 @@
                               </tr>
                           </thead>
                           <tbody>
-
                             
+                            @foreach($ca_transactions as $ca_transaction)
+                            <tr>
+                                <td>{{ $loop->index + 1 }}</td>
+                                <td>{{ $ca_transaction->type_ca }}</td>
+                                <td>{{ $ca_transaction->no_ca }}</td>
+                                <td>{{ $ca_transaction->user_id }}</td>
+                                <td>{{ $ca_transaction->contribution_level_code }}</td>
+                                <td>{{ $ca_transaction->start_date }}</td>
+                                <td>{{ $ca_transaction->end_date }}</td>
+                                <td>{{ $ca_transaction->total_ca }}</td>
+                                <td>{{ $ca_transaction->total_real }}</td>
+                                <td>{{ $ca_transaction->total_cost }}</td>
+                                <td class="text-center">
+                                    <a href="{{ route('cashadvanced.form', $ca_transaction->id) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a> 
+                                    <a class="btn btn-sm rounded-pill btn-danger" title="Delete" onclick="handleDelete(this)" data-id="{{ $ca_transaction->id }}"><i class="ri-delete-bin-line"></i></a>
+                                </td>                               
+                            </tr>
+                            @endforeach
                           </tbody>
                       </table>
                   </div>

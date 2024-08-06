@@ -27,10 +27,13 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
+        $ca_transactions = ca_transaction::where('user_id', $userId)->get();
+        //dd($ca_transactions);
         return view('hcis.reimbursements.cashadv.cashadv', [
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
         ]);
     }
     function cashadvancedCreate() {
