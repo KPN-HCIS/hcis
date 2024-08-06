@@ -207,53 +207,74 @@
                                             <td>{{ $n->mulai }}</td>
                                             <td>{{ $n->kembali }}</td>
                                             <td>
-                                                @if ($n->ca == 'Ya' && isset($ca))
+                                                @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
                                                     <button class="btn btn-secondary btn-detail" data-toggle="modal"
                                                         data-target="#detailModal"
                                                         data-ca="{{ json_encode([
-                                                            'no_ca' => $ca->no_ca,
-                                                            'no_sppd' => $ca->no_sppd,
-                                                            'unit' => $ca->unit,
-                                                            'destination' => $ca->destination,
-                                                            'total_ca' => $ca->total_ca,
-                                                            'total_real' => $ca->total_real,
-                                                            'total_cost' => $ca->total_cost,
-                                                            'start_date' => $ca->start_date,
-                                                            'end_date' => $ca->end_date,
-                                                        ]) }}"
-                                                        data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
-                                                        data-taksi="{{ $n->taksi }}">Detail</button>
+                                                            'no_ca' => $caTransactions[$n->no_sppd]->no_ca,
+                                                            'no_sppd' => $caTransactions[$n->no_sppd]->no_sppd,
+                                                            'unit' => $caTransactions[$n->no_sppd]->unit,
+                                                            'destination' => $caTransactions[$n->no_sppd]->destination,
+                                                            'total_ca' => $caTransactions[$n->no_sppd]->total_ca,
+                                                            'total_real' => $caTransactions[$n->no_sppd]->total_real,
+                                                            'total_cost' => $caTransactions[$n->no_sppd]->total_cost,
+                                                            'start_date' => $caTransactions[$n->no_sppd]->start_date,
+                                                            'end_date' => $caTransactions[$n->no_sppd]->end_date,
+                                                        ]) }}">Detail</button>
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($n->tiket == 'Ya')
+                                                @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
                                                     <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
-                                                        data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
-                                                        data-taksi="{{ $n->taksi }}">Detail</button>
+                                                        data-target="#detailModal" data-ca=""
+                                                        data-tiket="{{ json_encode([
+                                                            'no_tkt' => $tickets[$n->no_sppd]->no_tkt,
+                                                            'no_sppd' => $tickets[$n->no_sppd]->no_sppd,
+                                                            'unit' => $tickets[$n->no_sppd]->unit,
+                                                            'jk_tkt' => $tickets[$n->no_sppd]->jk_tkt,
+                                                            'np_tkt' => $tickets[$n->no_sppd]->np_tkt,
+                                                            'noktp_tkt' => $tickets[$n->no_sppd]->noktp_tkt,
+                                                            'tlp_tkt' => $tickets[$n->no_sppd]->tlp_tkt,
+                                                            'dari_tkt' => $tickets[$n->no_sppd]->dari_tkt,
+                                                            'ke_tkt' => $tickets[$n->no_sppd]->ke_tkt,
+                                                        ]) }}">Detail</button>
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($n->hotel == 'Ya')
+                                                @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
                                                     <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
-                                                        data-tiket="{{ $n->tiket }}" data-hotel="{{ $n->hotel }}"
-                                                        data-taksi="{{ $n->taksi }}">Detail</button>
+                                                        data-target="#detailModal"
+                                                        data-hotel="{{ json_encode([
+                                                            'no_htl' => $hotel[$n->no_sppd]->no_htl,
+                                                            'no_sppd' => $hotel[$n->no_sppd]->no_sppd,
+                                                            'unit' => $hotel[$n->no_sppd]->unit,
+                                                            'nama_htl' => $hotel[$n->no_sppd]->nama_htl,
+                                                            'lokasi_htl' => $hotel[$n->no_sppd]->lokasi_htl,
+                                                            'jmlkmr_htl' => $hotel[$n->no_sppd]->jmlkmr_htl,
+                                                            'bed_htl' => $hotel[$n->no_sppd]->bed_htl,
+                                                            'tgl_masuk_htl' => $hotel[$n->no_sppd]->tgl_masuk_htl,
+                                                            'tgl_keluar_htl' => $hotel[$n->no_sppd]->tgl_keluar_htl,
+                                                            'total_hari' => $hotel[$n->no_sppd]->total_hari,
+                                                        ]) }}">Detail</button>
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($n->taksi == 'Ya')
+                                                @if ($n->taksi == 'Ya' && isset($taksi[$n->no_sppd]))
                                                     <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal" data-ca="{{ $n->ca }}"
-                                                        data-tiket="{{ $n->tiket }}"
-                                                        data-hotel="{{ $n->hotel }}"
-                                                        data-taksi="{{ $n->taksi }}">Detail</button>
+                                                        data-target="#detailModal"
+                                                        data-taksi="{{ json_encode([
+                                                            'no_vt' => $taksi[$n->no_sppd]->no_vt,
+                                                            'no_sppd' => $taksi[$n->no_sppd]->no_sppd,
+                                                            'unit' => $taksi[$n->no_sppd]->unit,
+                                                            'nominal_vt' => $taksi[$n->no_sppd]->nominal_vt,
+                                                            'keeper_vt' => $taksi[$n->no_sppd]->keeper_vt,
+                                                        ]) }}">Detail</button>
                                                 @else
                                                     -
                                                 @endif
@@ -278,7 +299,7 @@
                                                 @php
                                                     $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                 @endphp
-                                                @if ($n->kembali >= $today)
+                                                @if ($n->kembali <= $today)
                                                     <form method="GET"
                                                         action="/businessTrip/deklarasi/{{ $n->id }}"
                                                         style="display: inline-block;">
@@ -447,81 +468,61 @@
 
             $(document).ready(function() {
                 $('.btn-detail').click(function() {
-                    // Get all data
                     var ca = $(this).data('ca');
                     var tiket = $(this).data('tiket');
                     var hotel = $(this).data('hotel');
                     var taksi = $(this).data('taksi');
 
-                    console.log('Button clicked');
-
-                    // Function to create table HTML
                     function createTableHtml(data) {
                         var tableHtml = '<table class="table"><thead><tr>';
-                        // Create table headers
                         for (var key in data) {
                             if (data.hasOwnProperty(key)) {
                                 tableHtml += '<th>' + key + '</th>';
                             }
                         }
-                        tableHtml += '</tr></thead><tbody>';
-                        // Create table rows
-                        var row = '<tr>';
+                        tableHtml += '</tr></thead><tbody><tr>';
                         for (var key in data) {
                             if (data.hasOwnProperty(key)) {
-                                row += '<td>' + data[key] + '</td>';
+                                tableHtml += '<td>' + data[key] + '</td>';
                             }
                         }
-                        row += '</tr>';
-                        tableHtml += row;
-                        tableHtml += '</tbody></table>';
+                        tableHtml += '</tr></tbody></table>';
                         return tableHtml;
                     }
 
-
-                    // Clear previous content
                     $('#detailTypeHeader').text('');
                     $('#detailContent').empty();
 
-                    // Check and display data based on which button was clicked
                     if (ca && ca !== 'undefined') {
                         try {
                             var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
-                            console.log('CA data:', caData);
                             $('#detailTypeHeader').text('CA Detail');
                             $('#detailContent').html(createTableHtml(caData));
                         } catch (e) {
-                            console.error('Error parsing CA data:', e);
                             $('#detailContent').html('<p>Error loading CA data</p>');
                         }
                     } else if (tiket && tiket !== 'undefined') {
                         try {
                             var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
-                            console.log('Ticket data:', tiketData);
                             $('#detailTypeHeader').text('Ticket Detail');
                             $('#detailContent').html(createTableHtml(tiketData));
                         } catch (e) {
-                            console.error('Error parsing Ticket data:', e);
                             $('#detailContent').html('<p>Error loading Ticket data</p>');
                         }
                     } else if (hotel && hotel !== 'undefined') {
                         try {
                             var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                            console.log('Hotel data:', hotelData);
                             $('#detailTypeHeader').text('Hotel Detail');
                             $('#detailContent').html(createTableHtml(hotelData));
                         } catch (e) {
-                            console.error('Error parsing Hotel data:', e);
                             $('#detailContent').html('<p>Error loading Hotel data</p>');
                         }
                     } else if (taksi && taksi !== 'undefined') {
                         try {
                             var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
-                            console.log('Taxi data:', taksiData);
                             $('#detailTypeHeader').text('Taxi Detail');
                             $('#detailContent').html(createTableHtml(taksiData));
                         } catch (e) {
-                            console.error('Error parsing Taxi data:', e);
                             $('#detailContent').html('<p>Error loading Taxi data</p>');
                         }
                     } else {
@@ -529,11 +530,9 @@
                         $('#detailContent').html('<p>No detail information available.</p>');
                     }
 
-                    // Ensure the modal is shown
                     $('#detailModal').modal('show');
                 });
 
-                // Ensure backdrop is removed when modal is hidden
                 $('#detailModal').on('hidden.bs.modal', function() {
                     $('body').removeClass('modal-open').css({
                         overflow: '',

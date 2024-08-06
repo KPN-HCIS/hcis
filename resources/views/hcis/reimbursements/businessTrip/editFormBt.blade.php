@@ -42,7 +42,7 @@
                                 <!-- Add more options if needed -->
                             </select>--}}
                             </div>
-                            <div class="row mb-3">
+                            {{-- <div class="row mb-3">
                                 <div class="col-md-4">
                                     <label for="unit_1" class="form-label">Unit/Lokasi Kerja</label>
                                     <select class="form-select" id="unit_1" name="unit_1">
@@ -97,7 +97,7 @@
                                     <input type="email" class="form-control" id="email_2" name="email_2"
                                         placeholder="Email Atasan 2" value="{{ $n->email_2 }}">
                                 </div>
-                            </div>
+                            </div> --}}
 
 
 

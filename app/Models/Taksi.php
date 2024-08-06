@@ -8,14 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Taksi extends Model
 {
     protected $fillable = [
-        'id_vt',
-        'nama',
+        'id',
         'no_vt',
         'no_sppd',
         'user_id',
         'unit',
-        'sppd_bt',
-        'nom_vt',
+        'nominal_vt',
         'keeper_vt',
     ];
     protected $table = 'vt_transaction';

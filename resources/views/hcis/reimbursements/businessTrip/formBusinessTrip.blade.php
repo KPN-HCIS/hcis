@@ -34,18 +34,11 @@
                                 <input type="text" class="form-control bg-light" id="divisi" name="divisi"
                                     style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
 
-                                {{-- <select class="form-select" id="divisi" name="divisi">
-                                <option value="Plantation">Plantation</option>
-                                <option value="Plantation">Personalia</option>
-                                <option value="Plantation">IT</option>
-                                <option value="Plantation">HR</option>
-                                <!-- Add more options if needed -->
-                            </select> --}}
                             </div>
-                            <div class="row mb-3">
+                            {{-- <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label for="unit_1" class="form-label">Unit/Lokasi Kerja</label>
-                                    <select class="form-select" id="unit_1" name="unit_1">
+                                    <label for="unit_1" class="form-label" hidden>Unit/Lokasi Kerja</label>
+                                    <select class="form-select" id="unit_1" name="unit_1" hidden>
                                         <option selected disabled>-- Pilih Unit --</option>
                                         <option value="unit 1">Unit 1</option>
                                         <option value="unit 2">Unit 2</option>
@@ -54,8 +47,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="atasan_1" class="form-label">Atasan 1</label>
-                                    <select class="form-select" id="atasan_1" name="atasan_1">
+                                    <label for="atasan_1" class="form-label" hidden>Atasan 1</label>
+                                    <select class="form-select" id="atasan_1" name="atasan_1" hidden>
                                         <option selected disabled>-- Pilih Atasan --</option>
                                         <option value="atasan 1">Atasan 1</option>
                                         <option value="atasan 2">Atasan 2</option>
@@ -65,16 +58,16 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="email_1" class="form-label">Email</label>
+                                    <label for="email_1" class="form-label" hidden>Email</label>
                                     <input type="email" class="form-control" id="email_1" name="email_1"
-                                        placeholder="Email Atasan 1">
+                                        placeholder="Email Atasan 1" hidden>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label for="unit_2" class="form-label">Unit/Lokasi Kerja</label>
-                                    <select class="form-select" id="unit_2" name="unit_2">
+                                    <label for="unit_2" class="form-label" hidden>Unit/Lokasi Kerja</label>
+                                    <select class="form-select" id="unit_2" name="unit_2" hidden>
                                         <option selected disabled>-- Pilih Unit --</option>
                                         <option value="unit 1">Unit 1</option>
                                         <option value="unit 2">Unit 2</option>
@@ -83,8 +76,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="atasan_2" class="form-label">Atasan 2</label>
-                                    <select class="form-select" id="atasan_2" name="atasan_2">
+                                    <label for="atasan_2" class="form-label" hidden>Atasan 2</label>
+                                    <select class="form-select" id="atasan_2" name="atasan_2" hidden>
                                         <option selected disabled>-- Pilih Atasan --</option>
                                         <option value="atasan 1">Atasan 1</option>
                                         <option value="atasan 2">Atasan 2</option>
@@ -93,14 +86,11 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="email_2" class="form-label">Email</label>
+                                    <label for="email_2" class="form-label" hidden>Email</label>
                                     <input type="email" class="form-control" id="email_2" name="email_2"
-                                        placeholder="Email Atasan 2">
+                                        placeholder="Email Atasan 2" hidden>
                                 </div>
-                            </div>
-
-
-
+                            </div> --}}
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="mulai" class="form-label">Tanggal Mulai</label>

@@ -8,6 +8,9 @@ use App\Models\BusinessTrip;
 use App\Models\ca_transaction;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\Hotel;
+use App\Models\Taksi;
+use App\Models\Tiket;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,21 +26,22 @@ class BusinessTripController extends Controller
         $perPage = request()->query('per_page', 10);
 
         $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate($perPage);
-        // $sppd = BusinessTrip::where('user_id', $user->id)
-        //                 ->orderBy('mulai', 'asc')
-        //                 ->paginate($perPage);
-        // $noSppds = $sppd->pluck('no_sppd')->toArray();
-        // $ca = ca_transaction::where('user_id', $user->id)
-        //                  ->whereIn('no_sppd', $noSppds)
-        //                  ->get();
-        // $caGroupedBySppd = $ca->groupBy('no_sppd');
-        $ca = ca_transaction::where('user_id', $user->id)->first();
+
+        // Collect all SPPD numbers from the BusinessTrip instances
+        $sppdNos = $sppd->pluck('no_sppd');
+
+        // No sppd
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'ca'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
+
 
     public function delete($id)
     {
@@ -111,7 +115,7 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
         $cari = $request->q;
-        $ca = ca_transaction::where('user_id', $user->id)->first();
+
         $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
             ->where(function ($query) use ($cari) {
                 $query->where('nama', 'like', '%' . $cari . '%')
@@ -126,34 +130,45 @@ class BusinessTripController extends Controller
             })
             ->paginate(10);
 
+        $sppdNos = $sppd->pluck('no_sppd');
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
         $sppd->appends($request->all());
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        // return redirect('businessTrip');
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'ca'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
     public function filterDate(Request $request)
     {
         $user = Auth::user();
-        $ca = ca_transaction::where('user_id', $user->id)->first();
+        $sppd = BusinessTrip::where('user_id', $user->id);
+        $sppdNos = $sppd->pluck('no_sppd');
+
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+
         $startDate = $request->query('start-date');
         $endDate = $request->query('end-date');
 
         if ($startDate && $endDate) {
             $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
                 ->whereBetween('mulai', [$startDate, $endDate])
-                ->orderBy('mulai', 'desc')
+                ->orderBy('mulai', 'asc')
                 ->paginate(10); // Adjust the pagination as needed
         } else {
             $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
-                ->orderBy('mulai', 'desc')
+                ->orderBy('mulai', 'asc')
                 ->paginate(10);
         }
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'ca'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
 
     public function updatestatus($id, Request $request)
