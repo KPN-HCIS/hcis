@@ -30,12 +30,12 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced.submit') }}">@csrf 
+                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced.submit') }}">@csrf
                             <div class="row my-2">
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
-                                        <input type="text" name="name" id="name" value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
+                                        <input type="text" name="name" id="name" value="{{ $employee_data->fullname }}" class="form-control bg-light" style="cursor: none;" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                                                 <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
                                             @endforeach
                                         </select>
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +80,7 @@
                                             @endforeach
                                             <option value="Others">Others</option>
                                         </select>
-                                        <br><input type="text" name="others_location" id="others_location" class="form-control" placeholder="Other Location" value="" style="display: none;"> 
+                                        <br><input type="text" name="others_location" id="others_location" class="form-control" placeholder="Other Location" value="" style="display: none;">
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +156,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <br>
                             <div class="row" id="ca_nbt" style="display: none;">
                                 <div class="col-md-12">
@@ -535,7 +535,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <br>
                             <div class="row">
                                 <div class="col-md d-md-flex justify-content-end text-center">
@@ -562,7 +562,7 @@
         var div_bisnis_numb = document.getElementById("div_bisnis_numb");
         var bisnis_numb = document.getElementById("bisnis_numb");
         var div_allowance = document.getElementById("div_allowance");
-        
+
         if (ca_type.value === "dns") {
             ca_nbt.style.display = "block";
             ca_e.style.display = "none";
@@ -589,7 +589,7 @@
         // ca_type ca_nbt ca_e
         var locationFilter = document.getElementById("locationFilter");
         var others_location = document.getElementById("others_location");
-        
+
         if (locationFilter.value === "Others") {
             others_location.style.display = "block";
         } else{
@@ -597,7 +597,7 @@
             others_location.value = "";
         }
     }
-      
+
     function validateInput(input) {
         //input.value = input.value.replace(/[^0-9,]/g, '');
         input.value = input.value.replace(/[^0-9]/g, '');
@@ -692,7 +692,7 @@
                 totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
                 allowanceInput.value = 0;
             }
-            
+
             // totalcaInput.value = formatNumber(totalca.toFixed(2));
             totalcaInput.value = formatNumber(Math.floor(totalca));
         }
@@ -711,7 +711,7 @@
     $(document).ready(function() {
         $('.select2').select2({
             theme: "bootstrap-5",
-            
+
         });
     });
 </script>
