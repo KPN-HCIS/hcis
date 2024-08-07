@@ -1,163 +1,173 @@
 @extends('layouts_.vertical', ['page_title' => 'Business Trip'])
 @section('content')
-<style>
-    body {
-        background-color: #f8f9fa;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        max-width: 600px;
-        padding: 20px;
-        box-sizing: border-box;
-    }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-    .card {
-        background-color: #ffffff;
-        border-radius: 8px;
-        padding: 20px;
-        width: 100%;
-        max-width: 400px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        box-sizing: border-box;
-    }
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
 
-    h2 {
-        font-size: 1.5rem;
-        color: #333;
-        margin-top: 0;
-        margin-bottom: 15px;
-    }
+        h2 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
 
-    .download-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-        padding: 5px;
-        border-bottom: 1px solid #ddd;
-    }
+        .download-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
 
-    .download-item:last-child {
-        border-bottom: none;
-    }
+        .download-item:last-child {
+            border-bottom: none;
+        }
 
-    .progress-bar {
-        flex-grow: 1;
-        height: 6px;
-        background-color: #007bff;
-        margin-left: 10px;
-        border-radius: 3px;
-    }
+        .download-button {
+            display: inline-block;
+            /* Change to inline-block to reduce width */
+            padding: 4px 8px;
+            /* Smaller padding */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            /* Slightly smaller border-radius */
+            cursor: pointer;
+            font-size: 0.75rem;
+            /* Smaller font size */
+            text-align: center;
+            margin-left: auto;
+            /* Align to the right */
+            transition: background-color 0.3s ease;
+        }
 
-    .download-button {
-        display: block;
-        width: 100%;
-        padding: 12px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-        text-align: center;
-        margin-top: 20px;
-        transition: background-color 0.3s ease;
-    }
+        .download-button:hover {
+            background-color: #0056b3;
+        }
 
-    .download-button:hover {
-        background-color: #0056b3;
-    }
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
 
-    .modal-footer {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
+        .btn-secondary,
+        .btn-primary {
+            border: none;
+            padding: 4px 8px;
+            /* Smaller padding */
+            border-radius: 4px;
+            /* Slightly smaller border-radius */
+            font-size: 0.75rem;
+            /* Smaller font size */
+            cursor: pointer;
+        }
 
-    .btn-secondary,
-    .btn-primary {
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        font-size: 1rem;
-        cursor: pointer;
-    }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
 
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-    }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
 
-    .btn-secondary:hover {
-        background-color: #5a6268;
-    }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            float: right;
+        }
 
-    .btn-primary {
-        background-color: #007bff;
-        color: white;
-        float: right;
-    }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
 
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-</style>
-
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            <h2>Download Files for: {{ $data->nama }}</h2>
-        </div>
-        <div class="card-body">
-            <div class="download-item">
-                <input type="checkbox" id="file1" checked>
-                <label for="file1">SPPD Document</label>
-                <div class="progress-bar"></div>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Download Files for: {{ $sppd->nama ?? 'N/A' }}</h2>
             </div>
-            <div class="download-item">
-                <input type="checkbox" id="file1" checked>
-                <label for="file1">CA Document</label>
-                <div class="progress-bar"></div>
-            </div>
-            <div class="download-item">
-                <input type="checkbox" id="file1" checked>
-                <label for="file1">Hotel Document</label>
-                <div class="progress-bar"></div>
-            </div>
-            <div class="download-item">
-                <input type="checkbox" id="file1" checked>
-                <label for="file1">Tiket Document</label>
-                <div class="progress-bar"></div>
-            </div>
-            <div class="download-item">
-                <input type="checkbox" id="file1" checked>
-                <label for="file1">Taxi Document</label>
-                <div class="progress-bar"></div>
-            </div>
-            <!-- Add more download items as needed -->
-            <form action="{{ route('export', ['id' => $data->id]) }}" method="POST">
-                @csrf
-                <p>Are you sure you want to download the file?</p>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary float-end">Download</button>
+            <div class="card-body">
+                <div class="download-item">
+                    <label for="fileSppd">SPPD Document</label>
+                    <button class="btn btn-primary download-button" data-type="sppd">Download</button>
                 </div>
-            </form>
+
+                @if ($sppd->ca == 'Ya' && isset($caTransactions[$sppd->no_sppd]))
+                    <div class="download-item">
+                        <label for="fileCa">CA Document</label>
+                        <button class="btn btn-primary download-button" data-type="ca">Download</button>
+                    </div>
+                @endif
+
+                @if ($sppd->hotel == 'Ya' && isset($hotel[$sppd->no_sppd]))
+                    <div class="download-item">
+                        <label for="fileHtl">Hotel Document</label>
+                        <button class="btn btn-primary download-button" data-type="hotel">Download</button>
+                    </div>
+                @endif
+
+                @if ($sppd->tiket == 'Ya' && isset($tickets[$sppd->no_sppd]))
+                    <div class="download-item">
+                        <label for="fileTkt">Tiket Document</label>
+                        <button class="btn btn-primary download-button" data-type="tiket">Download</button>
+                    </div>
+                @endif
+
+                @if ($sppd->taksi == 'Ya' && isset($taksi[$sppd->no_sppd]))
+                    <div class="download-item">
+                        <label for="fileTaksi">Taxi Document</label>
+                        <button class="btn btn-primary download-button" data-type="taksi">Download</button>
+                    </div>
+                @endif
+
+                <form action="{{ route('export', ['id' => $sppd->id]) }}" method="POST">
+                    @csrf
+                    <p>Are you sure you want to download all files?</p>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Download All</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.getElementById('closeButton').addEventListener('click', function() {
-        window.history.back();
-    });
-</script>
+    <script>
+        document.querySelectorAll('.download-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                const id = '{{ $sppd->id }}';
+                window.location.href = `/download-document/${id}/${type}`;
+            });
+        });
+    </script>
 @endsection

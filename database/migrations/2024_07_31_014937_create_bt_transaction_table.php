@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bt_transaction', function (Blueprint $table) {
-            $table->increments('id');
+            $table->uuid('id')->primary();
             $table->integer('user_id');
             $table->string('nama');
             $table->string('no_sppd');

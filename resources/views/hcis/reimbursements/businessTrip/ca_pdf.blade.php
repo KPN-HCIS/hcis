@@ -1,58 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Business Trip</title>
+    <title>CA Transaction</title>
     <style>
         body {
+            margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-size: 12px;
         }
-        h5, p {
+
+        .header {
+            width: 100%;
+            height: auto;
+        }
+
+        .header img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        h5 {
+            font-size: 14px;
             margin: 0;
             padding: 0;
         }
+
+        p {
+            margin-top: 4px;
+            padding: 2px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
         }
+
         td {
             padding: 5px;
             vertical-align: top;
         }
+
         .center {
             text-align: center;
         }
+
         .label {
             width: 30%;
         }
+
         .colon {
             width: 20px;
             text-align: center;
         }
+
         .value {
             width: 70%;
         }
+
         .section-title {
             margin-top: 20px;
         }
     </style>
 </head>
+
 <body>
-    <h5 class="center">SURAT PERINTAH PERJALANAN DINAS</h5>
-    <h5 class="center">No. {{ $ca ? $ca->no_sppd : 'N/A' }}</h5>
+    <div class="header">
+        <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
+    </div>
+    <h5 class="center">CASH ADVANCE (CA) TRANSACTION</h5>
+    <h5 class="center">No. {{ $ca->no_ca }}</h5>
 
     <table>
         <tr>
-            <td colspan="3"><b>Ditugaskan Kepada :</b></td>
+            <td colspan="3"><b>Transaction Details:</b></td>
         </tr>
         <tr>
-            <td class="label">Nama</td>
+            <td class="label">Type CA</td>
             <td class="colon">:</td>
-            <td class="value">{{ $data->nama }}</td>
+            <td class="value">{{ $ca->type_ca }}</td>
         </tr>
         <tr>
             <td class="label">No. CA</td>
@@ -60,72 +96,94 @@
             <td class="value">{{ $ca->no_ca }}</td>
         </tr>
         <tr>
-            <td class="label">Email</td>
+            <td class="label">No. SPPD</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ca->email }}</td>
+            <td class="value">{{ $ca->no_sppd }}</td>
         </tr>
         <tr>
-            <td class="label">Divisi</td>
+            <td class="label">Unit</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ca->divisi }}</td>
+            <td class="value">{{ $ca->unit }}</td>
         </tr>
         <tr>
-            <td class="label">Cost Center</td>
+            <td class="label">Contribution Level Code</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ca->cost_center }}</td>
+            <td class="value">{{ $ca->contribution_level_code }}</td>
         </tr>
     </table>
 
     <table>
         <tr>
-            <td colspan="3"><b>Untuk Melakukan Perjalanan Dinas ke :</b></td>
+            <td colspan="3"><b>Travel Details:</b></td>
         </tr>
         <tr>
-            <td class="label">Tujuan</td>
+            <td class="label">Destination</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ca->tujuan }}</td>
+            <td class="value">{{ $ca->destination }}</td>
         </tr>
         <tr>
-            <td class="label">Keperluan</td>
+            <td class="label">CA Needs</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ca->keperluan }}</td>
+            <td class="value">{{ $ca->ca_needs }}</td>
         </tr>
         <tr>
-            <td class="label">Dari Tanggal</td>
+            <td class="label">Start Date</td>
             <td class="colon">:</td>
             <td class="value">{{ $ca->start_date }}</td>
         </tr>
         <tr>
-            <td class="label">Sampai dengan tanggal</td>
+            <td class="label">End Date</td>
             <td class="colon">:</td>
             <td class="value">{{ $ca->end_date }}</td>
+        </tr>
+        {{-- <tr>
+            <td class="label">Date Required</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $ca->date_required }}</td>
+        </tr> --}}
+    </table>
+
+    <table>
+        <tr>
+            <td colspan="3"><b>Financial Details:</b></td>
+        </tr>
+        <tr>
+            <td class="label">Total CA</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $ca->total_ca }}</td>
+        </tr>
+        <tr>
+            <td class="label">Total Real</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $ca->total_real }}</td>
+        </tr>
+        <tr>
+            <td class="label">Total Cost</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $ca->total_cost }}</td>
         </tr>
     </table>
 
     <table>
         <tr>
-            <td colspan="3"><b>Disetujui Oleh :</b></td>
+            <td colspan="3"><b>Approval Status:</b></td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 1</td>
+            <td class="label">Approval Status</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ca->atasan_1 }}</td>
+            <td class="value">{{ $ca->approval_status }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Approval Sett</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ca->tanggal_atasan_1 }}</td>
+            <td class="value">{{ $ca->approval_sett }}</td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 2</td>
+            <td class="label">Approval Extend</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ca->atasan_2 }}</td>
-        </tr>
-        <tr>
-            <td class="label">Tanggal</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $ca->tanggal_atasan_2 }}</td>
+            <td class="value">{{ $ca->approval_extend }}</td>
         </tr>
     </table>
 </body>
+
 </html>

@@ -116,6 +116,70 @@
             padding: 3px 6px !important;
             border-radius: 3px !important;
         }
+
+        /* Modal css */
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .btn-close {
+            font-size: 1.25rem;
+        }
+
+        .modal-body {
+            padding: 20px;
+            font-size: 1rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+        }
+
+        .download-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+
+        .download-item label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            font-size: 0.875rem;
+            border-radius: 5px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        /* Loading indicator styles */
+        .loading-indicator {
+            text-align: center;
+            font-size: 1rem;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
     </style>
 @endsection
 
@@ -290,16 +354,17 @@
                                             </td>
 
                                             <td>
-                                                <a href="{{ route('pdf', $n->id) }}" class="btn btn-outline-primary"
-                                                    target="_blank">
+                                                <button type="button" class="btn btn-outline-primary"
+                                                    data-bs-toggle="modal" data-bs-target="#pdfModal"
+                                                    data-id="{{ $n->id }}">
                                                     <i class="bi bi-file-earmark-arrow-down"></i>
-                                                </a>
+                                                </button>
                                             </td>
                                             <td>
                                                 @php
                                                     $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                 @endphp
-                                                @if ($n->kembali <= $today)
+                                                @if ($n->kembali <= $today && $n->status == 'Diterima')
                                                     <form method="GET"
                                                         action="/businessTrip/deklarasi/{{ $n->id }}"
                                                         style="display: inline-block;">
@@ -416,6 +481,35 @@
                 </div>
             </div>
         </div>
+
+        <!-- PDF Modal -->
+        <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pdfModalLabel">Download Files</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="loadingIndicator" style="display:none;">Loading...</div>
+                        <div id="modalContent"></div>
+                        <button class="download-button" data-id="1" data-type="sppd">Download SPPD</button>
+                        <button class="download-button" data-id="1" data-type="ca">Download CA</button>
+                        <button class="download-button" data-id="1" data-type="tiket">Download Ticket</button>
+                        <button class="download-button" data-id="1" data-type="hotel">Download Hotel</button>
+                        <button class="download-button" data-id="1" data-type="taksi">Download Taxi</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form id="downloadForm" method="GET" style="display: none;">
+            @csrf
+            <input type="hidden" name="id" id="downloadId">
+            <input type="hidden" name="type" id="downloadType">
+        </form>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -540,6 +634,149 @@
                     });
                     $('.modal-backdrop').remove();
                 });
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = document.getElementById('pdfModal');
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                const modalBody = modal.querySelector('.modal-body');
+                let cachedData = {};
+
+                modal.removeEventListener('show.bs.modal', handleShowModal);
+                modal.addEventListener('show.bs.modal', handleShowModal);
+
+                function handleShowModal(event) {
+                    const button = event.relatedTarget;
+                    const id = button.getAttribute('data-id');
+
+                    console.log(`Fetching data for SPPD ID: ${id}`);
+
+                    loadingIndicator.style.display = 'block';
+                    modalBody.innerHTML = '';
+
+                    if (cachedData[id]) {
+                        renderModalContent(cachedData[id]);
+                    } else {
+                        fetchData(id);
+                    }
+                }
+
+                function fetchData(id) {
+                    fetch(`/businessTrip/pdf/${id}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Data fetched:', data);
+                            cachedData[id] = data;
+                            renderModalContent(data);
+                        })
+                        .catch(error => {
+                            loadingIndicator.style.display = 'none';
+                            modalBody.innerHTML =
+                                '<div class="alert alert-danger">Error loading data. Please try again.</div>';
+                            console.error('Error fetching data:', error);
+                        });
+                }
+
+                function renderModalContent(data) {
+                    loadingIndicator.style.display = 'none';
+
+                    const content = [];
+
+                    const documentTypes = [{
+                            key: 'sppd',
+                            label: 'SPPD Document',
+                            id: data.sppd.id
+                        },
+                        {
+                            key: 'caTransactions',
+                            label: 'CA Document',
+                            type: 'ca',
+                            id: data.caTransactions?.id
+                        },
+                        {
+                            key: 'tickets',
+                            label: 'Ticket Document',
+                            type: 'tiket',
+                            id: data.tickets?.id
+                        },
+                        {
+                            key: 'hotel',
+                            label: 'Hotel Document',
+                            id: data.hotel?.id
+                        },
+                        {
+                            key: 'taksi',
+                            label: 'Taxi Document',
+                            id: data.taksi?.id
+                        }
+                    ];
+
+                    documentTypes.forEach(doc => {
+                        if (data[doc.key] && doc.id) {
+                            content.push(`
+                <div class="download-item">
+                    <label>${doc.label}</label>
+                    <button class="btn btn-primary download-button" data-type="${doc.type || doc.key}" data-id="${doc.id}">Download</button>
+                </div>
+            `);
+                        }
+                    });
+
+                    modalBody.innerHTML = content.join('');
+
+                    attachDownloadListeners();
+                }
+
+                function attachDownloadListeners() {
+                    document.querySelectorAll('.download-button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const type = this.getAttribute('data-type');
+                            const id = this.getAttribute('data-id');
+                            downloadDocument(id, type);
+                        });
+                    });
+                }
+
+                function downloadDocument(id, type) {
+                    console.log(`Attempting to download document: Type=${type}, ID=${id}`);
+
+                    // Open a new tab immediately
+                    const newTab = window.open('about:blank', '_blank');
+
+                    fetch(`/businessTrip/export/${id}/${type}`, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    try {
+                                        return JSON.parse(text);
+                                    } catch (e) {
+                                        throw new Error(text);
+                                    }
+                                }).then(err => {
+                                    throw err;
+                                });
+                            }
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            newTab.location.href = url;
+                            console.log(`Document downloaded successfully: Type=${type}, ID=${id}`);
+                        })
+                        .catch(error => {
+                            console.error('Error downloading document:', error);
+                            newTab.close();
+                            let errorMessage = error.error ||
+                                `Error downloading ${type} document. Please try again later.`;
+                            alert(errorMessage);
+                            console.error('Detailed error:', JSON.stringify(error, null, 2));
+                        });
+                }
             });
         </script>
     @endsection
