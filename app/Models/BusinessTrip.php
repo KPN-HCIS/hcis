@@ -10,9 +10,21 @@ class BusinessTrip extends Model
 {
     use HasFactory, HasUuids;
 
-    public function user()
+    public function employee()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Employee::class, 'user_id', 'id');
+    }
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class, 'user_id', 'user_id');
+    }
+    public function tiket()
+    {
+        return $this->belongsTo(Tiket::class, 'user_id', 'user_id');
+    }
+    public function taksi()
+    {
+        return $this->belongsTo(Taksi::class, 'user_id', 'user_id');
     }
     protected $keyType = 'string';
     public $incrementing=false;

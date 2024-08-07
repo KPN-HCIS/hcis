@@ -35,6 +35,11 @@
             padding: 0;
         }
 
+        h4 {
+            padding-left: 2px;
+            padding-top: 4px;
+        }
+
         p {
             margin-top: 4px;
             padding: 2px;
@@ -73,12 +78,14 @@
         }
 
         .bottom-table {
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
-        .bottom-table th, .bottom-table td {
+        .bottom-table th,
+        .bottom-table td {
             padding: 10px;
             text-align: left !important;
+            width: 70px;
         }
 
         .bottom-table th {
@@ -88,10 +95,12 @@
         .bottom-table tr:nth-child(even) {
             background-color: #d3d3d3;
         }
+
         .bottom-table tr:nth-child(odd) {
             background-color: #ededed;
         }
-        table .ttd{
+
+        table .ttd {
             height: 64px;
         }
     </style>
@@ -111,17 +120,17 @@
         <tr>
             <td class="label">Nama</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->nama }}</td>
+            <td class="value">{{ $sppd->employee->fullname }}</td>
         </tr>
         <tr>
             <td class="label">NIK</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->nik }}</td>
+            <td class="value">{{ $sppd->employee->employee_id }}</td>
         </tr>
         <tr>
             <td class="label">Email</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->email_1 }}</td>
+            <td class="value">{{ $sppd->employee->email }}</td>
         </tr>
         <tr>
             <td class="label">Divisi</td>
@@ -131,12 +140,12 @@
         <tr>
             <td class="label">PT</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->bb_perusahaan }}</td>
+            <td class="value">{{ $sppd->employee->company_name }}</td>
         </tr>
         <tr>
             <td class="label">Cost Center</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->cost_center }}</td>
+            <td class="value">{{ $sppd->cost_center ?? '0' }}</td>
         </tr>
     </table>
 

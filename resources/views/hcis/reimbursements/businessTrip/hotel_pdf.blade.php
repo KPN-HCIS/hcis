@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Taxi Voucher Details</title>
+    <title>Hotel Details</title>
     <style>
         body {
             margin: 0;
@@ -22,7 +22,7 @@
         .header img {
             width: 100%;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .content {
@@ -47,7 +47,7 @@
         }
 
         td {
-            padding: 5px;
+            padding: 2px;
             vertical-align: top;
         }
 
@@ -74,20 +74,25 @@
     <div class="header">
         <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
     </div>
-    <h5 class="center">TAXI VOUCHER DETAILS</h5>
-    <h5 class="center">No. {{ $hotel->no_htl }}</h5>
+    <h5 class="center">HOTEL BOOKING FORM</h5>
+    <h5 class="center">No. {{ $hotel->no_sppd }}</h5>
 
     <table>
         <tr>
-            <td colspan="3"><b>Voucher Information:</b></td>
+            <td colspan="3"><b>Identity Information:</b></td>
         </tr>
         <tr>
-            <td class="label">SPPD Number</td>
+            <td class="label">Nama</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->no_sppd }}</td>
+            <td class="value">{{ $hotel->employee->fullname }}</td>
         </tr>
         <tr>
-            <td class="label">Unit</td>
+            <td class="label">Jabatan</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $hotel->employee->designation }}</td>
+        </tr>
+        <tr>
+            <td class="label">Divisi</td>
             <td class="colon">:</td>
             <td class="value">{{ $hotel->unit }}</td>
         </tr>
@@ -117,12 +122,6 @@
             <td class="colon">:</td>
             <td class="value">{{ $hotel->bed_htl }}</td>
         </tr>
-    </table>
-
-    <table>
-        <tr>
-            <td colspan="3"><b>Others:</b></td>
-        </tr>
         <tr>
             <td class="label">Check In Date:</td>
             <td class="colon">:</td>
@@ -133,10 +132,47 @@
             <td class="colon">:</td>
             <td class="value">{{ $hotel->tgl_keluar_htl }}</td>
         </tr>
+    </table>
+
+    <table>
         <tr>
-            <td class="label">Total Days:</td>
+            <td colspan="3"><b>Others:</b></td>
+        </tr>
+        <tr>
+            <td class="label">PT</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->total_hari }}</td>
+            <td class="value">{{ $hotel->employee->company_name }}</td>
+        </tr>
+        <tr>
+            <td class="label">Cost Center</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $hotel->cost_center ?? '0'}}</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td colspan="3"><b>Disetujui Oleh :</b></td>
+        </tr>
+        <tr>
+            <td class="label">Nama Atasan 1</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $hotel->businessTrip->atasan_1 }}</td>
+        </tr>
+        <tr>
+            <td class="label">Tanggal</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $hotel->businessTrip->tanggal_atasan_1 }}</td>
+        </tr>
+        <tr>
+            <td class="label">Nama Atasan 2</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $hotel->businessTrip->atasan_2 }}</td>
+        </tr>
+        <tr>
+            <td class="label">Tanggal</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $hotel->businessTrip->tanggal_atasan_2 }}</td>
         </tr>
     </table>
 </body>

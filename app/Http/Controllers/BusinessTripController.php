@@ -97,14 +97,24 @@ class BusinessTripController extends Controller
         $user = Auth::user();
         $perPage = request()->query('per_page', 10);
 
+        // Fetch BusinessTrip instances for the authenticated user
         $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate($perPage);
-        $ca = ca_transaction::where('user_id', $user->id)->first();
+
+        // Collect all SPPD numbers from the BusinessTrip instances
+        $sppdNos = $sppd->pluck('no_sppd');
+
+        // Fetch related data based on SPPD numbers
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
-        $link = 'Business Trip';
+        $link = 'BT Approval';
 
-        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'ca'));
+        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
+
 
     public function deklarasi($id)
     {
@@ -181,7 +191,7 @@ class BusinessTripController extends Controller
         // Update your model or database table with the new status value
         BusinessTrip::where('id', $id)->update(['status' => $statusValue]);
 
-        return redirect('/businessTrip');
+        return redirect('/businessTrip/approval');
     }
 
     // public function export($id)

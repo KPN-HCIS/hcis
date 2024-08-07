@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Employee extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         // Kolom-kolom lainnya,
         'access_menu','id','employee_id', 'fullname', 'gender', 'email', 'group_company',
@@ -22,11 +22,23 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class, 'users_id', 'id');
     }
+    public function businessTrip()
+    {
+        return $this->belongsTo(BusinessTrip::class, 'users_id', 'id');
+    }
+    public function taksi()
+    {
+        return $this->belongsTo(Taksi::class, 'users_id', 'id');
+    }
+    public function tiket()
+    {
+        return $this->belongsTo(Tiket::class, 'users_id', 'id');
+    }
     public function goal()
     {
         return $this->belongsTo(Goal::class, 'employee_id', 'employee_id');
     }
-    
+
     public function approvalRequest()
     {
         return $this->hasMany(ApprovalRequest::class, 'employee_id', 'employee_id');
