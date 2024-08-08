@@ -15,6 +15,8 @@ use App\Models\CATransaction;
 use App\Http\Controllers\Log;
 use App\Models\htl_transaction;
 use App\Models\tkt_transaction;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 
 class ReimburseController extends Controller
 {
@@ -27,18 +29,30 @@ class ReimburseController extends Controller
             'userId' => $userId,
         ]);
     }
+
+    // Cash Advanced
     public function cashadvanced()
     {
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
-        $ca_transactions = ca_transaction::where('user_id', $userId)->get();
+        // Mengambil transaksi dengan user_id yang sesuai dan mengikutsertakan relasi employee
+        $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
+
+        $company = Company::with('companies')->where('contribution_level_code', 'company_name')->get();
+
+        // Memformat tanggal
+        foreach ($ca_transactions as $transaction) {
+            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+        }
         //dd($ca_transactions);
         return view('hcis.reimbursements.cashadv.cashadv', [
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
+            'company' => $company,
         ]);
     }
     function cashadvancedCreate()
@@ -117,6 +131,7 @@ class ReimburseController extends Controller
         $model->ca_needs        = $req->ca_needs;
         $model->start_date      = $req->start_date;
         $model->end_date        = $req->end_date;
+        $model->declare_estimate      = $req->ca_decla;
         $model->date_required   = $req->ca_required;
         $model->total_days      = $req->totaldays;
         if ($req->ca_type == 'dns' || $req->ca_type == 'ndns') {
@@ -177,7 +192,7 @@ class ReimburseController extends Controller
         $model->save();
 
         Alert::success('Success');
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->intended(route('cashadvanced', absolute: false))->with('success', 'Data berhasil dibuat.');
     }
     function cashadvancedEdit($key)
     {
@@ -190,7 +205,7 @@ class ReimburseController extends Controller
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
-        $transactions = CATransaction::find($key);
+        $transactions = CATransaction::findByRouteKey($key);
 
         return view('hcis.reimbursements.cashadv.editCashadv', [
             'link' => $link,
@@ -207,10 +222,11 @@ class ReimburseController extends Controller
     function cashadvancedUpdate(Request $req, $key)
     {
         $userId = Auth::id();
-        $model = ca_transaction::find($key);
+        $model = CATransaction::findByRouteKey($key);
         $model->type_ca         = $req->ca_type;
         $model->no_ca           = $req->no_ca;
         $model->no_sppd         = $req->bisnis_numb;
+        $model->declare_estimate      = $req->ca_decla;
         // $model->user_id         = $req->id;
         $model->unit            = $req->unit;
         $model->contribution_level_code   = $req->companyFilter;
@@ -279,14 +295,114 @@ class ReimburseController extends Controller
         $model->save();
 
         Alert::success('Success Update');
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->intended(route('cashadvanced', absolute: false))->with('success', 'Data berhasil diedit.');
     }
-    function cashadvancedDelete($id)
+    public function cashadvancedDelete($id)
     {
-        $model = ca_transaction::find($id);
+        $model = CATransaction::find($id);
+
+        if (!$model) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
+
         $model->delete();
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->intended(route('cashadvanced', absolute: false))->with('success', 'Data berhasil dihapus.');
     }
+    function cashadvancedDownload($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        // $kantor = Company::where('contribution_level', $companies->contribution_level_code)->first();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $transactions = CATransaction::find($key);
+
+        // return view('hcis.reimbursements.cashadv.downloadCashadv', [
+        $pdf = PDF::loadView('hcis.reimbursements.cashadv.downloadCashadv', [
+            'link' => $link,
+            // 'pdf' => $pdf,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+        ]);
+
+        // return $pdf->download('Cash Advanced ' . $key . '.pdf');
+        return $pdf->stream('Cash Advanced ' . $key . '.pdf');
+    }
+    public function cashadvancedApproval()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced Approval';
+        // Mengambil transaksi dengan user_id yang sesuai dan mengikutsertakan relasi employee
+        $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
+        $company = Company::with('companies')->where('contribution_level_code', 'company_name')->get();
+        $pendingCACount = CATransaction::where('approval_status', 'Pending')->count();
+        $pendingHTLCount = htl_transaction::where('approval_status', 'Pending')->count();
+
+        // Memformat tanggal
+        foreach ($ca_transactions as $transaction) {
+            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+        }
+        //dd($ca_transactions);
+        return view('hcis.reimbursements.cashadv.approveCashadv', [
+            'pendingCACount' => $pendingCACount,
+            'pendingHTLCount' => $pendingHTLCount,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
+            'company' => $company,
+        ]);
+    }
+    public function cashadvancedFormApproval($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $transactions = CATransaction::findByRouteKey($key);
+
+        return view('hcis.reimbursements.cashadv.listApproveCashadv', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+        ]);
+    }
+    function cashadvancedActionApproval(Request $req, $key)
+    {
+        $userId = Auth::id();
+        $model = CATransaction::findByRouteKey($key);
+        $model->approval_status         = $req->approval_status;
+        $model->created_by      = $userId;
+        $model->save();
+
+        Alert::success('Success Approve');
+        return redirect()->intended(route('cashadvanced_approve', absolute: false));
+    }
+    // Hotel
     public function hotel()
     {
         $userId = Auth::id();
@@ -374,7 +490,7 @@ class ReimburseController extends Controller
         $model->save();
 
         Alert::success('Success');
-        session()->flash('message', 'Berhasil di Tambahkan');
+        // session()->flash('message', 'Berhasil di Tambahkan');
         return redirect()->intended(route('hotel', absolute: false));
     }
     function hotelEdit($key)
@@ -418,7 +534,7 @@ class ReimburseController extends Controller
             $model->save();
 
             Alert::success('Success');
-            session()->flash('message', 'Edit Berhasil');
+            // session()->flash('message', 'Edit Berhasil');
             return redirect()->route('hotel');
         } else {
             return redirect()->back()->withErrors(['message' => 'Transaction not found']);
@@ -522,7 +638,7 @@ class ReimburseController extends Controller
         $model->save();
 
         Alert::success('Success');
-        session()->flash('message', 'Berhasil di Tambahkan');
+        // session()->flash('message', 'Berhasil di Tambahkan');
         return redirect()->intended(route('ticket', absolute: false));
     }
     function ticketEdit($key)
@@ -570,7 +686,7 @@ class ReimburseController extends Controller
         $model->save();
 
         Alert::success('Success');
-        session()->flash('message', 'Berhasil di Edit');
+        // session()->flash('message', 'Berhasil di Edit');
         return redirect()->intended(route('ticket', absolute: false));
     }
     function ticketDelete($key)

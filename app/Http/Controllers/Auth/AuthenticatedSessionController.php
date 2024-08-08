@@ -29,18 +29,24 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        if ($request->input('system') === 'kpnpm') {
+            $request->session()->put('system', 'kpnpm');
+            $redirectUrl = url('goals');
+        } else {
+            $request->session()->put('system', 'kpnreimburse');
+            $redirectUrl = url('reimbursements');
+        }
 
         if (Auth::check()) {
             Session::flash("toast", [
                 "type" => "success",
                 "message" => "You're logged in."
             ]);
-            return redirect()->intended(url('/'));
+            return redirect()->intended($redirectUrl);
         } else {
             Alert::error('Error', 'Email or password is incorrect.')->showConfirmButton('OK');
             return redirect()->back();
         }
-
     }
 
     /**
@@ -50,14 +56,14 @@ class AuthenticatedSessionController extends Controller
     {
         $user = Auth::user();
         // Memastikan bahwa $user adalah instance dari model User
-        if($user instanceof \App\Models\User) {
-            $user->token = null; 
+        if ($user instanceof \App\Models\User) {
+            $user->token = null;
             $user->save();
         } else {
             // Jika $user bukan instance dari model User
             // Lakukan penanganan kesalahan sesuai kebutuhan Anda
         }
-        
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

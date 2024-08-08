@@ -63,26 +63,66 @@
                           <tbody>
                             @foreach($transactions as $transaction)
                             <tr>
-                                  <td>{{ $loop->index + 1 }}</td>
-                                  <td>{{ $transaction->no_htl }}</td>
-                                  {{-- <td>{{ $transaction->no_sppd }}</td> --}}
-                                  <td>{{ $transaction->employee->fullname }}</td>
-                                  <td>{{ $transaction->nama_htl }}</td>
-                                  <td>{{ $transaction->lokasi_htl }}</td>
-                                  <td>{{ $transaction->jmlkmr_htl }}</td>
-                                  <td>{{ $transaction->bed_htl }}</td>
-                                  <td>{{ $transaction->tgl_masuk_htl }}</td>
-                                  <td>{{ $transaction->tgl_keluar_htl }}</td>
-                                  <td class="text-center">
-                                    {{-- @if($transaction->created_by == $userId) --}}
-                                        <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                        <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-sm rounded-pill btn-danger" title="Delete">
-                                                <i class="ri-delete-bin-line"></i>
-                                            </button>
-                                        </form>
-                                    {{-- @endif --}}
+                                <td>{{ $loop->index + 1 }}</td>
+                                <td>{{ $transaction->no_htl }}</td>
+                                {{-- <td>{{ $transaction->no_sppd }}</td> --}}
+                                <td>{{ $transaction->employee->fullname }}</td>
+                                <td>{{ $transaction->nama_htl }}</td>
+                                <td>{{ $transaction->lokasi_htl }}</td>
+                                <td>{{ $transaction->jmlkmr_htl }}</td>
+                                <td>{{ $transaction->bed_htl }}</td>
+                                <td>{{ $transaction->tgl_masuk_htl }}</td>
+                                <td>{{ $transaction->tgl_keluar_htl }}</td>
+                                <td>
+                                    @if ($transaction->hotel == 'Ya' && isset($hotel[$transaction->no_sppd]))
+                                        <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                            data-target="#detailModal"
+                                            data-hotel="{{ json_encode([
+                                                'no_htl' => $hotel[$transaction->no_sppd]->no_htl,
+                                                'no_sppd' => $hotel[$transaction->no_sppd]->no_sppd,
+                                                'unit' => $hotel[$transaction->no_sppd]->unit,
+                                                'nama_htl' => $hotel[$transaction->no_sppd]->nama_htl,
+                                                'lokasi_htl' => $hotel[$transaction->no_sppd]->lokasi_htl,
+                                                'jmlkmr_htl' => $hotel[$transaction->no_sppd]->jmlkmr_htl,
+                                                'bed_htl' => $hotel[$transaction->no_sppd]->bed_htl,
+                                                'tgl_masuk_htl' => $hotel[$transaction->no_sppd]->tgl_masuk_htl,
+                                                'tgl_keluar_htl' => $hotel[$transaction->no_sppd]->tgl_keluar_htl,
+                                                'total_hari' => $hotel[$transaction->no_sppd]->total_hari,
+                                            ]) }}">Detail</button>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                                    style="border: 0px; border-radius:4px;">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h6 id="detailTypeHeader" class="mb-3"></h6>
+                                                <div id="detailContent"></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <td class="text-center">
+                                {{-- @if($transaction->created_by == $userId) --}}
+                                    <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                    <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-sm rounded-pill btn-danger" title="Delete">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    </form>
+                                {{-- @endif --}}
                                 </td>
                             </tr>
                             @endforeach

@@ -47,7 +47,7 @@
                     <div class="card" style="height: 215px">
                         <div class="card-body">
                             <img src="/images/menu/cashadv.png" alt="logo">
-                            <h4 class="my-3">Approval</h4>
+                            <h4 class="my-3">Cash Advanced (Approve)</h4>
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>

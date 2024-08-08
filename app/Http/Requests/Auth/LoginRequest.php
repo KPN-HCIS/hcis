@@ -30,6 +30,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string'],
             'password' => ['required', 'string'],
+            'system' => ['required', 'string'],
         ];
     }
 
@@ -45,7 +46,7 @@ class LoginRequest extends FormRequest
         $credential = $this->only('email', 'password');
         $remember = $this->boolean('remember');
         $checkPassword = User::where('email', $credential['email'])->orWhere('employee_id', $credential['email'])->first();
-        
+
         // Validasi apakah password tidak boleh kosong
         if (empty($checkPassword)) {
             throw ValidationException::withMessages([
@@ -57,7 +58,7 @@ class LoginRequest extends FormRequest
                 'password' => 'Password incorrect. Please try again or click Forgot password to reset.',
             ]);
         }
-        $credentials = [ 'email' => $checkPassword->email, 'password' => $credential['password']];
+        $credentials = ['email' => $checkPassword->email, 'password' => $credential['password']];
 
         if (!Auth::attempt($credentials, $remember)) {
             // Jika autentikasi gagal, tambahkan hit pada RateLimiter
@@ -79,7 +80,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -100,6 +101,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }

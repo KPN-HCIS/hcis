@@ -74,7 +74,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-                    ->name('password.request');
+        ->name('password.request');
 
     Route::get('reset-password-email', [PasswordResetLinkController::class, 'selfResetView']);
 
@@ -106,6 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/cashadvanced/edit/{id}', [ReimburseController::class, 'cashadvancedEdit'])->name('cashadvanced.edit');
     Route::post('/cashadvanced/update/{id}', [ReimburseController::class, 'cashadvancedUpdate'])->name('cashadvanced.update');
     Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
+    Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
 
     // My Hotel
     Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');
@@ -142,6 +143,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-tooltip-content', [TeamGoalController::class, 'getTooltipContent']);
     Route::get('/units-of-measurement', [TeamGoalController::class, 'unitOfMeasurement']);
 
+    // Approval Reimburse
+    Route::get('/cashadvanced_approval', [ReimburseController::class, 'cashadvancedApproval'])->name('cashadvanced_approve');
+    Route::get('/cashadvanced_approval/approve/{id}', [ReimburseController::class, 'cashadvancedFormApproval'])->name('cashadvanced_approve.approve');
+    Route::post('/cashadvanced_approval/approved/{id}', [ReimburseController::class, 'cashadvancedActionApproval'])->name('cashadvanced_approve.approved');
+
     // Approval
     Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
 
@@ -166,35 +172,35 @@ Route::middleware('auth')->group(function () {
     Route::get('/changes-company', [ReportController::class, 'changesCompany']);
 
     //Medical
-    Route::get('/medical', [MedicalController::class, 'medical']) -> name('medical');
+    Route::get('/medical', [MedicalController::class, 'medical'])->name('medical');
 
     //Taksi Form
-    Route::get('/taksi', [TaksiController::class, 'taksi']) -> name('taksi');
-    Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd']) -> name('medical.form.add');
-    Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate']) -> name('medical.form.post');
+    Route::get('/taksi', [TaksiController::class, 'taksi'])->name('taksi');
+    Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd'])->name('medical.form.add');
+    Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate'])->name('medical.form.post');
 
     //Business Trip
-    Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip']) -> name('businessTrip');
-    Route::get('/businessTrip/form/add', [BusinessTripController::class, 'businessTripformAdd']) -> name('businessTrip.add');
-    Route::post('/businessTrip/form/post', [BusinessTripController::class, 'businessTripCreate']) -> name('businessTrip.post');
-    Route::get('/businessTrip/form/update/{id}', [BusinessTripController::class, 'formUpdate']) -> name('businessTrip.update');
+    Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip'])->name('businessTrip');
+    Route::get('/businessTrip/form/add', [BusinessTripController::class, 'businessTripformAdd'])->name('businessTrip.add');
+    Route::post('/businessTrip/form/post', [BusinessTripController::class, 'businessTripCreate'])->name('businessTrip.post');
+    Route::get('/businessTrip/form/update/{id}', [BusinessTripController::class, 'formUpdate'])->name('businessTrip.update');
     Route::put('/businessTrip/update/{id}', [BusinessTripController::class, 'update'])->name('update.bt');
 
     //APPROVAL BT
-    Route::get('/businessTrip/approval', [BusinessTripController::class, 'approval']) -> name('businessTrip.approval');
-    Route::get('/businessTrip/approval/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate.approval');
+    Route::get('/businessTrip/approval', [BusinessTripController::class, 'approval'])->name('businessTrip.approval');
+    Route::get('/businessTrip/approval/filterDate', [BusinessTripController::class, 'filterDate'])->name('businessTrip-filterDate.approval');
 
     //DEKLARASI BT
-    Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi']) -> name('businessTrip.deklarasi');
+    Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi'])->name('businessTrip.deklarasi');
 
     Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
 
     //pdf BT
-    Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload']) -> name('pdf');
-    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export']) -> name('export');
+    Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
+    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
 
-    Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
-    Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
+    Route::get('/businessTrip/search', [BusinessTripController::class, 'search'])->name('businessTrip-search');
+    Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate'])->name('businessTrip-filterDate');
 
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');

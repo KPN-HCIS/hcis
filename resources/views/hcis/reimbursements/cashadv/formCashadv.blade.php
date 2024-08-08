@@ -133,6 +133,14 @@
                             <div class="row my-2">
                                 <div class="col-md-6">
                                     <div class="mb-2">
+                                        <label class="form-label" for="start">Declaration Estimate</label>
+                                        <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" placeholder="mm/dd/yyyy" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
                                         <label class="form-label" for="type">CA Type</label>
                                         <select name="ca_type" id="ca_type" class="form-select" onchange="toggleDivs()" readonly>
                                             <option value="">-</option>
@@ -704,6 +712,18 @@
         [transportInput, accommodationInput, otherInput, allowanceInput, nominal_1, nominal_2, nominal_3, nominal_4, nominal_5].forEach(input => {
             input.addEventListener('input', () => formatInput(input));
         });
+    });
+
+    document.getElementById('end_date').addEventListener('change', function() {
+        const endDate = new Date(this.value);
+        const declarationEstimateDate = new Date(endDate);
+        declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+        const year = declarationEstimateDate.getFullYear();
+        const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');
+        const day = String(declarationEstimateDate.getDate()).padStart(2, '0');
+
+        document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
     });
 </script>
 

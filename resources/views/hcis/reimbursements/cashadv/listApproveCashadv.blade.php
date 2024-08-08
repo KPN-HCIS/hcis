@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
+@extends('layouts_.vertical', ['page_title' => 'Approve Cash Advanced'])
 
 @section('css')
     <!-- Sertakan CSS Bootstrap jika diperlukan -->
@@ -14,7 +14,7 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('cashadvanced') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('cashadvanced_approve') }}">{{ $parentLink }}</a></li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -26,11 +26,11 @@
             <div class="card col-md-8">
                 <div class="card-header d-flex bg-white justify-content-between">
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data <b>{{ $transactions->no_sppd }}</b></h4>
-                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
+                    <a href="{{ route('cashadvanced_approve') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced.update', encrypt($transactions->id)) }}">@csrf
+                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced_approve.approved', encrypt($transactions->id)) }}">@csrf
                             <div class="row my-2">
                                 <div class="col-md-6">
                                     <div class="mb-2">
@@ -56,10 +56,10 @@
                                 </div>
                             </div>
                             <div class="row my-2">
-                                <div class="col-md-6">
+                                <div class="col-md-8">
                                     <div class="mb-2">
                                         <label class="form-label" for="name">Costing Company</label>
-                                        <select class="form-control select2" id="companyFilter" name="companyFilter" required>
+                                        <select class="form-control bg-light" id="companyFilter" name="companyFilter" disabled>
                                             <option value="">Select Company...</option>
                                             @foreach($companies as $company)
                                                 <option value="{{ $company->contribution_level_code }}" {{ $company->contribution_level_code == $transactions->contribution_level_code ? 'selected' : '' }}>
@@ -74,7 +74,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="name">Destination</label>
-                                        <select class="form-control select2" id="locationFilter" name="locationFilter" onchange="toggleOthers()" required>
+                                        <select class="form-control bg-light" id="locationFilter" name="locationFilter" onchange="toggleOthers()" disabled>
                                             <option value="">Select location...</option>
                                             <p>{{ $transactions->destination }}</p>
                                             @foreach($locations as $location)
@@ -84,7 +84,7 @@
                                             @endforeach
                                             <option value="Others" {{ $transactions->destination == 'Others' ? 'selected' : '' }}>Others</option>
                                         </select>
-                                        <br><input type="text" name="others_location" id="others_location" class="form-control" placeholder="Other Location" value="{{ $transactions->others_location }}" style="{{ $transactions->destination == 'Others' ? 'display: block;' : 'display: none;' }}">
+                                        <br><input type="text" name="others_location" id="others_location" class="form-control bg-light" placeholder="Other Location" value="{{ $transactions->others_location }}" readonly style="{{ $transactions->destination == 'Others' ? 'display: block;' : 'display: none;' }}">
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="name">CA Purposes</label>
-                                        <textarea name="ca_needs" id="ca_needs" class="form-control">{{ $transactions->ca_needs }}</textarea>
+                                        <textarea name="ca_needs" id="ca_needs" class="form-control bg-light" disabled>{{ $transactions->ca_needs }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -100,7 +100,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Start Date</label>
-                                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ $transactions->start_date }}" required>
+                                        <input type="date" name="start_date" id="start_date" class="form-control bg-light" value="{{ $transactions->start_date }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">End Date</label>
-                                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ $transactions->end_date }}" required>
+                                        <input type="date" name="end_date" id="end_date" class="form-control bg-light" value="{{ $transactions->end_date }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">CA Date Required</label>
-                                        <input type="date" name="ca_required" id="ca_required" class="form-control" value="{{ $transactions->date_required }}" required>
+                                        <input type="date" name="ca_required" id="ca_required" class="form-control bg-light" value="{{ $transactions->date_required }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-2">
                                         <label class="form-label" for="type">CA Type</label>
-                                        <select name="ca_type" id="ca_type" class="form-select" onchange="toggleDivs()" required>
+                                        <select name="ca_type" id="ca_type" class="form-control bg-light" disabled>
                                             <option value="">-</option>
                                             <option value="dns" {{ $transactions->type_ca == 'dns' ? 'selected' : '' }}>Business Trip</option>
                                             <option value="ndns" {{ $transactions->type_ca == 'ndns' ? 'selected' : '' }}>Non Business Trip</option>
@@ -181,7 +181,7 @@
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input class="form-control" name="transport" id="transport" type="text" min="0" value="{{ $details['transport'] ?? '0' }}">
+                                                            <input class="form-control bg-light" name="transport" id="transport" type="text" min="0" value="{{ $details['transport'] ?? '0' }}" readonly>
                                                         </div>
                                                     </div>
                                                     <div class="mb-2">
@@ -190,7 +190,7 @@
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input class="form-control" name="accommodation" id="accommodation" type="text" min="0" value="{{ $details['accommodation'] ?? '0' }}">
+                                                            <input class="form-control bg-light" name="accommodation" id="accommodation" type="text" min="0" value="{{ $details['accommodation'] ?? '0' }}" readonly>
                                                         </div>
                                                     </div>
                                                     <div class="mb-2">
@@ -199,7 +199,7 @@
                                                             <div class="input-group-append">
                                                                 <span class="input-group-text">Rp</span>
                                                             </div>
-                                                            <input class="form-control" name="other" id="other" type="text" min="0" value="{{ $details['other'] ?? '0' }}">
+                                                            <input class="form-control bg-light" name="other" id="other" type="text" min="0" value="{{ $details['other'] ?? '0' }}" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -223,11 +223,11 @@
                                                                         Entertainment Detail #1
                                                                     </button>
                                                                 </h2>
-                                                                <div id="enter-collapseOne" class="accordion-collapse collapse {{ isset($details['enter_type_1']) != null ? 'show' : '' }} " aria-labelledby="enter-headingOne">
+                                                                <div id="enter-collapseOne" class="accordion-collapse collapse {{ isset($details['enter_type_1']) != null ? 'show' : '' }} " aria-labelledby="enter-headingOne" readonly>
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Type</label>
-                                                                            <select name="enter_type_1" id="enter_type_1" class="form-select">
+                                                                            <select name="enter_type_1" id="enter_type_1" class="form-select" disabled>
                                                                                 <option value="">-</option>
                                                                                 <option value="food_cost" {{ isset($details['enter_type_1']) && $details['enter_type_1'] == 'food_cost' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                                                                 <option value="transport" {{ isset($details['enter_type_1']) && $details['enter_type_1'] == 'transport' ? 'selected' : '' }}>Transport</option>
@@ -238,13 +238,13 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Fee Detail</label>
-                                                                            <textarea name="enter_fee_1" id="enter_fee_1"  class="form-control">{{ $details['enter_fee_1'] ?? '' }}</textarea>
+                                                                            <textarea name="enter_fee_1" id="enter_fee_1"  class="form-control bg-light" disabled>{{ $details['enter_fee_1'] ?? '' }}</textarea>
                                                                         </div>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_1" id="nominal_1" type="text" min="0" value="{{ $details['nominal_1'] ?? '0' }}">
+                                                                            <input class="form-control bg-light" name="nominal_1" id="nominal_1" type="text" min="0" value="{{ $details['nominal_1'] ?? '0' }}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -259,7 +259,7 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Type</label>
-                                                                            <select name="enter_type_2" id="enter_type_2" class="form-select">
+                                                                            <select name="enter_type_2" id="enter_type_2" class="form-select" disabled>
                                                                                 <option value="">-</option>
                                                                                 <option value="food_cost" {{ isset($details['enter_type_2']) && $details['enter_type_2'] == 'food_cost' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                                                                 <option value="transport" {{ isset($details['enter_type_2']) && $details['enter_type_2'] == 'transport' ? 'selected' : '' }}>Transport</option>
@@ -270,13 +270,13 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Fee Detail</label>
-                                                                            <textarea name="enter_fee_2" id="enter_fee_2"  class="form-control">{{ $details['enter_fee_2'] ?? '' }}</textarea>
+                                                                            <textarea name="enter_fee_2" id="enter_fee_2"  class="form-control bg-light" disabled>{{ $details['enter_fee_2'] ?? '' }}</textarea>
                                                                         </div>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_2" id="nominal_2" type="text" min="0" value="{{ $details['nominal_2'] ?? '0' }}">
+                                                                            <input class="form-control bg-light" name="nominal_2" id="nominal_2" type="text" min="0" value="{{ $details['nominal_2'] ?? '0' }}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -291,7 +291,7 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Type</label>
-                                                                            <select name="enter_type_3" id="enter_type_3" class="form-select">
+                                                                            <select name="enter_type_3" id="enter_type_3" class="form-select" disabled>
                                                                                 <option value="">-</option>
                                                                                 <option value="food_cost" {{ isset($details['enter_type_3']) && $details['enter_type_3'] == 'food_cost' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                                                                 <option value="transport" {{ isset($details['enter_type_3']) && $details['enter_type_3'] == 'transport' ? 'selected' : '' }}>Transport</option>
@@ -302,13 +302,13 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Fee Detail</label>
-                                                                            <textarea name="enter_fee_3" id="enter_fee_3" class="form-control">{{ $details['enter_fee_3'] ?? '' }}</textarea>
+                                                                            <textarea name="enter_fee_3" id="enter_fee_3" class="form-control bg-light" disabled>{{ $details['enter_fee_3'] ?? '' }}</textarea>
                                                                         </div>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_3" id="nominal_3" type="text" min="0" value="{{ $details['nominal_3'] ?? '0' }}">
+                                                                            <input class="form-control bg-light" name="nominal_3" id="nominal_3" type="text" min="0" value="{{ $details['nominal_3'] ?? '0' }}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -323,7 +323,7 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Type</label>
-                                                                            <select name="enter_type_4" id="enter_type_4" class="form-select">
+                                                                            <select name="enter_type_4" id="enter_type_4" class="form-select" disabled>
                                                                                 <option value="">-</option>
                                                                                 <option value="food_cost" {{ isset($details['enter_type_4']) && $details['enter_type_4'] == 'food_cost' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                                                                 <option value="transport" {{ isset($details['enter_type_4']) && $details['enter_type_4'] == 'transport' ? 'selected' : '' }}>Transport</option>
@@ -334,13 +334,13 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Fee Detail</label>
-                                                                            <textarea name="enter_fee_4" id="enter_fee_4" class="form-control">{{ $details['enter_fee_4'] ?? '' }}</textarea>
+                                                                            <textarea name="enter_fee_4" id="enter_fee_4" class="form-control bg-light" disabled>{{ $details['enter_fee_4'] ?? '' }}</textarea>
                                                                         </div>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_4" id="nominal_4" type="text" min="0" value="{{ $details['nominal_4'] ?? '0' }}">
+                                                                            <input class="form-control bg-light" name="nominal_4" id="nominal_4" type="text" min="0" value="{{ $details['nominal_4'] ?? '0' }}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -355,7 +355,7 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Type</label>
-                                                                            <select name="enter_type_5" id="enter_type_5" class="form-select">
+                                                                            <select name="enter_type_5" id="enter_type_5" class="form-select" disabled>
                                                                                 <option value="">-</option>
                                                                                 <option value="food_cost" {{ isset($details['enter_type_5']) && $details['enter_type_5'] == 'food_cost' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                                                                 <option value="transport" {{ isset($details['enter_type_5']) && $details['enter_type_5'] == 'transport' ? 'selected' : '' }}>Transport</option>
@@ -366,13 +366,13 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Entertainment Fee Detail</label>
-                                                                            <textarea name="enter_fee_5" id="enter_fee_5" class="form-control">{{ $details['enter_fee_5'] ?? '' }}</textarea>
+                                                                            <textarea name="enter_fee_5" id="enter_fee_5" class="form-control bg-light" disabled>{{ $details['enter_fee_5'] ?? '' }}</textarea>
                                                                         </div>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_5" id="nominal_5" type="text" min="0" value="{{ $details['nominal_5'] ?? '0' }}">
+                                                                            <input class="form-control bg-light" name="nominal_5" id="nominal_5" type="text" min="0" value="{{ $details['nominal_5'] ?? '0' }}"readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -391,19 +391,19 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Name</label>
-                                                                            <input type="text" name="rname_1" id="rname_1" class="form-control" value="{{ $details['rname_1'] ?? ''}}">
+                                                                            <input type="text" name="rname_1" id="rname_1" class="form-control bg-light" value="{{ $details['rname_1'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Position</label>
-                                                                            <input type="text" name="rposition_1" id="rposition_1" class="form-control" value="{{ $details['rposition_1'] ?? ''}}">
+                                                                            <input type="text" name="rposition_1" id="rposition_1" class="form-control bg-light" value="{{ $details['rposition_1'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Company</label>
-                                                                            <input type="text" name="rcompany_1" id="rcompany_1" class="form-control" value="{{ $details['rcompany_1'] ?? ''}}">
+                                                                            <input type="text" name="rcompany_1" id="rcompany_1" class="form-control bg-light" value="{{ $details['rcompany_1'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Purpose</label>
-                                                                            <input type="text" name="rpurpose_1" id="rpurpose_1" class="form-control" value="{{ $details['rpurpose_1'] ?? ''}}">
+                                                                            <input type="text" name="rpurpose_1" id="rpurpose_1" class="form-control bg-light" value="{{ $details['rpurpose_1'] ?? ''}}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -418,19 +418,19 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Name</label>
-                                                                            <input type="text" name="rname_2" id="rname_2" class="form-control" value="{{ $details['rname_2'] ?? ''}}">
+                                                                            <input type="text" name="rname_2" id="rname_2" class="form-control bg-light" value="{{ $details['rname_2'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Position</label>
-                                                                            <input type="text" name="rposition_2" id="rposition_2" class="form-control" value="{{ $details['rposition_2'] ?? ''}}">
+                                                                            <input type="text" name="rposition_2" id="rposition_2" class="form-control bg-light" value="{{ $details['rposition_2'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Company</label>
-                                                                            <input type="text" name="rcompany_2" id="rcompany_2" class="form-control" value="{{ $details['rcompany_2'] ?? ''}}">
+                                                                            <input type="text" name="rcompany_2" id="rcompany_2" class="form-control bg-light" value="{{ $details['rcompany_2'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Purpose</label>
-                                                                            <input type="text" name="rpurpose_2" id="rpurpose_2" class="form-control" value="{{ $details['rpurpose_2'] ?? ''}}">
+                                                                            <input type="text" name="rpurpose_2" id="rpurpose_2" class="form-control bg-light" value="{{ $details['rpurpose_2'] ?? ''}}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -445,19 +445,19 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Name</label>
-                                                                            <input type="text" name="rname_3" id="rname_3" class="form-control" value="{{ $details['rname_3'] ?? ''}}">
+                                                                            <input type="text" name="rname_3" id="rname_3" class="form-control bg-light" value="{{ $details['rname_3'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Position</label>
-                                                                            <input type="text" name="rposition_3" id="rposition_3" class="form-control" value="{{ $details['rposition_3'] ?? ''}}">
+                                                                            <input type="text" name="rposition_3" id="rposition_3" class="form-control bg-light" value="{{ $details['rposition_3'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Company</label>
-                                                                            <input type="text" name="rcompany_3" id="rcompany_3" class="form-control" value="{{ $details['rcompany_3'] ?? ''}}">
+                                                                            <input type="text" name="rcompany_3" id="rcompany_3" class="form-control bg-light" value="{{ $details['rcompany_3'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Purpose</label>
-                                                                            <input type="text" name="rpurpose_3" id="rpurpose_3" class="form-control" value="{{ $details['rpurpose_3'] ?? ''}}">
+                                                                            <input type="text" name="rpurpose_3" id="rpurpose_3" class="form-control bg-light" value="{{ $details['rpurpose_3'] ?? ''}}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -472,19 +472,19 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Name</label>
-                                                                            <input type="text" name="rname_4" id="rname_4" class="form-control" value="{{ $details['rname_4'] ?? ''}}">
+                                                                            <input type="text" name="rname_4" id="rname_4" class="form-control bg-light" value="{{ $details['rname_4'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Position</label>
-                                                                            <input type="text" name="rposition_4" id="rposition_4" class="form-control" value="{{ $details['rposition_4'] ?? ''}}">
+                                                                            <input type="text" name="rposition_4" id="rposition_4" class="form-control bg-light" value="{{ $details['rposition_4'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Company</label>
-                                                                            <input type="text" name="rcompany_4" id="rcompany_4" class="form-control" value="{{ $details['rcompany_4'] ?? ''}}">
+                                                                            <input type="text" name="rcompany_4" id="rcompany_4" class="form-control bg-light" value="{{ $details['rcompany_4'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Purpose</label>
-                                                                            <input type="text" name="rpurpose_4" id="rpurpose_4" class="form-control" value="{{ $details['rpurpose_4'] ?? ''}}">
+                                                                            <input type="text" name="rpurpose_4" id="rpurpose_4" class="form-control bg-light" value="{{ $details['rpurpose_4'] ?? ''}}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -499,19 +499,19 @@
                                                                     <div class="accordion-body">
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Name</label>
-                                                                            <input type="text" name="rname_5" id="rname_5" class="form-control" value="{{ $details['rname_5'] ?? ''}}">
+                                                                            <input type="text" name="rname_5" id="rname_5" class="form-control bg-light" value="{{ $details['rname_5'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Position</label>
-                                                                            <input type="text" name="rposition_5" id="rposition_5" class="form-control" value="{{ $details['rposition_5'] ?? ''}}">
+                                                                            <input type="text" name="rposition_5" id="rposition_5" class="form-control bg-light" value="{{ $details['rposition_5'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Company</label>
-                                                                            <input type="text" name="rcompany_5" id="rcompany_5" class="form-control" value="{{ $details['rcompany_5'] ?? ''}}">
+                                                                            <input type="text" name="rcompany_5" id="rcompany_5" class="form-control bg-light" value="{{ $details['rcompany_5'] ?? ''}}" readonly>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Purpose</label>
-                                                                            <input type="text" name="rpurpose_5" id="rpurpose_5" class="form-control" value="{{ $details['rpurpose_5'] ?? ''}}">
+                                                                            <input type="text" name="rpurpose_5" id="rpurpose_5" class="form-control bg-light" value="{{ $details['rpurpose_5'] ?? ''}}" readonly>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -536,6 +536,15 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Persetujuan</label>
+                                    <select name="approval_status" id="approval_status" class="form-select">
+                                        <option value="">-</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
+                                </div>
                             </div>
                             <input type="text" name="no_ca" id="no_ca" value="{{ $transactions->id }}" style="visibility: hidden" class="form-control bg-light" readonly>
                             <input type="text" name="no_ca" id="no_ca" value="{{ $transactions->no_ca }}" style="visibility: hidden" class="form-control bg-light" readonly>
@@ -543,7 +552,7 @@
                             <div class="row">
                                 <div class="col-md d-md-flex justify-content-end text-center">
                                     <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-danger rounded-pill shadow px-4 me-2">Cancel</a>
+                                    <a href="{{ route('cashadvanced_approve') }}" type="button" class="btn btn-danger rounded-pill shadow px-4 me-2">Cancel</a>
                                     <button type="submit" class="btn btn-primary rounded-pill shadow px-4">Submit</button>
                                 </div>
                             </div>
@@ -711,18 +720,6 @@
         [transportInput, accommodationInput, otherInput, allowanceInput, nominal_1, nominal_2, nominal_3, nominal_4, nominal_5].forEach(input => {
             input.addEventListener('input', () => formatInput(input));
         });
-    });
-
-    document.getElementById('end_date').addEventListener('change', function() {
-        const endDate = new Date(this.value);
-        const declarationEstimateDate = new Date(endDate);
-        declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
-
-        const year = declarationEstimateDate.getFullYear();
-        const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');
-        const day = String(declarationEstimateDate.getDate()).padStart(2, '0');
-
-        document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
     });
 </script>
 
