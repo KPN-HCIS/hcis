@@ -54,7 +54,6 @@
                                         <option value="atasan 2">Atasan 2</option>
                                         <option value="atasan 3">Atasan 3</option>
                                         <option value="atasan 4">Atasan 4</option>
-
                                     </select>
                                 </div>
                                 <div class="col-md-4">
@@ -151,7 +150,17 @@
                                     placeholder="Nama Pemilik Rekening">
                             </div>
 
-                            <div class="row mb-3">
+                            <!-- HTML Part -->
+                            <div class="col-md-14 mb-3">
+                                <label for="jns_dinas" class="form-label">Jenis Dinas</label>
+                                <select class="form-select" id="jns_dinas" name="jns_dinas">
+                                    <option selected disabled>-- Pilih Jenis Dinas --</option>
+                                    <option value="dalam kota">Dinas Dalam Kota</option>
+                                    <option value="luar kota">Dinas Luar Kota</option>
+                                </select>
+                            </div>
+
+                            <div id="additional-fields" class="row mb-3" style="display: none;">
                                 <div class="col-md-6">
                                     <label for="ca" class="form-label">Cash Advanced</label>
                                     <select class="form-select" id="ca" name="ca">
@@ -159,7 +168,7 @@
                                         <option value="Ya">Ya</option>
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mt-3">
                                     <label for="tiket" class="form-label">Ticket</label>
                                     <select class="form-select" id="tiket" name="tiket">
                                         <option value="Tidak">Tidak</option>
@@ -181,6 +190,7 @@
                                     </select>
                                 </div>
                             </div>
+
                             <input type="hidden" name="status" value="Pending">
 
                             <div class="text-end">
@@ -192,4 +202,24 @@
             </div>
         </div>
     </div>
+    <!-- JavaScript Part -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var jnsDinasSelect = document.getElementById('jns_dinas');
+            var additionalFields = document.getElementById('additional-fields');
+
+            jnsDinasSelect.addEventListener('change', function() {
+                if (this.value === 'luar kota') {
+                    additionalFields.style.display = 'block';
+                } else {
+                    additionalFields.style.display = 'none';
+                    // Reset all fields to "Tidak"
+                    document.getElementById('ca').value = 'Tidak';
+                    document.getElementById('tiket').value = 'Tidak';
+                    document.getElementById('hotel').value = 'Tidak';
+                    document.getElementById('taksi').value = 'Tidak';
+                }
+            });
+        });
+    </script>
 @endsection

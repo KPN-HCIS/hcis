@@ -1,186 +1,6 @@
 @extends('layouts_.vertical', ['page_title' => 'Business Trip'])
 
 @section('css')
-    <style>
-        .btn-action {
-            margin-right: 10px;
-
-        }
-
-        .date-range {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .date-range label {
-            margin-right: 10px;
-        }
-
-        .date-range input {
-            margin-right: 10px;
-        }
-
-        .table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        .table th,
-        .table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-            align-content: center;
-        }
-
-        .table th {
-            background-color: #f2f2f2;
-            text-align: center;
-        }
-
-        .table th.rowspan,
-        .table th.colspan {
-            border-bottom: 2px solid #000;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .badge-med {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 10px;
-            display: inline-block;
-            width: 64px;
-            text-align: center;
-        }
-
-        .badge-success {
-            background-color: green;
-            color: white;
-            font-weight: bold;
-        }
-
-        .badge-danger {
-            background-color: red;
-            color: white;
-            font-weight: bold;
-        }
-
-        .badge-pending {
-            background-color: orange;
-            color: black;
-            font-weight: bold;
-        }
-
-        .pagination {
-            margin-top: 10px;
-            display: flex;
-            gap: 5px;
-        }
-
-        .page-item {
-            width: 100px;
-            text-align: center;
-        }
-
-        .page-item {
-            width: 100px;
-            text-align: center;
-        }
-
-        .page-link {
-            display: block;
-            padding: 8px 20px;
-            border: 0px;
-
-            border-radius: 4px;
-            text-decoration: none;
-        }
-
-        .page-item.disabled .page-link {
-            background-color: #CCCCCC !important;
-            /* Light grey background for disabled state */
-            color: #888888 !important;
-            /* Darker grey text color for disabled state */
-            cursor: not-allowed;
-            /* Change cursor to indicate disabled */
-            border: 1px solid #CCCCCC !important;
-            /* Match border with background color */
-        }
-
-        .btn-detail {
-            font-size: 12px !important;
-            padding: 3px 6px !important;
-            border-radius: 3px !important;
-        }
-
-        /* Modal css */
-        .modal-content {
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-        }
-
-        .btn-close {
-            font-size: 1.25rem;
-        }
-
-        .modal-body {
-            padding: 20px;
-            font-size: 1rem;
-        }
-
-        .modal-footer {
-            border-top: 1px solid #e9ecef;
-        }
-
-        .download-item {
-            margin-bottom: 15px;
-            padding: 15px;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-        }
-
-        .download-item label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-            padding: 10px 20px;
-            font-size: 0.875rem;
-            border-radius: 5px;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-
-        /* Loading indicator styles */
-        .loading-indicator {
-            text-align: center;
-            font-size: 1rem;
-            color: #007bff;
-            margin-bottom: 15px;
-        }
-    </style>
 @endsection
 
 @section('content')
@@ -200,13 +20,10 @@
         </div>
         <div class="row mb-3">
             <div class="col">
-                <a href="/reimbursements" class="btn btn-primary btn-action">
+                <a href="/reimbursements" class="btn btn-primary rounded-pill">
                     <i class="bi bi-caret-left-fill"></i> Back
                 </a>
-                {{-- <a href="/businessTrip" class="btn btn-info btn-action">
-                    <i class="bi bi-arrow-clockwise"></i> Refresh
-                </a> --}}
-                <a href="/businessTrip/form/add" class="btn btn-outline-primary btn-action">
+                <a href="/businessTrip/form/add" class="btn btn-outline-primary rounded-pill">
                     <i class="bi bi-plus-circle"></i> Add Data
                 </a>
             </div>
@@ -215,15 +32,24 @@
         <div class="card">
             <div class="card-body">
                 <form class="date-range mb-3" method="GET" action="{{ route('businessTrip-filterDate') }}">
-                    <label for="start-date">Departure Date:</label>
-                    <input type="date" id="start-date" name="start-date" class="form-control"
-                        value="{{ request()->query('start-date') }}">
-                    <label for="end-date">To:</label>
-                    <input type="date" id="end-date" name="end-date" class="form-control"
-                        value="{{ request()->query('end-date') }}">
-                    <button type="submit" class="btn btn-primary">Find</button>
-                    {{-- <a href="{{ route('filterDate') }}" class="btn btn-secondary" style="background-color: #e0e0e0; border:0px;">Reset Filter</a> --}}
+                    <div class="row align-items-end">
+                        <div class="col-md-5">
+                            <label for="start-date">Departure Date:</label>
+                            <input type="date" id="start-date" name="start-date" class="form-control"
+                                value="{{ request()->query('start-date') }}">
+                        </div>
+                        <div class="col-md-5">
+                            <label for="end-date">To:</label>
+                            <input type="date" id="end-date" name="end-date" class="form-control"
+                                value="{{ request()->query('end-date') }}">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary rounded-pill w-100">Find</button>
+                        </div>
+                    </div>
                 </form>
+
+
                 <div class="card mt-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -231,33 +57,29 @@
                             <form class="input-group" method="GET" id="searchForm" action="/businessTrip/search"
                                 style="width: 300px;">
                                 <input name="q" type="text" class="form-control" placeholder="Search...">
-                                <button class="btn btn-outline-secondary" style="outline-color: #AB2F2B;" type="submit">
+                                <button class="btn btn-outline-secondary" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
                             </form>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th rowspan="3">No</th>
-                                        <th rowspan="3">Nama</th>
-                                        <th rowspan="3">Divisi</th>
-                                        <th rowspan="3">No SPPD</th>
-                                        <th colspan="2" class="text-center">Perjalanan Dinas</th>
-                                        <th colspan="4" class="text-center">SPPD</th>
-                                        <th rowspan="3">Status</th>
-                                        <th rowspan="3">Export</th>
-                                        {{-- <th rowspan="3">Confirm</th> --}}
-                                        <th rowspan="3">Action</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Mulai</th>
-                                        <th>Kembali</th>
-                                        <th rowspan="2" class="text-center">CA</th>
-                                        <th rowspan="2" class="text-center">Ticket</th>
-                                        <th rowspan="2" class="text-center">Hotel</th>
-                                        <th rowspan="2" class="text-center">Taksi</th>
+                            <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%"
+                                cellspacing="0">
+                                <thead class="thead-light">
+                                    <tr class="text-center">
+                                        <th>No</th>
+                                        {{-- <th>Nama</th> --}}
+                                        {{-- <th>Divisi</th> --}}
+                                        <th>No SPPD</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>CA</th>
+                                        <th>Ticket</th>
+                                        <th>Hotel</th>
+                                        <th>Taksi</th>
+                                        <th>Status</th>
+                                        <th>Export</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -265,14 +87,14 @@
                                         <tr>
                                             <th scope="row">{{ $sppd->firstItem() + $idx }}
                                             </th>
-                                            <td>{{ $n->nama }}</td>
-                                            <td>{{ $n->divisi }}</td>
+                                            {{-- <td>{{ $n->nama }}</td>
+                                            <td>{{ $n->divisi }}</td> --}}
                                             <td>{{ $n->no_sppd }}</td>
                                             <td>{{ $n->mulai }}</td>
                                             <td>{{ $n->kembali }}</td>
                                             <td>
                                                 @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                    <button class="btn btn-secondary btn-sm" data-toggle="modal"
                                                         data-target="#detailModal"
                                                         data-ca="{{ json_encode([
                                                             'no_ca' => $caTransactions[$n->no_sppd]->no_ca,
@@ -291,7 +113,7 @@
                                             </td>
                                             <td>
                                                 @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                    <button class="btn btn-secondary btn-sm" data-toggle="modal"
                                                         data-target="#detailModal" data-ca=""
                                                         data-tiket="{{ json_encode([
                                                             'no_tkt' => $tickets[$n->no_sppd]->no_tkt,
@@ -310,7 +132,7 @@
                                             </td>
                                             <td>
                                                 @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                    <button class="btn btn-secondary btn-sm" data-toggle="modal"
                                                         data-target="#detailModal"
                                                         data-hotel="{{ json_encode([
                                                             'no_htl' => $hotel[$n->no_sppd]->no_htl,
@@ -330,7 +152,7 @@
                                             </td>
                                             <td>
                                                 @if ($n->taksi == 'Ya' && isset($taksi[$n->no_sppd]))
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                    <button class="btn btn-secondary btn-sm" data-toggle="modal"
                                                         data-target="#detailModal"
                                                         data-taksi="{{ json_encode([
                                                             'no_vt' => $taksi[$n->no_sppd]->no_vt,
@@ -344,17 +166,23 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <span
-                                                    class="badge-med
-                                                    @if ($n->status === 'Diterima') badge-success
-                                                    @elseif($n->status === 'Ditolak') badge-danger
-                                                    @elseif($n->status === 'Pending') badge-pending @endif">
-                                                    {{ $n->status }}
-                                                </span>
+                                                @if ($n->status == 'Approved')
+                                                    <div class="badge p-1 bg-success rounded-pill">
+                                                        Approved
+                                                    </div>
+                                                @elseif ($n->status == 'Pending')
+                                                    <div class="badge p-1 bg-warning rounded-pill">
+                                                        Pending
+                                                    </div>
+                                                @elseif ($n->status == 'Rejected')
+                                                    <div class="badge p-1 bg-warning rounded-pill>
+                                                        Rejected
+                                                    </div>
+                                                @endif
                                             </td>
 
                                             <td>
-                                                <button type="button" class="btn btn-outline-primary"
+                                                <button type="button" class="btn btn-primary rounded-pill"
                                                     data-bs-toggle="modal" data-bs-target="#pdfModal"
                                                     data-id="{{ $n->id }}">
                                                     <i class="bi bi-file-earmark-arrow-down"></i>
@@ -368,7 +196,7 @@
                                                     <form method="GET"
                                                         action="/businessTrip/deklarasi/{{ $n->id }}"
                                                         style="display: inline-block;">
-                                                        <button type="submit" class="btn btn-primary"
+                                                        <button type="submit" class="btn btn-success rounded-pill"
                                                             data-toggle="tooltip" title="Edit">
                                                             <i class="bi bi-card-checklist"></i>
                                                         </button>
@@ -377,7 +205,7 @@
                                                     <form method="GET"
                                                         action="/businessTrip/form/update/{{ $n->id }}"
                                                         style="display: inline-block;">
-                                                        <button type="submit" class="btn btn-success mb-2"
+                                                        <button type="submit" class="btn btn-success rounded-pill"
                                                             {{ $n->status === 'Diterima' ? 'disabled' : '' }}
                                                             data-toggle="tooltip" title="Edit">
                                                             <i class="bi bi-pencil-square"></i>
@@ -389,7 +217,7 @@
                                                         @csrf
                                                         @method('DELETE')
 
-                                                        <button type="button" class="btn btn-outline-danger mb-2"
+                                                        <button type="button" class="btn btn-outline-danger rounded-pill"
                                                             onclick="confirmDelete('{{ $n->id }}')"
                                                             {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
                                                             <i class="bi bi-trash-fill"></i>
@@ -405,54 +233,6 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="records-per-page">
-                                <select class="form-select" id="recordsPerPage">
-                                    <option value="10" {{ request()->query('per_page') == 10 ? 'selected' : '' }}>10
-                                    </option>
-                                    <option value="25" {{ request()->query('per_page') == 25 ? 'selected' : '' }}>25
-                                    </option>
-                                    <option value="35" {{ request()->query('per_page') == 35 ? 'selected' : '' }}>35
-                                    </option>
-                                    <option value="50" {{ request()->query('per_page') == 50 ? 'selected' : '' }}>50
-                                    </option>
-                                </select>
-                                <span>records per page</span>
-                            </div>
-                            <div>
-                                <span>{{ $sppd->count() }} of {{ $sppd->total() }} records</span>
-                            </div>
-
-                            <nav aria-label="Page navigation" class="mt-3">
-                                <ul class="pagination justify-content-end">
-                                    @if ($sppd->onFirstPage())
-                                        <li class="page-item disabled">
-                                            <a class="page-link text-primary" href="#" tabindex="-1"><i
-                                                    class="bi bi-caret-left-fill"></i> Previous</a>
-                                        </li>
-                                    @else
-                                        <li class="page-item">
-                                            <a class="page-link text-primary"
-                                                href="{{ $sppd->appends(['per_page' => request()->query('per_page')])->previousPageUrl() }}"
-                                                tabindex="-1"><i class="bi bi-caret-left-fill"></i> Previous</a>
-                                        </li>
-                                    @endif
-
-                                    @if ($sppd->hasMorePages())
-                                        <li class="page-item">
-                                            <a class="page-link text-primary"
-                                                href="{{ $sppd->appends(['per_page' => request()->query('per_page')])->nextPageUrl() }}">Next
-                                                <i class="bi bi-caret-right-fill"></i></a>
-                                        </li>
-                                    @else
-                                        <li class="page-item disabled">
-                                            <a class="page-link text-primary" href="#" tabindex="-1">Next <i
-                                                    class="bi bi-caret-right-fill"></i> </a>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </nav>
                         </div>
                     </div>
                 </div>

@@ -5,106 +5,138 @@ namespace App\Exports;
 use App\Models\BusinessTrip;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class BusinessTripExport implements FromCollection, WithMapping, WithHeadings, WithStyles, ShouldAutoSize, WithDrawings
+class BusinessTripExport implements FromCollection, WithMapping, WithHeadings, WithStyles, ShouldAutoSize
 {
-    protected $id;
+    protected $businessTrips;
 
-    public function __construct($id)
+    public function __construct($businessTrips)
     {
-        $this->id = $id;
+        $this->businessTrips = $businessTrips;
     }
 
     public function collection()
     {
-        return BusinessTrip::where('id', $this->id)->get();
-    }
-
-    public function styles(Worksheet $sheet)
-    {
-        // Set company name
-        $sheet->mergeCells('B1:J1');
-        $sheet->setCellValue('B1', 'KPNCORP');
-        $sheet->getStyle('B1')->getFont()->setBold(true)->setSize(20);
-        $sheet->getStyle('B1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT)->setVertical(Alignment::VERTICAL_CENTER);
-
-        // Set "Business Trip" title
-        $sheet->mergeCells('A3:J3');
-        $sheet->setCellValue('A3', 'Business Trip');
-        $sheet->getStyle('A3')->getFont()->setBold(true)->setSize(16);
-        $sheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-        // Set header style
-        $sheet->getStyle('A4:J4')->getFont()->setBold(true);
-        $sheet->getStyle('A4:J4')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                                          ->getStartColor()->setARGB('FFFF00');
-
-        // Set borders for all cells
-        $sheet->getStyle('A1:J' . ($sheet->getHighestRow()))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-
-        // Set text wrap and vertical alignment for all cells
-        $sheet->getStyle('A1:J' . ($sheet->getHighestRow()))->getAlignment()
-              ->setWrapText(true)
-              ->setVertical(Alignment::VERTICAL_CENTER);
-
-        return [
-            4 => [
-                'font' => ['bold' => true],
-                'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => 'FFFF00']]
-            ],
-        ];
+        return $this->businessTrips;
     }
 
     public function map($businessTrip): array
     {
         return [
+            $businessTrip->id, // Assuming id is the "No."
+            $businessTrip->jns_dinas,
             $businessTrip->nama,
             $businessTrip->divisi,
             $businessTrip->no_sppd,
             $businessTrip->mulai,
             $businessTrip->kembali,
-            $businessTrip->ca,
-            $businessTrip->tiket,
-            $businessTrip->hotel,
-            $businessTrip->taksi,
-            $businessTrip->status,
+            $businessTrip->tujuan,
+            $businessTrip->pt,
+            $businessTrip->uang_muka,
+            $businessTrip->realisasi,
+            $businessTrip->sisa_kurang,
+            $businessTrip->tanggal_permintaan_nomor,
+            $businessTrip->tanggal_diterima_hrd,
+            $businessTrip->tanggal_diproses_hrd,
+            $businessTrip->tanggal_penyerahan_ke,
+            $businessTrip->hari_berjalan,
         ];
     }
 
     public function headings(): array
     {
         return [
+            'No.',
+            'Jenis',
             'Nama',
-            'Divisi',
+            'Departemen',
             'No SPPD',
             'Mulai',
             'Kembali',
-            'CA',
-            'Tiket',
-            'Hotel',
-            'Taksi',
-            'Status',
+            'Tujuan',
+            'PT',
+            'Uang Muka',
+            'Realisasi',
+            'Sisa/Kurang',
+            'Tanggal permintaan nomor',
+            'Tanggal diterima HRD',
+            'Tanggal diproses HRD',
+            'Tanggal penyerahan ke',
+            'Hari Berjalan',
         ];
     }
 
-    public function drawings()
+    public function styles(Worksheet $sheet)
     {
-        $drawing = new Drawing();
-        $drawing->setName('Logo');
-        $drawing->setPath(public_path('img/logos/logokpn.png'));
-        $drawing->setHeight(60);
-        $drawing->setCoordinates('A1');
-        $drawing->setOffsetX(5);
-        $drawing->setOffsetY(5);
+        // Merge cells and set title
+        $sheet->mergeCells('B2:R2');
+        $sheet->setCellValue('B2', 'Data Klaim Biaya CA Head Office');
+        $sheet->getStyle('B2')->getFont()->setBold(true)->setSize(16);
+        $sheet->getStyle('B2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-        return $drawing;
+        // Merge cells for sub headers
+        $sheet->mergeCells('B4:D4');
+        $sheet->setCellValue('B4', 'Identitas');
+        $sheet->mergeCells('E4:H4');
+        $sheet->setCellValue('E4', 'Perjalanan Dinas');
+        $sheet->mergeCells('I4:K4');
+        $sheet->setCellValue('I4', 'Dana SPPD');
+        $sheet->mergeCells('L4:P4');
+        $sheet->setCellValue('L4', 'Tanggal');
+        $sheet->mergeCells('Q4:Q4');
+        $sheet->setCellValue('Q4', 'Hari Berjalan');
+
+        // Set sub headers styles
+        $sheet->getStyle('B4:Q4')->applyFromArray([
+            'font' => ['bold' => true],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ]);
+
+        // Set headers
+        $sheet->fromArray($this->headings(), null, 'B5');
+        $sheet->getStyle('B5:Q5')->applyFromArray([
+            'font' => ['bold' => true],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'C6E0B4'],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ]);
+
+        // Apply border and alignment styles to the entire sheet
+        $sheet->getStyle('B6:Q' . ($sheet->getHighestRow() + 1))->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'wrapText' => true,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
     }
 }

@@ -203,18 +203,17 @@
                 <a href="/reimbursements" class="btn btn-primary btn-action">
                     <i class="bi bi-caret-left-fill"></i> Back
                 </a>
-                {{-- <a href="/businessTrip" class="btn btn-info btn-action">
-                    <i class="bi bi-arrow-clockwise"></i> Refresh
-                </a> --}}
-                <a href="/businessTrip/form/add" class="btn btn-outline-primary btn-action">
-                    <i class="bi bi-plus-circle"></i> Add Data
-                </a>
+                @if ($sppd->count() > 0)
+                    <a href="{{ route('export.excel') }}" class="btn btn-outline-primary btn-action">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel
+                    </a>
+                @endif
             </div>
         </div>
 
         <div class="card">
             <div class="card-body">
-                <form class="date-range mb-3" method="GET" action="{{ route('businessTrip-filterDate') }}">
+                <form class="date-range mb-3" method="GET" action="{{ route('businessTrip-filterDate.approval') }}">
                     <label for="start-date">Departure Date:</label>
                     <input type="date" id="start-date" name="start-date" class="form-control"
                         value="{{ request()->query('start-date') }}">
@@ -228,7 +227,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="card-title">Data SPPD</h3>
-                            <form class="input-group" method="GET" id="searchForm" action="/businessTrip/search"
+                            <form class="input-group" method="GET" id="searchForm" action="/businessTrip/approval/search"
                                 style="width: 300px;">
                                 <input name="q" type="text" class="form-control" placeholder="Search...">
                                 <button class="btn btn-outline-secondary" style="outline-color: #AB2F2B;" type="submit">
@@ -236,7 +235,7 @@
                                 </button>
                             </form>
                         </div>
-                        <div class="table-responsive">
+                        <div>
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
@@ -261,210 +260,208 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($sppd as $idx => $n)
+                                    @if ($sppd->isEmpty())
                                         <tr>
-                                            <th scope="row">{{ $sppd->firstItem() + $idx }}
-                                            </th>
-                                            <td>{{ $n->nama }}</td>
-                                            <td>{{ $n->divisi }}</td>
-                                            <td>{{ $n->no_sppd }}</td>
-                                            <td>{{ $n->mulai }}</td>
-                                            <td>{{ $n->kembali }}</td>
-                                            <td>
-                                                @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal"
-                                                        data-ca="{{ json_encode([
-                                                            'no_ca' => $caTransactions[$n->no_sppd]->no_ca,
-                                                            'no_sppd' => $caTransactions[$n->no_sppd]->no_sppd,
-                                                            'unit' => $caTransactions[$n->no_sppd]->unit,
-                                                            'destination' => $caTransactions[$n->no_sppd]->destination,
-                                                            'total_ca' => $caTransactions[$n->no_sppd]->total_ca,
-                                                            'total_real' => $caTransactions[$n->no_sppd]->total_real,
-                                                            'total_cost' => $caTransactions[$n->no_sppd]->total_cost,
-                                                            'start_date' => $caTransactions[$n->no_sppd]->start_date,
-                                                            'end_date' => $caTransactions[$n->no_sppd]->end_date,
-                                                        ]) }}">Detail</button>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal" data-ca=""
-                                                        data-tiket="{{ json_encode([
-                                                            'no_tkt' => $tickets[$n->no_sppd]->no_tkt,
-                                                            'no_sppd' => $tickets[$n->no_sppd]->no_sppd,
-                                                            'unit' => $tickets[$n->no_sppd]->unit,
-                                                            'jk_tkt' => $tickets[$n->no_sppd]->jk_tkt,
-                                                            'np_tkt' => $tickets[$n->no_sppd]->np_tkt,
-                                                            'noktp_tkt' => $tickets[$n->no_sppd]->noktp_tkt,
-                                                            'tlp_tkt' => $tickets[$n->no_sppd]->tlp_tkt,
-                                                            'dari_tkt' => $tickets[$n->no_sppd]->dari_tkt,
-                                                            'ke_tkt' => $tickets[$n->no_sppd]->ke_tkt,
-                                                        ]) }}">Detail</button>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal"
-                                                        data-hotel="{{ json_encode([
-                                                            'no_htl' => $hotel[$n->no_sppd]->no_htl,
-                                                            'no_sppd' => $hotel[$n->no_sppd]->no_sppd,
-                                                            'unit' => $hotel[$n->no_sppd]->unit,
-                                                            'nama_htl' => $hotel[$n->no_sppd]->nama_htl,
-                                                            'lokasi_htl' => $hotel[$n->no_sppd]->lokasi_htl,
-                                                            'jmlkmr_htl' => $hotel[$n->no_sppd]->jmlkmr_htl,
-                                                            'bed_htl' => $hotel[$n->no_sppd]->bed_htl,
-                                                            'tgl_masuk_htl' => $hotel[$n->no_sppd]->tgl_masuk_htl,
-                                                            'tgl_keluar_htl' => $hotel[$n->no_sppd]->tgl_keluar_htl,
-                                                            'total_hari' => $hotel[$n->no_sppd]->total_hari,
-                                                        ]) }}">Detail</button>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($n->taksi == 'Ya' && isset($taksi[$n->no_sppd]))
-                                                    <button class="btn btn-secondary btn-detail" data-toggle="modal"
-                                                        data-target="#detailModal"
-                                                        data-taksi="{{ json_encode([
-                                                            'no_vt' => $taksi[$n->no_sppd]->no_vt,
-                                                            'no_sppd' => $taksi[$n->no_sppd]->no_sppd,
-                                                            'unit' => $taksi[$n->no_sppd]->unit,
-                                                            'nominal_vt' => $taksi[$n->no_sppd]->nominal_vt,
-                                                            'keeper_vt' => $taksi[$n->no_sppd]->keeper_vt,
-                                                        ]) }}">Detail</button>
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <span
-                                                    class="badge-med
-                                                    @if ($n->status === 'Diterima') badge-success
-                                                    @elseif($n->status === 'Ditolak') badge-danger
-                                                    @elseif($n->status === 'Pending') badge-pending @endif">
-                                                    {{ $n->status }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                @php
-                                                $isAccepted = $n->status === 'Diterima';
-                                                $isRejected = $n->status === 'Ditolak';
-                                            @endphp
-
-                                            @if($isAccepted)
-                                                <form method="POST" action="{{ url('businessTrip/status/change/' . $n->id) }}">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="status" value="Diterima">
-                                                    <button type="submit" class="btn btn-primary mb-2" onclick="return confirm('Are you sure you want to accept this?')" disabled>
-                                                        <i class="bi bi-check-circle-fill"></i>
+                                            <td colspan="14" class="text-center">No data available for the selected
+                                                criteria.</td>
+                                        </tr>
+                                    @else
+                                        @forelse ($sppd as $idx => $n)
+                                            <tr>
+                                                <th scope="row">{{ $sppd->firstItem() + $idx }}</th>
+                                                <td>{{ $n->nama }}</td>
+                                                <td>{{ $n->divisi }}</td>
+                                                <td>{{ $n->no_sppd }}</td>
+                                                <td>{{ $n->mulai }}</td>
+                                                <td>{{ $n->kembali }}</td>
+                                                <td>
+                                                    @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
+                                                        <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                            data-target="#detailModal"
+                                                            data-ca="{{ json_encode([
+                                                                'no_ca' => $caTransactions[$n->no_sppd]->no_ca,
+                                                                'no_sppd' => $caTransactions[$n->no_sppd]->no_sppd,
+                                                                'unit' => $caTransactions[$n->no_sppd]->unit,
+                                                                'destination' => $caTransactions[$n->no_sppd]->destination,
+                                                                'total_ca' => $caTransactions[$n->no_sppd]->total_ca,
+                                                                'total_real' => $caTransactions[$n->no_sppd]->total_real,
+                                                                'total_cost' => $caTransactions[$n->no_sppd]->total_cost,
+                                                                'start_date' => $caTransactions[$n->no_sppd]->start_date,
+                                                                'end_date' => $caTransactions[$n->no_sppd]->end_date,
+                                                            ]) }}">Detail</button>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
+                                                        <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                            data-target="#detailModal"
+                                                            data-tiket="{{ json_encode([
+                                                                'no_tkt' => $tickets[$n->no_sppd]->no_tkt,
+                                                                'no_sppd' => $tickets[$n->no_sppd]->no_sppd,
+                                                                'unit' => $tickets[$n->no_sppd]->unit,
+                                                                'jk_tkt' => $tickets[$n->no_sppd]->jk_tkt,
+                                                                'np_tkt' => $tickets[$n->no_sppd]->np_tkt,
+                                                                'noktp_tkt' => $tickets[$n->no_sppd]->noktp_tkt,
+                                                                'tlp_tkt' => $tickets[$n->no_sppd]->tlp_tkt,
+                                                                'dari_tkt' => $tickets[$n->no_sppd]->dari_tkt,
+                                                                'ke_tkt' => $tickets[$n->no_sppd]->ke_tkt,
+                                                            ]) }}">Detail</button>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
+                                                        <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                            data-target="#detailModal"
+                                                            data-hotel="{{ json_encode([
+                                                                'no_htl' => $hotel[$n->no_sppd]->no_htl,
+                                                                'no_sppd' => $hotel[$n->no_sppd]->no_sppd,
+                                                                'unit' => $hotel[$n->no_sppd]->unit,
+                                                                'nama_htl' => $hotel[$n->no_sppd]->nama_htl,
+                                                                'lokasi_htl' => $hotel[$n->no_sppd]->lokasi_htl,
+                                                                'jmlkmr_htl' => $hotel[$n->no_sppd]->jmlkmr_htl,
+                                                                'bed_htl' => $hotel[$n->no_sppd]->bed_htl,
+                                                                'tgl_masuk_htl' => $hotel[$n->no_sppd]->tgl_masuk_htl,
+                                                                'tgl_keluar_htl' => $hotel[$n->no_sppd]->tgl_keluar_htl,
+                                                                'total_hari' => $hotel[$n->no_sppd]->total_hari,
+                                                            ]) }}">Detail</button>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($n->taksi == 'Ya' && isset($taksi[$n->no_sppd]))
+                                                        <button class="btn btn-secondary btn-detail" data-toggle="modal"
+                                                            data-target="#detailModal"
+                                                            data-taksi="{{ json_encode([
+                                                                'no_vt' => $taksi[$n->no_sppd]->no_vt,
+                                                                'no_sppd' => $taksi[$n->no_sppd]->no_sppd,
+                                                                'unit' => $taksi[$n->no_sppd]->unit,
+                                                                'nominal_vt' => $taksi[$n->no_sppd]->nominal_vt,
+                                                                'keeper_vt' => $taksi[$n->no_sppd]->keeper_vt,
+                                                            ]) }}">Detail</button>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        class="badge-med
+                                                            @if ($n->status === 'Diterima') badge-success
+                                                            @elseif($n->status === 'Ditolak') badge-danger
+                                                            @elseif($n->status === 'Pending') badge-pending @endif">
+                                                        {{ $n->status }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-outline-primary"
+                                                        data-bs-toggle="modal" data-bs-target="#pdfModal"
+                                                        data-id="{{ $n->id }}">
+                                                        <i class="bi bi-file-earmark-arrow-down"></i>
                                                     </button>
-                                                </form>
-                                                <form method="POST" action="{{ url('businessTrip/status/change/' . $n->id) }}">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="status" value="Ditolak">
-                                                    <button type="submit" class="btn btn-outline-danger mb-2" onclick="return confirm('Are you sure you want to reject this?')">
-                                                        <i class="bi bi-x-circle-fill"></i>
-                                                    </button>
-                                                </form>
-                                            @elseif($isRejected)
-                                                <form method="POST" action="{{ url('businessTrip/status/change/' . $n->id) }}">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="status" value="Diterima">
-                                                    <button type="submit" class="btn btn-primary mb-2" onclick="return confirm('Are you sure you want to accept this?')">
-                                                        <i class="bi bi-check-circle-fill"></i>
-                                                    </button>
-                                                </form>
-                                                <form method="POST" action="{{ url('businessTrip/status/change/' . $n->id) }}">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="status" value="Ditolak">
-                                                    <button type="submit" class="btn btn-outline-danger mb-2" onclick="return confirm('Are you sure you want to reject this?')" disabled>
-                                                        <i class="bi bi-x-circle-fill"></i>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <form method="POST" action="{{ url('businessTrip/status/change/' . $n->id) }}">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="status" value="Diterima">
-                                                    <button type="submit" class="btn btn-primary mb-2" onclick="return confirm('Are you sure you want to accept this?')">
-                                                        <i class="bi bi-check-circle-fill"></i>
-                                                    </button>
-                                                </form>
-                                                <form method="POST" action="{{ url('businessTrip/status/change/' . $n->id) }}">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="status" value="Ditolak">
-                                                    <button type="submit" class="btn btn-outline-danger mb-2" onclick="return confirm('Are you sure you want to reject this?')">
-                                                        <i class="bi bi-x-circle-fill"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            </td>
-
-                                            <td>
-                                                <button type="button" class="btn btn-outline-primary"
-                                                    data-bs-toggle="modal" data-bs-target="#pdfModal"
-                                                    data-id="{{ $n->id }}">
-                                                    <i class="bi bi-file-earmark-arrow-down"></i>
-                                                </button>
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $today = \Carbon\Carbon::today()->format('Y-m-d');
-                                                @endphp
-                                                @if ($n->kembali <= $today && $n->status == 'Diterima')
-                                                    <form method="GET"
-                                                        action="/businessTrip/deklarasi/{{ $n->id }}"
-                                                        style="display: inline-block;">
-                                                        <button type="submit" class="btn btn-primary"
-                                                            data-toggle="tooltip" title="Edit">
-                                                            <i class="bi bi-card-checklist"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <form method="GET"
-                                                        action="/businessTrip/form/update/{{ $n->id }}"
-                                                        style="display: inline-block;">
-                                                        <button type="submit" class="btn btn-success mb-2"
-                                                            {{ $n->status === 'Diterima' ? 'disabled' : '' }}
-                                                            data-toggle="tooltip" title="Edit">
-                                                            <i class="bi bi-pencil-square"></i>
-                                                        </button>
-                                                    </form>
+                                                </td>
+                                                <td>
+                                                    @php
+                                                        $isAccepted = $n->status === 'Diterima';
+                                                        $isRejected = $n->status === 'Ditolak';
+                                                    @endphp
+                                                    @if ($isAccepted)
+                                                        <form method="POST"
+                                                            action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <input type="hidden" name="status" value="Diterima">
+                                                            <button type="submit" class="btn btn-primary mb-2"
+                                                                onclick="return confirm('Are you sure you want to accept this?')"
+                                                                disabled>
+                                                                <i class="bi bi-check-circle-fill"></i>
+                                                            </button>
+                                                        </form>
+                                                        <form method="POST"
+                                                            action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <input type="hidden" name="status" value="Ditolak">
+                                                            <button type="submit" class="btn btn-outline-danger mb-2"
+                                                                onclick="return confirm('Are you sure you want to reject this?')">
+                                                                <i class="bi bi-x-circle-fill"></i>
+                                                            </button>
+                                                        </form>
+                                                    @elseif($isRejected)
+                                                        <form method="POST"
+                                                            action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <input type="hidden" name="status" value="Diterima">
+                                                            <button type="submit" class="btn btn-primary mb-2"
+                                                                onclick="return confirm('Are you sure you want to accept this?')">
+                                                                <i class="bi bi-check-circle-fill"></i>
+                                                            </button>
+                                                        </form>
+                                                        <form method="POST"
+                                                            action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <input type="hidden" name="status" value="Ditolak">
+                                                            <button type="submit" class="btn btn-outline-danger mb-2"
+                                                                onclick="return confirm('Are you sure you want to reject this?')"
+                                                                disabled>
+                                                                <i class="bi bi-x-circle-fill"></i>
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <form method="POST"
+                                                            action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <input type="hidden" name="status" value="Diterima">
+                                                            <button type="submit" class="btn btn-primary mb-2"
+                                                                onclick="return confirm('Are you sure you want to accept this?')">
+                                                                <i class="bi bi-check-circle-fill"></i>
+                                                            </button>
+                                                        </form>
+                                                        <form method="POST"
+                                                            action="{{ url('businessTrip/status/change/' . $n->id) }}">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <input type="hidden" name="status" value="Ditolak">
+                                                            <button type="submit" class="btn btn-outline-danger mb-2"
+                                                                onclick="return confirm('Are you sure you want to reject this?')">
+                                                                <i class="bi bi-x-circle-fill"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @php
+                                                        $today = \Carbon\Carbon::today()->format('Y-m-d');
+                                                    @endphp
                                                     <form id="deleteForm_{{ $n->id }}" method="POST"
                                                         action="/businessTrip/delete/{{ $n->id }}"
                                                         style="display: inline-block;">
                                                         @csrf
                                                         @method('DELETE')
-
                                                         <button type="button" class="btn btn-outline-danger mb-2"
                                                             onclick="confirmDelete('{{ $n->id }}')"
                                                             {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
                                                             <i class="bi bi-trash-fill"></i>
                                                         </button>
                                                     </form>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="14" class="text-center">No data available in table</td>
-                                        </tr>
-                                    @endforelse
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="14" class="text-center">No data available in table. Please select criteria</td>
+                                            </tr>
+                                        @endforelse
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
+
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="records-per-page">
                                 <select class="form-select" id="recordsPerPage">
@@ -480,9 +477,12 @@
                                 <span>records per page</span>
                             </div>
                             <div>
-                                <span>{{ $sppd->count() }} of {{ $sppd->total() }} records</span>
+                                @if (method_exists($sppd, 'total'))
+                                    <span>{{ $sppd->count() }} of {{ $sppd->total() }} records</span>
+                                @else
+                                    <span>{{ $sppd->count() }} records</span>
+                                @endif
                             </div>
-
                             <nav aria-label="Page navigation" class="mt-3">
                                 <ul class="pagination justify-content-end">
                                     @if ($sppd->onFirstPage())

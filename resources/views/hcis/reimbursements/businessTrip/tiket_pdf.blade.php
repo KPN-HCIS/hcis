@@ -111,11 +111,6 @@
             <td class="colon">:</td>
             <td class="value">{{ $ticket->dari_tkt }} - {{ $ticket->ke_tkt }} </td>
         </tr>
-        {{-- <tr>
-            <td class="label">To</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $ticket->ke_tkt }}</td>
-        </tr> --}}
         @php
             use Carbon\Carbon;
         @endphp
