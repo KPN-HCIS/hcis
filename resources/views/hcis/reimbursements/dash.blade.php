@@ -30,8 +30,8 @@
     {{-- {{ "Hallo ".$userId." berasal dari system ".session('system') }} --}}
     <br>
     <div class="container-fluid">
-        <div class="row row-cols-1 row-cols-xxl-5 row-cols-lg-3 row-cols-md-2">
-            <div class="col">
+        <div class="row text-center">
+            <div class="col-md-3">
                 <a href="{{ route('cashadvanced') }}">
                     <div class="card">
                         <div class="card-body">
@@ -42,7 +42,7 @@
                 </a>
             </div> <!-- end col-->
 
-            <div class="col">
+            <div class="col-md-3">
                 <a href="{{ route('medical') }}">
                     <div class="card">
                         <div class="card-body">
@@ -53,17 +53,17 @@
                 </a>
             </div> <!-- end col-->
 
-            <div class="col">
+            <div class="col-md-3">
                 <a href="{{ route('businessTrip') }}">
                     <div class="card">
                         <div class="card-body">
-                            <img src="/images/menu/business-trip.png" alt="logo">
+                            <img src="/images/menu/business-trip.png" alt="logo" style="width: 100px; height: 100px;">
                             <h4 class="my-3">Business Trip</h4>
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            <div class="col">
+            <div class="col-md-3">
                 <a href="{{ '' }}">
                     <div class="card">
                         <div class="card-body">
@@ -73,7 +73,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            <div class="col">
+
         </div> <!-- end row -->
     </div>
 @endsection
