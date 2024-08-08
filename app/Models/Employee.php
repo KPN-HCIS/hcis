@@ -15,7 +15,10 @@ class Employee extends Model
         'access_menu','id','employee_id', 'fullname', 'gender', 'email', 'group_company',
         'designation', 'job_level', 'company_name', 'contribution_level_code',
         'work_area_code', 'office_area', 'manager_l1_id', 'manager_l2_id',
-        'employee_type', 'unit', 'date_of_joining', 'users_id'
+        'employee_type', 'unit', 'date_of_joining', 'users_id','personal_email','personal_mobile_number','date_of_birth','place_of_birth'
+        ,'nationality','religion','marital_status','citizenship_status','ethnic_group','homebase','current_address','current_city'
+        ,'permanent_address','permanent_city','blood_group','tax_status','bpjs_tk','bpjs_ks','ktp','kk','npwp','mother_name','bank_name'
+        ,'bank_account_number','bank_name'
     ];
 
     public function user()

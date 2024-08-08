@@ -60,6 +60,7 @@ class EmployeeController extends Controller
 
             // Parse response
             $employees = $response->json('employee_data');
+            
             $number_data = 0;
 
             Log::info('API response received', ['employee_count' => count($employees)]);
@@ -96,7 +97,32 @@ class EmployeeController extends Controller
                         'employee_type' => $employee['employee_type'],
                         'unit' => $employee['unit'],
                         'date_of_joining' => $employee['date_of_joining'],
-                        'users_id' => $employee['user_unique_id']
+                        'users_id' => $employee['user_unique_id'],
+                        'personal_email' => $employee['personal_email_id'],
+                        'personal_mobile_number' => $employee['personal_mobile_no'],
+                        'date_of_birth' => $employee['date_of_birth'],
+                        'place_of_birth' => $employee['place_of_birth'],
+                        'nationality' => $employee['nationality'],
+                        'religion' => $employee['religion'],
+                        'marital_status' => $employee['marital_status'],
+                        'citizenship_status' => $employee['citizenship_status'],
+                        'ethnic_group' => $employee['suku'],
+                        'homebase' => $employee['homebase'],
+                        'current_address' => $employee['current_address'],
+                        'current_city' => $employee['current_city'],
+                        'permanent_address' => $employee['permanent_address'],
+                        'permanent_city' => $employee['permanent_city'],
+                        'blood_group' => $employee['blood_group'],
+                        'tax_status' => $employee['status_ptkp'],
+                        'bpjs_tk' => $employee['badan_penyelenggara_jaminan_sosial_(bpjs)_tenaga_kerja_(bpjstk)'],
+                        'bpjs_ks' => $employee['badan_penyelenggara_jaminan_sosial_(bpjs)_kesehatan_(bpjskes)'],
+                        'ktp' => $employee['nomor_ktp'],
+                        'kk' => $employee['family_card_number_(nomor_kk)'],
+                        'npwp' => $employee['nomor_npwp'],
+                        'mother_name' => $employee['mother_name'],
+                        'bank_name' => $employee['nama_bank'],
+                        'bank_account_number' => $employee['bank_account'],
+                        'bank_name' => $employee['nama_pemilik_rekening']
                     ]
                 );
 
