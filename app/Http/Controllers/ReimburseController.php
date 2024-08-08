@@ -15,6 +15,8 @@ use App\Models\CATransaction;
 use App\Http\Controllers\Log;
 use App\Models\htl_transaction;
 use App\Models\tkt_transaction;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 
 class ReimburseController extends Controller
 {
@@ -32,8 +34,16 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
-        $ca_transactions = ca_transaction::where('user_id', $userId)->get();
-        //dd($ca_transactions);
+
+        // Mengambil transaksi dengan user_id yang sesuai dan mengikutsertakan relasi employee
+        $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
+
+        // Memformat tanggal
+        foreach ($ca_transactions as $transaction) {
+            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+        }
+
         return view('hcis.reimbursements.cashadv.cashadv', [
             'link' => $link,
             'parentLink' => $parentLink,
@@ -287,6 +297,37 @@ class ReimburseController extends Controller
         $model->delete();
         return redirect()->intended(route('cashadvanced', absolute: false));
     }
+    function cashadvancedDownload($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        // $kantor = Company::where('contribution_level', $companies->contribution_level_code)->first();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $transactions = CATransaction::find($key);
+
+        // return view('hcis.reimbursements.cashadv.downloadCashadv', [
+        $pdf = PDF::loadView('hcis.reimbursements.cashadv.downloadCashadv', [
+            'link' => $link,
+            // 'pdf' => $pdf,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+        ]);
+
+        return $pdf->stream('Cash Advanced ' . $key . '.pdf');
+    }
+
     public function hotel()
     {
         $userId = Auth::id();
