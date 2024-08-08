@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Hotel Details</title>
+    <title>Hotel Form</title>
     <style>
         body {
             margin: 0;
@@ -79,7 +79,7 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Identity Information:</b></td>
+            <td colspan="3"><b>Identitas Pengaju:</b></td>
         </tr>
         <tr>
             <td class="label">Nama</td>
@@ -100,7 +100,7 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Hotel Details:</b></td>
+            <td colspan="3"><b>Detail Hotel:</b></td>
         </tr>
         <tr>
             <td class="label">Hotel Name</td>
@@ -122,21 +122,26 @@
             <td class="colon">:</td>
             <td class="value">{{ $hotel->bed_htl }}</td>
         </tr>
+        @php
+            use Carbon\Carbon;
+            Carbon::setLocale('id');
+        @endphp
+
         <tr>
             <td class="label">Check In Date:</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->tgl_masuk_htl }}</td>
+            <td class="value">{{ Carbon::parse($hotel->tgl_masuk_htl)->format('d F Y') }}</td>
         </tr>
         <tr>
             <td class="label">Check Out Date:</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->tgl_keluar_htl }}</td>
+            <td class="value">{{ Carbon::parse($hotel->tgl_keluar_htl)->format('d F Y') }}</td>
         </tr>
     </table>
 
     <table>
         <tr>
-            <td colspan="3"><b>Others:</b></td>
+            <td colspan="3"><b>Lainnya:</b></td>
         </tr>
         <tr>
             <td class="label">PT</td>
@@ -146,7 +151,7 @@
         <tr>
             <td class="label">Cost Center</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->cost_center ?? '0'}}</td>
+            <td class="value">{{ $hotel->cost_center ?? '0' }}</td>
         </tr>
     </table>
 
@@ -164,6 +169,8 @@
             <td class="colon">:</td>
             <td class="value">{{ $hotel->businessTrip->tanggal_atasan_1 }}</td>
         </tr>
+    </table>
+    <table>
         <tr>
             <td class="label">Nama Atasan 2</td>
             <td class="colon">:</td>

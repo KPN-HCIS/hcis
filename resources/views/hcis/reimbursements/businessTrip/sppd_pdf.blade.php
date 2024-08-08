@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Business Trip</title>
+    <title>SPPD</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('/public/images/favicon.ico') }}">
     <style>
         body {
             margin: 0;
@@ -163,15 +164,20 @@
             <td class="colon">:</td>
             <td class="value">{{ $sppd->keperluan }}</td>
         </tr>
+
+        @php
+            use Carbon\Carbon;
+            Carbon::setLocale('id');
+        @endphp
         <tr>
             <td class="label">Dari Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->mulai }}</td>
+            <td class="value">{{ Carbon::parse($sppd->mulai)->format('d F Y') }}</td>
         </tr>
         <tr>
             <td class="label">Sampai dengan tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->kembali }}</td>
+            <td class="value">{{ Carbon::parse($sppd->kembali)->format('d F Y') }}</td>
         </tr>
     </table>
 

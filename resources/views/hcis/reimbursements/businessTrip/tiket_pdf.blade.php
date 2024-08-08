@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ticket Details</title>
+    <title>Ticket Voucher Form</title>
     <style>
         body {
             margin: 0;
@@ -125,7 +125,7 @@
             <td class="colon">:</td>
             <td class="value">
                 @php
-                    $formattedDate = Carbon::parse($ticket->tgl_brkt_tkt)->format('d-m-Y');
+                    $formattedDate = Carbon::parse($ticket->tgl_brkt_tkt)->format('d F Y');
                     $formattedTime = Carbon::parse($ticket->jam_brkt_tkt)->format('H:i');
                 @endphp
                 {{ $formattedDate }}, {{ $formattedTime }} WIB
@@ -138,7 +138,7 @@
                 <td class="colon">:</td>
                 <td class="value">
                     @php
-                        $formattedReturnDate = Carbon::parse($ticket->tgl_plg_tkt)->format('d-m-Y');
+                        $formattedReturnDate = Carbon::parse($ticket->tgl_plg_tkt)->format('d F Y');
                         $formattedReturnTime = Carbon::parse($ticket->jam_plg_tkt)->format('H:i');
                     @endphp
                     {{ $formattedReturnDate }}, {{ $formattedReturnTime }} WIB
