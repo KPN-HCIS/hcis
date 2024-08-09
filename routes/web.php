@@ -198,8 +198,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi']) -> name('businessTrip.deklarasi');
 
     //PDF BT
-    Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload']) -> name('pdf');
-    Route::get('/businessTrip/export/{id}/{type}', [BusinessTripController::class, 'export']) -> name('export');
+    Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
+    Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('export');
 
 
     // Authentication

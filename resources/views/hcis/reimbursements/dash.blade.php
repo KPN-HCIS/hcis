@@ -72,7 +72,29 @@
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> <!-- end col-->
+            </div><!-- end col-->
+
+            <div class="col-md-3">
+                <a href="{{ route('ticket') }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/ticket.png" alt="logo" style="width: 100px; height: 100px;">
+                            <h4 class="my-3">Tiket</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                <a href="{{ route('hotel') }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/hotel.png" alt="logo" style="width: 100px; height: 100px;">
+                            <h4 class="my-3">Hotel</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div>
 
         </div> <!-- end row -->
     </div>

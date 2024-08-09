@@ -9,8 +9,10 @@ use App\Models\ca_transaction;
 use App\Models\Company;
 use App\Models\Employee;
 use App\Models\Hotel;
+use App\Models\Location;
 use App\Models\Taksi;
 use App\Models\Tiket;
+use Carbon\Carbon;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,9 +28,8 @@ class BusinessTripController extends Controller
     public function businessTrip()
     {
         $user = Auth::user();
-        $perPage = request()->query('per_page', 10);
 
-        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate($perPage);
+        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate(10);
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -176,78 +177,89 @@ class BusinessTripController extends Controller
     public function pdfDownload($id)
     {
         $sppd = BusinessTrip::findOrFail($id);
-
         $response = ['sppd' => $sppd];
 
-        $caTransactions = ca_transaction::where('no_sppd', $sppd->no_sppd)->first();
-        if ($caTransactions) {
-            $response['caTransactions'] = $caTransactions;
+        $types = ['ca' => ca_transaction::class, 'tiket' => Tiket::class, 'hotel' => Hotel::class, 'taksi' => Taksi::class];
+
+        foreach ($types as $type => $model) {
+            $data = $model::where('no_sppd', $sppd->no_sppd)->first();
+            if ($data) {
+                $response[$type] = $data;
+            }
         }
-        $tickets = Tiket::where('no_sppd', $sppd->no_sppd)->first();
-        if ($tickets) {
-            $response['tickets'] = $tickets;
-        }
-        $hotel = Hotel::where('no_sppd', $sppd->no_sppd)->first();
-        if ($hotel) {
-            $response['hotel'] = $hotel;
-        }
-        $taksi = Taksi::where('no_sppd', $sppd->no_sppd)->first();
-        if ($taksi) {
-            $response['taksi'] = $taksi;
-        }
+
         return response()->json($response);
     }
-    public function export($id, $type)
+    public function export($id, $types = null)
     {
         try {
-            Log::info("Export request received for ID: {$id}, Type: {$type}");
-
             $user = Auth::user();
-            $pdfContent = null;
-            $pdfName = '';
+            $sppd = BusinessTrip::where('user_id', $user->id)->where('id', $id)->firstOrFail();
 
-            switch ($type) {
-                case 'sppd':
-                    $sppd = BusinessTrip::where('user_id', $user->id)->where('id', $id)->firstOrFail();
-                    $pdfName = 'SPPD.pdf';
-                    $viewPath = 'hcis.reimbursements.businessTrip.sppd_pdf';
-                    $data = ['sppd' => $sppd];
-                    break;
-                case 'ca':
-                    $ca = ca_transaction::findOrFail($id);
-                    $pdfName = 'CA.pdf';
-                    $viewPath = 'hcis.reimbursements.businessTrip.ca_pdf';
-                    $data = ['ca' => $ca];
-                    break;
-                case 'tiket':
-                    $ticket = Tiket::findOrFail($id);
-                    $pdfName = 'Ticket.pdf';
-                    $viewPath = 'hcis.reimbursements.businessTrip.tiket_pdf';
-                    $data = ['ticket' => $ticket];
-                    break;
-                case 'hotel':
-                    $hotel = Hotel::findOrFail($id);
-                    $pdfName = 'Hotel.pdf';
-                    $viewPath = 'hcis.reimbursements.businessTrip.hotel_pdf';
-                    $data = ['hotel' => $hotel];
-                    break;
-                case 'taksi':
-                    $taksi = Taksi::findOrFail($id);
-                    $pdfName = 'Taxi.pdf';
-                    $viewPath = 'hcis.reimbursements.businessTrip.taksi_pdf';
-                    $data = ['taksi' => $taksi];
-                    break;
-                default:
-                    throw new \Exception('Invalid document type.');
+            if (!$types) {
+                $types = ['sppd', 'ca', 'tiket', 'hotel', 'taksi'];
+            } else {
+                $types = explode(',', $types);
             }
 
-            Log::info("Attempting to load view: {$viewPath}");
+            $zip = new ZipArchive();
+            $zipFileName = 'Business Trip.zip';
+            $zipFilePath = storage_path('app/public/' . $zipFileName);
 
-            $pdfContent = PDF::loadView($viewPath, $data);
+            if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+                foreach ($types as $type) {
+                    $pdfContent = null;
+                    $pdfName = '';
 
-            Log::info("PDF content generated successfully");
+                    switch ($type) {
+                        case 'sppd':
+                            $pdfName = 'SPPD.pdf';
+                            $viewPath = 'hcis.reimbursements.businessTrip.sppd_pdf';
+                            $data = ['sppd' => $sppd];
+                            break;
+                        case 'ca':
+                            $ca = ca_transaction::where('no_sppd', $sppd->no_sppd)->first();
+                            if (!$ca)
+                                continue 2;
+                            $pdfName = 'CA.pdf';
+                            $viewPath = 'hcis.reimbursements.businessTrip.ca_pdf';
+                            $data = ['ca' => $ca];
+                            break;
+                        case 'tiket':
+                            $ticket = Tiket::where('no_sppd', $sppd->no_sppd)->first();
+                            if (!$ticket)
+                                continue 2;
+                            $pdfName = 'Ticket.pdf';
+                            $viewPath = 'hcis.reimbursements.businessTrip.tiket_pdf';
+                            $data = ['ticket' => $ticket];
+                            break;
+                        case 'hotel':
+                            $hotel = Hotel::where('no_sppd', $sppd->no_sppd)->first();
+                            if (!$hotel)
+                                continue 2;
+                            $pdfName = 'Hotel.pdf';
+                            $viewPath = 'hcis.reimbursements.businessTrip.hotel_pdf';
+                            $data = ['hotel' => $hotel];
+                            break;
+                        case 'taksi':
+                            $taksi = Taksi::where('no_sppd', $sppd->no_sppd)->first();
+                            if (!$taksi)
+                                continue 2;
+                            $pdfName = 'Taxi.pdf';
+                            $viewPath = 'hcis.reimbursements.businessTrip.taksi_pdf';
+                            $data = ['taksi' => $taksi];
+                            break;
+                        default:
+                            continue 2;
+                    }
 
-            return $pdfContent->stream($pdfName);
+                    $pdfContent = PDF::loadView($viewPath, $data)->output();
+                    $zip->addFromString($pdfName, $pdfContent);
+                }
+                $zip->close();
+            }
+
+            return response()->download($zipFilePath)->deleteFileAfterSend(true);
 
         } catch (\Exception $e) {
             Log::error("Error in export function: " . $e->getMessage());
@@ -264,12 +276,14 @@ class BusinessTripController extends Controller
     {
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
+        $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
         return view(
             'hcis.reimbursements.businessTrip.formBusinessTrip',
             [
                 'employee_data' => $employee_data,
                 'companies' => $companies,
+                'locations' => $locations,
             ]
         );
     }
@@ -307,8 +321,37 @@ class BusinessTripController extends Controller
             'hotel' => $request->hotel,
             'taksi' => $request->taksi,
             'status' => $request->status,
-
         ]);
+        if ($request->taksi === 'Ya') {
+            $taksi = new Taksi();
+            $taksi->id = (string) Str::uuid();
+            $taksi->no_vt = $request->no_vt;
+            $taksi->no_sppd = $noSppd;
+            $taksi->user_id = $userId;
+            $taksi->unit = $request->divisi;
+            $taksi->nominal_vt = $request->nominal_vt;
+            $taksi->keeper_vt = $request->keeper_vt;
+
+            $taksi->save();
+        }
+        if ($request->hotel === 'Ya') {
+            $hotel = new Hotel();
+            $hotel->id = (string) Str::uuid();
+            $hotel->no_htl = $request->no_htl;
+            $hotel->no_sppd = $noSppd;
+            $hotel->user_id = $userId;
+            $hotel->unit = $request->divisi;
+            $hotel->nama_htl = $request->nama_htl;
+            $hotel->lokasi_htl = $request->lokasi_htl;
+            $hotel->jmlkmr_htl = $request->jmlkmr_htl;
+            $hotel->bed_htl = $request->bed_htl;
+            $hotel->tgl_masuk_htl = $request->tgl_masuk_htl;
+            $hotel->tgl_keluar_htl = $request->tgl_keluar_htl;
+            $hotel->total_hari = $request->total_hari;
+
+            $hotel->save();
+        }
+
         return redirect('/businessTrip');
     }
 
@@ -428,14 +471,14 @@ class BusinessTripController extends Controller
             ->orderBy('no_sppd', 'desc')
             ->first();
 
-        if ($lastTransaction && preg_match('/(\d{3})\/BT-ACC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/SPPD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
         }
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        $newNoSppd = "$newNumber/BT-ACC/$romanMonth/$currentYear";
+        $newNoSppd = "$newNumber/SPPD-HRD/$romanMonth/$currentYear";
 
         return $newNoSppd;
     }
