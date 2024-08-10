@@ -29,7 +29,7 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
 
-        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate(10);
+        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate(50);
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -103,36 +103,6 @@ class BusinessTripController extends Controller
         return view('hcis.reimbursements.businessTrip.deklarasi', ['n' => $n, 'companies' => $companies]);
     }
 
-    public function search(Request $request)
-    {
-        $user = Auth::user();
-        $cari = $request->q;
-
-        $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
-            ->where(function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%')
-                    ->orWhere('divisi', 'like', '%' . $cari . '%')
-                    ->orWhere('no_sppd', 'like', '%' . $cari . '%')
-                    ->orWhere('mulai', 'like', '%' . $cari . '%')
-                    ->orWhere('ca', 'like', '%' . $cari . '%')
-                    ->orWhere('tiket', 'like', '%' . $cari . '%')
-                    ->orWhere('hotel', 'like', '%' . $cari . '%')
-                    ->orWhere('taksi', 'like', '%' . $cari . '%')
-                    ->orWhere('status', 'like', '%' . $cari . '%');
-            })
-            ->paginate(10);
-
-        $sppdNos = $sppd->pluck('no_sppd');
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $sppd->appends($request->all());
-        $parentLink = 'Reimbursement';
-        $link = 'Business Trip';
-
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
-    }
     public function filterDate(Request $request)
     {
         $user = Auth::user();
@@ -151,11 +121,11 @@ class BusinessTripController extends Controller
             $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
                 ->whereBetween('mulai', [$startDate, $endDate])
                 ->orderBy('mulai', 'asc')
-                ->paginate(10); // Adjust the pagination as needed
+                ->paginate(50); // Adjust the pagination as needed
         } else {
             $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
                 ->orderBy('mulai', 'asc')
-                ->paginate(10);
+                ->paginate(50);
         }
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
@@ -249,6 +219,14 @@ class BusinessTripController extends Controller
                             $viewPath = 'hcis.reimbursements.businessTrip.taksi_pdf';
                             $data = ['taksi' => $taksi];
                             break;
+                        // case 'deklarasi':
+                        //     $deklarasi = deklarasi::where('no_sppd', $sppd->no_sppd)->first();
+                        //     if (!$deklarasi)
+                        //         continue 2;
+                        //     $pdfName = 'Deklarasi.pdf';
+                        //     $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
+                        //     $data = ['deklarasi' => $deklarasi];
+                        //     break;
                         default:
                             continue 2;
                     }
@@ -292,6 +270,9 @@ class BusinessTripController extends Controller
     {
         $bt = new BusinessTrip();
         $bt->id = (string) Str::uuid();
+
+        // Fetch employee data using NIK
+        $employee_data = Employee::where('ktp', $request->noktp_tkt)->first();
 
         $noSppd = $this->generateNoSppd();
         $userId = Auth::id();
@@ -351,6 +332,46 @@ class BusinessTripController extends Controller
 
             $hotel->save();
         }
+        if ($request->tiket === 'Ya') {
+            $tiket = new Tiket();
+            $tiket->id = (string) Str::uuid();
+            // $tiket->no_tkt = $request->no_tkt;
+            $tiket->no_sppd = $noSppd;
+            $tiket->user_id = $userId;
+            $tiket->unit = $request->divisi;
+            $tiket->jk_tkt = $employee_data->gender;
+            $tiket->np_tkt = '0';
+            $tiket->noktp_tkt = $request->noktp_tkt;
+            $tiket->tlp_tkt = $employee_data->personal_mobile_number;
+            $tiket->dari_tkt = $request->dari_tkt;
+            $tiket->ke_tkt = $request->ke_tkt;
+            $tiket->tgl_brkt_tkt = $request->tgl_brkt_tkt;
+            $tiket->tgl_plg_tkt = $request->tgl_plg_tkt;
+            $tiket->jam_brkt_tkt = $request->jam_brkt_tkt;
+            $tiket->jam_plg_tkt = $request->jam_plg_tkt;
+            $tiket->jenis_tkt = $request->jenis_tkt;
+            $tiket->type_tkt = $request->type_tkt;
+
+            // dd($request->all());
+            $tiket->save();
+        }
+        if ($request->ca === 'Ya') {
+            $ca = new Hotel();
+            $ca->id = (string) Str::uuid();
+            $ca->no_htl = $request->no_htl;
+            $ca->no_sppd = $noSppd;
+            $ca->user_id = $userId;
+            $ca->unit = $request->divisi;
+            $ca->nama_htl = $request->nama_htl;
+            $ca->lokasi_htl = $request->lokasi_htl;
+            $ca->jmlkmr_htl = $request->jmlkmr_htl;
+            $ca->bed_htl = $request->bed_htl;
+            $ca->tgl_masuk_htl = $request->tgl_masuk_htl;
+            $ca->tgl_keluar_htl = $request->tgl_keluar_htl;
+            $ca->total_hari = $request->total_hari;
+
+            $ca->save();
+        }
 
         return redirect('/businessTrip');
     }
@@ -398,38 +419,6 @@ class BusinessTripController extends Controller
 
         $parentLink = 'Reimbursement';
         $link = 'BT Approval';
-
-        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData'));
-    }
-
-    public function searchApproval(Request $request)
-    {
-        $user = Auth::user();
-        $cari = $request->q;
-
-        $sppd = BusinessTrip::query()
-            ->where(function ($query) use ($cari) {
-                $query->where('nama', 'like', '%' . $cari . '%')
-                    ->orWhere('divisi', 'like', '%' . $cari . '%')
-                    ->orWhere('no_sppd', 'like', '%' . $cari . '%')
-                    ->orWhere('mulai', 'like', '%' . $cari . '%')
-                    ->orWhere('ca', 'like', '%' . $cari . '%')
-                    ->orWhere('tiket', 'like', '%' . $cari . '%')
-                    ->orWhere('hotel', 'like', '%' . $cari . '%')
-                    ->orWhere('taksi', 'like', '%' . $cari . '%')
-                    ->orWhere('status', 'like', '%' . $cari . '%');
-            })
-            ->paginate(10);
-
-        $sppdNos = $sppd->pluck('no_sppd');
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $sppd->appends($request->all());
-        $parentLink = 'Reimbursement';
-        $link = 'Business Trip';
-        $showData = true;
 
         return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData'));
     }
