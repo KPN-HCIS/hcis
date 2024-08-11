@@ -29,7 +29,7 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
 
-        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate(50);
+        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -121,11 +121,11 @@ class BusinessTripController extends Controller
             $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
                 ->whereBetween('mulai', [$startDate, $endDate])
                 ->orderBy('mulai', 'asc')
-                ->paginate(50); // Adjust the pagination as needed
+                ->get(); // Adjust the pagination as needed
         } else {
             $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
                 ->orderBy('mulai', 'asc')
-                ->paginate(50);
+                ->get();
         }
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
@@ -271,10 +271,18 @@ class BusinessTripController extends Controller
         $bt = new BusinessTrip();
         $bt->id = (string) Str::uuid();
 
-        // Fetch employee data using NIK
-        $employee_data = Employee::where('ktp', $request->noktp_tkt)->first();
+        $companies = Company::orderBy('contribution_level')->get();
 
+        // Fetch employee data using NIK
+        if ($request->has('noktp_tkt') && !empty($request->noktp_tkt)) {
+            $employee_data = Employee::where('ktp', $request->noktp_tkt)->first();
+            // If employee data is not found
+            if (!$employee_data) {
+                return redirect()->back()->with('error', 'NIK not found');
+            }
+        }
         $noSppd = $this->generateNoSppd();
+        $noSppdCa = $this->generateNoSppdCa();
         $userId = Auth::id();
         BusinessTrip::create([
             'id' => $bt->id,
@@ -353,28 +361,66 @@ class BusinessTripController extends Controller
             $tiket->type_tkt = $request->type_tkt;
 
             // dd($request->all());
+            // dd(session()->all());
             $tiket->save();
         }
         if ($request->ca === 'Ya') {
-            $ca = new Hotel();
+            $ca = new ca_transaction();
             $ca->id = (string) Str::uuid();
-            $ca->no_htl = $request->no_htl;
+            $ca->type_ca = 'dns';
+            $ca->no_ca = $noSppdCa;
             $ca->no_sppd = $noSppd;
             $ca->user_id = $userId;
             $ca->unit = $request->divisi;
-            $ca->nama_htl = $request->nama_htl;
-            $ca->lokasi_htl = $request->lokasi_htl;
-            $ca->jmlkmr_htl = $request->jmlkmr_htl;
-            $ca->bed_htl = $request->bed_htl;
-            $ca->tgl_masuk_htl = $request->tgl_masuk_htl;
-            $ca->tgl_keluar_htl = $request->tgl_keluar_htl;
-            $ca->total_hari = $request->total_hari;
+
+            $ca->contribution_level_code = $request->contribution_level_code;
+            $ca->destination = $request->destination;
+            $ca->others_location = $request->others_location;
+
+            $ca->ca_needs = $request->ca_needs;
+            $ca->start_date = $request->start_date;
+            $ca->end_date = $request->end_date;
+            $ca->date_required = $request->date_required;
+            $ca->total_days = $request->total_days;
+            $ca->detail_ca = $request->detail_ca;
+            $ca->total_ca = $request->total_ca;
+            $ca->total_real = $request->total_real;
+            $ca->total_cost = $request->total_cost;
+
+            $ca->approval_status = $request->approval_status;
+            $ca->approval_sett = $request->approval_sett;
+            $ca->approval_extend = $request->approval_extend;
+
 
             $ca->save();
         }
-
         return redirect('/businessTrip');
     }
+
+    public function saveDraft(Request $request)
+    {
+        // Create a new BusinessTrip instance
+        $bt = new BusinessTrip();
+        $bt->id = (string) Str::uuid();
+        $userId = Auth::id();
+        $noSppd = $this->generateNoSppd();
+
+        // Extract all input data
+        $draftData = $request->all();
+        $draftData['id'] = $bt->id;
+        $draftData['user_id'] = $userId;
+        $draftData['no_sppd'] = $noSppd;
+        $draftData['status'] = 'Draft'; // Ensure status is set to 'Draft'
+
+        // Create the BusinessTrip record
+        BusinessTrip::create($draftData);
+
+        // Handle related models if needed (Taksi, Hotel, Tiket, ca_transaction)
+
+        // Respond with JSON
+        return response()->json(['success' => true]);
+    }
+
 
     public function approval()
     {
@@ -468,6 +514,29 @@ class BusinessTripController extends Controller
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         $newNoSppd = "$newNumber/SPPD-HRD/$romanMonth/$currentYear";
+
+        return $newNoSppd;
+    }
+    private function generateNoSppdCa()
+    {
+        $currentYear = date('Y');
+        $currentMonth = date('n');
+        $romanMonth = $this->getRomanMonth($currentMonth);
+
+        // Assuming you want to generate no_sppd similarly to no_ca
+        $lastTransaction = BusinessTrip::whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->orderBy('no_sppd', 'desc')
+            ->first();
+
+        if ($lastTransaction && preg_match('/(\d{3})\/SPPD-CA\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
+            $lastNumber = intval($matches[1]);
+        } else {
+            $lastNumber = 0;
+        }
+
+        $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        $newNoSppd = "$newNumber/SPPD-CA/$romanMonth/$currentYear";
 
         return $newNoSppd;
     }

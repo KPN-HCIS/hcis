@@ -21,6 +21,14 @@
                         <a href="/businessTrip" type="button" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+
                         <form action="/businessTrip/form/post" method="POST">
                             @csrf
 
@@ -268,7 +276,8 @@
                                                                         placeholder="ex. Train/Bus/Airplane etc.">
                                                                 </div>
                                                             </div>
-                                                            <label for="more_tkt" class="form-label">Add more ticket</label>
+                                                            <label for="more_tkt" class="form-label">Add more
+                                                                ticket</label>
                                                             <select class="form-select" id="more_tkt" name="more_tkt">
                                                                 <option value="Tidak">Tidak</option>
                                                                 <option value="Ya">Ya</option>
@@ -358,7 +367,8 @@
                                                                     class="form-control datepicker bg-light"
                                                                     id="total_hari" name="total_hari" readonly>
                                                             </div>
-                                                            <label for="more_htl" class="form-label">Add more hotel</label>
+                                                            <label for="more_htl" class="form-label">Add more
+                                                                hotel</label>
                                                             <select class="form-select" id="more_htl" name="more_htl">
                                                                 <option value="Tidak">Tidak</option>
                                                                 <option value="Ya">Ya</option>

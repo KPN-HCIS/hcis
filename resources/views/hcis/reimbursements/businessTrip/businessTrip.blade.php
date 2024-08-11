@@ -28,8 +28,8 @@
             </div>
 
             <!-- Add Data Button -->
-            <div class="col-md-6 mt-3 text-end">
-                <a href="/businessTrip/form/add" class="btn btn-outline-primary rounded-pill">
+            <div class="col-md-6 mt-4 text-end">
+                <a href="/businessTrip/form/add" class="btn btn-outline-primary rounded-pill" style="font-size: 18px">
                     <i class="bi bi-plus-circle"></i> Add Data
                 </a>
             </div>
@@ -96,7 +96,7 @@
                                         @foreach ($sppd as $idx => $n)
                                             <tr>
                                                 <th scope="row" style="text-align: center;">
-                                                    {{ $sppd->firstItem() + $idx }}
+                                                    {{ $loop->iteration }}
                                                 </th>
                                                 <td>{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
@@ -188,7 +188,7 @@
                                                 </td>
                                                 <td>
                                                     <p type="button"
-                                                        class="btn btn-sm rounded-pill btn-{{ $n->status == 'Diterima' ? 'success' : ($n->status == 'Ditolak' ? 'danger' : 'warning') }}"
+                                                        class="btn btn-sm rounded-pill btn-{{ $n->status == 'Doc Accepted' ? 'success' : ($n->status == 'Return' ? 'danger' : 'warning') }}"
                                                         style="pointer-events: none">
                                                         {{ $n->status }}
                                                     </p>
@@ -202,7 +202,7 @@
                                                     @php
                                                         $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                     @endphp
-                                                    @if ($n->kembali <= $today && $n->status == 'Diterima')
+                                                    @if ($n->kembali <= $today && $n->status == 'Doc Accepted')
                                                         <form method="GET"
                                                             action="/businessTrip/deklarasi/{{ $n->id }}"
                                                             style="display: inline-block;">
@@ -242,7 +242,6 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                {{ $sppd->links('pagination::simple-bootstrap-4') }}
                             </div>
                         </div>
                     </div>
@@ -410,16 +409,15 @@
                         });
                     });
 
-                    // $(document).ready(function() {
-                    //     var table = $('table').DataTable({
-                    //         pageLength: 10, // Set the initial page length
-                    //         lengthMenu: [10, 25, 50, 100], // Allow selecting page lengths
-                    //     });
+                    $(document).ready(function() {
+                        var table = $('#yourTableId').DataTable({
+                            "pageLength": 10 // Set default page length
+                        });
+                        // Set to 10 entries per page
+                        $('#dt-length-0').val(10);
 
-                    //     $('#dt-length-0').on('change', function() {
-                    //         var length = parseInt(this.value, 10);
-                    //         table.page.len(length).draw(); // Update page length dynamically
-                    //     });
-                    // });
+                        // Trigger the change event to apply the selected value
+                        $('#dt-length-0').trigger('change');
+                    });
                 </script>
             @endsection

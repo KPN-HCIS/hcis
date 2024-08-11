@@ -180,6 +180,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/businessTrip/form/update/{id}', [BusinessTripController::class, 'formUpdate']) -> name('businessTrip.update');
     Route::put('/businessTrip/update/{id}', [BusinessTripController::class, 'update'])->name('update.bt');
     Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
+    Route::post('/businessTrip/saveDraft', [BusinessTripController::class, 'saveDraft'])->name('businessTrip.saveDraft');
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
