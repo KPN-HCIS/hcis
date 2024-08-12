@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Hotel'])
+@extends('layouts_.vertical', ['page_title' => 'Ticket'])
 
 @section('css')
 @endsection
@@ -34,7 +34,7 @@
             </div>
             <div class="col">
                 <div class="mb-2 text-end">
-                    <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow">Create CA</a>
+                    <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow">Add Ticket</a>
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
             <div class="card shadow mb-4">
               <div class="card-body">
                   <div class="table-responsive">
-                      <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
+                      <table class="table table-sm table-hover dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
                           <thead class="thead-light">
                               <tr class="text-center">
                                   <th>No</th>

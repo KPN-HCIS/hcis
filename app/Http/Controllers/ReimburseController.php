@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusinessTrip;
 use App\Models\ca_transaction;
+use App\Models\Hotel;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Location;
@@ -71,9 +73,18 @@ class ReimburseController extends Controller
         function getRomanMonth($month)
         {
             $romanMonths = [
-                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
-                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
-                11 => 'XI', 12 => 'XII'
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
             ];
             return $romanMonths[$month];
         }
@@ -106,19 +117,19 @@ class ReimburseController extends Controller
 
         $model = new CATransaction;
         $model->id = Str::uuid();
-        $model->type_ca         = $req->ca_type;
-        $model->no_ca           = $newNoCa;
-        $model->no_sppd         = $req->bisnis_numb;
-        $model->user_id         = $userId;
-        $model->unit            = $req->unit;
-        $model->contribution_level_code   = $req->companyFilter;
-        $model->destination     = $req->locationFilter;
+        $model->type_ca = $req->ca_type;
+        $model->no_ca = $newNoCa;
+        $model->no_sppd = $req->bisnis_numb;
+        $model->user_id = $userId;
+        $model->unit = $req->unit;
+        $model->contribution_level_code = $req->companyFilter;
+        $model->destination = $req->locationFilter;
         $model->others_location = $req->others_location;
-        $model->ca_needs        = $req->ca_needs;
-        $model->start_date      = $req->start_date;
-        $model->end_date        = $req->end_date;
-        $model->date_required   = $req->ca_required;
-        $model->total_days      = $req->totaldays;
+        $model->ca_needs = $req->ca_needs;
+        $model->start_date = $req->start_date;
+        $model->end_date = $req->end_date;
+        $model->date_required = $req->ca_required;
+        $model->total_days = $req->totaldays;
         if ($req->ca_type == 'dns' || $req->ca_type == 'ndns') {
             $detail_ca = [
                 'allowance' => $req->allowance,
@@ -169,11 +180,11 @@ class ReimburseController extends Controller
             $detail_ca_json = json_encode($detail_ca);
             $model->detail_ca = $detail_ca_json;
         }
-        $model->total_ca        = str_replace('.', '', $req->totalca);
-        $model->total_real      = "0";
-        $model->total_cost      = str_replace('.', '', $req->totalca);
+        $model->total_ca = str_replace('.', '', $req->totalca);
+        $model->total_real = "0";
+        $model->total_cost = str_replace('.', '', $req->totalca);
         $model->approval_status = "Pending";
-        $model->created_by          = $userId;
+        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success');
@@ -208,19 +219,19 @@ class ReimburseController extends Controller
     {
         $userId = Auth::id();
         $model = ca_transaction::find($key);
-        $model->type_ca         = $req->ca_type;
-        $model->no_ca           = $req->no_ca;
-        $model->no_sppd         = $req->bisnis_numb;
+        $model->type_ca = $req->ca_type;
+        $model->no_ca = $req->no_ca;
+        $model->no_sppd = $req->bisnis_numb;
         // $model->user_id         = $req->id;
-        $model->unit            = $req->unit;
-        $model->contribution_level_code   = $req->companyFilter;
-        $model->destination     = $req->locationFilter;
+        $model->unit = $req->unit;
+        $model->contribution_level_code = $req->companyFilter;
+        $model->destination = $req->locationFilter;
         $model->others_location = $req->others_location;
-        $model->ca_needs        = $req->ca_needs;
-        $model->start_date      = $req->start_date;
-        $model->end_date        = $req->end_date;
-        $model->date_required   = $req->ca_required;
-        $model->total_days      = $req->totaldays;
+        $model->ca_needs = $req->ca_needs;
+        $model->start_date = $req->start_date;
+        $model->end_date = $req->end_date;
+        $model->date_required = $req->ca_required;
+        $model->total_days = $req->totaldays;
         if ($req->ca_type == 'dns' || $req->ca_type == 'ndns') {
             $detail_ca = [
                 'allowance' => $req->allowance,
@@ -271,11 +282,11 @@ class ReimburseController extends Controller
             $detail_ca_json = json_encode($detail_ca);
             $model->detail_ca = $detail_ca_json;
         }
-        $model->total_ca        = str_replace('.', '', $req->totalca);
-        $model->total_real      = "0";
-        $model->total_cost      = str_replace('.', '', $req->totalca);
+        $model->total_ca = str_replace('.', '', $req->totalca);
+        $model->total_real = "0";
+        $model->total_cost = str_replace('.', '', $req->totalca);
         $model->approval_status = "Pending";
-        $model->created_by      = $userId;
+        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success Update');
@@ -292,7 +303,11 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Hotel';
-        $transactions = tkt_transaction::with('employee')->get();
+        $transactions = Hotel::with('employee')->get();
+
+        // foreach ($transactions as $transaction) {
+        //     dd($transaction); // This will dump the first transaction and stop execution
+        // }
 
         return view('hcis.reimbursements.hotel.hotel', [
             'link' => $link,
@@ -301,6 +316,8 @@ class ReimburseController extends Controller
             'transactions' => $transactions,
         ]);
     }
+
+
     function hotelCreate()
     {
 
@@ -312,7 +329,8 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Approved')->get();
+        // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
 
         return view('hcis.reimbursements.hotel.formHotel', [
@@ -331,9 +349,18 @@ class ReimburseController extends Controller
         function getRomanMonth_htl($month)
         {
             $romanMonths = [
-                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
-                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
-                11 => 'XI', 12 => 'XII'
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
             ];
             return $romanMonths[$month];
         }
@@ -359,18 +386,18 @@ class ReimburseController extends Controller
 
         $model = new htl_transaction;
         $model->id = Str::uuid();
-        $model->no_htl          = $newNoHtl;
-        $model->no_sppd         = $req->bisnis_numb;
-        $model->user_id         = $userId;
-        $model->unit            = $req->unit;
-        $model->nama_htl        = $req->nama_htl;
-        $model->lokasi_htl      = $req->lokasi_htl;
-        $model->jmlkmr_htl      = $req->jmlkmr_htl;
-        $model->bed_htl         = $req->bed_htl;
-        $model->tgl_masuk_htl   = $req->tgl_masuk_htl;
-        $model->tgl_keluar_htl  = $req->tgl_keluar_htl;
-        $model->total_hari      = $req->totaldays;
-        $model->created_by      = $userId;
+        $model->no_htl = $newNoHtl;
+        $model->no_sppd = $req->bisnis_numb;
+        $model->user_id = $userId;
+        $model->unit = $req->unit;
+        $model->nama_htl = $req->nama_htl;
+        $model->lokasi_htl = $req->lokasi_htl;
+        $model->jmlkmr_htl = $req->jmlkmr_htl;
+        $model->bed_htl = $req->bed_htl;
+        $model->tgl_masuk_htl = $req->tgl_masuk_htl;
+        $model->tgl_keluar_htl = $req->tgl_keluar_htl;
+        $model->total_hari = $req->totaldays;
+        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success');
@@ -407,14 +434,14 @@ class ReimburseController extends Controller
         $model = htl_transaction::findByRouteKey($key);
 
         if ($model) {
-            $model->unit            = $req->unit;
-            $model->nama_htl        = $req->nama_htl;
-            $model->lokasi_htl      = $req->lokasi_htl;
-            $model->jmlkmr_htl      = $req->jmlkmr_htl;
-            $model->bed_htl         = $req->bed_htl;
-            $model->tgl_masuk_htl   = $req->tgl_masuk_htl;
-            $model->tgl_keluar_htl  = $req->tgl_keluar_htl;
-            $model->total_hari      = $req->totaldays;
+            $model->unit = $req->unit;
+            $model->nama_htl = $req->nama_htl;
+            $model->lokasi_htl = $req->lokasi_htl;
+            $model->jmlkmr_htl = $req->jmlkmr_htl;
+            $model->bed_htl = $req->bed_htl;
+            $model->tgl_masuk_htl = $req->tgl_masuk_htl;
+            $model->tgl_keluar_htl = $req->tgl_keluar_htl;
+            $model->total_hari = $req->totaldays;
             $model->save();
 
             Alert::success('Success');
@@ -455,7 +482,8 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Approved')->get();
+        // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
 
         return view('hcis.reimbursements.ticket.formTicket', [
@@ -474,9 +502,18 @@ class ReimburseController extends Controller
         function getRomanMonth_tkt($month)
         {
             $romanMonths = [
-                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
-                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
-                11 => 'XI', 12 => 'XII'
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
             ];
             return $romanMonths[$month];
         }
@@ -502,23 +539,23 @@ class ReimburseController extends Controller
 
         $model = new tkt_transaction;
         $model->id = Str::uuid();
-        $model->no_tkt          = $newNoHtl;
-        $model->no_sppd         = $req->bisnis_numb;
-        $model->user_id         = $userId;
-        $model->unit            = $req->unit;
-        $model->jk_tkt          = $req->jk_tkt;
-        $model->np_tkt          = $req->np_tkt;
-        $model->noktp_tkt       = $req->noktp_tkt;
-        $model->tlp_tkt         = $req->tlp_tkt;
-        $model->jenis_tkt       = $req->jenis_tkt;
-        $model->dari_tkt        = $req->dari_tkt;
-        $model->ke_tkt          = $req->ke_tkt;
-        $model->tgl_brkt_tkt    = $req->tgl_brkt_tkt;
-        $model->jam_brkt_tkt    = $req->jam_brkt_tkt;
-        $model->type_tkt        = $req->type_tkt;
-        $model->tgl_plg_tkt     = $req->tgl_plg_tkt;
-        $model->jam_plg_tkt     = $req->jam_plg_tkt;
-        $model->created_by      = $userId;
+        $model->no_tkt = $newNoHtl;
+        $model->no_sppd = $req->bisnis_numb;
+        $model->user_id = $userId;
+        $model->unit = $req->unit;
+        $model->jk_tkt = $req->jk_tkt;
+        $model->np_tkt = $req->np_tkt;
+        $model->noktp_tkt = $req->noktp_tkt;
+        $model->tlp_tkt = $req->tlp_tkt;
+        $model->jenis_tkt = $req->jenis_tkt;
+        $model->dari_tkt = $req->dari_tkt;
+        $model->ke_tkt = $req->ke_tkt;
+        $model->tgl_brkt_tkt = $req->tgl_brkt_tkt;
+        $model->jam_brkt_tkt = $req->jam_brkt_tkt;
+        $model->type_tkt = $req->type_tkt;
+        $model->tgl_plg_tkt = $req->tgl_plg_tkt;
+        $model->jam_plg_tkt = $req->jam_plg_tkt;
+        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success');
@@ -554,19 +591,19 @@ class ReimburseController extends Controller
     {
         $userId = Auth::id();
         $model = tkt_transaction::findByRouteKey($key);
-        $model->jk_tkt          = $req->jk_tkt;
-        $model->np_tkt          = $req->np_tkt;
-        $model->noktp_tkt       = $req->noktp_tkt;
-        $model->tlp_tkt         = $req->tlp_tkt;
-        $model->jenis_tkt       = $req->jenis_tkt;
-        $model->dari_tkt        = $req->dari_tkt;
-        $model->ke_tkt          = $req->ke_tkt;
-        $model->tgl_brkt_tkt    = $req->tgl_brkt_tkt;
-        $model->jam_brkt_tkt    = $req->jam_brkt_tkt;
-        $model->type_tkt        = $req->type_tkt;
-        $model->tgl_plg_tkt     = $req->tgl_plg_tkt;
-        $model->jam_plg_tkt     = $req->jam_plg_tkt;
-        $model->created_by      = $userId;
+        $model->jk_tkt = $req->jk_tkt;
+        $model->np_tkt = $req->np_tkt;
+        $model->noktp_tkt = $req->noktp_tkt;
+        $model->tlp_tkt = $req->tlp_tkt;
+        $model->jenis_tkt = $req->jenis_tkt;
+        $model->dari_tkt = $req->dari_tkt;
+        $model->ke_tkt = $req->ke_tkt;
+        $model->tgl_brkt_tkt = $req->tgl_brkt_tkt;
+        $model->jam_brkt_tkt = $req->jam_brkt_tkt;
+        $model->type_tkt = $req->type_tkt;
+        $model->tgl_plg_tkt = $req->tgl_plg_tkt;
+        $model->jam_plg_tkt = $req->jam_plg_tkt;
+        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success');

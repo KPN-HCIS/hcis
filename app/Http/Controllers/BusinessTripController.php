@@ -102,6 +102,13 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         return view('hcis.reimbursements.businessTrip.deklarasi', ['n' => $n, 'companies' => $companies]);
     }
+    public function deklarasiAdmin($id)
+    {
+        $companies = Company::orderBy('contribution_level')->get();
+
+        $n = BusinessTrip::find($id);
+        return view('hcis.reimbursements.businessTrip.deklarasiAdmin', ['n' => $n, 'companies' => $companies]);
+    }
 
     public function filterDate(Request $request)
     {
@@ -269,21 +276,30 @@ class BusinessTripController extends Controller
     public function businessTripCreate(Request $request)
     {
         $bt = new BusinessTrip();
+
         $bt->id = (string) Str::uuid();
 
-        $companies = Company::orderBy('contribution_level')->get();
-
         // Fetch employee data using NIK
-        if ($request->has('noktp_tkt') && !empty($request->noktp_tkt)) {
-            $employee_data = Employee::where('ktp', $request->noktp_tkt)->first();
-            // If employee data is not found
+        $employee_data = null;
+        if ($request->has('noktp_tkt') && !empty($request->noktp_tkt[0])) {
+            $employee_data = Employee::where('ktp', $request->noktp_tkt[0])->first();
             if (!$employee_data) {
                 return redirect()->back()->with('error', 'NIK not found');
             }
         }
+
+        // Check if "Others" is selected in the "tujuan" dropdown
+        if ($request->tujuan === 'Others' && !empty($request->others_location)) {
+            $tujuan = $request->others_location;  // Use the value from the text box
+        } else {
+            $tujuan = $request->tujuan;  // Use the selected dropdown value
+        }
+
         $noSppd = $this->generateNoSppd();
         $noSppdCa = $this->generateNoSppdCa();
         $userId = Auth::id();
+        $employee = Employee::where('id', $userId)->first();
+
         BusinessTrip::create([
             'id' => $bt->id,
             'user_id' => $userId,
@@ -299,7 +315,7 @@ class BusinessTripController extends Controller
             'no_sppd' => $noSppd,
             'mulai' => $request->mulai,
             'kembali' => $request->kembali,
-            'tujuan' => $request->tujuan,
+            'tujuan' => $tujuan,
             'keperluan' => $request->keperluan,
             'bb_perusahaan' => $request->bb_perusahaan,
             'norek_krywn' => $request->norek_krywn,
@@ -310,6 +326,8 @@ class BusinessTripController extends Controller
             'hotel' => $request->hotel,
             'taksi' => $request->taksi,
             'status' => $request->status,
+            'manager_l1_id' => $employee->manager_l1_id,
+            'manager_l2_id' => $employee->manager_l2_id,
         ]);
         if ($request->taksi === 'Ya') {
             $taksi = new Taksi();
@@ -323,47 +341,77 @@ class BusinessTripController extends Controller
 
             $taksi->save();
         }
+
         if ($request->hotel === 'Ya') {
-            $hotel = new Hotel();
-            $hotel->id = (string) Str::uuid();
-            $hotel->no_htl = $request->no_htl;
-            $hotel->no_sppd = $noSppd;
-            $hotel->user_id = $userId;
-            $hotel->unit = $request->divisi;
-            $hotel->nama_htl = $request->nama_htl;
-            $hotel->lokasi_htl = $request->lokasi_htl;
-            $hotel->jmlkmr_htl = $request->jmlkmr_htl;
-            $hotel->bed_htl = $request->bed_htl;
-            $hotel->tgl_masuk_htl = $request->tgl_masuk_htl;
-            $hotel->tgl_keluar_htl = $request->tgl_keluar_htl;
-            $hotel->total_hari = $request->total_hari;
+            $hotelData = [
+                'nama_htl' => $request->nama_htl,
+                'lokasi_htl' => $request->lokasi_htl,
+                'jmlkmr_htl' => $request->jmlkmr_htl,
+                'bed_htl' => $request->bed_htl,
+                'tgl_masuk_htl' => $request->tgl_masuk_htl,
+                'tgl_keluar_htl' => $request->tgl_keluar_htl,
+                'total_hari' => $request->total_hari,
+            ];
 
-            $hotel->save();
+            foreach ($hotelData['nama_htl'] as $key => $value) {
+                if (!empty($value)) {
+                    $hotel = new Hotel();
+                    $hotel->id = (string) Str::uuid();
+                    $hotel->no_htl = $key + 1; // This will give us a sequential number starting from 1
+                    $hotel->no_sppd = $noSppd;
+                    $hotel->user_id = $userId;
+                    $hotel->unit = $request->divisi;
+                    $hotel->nama_htl = $value;
+                    $hotel->lokasi_htl = $hotelData['lokasi_htl'][$key];
+                    $hotel->jmlkmr_htl = $hotelData['jmlkmr_htl'][$key];
+                    $hotel->bed_htl = $hotelData['bed_htl'][$key];
+                    $hotel->tgl_masuk_htl = $hotelData['tgl_masuk_htl'][$key];
+                    $hotel->tgl_keluar_htl = $hotelData['tgl_keluar_htl'][$key];
+                    $hotel->total_hari = $hotelData['total_hari'][$key];
+
+                    $hotel->save();
+                }
+            }
         }
+
         if ($request->tiket === 'Ya') {
-            $tiket = new Tiket();
-            $tiket->id = (string) Str::uuid();
-            // $tiket->no_tkt = $request->no_tkt;
-            $tiket->no_sppd = $noSppd;
-            $tiket->user_id = $userId;
-            $tiket->unit = $request->divisi;
-            $tiket->jk_tkt = $employee_data->gender;
-            $tiket->np_tkt = '0';
-            $tiket->noktp_tkt = $request->noktp_tkt;
-            $tiket->tlp_tkt = $employee_data->personal_mobile_number;
-            $tiket->dari_tkt = $request->dari_tkt;
-            $tiket->ke_tkt = $request->ke_tkt;
-            $tiket->tgl_brkt_tkt = $request->tgl_brkt_tkt;
-            $tiket->tgl_plg_tkt = $request->tgl_plg_tkt;
-            $tiket->jam_brkt_tkt = $request->jam_brkt_tkt;
-            $tiket->jam_plg_tkt = $request->jam_plg_tkt;
-            $tiket->jenis_tkt = $request->jenis_tkt;
-            $tiket->type_tkt = $request->type_tkt;
+            $ticketData = [
+                'noktp_tkt' => $request->noktp_tkt,
+                'dari_tkt' => $request->dari_tkt,
+                'ke_tkt' => $request->ke_tkt,
+                'tgl_brkt_tkt' => $request->tgl_brkt_tkt,
+                'tgl_plg_tkt' => $request->tgl_plg_tkt,
+                'jam_brkt_tkt' => $request->jam_brkt_tkt,
+                'jam_plg_tkt' => $request->jam_plg_tkt,
+                'jenis_tkt' => $request->jenis_tkt,
+                'type_tkt' => $request->type_tkt,
+            ];
 
-            // dd($request->all());
-            // dd(session()->all());
-            $tiket->save();
+            foreach ($ticketData['noktp_tkt'] as $key => $value) {
+                if (!empty($value)) {
+                    $tiket = new Tiket();
+                    $tiket->id = (string) Str::uuid();
+                    $tiket->no_sppd = $noSppd;
+                    $tiket->user_id = $userId;
+                    $tiket->unit = $request->divisi;
+                    $tiket->jk_tkt = $employee_data ? $employee_data->gender : null;
+                    $tiket->np_tkt = '0';
+                    $tiket->noktp_tkt = $value;
+                    $tiket->tlp_tkt = $employee_data ? $employee_data->personal_mobile_number : null;
+                    $tiket->dari_tkt = $ticketData['dari_tkt'][$key] ?? null;
+                    $tiket->ke_tkt = $ticketData['ke_tkt'][$key] ?? null;
+                    $tiket->tgl_brkt_tkt = $ticketData['tgl_brkt_tkt'][$key] ?? null;
+                    $tiket->tgl_plg_tkt = $ticketData['tgl_plg_tkt'][$key] ?? null;
+                    $tiket->jam_brkt_tkt = $ticketData['jam_brkt_tkt'][$key] ?? null;
+                    $tiket->jam_plg_tkt = $ticketData['jam_plg_tkt'][$key] ?? null;
+                    $tiket->jenis_tkt = $ticketData['jenis_tkt'][$key] ?? null;
+                    $tiket->type_tkt = $ticketData['type_tkt'][$key] ?? null;
+
+                    $tiket->save();
+                }
+            }
         }
+
         if ($request->ca === 'Ya') {
             $ca = new ca_transaction();
             $ca->id = (string) Str::uuid();
@@ -373,13 +421,16 @@ class BusinessTripController extends Controller
             $ca->user_id = $userId;
             $ca->unit = $request->divisi;
 
-            $ca->contribution_level_code = $request->contribution_level_code;
-            $ca->destination = $request->destination;
+            $company = Company::find($request->bb_perusahaan);
+
+            $ca->contribution_level_code = $company->contribution_level_code;
+            $ca->destination = $request->tujuan;
             $ca->others_location = $request->others_location;
 
-            $ca->ca_needs = $request->ca_needs;
-            $ca->start_date = $request->start_date;
-            $ca->end_date = $request->end_date;
+            $ca->ca_needs = $request->keperluan;
+            $ca->start_date = $request->mulai;
+            $ca->end_date = $request->kembali;
+
             $ca->date_required = $request->date_required;
             $ca->total_days = $request->total_days;
             $ca->detail_ca = $request->detail_ca;
@@ -387,7 +438,7 @@ class BusinessTripController extends Controller
             $ca->total_real = $request->total_real;
             $ca->total_cost = $request->total_cost;
 
-            $ca->approval_status = $request->approval_status;
+            $ca->approval_status = $request->status;
             $ca->approval_sett = $request->approval_sett;
             $ca->approval_extend = $request->approval_extend;
 
@@ -422,51 +473,71 @@ class BusinessTripController extends Controller
     }
 
 
+    public function admin()
+    {
+        $user = Auth::user();
+
+        $sppd = BusinessTrip::orderBy('mulai', 'asc')->get();
+
+        // Collect all SPPD numbers from the BusinessTrip instances
+        $sppdNos = $sppd->pluck('no_sppd');
+
+        // No sppd
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+
+        $parentLink = 'Reimbursement';
+        $link = 'Business Trip';
+
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
+    }
+    public function filterDateAdmin(Request $request)
+    {
+        $user = Auth::user();
+        $startDate = $request->query('start-date');
+        $endDate = $request->query('end-date');
+
+        $sppd = BusinessTrip::query();
+
+        if ($startDate && $endDate) {
+            $sppd = $sppd->whereBetween('mulai', [$startDate, $endDate]);
+        }
+
+        $sppd = $sppd->orderBy('mulai', 'asc')->get();
+
+        $sppdNos = $sppd->pluck('no_sppd');
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+
+        $parentLink = 'Reimbursement';
+        $link = 'Business Trip';
+        $showData = true;
+
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData'));
+    }
     public function approval()
     {
         $user = Auth::user();
-        $perPage = request()->query('per_page', 10);
-        $startDate = request()->query('start-date');
-        $endDate = request()->query('end-date');
-        $searchQuery = request()->query('q');
 
-        $showData = $startDate || $endDate || $searchQuery;
+        $sppd = BusinessTrip::orderBy('mulai', 'asc')->get();
 
-        if ($showData) {
-            $query = BusinessTrip::where('user_id', $user->id);
+        // Collect all SPPD numbers from the BusinessTrip instances
+        $sppdNos = $sppd->pluck('no_sppd');
 
-            if ($startDate && $endDate) {
-                $query->whereBetween('mulai', [$startDate, $endDate]);
-            }
-
-            if ($searchQuery) {
-                $query->where(function ($q) use ($searchQuery) {
-                    $q->where('nama', 'like', "%{$searchQuery}%")
-                        ->orWhere('no_sppd', 'like', "%{$searchQuery}%")
-                        ->orWhere('divisi', 'like', "%{$searchQuery}%");
-                });
-            }
-
-            $sppd = $query->orderBy('mulai', 'asc')->paginate($perPage);
-
-            $sppdNos = $sppd->pluck('no_sppd');
-
-            $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-            $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-            $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-            $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        } else {
-            $sppd = new \Illuminate\Pagination\LengthAwarePaginator([], 0, $perPage);
-            $caTransactions = collect([]);
-            $tickets = collect([]);
-            $hotel = collect([]);
-            $taksi = collect([]);
-        }
+        // No sppd
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
-        $link = 'BT Approval';
+        $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData'));
+        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
     public function filterDateApproval(Request $request)
     {
@@ -480,7 +551,7 @@ class BusinessTripController extends Controller
             $sppd = $sppd->whereBetween('mulai', [$startDate, $endDate]);
         }
 
-        $sppd = $sppd->orderBy('mulai', 'asc')->paginate(10);
+        $sppd = $sppd->orderBy('mulai', 'asc')->get();
 
         $sppdNos = $sppd->pluck('no_sppd');
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');

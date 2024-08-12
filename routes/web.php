@@ -181,22 +181,29 @@ Route::middleware('auth')->group(function () {
     Route::put('/businessTrip/update/{id}', [BusinessTripController::class, 'update'])->name('update.bt');
     Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
     Route::post('/businessTrip/saveDraft', [BusinessTripController::class, 'saveDraft'])->name('businessTrip.saveDraft');
+     //DEKLARASI BT
+     Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi']) -> name('businessTrip.deklarasi');
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
+
+    //ADMIIN BT
+    Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin']) -> name('businessTrip.admin');
+    Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin']) -> name('businessTrip-filterDate.admin');
+    Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
+    Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
+    Route::get('/businessTrip/deklarasi/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin']) -> name('businessTrip.deklarasi.admin');
 
     //APPROVAL BT
     Route::get('/businessTrip/approval', [BusinessTripController::class, 'approval']) -> name('businessTrip.approval');
     Route::get('/businessTrip/approval/filterDate', [BusinessTripController::class, 'filterDateApproval']) -> name('businessTrip-filterDate.approval');
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
-    Route::get('/businessTrip/approval/search', [BusinessTripController::class, 'searchApproval']) -> name('businessTrip-search.approval');
 
     //Export BT excel
     Route::get('businessTrip/export/excel/', [BusinessTripController::class, 'exportExcel'])->name('export.excel');
 
-    //DEKLARASI BT
-    Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi']) -> name('businessTrip.deklarasi');
+
 
     //PDF BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');

@@ -59,6 +59,8 @@ class BusinessTrip extends Model
         'id_hotel',
         'id_taksi',
         'status',
+        'manager_l1_id',
+        'manager_l2_id',
 
     ];
 
