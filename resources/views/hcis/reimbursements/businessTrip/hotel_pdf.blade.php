@@ -79,65 +79,72 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Identitas Pengaju:</b></td>
+            <td colspan="3"><b>Identity:</b></td>
         </tr>
         <tr>
-            <td class="label">Nama</td>
+            <td class="label">Name</td>
             <td class="colon">:</td>
             <td class="value">{{ $hotel->employee->fullname }}</td>
         </tr>
         <tr>
-            <td class="label">Jabatan</td>
+            <td class="label">Department</td>
             <td class="colon">:</td>
             <td class="value">{{ $hotel->employee->designation }}</td>
         </tr>
         <tr>
-            <td class="label">Divisi</td>
+            <td class="label">Division</td>
             <td class="colon">:</td>
             <td class="value">{{ $hotel->unit }}</td>
         </tr>
     </table>
 
-    <table>
-        <tr>
-            <td colspan="3"><b>Detail Hotel:</b></td>
-        </tr>
-        <tr>
-            <td class="label">Hotel Name</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $hotel->nama_htl }}</td>
-        </tr>
-        <tr>
-            <td class="label">Hotel Location</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $hotel->lokasi_htl }}</td>
-        </tr>
-        <tr>
-            <td class="label">Total Room</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $hotel->jmlkmr_htl }} Kamar</td>
-        </tr>
-        <tr>
-            <td class="label">Bed Type</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $hotel->bed_htl }}</td>
-        </tr>
-        @php
-            use Carbon\Carbon;
-            Carbon::setLocale('id');
-        @endphp
-
-        <tr>
-            <td class="label">Check In Date:</td>
-            <td class="colon">:</td>
-            <td class="value">{{ Carbon::parse($hotel->tgl_masuk_htl)->format('d F Y') }}</td>
-        </tr>
-        <tr>
-            <td class="label">Check Out Date:</td>
-            <td class="colon">:</td>
-            <td class="value">{{ Carbon::parse($hotel->tgl_keluar_htl)->format('d F Y') }}</td>
-        </tr>
-    </table>
+    @foreach ($hotels as $index => $hotel)
+        <table>
+            <tr>
+                <td colspan="3"><b>Detail Hotel {{ $index + 1 }}:</b></td>
+            </tr>
+            <tr>
+                <td class="label">Hotel Name</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $hotel->nama_htl }}</td>
+            </tr>
+            <tr>
+                <td class="label">Hotel Location</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $hotel->lokasi_htl }}</td>
+            </tr>
+            <tr>
+                <td class="label">Total Room</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $hotel->jmlkmr_htl }} Kamar</td>
+            </tr>
+            <tr>
+                <td class="label">Bed Type</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $hotel->bed_htl }}</td>
+            </tr>
+            <tr>
+                <td class="label">Check In Date</td>
+                <td class="colon">:</td>
+                <td class="value">
+                    @php
+                        $formattedCheckInDate = \Carbon\Carbon::parse($hotel->tgl_masuk_htl)->format('d F Y');
+                    @endphp
+                    {{ $formattedCheckInDate }}
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Check Out Date</td>
+                <td class="colon">:</td>
+                <td class="value">
+                    @php
+                        $formattedCheckOutDate = \Carbon\Carbon::parse($hotel->tgl_keluar_htl)->format('d F Y');
+                    @endphp
+                    {{ $formattedCheckOutDate }}
+                </td>
+            </tr>
+        </table>
+    @endforeach
 
     <table>
         <tr>

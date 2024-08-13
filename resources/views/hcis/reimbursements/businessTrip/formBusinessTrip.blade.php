@@ -231,15 +231,17 @@
                                                                     <label class="form-label">Date</label>
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
+                                                                            id="tgl_brkt_tkt_<?php echo $i; ?>"
                                                                             name="tgl_brkt_tkt[]" type="date"
-                                                                            onchange="validateDates()">
+                                                                            onchange="validateDates(<?php echo $i; ?>)">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label">Time</label>
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
-                                                                            name="jam_brkt_tkt[]" type="time">
+                                                                            id="jam_brkt_tkt_<?php echo $i; ?>"
+                                                                            name="jam_brkt_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -257,14 +259,16 @@
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
                                                                                 name="tgl_plg_tkt[]" type="date"
-                                                                                onchange="validateDates()">
+                                                                                id="tgl_plg_tkt_<?php echo $i; ?>"
+                                                                                onchange="validateDates(<?php echo $i; ?>)">
                                                                         </div>
                                                                     </div>
                                                                     <div class="mb-2">
                                                                         <label class="form-label">Return Time</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
-                                                                                name="jam_plg_tkt[]" type="time">
+                                                                                id="jam_plg_tkt_<?php echo $i; ?>"
+                                                                                name="jam_plg_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -467,7 +471,7 @@
                             <input type="hidden" name="status" value="Pending L1">
 
                             <div class="d-flex justify-content-end mt-3">
-                                <button type="submit" class="btn btn-outline-primary me-2">Save as Draft</button>
+                                <button class="btn btn-outline-primary me-2">Save as Draft</button>
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
 
@@ -644,11 +648,25 @@
                 const checkOut = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
                 const totalDays = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
 
-                if (checkIn.value && checkOut.value) {
+                if (checkIn && checkOut && totalDays) {
                     const start = new Date(checkIn.value);
                     const end = new Date(checkOut.value);
-                    const difference = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-                    totalDays.value = difference > 0 ? difference : 0;
+
+                    if (checkIn.value && checkOut.value) {
+                        // Calculate difference in milliseconds and convert to days, excluding the same day
+                        const difference = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                        if (difference < 0) {
+                            alert("Check out date cannot be earlier than check in date.");
+                            checkOut.value = ''; // Clear the check-out date if invalid
+                            totalDays.value = ''; // Clear the total days if check-out date is reset
+                        } else {
+                            totalDays.value = difference >= 0 ? difference : 0;
+                        }
+                    } else {
+                        totalDays.value = ''; // Clear total days if dates are not set
+                    }
+                } else {
+                    console.error("Elements not found. Check selectors.");
                 }
             }
 
@@ -711,15 +729,47 @@
             }
         }
 
-        function validateDates() {
-            const departureDate = document.getElementById('tgl_brkt_tkt').value;
-            const returnDate = document.getElementById('tgl_plg_tkt').value;
+        function validateDates(index) {
+            // Get the departure and return date inputs for the given form index
+            const departureDate = document.querySelector(`#tgl_brkt_tkt_${index}`);
+            const returnDate = document.querySelector(`#tgl_plg_tkt_${index}`);
 
-            if (departureDate && returnDate && returnDate < departureDate) {
-                alert('Return Date cannot be earlier than Departure Date.');
-                document.getElementById('tgl_plg_tkt').value = ''; // Clear the return date
+            // Get the departure and return time inputs for the given form index
+            const departureTime = document.querySelector(`#jam_brkt_tkt_${index}`);
+            const returnTime = document.querySelector(`#jam_plg_tkt_${index}`);
+
+            if (departureDate && returnDate) {
+                const depDate = new Date(departureDate.value);
+                const retDate = new Date(returnDate.value);
+
+                // Check if both dates are valid
+                if (depDate && retDate) {
+                    // Validate if return date is earlier than departure date
+                    if (retDate < depDate) {
+                        alert("Return date cannot be earlier than departure date.");
+                        returnDate.value = ''; // Reset the return date field
+                    } else if (retDate.getTime() === depDate.getTime() && departureTime && returnTime) {
+                        // If dates are the same, validate time
+                        const depTime = departureTime.value;
+                        const retTime = returnTime.value;
+
+                        // Check if both times are set and validate
+                        if (depTime && retTime) {
+                            const depDateTime = new Date(`1970-01-01T${depTime}:00`);
+                            const retDateTime = new Date(`1970-01-01T${retTime}:00`);
+
+                            if (retDateTime < depDateTime) {
+                                alert("Return time cannot be earlier than departure time on the same day.");
+                                returnTime.value = ''; // Reset the return time field
+                            }
+                        }
+                    }
+                }
             }
         }
+
+
+
 
         document.getElementById('nik').addEventListener('change', function() {
             var nik = this.value;
