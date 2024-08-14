@@ -7,6 +7,7 @@ use App\Models\ca_transaction;
 use App\Models\Hotel;
 use Illuminate\Http\Request;
 use App\Models\Company;
+use App\Models\Designation;
 use App\Models\Location;
 use App\Models\Employee;
 use App\Models\ListPerdiem;
@@ -66,6 +67,26 @@ class ReimburseController extends Controller
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
+        function findDepartmentHead($employee) {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+            
+            if (!$manager) {
+                return null;
+            }
+        
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+    
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }      
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
 
         return view('hcis.reimbursements.cashadv.formCashadv', [
             'link' => $link,
@@ -76,6 +97,8 @@ class ReimburseController extends Controller
             'employee_data' => $employee_data,
             'perdiem' => $perdiem,
             'no_sppds' => $no_sppds,
+            'managerL1' => $managerL1,
+            'managerL2' => $managerL2,
         ]);
     }
     public function cashadvancedSubmit(Request $req)
