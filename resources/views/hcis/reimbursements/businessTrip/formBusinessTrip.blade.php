@@ -62,7 +62,7 @@
                             <div class="mb-3">
                                 <label for="keperluan" class="form-label">Need (To be filled in according to visit
                                     service)</label>
-                                <textarea class="form-control" id="keperluan" name="keperluan" rows="3" required></textarea>
+                                <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need" required></textarea>
                             </div>
 
                             <div class="mb-3">
@@ -80,20 +80,20 @@
 
                             <div class="mb-3">
                                 <label for="norek_krywn" class="form-label">Employee Account Number</label>
-                                <input type="number" class="form-control" id="norek_krywn" name="norek_krywn"
-                                    placeholder="Account Number" required>
+                                <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
+                                    value="{{ $employee_data->bank_account_number }}" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
+                                <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
+                                    name="nama_pemilik_rek" value="{{ $employee_data->bank_name }}" readonly>
                             </div>
 
                             <div class="mb-3">
                                 <label for="nama_bank" class="form-label">Bank Name</label>
                                 <input type="text" class="form-control" id="nama_bank" name="nama_bank"
-                                    placeholder="Bank Name" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
-                                <input type="text" class="form-control" id="nama_pemilik_rek" name="nama_pemilik_rek"
-                                    placeholder="Name of account owner" required>
+                                    placeholder="ex. BCA" required>
                             </div>
 
                             <!-- HTML Part -->
@@ -107,7 +107,7 @@
                             </div>
 
                             <div id="additional-fields" class="row mb-3" style="display: none;">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <label for="ca" class="form-label">Cash Advanced</label>
                                     <select class="form-select" id="ca" name="ca">
                                         <option value="Tidak">Tidak</option>
@@ -118,8 +118,8 @@
                                         <div class="col-md-12">
                                             <div class="table-responsive-sm">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <div class="text-bg-danger p-2" style="text-align:center">Estimated
-                                                        Cash Advanced</div>
+                                                    <div class="text-bg-primary p-2"
+                                                        style="text-align:center; border-radius:4px;">Cash Advanced</div>
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="mb-2" id="div_allowance">
@@ -174,7 +174,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-12 mt-3">
                                     <label for="tiket" class="form-label">Ticket</label>
                                     <select class="form-select" id="tiket" name="tiket">
                                         <option value="Tidak">Tidak</option>
@@ -184,54 +184,95 @@
                                         <div class="col-md-12">
                                             <div class="table-responsive-sm">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <div class="text-bg-danger p-2" style="text-align:center">Estimated
-                                                        Cash Advanced</div>
+                                                    <div class="text-bg-primary p-2"
+                                                        style="text-align:center; border-radius:4px;">Ticket</div>
                                                     <div class="card">
                                                         <div class="card-body">
-                                                            <div class="mb-2" id="div_allowance">
-                                                                <label class="form-label">Allowance (Perdiem)</label>
+                                                            <div class="mb-2" id="tiket_div">
+                                                                <label class="form-label">NIK</label>
                                                                 <div class="input-group">
-                                                                    <div class="input-group-append">
-                                                                        <span class="input-group-text">Rp</span>
-                                                                    </div>
-                                                                    <input class="form-control bg-light" name="allowance"
-                                                                        id="allowance" type="text" min="0"
-                                                                        value="0" readonly>
+                                                                    <input class="form-control" name="noktp_tkt"
+                                                                        id="noktp_tkt" type="number">
+                                                                </div>
+                                                            </div>
+                                                            {{-- <input type="hidden" name="jk_tkt"
+                                                                value="{{ $employee_data->gender }}">
+                                                            <input type="hidden" name="tlp_tkt"
+                                                                value="{{ $employee_data->personal_mobile_number }}"> --}}
+
+                                                            <div class="mb-2">
+                                                                <label class="form-label">From</label>
+                                                                <div class="input-group">
+                                                                    <input class="form-control bg-white" name="dari_tkt"
+                                                                        id="dari_tkt" type="text"
+                                                                        placeholder="ex. Yogyakarta (YIA)">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
-                                                                <label class="form-label">Transportation</label>
+                                                                <label class="form-label">To</label>
                                                                 <div class="input-group">
-                                                                    <div class="input-group-append">
-                                                                        <span class="input-group-text">Rp</span>
-                                                                    </div>
-                                                                    <input class="form-control" name="transport"
-                                                                        id="transport" type="text" min="0"
-                                                                        value="0">
+                                                                    <input class="form-control bg-white" name="ke_tkt"
+                                                                        id="ke_tkt" type="text"
+                                                                        placeholder="ex. Jakarta (CGK)">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
-                                                                <label class="form-label">Accommodation</label>
+                                                                <label class="form-label">Date</label>
                                                                 <div class="input-group">
-                                                                    <div class="input-group-append">
-                                                                        <span class="input-group-text">Rp</span>
-                                                                    </div>
-                                                                    <input class="form-control" name="accommodation"
-                                                                        id="accommodation" type="text" min="0"
-                                                                        value="0">
+                                                                    <input class="form-control bg-white"
+                                                                        name="tgl_brkt_tkt" id="tgl_brkt_tkt"
+                                                                        type="date" onchange="validateDates()">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
-                                                                <label class="form-label">Other</label>
+                                                                <label class="form-label">Time</label>
                                                                 <div class="input-group">
-                                                                    <div class="input-group-append">
-                                                                        <span class="input-group-text">Rp</span>
-                                                                    </div>
-                                                                    <input class="form-control" name="other"
-                                                                        id="other" type="text" min="0"
-                                                                        value="0">
+                                                                    <input class="form-control bg-white"
+                                                                        name="jam_brkt_tkt" id="jam_brkt_tkt"
+                                                                        type="time">
                                                                 </div>
                                                             </div>
+                                                            <div class="mb-2">
+                                                                <label for="type_tkt" class="form-label">Ticket
+                                                                    Type</label>
+                                                                <select class="form-select" id="type_tkt"
+                                                                    name="type_tkt" required>
+                                                                    <option value="One Way">One Way</option>
+                                                                    <option value="Round Trip">Round Trip</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div id="roundTripOptions" style="display: none;">
+                                                                <div class="mb-2">
+                                                                    <label class="form-label">Date</label>
+                                                                    <div class="input-group">
+                                                                        <input class="form-control bg-white"
+                                                                            name="tgl_plg_tkt" id="tgl_plg_tkt"
+                                                                            type="date" onchange="validateDates()">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label class="form-label">Time</label>
+                                                                    <div class="input-group">
+                                                                        <input class="form-control bg-white"
+                                                                            name="jam_plg_tkt" id="jam_plg_tkt"
+                                                                            type="time">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <label class="form-label">Transportation Type</label>
+                                                                <div class="input-group">
+                                                                    <input class="form-control bg-white" name="jenis_tkt"
+                                                                        id="jenis_tkt" type="text"
+                                                                        placeholder="ex. Train/Bus/Airplane etc.">
+                                                                </div>
+                                                            </div>
+                                                            <label for="more_tkt" class="form-label">Add more ticket</label>
+                                                            <select class="form-select" id="more_tkt" name="more_tkt">
+                                                                <option value="Tidak">Tidak</option>
+                                                                <option value="Ya">Ya</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -239,7 +280,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-12 mt-3">
                                     <label for="hotel" class="form-label">Hotel</label>
                                     <select class="form-select" id="hotel" name="hotel">
                                         <option value="Tidak">Tidak</option>
@@ -249,7 +290,8 @@
                                         <div class="col-md-12">
                                             <div class="table-responsive-sm">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <div class="text-bg-primary p-2" style="text-align:center">Add Hotel
+                                                    <div class="text-bg-primary p-2"
+                                                        style="text-align:center; border-radius:4px;">Add Hotel
                                                     </div>
                                                     <div class="card">
                                                         <div class="card-body">
@@ -258,15 +300,14 @@
                                                                 <div class="input-group">
                                                                     <input class="form-control bg-white" name="no_htl"
                                                                         id="no_htl" type="number" min="0"
-                                                                        placeholder="0" required>
+                                                                        placeholder="0">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
                                                                 <label class="form-label">Hotel Name</label>
                                                                 <div class="input-group">
                                                                     <input class="form-control bg-white" name="nama_htl"
-                                                                        id="nama_htl" type="text" min="0"
-                                                                        required>
+                                                                        id="nama_htl" type="text" min="0">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
@@ -274,7 +315,7 @@
                                                                 <div class="input-group">
                                                                     <input class="form-control bg-white" name="lokasi_htl"
                                                                         id="lokasi_htl" type="text" min="0"
-                                                                        placeholder="ex: Jakarta" required>
+                                                                        placeholder="ex: Jakarta">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
@@ -282,7 +323,7 @@
                                                                 <div class="input-group">
                                                                     <input class="form-control bg-white" name="jmlkmr_htl"
                                                                         id="jmlkmr_htl" type="text" min="0"
-                                                                        placeholder="ex: 1" required>
+                                                                        placeholder="ex: 1">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
@@ -313,10 +354,15 @@
                                                             <div class="mb-2">
                                                                 <label for="total_hari" class="form-label">Total
                                                                     Days</label>
-                                                                <input type="number" class="form-control datepicker"
+                                                                <input type="number"
+                                                                    class="form-control datepicker bg-light"
                                                                     id="total_hari" name="total_hari" readonly>
                                                             </div>
-
+                                                            <label for="more_htl" class="form-label">Add more hotel</label>
+                                                            <select class="form-select" id="more_htl" name="more_htl">
+                                                                <option value="Tidak">Tidak</option>
+                                                                <option value="Ya">Ya</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -324,7 +370,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-3">
+
+                                <div class="col-md-12 mt-3">
                                     <label for="taksi" class="form-label">Voucher Taksi</label>
                                     <select class="form-select" id="taksi" name="taksi">
                                         <option value="Tidak">Tidak</option>
@@ -334,7 +381,8 @@
                                         <div class="col-md-12">
                                             <div class="table-responsive-sm">
                                                 <div class="d-flex flex-column gap-2">
-                                                    <div class="text-bg-primary p-2 r-3" style="text-align:center">Voucher
+                                                    <div class="text-bg-primary p-2 r-3"
+                                                        style="text-align:center; border-radius:4px;">Voucher
                                                         Taksi</div>
                                                     <div class="card">
                                                         <div class="card-body">
@@ -345,7 +393,7 @@
                                                                     </div>
                                                                     <input class="form-control bg-white" name="no_vt"
                                                                         id="no_vt" type="text" min="0"
-                                                                        value="0">
+                                                                        placeholder="0">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
@@ -356,7 +404,7 @@
                                                                     </div>
                                                                     <input class="form-control" name="nominal_vt"
                                                                         id="nominal_vt" type="text" min="0"
-                                                                        value="0">
+                                                                        placeholder="ex. 12000">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
@@ -367,7 +415,7 @@
                                                                     </div>
                                                                     <input class="form-control" name="keeper_vt"
                                                                         id="keeper_vt" type="text" min="0"
-                                                                        value="0">
+                                                                        placeholder="ex. 12000">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -490,5 +538,39 @@
                 }
             }
         });
+
+        document.getElementById('type_tkt').addEventListener('change', function() {
+            var roundTripOptions = document.getElementById('roundTripOptions');
+            if (this.value === 'Round Trip') {
+                roundTripOptions.style.display = 'block';
+            } else {
+                roundTripOptions.style.display = 'none';
+            }
+        });
+        document.getElementById('nik').addEventListener('change', function() {
+            var nik = this.value;
+
+            fetch('/get-employee-data?nik=' + nik)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('jk_tkt').value = data.jk_tkt;
+                        document.getElementById('tlp_tkt').value = data.tlp_tkt;
+                    } else {
+                        alert('Employee data not found!');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        function validateDates() {
+            const departureDate = document.getElementById('tgl_brkt_tkt').value;
+            const returnDate = document.getElementById('tgl_plg_tkt').value;
+
+            if (departureDate && returnDate && returnDate < departureDate) {
+                alert('Return Date cannot be earlier than Departure Date.');
+                document.getElementById('tgl_plg_tkt').value = ''; // Clear the return date
+            }
+        }
     </script>
 @endsection

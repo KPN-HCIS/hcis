@@ -1,31 +1,38 @@
 @extends('layouts_.vertical', ['page_title' => 'Business Trip'])
 
 @section('css')
+    <style>
+        .breadcrumb-item+.breadcrumb-item::before {
+            font-size: 28px !important;
+            vertical-align: middle !important;
+        }
+    </style>
 @endsection
 
 @section('content')
-<div class="container-fluid">
-    <div class="row mb-3">
-        <!-- Breadcrumb Navigation -->
-        <div class="col-md-6 mt-3">
-            <div class="page-title-box d-flex align-items-center">
-                <ol class="breadcrumb mb-0" style="font-size: 1.25rem; display: flex; align-items: center;">
-                    <li class="breadcrumb-item">
-                        <a href="/reimbursements" style="font-size: 1.25rem; text-decoration: none; color: #007bff;">
-                            <i class="bi bi-arrow-left" style="font-size: 1.5rem;"></i>
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item" style="font-size: 1.25rem;">{{ $parentLink }}</li>
-                    <li class="breadcrumb-item active" style="font-size: 1.25rem;">{{ $link }}</li>
-                </ol>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Breadcrumb Navigation -->
+            <div class="col-md-6 mt-3">
+                <div class="page-title-box d-flex align-items-center">
+                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center;">
+                        <li class="breadcrumb-item">
+                            <a href="/reimbursements" style="font-size: 32px; text-decoration: none; color: #007bff;">
+                                <i class="bi bi-arrow-left" style="font-size: 32px;"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item" style="font-size: 24px;">{{ $parentLink }}</li>
+                        <li class="breadcrumb-item active" style="font-size: 24px;">{{ $link }}</li>
+                    </ol>
+                </div>
             </div>
-        </div>
 
-        <!-- Add Data Button -->
-        <div class="col-md-6 mt-3 text-end">
-            <a href="/businessTrip/form/add" class="btn btn-outline-primary rounded-pill">
-                <i class="bi bi-plus-circle"></i> Add Data
-            </a>
+            <!-- Add Data Button -->
+            <div class="col-md-6 mt-3 text-end">
+                <a href="/businessTrip/form/add" class="btn btn-outline-primary rounded-pill">
+                    <i class="bi bi-plus-circle"></i> Add Data
+                </a>
+            </div>
         </div>
     </div>
 
@@ -120,15 +127,25 @@
                                                             data-target="#detailModal" style="cursor: pointer"
                                                             data-ca=""
                                                             data-tiket="{{ json_encode([
-                                                                'No. Tiket' => $tickets[$n->no_sppd]->no_tkt,
+                                                                'No. Ticket' => $tickets[$n->no_sppd]->no_tkt,
                                                                 'No. SPPD' => $tickets[$n->no_sppd]->no_sppd,
                                                                 'Unit' => $tickets[$n->no_sppd]->unit,
                                                                 'Gender' => $tickets[$n->no_sppd]->jk_tkt,
-                                                                'NP Ticket' => $tickets[$n->no_sppd]->np_tkt,
+                                                                // 'NP Ticket' => $tickets[$n->no_sppd]->np_tkt,
                                                                 'No. KTP' => $tickets[$n->no_sppd]->noktp_tkt,
-                                                                'Phone Number' => $tickets[$n->no_sppd]->tlp_tkt,
-                                                                'From' => date('d-m-Y', strtotime($tickets[$n->no_sppd]->dari_tkt)),
-                                                                'To' => date('d-m-Y', strtotime($tickets[$n->no_sppd]->ke_tkt)),
+                                                                'Phone No.' => $tickets[$n->no_sppd]->tlp_tkt,
+                                                                'From' => $tickets[$n->no_sppd]->dari_tkt,
+                                                                'To' => $tickets[$n->no_sppd]->ke_tkt,
+                                                                'Depature Date' => date('d-m-Y', strtotime($tickets[$n->no_sppd]->tgl_brkt_tkt)),
+                                                                'Time' => !empty($tickets[$n->no_sppd]->jam_brkt_tkt)
+                                                                    ? date('H:i', strtotime($tickets[$n->no_sppd]->jam_brkt_tkt))
+                                                                    : 'No Data',
+                                                                'Return Date' => isset($tickets[$n->no_sppd]->tgl_plg_tkt)
+                                                                    ? date('d-m-Y', strtotime($tickets[$n->no_sppd]->tgl_plg_tkt))
+                                                                    : 'No Data',
+                                                                'Return Time' => !empty($tickets[$n->no_sppd]->jam_plg_tkt)
+                                                                    ? date('H:i', strtotime($tickets[$n->no_sppd]->jam_plg_tkt))
+                                                                    : 'No Data',
                                                             ]) }}"><u>Detail</u></a>
                                                     @else
                                                         -
@@ -163,7 +180,7 @@
                                                                 'No. SPPD' => $taksi[$n->no_sppd]->no_sppd,
                                                                 'Unit' => $taksi[$n->no_sppd]->unit,
                                                                 'Nominal' => 'Rp ' . number_format($taksi[$n->no_sppd]->nominal_vt, 0, ',', '.'),
-                                                                'Keeper Voucher' => 'Rp' .  number_format($taksi[$n->no_sppd]->keeper_vt, 0, ',', '.'),
+                                                                'Keeper Voucher' => 'Rp' . number_format($taksi[$n->no_sppd]->keeper_vt, 0, ',', '.'),
                                                             ]) }}"><u>Detail<u></a>
                                                     @else
                                                         -
@@ -258,7 +275,7 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
-                    new DataTable('#btTable');
+                    //    let table = new DataTable('#scheduleTable');
 
                     function getDate() {
                         var today = new Date();
@@ -392,5 +409,17 @@
                             $('.modal-backdrop').remove();
                         });
                     });
+
+                    // $(document).ready(function() {
+                    //     var table = $('table').DataTable({
+                    //         pageLength: 10, // Set the initial page length
+                    //         lengthMenu: [10, 25, 50, 100], // Allow selecting page lengths
+                    //     });
+
+                    //     $('#dt-length-0').on('change', function() {
+                    //         var length = parseInt(this.value, 10);
+                    //         table.page.len(length).draw(); // Update page length dynamically
+                    //     });
+                    // });
                 </script>
             @endsection
