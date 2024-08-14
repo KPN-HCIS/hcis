@@ -191,7 +191,7 @@ Route::middleware('auth')->group(function () {
 
     //pdf BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload']) -> name('pdf');
-    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export']) -> name('export');
+    Route::get('/businessTrip/export/{id}/{type}', [BusinessTripController::class, 'export']) -> name('export');
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
@@ -200,10 +200,10 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
     //Export Business Trip excel
-    Route::get('businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
+    // Route::get('businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
 
     //Export Business Trip .pdf
-    Route::get('businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
+    // Route::get('businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
 
     // Authentication
     Route::get('verify-email', EmailVerificationPromptController::class)
