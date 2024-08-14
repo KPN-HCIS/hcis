@@ -44,10 +44,12 @@ class Hotel extends Model
             abort(404);
         }
     }
-
-
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'user_id', 'id');
+    }
+    public function businessTrip()
+    {
+        return $this->belongsTo(BusinessTrip::class, 'user_id', 'user_id');
     }
 }

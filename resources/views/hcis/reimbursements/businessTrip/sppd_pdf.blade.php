@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Business Trip</title>
+    <title>SPPD</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('/public/images/favicon.ico') }}">
     <style>
         body {
             margin: 0;
@@ -33,6 +34,11 @@
             font-size: 14px;
             margin: 0;
             padding: 0;
+        }
+
+        h4 {
+            padding-left: 2px;
+            padding-top: 4px;
         }
 
         p {
@@ -73,12 +79,14 @@
         }
 
         .bottom-table {
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
-        .bottom-table th, .bottom-table td {
+        .bottom-table th,
+        .bottom-table td {
             padding: 10px;
             text-align: left !important;
+            width: 70px;
         }
 
         .bottom-table th {
@@ -88,10 +96,12 @@
         .bottom-table tr:nth-child(even) {
             background-color: #d3d3d3;
         }
+
         .bottom-table tr:nth-child(odd) {
             background-color: #ededed;
         }
-        table .ttd{
+
+        table .ttd {
             height: 64px;
         }
     </style>
@@ -111,17 +121,17 @@
         <tr>
             <td class="label">Nama</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->nama }}</td>
+            <td class="value">{{ $sppd->employee->fullname }}</td>
         </tr>
         <tr>
             <td class="label">NIK</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->nik }}</td>
+            <td class="value">{{ $sppd->employee->employee_id }}</td>
         </tr>
         <tr>
             <td class="label">Email</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->email_1 }}</td>
+            <td class="value">{{ $sppd->employee->email }}</td>
         </tr>
         <tr>
             <td class="label">Divisi</td>
@@ -131,12 +141,12 @@
         <tr>
             <td class="label">PT</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->bb_perusahaan }}</td>
+            <td class="value">{{ $sppd->employee->company_name }}</td>
         </tr>
         <tr>
             <td class="label">Cost Center</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->cost_center }}</td>
+            <td class="value">{{ $sppd->cost_center ?? '0' }}</td>
         </tr>
     </table>
 
@@ -154,15 +164,20 @@
             <td class="colon">:</td>
             <td class="value">{{ $sppd->keperluan }}</td>
         </tr>
+
+        @php
+            use Carbon\Carbon;
+            Carbon::setLocale('id');
+        @endphp
         <tr>
             <td class="label">Dari Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->mulai }}</td>
+            <td class="value">{{ Carbon::parse($sppd->mulai)->format('d F Y') }}</td>
         </tr>
         <tr>
             <td class="label">Sampai dengan tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->kembali }}</td>
+            <td class="value">{{ Carbon::parse($sppd->kembali)->format('d F Y') }}</td>
         </tr>
     </table>
 

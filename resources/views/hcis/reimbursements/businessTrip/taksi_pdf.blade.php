@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Taxi Voucher Details</title>
+    <title>Taxi Voucher Form</title>
     <style>
         body {
             margin: 0;
@@ -47,7 +47,7 @@
         }
 
         td {
-            padding: 5px;
+            padding: 2px;
             vertical-align: top;
         }
 
@@ -74,22 +74,22 @@
     <div class="header">
         <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
     </div>
-    <h5 class="center">TAXI VOUCHER DETAILS</h5>
-    <h5 class="center">No. {{ $taksi->no_vt }}</h5>
+    <h5 class="center">TAXI VOUCHER FORM</h5>
+    <h5 class="center">No. {{ $taksi->no_sppd }}</h5>
 
     <table>
         <tr>
-            <td colspan="3"><b>Voucher Information:</b></td>
+            <td colspan="3"><b>Identitas Pengaju:</b></td>
         </tr>
         <tr>
-            <td class="label">Voucher Number</td>
+            <td class="label">Nama</td>
             <td class="colon">:</td>
-            <td class="value">{{ $taksi->no_vt }}</td>
+            <td class="value">{{ $taksi->employee->fullname }}</td>
         </tr>
         <tr>
-            <td class="label">SPPD Number</td>
+            <td class="label">Jabatan</td>
             <td class="colon">:</td>
-            <td class="value">{{ $taksi->no_sppd }}</td>
+            <td class="value">{{ $taksi->employee->designation }}</td>
         </tr>
         <tr>
             <td class="label">Unit</td>
@@ -100,23 +100,56 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Financial Details:</b></td>
+            <td colspan="3"><b>Detail Voucher:</b></td>
         </tr>
         <tr>
             <td class="label">Nominal Value</td>
             <td class="colon">:</td>
             <td class="value">{{ $taksi->nominal_vt }}</td>
         </tr>
+        <tr>
+            <td class="label">Keperluan</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $taksi->businessTrip->keperluan }}</td>
+        </tr>
+        <tr>
+            <td class="label">PT</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $taksi->employee->company_name}}</td>
+        </tr>
+        <tr>
+            <td class="label">Cost Center</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $taksi->cost_center ?? '0' }}</td>
+        </tr>
     </table>
 
     <table>
         <tr>
-            <td colspan="3"><b>Keeper Information:</b></td>
+            <td colspan="3"><b>Disetujui Oleh :</b></td>
         </tr>
         <tr>
-            <td class="label">Keeper</td>
+            <td class="label">Nama Atasan 1</td>
             <td class="colon">:</td>
-            <td class="value">{{ $taksi->keeper_vt }}</td>
+            <td class="value">{{ $taksi->businessTrip->atasan_1 }}</td>
+        </tr>
+        <tr>
+            <td class="label">Tanggal</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $taksi->businessTrip->atasan_2 }}</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td class="label">Nama Atasan 2</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $taksi->businessTrip->atasan_2 }}</td>
+        </tr>
+        <tr>
+            <td class="label">Tanggal</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $taksi->businessTrip->tanggal_atasan_2 }}</td>
         </tr>
     </table>
 </body>
