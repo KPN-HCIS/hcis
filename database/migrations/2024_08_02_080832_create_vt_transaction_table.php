@@ -12,14 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vt_transaction', function (Blueprint $table) {
-            $table->increments('vt_id');
-            $table->string('nama');
+            $table->uuid('id')->primary();
             $table->string('no_vt');
             $table->string('no_sppd');
-            $table->integer('user_id');
+            $table->string('user_id');
             $table->string('unit');
-            $table->string('sppd_bt');
-            $table->integer('nom_vt');
+            $table->integer('nominal_vt');
             $table->integer('keeper_vt');
             $table->timestamps();
         });
