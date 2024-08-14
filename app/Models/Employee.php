@@ -27,15 +27,19 @@ class Employee extends Model
     }
     public function businessTrip()
     {
-        return $this->belongsTo(BusinessTrip::class, 'users_id', 'id');
+        return $this->belongsTo(BusinessTrip::class, 'user_id', 'id');
     }
     public function taksi()
     {
-        return $this->belongsTo(Taksi::class, 'users_id', 'id');
+        return $this->belongsTo(Taksi::class, 'user_id', 'id');
+    }
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class, 'user_id', 'id');
     }
     public function tiket()
     {
-        return $this->belongsTo(Tiket::class, 'users_id', 'id');
+        return $this->belongsTo(Tiket::class, 'user_id', 'id');
     }
     public function goal()
     {

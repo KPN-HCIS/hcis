@@ -28,18 +28,18 @@
             </div>
 
             <!-- Add Data Button -->
-            {{-- <div class="col-md-6 mt-4 text-end">
+            <div class="col-md-6 mt-4 text-end">
                 <a href="{{ route('export.excel') }}" class="btn btn-outline-primary rounded-pill btn-action">
                     <i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel
                 </a>
-            </div> --}}
+            </div>
         </div>
     </div>
 
 
     <div class="card">
         <div class="card-body">
-            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate.approval') }}">
+            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate.admin') }}">
                 <div class="row align-items-end">
                     <h3 class="card-title">Data SPPD</h3>
                     <div class="col-md-5">

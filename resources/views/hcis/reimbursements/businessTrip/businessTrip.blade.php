@@ -125,7 +125,6 @@
                                                     @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
-                                                            data-ca=""
                                                             data-tiket="{{ json_encode([
                                                                 'No. Ticket' => $tickets[$n->no_sppd]->no_tkt,
                                                                 'No. SPPD' => $tickets[$n->no_sppd]->no_sppd,
@@ -188,7 +187,15 @@
                                                 </td>
                                                 <td>
                                                     <p type="button"
-                                                        class="btn btn-sm rounded-pill btn-{{ $n->status == 'Doc Accepted' ? 'success' : ($n->status == 'Return' ? 'danger' : 'warning') }}"
+                                                        class="btn btn-sm rounded-pill btn-{{ $n->status == 'Approved'
+                                                            ? 'success'
+                                                            : ($n->status == 'Return' || $n->status == 'return/refunds'
+                                                                ? 'danger'
+                                                                : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
+                                                                    ? 'warning'
+                                                                    : (in_array($n->status, ['Doc Accepted', 'verified'])
+                                                                        ? 'primary'
+                                                                        : 'secondary'))) }}"
                                                         style="pointer-events: none">
                                                         {{ $n->status }}
                                                     </p>
@@ -202,7 +209,7 @@
                                                     @php
                                                         $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                     @endphp
-                                                    @if ($n->kembali <= $today && $n->status == 'Doc Accepted')
+                                                    @if ($n->kembali < $today && $n->status == 'Approved')
                                                         <form method="GET"
                                                             action="/businessTrip/deklarasi/{{ $n->id }}"
                                                             style="display: inline-block;">
@@ -342,62 +349,81 @@
 
                             function createTableHtml(data) {
                                 var tableHtml = '<table class="table table-sm"><thead><tr>';
-                                for (var key in data) {
-                                    if (data.hasOwnProperty(key)) {
-                                        tableHtml += '<th>' + key + '</th>';
+                                var isArray = Array.isArray(data) && data.length > 0;
+
+                                // Assuming all objects in the data array have the same keys, use the first object to create headers
+                                if (isArray) {
+                                    for (var key in data[0]) {
+                                        if (data[0].hasOwnProperty(key)) {
+                                            tableHtml += '<th>' + key + '</th>';
+                                        }
+                                    }
+                                } else if (typeof data === 'object') {
+                                    // If data is a single object, create headers from its keys
+                                    for (var key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            tableHtml += '<th>' + key + '</th>';
+                                        }
                                     }
                                 }
-                                tableHtml += '</tr></thead><tbody><tr>';
-                                for (var key in data) {
-                                    if (data.hasOwnProperty(key)) {
-                                        tableHtml += '<td>' + data[key] + '</td>';
+
+                                tableHtml += '</tr></thead><tbody>';
+
+                                // Loop through each item in the array and create a row for each
+                                if (isArray) {
+                                    data.forEach(function(row) {
+                                        tableHtml += '<tr>';
+                                        for (var key in row) {
+                                            if (row.hasOwnProperty(key)) {
+                                                tableHtml += '<td>' + row[key] + '</td>';
+                                            }
+                                        }
+                                        tableHtml += '</tr>';
+                                    });
+                                } else if (typeof data === 'object') {
+                                    // If data is a single object, create a single row
+                                    tableHtml += '<tr>';
+                                    for (var key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            tableHtml += '<td>' + data[key] + '</td>';
+                                        }
                                     }
+                                    tableHtml += '</tr>';
                                 }
-                                tableHtml += '</tr></tbody></table>';
+
+                                tableHtml += '</tbody></table>';
                                 return tableHtml;
                             }
 
                             $('#detailTypeHeader').text('');
                             $('#detailContent').empty();
 
-                            if (ca && ca !== 'undefined') {
-                                try {
+                            try {
+                                if (ca && ca !== 'undefined') {
                                     var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
                                     $('#detailTypeHeader').text('CA Detail');
                                     $('#detailContent').html(createTableHtml(caData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading CA data</p>');
-                                }
-                            } else if (tiket && tiket !== 'undefined') {
-                                try {
+                                } else if (tiket && tiket !== 'undefined') {
                                     var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
                                     $('#detailTypeHeader').text('Ticket Detail');
                                     $('#detailContent').html(createTableHtml(tiketData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Ticket data</p>');
-                                }
-                            } else if (hotel && hotel !== 'undefined') {
-                                try {
+                                } else if (hotel && hotel !== 'undefined') {
                                     var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
                                     $('#detailTypeHeader').text('Hotel Detail');
                                     $('#detailContent').html(createTableHtml(hotelData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Hotel data</p>');
-                                }
-                            } else if (taksi && taksi !== 'undefined') {
-                                try {
+                                } else if (taksi && taksi !== 'undefined') {
                                     var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
                                     $('#detailTypeHeader').text('Taxi Detail');
                                     $('#detailContent').html(createTableHtml(taksiData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Taxi data</p>');
+                                } else {
+                                    $('#detailTypeHeader').text('No Data Available');
+                                    $('#detailContent').html('<p>No detail information available.</p>');
                                 }
-                            } else {
-                                $('#detailTypeHeader').text('No Data Available');
-                                $('#detailContent').html('<p>No detail information available.</p>');
-                            }
 
-                            $('#detailModal').modal('show');
+                                $('#detailModal').modal('show');
+                            } catch (e) {
+                                $('#detailContent').html('<p>Error loading data</p>');
+                            }
                         });
 
                         $('#detailModal').on('hidden.bs.modal', function() {
@@ -408,6 +434,7 @@
                             $('.modal-backdrop').remove();
                         });
                     });
+
 
                     $(document).ready(function() {
                         var table = $('#yourTableId').DataTable({

@@ -62,7 +62,7 @@
                                     <select class="form-control select2" id="bisnis_numb" name="bisnis_numb">
                                         <option value="">Select</option>
                                         @foreach($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_ca }}">{{ $no_sppd->no_ca }}</option>
+                                            <option value="{{ $no_sppd->no_sppd }}">{{ $no_sppd->no_sppd }}</option>
                                         @endforeach
                                     </select>
                                 </div>

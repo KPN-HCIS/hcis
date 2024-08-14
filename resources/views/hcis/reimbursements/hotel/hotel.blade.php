@@ -34,7 +34,7 @@
             </div>
             <div class="col">
                 <div class="mb-2 text-end">
-                    <a href="{{ route('hotel.form') }}" class="btn btn-primary rounded-pill shadow">Create CA</a>
+                    <a href="{{ route('hotel.form') }}" class="btn btn-primary rounded-pill shadow">Add Hotel</a>
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
             <div class="card shadow mb-4">
               <div class="card-body">
                   <div class="table-responsive">
-                      <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
+                      <table class="table table-sm table-hover dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
                           <thead class="thead-light">
                               <tr class="text-center">
                                   <th>No</th>
@@ -63,16 +63,15 @@
                           <tbody>
                             @foreach($transactions as $transaction)
                             <tr>
-                                  <td>{{ $loop->index + 1 }}</td>
-                                  <td>{{ $transaction->no_htl }}</td>
-                                  {{-- <td>{{ $transaction->no_sppd }}</td> --}}
-                                  <td>{{ $transaction->employee->fullname }}</td>
-                                  <td>{{ $transaction->nama_htl }}</td>
-                                  <td>{{ $transaction->lokasi_htl }}</td>
-                                  <td>{{ $transaction->jmlkmr_htl }}</td>
-                                  <td>{{ $transaction->bed_htl }}</td>
-                                  <td>{{ $transaction->tgl_masuk_htl }}</td>
-                                  <td>{{ $transaction->tgl_keluar_htl }}</td>
+                                <td>{{ $loop->index + 1 }}</td>
+                                <td>{{ $transaction->no_htl }}</td>
+                                <td>{{ $transaction->employee->fullname }}</td>
+                                <td>{{ $transaction->nama_htl }}</td>
+                                <td>{{ $transaction->lokasi_htl }}</td>
+                                <td>{{ $transaction->jmlkmr_htl }}</td>
+                                <td>{{ $transaction->bed_htl }}</td>
+                                <td>{{ $transaction->tgl_masuk_htl }}</td>
+                                <td>{{ $transaction->tgl_keluar_htl }}</td>
                                   <td class="text-center">
                                     {{-- @if($transaction->created_by == $userId) --}}
                                         <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
