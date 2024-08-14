@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\BusinessTripExport;
 use App\Exports\UsersExport;
+use App\Models\BTApproval;
 use App\Models\BusinessTrip;
 use App\Models\ca_transaction;
 use App\Models\Company;
@@ -141,16 +142,6 @@ class BusinessTripController extends Controller
         return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
 
-    public function updatestatus($id, Request $request)
-    {
-        $statusValue = $request->input('status');
-
-        // Update your model or database table with the new status value
-        BusinessTrip::where('id', $id)->update(['status' => $statusValue]);
-        $currentUrl = url()->previous();
-
-        return redirect($currentUrl);
-    }
 
     public function pdfDownload($id)
     {
@@ -524,15 +515,16 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
 
-        $sppd = BusinessTrip::orderBy('mulai', 'asc')->get();
+        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
 
         // No sppd
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        // dd($tickets);
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
@@ -569,23 +561,89 @@ class BusinessTripController extends Controller
     public function approval()
     {
         $user = Auth::user();
-
-        $sppd = BusinessTrip::orderBy('mulai', 'asc')->get();
+        $sppd = BusinessTrip::where(function ($query) use ($user) {
+            $query->where('manager_l1_id', $user->employee_id)
+                ->where('status', 'Pending L1')
+                ->orWhere(function ($query) use ($user) {
+                    $query->where('manager_l2_id', $user->employee_id)
+                        ->where('status', 'Pending L2');
+                });
+        })
+            ->orderBy('mulai', 'asc')
+            ->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
 
-        // No sppd
+        // Retrieve related data based on the collected SPPD numbers
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
-        $parentLink = 'Reimbursement';
+        $parentLink = 'Approval';
         $link = 'Business Trip';
 
         return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
+    public function updateStatus($id, Request $request)
+    {
+        $user = Auth::user();
+        $employeeId = $user->employee_id;
+        $approval = new BTApproval();
+        $approval->id = (string) Str::uuid();
+
+        // Find the business trip by ID
+        $businessTrip = BusinessTrip::findOrFail($id);
+
+        // Determine the new status and layer based on the action and manager's role
+        $action = $request->input('status_approval');
+        if ($action == 'Rejected') {
+            $statusValue = 'Rejected';
+            if ($employeeId == $businessTrip->manager_l1_id) {
+                $layer = 1;
+            } elseif ($employeeId == $businessTrip->manager_l2_id) {
+                $layer = 2;
+            } else {
+                return redirect()->back()->with('error', 'Unauthorized action.');
+            }
+        } elseif ($employeeId == $businessTrip->manager_l1_id) {
+            $statusValue = 'Pending L2';
+            $layer = 1;
+        } elseif ($employeeId == $businessTrip->manager_l2_id) {
+            $statusValue = 'Approved';
+            $layer = 2;
+        } else {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        // Update the status in the BusinessTrip table
+        $businessTrip->update(['status' => $statusValue]);
+
+        // Record the approval or rejection in the BTApproval table
+        $approval->bt_id = $businessTrip->id;
+        $approval->layer = $layer;
+        $approval->approval_status = $statusValue;
+        $approval->approved_at = now();
+        $approval->employee_id = $employeeId;
+
+        // Save the approval record
+        $approval->save();
+        $message = $statusValue === 'Rejected'
+            ? 'The request has been successfully' . ' Rejected.'
+            : 'The request has been successfully' . ' Accepted.';
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+        }
+        // Redirect back to the previous page with a success message
+        return redirect()->back()->with('success', $message);
+    }
+
+
     public function filterDateApproval(Request $request)
     {
         $user = Auth::user();
@@ -594,16 +652,31 @@ class BusinessTripController extends Controller
 
         $sppd = BusinessTrip::query();
 
+        // Apply date filtering if both startDate and endDate are provided
         if ($startDate && $endDate) {
             $sppd = $sppd->whereBetween('mulai', [$startDate, $endDate]);
         }
 
+        // Filter based on manager's role and status
+        $sppd = $sppd->where(function ($query) use ($user) {
+            $query->where('manager_l1_id', $user->employee_id)
+                ->where('status', 'Pending L1')
+                ->orWhere(function ($query) use ($user) {
+                    $query->where('manager_l2_id', $user->employee_id)
+                        ->where('status', 'Pending L2');
+                });
+        });
+
+        // Order and retrieve the filtered results
         $sppd = $sppd->orderBy('mulai', 'asc')->get();
 
+        // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
+
+        // Retrieve related data based on the collected SPPD numbers
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
@@ -612,6 +685,7 @@ class BusinessTripController extends Controller
 
         return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData'));
     }
+
     private function generateNoSppd()
     {
         $currentYear = date('Y');

@@ -329,7 +329,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Approved')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Approved')->orderBy('no_sppd', 'asc')->get();
         // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
 
@@ -459,10 +459,10 @@ class ReimburseController extends Controller
     }
     public function ticket()
     {
-        $userId = Auth::id();
+        $userId = Auth::user();
         $parentLink = 'Reimbursement';
         $link = 'Ticket';
-        $transactions = tkt_transaction::with('employee')->get();
+        $transactions = tkt_transaction::where('user_id', $userId->id)->get();
 
         return view('hcis.reimbursements.ticket.ticket', [
             'link' => $link,
@@ -482,7 +482,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Approved')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Approved')->orderBy('no_sppd', 'asc')->get();
         // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
 

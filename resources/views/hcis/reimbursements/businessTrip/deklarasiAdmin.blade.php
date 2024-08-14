@@ -39,8 +39,8 @@
                             </div>
 
                             <!-- View-only Table -->
-                            <div class="mb-4">
-                                <h5 class="mb-3">Estimasi Uang Muka</h5>
+                            <div class="mb-2">
+                                <h5 class="mb-2">Estimasi Uang Muka</h5>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped">
                                         <thead class="table-light">
@@ -101,8 +101,8 @@
                             </div>
 
                             <!-- Input Table -->
-                            <div class="mb-4">
-                                <h5 class="mb-3">Realization Money (Declaration)</h5>
+                            <div class="mb-2">
+                                <h5 class="mb-2">Realization Money (Declaration)</h5>
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <thead class="table-light">
@@ -187,14 +187,43 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="struk" class="form-label">Upload Proof</label>
-                                <input type="file" id="struk" name="struk" accept="image/*,application/pdf" class="form-control">
-                            </div>
+                            <div class="mt-3 mb-2">
+                                <label for="uploaded-file" class="form-label">Uploaded Proof</label>
+                                <div id="uploaded-file">
+                                    <!-- Message when no proof is submitted -->
+                                    <p id="no-proof-message" style="color: red;">No proof has been uploaded.</p>
 
-                            <div class="text-end mr-3">
-                                <button type="submit" class="btn btn-outline-primary">Decline</button>
-                                <button type="submit" class="btn btn-primary">Accept</button>
+                                    <!-- If the uploaded file is an image -->
+                                    <img id="uploaded-image" src="#" alt="Uploaded Image"
+                                        style="max-width: 100%; display: none;">
+
+                                    <!-- If the uploaded file is a PDF -->
+                                    <iframe id="uploaded-pdf" src="#"
+                                        style="width: 100%; height: 500px; display: none;"></iframe>
+
+                                    <!-- Link to download the uploaded file -->
+                                    <a id="uploaded-link" href="#" target="_blank" style="display: none;">Download
+                                        File</a>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Accept Status</label>
+                                <select class="form-select" name="accept_status" id="accept-status" required>
+                                    <option value="" selected disabled>--- Choose Acceptance Status ---</option>
+                                    <option value="Verified">Verified</option>
+                                    <option value="Doc Accepted">Doc Accepted</option>
+                                    <option value="Return/Refund">Return/Refund</option>
+                                </select>
+                            </div>
+                            <div class="mb-2" id="refund-amount-div" style="display: none;">
+                                <label for="refund-amount" class="form-label">Refund Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="text" name="refund_amount" id="refund-amount" class="form-control">
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -208,6 +237,48 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
     <script>
-        // Add any necessary JavaScript for calculations or interactivity
+        document.getElementById('refund-amount').addEventListener('input', function() {
+            let value = this.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+            if (value) {
+                value = new Intl.NumberFormat('id-ID').format(value); // Format the number
+                this.value = value;
+            } else {
+                this.value = '';
+            }
+        });
+        document.getElementById('accept-status').addEventListener('change', function() {
+            var refundDiv = document.getElementById('refund-amount-div');
+            if (this.value === 'Return/Refund') {
+                refundDiv.style.display = 'block';
+            } else {
+                refundDiv.style.display = 'none';
+            }
+        });
+
+        document.getElementById('struk').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const fileURL = URL.createObjectURL(file);
+
+            if (file) {
+                // Hide the "no proof" message
+                document.getElementById('no-proof-message').style.display = 'none';
+
+                if (file.type.startsWith('image/')) {
+                    document.getElementById('uploaded-image').src = fileURL;
+                    document.getElementById('uploaded-image').style.display = 'block';
+                    document.getElementById('uploaded-pdf').style.display = 'none';
+                } else if (file.type === 'application/pdf') {
+                    document.getElementById('uploaded-pdf').src = fileURL;
+                    document.getElementById('uploaded-pdf').style.display = 'block';
+                    document.getElementById('uploaded-image').style.display = 'none';
+                }
+
+                document.getElementById('uploaded-link').href = fileURL;
+                document.getElementById('uploaded-link').style.display = 'block';
+            } else {
+                // Show the "no proof" message if no file is selected
+                document.getElementById('no-proof-message').style.display = 'block';
+            }
+        });
     </script>
 @endsection

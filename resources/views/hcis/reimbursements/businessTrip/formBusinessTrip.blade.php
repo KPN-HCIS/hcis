@@ -413,7 +413,7 @@
                                 </div>
 
                                 <div class="col-md-12 mt-3">
-                                    <label for="taksi" class="form-label">Voucher Taksi</label>
+                                    <label for="taksi" class="form-label">Taxi Voucher</label>
                                     <select class="form-select" id="taksi" name="taksi">
                                         <option value="Tidak">Tidak</option>
                                         <option value="Ya">Ya</option>
@@ -423,8 +423,7 @@
                                             <div class="table-responsive-sm">
                                                 <div class="d-flex flex-column gap-2">
                                                     <div class="text-bg-primary p-2 r-3"
-                                                        style="text-align:center; border-radius:4px;">Voucher
-                                                        Taksi</div>
+                                                        style="text-align:center; border-radius:4px;">Taxi Voucher</div>
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="mb-2" id="taksi_div">
@@ -444,7 +443,7 @@
                                                                         <span class="input-group-text">Rp</span>
                                                                     </div>
                                                                     <input class="form-control" name="nominal_vt"
-                                                                        id="nominal_vt" type="text" min="0"
+                                                                        id="nominal_vt" type="number" min="0"
                                                                         placeholder="ex. 12000">
                                                                 </div>
                                                             </div>
@@ -455,7 +454,7 @@
                                                                         <span class="input-group-text">Rp</span>
                                                                     </div>
                                                                     <input class="form-control" name="keeper_vt"
-                                                                        id="keeper_vt" type="text" min="0"
+                                                                        id="keeper_vt" type="number" min="0"
                                                                         placeholder="ex. 12000">
                                                                 </div>
                                                             </div>
@@ -471,8 +470,8 @@
                             <input type="hidden" name="status" value="Pending L1">
 
                             <div class="d-flex justify-content-end mt-3">
-                                <button class="btn btn-outline-primary me-2">Save as Draft</button>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button class="btn btn-outline-primary rounded-pill me-2">Save as Draft</button>
+                                <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
                             </div>
 
                         </form>

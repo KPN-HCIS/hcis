@@ -17,7 +17,7 @@
                 <div class="page-title-box d-flex align-items-center">
                     <ol class="breadcrumb mb-0" style="display: flex; align-items: center;">
                         <li class="breadcrumb-item">
-                            <a href="/reimbursements" style="font-size: 32px; text-decoration: none; color: #007bff;">
+                            <a href="{{ route('reimbursements') }}" style="text-decoration: none; color: #007bff;">
                                 <i class="bi bi-arrow-left" style="font-size: 32px;"></i>
                             </a>
                         </li>
@@ -28,8 +28,8 @@
             </div>
 
             <!-- Add Data Button -->
-            <div class="col-md-6 mt-4 text-end">
-                <a href="/businessTrip/form/add" class="btn btn-outline-primary rounded-pill" style="font-size: 18px">
+            <div class="col-md-6 mt-4 mb-2 text-end">
+                <a href="{{ route('businessTrip.add') }}" class="btn btn-primary rounded-pill" style="font-size: 16px">
                     <i class="bi bi-plus-circle"></i> Add Data
                 </a>
             </div>
@@ -41,7 +41,7 @@
         <div class="card-body">
             <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}">
                 <div class="row align-items-end">
-                    <h3 class="card-title">Data SPPD</h3>
+                    <h3 class="card-title">SPPD Data</h3>
                     <div class="col-md-5">
                         <label for="start-date" class="mb-2">Departure Date:</label>
                         <input type="date" id="start-date" name="start-date" class="form-control"
@@ -52,7 +52,7 @@
                         <input type="date" id="end-date" name="end-date" class="form-control"
                             value="{{ request()->query('end-date') }}">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 mt-2">
                         <button type="submit" class="btn btn-primary rounded-pill w-100">Find</button>
                     </div>
                 </div>
@@ -195,7 +195,7 @@
                                                     <p type="button"
                                                         class="btn btn-sm rounded-pill btn-{{ $n->status == 'Approved'
                                                             ? 'success'
-                                                            : ($n->status == 'Return' || $n->status == 'return/refunds'
+                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
                                                                 ? 'danger'
                                                                 : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
                                                                     ? 'warning'
@@ -225,7 +225,7 @@
                                                                 <i class="bi bi-card-checklist"></i>
                                                             </button>
                                                         </form>
-                                                    @else
+                                                    {{-- @else --}}
                                                         {{-- <form method="GET"
                                                             action="/businessTrip/form/update/{{ $n->id }}"
                                                             style="display: inline-block;">
@@ -236,7 +236,7 @@
                                                                 <i class="bi bi-pencil-square"></i>
                                                             </button>
                                                         </form> --}}
-                                                        <form id="deleteForm_{{ $n->id }}" method="POST"
+                                                        {{-- <form id="deleteForm_{{ $n->id }}" method="POST"
                                                             action="/businessTrip/delete/{{ $n->id }}"
                                                             style="display: inline-block;">
                                                             @csrf
@@ -248,7 +248,7 @@
                                                                 {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
                                                                 <i class="bi bi-trash-fill"></i>
                                                             </button>
-                                                        </form>
+                                                        </form>--}}
                                                     @endif
                                                 </td>
                                             </tr>
@@ -277,7 +277,7 @@
                                 <div id="detailContent"></div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-primary rounded-pill" data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
@@ -355,7 +355,7 @@
 
                             function createTableHtml(data, title) {
                                 var tableHtml = '<h5>' + title + '</h5>';
-                                tableHtml += '<table class="table table-sm"><thead><tr>';
+                                tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
                                 var isArray = Array.isArray(data) && data.length > 0;
 
                                 // Assuming all objects in the data array have the same keys, use the first object to create headers

@@ -29,7 +29,7 @@
                             <span class="input-group-text bg-white border-dark-subtle"><i class="ri-search-line"></i></span>
                         </div>
                         <input type="text" name="customsearch" id="customsearch"
-                            class="form-control  border-dark-subtle border-left-0" placeholder="search.."
+                            class="form-control  border-dark-subtle border-left-0" placeholder="Search.."
                             aria-label="search" aria-describedby="search">
                     </div>
                 </div>
@@ -53,10 +53,10 @@
                                         <th>No</th>
                                         <th>Ticket Type</th>
                                         <th>Requestor</th>
-                                        <th>Tranportation Type</th>
+                                        <th>Transportation Type</th>
                                         <th>Passengers Name</th>
                                         <th>From</th>
-                                        <th>Destination</th>
+                                        <th>To</th>
                                         <th>Departure</th>
                                         <th>Departure Time</th>
                                         <th>Homecoming</th>
@@ -67,7 +67,7 @@
                                 <tbody>
                                     @foreach ($transactions as $transaction)
                                         <tr>
-                                            <td>{{ $loop->index + 1 }}</td>
+                                            <td style="text-align: center">{{ $loop->index + 1 }}</td>
                                             <td>{{ $transaction->type_tkt }}</td>
                                             <td>{{ $transaction->employee->fullname }}</td>
                                             <td>{{ $transaction->jenis_tkt }}</td>
@@ -77,9 +77,12 @@
                                             <td>{{ \Carbon\Carbon::parse($transaction->tgl_brkt_tkt)->format('d/m/Y') }}
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($transaction->jam_brkt_tkt)->format('H:i') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($transaction->tgl_plg_tkt)->format('d/m/Y') }}
+                                            <td>
+                                                {{ $transaction->tgl_plg_tkt ? \Carbon\Carbon::parse($transaction->tgl_plg_tkt)->format('d/m/Y') : '-' }}
                                             </td>
-                                            <td>{{ \Carbon\Carbon::parse($transaction->jam_plg_tkt)->format('H:i') }}</td>
+                                            <td>
+                                                {{ $transaction->jam_plg_tkt ? \Carbon\Carbon::parse($transaction->jam_plg_tkt)->format('H:i') : '-' }}
+                                            </td>
                                             <td class="text-center">
                                                 <a href="{{ route('ticket.edit', encrypt($transaction->id)) }}"
                                                     class="btn btn-sm rounded-pill btn-outline-warning" title="Edit"><i

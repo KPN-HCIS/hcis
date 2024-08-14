@@ -29,8 +29,8 @@
 
             <!-- Add Data Button -->
             <div class="col-md-6 mt-4 text-end">
-                <a href="{{ route('export.excel') }}" class="btn btn-outline-primary rounded-pill btn-action">
-                    <i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel
+                <a href="/businessTrip/form/add" class="btn btn-outline-primary rounded-pill" style="font-size: 18px">
+                    <i class="bi bi-plus-circle"></i> Add Data
                 </a>
             </div>
         </div>
@@ -39,7 +39,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate.admin') }}">
+            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}">
                 <div class="row align-items-end">
                     <h3 class="card-title">Data SPPD</h3>
                     <div class="col-md-5">
@@ -79,10 +79,8 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
-                                            <th>Name</th>
                                             <th>No SPPD</th>
                                             <th>Destination</th>
-                                            {{-- <th>Needs</th> --}}
                                             <th>Start</th>
                                             <th>End</th>
                                             <th>CA</th>
@@ -100,10 +98,8 @@
                                                 <th scope="row" style="text-align: center;">
                                                     {{ $loop->iteration }}
                                                 </th>
-                                                <td>{{ $n->nama }}</td>
                                                 <td>{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
-                                                {{-- <td>{{ $n->keperluan }}</td> --}}
                                                 <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-m-Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-m-Y') }}</td>
                                                 <td style="text-align: center">
@@ -120,7 +116,7 @@
                                                                 'Total Cost' => $caTransactions[$n->no_sppd]->total_cost,
                                                                 'Start' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
                                                                 'End' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
-                                                            ]) }}"><u>Detail</u></a>
+                                                            ]) }}"><u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
@@ -129,48 +125,53 @@
                                                     @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
-                                                            data-ca=""
-                                                            data-tiket="{{ json_encode([
-                                                                'No. Ticket' => $tickets[$n->no_sppd]->no_tkt,
-                                                                'No. SPPD' => $tickets[$n->no_sppd]->no_sppd,
-                                                                'Unit' => $tickets[$n->no_sppd]->unit,
-                                                                'Gender' => $tickets[$n->no_sppd]->jk_tkt,
-                                                                // 'NP Ticket' => $tickets[$n->no_sppd]->np_tkt,
-                                                                'No. KTP' => $tickets[$n->no_sppd]->noktp_tkt,
-                                                                'Phone No.' => $tickets[$n->no_sppd]->tlp_tkt,
-                                                                'From' => $tickets[$n->no_sppd]->dari_tkt,
-                                                                'To' => $tickets[$n->no_sppd]->ke_tkt,
-                                                                'Depature Date' => date('d-m-Y', strtotime($tickets[$n->no_sppd]->tgl_brkt_tkt)),
-                                                                'Time' => !empty($tickets[$n->no_sppd]->jam_brkt_tkt)
-                                                                    ? date('H:i', strtotime($tickets[$n->no_sppd]->jam_brkt_tkt))
-                                                                    : 'No Data',
-                                                                'Return Date' => isset($tickets[$n->no_sppd]->tgl_plg_tkt)
-                                                                    ? date('d-m-Y', strtotime($tickets[$n->no_sppd]->tgl_plg_tkt))
-                                                                    : 'No Data',
-                                                                'Return Time' => !empty($tickets[$n->no_sppd]->jam_plg_tkt)
-                                                                    ? date('H:i', strtotime($tickets[$n->no_sppd]->jam_plg_tkt))
-                                                                    : 'No Data',
-                                                            ]) }}"><u>Detail</u></a>
+                                                            data-tiket="{{ json_encode(
+                                                                $tickets[$n->no_sppd]->map(function ($ticket) {
+                                                                    return [
+                                                                        // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
+                                                                        'No. SPPD' => $ticket->no_sppd,
+                                                                        'Passengers Name' => $ticket->np_tkt,
+                                                                        'Unit' => $ticket->unit,
+                                                                        'Gender' => $ticket->jk_tkt,
+                                                                        'NIK' => $ticket->noktp_tkt,
+                                                                        'Phone No.' => $ticket->tlp_tkt,
+                                                                        'From' => $ticket->dari_tkt,
+                                                                        'To' => $ticket->ke_tkt,
+                                                                        'Departure Date' => date('d-m-Y', strtotime($ticket->tgl_brkt_tkt)),
+                                                                        'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
+                                                                        'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-m-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
+                                                                        'Return Time' => !empty($ticket->jam_plg_tkt) ? date('H:i', strtotime($ticket->jam_plg_tkt)) : 'No Data',
+                                                                    ];
+                                                                }),
+                                                            ) }}">
+                                                            <u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
+
+
                                                 </td>
                                                 <td style="text-align: center">
                                                     @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
-                                                            data-hotel="{{ json_encode([
-                                                                'No. Hotel' => $hotel[$n->no_sppd]->no_htl,
-                                                                'No. SPPD' => $hotel[$n->no_sppd]->no_sppd,
-                                                                'Unit' => $hotel[$n->no_sppd]->unit,
-                                                                'Hotel Name' => $hotel[$n->no_sppd]->nama_htl,
-                                                                'Location' => $hotel[$n->no_sppd]->lokasi_htl,
-                                                                'Room' => $hotel[$n->no_sppd]->jmlkmr_htl,
-                                                                'Bed' => $hotel[$n->no_sppd]->bed_htl,
-                                                                'Check In' => date('d-m-Y', strtotime($hotel[$n->no_sppd]->tgl_masuk_htl)),
-                                                                'Check Out' => date('d-m-Y', strtotime($hotel[$n->no_sppd]->tgl_keluar_htl)),
-                                                                'Total Days' => $hotel[$n->no_sppd]->total_hari,
-                                                            ]) }}"><u>Detail</u></a>
+                                                            data-hotel="{{ json_encode(
+                                                                $hotel[$n->no_sppd]->map(function ($hotel) {
+                                                                    return [
+                                                                        'No. Hotel' => $hotel->no_htl,
+                                                                        'No. SPPD' => $hotel->no_sppd,
+                                                                        'Unit' => $hotel->unit,
+                                                                        'Hotel Name' => $hotel->nama_htl,
+                                                                        'Location' => $hotel->lokasi_htl,
+                                                                        'Room' => $hotel->jmlkmr_htl,
+                                                                        'Bed' => $hotel->bed_htl,
+                                                                        'Check In' => date('d-m-Y', strtotime($hotel->tgl_masuk_htl)),
+                                                                        'Check Out' => date('d-m-Y', strtotime($hotel->tgl_keluar_htl)),
+                                                                        'Total Days' => $hotel->total_hari,
+                                                                    ];
+                                                                }),
+                                                            ) }}">
+                                                            <u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
@@ -185,7 +186,7 @@
                                                                 'Unit' => $taksi[$n->no_sppd]->unit,
                                                                 'Nominal' => 'Rp ' . number_format($taksi[$n->no_sppd]->nominal_vt, 0, ',', '.'),
                                                                 'Keeper Voucher' => 'Rp' . number_format($taksi[$n->no_sppd]->keeper_vt, 0, ',', '.'),
-                                                            ]) }}"><u>Detail<u></a>
+                                                            ]) }}"><u>Details<u></a>
                                                     @else
                                                         -
                                                     @endif
@@ -214,7 +215,7 @@
                                                     @php
                                                         $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                     @endphp
-                                                    @if ($n->kembali <= $today && $n->status == 'Approved')
+                                                    @if ($n->kembali < $today && $n->status == 'Approved')
                                                         <form method="GET"
                                                             action="/businessTrip/deklarasi/admin/{{ $n->id }}"
                                                             style="display: inline-block;">
@@ -352,64 +353,88 @@
                             var hotel = $(this).data('hotel');
                             var taksi = $(this).data('taksi');
 
-                            function createTableHtml(data) {
-                                var tableHtml = '<table class="table table-sm"><thead><tr>';
-                                for (var key in data) {
-                                    if (data.hasOwnProperty(key)) {
-                                        tableHtml += '<th>' + key + '</th>';
+                            function createTableHtml(data, title) {
+                                var tableHtml = '<h5>' + title + '</h5>';
+                                tableHtml += '<table class="table table-sm"><thead><tr>';
+                                var isArray = Array.isArray(data) && data.length > 0;
+
+                                // Assuming all objects in the data array have the same keys, use the first object to create headers
+                                if (isArray) {
+                                    for (var key in data[0]) {
+                                        if (data[0].hasOwnProperty(key)) {
+                                            tableHtml += '<th>' + key + '</th>';
+                                        }
+                                    }
+                                } else if (typeof data === 'object') {
+                                    // If data is a single object, create headers from its keys
+                                    for (var key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            tableHtml += '<th>' + key + '</th>';
+                                        }
                                     }
                                 }
-                                tableHtml += '</tr></thead><tbody><tr>';
-                                for (var key in data) {
-                                    if (data.hasOwnProperty(key)) {
-                                        tableHtml += '<td>' + data[key] + '</td>';
+
+                                tableHtml += '</tr></thead><tbody>';
+
+                                // Loop through each item in the array and create a row for each
+                                if (isArray) {
+                                    data.forEach(function(row) {
+                                        tableHtml += '<tr>';
+                                        for (var key in row) {
+                                            if (row.hasOwnProperty(key)) {
+                                                tableHtml += '<td>' + row[key] + '</td>';
+                                            }
+                                        }
+                                        tableHtml += '</tr>';
+                                    });
+                                } else if (typeof data === 'object') {
+                                    // If data is a single object, create a single row
+                                    tableHtml += '<tr>';
+                                    for (var key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            tableHtml += '<td>' + data[key] + '</td>';
+                                        }
                                     }
+                                    tableHtml += '</tr>';
                                 }
-                                tableHtml += '</tr></tbody></table>';
+
+                                tableHtml += '</tbody></table>';
                                 return tableHtml;
                             }
 
-                            $('#detailTypeHeader').text('');
+                            // $('#detailTypeHeader').text('Detail Information');
                             $('#detailContent').empty();
 
-                            if (ca && ca !== 'undefined') {
-                                try {
-                                    var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
-                                    $('#detailTypeHeader').text('CA Detail');
-                                    $('#detailContent').html(createTableHtml(caData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading CA data</p>');
-                                }
-                            } else if (tiket && tiket !== 'undefined') {
-                                try {
-                                    var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
-                                    $('#detailTypeHeader').text('Ticket Detail');
-                                    $('#detailContent').html(createTableHtml(tiketData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Ticket data</p>');
-                                }
-                            } else if (hotel && hotel !== 'undefined') {
-                                try {
-                                    var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                                    $('#detailTypeHeader').text('Hotel Detail');
-                                    $('#detailContent').html(createTableHtml(hotelData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Hotel data</p>');
-                                }
-                            } else if (taksi && taksi !== 'undefined') {
-                                try {
-                                    var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
-                                    $('#detailTypeHeader').text('Taxi Detail');
-                                    $('#detailContent').html(createTableHtml(taksiData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Taxi data</p>');
-                                }
-                            } else {
-                                $('#detailTypeHeader').text('No Data Available');
-                                $('#detailContent').html('<p>No detail information available.</p>');
-                            }
+                            try {
+                                var content = '';
 
-                            $('#detailModal').modal('show');
+                                if (ca && ca !== 'undefined') {
+                                    var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
+                                    content += createTableHtml(caData, 'CA Detail');
+                                }
+                                if (tiket && tiket !== 'undefined') {
+                                    var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
+                                    content += createTableHtml(tiketData, 'Ticket Detail');
+                                }
+                                if (hotel && hotel !== 'undefined') {
+                                    var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
+                                    content += createTableHtml(hotelData, 'Hotel Detail');
+                                }
+                                if (taksi && taksi !== 'undefined') {
+                                    var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
+                                    content += createTableHtml(taksiData, 'Taxi Detail');
+                                }
+
+                                if (content !== '') {
+                                    $('#detailContent').html(content);
+                                } else {
+                                    $('#detailContent').html('<p>No detail information available.</p>');
+                                }
+
+                                $('#detailModal').modal('show');
+                            } catch (e) {
+                                $('#detailContent').html('<p>Error loading data</p>');
+                            }
                         });
 
                         $('#detailModal').on('hidden.bs.modal', function() {
@@ -420,6 +445,8 @@
                             $('.modal-backdrop').remove();
                         });
                     });
+
+
 
                     $(document).ready(function() {
                         var table = $('#yourTableId').DataTable({

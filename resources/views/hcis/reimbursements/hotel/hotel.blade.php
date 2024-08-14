@@ -28,7 +28,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text bg-white border-dark-subtle"><i class="ri-search-line"></i></span>
                   </div>
-                  <input type="text" name="customsearch" id="customsearch" class="form-control  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
+                  <input type="text" name="customsearch" id="customsearch" class="form-control  border-dark-subtle border-left-0" placeholder="Search.." aria-label="search" aria-describedby="search">
                 </div>
               </div>
             </div>
@@ -48,12 +48,12 @@
                           <thead class="thead-light">
                               <tr class="text-center">
                                   <th>No</th>
-                                  <th>No Hotel</th>
+                                  <th style="text-align: left">No Hotel</th>
                                   {{-- <th>No SPPD</th> --}}
                                   <th>Requestor</th>
                                   <th>Hotel Name</th>
                                   <th>Location</th>
-                                  <th>Rooms</th>
+                                  <th style="text-align: left">Rooms</th>
                                   <th>Bed Type</th>
                                   <th>Start Date</th>
                                   <th>End Date</th>
@@ -63,12 +63,12 @@
                           <tbody>
                             @foreach($transactions as $transaction)
                             <tr>
-                                <td>{{ $loop->index + 1 }}</td>
-                                <td>{{ $transaction->no_htl }}</td>
+                                <td style="text-align: center">{{ $loop->index + 1 }}</td>
+                                <td style="text-align: left">{{ $transaction->no_htl }}</td>
                                 <td>{{ $transaction->employee->fullname }}</td>
                                 <td>{{ $transaction->nama_htl }}</td>
                                 <td>{{ $transaction->lokasi_htl }}</td>
-                                <td>{{ $transaction->jmlkmr_htl }}</td>
+                                <td style="text-align: left">{{ $transaction->jmlkmr_htl }}</td>
                                 <td>{{ $transaction->bed_htl }}</td>
                                 <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
                                 <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }}
