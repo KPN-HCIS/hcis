@@ -116,7 +116,7 @@
                                                                 'Total Cost' => $caTransactions[$n->no_sppd]->total_cost,
                                                                 'Start' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
                                                                 'End' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
-                                                            ]) }}"><u>Detail</u></a>
+                                                            ]) }}"><u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
@@ -125,47 +125,53 @@
                                                     @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
-                                                            data-tiket="{{ json_encode([
-                                                                'No. Ticket' => $tickets[$n->no_sppd]->no_tkt,
-                                                                'No. SPPD' => $tickets[$n->no_sppd]->no_sppd,
-                                                                'Unit' => $tickets[$n->no_sppd]->unit,
-                                                                'Gender' => $tickets[$n->no_sppd]->jk_tkt,
-                                                                // 'NP Ticket' => $tickets[$n->no_sppd]->np_tkt,
-                                                                'No. KTP' => $tickets[$n->no_sppd]->noktp_tkt,
-                                                                'Phone No.' => $tickets[$n->no_sppd]->tlp_tkt,
-                                                                'From' => $tickets[$n->no_sppd]->dari_tkt,
-                                                                'To' => $tickets[$n->no_sppd]->ke_tkt,
-                                                                'Depature Date' => date('d-m-Y', strtotime($tickets[$n->no_sppd]->tgl_brkt_tkt)),
-                                                                'Time' => !empty($tickets[$n->no_sppd]->jam_brkt_tkt)
-                                                                    ? date('H:i', strtotime($tickets[$n->no_sppd]->jam_brkt_tkt))
-                                                                    : 'No Data',
-                                                                'Return Date' => isset($tickets[$n->no_sppd]->tgl_plg_tkt)
-                                                                    ? date('d-m-Y', strtotime($tickets[$n->no_sppd]->tgl_plg_tkt))
-                                                                    : 'No Data',
-                                                                'Return Time' => !empty($tickets[$n->no_sppd]->jam_plg_tkt)
-                                                                    ? date('H:i', strtotime($tickets[$n->no_sppd]->jam_plg_tkt))
-                                                                    : 'No Data',
-                                                            ]) }}"><u>Detail</u></a>
+                                                            data-tiket="{{ json_encode(
+                                                                $tickets[$n->no_sppd]->map(function ($ticket) {
+                                                                    return [
+                                                                        // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
+                                                                        'No. SPPD' => $ticket->no_sppd,
+                                                                        'Passengers Name' => $ticket->np_tkt,
+                                                                        'Unit' => $ticket->unit,
+                                                                        'Gender' => $ticket->jk_tkt,
+                                                                        'NIK' => $ticket->noktp_tkt,
+                                                                        'Phone No.' => $ticket->tlp_tkt,
+                                                                        'From' => $ticket->dari_tkt,
+                                                                        'To' => $ticket->ke_tkt,
+                                                                        'Departure Date' => date('d-m-Y', strtotime($ticket->tgl_brkt_tkt)),
+                                                                        'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
+                                                                        'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-m-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
+                                                                        'Return Time' => !empty($ticket->jam_plg_tkt) ? date('H:i', strtotime($ticket->jam_plg_tkt)) : 'No Data',
+                                                                    ];
+                                                                }),
+                                                            ) }}">
+                                                            <u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
+
+
                                                 </td>
                                                 <td style="text-align: center">
                                                     @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
-                                                            data-hotel="{{ json_encode([
-                                                                'No. Hotel' => $hotel[$n->no_sppd]->no_htl,
-                                                                'No. SPPD' => $hotel[$n->no_sppd]->no_sppd,
-                                                                'Unit' => $hotel[$n->no_sppd]->unit,
-                                                                'Hotel Name' => $hotel[$n->no_sppd]->nama_htl,
-                                                                'Location' => $hotel[$n->no_sppd]->lokasi_htl,
-                                                                'Room' => $hotel[$n->no_sppd]->jmlkmr_htl,
-                                                                'Bed' => $hotel[$n->no_sppd]->bed_htl,
-                                                                'Check In' => date('d-m-Y', strtotime($hotel[$n->no_sppd]->tgl_masuk_htl)),
-                                                                'Check Out' => date('d-m-Y', strtotime($hotel[$n->no_sppd]->tgl_keluar_htl)),
-                                                                'Total Days' => $hotel[$n->no_sppd]->total_hari,
-                                                            ]) }}"><u>Detail</u></a>
+                                                            data-hotel="{{ json_encode(
+                                                                $hotel[$n->no_sppd]->map(function ($hotel) {
+                                                                    return [
+                                                                        'No. Hotel' => $hotel->no_htl,
+                                                                        'No. SPPD' => $hotel->no_sppd,
+                                                                        'Unit' => $hotel->unit,
+                                                                        'Hotel Name' => $hotel->nama_htl,
+                                                                        'Location' => $hotel->lokasi_htl,
+                                                                        'Room' => $hotel->jmlkmr_htl,
+                                                                        'Bed' => $hotel->bed_htl,
+                                                                        'Check In' => date('d-m-Y', strtotime($hotel->tgl_masuk_htl)),
+                                                                        'Check Out' => date('d-m-Y', strtotime($hotel->tgl_keluar_htl)),
+                                                                        'Total Days' => $hotel->total_hari,
+                                                                    ];
+                                                                }),
+                                                            ) }}">
+                                                            <u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
@@ -180,7 +186,7 @@
                                                                 'Unit' => $taksi[$n->no_sppd]->unit,
                                                                 'Nominal' => 'Rp ' . number_format($taksi[$n->no_sppd]->nominal_vt, 0, ',', '.'),
                                                                 'Keeper Voucher' => 'Rp' . number_format($taksi[$n->no_sppd]->keeper_vt, 0, ',', '.'),
-                                                            ]) }}"><u>Detail<u></a>
+                                                            ]) }}"><u>Details<u></a>
                                                     @else
                                                         -
                                                     @endif
@@ -347,8 +353,9 @@
                             var hotel = $(this).data('hotel');
                             var taksi = $(this).data('taksi');
 
-                            function createTableHtml(data) {
-                                var tableHtml = '<table class="table table-sm"><thead><tr>';
+                            function createTableHtml(data, title) {
+                                var tableHtml = '<h5>' + title + '</h5>';
+                                tableHtml += '<table class="table table-sm"><thead><tr>';
                                 var isArray = Array.isArray(data) && data.length > 0;
 
                                 // Assuming all objects in the data array have the same keys, use the first object to create headers
@@ -395,28 +402,32 @@
                                 return tableHtml;
                             }
 
-                            $('#detailTypeHeader').text('');
+                            // $('#detailTypeHeader').text('Detail Information');
                             $('#detailContent').empty();
 
                             try {
+                                var content = '';
+
                                 if (ca && ca !== 'undefined') {
                                     var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
-                                    $('#detailTypeHeader').text('CA Detail');
-                                    $('#detailContent').html(createTableHtml(caData));
-                                } else if (tiket && tiket !== 'undefined') {
+                                    content += createTableHtml(caData, 'CA Detail');
+                                }
+                                if (tiket && tiket !== 'undefined') {
                                     var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
-                                    $('#detailTypeHeader').text('Ticket Detail');
-                                    $('#detailContent').html(createTableHtml(tiketData));
-                                } else if (hotel && hotel !== 'undefined') {
+                                    content += createTableHtml(tiketData, 'Ticket Detail');
+                                }
+                                if (hotel && hotel !== 'undefined') {
                                     var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                                    $('#detailTypeHeader').text('Hotel Detail');
-                                    $('#detailContent').html(createTableHtml(hotelData));
-                                } else if (taksi && taksi !== 'undefined') {
+                                    content += createTableHtml(hotelData, 'Hotel Detail');
+                                }
+                                if (taksi && taksi !== 'undefined') {
                                     var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
-                                    $('#detailTypeHeader').text('Taxi Detail');
-                                    $('#detailContent').html(createTableHtml(taksiData));
+                                    content += createTableHtml(taksiData, 'Taxi Detail');
+                                }
+
+                                if (content !== '') {
+                                    $('#detailContent').html(content);
                                 } else {
-                                    $('#detailTypeHeader').text('No Data Available');
                                     $('#detailContent').html('<p>No detail information available.</p>');
                                 }
 
@@ -434,6 +445,7 @@
                             $('.modal-backdrop').remove();
                         });
                     });
+
 
 
                     $(document).ready(function() {

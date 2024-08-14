@@ -36,8 +36,9 @@ class BusinessTripController extends Controller
 
         // No sppd
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        // dd($tickets);
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
@@ -117,8 +118,8 @@ class BusinessTripController extends Controller
         $sppdNos = $sppd->pluck('no_sppd');
 
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $startDate = $request->query('start-date');
@@ -156,10 +157,20 @@ class BusinessTripController extends Controller
         $sppd = BusinessTrip::findOrFail($id);
         $response = ['sppd' => $sppd];
 
-        $types = ['ca' => ca_transaction::class, 'tiket' => Tiket::class, 'hotel' => Hotel::class, 'taksi' => Taksi::class];
+        $types = [
+            'ca' => ca_transaction::class,
+            'tiket' => Tiket::class,
+            'hotel' => Hotel::class,
+            'taksi' => Taksi::class
+        ];
 
         foreach ($types as $type => $model) {
-            $data = $model::where('no_sppd', $sppd->no_sppd)->first();
+            if (in_array($type, ['tiket', 'hotel'])) {
+                $data = $model::where('no_sppd', $sppd->no_sppd)->get();
+            } else {
+                $data = $model::where('no_sppd', $sppd->no_sppd)->first();
+            }
+
             if ($data) {
                 $response[$type] = $data;
             }
@@ -167,6 +178,7 @@ class BusinessTripController extends Controller
 
         return response()->json($response);
     }
+
     public function export($id, $types = null)
     {
         try {
@@ -203,21 +215,47 @@ class BusinessTripController extends Controller
                             $data = ['ca' => $ca];
                             break;
                         case 'tiket':
-                            $ticket = Tiket::where('no_sppd', $sppd->no_sppd)->first();
-                            if (!$ticket)
+                            $tickets = Tiket::where('no_sppd', $sppd->no_sppd)->get();
+                            if ($tickets->isEmpty()) {
                                 continue 2;
+                            }
                             $pdfName = 'Ticket.pdf';
                             $viewPath = 'hcis.reimbursements.businessTrip.tiket_pdf';
-                            $data = ['ticket' => $ticket];
+                            $data = [
+                                'ticket' => $tickets->first(),
+                                'passengers' => $tickets->map(function ($ticket) {
+                                    return (object) [
+                                        'np_tkt' => $ticket->np_tkt,
+                                        'tlp_tkt' => $ticket->tlp_tkt,
+                                        'jk_tkt' => $ticket->jk_tkt,
+                                        'dari_tkt' => $ticket->dari_tkt,
+                                        'ke_tkt' => $ticket->ke_tkt,
+                                        'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                                        'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                                        'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                                        'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                                        'type_tkt' => $ticket->type_tkt,
+                                        'jenis_tkt' => $ticket->jenis_tkt,
+                                        'company_name' => $ticket->employee->company_name,
+                                        'cost_center' => $ticket->cost_center
+                                    ];
+                                })
+                            ];
                             break;
                         case 'hotel':
-                            $hotel = Hotel::where('no_sppd', $sppd->no_sppd)->first();
-                            if (!$hotel)
-                                continue 2;
+                            $hotels = Hotel::where('no_sppd', $sppd->no_sppd)->get(); // Fetch all hotels with the given sppd
+                            if ($hotels->isEmpty()) {
+                                continue 2; // Skip if no hotels found
+                            }
                             $pdfName = 'Hotel.pdf';
                             $viewPath = 'hcis.reimbursements.businessTrip.hotel_pdf';
-                            $data = ['hotel' => $hotel];
+                            $data = [
+                                'hotel' => $hotels->first(), // Use the first hotel for general details
+                                'hotels' => $hotels // Pass all hotels for detailed view
+                            ];
                             break;
+
+
                         case 'taksi':
                             $taksi = Taksi::where('no_sppd', $sppd->no_sppd)->first();
                             if (!$taksi)
@@ -257,6 +295,7 @@ class BusinessTripController extends Controller
             }
         }
     }
+
     public function businessTripformAdd()
     {
         $userId = Auth::id();
@@ -389,13 +428,20 @@ class BusinessTripController extends Controller
 
             foreach ($ticketData['noktp_tkt'] as $key => $value) {
                 if (!empty($value)) {
+                    // Fetch employee data inside the loop
+                    $employee_data = Employee::where('ktp', $value)->first();
+
+                    if (!$employee_data) {
+                        return redirect()->back()->with('error', "NIK $value not found");
+                    }
+
                     $tiket = new Tiket();
                     $tiket->id = (string) Str::uuid();
                     $tiket->no_sppd = $noSppd;
                     $tiket->user_id = $userId;
                     $tiket->unit = $request->divisi;
                     $tiket->jk_tkt = $employee_data ? $employee_data->gender : null;
-                    $tiket->np_tkt = '0';
+                    $tiket->np_tkt = $employee_data ? $employee_data->fullname : null;
                     $tiket->noktp_tkt = $value;
                     $tiket->tlp_tkt = $employee_data ? $employee_data->personal_mobile_number : null;
                     $tiket->dari_tkt = $ticketData['dari_tkt'][$key] ?? null;
@@ -411,6 +457,7 @@ class BusinessTripController extends Controller
                 }
             }
         }
+
 
         if ($request->ca === 'Ya') {
             $ca = new ca_transaction();

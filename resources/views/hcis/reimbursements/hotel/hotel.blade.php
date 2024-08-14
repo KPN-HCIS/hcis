@@ -70,14 +70,14 @@
                                 <td>{{ $transaction->lokasi_htl }}</td>
                                 <td>{{ $transaction->jmlkmr_htl }}</td>
                                 <td>{{ $transaction->bed_htl }}</td>
-                                <td>{{ $transaction->tgl_masuk_htl }}</td>
-                                <td>{{ $transaction->tgl_keluar_htl }}</td>
+                                <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
+                                <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }}
                                   <td class="text-center">
                                     {{-- @if($transaction->created_by == $userId) --}}
-                                        <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}" class="btn btn-sm rounded-pill btn-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                        <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}" class="btn btn-sm rounded-pill btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                         <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}" method="POST" style="display:inline;">
                                             @csrf
-                                            <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-sm rounded-pill btn-danger" title="Delete">
+                                            <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-sm rounded-pill btn-outline-danger" title="Delete">
                                                 <i class="ri-delete-bin-line"></i>
                                             </button>
                                         </form>
