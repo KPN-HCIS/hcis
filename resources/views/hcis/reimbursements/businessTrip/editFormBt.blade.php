@@ -33,15 +33,8 @@
                                 <label for="divisi" class="form-label">Divisi</label>
                                 <input type="text" class="form-control bg-light" id="divisi" name="divisi"
                                     style="cursor:not-allowed;" value="{{ $n->divisi }}" readonly>
-
-                                {{-- <select class="form-select" id="divisi" name="divisi">
-                                <option value="Plantation">Plantation</option>
-                                <option value="Plantation">Personalia</option>
-                                <option value="Plantation">IT</option>
-                                <option value="Plantation">HR</option>
-                                <!-- Add more options if needed -->
-                            </select>--}}
                             </div>
+
                             {{-- <div class="row mb-3">
                                 <div class="col-md-4">
                                     <label for="unit_1" class="form-label">Unit/Lokasi Kerja</label>
@@ -127,11 +120,13 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="bb_perusahaan_{{ $n->id }}" class="form-label">Beban Biaya Perusahaan (PT Keperluan Dinas / Bukan PT Payroll)</label>
+                                <label for="bb_perusahaan_{{ $n->id }}" class="form-label">Beban Biaya Perusahaan
+                                    (PT Keperluan Dinas / Bukan PT Payroll)</label>
                                 <select class="form-select" id="bb_perusahaan_{{ $n->id }}" name="bb_perusahaan">
                                     <option value="">--- Pilih PT ---</option>
                                     @foreach ($companies as $company)
-                                        <option value="{{ $company->contribution_level_code }}" {{ $company->contribution_level_code == $n->bb_perusahaan ? 'selected' : '' }}>
+                                        <option value="{{ $company->contribution_level_code }}"
+                                            {{ $company->contribution_level_code == $n->bb_perusahaan ? 'selected' : '' }}>
                                             {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
                                         </option>
                                     @endforeach
@@ -156,7 +151,18 @@
                                     placeholder="Nama Pemilik Rekening" value="{{ $n->nama_pemilik_rek }}">
                             </div>
 
-                            <div class="row mb-3">
+                            <div class="col-md-14 mb-3">
+                                <label for="jns_dinas" class="form-label">Jenis Dinas</label>
+                                <select class="form-select" id="jns_dinas" name="jns_dinas">
+                                    <option selected disabled>-- Pilih Jenis Dinas --</option>
+                                    <option value="dalam kota" {{ $n->jns_dinas == 'dalam kota' ? 'selected' : '' }}>Dinas
+                                        Dalam Kota</option>
+                                    <option value="luar kota" {{ $n->jns_dinas == 'luar kota' ? 'selected' : '' }}>Dinas
+                                        Luar Kota</option>
+                                </select>
+                            </div>
+
+                            <div id="additional-fields" class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="ca" class="form-label">Cash Advanced</label>
                                     <select class="form-select" id="ca" name="ca">
@@ -164,7 +170,7 @@
                                         <option value="Ya" {{ $n->ca == 'Ya' ? 'selected' : '' }}>Ya</option>
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mt-3">
                                     <label for="tiket" class="form-label">Ticket</label>
                                     <select class="form-select" id="tiket" name="tiket">
                                         <option value="Tidak" {{ $n->tiket == 'Tidak' ? 'selected' : '' }}>Tidak</option>
@@ -181,11 +187,12 @@
                                 <div class="col-md-6 mt-3">
                                     <label for="taksi" class="form-label">Voucher Taksi</label>
                                     <select class="form-select" id="taksi" name="taksi">
-                                        <option value="Tidak" {{ $n->taksi == 'Tidak' ? 'selected' : '' }}s>Tidak</option>
+                                        <option value="Tidak" {{ $n->taksi == 'Tidak' ? 'selected' : '' }}>Tidak</option>
                                         <option value="Ya" {{ $n->taksi == 'Ya' ? 'selected' : '' }}>Ya</option>
                                     </select>
                                 </div>
                             </div>
+
                             <input type="hidden" name="status" value="Pending">
 
                             <div class="text-end">
@@ -197,4 +204,30 @@
             </div>
         </div>
     </div>
+    <!-- JavaScript Part -->
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var jnsDinasSelect = document.getElementById('jns_dinas');
+                var additionalFields = document.getElementById('additional-fields');
+
+                function toggleAdditionalFields() {
+                    if (jnsDinasSelect.value === 'luar kota') {
+                        additionalFields.style.display = 'block';
+                    } else {
+                        additionalFields.style.display = 'none';
+                        // Reset all fields to "Tidak"
+                        document.getElementById('ca').value = 'Tidak';
+                        document.getElementById('tiket').value = 'Tidak';
+                        document.getElementById('hotel').value = 'Tidak';
+                        document.getElementById('taksi').value = 'Tidak';
+                    }
+                }
+
+                // Initial toggle based on the selected value
+                toggleAdditionalFields();
+
+                // Add event listener for change
+                jnsDinasSelect.addEventListener('change', toggleAdditionalFields);
+            });
+    </script>
 @endsection

@@ -32,6 +32,7 @@ class BusinessTrip extends Model
     protected $fillable = [
         'id',
         'user_id',
+        'jns_dinas',
         'nama',
         'no_sppd',
         'unit_1',
