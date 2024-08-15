@@ -12,15 +12,34 @@ class Employee extends Model
 
     protected $fillable = [
         // Kolom-kolom lainnya,
-        'access_menu','id','employee_id', 'fullname', 'gender', 'email', 'group_company',
-        'designation', 'job_level', 'company_name', 'contribution_level_code',
-        'work_area_code', 'office_area', 'manager_l1_id', 'manager_l2_id',
-        'employee_type', 'unit', 'date_of_joining', 'users_id'
+        'access_menu',
+        'id',
+        'employee_id',
+        'fullname',
+        'gender',
+        'email',
+        'group_company',
+        'designation',
+        'job_level',
+        'company_name',
+        'contribution_level_code',
+        'work_area_code',
+        'office_area',
+        'manager_l1_id',
+        'manager_l2_id',
+        'employee_type',
+        'unit',
+        'date_of_joining',
+        'users_id'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id', 'id');
+    }
+    public function btApprovals()
+    {
+        return $this->belongsTo(BTApproval::class, 'employee_id', 'employee_id');
     }
     public function businessTrip()
     {
@@ -63,7 +82,7 @@ class Employee extends Model
     public function schedule()
     {
         return $this->belongsTo(Schedule::class, 'bisnis_unit', 'group_company')
-                ->whereRaw("FIND_IN_SET('bisnis_unit', group_company)");
+            ->whereRaw("FIND_IN_SET('bisnis_unit', group_company)");
     }
     public static function getUniqueGroupCompanies()
     {

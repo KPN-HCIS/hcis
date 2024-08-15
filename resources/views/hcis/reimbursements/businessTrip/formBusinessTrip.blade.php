@@ -241,7 +241,25 @@
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
                                                                             id="jam_brkt_tkt_<?php echo $i; ?>"
-                                                                            name="jam_brkt_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
+                                                                            name="jam_brkt_tkt[]" type="time"
+                                                                            onchange="validateDates(<?php echo $i; ?>)">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label class="form-label"
+                                                                        for="jenis_tkt_<?php echo $i; ?>">Transportation
+                                                                        Type</label>
+                                                                    <div class="input-group">
+                                                                        <select class="form-select" name="jenis_tkt[]"
+                                                                            id="jenis_tkt">
+                                                                            <option value="">Select Transportation
+                                                                                Type</option>
+                                                                            <option value="Train">Train</option>
+                                                                            <option value="Bus">Bus</option>
+                                                                            <option value="Airplane">Airplane</option>
+                                                                            <option value="Car">Car</option>
+                                                                            <option value="Ferry">Ferry</option>
+                                                                        </select>
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -268,18 +286,12 @@
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
                                                                                 id="jam_plg_tkt_<?php echo $i; ?>"
-                                                                                name="jam_plg_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
+                                                                                name="jam_plg_tkt[]" type="time"
+                                                                                onchange="validateDates(<?php echo $i; ?>)">
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">Transportation Type</label>
-                                                                    <div class="input-group">
-                                                                        <input class="form-control bg-white"
-                                                                            name="jenis_tkt[]" type="text"
-                                                                            placeholder="ex. Train/Bus/Airplane etc.">
-                                                                    </div>
-                                                                </div>
+
                                                                 <?php if ($i < 5) : ?>
                                                                 <div class="mt-3">
                                                                     <label class="form-label">Add more ticket</label>
@@ -356,11 +368,14 @@
                                                                 <div class="mb-2">
                                                                     <label class="form-label">Bed Size</label>
                                                                     <select class="form-select" name="bed_htl[]" required>
-                                                                        <option value="King Size">King Size</option>
-                                                                        <option value="Queen Size">Queen Size</option>
-                                                                        <option value="Full">Full</option>
-                                                                        <option value="Twin XL">Twin XL</option>
-                                                                        <option value="Twin">Twin</option>
+                                                                        <option value="Single Bed">Single Bed</option>
+                                                                        <option value="Twin Bed">Twin Bed</option>
+                                                                        <option value="King Bed">King Bed</option>
+                                                                        <option value="Super King Bed">Super King Bed
+                                                                        </option>
+                                                                        <option value="Extra Bed">Extra Bed</option>
+                                                                        <option value="Baby Cot">Baby Cot</option>
+                                                                        <option value="Sofa Bed">Sofa Bed</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -467,10 +482,11 @@
                                 </div>
 
                             </div>
-                            <input type="hidden" name="status" value="Pending L1">
+                            <input type="hidden" name="status" value="Pending L1" id="status">
 
                             <div class="d-flex justify-content-end mt-3">
-                                <button class="btn btn-outline-primary rounded-pill me-2">Save as Draft</button>
+                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                    id="save-draft">Save as Draft</button>
                                 <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
                             </div>
 
@@ -483,6 +499,32 @@
 
     <!-- JavaScript Part -->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('save-draft').addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Remove the existing status input
+                const existingStatus = document.getElementById('status');
+                if (existingStatus) {
+                    existingStatus.remove();
+                }
+
+                // Create a new hidden input for "Draft"
+                const draftInput = document.createElement('input');
+                draftInput.type = 'hidden';
+                draftInput.name = 'status';
+                draftInput.value = 'Draft';
+                draftInput.id = 'status';
+
+                // Append the draft input to the form
+                this.closest('form').appendChild(draftInput);
+
+                // Submit the form
+                this.closest('form').submit();
+            });
+        });
+
+
         function calculateTotalDays() {
             const checkInDate = new Date(document.getElementById('tgl_masuk_htl').value);
             const checkOutDate = new Date(document.getElementById('tgl_keluar_htl').value);

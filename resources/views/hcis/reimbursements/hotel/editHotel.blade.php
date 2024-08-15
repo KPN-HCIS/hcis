@@ -24,15 +24,15 @@
         </div>
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-8">
-                <div class="card-header d-flex bg-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data {{ $transactions->no_htl }} </h4>
-                    <a href="{{ route('hotel') }}" type="button" class="btn btn-close"></a>
+                <div class="card-header d-flex bg-primary text-white justify-content-between">
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data Hotel</h4>
+                    <a href="{{ route('hotel') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
                         <form id="scheduleForm" method="post" action="{{ route('hotel.update', encrypt($transactions->id)) }}">@csrf
                             <div class="row my-2">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
                                         <input type="text" name="name" id="name" value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                             <div class="row my-2">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Unit</label>
                                         <input type="text" name="unit" id="unit" value="{{ $employee_data->unit }}" class="form-control bg-light" readonly>
@@ -48,7 +48,7 @@
                                 </div>
                             </div>
                             <div class="row my-2">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Grade</label>
                                         <input type="text" name="grade" id="grade" value="{{ $employee_data->job_level }}" class="form-control bg-light" readonly>
@@ -63,7 +63,7 @@
                                 </div>
                             </div>
                             <div class="row my-2">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Hotel Name</label>
                                         <input type="text" name="nama_htl" id="nama_htl" class="form-control" value="{{ $transactions->nama_htl }}">
@@ -81,12 +81,12 @@
                                         <input type="number" name="jmlkmr_htl" id="jmlkmr_htl" class="form-control" value="{{ $transactions->jmlkmr_htl }}">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="mb-2">
                                         <label class="form-label" for="name">Bed Type</label>
                                         <select class="form-control" name="bed_htl" required>
-                                            <option value="">-</option>
-                                            <option value="Singgle Bed" {{ $transactions->bed_htl == 'Singgle Bed' ? 'selected' : '' }}>Business Trip</option>
+                                            <option value="" selected disabled>-</option>
+                                            <option value="Single Bed" {{ $transactions->bed_htl == 'Single Bed' ? 'selected' : '' }}>Single Bed</option>
                                             <option value="Twin Bed" {{ $transactions->bed_htl == 'Twin Bed' ? 'selected' : '' }}>Twin Bed</option>
                                             <option value="King Bed" {{ $transactions->bed_htl == 'King Bed' ? 'selected' : '' }}>King Bed</option>
                                             <option value="Super King Bed" {{ $transactions->bed_htl == 'Super King Bed' ? 'selected' : '' }}>Super King Bed</option>
@@ -128,7 +128,7 @@
                             <div class="row">
                                 <div class="col-md d-md-flex justify-content-end text-center">
                                     <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                                    <a href="{{ route('hotel') }}" type="button" class="btn btn-danger rounded-pill shadow px-4 me-2">Cancel</a>
+                                    <a href="{{ route('hotel') }}" type="button" class="btn btn-outline-danger rounded-pill shadow px-4 me-2">Cancel</a>
                                     <button type="submit" class="btn btn-primary rounded-pill shadow px-4">Submit</button>
                                 </div>
                             </div>

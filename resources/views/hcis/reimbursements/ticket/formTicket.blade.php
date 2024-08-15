@@ -97,16 +97,18 @@
                                     <div class="mb-2">
                                         <label class="form-label" for="tlp_tkt">Phone Number</label>
                                         <input type="number" name="tlp_tkt" id="tlp_tkt" class="form-control"
-                                            maxlength="12" placeholder="Telp" required>
+                                            maxlength="12" placeholder="ex: 08123123123" required>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="mb-2">
                                         <label class="form-label" for="jenis_tkt">Transportation Type</label>
                                         <select class="form-select" name="jenis_tkt" required>
-                                            <option value="Pesawat">Pesawat</option>
-                                            <option value="Kereta">Kereta</option>
+                                            <option value="" disabled selected>Select Transportation Type</option>
+                                            <option value="Train">Train</option>
                                             <option value="Bus">Bus</option>
+                                            <option value="Airplane">Airplane</option>
+                                            <option value="Car">Car</option>
                                             <option value="Ferry">Ferry</option>
                                         </select>
                                     </div>

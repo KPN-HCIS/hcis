@@ -59,43 +59,181 @@ class BusinessTripController extends Controller
     }
     public function formUpdate($id)
     {
+        $n = BusinessTrip::find($id);
+        $userId = Auth::id();
+        $employee_data = Employee::where('id', $userId)->first();
+        $hotel = Hotel::where('user_id', $userId)->first();
+        $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
-        $n = BusinessTrip::find($id);
-        return view('hcis.reimbursements.businessTrip.editFormBt', ['n' => $n, 'companies' => $companies]);
+
+        return view(
+            'hcis.reimbursements.businessTrip.editFormBt',
+            [
+                'n' => $n,
+                'hotel' => $hotel,
+                'employee_data' => $employee_data,
+                'companies' => $companies,
+                'locations' => $locations,
+            ]
+        );
     }
 
 
-    public function update($id, Request $request)
+    public function update(Request $request, $id)
     {
+        // Fetch the business trip record to update
         $n = BusinessTrip::find($id);
-        if ($n) {
-            $oldNoSppd = $n->no_sppd;
-            $n->nama = $request->nama;
-            $n->jns_dinas = $request->jns_dinas;
-            $n->divisi = $request->divisi;
-            $n->unit_1 = $request->unit_1;
-            $n->atasan_1 = $request->atasan_1;
-            $n->email_1 = $request->email_1;
-            $n->unit_2 = $request->unit_2;
-            $n->email_2 = $request->email_2;
-            $n->no_sppd = $request->no_sppd;
-            $n->mulai = $request->mulai;
-            $n->kembali = $request->kembali;
-            $n->tujuan = $request->tujuan;
-            $n->keperluan = $request->keperluan;
-            $n->bb_perusahaan = $request->bb_perusahaan;
-            $n->norek_krywn = $request->norek_krywn;
-            $n->nama_pemilik_rek = $request->nama_pemilik_rek;
-            $n->nama_bank = $request->nama_bank;
-            $n->ca = $request->ca;
-            $n->tiket = $request->tiket;
-            $n->hotel = $request->hotel;
-            $n->taksi = $request->taksi;
-            $n->no_sppd = $oldNoSppd;
-            $n->save();
+        if (!$n) {
+            return redirect()->back()->with('error', 'Business trip not found');
         }
-        return redirect("/businessTrip");
+        // dd($request->all());
+
+        // Store old SPPD number for later use
+        $oldNoSppd = $n->no_sppd;
+
+        // Update business trip record
+        $n->update([
+            'nama' => $request->nama,
+            'jns_dinas' => $request->jns_dinas,
+            'divisi' => $request->divisi,
+            'unit_1' => $request->unit_1,
+            'atasan_1' => $request->atasan_1,
+            'email_1' => $request->email_1,
+            'unit_2' => $request->unit_2,
+            'atasan_2' => $request->atasan_2,
+            'email_2' => $request->email_2,
+            'no_sppd' => $oldNoSppd,  // Preserve old SPPD number
+            'mulai' => $request->mulai,
+            'kembali' => $request->kembali,
+            'tujuan' => $request->tujuan,
+            'keperluan' => $request->keperluan,
+            'bb_perusahaan' => $request->bb_perusahaan,
+            'norek_krywn' => $request->norek_krywn,
+            'nama_pemilik_rek' => $request->nama_pemilik_rek,
+            'nama_bank' => $request->nama_bank,
+            'ca' => $request->ca,
+            'tiket' => $request->tiket,
+            'hotel' => $request->hotel,
+            'taksi' => $request->taksi,
+            'status' => $request->status,
+        ]);
+
+        // Handle "Taksi" update
+        if ($request->taksi === 'Ya') {
+            $taksi = Taksi::updateOrCreate(
+                ['no_sppd' => $oldNoSppd],  // Find by SPPD number
+                [
+                    'id' => (string) Str::uuid(),
+                    'no_vt' => $request->no_vt,
+                    'user_id' => Auth::id(),
+                    'unit' => $request->divisi,
+                    'nominal_vt' => $request->nominal_vt,
+                    'keeper_vt' => $request->keeper_vt,
+                ]
+            );
+        } else {
+            Taksi::where('no_sppd', $oldNoSppd)->delete();  // Remove taksi if not selected
+        }
+
+        // Handle "Hotel" update
+        if ($request->hotel === 'Ya') {
+            foreach ($request->nama_htl as $key => $value) {
+                if (!empty($value)) {
+                    Hotel::updateOrCreate(
+                        ['no_sppd' => $oldNoSppd, 'nama_htl' => $value],
+                        [
+                            'id' => (string) Str::uuid(),
+                            'no_htl' => $this->generateNoSppdHtl(),
+                            'user_id' => Auth::id(),
+                            'unit' => $request->divisi,
+                            'nama_htl' => $value,
+                            'lokasi_htl' => $request->lokasi_htl[$key],
+                            'jmlkmr_htl' => $request->jmlkmr_htl[$key],
+                            'bed_htl' => $request->bed_htl[$key],
+                            'tgl_masuk_htl' => $request->tgl_masuk_htl[$key],
+                            'tgl_keluar_htl' => $request->tgl_keluar_htl[$key],
+                            'total_hari' => $request->total_hari[$key],
+
+                        ]
+                    );
+                }
+            }
+        } else {
+            Hotel::where('no_sppd', $oldNoSppd)->delete();  // Remove all hotels if not selected
+        }
+
+        // Handle "Tiket" update
+        if ($request->tiket === 'Ya') {
+            foreach ($request->noktp_tkt as $key => $value) {
+                if (!empty($value)) {
+                    $employee_data = Employee::where('ktp', $value)->first();
+
+                    if (!$employee_data) {
+                        return redirect()->back()->with('error', "NIK $value not found");
+                    }
+
+                    Tiket::updateOrCreate(
+                        ['no_sppd' => $oldNoSppd, 'noktp_tkt' => $value],
+                        [
+                            'id' => (string) Str::uuid(),
+                            'no_tkt' => $this->generateNoSppdTkt(),
+                            'user_id' => Auth::id(),
+                            'unit' => $request->divisi,
+                            'jk_tkt' => $employee_data->gender ?? null,
+                            'np_tkt' => $employee_data->fullname ?? null,
+                            'noktp_tkt' => $value,
+                            'tlp_tkt' => $employee_data->personal_mobile_number ?? null,
+                            'dari_tkt' => $request->dari_tkt[$key] ?? null,
+                            'ke_tkt' => $request->ke_tkt[$key] ?? null,
+                            'tgl_brkt_tkt' => $request->tgl_brkt_tkt[$key] ?? null,
+                            'tgl_plg_tkt' => $request->tgl_plg_tkt[$key] ?? null,
+                            'jam_brkt_tkt' => $request->jam_brkt_tkt[$key] ?? null,
+                            'jam_plg_tkt' => $request->jam_plg_tkt[$key] ?? null,
+                            'jenis_tkt' => $request->jenis_tkt[$key] ?? null,
+                            'type_tkt' => $request->type_tkt[$key] ?? null,
+                        ]
+                    );
+                }
+            }
+        } else {
+            Tiket::where('no_sppd', $oldNoSppd)->delete();  // Remove all tickets if not selected
+        }
+
+        // Handle "CA Transaction" update
+        if ($request->ca === 'Ya') {
+            $ca = ca_transaction::updateOrCreate(
+                ['no_sppd' => $oldNoSppd],
+                [
+                    'id' => (string) Str::uuid(),
+                    'type_ca' => 'dns',
+                    'no_ca' => $this->generateNoSppdCa(),
+                    'no_sppd' => $oldNoSppd,
+                    'user_id' => Auth::id(),
+                    'unit' => $request->divisi,
+                    'contribution_level_code' => Company::find($request->bb_perusahaan)->contribution_level_code,
+                    'destination' => $request->tujuan,
+                    'others_location' => $request->others_location,
+                    'ca_needs' => $request->keperluan,
+                    'start_date' => $request->mulai,
+                    'end_date' => $request->kembali,
+                    'date_required' => $request->date_required,
+                    'total_days' => $request->total_days,
+                    'detail_ca' => $request->detail_ca,
+                    'total_ca' => $request->total_ca,
+                    'total_real' => $request->total_real,
+                    'total_cost' => $request->total_cost,
+                    'approval_status' => $request->status,
+                    'approval_sett' => $request->approval_sett,
+                    'approval_extend' => $request->approval_extend,
+                ]
+            );
+        } else {
+            ca_transaction::where('no_sppd', $oldNoSppd)->delete();  // Remove CA transaction if not selected
+        }
+
+        return redirect('/businessTrip')->with('success', 'Business trip updated successfully');
     }
+
 
     public function deklarasi($id)
     {
@@ -327,6 +465,8 @@ class BusinessTripController extends Controller
 
         $noSppd = $this->generateNoSppd();
         $noSppdCa = $this->generateNoSppdCa();
+        $noSppdTkt = $this->generateNoSppdTkt();
+        $noSppdHtl = $this->generateNoSppdHtl();
         $userId = Auth::id();
         $employee = Employee::where('id', $userId)->first();
 
@@ -374,6 +514,7 @@ class BusinessTripController extends Controller
 
         if ($request->hotel === 'Ya') {
             $hotelData = [
+                'no_htl' => $noSppdTkt,
                 'nama_htl' => $request->nama_htl,
                 'lokasi_htl' => $request->lokasi_htl,
                 'jmlkmr_htl' => $request->jmlkmr_htl,
@@ -387,7 +528,7 @@ class BusinessTripController extends Controller
                 if (!empty($value)) {
                     $hotel = new Hotel();
                     $hotel->id = (string) Str::uuid();
-                    $hotel->no_htl = $key + 1; // This will give us a sequential number starting from 1
+                    $hotel->no_htl = $noSppdHtl;
                     $hotel->no_sppd = $noSppd;
                     $hotel->user_id = $userId;
                     $hotel->unit = $request->divisi;
@@ -428,6 +569,7 @@ class BusinessTripController extends Controller
 
                     $tiket = new Tiket();
                     $tiket->id = (string) Str::uuid();
+                    $tiket->no_tkt = $noSppdTkt;
                     $tiket->no_sppd = $noSppd;
                     $tiket->user_id = $userId;
                     $tiket->unit = $request->divisi;
@@ -709,6 +851,52 @@ class BusinessTripController extends Controller
 
         return $newNoSppd;
     }
+    private function generateNoSppdHtl()
+    {
+        $currentYear = date('Y');
+        $currentMonth = date('n');
+        $romanMonth = $this->getRomanMonth($currentMonth);
+
+        // Assuming you want to generate no_sppd similarly to no_ca
+        $lastTransaction = Hotel::whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->orderBy('no_htl', 'desc')
+            ->first();
+
+        if ($lastTransaction && preg_match('/(\d{3})\/HTLD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_htl, $matches)) {
+            $lastNumber = intval($matches[1]);
+        } else {
+            $lastNumber = 0;
+        }
+
+        $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        $newNoSppd = "$newNumber/HTLD-HRD/$romanMonth/$currentYear";
+
+        return $newNoSppd;
+    }
+    private function generateNoSppdTkt()
+    {
+        $currentYear = date('Y');
+        $currentMonth = date('n');
+        $romanMonth = $this->getRomanMonth($currentMonth);
+
+        // Assuming you want to generate no_sppd similarly to no_ca
+        $lastTransaction = Tiket::whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->orderBy('no_tkt', 'desc')
+            ->first();
+
+        if ($lastTransaction && preg_match('/(\d{3})\/TKTD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
+            $lastNumber = intval($matches[1]);
+        } else {
+            $lastNumber = 0;
+        }
+
+        $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        $newNoSppd = "$newNumber/TKTD-HRD/$romanMonth/$currentYear";
+
+        return $newNoSppd;
+    }
     private function generateNoSppdCa()
     {
         $currentYear = date('Y');
@@ -716,7 +904,7 @@ class BusinessTripController extends Controller
         $romanMonth = $this->getRomanMonth($currentMonth);
 
         // Assuming you want to generate no_sppd similarly to no_ca
-        $lastTransaction = BusinessTrip::whereYear('created_at', $currentYear)
+        $lastTransaction = ca_transaction::whereYear('created_at', $currentYear)
             ->whereMonth('created_at', $currentMonth)
             ->orderBy('no_sppd', 'desc')
             ->first();

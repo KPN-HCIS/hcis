@@ -29,8 +29,8 @@
 
             <!-- Add Data Button -->
             <div class="col-md-6 mt-4 mb-2 text-end">
-                <a href="{{ route('businessTrip.add') }}" class="btn btn-primary rounded-pill" style="font-size: 16px">
-                    <i class="bi bi-plus-circle"></i> Add Data
+                <a href="{{ route('businessTrip.add') }}" class="btn btn-primary rounded-pill">
+                    Add Data
                 </a>
             </div>
         </div>
@@ -207,26 +207,8 @@
                                                     </p>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
-                                                        class="btn btn-outline-info rounded-pill">
-                                                        <i class="bi bi-download"></i>
-                                                    </a>
-
-                                                    @php
-                                                        $today = \Carbon\Carbon::today()->format('Y-m-d');
-                                                    @endphp
-                                                    @if ($n->kembali < $today && $n->status == 'Approved')
+                                                    @if ($n->status == 'Draft')
                                                         <form method="GET"
-                                                            action="/businessTrip/deklarasi/{{ $n->id }}"
-                                                            style="display: inline-block;">
-                                                            <button type="submit"
-                                                                class="btn btn-outline-success rounded-pill"
-                                                                data-toggle="tooltip" title="Deklarasi">
-                                                                <i class="bi bi-card-checklist"></i>
-                                                            </button>
-                                                        </form>
-                                                    {{-- @else --}}
-                                                        {{-- <form method="GET"
                                                             action="/businessTrip/form/update/{{ $n->id }}"
                                                             style="display: inline-block;">
                                                             <button type="submit"
@@ -235,8 +217,8 @@
                                                                 data-toggle="tooltip" title="Edit">
                                                                 <i class="bi bi-pencil-square"></i>
                                                             </button>
-                                                        </form> --}}
-                                                        {{-- <form id="deleteForm_{{ $n->id }}" method="POST"
+                                                        </form>
+                                                        <form id="deleteForm_{{ $n->id }}" method="POST"
                                                             action="/businessTrip/delete/{{ $n->id }}"
                                                             style="display: inline-block;">
                                                             @csrf
@@ -248,7 +230,27 @@
                                                                 {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
                                                                 <i class="bi bi-trash-fill"></i>
                                                             </button>
-                                                        </form>--}}
+                                                        </form>
+                                                    @else
+                                                        <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
+                                                            class="btn btn-outline-info rounded-pill">
+                                                            <i class="bi bi-download"></i>
+                                                        </a>
+
+                                                        @php
+                                                            $today = \Carbon\Carbon::today()->format('Y-m-d');
+                                                        @endphp
+                                                        @if ($n->kembali < $today && $n->status == 'Approved')
+                                                            <form method="GET"
+                                                                action="/businessTrip/deklarasi/{{ $n->id }}"
+                                                                style="display: inline-block;">
+                                                                <button type="submit"
+                                                                    class="btn btn-outline-success rounded-pill"
+                                                                    data-toggle="tooltip" title="Deklarasi">
+                                                                    <i class="bi bi-card-checklist"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>
@@ -277,7 +279,8 @@
                                 <div id="detailContent"></div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-outline-primary rounded-pill" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-primary rounded-pill"
+                                    data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>

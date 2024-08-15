@@ -26,8 +26,13 @@ class BusinessTrip extends Model
     {
         return $this->belongsTo(Taksi::class, 'user_id', 'user_id');
     }
+    public function btApprovals()
+    {
+        return $this->belongsTo(BTApproval::class, 'bt_id', 'id');
+    }
+
     protected $keyType = 'string';
-    public $incrementing=false;
+    public $incrementing = false;
 
     protected $fillable = [
         'id',

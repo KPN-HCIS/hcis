@@ -188,7 +188,7 @@
         <tr>
             <td class="label">Nama Atasan 1</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->atasan_1 }}</td>
+            <td class="value">{{ $sppd->btApprovals->employee_id ?? 'N/A' }}</td>
         </tr>
         <tr>
             <td class="label">Tanggal</td>

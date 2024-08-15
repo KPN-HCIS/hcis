@@ -10,11 +10,15 @@ class BTApproval extends Model
     use HasFactory;
     public function businessTrip()
     {
-        return $this->belongsTo(BusinessTrip::class, 'bt_id', 'user_id');
+        return $this->belongsTo(BusinessTrip::class, 'bt_id', 'id');
+    }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
 
     protected $keyType = 'string';
-    public $incrementing=false;
+    public $incrementing = false;
 
     protected $fillable = [
         'id',

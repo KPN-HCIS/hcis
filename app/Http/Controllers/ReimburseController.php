@@ -375,16 +375,17 @@ class ReimburseController extends Controller
             ->orderBy('no_htl', 'desc')
             ->first();
 
-        if ($lastTransaction && preg_match('/(\d{3})\/HTL-ACC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_htl, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/HTLD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_htl, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
         }
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        $newNoHtl = "$newNumber/HTL-ACC/$romanMonth/$currentYear";
+        $newNoHtl = "$newNumber/HTLD-HRD/$romanMonth/$currentYear";
 
         $model = new htl_transaction;
+
         $model->id = Str::uuid();
         $model->no_htl = $newNoHtl;
         $model->no_sppd = $req->bisnis_numb;
@@ -398,6 +399,15 @@ class ReimburseController extends Controller
         $model->tgl_keluar_htl = $req->tgl_keluar_htl;
         $model->total_hari = $req->totaldays;
         $model->created_by = $userId;
+
+        $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
+
+        if ($bt) {
+            // Update the 'hotel' field to 'Ya'
+            $bt->hotel = 'Ya';
+            $bt->save();
+        }
+
         $model->save();
 
         Alert::success('Success');
@@ -408,7 +418,7 @@ class ReimburseController extends Controller
     {
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
-        $link = 'Cash Advanced';
+        $link = 'Hotel';
 
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
@@ -462,7 +472,7 @@ class ReimburseController extends Controller
         $userId = Auth::user();
         $parentLink = 'Reimbursement';
         $link = 'Ticket';
-        $transactions = tkt_transaction::where('user_id', $userId->id)->get();
+        $transactions = tkt_transaction::where('user_id', $userId->id)->with('businessTrip')->get();
 
         return view('hcis.reimbursements.ticket.ticket', [
             'link' => $link,
@@ -482,7 +492,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Approved')->orderBy('no_sppd', 'asc')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '=', 'Pending L1')->orderBy('no_sppd', 'asc')->get();
         // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
 
@@ -528,14 +538,14 @@ class ReimburseController extends Controller
             ->orderBy('no_tkt', 'desc')
             ->first();
 
-        if ($lastTransaction && preg_match('/(\d{3})\/TKT-ACC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/TKTD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
         }
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        $newNoHtl = "$newNumber/TKT-ACC/$romanMonth/$currentYear";
+        $newNoHtl = "$newNumber/TKTD-HRD/$romanMonth/$currentYear";
 
         $model = new tkt_transaction;
         $model->id = Str::uuid();
@@ -556,6 +566,15 @@ class ReimburseController extends Controller
         $model->tgl_plg_tkt = $req->tgl_plg_tkt;
         $model->jam_plg_tkt = $req->jam_plg_tkt;
         $model->created_by = $userId;
+
+        $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
+
+        if ($bt) {
+            // Update the 'hotel' field to 'Ya'
+            $bt->tiket = 'Ya';
+            $bt->save();
+        }
+
         $model->save();
 
         Alert::success('Success');
@@ -572,7 +591,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '=', 'Pending L1')->orderBy('no_sppd', 'asc')->get();
         $transactions = tkt_transaction::findByRouteKey($key);
 
         return view('hcis.reimbursements.ticket.editTicket', [
