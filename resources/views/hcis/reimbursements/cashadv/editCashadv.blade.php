@@ -25,7 +25,7 @@
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-8">
                 <div class="card-header d-flex bg-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data <b>{{ $transactions->no_sppd }}</b></h4>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data <b>{{ $transactions->no_ca }}</b></h4>
                     <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>

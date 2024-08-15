@@ -7,6 +7,7 @@
 <!-- Custom styles for this page -->
 <link href="{{ asset('vendor/datatables/dataTables.bootstrap5.min.css') }}?v={{ config('app.version') }}" rel="stylesheet">
 <link href="{{ asset('css/quill.snow.css') }}?v={{ config('app.version') }}" rel="stylesheet">
+
 <!-- Select2 CSS -->
 <link href="{{ asset('vendor/select2/dist/css/select2.min.css') }}?v={{ config('app.version') }}" rel="stylesheet">
 <link href="{{ asset('vendor/select2/dist/css/select2-bootstrap-5-theme.min.css') }}?v={{ config('app.version') }}" rel="stylesheet">

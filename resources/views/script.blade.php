@@ -14,6 +14,8 @@
 
 <script src="{{ asset('js/report.js') }}?v={{ config('app.version') }}"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 @if(Session::has('toast'))
 <script>
     const toastData = {!! json_encode(Session::get('toast')) !!};

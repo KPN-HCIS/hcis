@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Location;
 use App\Models\Employee;
 use App\Models\ListPerdiem;
+use App\Models\BusinessTrip;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
@@ -38,6 +39,7 @@ class ReimburseController extends Controller
         $link = 'Cash Advanced';
         // Mengambil transaksi dengan user_id yang sesuai dan mengikutsertakan relasi employee
         $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
+        $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
 
         $company = Company::with('companies')->where('contribution_level_code', 'company_name')->get();
 
@@ -48,6 +50,7 @@ class ReimburseController extends Controller
         }
         //dd($ca_transactions);
         return view('hcis.reimbursements.cashadv.cashadv', [
+            'pendingCACount' => $pendingCACount,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
@@ -55,6 +58,21 @@ class ReimburseController extends Controller
             'company' => $company,
         ]);
     }
+
+    // public function show($id)
+    // {
+    //     $parentLink = 'Reimbursement';
+    //     $link = 'Cash Advanced';
+    //     $transaction = CATransaction::findOrFail($id);
+
+    //     return view('hcis.reimbursements.cashadv.cashadv', [
+    //         'transaction' => $transaction,
+    //         'parentLink' => $parentLink,
+    //         'link' => $link,
+    //     ]);
+    // }
+
+
     function cashadvancedCreate()
     {
 
@@ -66,7 +84,8 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $no_sppds = BusinessTrip::orderBy('no_sppd')->get();
 
 
         return view('hcis.reimbursements.cashadv.formCashadv', [
@@ -85,9 +104,18 @@ class ReimburseController extends Controller
         function getRomanMonth($month)
         {
             $romanMonths = [
-                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
-                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
-                11 => 'XI', 12 => 'XII'
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
             ];
             return $romanMonths[$month];
         }
@@ -134,7 +162,7 @@ class ReimburseController extends Controller
         $model->declare_estimate      = $req->ca_decla;
         $model->date_required   = $req->ca_required;
         $model->total_days      = $req->totaldays;
-        if ($req->ca_type == 'dns' || $req->ca_type == 'ndns') {
+        if ($req->ca_type == 'dns') {
             $detail_ca = [
                 'allowance' => $req->allowance,
                 'transport' => $req->transport,
@@ -143,6 +171,31 @@ class ReimburseController extends Controller
             ];
             $detail_ca_json = json_encode($detail_ca);
             $model->detail_ca = $detail_ca_json;
+        } else if ($req->ca_type == 'ndns') {
+            // Menyiapkan array untuk menyimpan detail 'ndns'
+            $detail_ndns = [];
+
+            // Loop melalui setiap tanggal yang diberikan (dari input dinamis)
+            if ($req->has('tanggal_nbt')) {
+                foreach ($req->tanggal_nbt as $key => $tanggal) {
+                    // Ambil keterangan, nominal, dan tanggal untuk setiap set input
+                    $keterangan_nbt = $req->keterangan_nbt[$key];
+                    $nominal_nbt = str_replace('.', '', $req->nominal_nbt[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+
+                    // Tambahkan ke array detail_ndns
+                    $detail_ndns[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan_nbt,
+                        'nominal' => $nominal_nbt,
+                    ];
+                }
+            }
+
+            // Konversi array detail_ndns menjadi JSON untuk disimpan di database
+            $detail_ndns_json = json_encode($detail_ndns);
+
+            // Simpan data 'detail_ca' ke model
+            $model->detail_ca = $detail_ndns_json;
         } else if ($req->ca_type == 'entr') {
             $detail_ca = [
                 'enter_type_1' => $req->enter_type_1,
@@ -187,7 +240,11 @@ class ReimburseController extends Controller
         $model->total_ca        = str_replace('.', '', $req->totalca);
         $model->total_real      = "0";
         $model->total_cost      = str_replace('.', '', $req->totalca);
-        $model->approval_status = "Pending";
+        if ($req->input('action') == 'draft') {
+            $model->approval_status = "Draft";
+        } elseif ($req->input('action') == 'submit') {
+            $model->approval_status = "Pending";
+        }
         $model->created_by          = $userId;
         $model->save();
 
@@ -339,6 +396,8 @@ class ReimburseController extends Controller
         // return $pdf->download('Cash Advanced ' . $key . '.pdf');
         return $pdf->stream('Cash Advanced ' . $key . '.pdf');
     }
+
+    // Approval Cash Advanced
     public function cashadvancedApproval()
     {
         $userId = Auth::id();
@@ -402,6 +461,7 @@ class ReimburseController extends Controller
         Alert::success('Success Approve');
         return redirect()->intended(route('cashadvanced_approve', absolute: false));
     }
+
     // Hotel
     public function hotel()
     {
@@ -447,9 +507,18 @@ class ReimburseController extends Controller
         function getRomanMonth_htl($month)
         {
             $romanMonths = [
-                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
-                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
-                11 => 'XI', 12 => 'XII'
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
             ];
             return $romanMonths[$month];
         }
@@ -546,6 +615,8 @@ class ReimburseController extends Controller
         $model->delete();
         return redirect()->intended(route('hotel', absolute: false));
     }
+
+    // Ticket
     public function ticket()
     {
         $userId = Auth::id();
@@ -590,9 +661,18 @@ class ReimburseController extends Controller
         function getRomanMonth_tkt($month)
         {
             $romanMonths = [
-                1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V',
-                6 => 'VI', 7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X',
-                11 => 'XI', 12 => 'XII'
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
             ];
             return $romanMonths[$month];
         }

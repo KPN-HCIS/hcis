@@ -8,6 +8,7 @@ use App\Models\BusinessTrip;
 use App\Models\ca_transaction;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\htl_transaction;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,20 +24,20 @@ class BusinessTripController extends Controller
         $perPage = request()->query('per_page', 10);
 
         $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->paginate($perPage);
-        // $sppd = BusinessTrip::where('user_id', $user->id)
-        //                 ->orderBy('mulai', 'asc')
-        //                 ->paginate($perPage);
-        // $noSppds = $sppd->pluck('no_sppd')->toArray();
-        // $ca = ca_transaction::where('user_id', $user->id)
-        //                  ->whereIn('no_sppd', $noSppds)
-        //                  ->get();
-        // $caGroupedBySppd = $ca->groupBy('no_sppd');
-        $ca = ca_transaction::where('user_id', $user->id)->first();
+
+        // Collect all SPPD numbers from the BusinessTrip instances
+        $sppdNos = $sppd->pluck('no_sppd');
+
+        // No sppd
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        // $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $hotel = htl_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        // $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'ca'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'hotel'));
     }
 
     public function delete($id)
@@ -281,5 +282,4 @@ class BusinessTripController extends Controller
         ];
         return $romanMonths[$month];
     }
-
 }
