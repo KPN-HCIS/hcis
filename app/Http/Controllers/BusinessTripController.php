@@ -53,9 +53,9 @@ class BusinessTripController extends Controller
     {
         $n = BusinessTrip::find($id);
         if ($n) {
-            $n->delete();
+            $n->delete(); // Perform soft delete
         }
-        return redirect('businessTrip');
+        return redirect()->route('businessTrip')->with('success', 'Business Trip marked as deleted.');
     }
     public function formUpdate($id)
     {
@@ -313,6 +313,8 @@ class BusinessTripController extends Controller
         try {
             $user = Auth::user();
             $sppd = BusinessTrip::where('user_id', $user->id)->where('id', $id)->firstOrFail();
+
+            $sppd->load(['manager1', 'manager2', 'approvals.employee']);
 
             if (!$types) {
                 $types = ['sppd', 'ca', 'tiket', 'hotel', 'taksi'];
@@ -840,14 +842,14 @@ class BusinessTripController extends Controller
             ->orderBy('no_sppd', 'desc')
             ->first();
 
-        if ($lastTransaction && preg_match('/(\d{3})\/SPPD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/SPPD-HC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
         }
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        $newNoSppd = "$newNumber/SPPD-HRD/$romanMonth/$currentYear";
+        $newNoSppd = "$newNumber/SPPD-HC/$romanMonth/$currentYear";
 
         return $newNoSppd;
     }

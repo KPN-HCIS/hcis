@@ -26,10 +26,37 @@ class BusinessTrip extends Model
     {
         return $this->belongsTo(Taksi::class, 'user_id', 'user_id');
     }
-    public function btApprovals()
+    public function manager1()
     {
-        return $this->belongsTo(BTApproval::class, 'bt_id', 'id');
+        return $this->belongsTo(Employee::class, 'manager_l1_id', 'employee_id');
     }
+
+    public function manager2()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l2_id', 'employee_id');
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(BTApproval::class, 'bt_id', 'id');
+    }
+    // BusinessTrip.php
+    public function latestApprovalL1()
+    {
+        return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+                    ->where('layer', 1) // or whatever column distinguishes the layer
+                    ->latestOfMany()
+                    ->with('manager1');
+    }
+
+    public function latestApprovalL2()
+    {
+        return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+                    ->where('layer', 2)
+                    ->latestOfMany('approved_at')
+                    ->with('manager2');
+    }
+
 
     protected $keyType = 'string';
     public $incrementing = false;

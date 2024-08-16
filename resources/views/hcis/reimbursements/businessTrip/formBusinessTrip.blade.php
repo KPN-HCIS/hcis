@@ -29,7 +29,7 @@
                             </div>
                         @endif
 
-                        <form action="/businessTrip/form/post" method="POST">
+                        <form id="btFrom" action="/businessTrip/form/post" method="POST">
                             @csrf
 
                             <div class="mb-3">
@@ -61,7 +61,7 @@
                                     required>
                                     <option value="">--- Choose Destination ---</option>
                                     @foreach ($locations as $location)
-                                        <option value="{{ $location->company_name }}">
+                                        <option value="{{ $location->area }}">
                                             {{ $location->area . ' (' . $location->city . ')' }}
                                         </option>
                                     @endforeach
@@ -99,13 +99,13 @@
                             <div class="mb-3">
                                 <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
                                 <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
-                                    name="nama_pemilik_rek" value="{{ $employee_data->bank_name }}" readonly>
+                                    name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
                             </div>
 
                             <div class="mb-3">
                                 <label for="nama_bank" class="form-label">Bank Name</label>
-                                <input type="text" class="form-control" id="nama_bank" name="nama_bank"
-                                    placeholder="ex. BCA" required>
+                                <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
+                                    placeholder="ex. BCA" value="{{ $employee_data->bank_name }}" readonly>
                             </div>
 
                             <!-- HTML Part -->
@@ -346,7 +346,8 @@
                                                                     <label class="form-label">Hotel Name</label>
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
-                                                                            name="nama_htl[]" type="text">
+                                                                            name="nama_htl[]" type="text"
+                                                                            placeholder="ex: Hyatt">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -442,35 +443,37 @@
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <div class="mb-2" id="taksi_div">
-                                                                <label class="form-label">No. Voucher Taxi</label>
+                                                                <label class="form-label">Total Ticket</label>
                                                                 <div class="input-group">
                                                                     <div class="input-group-append">
                                                                     </div>
                                                                     <input class="form-control bg-white" name="no_vt"
-                                                                        id="no_vt" type="text" min="0"
-                                                                        placeholder="0">
+                                                                        id="no_vt" type="number" min="0"
+                                                                        placeholder="ex: 2">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
                                                                 <label class="form-label">Voucher Nominal</label>
                                                                 <div class="input-group">
-                                                                    <div class="input-group-append">
+                                                                    <div class="input-group-prepend">
                                                                         <span class="input-group-text">Rp</span>
                                                                     </div>
                                                                     <input class="form-control" name="nominal_vt"
-                                                                        id="nominal_vt" type="number" min="0"
-                                                                        placeholder="ex. 12000">
+                                                                        id="nominal_vt" type="text"
+                                                                        placeholder="ex. 12.000"
+                                                                        oninput="formatCurrency(this)">
                                                                 </div>
                                                             </div>
                                                             <div class="mb-2">
                                                                 <label class="form-label">Voucher Keeper</label>
                                                                 <div class="input-group">
-                                                                    <div class="input-group-append">
+                                                                    <div class="input-group-prepend">
                                                                         <span class="input-group-text">Rp</span>
                                                                     </div>
                                                                     <input class="form-control" name="keeper_vt"
-                                                                        id="keeper_vt" type="number" min="0"
-                                                                        placeholder="ex. 12000">
+                                                                        id="keeper_vt" type="text"
+                                                                        placeholder="ex. 12.000"
+                                                                        oninput="formatCurrency(this)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -499,6 +502,37 @@
 
     <!-- JavaScript Part -->
     <script>
+        function formatCurrency(input) {
+            // Store the current cursor position
+            var cursorPos = input.selectionStart;
+
+            // Get the input value and remove non-digit characters
+            var value = input.value.replace(/[^\d]/g, '');
+
+            // Format the number with thousands separators
+            var formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            // Update the input value
+            input.value = formattedValue;
+
+            // Adjust cursor position
+            cursorPos += (formattedValue.length - value.length);
+
+            // Set the cursor position
+            input.setSelectionRange(cursorPos, cursorPos);
+        }
+        document.getElementById('btFrom').addEventListener('submit', function(event) {
+            // Unformat the voucher fields before submission
+            var nominalField = document.getElementById('nominal_vt');
+            var keeperField = document.getElementById('keeper_vt');
+
+            // Remove dots from the formatted value
+            nominalField.value = nominalField.value.replace(/\./g, '');
+            keeperField.value = keeperField.value.replace(/\./g, '');
+        });
+
+
+
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('save-draft').addEventListener('click', function(event) {
                 event.preventDefault();
@@ -560,6 +594,7 @@
             });
         });
         document.addEventListener('DOMContentLoaded', function() {
+            // Elements
             const caSelect = document.getElementById('ca');
             const caNbtDiv = document.getElementById('ca_div');
 
@@ -572,15 +607,29 @@
             const tiketSelect = document.getElementById('tiket');
             const tiketDiv = document.getElementById('tiket_div');
 
+            // Function to reset fields in the target div
+            function resetFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
+                });
+            }
 
+            // Function to toggle display and reset fields
             function toggleDisplay(selectElement, targetDiv) {
                 if (selectElement.value === 'Ya') {
                     targetDiv.style.display = 'block';
                 } else {
                     targetDiv.style.display = 'none';
+                    resetFields(targetDiv); // Reset fields when hiding the target div
                 }
             }
 
+            // Event listeners for select elements
             caSelect.addEventListener('change', function() {
                 toggleDisplay(caSelect, caNbtDiv);
             });
@@ -596,9 +645,8 @@
             tiketSelect.addEventListener('change', function() {
                 toggleDisplay(tiketSelect, tiketDiv);
             });
-
-
         });
+
         document.addEventListener('DOMContentLoaded', function() {
             const ticketSelect = document.getElementById('tiket');
             const ticketDiv = document.getElementById('tiket_div');
@@ -609,10 +657,25 @@
                     ticketDiv.style.display = 'block';
                 } else {
                     ticketDiv.style.display = 'none';
+                    // Reset all input fields within the ticketDiv when 'Tidak' is selected
+                    resetTicketFields(ticketDiv);
                 }
             });
 
-            // Rest of your existing code for handling multiple ticket forms
+            // Function to reset ticket fields
+            function resetTicketFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                // Also reset select fields if needed
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0; // or set to a specific default value
+                });
+            }
+
+            // Handling form visibility and reset for multiple ticket forms
             for (let i = 1; i <= 4; i++) {
                 const yesRadio = document.getElementById(`more_tkt_yes_${i}`);
                 const noRadio = document.getElementById(`more_tkt_no_${i}`);
@@ -629,11 +692,19 @@
                         nextForm.style.display = 'none';
                         // Hide all subsequent forms
                         for (let j = i + 1; j <= 5; j++) {
-                            document.getElementById(`ticket-form-${j}`).style.display = 'none';
+                            const form = document.getElementById(`ticket-form-${j}`);
+                            if (form) {
+                                form.style.display = 'none';
+                                // Reset the form when it is hidden
+                                resetTicketFields(form);
+                            }
                         }
                         // Reset radio buttons for subsequent forms
                         for (let j = i + 1; j <= 4; j++) {
-                            document.getElementById(`more_tkt_no_${j}`).checked = true;
+                            const noRadioButton = document.getElementById(`more_tkt_no_${j}`);
+                            if (noRadioButton) {
+                                noRadioButton.checked = true;
+                            }
                         }
                     }
                 });
@@ -653,8 +724,80 @@
                 });
             });
         });
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Existing ticket code...
+            // Ticket form handling
+            const ticketSelect = document.getElementById('tiket');
+            const ticketDiv = document.getElementById('tiket_div');
+
+            ticketSelect.addEventListener('change', function() {
+                if (this.value === 'Ya') {
+                    ticketDiv.style.display = 'block';
+                } else {
+                    ticketDiv.style.display = 'none';
+                    // Reset all input fields within the ticketDiv when 'Tidak' is selected
+                    resetTicketFields(ticketDiv);
+                }
+            });
+
+            function resetTicketFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
+                });
+            }
+
+            for (let i = 1; i <= 4; i++) {
+                const yesRadio = document.getElementById(`more_tkt_yes_${i}`);
+                const noRadio = document.getElementById(`more_tkt_no_${i}`);
+                const nextForm = document.getElementById(`ticket-form-${i + 1}`);
+
+                yesRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'block';
+                    }
+                });
+
+                noRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'none';
+                        // Hide all subsequent forms
+                        for (let j = i + 1; j <= 5; j++) {
+                            const form = document.getElementById(`ticket-form-${j}`);
+                            if (form) {
+                                form.style.display = 'none';
+                                // Reset the form when it is hidden
+                                resetTicketFields(form);
+                            }
+                        }
+                        // Reset radio buttons for subsequent forms
+                        for (let j = i + 1; j <= 4; j++) {
+                            const noRadioButton = document.getElementById(`more_tkt_no_${j}`);
+                            if (noRadioButton) {
+                                noRadioButton.checked = true;
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Handle Round Trip options
+            const ticketTypes = document.querySelectorAll('select[name="type_tkt[]"]');
+            ticketTypes.forEach((select, index) => {
+                select.addEventListener('change', function() {
+                    const roundTripOptions = this.closest('.card-body').querySelector(
+                        '.round-trip-options');
+                    if (this.value === 'Round Trip') {
+                        roundTripOptions.style.display = 'block';
+                    } else {
+                        roundTripOptions.style.display = 'none';
+                    }
+                });
+            });
 
             // Hotel form handling
             for (let i = 1; i <= 4; i++) {
@@ -673,13 +816,33 @@
                         nextForm.style.display = 'none';
                         // Hide all subsequent forms
                         for (let j = i + 1; j <= 5; j++) {
-                            document.getElementById(`hotel-form-${j}`).style.display = 'none';
+                            const form = document.getElementById(`hotel-form-${j}`);
+                            if (form) {
+                                form.style.display = 'none';
+                                // Reset the form when it is hidden
+                                resetHotelFields(form);
+                            }
                         }
                         // Reset radio buttons for subsequent forms
                         for (let j = i + 1; j <= 4; j++) {
-                            document.getElementById(`more_htl_no_${j}`).checked = true;
+                            const noRadioButton = document.getElementById(`more_htl_no_${j}`);
+                            if (noRadioButton) {
+                                noRadioButton.checked = true;
+                            }
                         }
                     }
+                });
+            }
+
+            // Function to reset hotel fields
+            function resetHotelFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
                 });
             }
 
@@ -721,17 +884,19 @@
                     checkOut.addEventListener('change', () => calculateTotalDays(i));
                 }
             }
+
+            // Handle date validation for the return date
+            document.getElementById('kembali').addEventListener('change', function() {
+                var mulaiDate = document.getElementById('mulai').value;
+                var kembaliDate = this.value;
+
+                if (kembaliDate < mulaiDate) {
+                    alert('Return date cannot be earlier than Start date.');
+                    this.value = ''; // Reset the kembali field
+                }
+            });
         });
 
-        document.getElementById('kembali').addEventListener('change', function() {
-            var mulaiDate = document.getElementById('mulai').value;
-            var kembaliDate = this.value;
-
-            if (kembaliDate < mulaiDate) {
-                alert('Return date cannot be earlier than Start date.');
-                this.value = ''; // Reset the kembali field
-            }
-        });
         document.getElementById('tgl_keluar_htl').addEventListener('change', function() {
             var masukHtl = document.getElementById('tgl_masuk_htl').value;
             var keluarDate = this.value;

@@ -37,9 +37,19 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class, 'users_id', 'id');
     }
-    public function btApprovals()
+    public function businessTripsAsManager1()
     {
-        return $this->belongsTo(BTApproval::class, 'employee_id', 'employee_id');
+        return $this->hasMany(BusinessTrip::class, 'manager_l1_id', 'employee_id');
+    }
+
+    public function businessTripsAsManager2()
+    {
+        return $this->hasMany(BusinessTrip::class, 'manager_l2_id', 'employee_id');
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(BTApproval::class, 'employee_id', 'employee_id');
     }
     public function businessTrip()
     {

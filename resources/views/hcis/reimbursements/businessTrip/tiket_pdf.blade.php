@@ -145,16 +145,6 @@
                 <td class="colon">:</td>
                 <td class="value"><b>{{ $passenger->type_tkt }}</b></td>
             </tr>
-            <tr>
-                <td class="label">Under the Burden of PT</td>
-                <td class="colon">:</td>
-                <td class="value">{{ $passenger->company_name }}</td>
-            </tr>
-            <tr>
-                <td class="label">Cost Center</td>
-                <td class="colon">:</td>
-                <td class="value"><b>{{ $passenger->cost_center ?? '0' }}</b></td>
-            </tr>
             @if (!$loop->last)
                 <tr>
                     <td colspan="3">
@@ -164,7 +154,21 @@
             @endif
         @endforeach
     </table>
-
+    <table>
+        <tr>
+            <td colspan="3"><b>Lainnya:</b></td>
+        </tr>
+        <tr>
+            <td class="label">Company</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $passenger->company_name }}</td>
+        </tr>
+        <tr>
+            <td class="label">Cost Center</td>
+            <td class="colon">:</td>
+            <td class="value"><b>{{ $passenger->cost_center ?? '0' }}</b></td>
+        </tr>
+    </table>
     <table>
         <tr>
             <td colspan="3"><b>Disetujui Oleh :</b></td>
@@ -172,25 +176,22 @@
         <tr>
             <td class="label">Nama Atasan 1</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->atasan_1 }}</td>
+            <td class="value"> {{ $passenger->businessTrip->manager1->fullname ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->tanggal_atasan_1 }}</td>
+            <td class="value"> {{ $sppd->latestApprovalL1->approved_at ?? '-' }}</td>
         </tr>
-    </table>
-
-    <table>
         <tr>
             <td class="label">Nama Atasan 2</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->atasan_2 }}</td>
+            <td class="value">{{ $sppd->manager2->fullname ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->tanggal_atasan_2 }}</td>
+            <td class="value"> {{ $sppd->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
     </table>
 

@@ -12,9 +12,19 @@ class BTApproval extends Model
     {
         return $this->belongsTo(BusinessTrip::class, 'bt_id', 'id');
     }
+
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
+    public function manager1()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l1_id', 'employee_id');
+    }
+
+    public function manager2()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l2_id', 'employee_id');
     }
 
     protected $keyType = 'string';

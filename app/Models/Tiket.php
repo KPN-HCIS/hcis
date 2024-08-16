@@ -17,8 +17,17 @@ class Tiket extends Model
     {
         return $this->belongsTo(BusinessTrip::class, 'user_id', 'user_id');
     }
+    public function manager1()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l1_id', 'employee_id');
+    }
+
+    public function manager2()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l2_id', 'employee_id');
+    }
     protected $keyType = 'string';
-    public $incrementing=false;
+    public $incrementing = false;
 
     protected $fillable = [
         'id',

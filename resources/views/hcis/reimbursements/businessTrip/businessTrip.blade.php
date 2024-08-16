@@ -6,6 +6,35 @@
             font-size: 28px !important;
             vertical-align: middle !important;
         }
+
+        .table {
+            border-collapse: separate;
+        }
+
+        .table th,
+        .table td {
+            position: -webkit-sticky;
+            /* For Safari */
+            position: sticky;
+            background: #fff;
+            /* or the background color of your choice */
+        }
+
+        .table th.sticky-col,
+        .table td.sticky-col {
+            left: 0;
+            z-index: 10;
+            /* Higher z-index to ensure it stays on top */
+            border-right: 1px solid #ddd;
+            /* Optional: Add border for visual separation */
+        }
+
+        .table th.sticky-col:first-child,
+        .table td.sticky-col:first-child {
+            left: 0;
+            z-index: 11;
+            /* Ensure the first sticky column is above other sticky columns */
+        }
     </style>
 @endsection
 
@@ -79,7 +108,7 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
-                                            <th>No SPPD</th>
+                                            <th class="sticky-col">No SPPD</th>
                                             <th>Destination</th>
                                             <th>Start</th>
                                             <th>End</th>
@@ -98,10 +127,10 @@
                                                 <th scope="row" style="text-align: center;">
                                                     {{ $loop->iteration }}
                                                 </th>
-                                                <td>{{ $n->no_sppd }}</td>
+                                                <td class="sticky-col">{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-m-Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-M-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-M-Y') }}</td>
                                                 <td style="text-align: center">
                                                     @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
@@ -114,8 +143,8 @@
                                                                 'CA Total' => $caTransactions[$n->no_sppd]->total_ca,
                                                                 'Total Real' => $caTransactions[$n->no_sppd]->total_real,
                                                                 'Total Cost' => $caTransactions[$n->no_sppd]->total_cost,
-                                                                'Start' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
-                                                                'End' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
+                                                                'Start' => date('d-M-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
+                                                                'End' => date('d-M-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
                                                             ]) }}"><u>Details</u></a>
                                                     @else
                                                         -
@@ -137,9 +166,9 @@
                                                                         'Phone No.' => $ticket->tlp_tkt,
                                                                         'From' => $ticket->dari_tkt,
                                                                         'To' => $ticket->ke_tkt,
-                                                                        'Departure Date' => date('d-m-Y', strtotime($ticket->tgl_brkt_tkt)),
+                                                                        'Departure Date' => date('d-M-Y', strtotime($ticket->tgl_brkt_tkt)),
                                                                         'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
-                                                                        'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-m-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
+                                                                        'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-M-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
                                                                         'Return Time' => !empty($ticket->jam_plg_tkt) ? date('H:i', strtotime($ticket->jam_plg_tkt)) : 'No Data',
                                                                     ];
                                                                 }),
@@ -165,8 +194,8 @@
                                                                         'Location' => $hotel->lokasi_htl,
                                                                         'Room' => $hotel->jmlkmr_htl,
                                                                         'Bed' => $hotel->bed_htl,
-                                                                        'Check In' => date('d-m-Y', strtotime($hotel->tgl_masuk_htl)),
-                                                                        'Check Out' => date('d-m-Y', strtotime($hotel->tgl_keluar_htl)),
+                                                                        'Check In' => date('d-M-Y', strtotime($hotel->tgl_masuk_htl)),
+                                                                        'Check Out' => date('d-M-Y', strtotime($hotel->tgl_keluar_htl)),
                                                                         'Total Days' => $hotel->total_hari,
                                                                     ];
                                                                 }),
@@ -191,22 +220,26 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    <p type="button"
-                                                        class="btn btn-sm rounded-pill btn-{{ $n->status == 'Approved'
+                                                <td style="align-content: center">
+                                                    <span
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved'
                                                             ? 'success'
                                                             : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
                                                                 ? 'danger'
                                                                 : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
                                                                     ? 'warning'
-                                                                    : (in_array($n->status, ['Doc Accepted', 'verified'])
-                                                                        ? 'primary'
-                                                                        : 'secondary'))) }}"
-                                                        style="pointer-events: none">
+                                                                    : ($n->status == 'Draft'
+                                                                        ? 'secondary'
+                                                                        : (in_array($n->status, ['Doc Accepted', 'verified'])
+                                                                            ? 'primary'
+                                                                            : 'secondary')))) }}"
+                                                        style="
+                                                        font-size: 12px;
+                                                        padding: 0.5rem 1rem;">
                                                         {{ $n->status }}
-                                                    </p>
+                                                    </span>
                                                 </td>
-                                                <td>
+                                                <td style="align-content: center">
                                                     @if ($n->status == 'Draft')
                                                         <form method="GET"
                                                             action="/businessTrip/form/update/{{ $n->id }}"
@@ -337,6 +370,21 @@
                         }
 
                     }
+                    // Initialize DataTable for all tables with the class 'data-table'
+                    document.querySelectorAll('.data-table').forEach(function(table) {
+                        new DataTable(table, {
+                            fixedColumns: {
+                                start: 1,
+                                end: 1
+                            },
+                            paging: false,
+                            scrollCollapse: true,
+                            scrollX: true,
+                            scrollY: 300
+                        });
+                    });
+
+
 
                     // Ensure the DOM is fully loaded before manipulating it
                     document.addEventListener('DOMContentLoaded', function() {

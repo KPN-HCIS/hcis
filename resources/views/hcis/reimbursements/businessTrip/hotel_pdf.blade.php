@@ -169,24 +169,22 @@
         <tr>
             <td class="label">Nama Atasan 1</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->businessTrip->atasan_1 }}</td>
+            <td class="value"> {{ $sppd->manager1->fullname ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->businessTrip->tanggal_atasan_1 }}</td>
+            <td class="value"> {{ $sppd->latestApprovalL1->approved_at ?? '-' }}</td>
         </tr>
-    </table>
-    <table>
         <tr>
             <td class="label">Nama Atasan 2</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->businessTrip->atasan_2 }}</td>
+            <td class="value">{{ $sppd->manager2->fullname ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->businessTrip->tanggal_atasan_2 }}</td>
+            <td class="value"> {{ $sppd->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
     </table>
 </body>

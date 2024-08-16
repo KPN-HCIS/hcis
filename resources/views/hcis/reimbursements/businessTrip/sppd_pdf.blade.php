@@ -179,6 +179,11 @@
             <td class="colon">:</td>
             <td class="value">{{ Carbon::parse($sppd->kembali)->format('d F Y') }}</td>
         </tr>
+        <tr>
+            <td class="label">Status</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $sppd->status }}</td>
+        </tr>
     </table>
 
     <table>
@@ -188,22 +193,22 @@
         <tr>
             <td class="label">Nama Atasan 1</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->btApprovals->employee_id ?? 'N/A' }}</td>
+            <td class="value"> {{ $sppd->manager1->fullname ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->tanggal_atasan_1 }}</td>
+            <td class="value"> {{ $sppd->latestApprovalL1->approved_at ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Nama Atasan 2</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->atasan_2 }}</td>
+            <td class="value">{{ $sppd->manager2->fullname ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->tanggal_atasan_2 }}</td>
+            <td class="value"> {{ $sppd->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
     </table>
     <p><b><i>Catatan : Persetujuan ini sudah disetujui secara Elektronik dan tidak memerlukan tanda tangan</b></i></p>

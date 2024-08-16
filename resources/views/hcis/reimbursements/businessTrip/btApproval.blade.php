@@ -71,6 +71,7 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
+                                            <th>Name</th>
                                             <th>No SPPD</th>
                                             <th>Destination</th>
                                             <th>Start</th>
@@ -80,7 +81,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                            <th style="width: 145px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -90,10 +91,11 @@
                                                 <th scope="row" style="text-align: center;">
                                                     {{ $loop->iteration }}
                                                 </th>
+                                                <td>{{ $n->nama }}</td>
                                                 <td>{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-m-Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-M-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-M-Y') }}</td>
                                                 <td style="text-align: center">
                                                     @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
@@ -183,22 +185,26 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    <p type="button"
-                                                        class="btn btn-sm rounded-pill btn-{{ $n->status == 'Approved'
+                                                <td style="align-content: center;">
+                                                    <span
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved'
                                                             ? 'success'
-                                                            : ($n->status == 'Return' || $n->status == 'return/refunds'
+                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
                                                                 ? 'danger'
                                                                 : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
                                                                     ? 'warning'
-                                                                    : (in_array($n->status, ['Doc Accepted', 'verified'])
-                                                                        ? 'primary'
-                                                                        : 'secondary'))) }}"
-                                                        style="pointer-events: none">
+                                                                    : ($n->status == 'Draft'
+                                                                        ? 'secondary'
+                                                                        : (in_array($n->status, ['Doc Accepted', 'verified'])
+                                                                            ? 'primary'
+                                                                            : 'secondary')))) }}"
+                                                        style="
+                                                    font-size: 12px;
+                                                    padding: 0.5rem 1rem;">
                                                         {{ $n->status }}
-                                                    </p>
+                                                    </span>
                                                 </td>
-                                                <td>
+                                                <td style="align-content: center;">
                                                     {{-- <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
                                                         class="btn btn-outline-info rounded-pill">
                                                         <i class="bi bi-download"></i>
@@ -215,8 +221,9 @@
                                                         <input type="hidden" name="status_approval"
                                                             value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}">
                                                         <button type="submit"
-                                                            class="btn btn-outline-success rounded-pill">
-                                                            <i class="bi bi-check-lg"></i>
+                                                            class="btn btn-outline-success rounded-pill"
+                                                            style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                            Approve
                                                         </button>
                                                     </form>
                                                     <form method="POST"
@@ -226,8 +233,8 @@
                                                         @method('PUT')
                                                         <input type="hidden" name="status_approval" value="Rejected">
                                                         <button type="submit"
-                                                            class="btn btn-outline-danger rounded-pill">
-                                                            <i class="bi bi-x-lg"></i>
+                                                            class="btn btn-sm btn-outline-danger rounded-pill" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                            Decline
                                                         </button>
                                                     </form>
                                                 </td>
@@ -241,18 +248,21 @@
                 </div>
 
                 <!-- Success Modal -->
-                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+                    aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content bg-light rounded-4 border-0 shadow" style="border-radius: 1rem;">
                             <div class="modal-body text-center p-5" style="padding: 2rem;">
                                 <div class="mb-4">
-                                    <i class="bi bi-check-circle-fill" style="font-size: 100px; color: #AB2F2B !important;"></i>
+                                    <i class="bi bi-check-circle-fill"
+                                        style="font-size: 100px; color: #AB2F2B !important;"></i>
                                 </div>
                                 <h4 class="mb-3 fw-bold" style="font-size: 32px; color: #AB2F2B !important;">Success!</h4>
                                 <p class="mb-4" id="successModalBody" style="font-size: 20px;">
                                     <!-- The success message will be inserted here -->
                                 </p>
-                                <button type="button" class="btn btn-outline-primary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-primary rounded-pill px-4"
+                                    data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
@@ -274,7 +284,8 @@
                                 <div id="detailContent"></div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-outline-primary rounded-pill" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-primary rounded-pill"
+                                    data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
