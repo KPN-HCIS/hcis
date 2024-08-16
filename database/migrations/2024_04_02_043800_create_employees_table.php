@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('email', 100);
             $table->string('group_company', 50);
             $table->string('designation', 255);
+            $table->string('designation_code', 255);
+            $table->string('designation_name', 255);
             $table->string('job_level', 50);
             $table->string('company_name', 50);
             $table->string('work_area_code', 50);
