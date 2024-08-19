@@ -20,6 +20,7 @@ use App\Models\htl_transaction;
 use App\Models\tkt_transaction;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ReimburseController extends Controller
 {
@@ -88,6 +89,28 @@ class ReimburseController extends Controller
         $managerL1 = $deptHeadManager->employee_id;
         $managerL2 = $deptHeadManager->manager_l1_id;
 
+        $cek_director_id = Employee::select([
+            'dsg.department_level2',
+            'dsg2.director_flag',
+            DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
+            'dsg2.designation_name',
+            'dsg2.job_code',
+            'emp.fullname',
+            'emp.employee_id',
+        ])
+        ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
+        ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
+        ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
+        ->where('employees.designation_code', '=', $employee_data->designation_code)
+        ->where('dsg2.director_flag', '=', 'T')
+        ->get();
+        
+        $director_id = "";
+
+        if ($cek_director_id->isNotEmpty()) {
+            $director_id = $cek_director_id->first()->employee_id;
+        }
+
         return view('hcis.reimbursements.cashadv.formCashadv', [
             'link' => $link,
             'parentLink' => $parentLink,
@@ -99,6 +122,7 @@ class ReimburseController extends Controller
             'no_sppds' => $no_sppds,
             'managerL1' => $managerL1,
             'managerL2' => $managerL2,
+            'director_id' => $director_id,
         ]);
     }
     public function cashadvancedSubmit(Request $req)
