@@ -47,12 +47,12 @@
                                 <div class="col-md-6">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control datepicker" id="mulai" name="mulai"
-                                        placeholder="Tanggal Mulai">
+                                        placeholder="Tanggal Mulai" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control datepicker" id="kembali" name="kembali"
-                                        placeholder="Tanggal Kembali">
+                                        placeholder="Tanggal Kembali" required>
                                 </div>
                             </div>
                             <div class="mb-2">
@@ -208,7 +208,7 @@
                                                                     <label class="form-label">NIK</label>
                                                                     <div class="input-group">
                                                                         <input class="form-control" name="noktp_tkt[]"
-                                                                            type="number">
+                                                                            type="number" placeholder="ex: 3521XXXXXXXXXXXX">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -503,10 +503,7 @@
     <!-- JavaScript Part -->
     <script>
         function formatCurrency(input) {
-            // Store the current cursor position
             var cursorPos = input.selectionStart;
-
-            // Get the input value and remove non-digit characters
             var value = input.value.replace(/[^\d]/g, '');
 
             // Format the number with thousands separators
@@ -559,23 +556,70 @@
         });
 
 
-        function calculateTotalDays() {
-            const checkInDate = new Date(document.getElementById('tgl_masuk_htl').value);
-            const checkOutDate = new Date(document.getElementById('tgl_keluar_htl').value);
+        function calculateTotalDays(index) {
+            const checkInInput = document.querySelector(`#hotel-form-${index} input[name="tgl_masuk_htl[]"]`);
+            const checkOutInput = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
+            const totalDaysInput = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
 
+            // Get Start Date and End Date from the main form
+            const mulaiInput = document.getElementById('mulai');
+            const kembaliInput = document.getElementById('kembali');
+
+            if (!checkInInput || !checkOutInput || !mulaiInput || !kembaliInput) {
+                return; // Ensure elements are present before proceeding
+            }
+
+            // Parse the dates
+            const checkInDate = new Date(checkInInput.value);
+            const checkOutDate = new Date(checkOutInput.value);
+            const mulaiDate = new Date(mulaiInput.value);
+            const kembaliDate = new Date(kembaliInput.value);
+
+            // Validate Check In Date
+            if (checkInDate < mulaiDate) {
+                alert('Check In date cannot be earlier than Start date.');
+                checkInInput.value = ''; // Reset the Check In field
+                totalDaysInput.value = ''; // Clear total days
+                return;
+            }
+            if (checkInDate > kembaliDate) {
+                alert('Check In date cannot be more than End date.');
+                checkInInput.value = ''; // Reset the Check In field
+                totalDaysInput.value = ''; // Clear total days
+                return;
+            }
+
+            // Ensure Check Out Date is not earlier than Check In Date
+            if (checkOutDate < checkInDate) {
+                alert('Check Out date cannot be earlier than Check In date.');
+                checkOutInput.value = ''; // Reset the Check Out field
+                totalDaysInput.value = ''; // Clear total days
+                return;
+            }
+
+            // Calculate the total days if all validations pass
             if (checkInDate && checkOutDate) {
-                // Calculate the difference in milliseconds
                 const diffTime = Math.abs(checkOutDate - checkInDate);
-                // Convert to days and add 1 to include both check-in and check-out days
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-                // Set the result in the total_hari input
-                document.getElementById('total_hari').value = diffDays;
+                totalDaysInput.value = diffDays;
             } else {
-                // If either date is not set, clear the total
-                document.getElementById('total_hari').value = '';
+                totalDaysInput.value = '';
             }
         }
+
+        // Attach event listeners to the hotel forms
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.hotel-form').forEach((form, index) => {
+                const i = index + 1; // Adjust for 1-based index
+
+                form.querySelector('input[name="tgl_masuk_htl[]"]').addEventListener('change', () =>
+                    calculateTotalDays(i));
+                form.querySelector('input[name="tgl_keluar_htl[]"]').addEventListener('change', () =>
+                    calculateTotalDays(i));
+            });
+        });
+
+
         document.addEventListener('DOMContentLoaded', function() {
             var jnsDinasSelect = document.getElementById('jns_dinas');
             var additionalFields = document.getElementById('additional-fields');
@@ -973,8 +1017,6 @@
                 }
             }
         }
-
-
 
 
         document.getElementById('nik').addEventListener('change', function() {

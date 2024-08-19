@@ -62,22 +62,63 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
-        $hotel = Hotel::where('user_id', $userId)->first();
+
+        // Retrieve the taxi data for the specific BusinessTrip
+        $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
+
+        // Retrieve all hotels for the specific BusinessTrip
+        $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare hotel data for the view
+        $hotelData = [];
+        foreach ($hotels as $index => $hotel) {
+            $hotelData[] = [
+                'nama_htl' => $hotel->nama_htl,
+                'lokasi_htl' => $hotel->lokasi_htl,
+                'jmlkmr_htl' => $hotel->jmlkmr_htl,
+                'bed_htl' => $hotel->bed_htl,
+                'tgl_masuk_htl' => $hotel->tgl_masuk_htl,
+                'tgl_keluar_htl' => $hotel->tgl_keluar_htl,
+                'total_hari' => $hotel->total_hari,
+                'more_htl' => ($index < count($hotels) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve all tickets for the specific BusinessTrip
+        $tickets = Tiket::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare ticket data for the view
+        $ticketData = [];
+        foreach ($tickets as $index => $ticket) {
+            $ticketData[] = [
+                'noktp_tkt' => $ticket->noktp_tkt,
+                'dari_tkt' => $ticket->dari_tkt,
+                'ke_tkt' => $ticket->ke_tkt,
+                'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                'jenis_tkt' => $ticket->jenis_tkt,
+                'type_tkt' => $ticket->type_tkt,
+                'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'more_tkt' => ($index < count($tickets) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve locations and companies data for the dropdowns
         $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
+        // dd($taksi->toArray());
 
-        return view(
-            'hcis.reimbursements.businessTrip.editFormBt',
-            [
-                'n' => $n,
-                'hotel' => $hotel,
-                'employee_data' => $employee_data,
-                'companies' => $companies,
-                'locations' => $locations,
-            ]
-        );
+        return view('hcis.reimbursements.businessTrip.editFormBt', [
+            'n' => $n,
+            'hotelData' => $hotelData,
+            'taksiData' => $taksi, // Pass the taxi data
+            'ticketData' => $ticketData,
+            'employee_data' => $employee_data,
+            'companies' => $companies,
+            'locations' => $locations,
+        ]);
     }
-
 
     public function update(Request $request, $id)
     {
@@ -86,7 +127,6 @@ class BusinessTripController extends Controller
         if (!$n) {
             return redirect()->back()->with('error', 'Business trip not found');
         }
-        // dd($request->all());
 
         // Store old SPPD number for later use
         $oldNoSppd = $n->no_sppd;
@@ -120,32 +160,58 @@ class BusinessTripController extends Controller
 
         // Handle "Taksi" update
         if ($request->taksi === 'Ya') {
-            $taksi = Taksi::updateOrCreate(
-                ['no_sppd' => $oldNoSppd],  // Find by SPPD number
-                [
+            // Fetch existing Taksi records
+            $existingTaksi = Taksi::where('no_sppd', $oldNoSppd)->get()->keyBy('id');
+
+            // If no existing Taksi record, or need to update existing records
+            if (isset($request->no_vt)) {
+                // Prepare the data for update
+                $taksiData = [
                     'id' => (string) Str::uuid(),
                     'no_vt' => $request->no_vt,
                     'user_id' => Auth::id(),
                     'unit' => $request->divisi,
-                    'nominal_vt' => $request->nominal_vt,
-                    'keeper_vt' => $request->keeper_vt,
-                ]
-            );
+                    'no_sppd' => $oldNoSppd,
+                    'nominal_vt' => (int) str_replace('.', '', $request->nominal_vt),  // Convert to integer
+                    'keeper_vt' => (int) str_replace('.', '', $request->keeper_vt),
+                ];
+
+                // Check if there's an existing Taksi record to update
+                $existingTaksiRecord = $existingTaksi->first();
+
+                if ($existingTaksiRecord) {
+                    // Update existing Taksi record
+                    $existingTaksiRecord->update($taksiData);
+                } else {
+                    // Create a new Taksi record
+                    Taksi::create($taksiData);
+                }
+            } else {
+                // If 'Taksi' is set to 'Ya' but no data provided, clear existing records
+                Taksi::where('no_sppd', $oldNoSppd)->delete();
+            }
         } else {
-            Taksi::where('no_sppd', $oldNoSppd)->delete();  // Remove taksi if not selected
+            // Remove all Taksi records if 'Taksi' is not selected
+            Taksi::where('no_sppd', $oldNoSppd)->delete();
         }
+
 
         // Handle "Hotel" update
         if ($request->hotel === 'Ya') {
+            // Get all existing hotels for this business trip
+            $existingHotels = Hotel::where('no_sppd', $oldNoSppd)->get()->keyBy('id');
+
+            $processedHotelIds = [];
+
             foreach ($request->nama_htl as $key => $value) {
                 if (!empty($value)) {
-                    Hotel::updateOrCreate(
-                        ['no_sppd' => $oldNoSppd, 'nama_htl' => $value],
-                        [
-                            'id' => (string) Str::uuid(),
-                            'no_htl' => $this->generateNoSppdHtl(),
-                            'user_id' => Auth::id(),
-                            'unit' => $request->divisi,
+                    // Check if the hotel ID exists in the request
+                    $hotelId = $request->hotel_id[$key] ?? null;
+
+                    if ($hotelId && isset($existingHotels[$hotelId])) {
+                        // Update existing hotel record
+                        $hotel = $existingHotels[$hotelId];
+                        $hotel->update([
                             'nama_htl' => $value,
                             'lokasi_htl' => $request->lokasi_htl[$key],
                             'jmlkmr_htl' => $request->jmlkmr_htl[$key],
@@ -153,50 +219,97 @@ class BusinessTripController extends Controller
                             'tgl_masuk_htl' => $request->tgl_masuk_htl[$key],
                             'tgl_keluar_htl' => $request->tgl_keluar_htl[$key],
                             'total_hari' => $request->total_hari[$key],
+                        ]);
 
-                        ]
-                    );
+                        $processedHotelIds[] = $hotelId;
+                    } else {
+                        // Create a new hotel record if no valid ID is provided
+                        $newHotel = Hotel::create([
+                            'id' => (string) Str::uuid(),
+                            'no_htl' => $this->generateNoSppdHtl(),
+                            'user_id' => Auth::id(),
+                            'unit' => $request->divisi,
+                            'no_sppd' => $oldNoSppd,
+                            'nama_htl' => $value,
+                            'lokasi_htl' => $request->lokasi_htl[$key],
+                            'jmlkmr_htl' => $request->jmlkmr_htl[$key],
+                            'bed_htl' => $request->bed_htl[$key],
+                            'tgl_masuk_htl' => $request->tgl_masuk_htl[$key],
+                            'tgl_keluar_htl' => $request->tgl_keluar_htl[$key],
+                            'total_hari' => $request->total_hari[$key],
+                        ]);
+
+                        $processedHotelIds[] = $newHotel->id;
+                    }
                 }
             }
+
+            // Remove hotels that are no longer in the request
+            Hotel::where('no_sppd', $oldNoSppd)->whereNotIn('id', $processedHotelIds)->delete();
         } else {
             Hotel::where('no_sppd', $oldNoSppd)->delete();  // Remove all hotels if not selected
         }
 
-        // Handle "Tiket" update
+        // Handle "Ticket" update
         if ($request->tiket === 'Ya') {
+            // Get all existing tickets for this business trip
+            $existingTickets = Tiket::where('no_sppd', $oldNoSppd)->get()->keyBy('noktp_tkt');
+
+            $processedTicketIds = [];
+
             foreach ($request->noktp_tkt as $key => $value) {
                 if (!empty($value)) {
+                    // Prepare ticket data
+                    $ticketData = [
+                        'no_sppd' => $oldNoSppd,
+                        'user_id' => Auth::id(),
+                        'unit' => $request->divisi,
+                        'dari_tkt' => $request->dari_tkt[$key] ?? null,
+                        'ke_tkt' => $request->ke_tkt[$key] ?? null,
+                        'tgl_brkt_tkt' => $request->tgl_brkt_tkt[$key] ?? null,
+                        'jam_brkt_tkt' => $request->jam_brkt_tkt[$key] ?? null,
+                        'jenis_tkt' => $request->jenis_tkt[$key] ?? null,
+                        'type_tkt' => $request->type_tkt[$key] ?? null,
+                        'tgl_plg_tkt' => $request->tgl_plg_tkt[$key] ?? null,
+                        'jam_plg_tkt' => $request->jam_plg_tkt[$key] ?? null,
+                    ];
+
+                    // Fetch employee data to get jk_tkt
                     $employee_data = Employee::where('ktp', $value)->first();
 
                     if (!$employee_data) {
                         return redirect()->back()->with('error', "NIK $value not found");
                     }
 
-                    Tiket::updateOrCreate(
-                        ['no_sppd' => $oldNoSppd, 'noktp_tkt' => $value],
-                        [
+                    // Ensure jk_tkt is included in the data
+                    $ticketData['jk_tkt'] = $employee_data->gender ?? null;
+                    $ticketData['np_tkt'] = $employee_data->fullname ?? null;
+                    $ticketData['tlp_tkt'] = $employee_data->personal_mobile_number ?? null;
+
+                    if (isset($existingTickets[$value])) {
+                        // Update existing ticket
+                        $existingTicket = $existingTickets[$value];
+                        $existingTicket->update($ticketData);
+                    } else {
+                        // Create a new ticket entry
+                        Tiket::create(array_merge($ticketData, [
                             'id' => (string) Str::uuid(),
                             'no_tkt' => $this->generateNoSppdTkt(),
-                            'user_id' => Auth::id(),
-                            'unit' => $request->divisi,
-                            'jk_tkt' => $employee_data->gender ?? null,
-                            'np_tkt' => $employee_data->fullname ?? null,
                             'noktp_tkt' => $value,
-                            'tlp_tkt' => $employee_data->personal_mobile_number ?? null,
-                            'dari_tkt' => $request->dari_tkt[$key] ?? null,
-                            'ke_tkt' => $request->ke_tkt[$key] ?? null,
-                            'tgl_brkt_tkt' => $request->tgl_brkt_tkt[$key] ?? null,
-                            'tgl_plg_tkt' => $request->tgl_plg_tkt[$key] ?? null,
-                            'jam_brkt_tkt' => $request->jam_brkt_tkt[$key] ?? null,
-                            'jam_plg_tkt' => $request->jam_plg_tkt[$key] ?? null,
-                            'jenis_tkt' => $request->jenis_tkt[$key] ?? null,
-                            'type_tkt' => $request->type_tkt[$key] ?? null,
-                        ]
-                    );
+                        ]));
+                    }
+
+                    // Track the processed ticket IDs
+                    $processedTicketIds[] = $value;
                 }
             }
+            // Remove tickets that are no longer in the request
+            Tiket::where('no_sppd', $oldNoSppd)
+                ->whereNotIn('noktp_tkt', $processedTicketIds)
+                ->delete();
         } else {
-            Tiket::where('no_sppd', $oldNoSppd)->delete();  // Remove all tickets if not selected
+            // Remove all tickets if not selected
+            Tiket::where('no_sppd', $oldNoSppd)->delete();
         }
 
         // Handle "CA Transaction" update
@@ -233,7 +346,6 @@ class BusinessTripController extends Controller
 
         return redirect('/businessTrip')->with('success', 'Business trip updated successfully');
     }
-
 
     public function deklarasi($id)
     {
@@ -508,8 +620,8 @@ class BusinessTripController extends Controller
             $taksi->no_sppd = $noSppd;
             $taksi->user_id = $userId;
             $taksi->unit = $request->divisi;
-            $taksi->nominal_vt = $request->nominal_vt;
-            $taksi->keeper_vt = $request->keeper_vt;
+            $taksi->nominal_vt = (int) str_replace('.', '', $request->nominal_vt);  // Convert to integer
+            $taksi->keeper_vt = (int) str_replace('.', '', $request->keeper_vt);   // Convert to integer
 
             $taksi->save();
         }
