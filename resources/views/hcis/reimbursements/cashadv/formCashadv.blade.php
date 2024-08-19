@@ -123,6 +123,12 @@
                                         placeholder="mm/dd/yyyy" required>
                                 </div>
                                 <div class="col-md-6 mb-2">
+                                    <div class="mb-2">
+                                        <label class="form-label" for="start">Declaration Estimate</label>
+                                        <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" placeholder="mm/dd/yyyy" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
                                     <label class="form-label" for="type">CA Type</label>
                                     <select name="ca_type" id="ca_type" class="form-select" onchange="toggleDivs()"
                                         readonly>
@@ -144,499 +150,444 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row mt-3" id="ca_nbt" style="display: none;">
+
+                            <br>
+
+                            {{-- Pls ini buat CA_NBT dia masih error --}}
+                            <div class="row" id="ca_bt" style="display: none;">
                                 <div class="col-md-12">
-                                    <div class="d-flex flex-column gap-2">
-                                        <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash
-                                            Advanced</div>
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="mb-2" id="div_allowance">
-                                                    <label class="form-label">Allowance (Perdiem)</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-append">
-                                                            <span class="input-group-text">Rp</span>
+                                    <div class="table-responsive-sm">
+                                        <div class="d-flex flex-column gap-2">
+                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
+                                            {{-- <div class="card">
+                                                <div class="card-body text-center">
+                                                    <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
+                                                </div>
+                                                <div id="perdiem-card" class="card-body" style="display: none;">
+                                                    <div class="accordion" id="accordionPerdiem">
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="enter-headingOne">
+                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                    Rencana Perdiem
+                                                                </button>
+                                                            </h2>
+                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                <div class="accordion-body">
+                                                                    <div id="form-container-bt-perdiem">
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Start Perdiem</label>
+                                                                            <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy" required>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">End Perdiem</label>
+                                                                            <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" placeholder="mm/dd/yyyy" required>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="start">Total Days</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="0" readonly>
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">days</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="name">Location Agency</label>
+                                                                            <select class="form-control" id="locationFilter" name="location_bt_perdiem[]" onchange="toggleOthers()" required>
+                                                                                <option value="">Select location...</option>
+                                                                                @foreach($locations as $location)
+                                                                                    <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                                                                                @endforeach
+                                                                                <option value="Others">Others</option>
+                                                                            </select>
+                                                                            <br><input type="text" name="others_location" id="others_location" class="form-control" placeholder="Other Location" value="" style="display: none;">
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="name">Company Code</label>
+                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]" required>
+                                                                                <option value="">Select Company...</option>
+                                                                                @foreach($companies as $company)
+                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Amount</label>
+                                                                        </div>
+                                                                        <div class="input-group mb-3">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="0">
+                                                                        </div>
+                                                                        <hr class="border border-primary border-1 opacity-50">
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label class="form-label">Total Perdiem</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <input class="form-control bg-light" name="allowance"
-                                                            id="allowance" type="text" min="0" value="0"
-                                                            readonly>
                                                     </div>
                                                 </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label">Transportation</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-append">
-                                                            <span class="input-group-text">Rp</span>
+
+                                                <!-- Button and Card for Transport -->
+                                                <div class="card-body text-center">
+                                                    <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
+                                                </div>
+                                                <div id="transport-card" class="card-body" style="display: none;">
+                                                    <div class="accordion" id="accordionTransport">
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="headingTransport">
+                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
+                                                                    Rencana Transport
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                <div class="accordion-body">
+                                                                    <div id="form-container-bt-transport">
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Tanggal Transport</label>
+                                                                            <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" required>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="name">Company Code</label>
+                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_transport[]" required>
+                                                                                <option value="">Select Company...</option>
+                                                                                @foreach($companies as $company)
+                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Keterangan</label>
+                                                                            <textarea name="keterangan_nb_transport[]" class="form-control"></textarea>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Amount</label>
+                                                                        </div>
+                                                                        <div class="input-group mb-3">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="0">
+                                                                        </div>
+                                                                        <hr class="border border-primary border-1 opacity-50">
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label class="form-label">Total Transport</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <input class="form-control" name="transport" id="transport"
-                                                            type="text" min="0" value="0">
                                                     </div>
                                                 </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label">Accommodation</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-append">
-                                                            <span class="input-group-text">Rp</span>
+
+                                                <!-- Button and Card for Penginapan -->
+                                                <div class="card-body text-center">
+                                                    <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
+                                                </div>
+                                                <div id="penginapan-card" class="card-body" style="display: none;">
+                                                    <div class="accordion" id="accordionPenginapan">
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="headingPenginapan">
+                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
+                                                                    Rencana Penginapan
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                <div class="accordion-body">
+                                                                    <div id="form-container-bt-penginapan">
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Start Penginapan</label>
+                                                                            <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy" required>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">End Penginapan</label>
+                                                                            <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy" required>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="start">Total Days</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="0" readonly>
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">days</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="name">Hotel Name</label>
+                                                                            <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel" required>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="name">Company Code</label>
+                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]" required>
+                                                                                <option value="">Select Company...</option>
+                                                                                @foreach($companies as $company)
+                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Amount</label>
+                                                                        </div>
+                                                                        <div class="input-group mb-3">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="0">
+                                                                        </div>
+                                                                        <hr class="border border-primary border-1 opacity-50">
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label class="form-label">Total Penginapan</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <input class="form-control" name="accommodation"
-                                                            id="accommodation" type="text" min="0"
-                                                            value="0">
                                                     </div>
                                                 </div>
-                                                <div class="mb-2">
-                                                    <label class="form-label">Other</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-append">
-                                                            <span class="input-group-text">Rp</span>
+
+
+                                                <!-- Button and Card for Lainnya -->
+                                                <div class="card-body text-center">
+                                                    <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
+                                                </div>
+                                                <div id="lainnya-card" class="card-body" style="display: none;">
+                                                    <div class="accordion" id="accordionLainnya">
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="headingLainnya">
+                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
+                                                                    Rencana Lainnya
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                <div class="accordion-body">
+                                                                    <div id="form-container-bt-lainnya">
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Tanggal</label>
+                                                                            <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy" required>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Keterangan</label>
+                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Accommodation</label>
+                                                                        </div>
+                                                                        <div class="input-group mb-3">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya" type="text" min="0" value="0">
+                                                                        </div>
+                                                                        <hr class="border border-primary border-1 opacity-50">
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label class="form-label">Total Lainnya</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <input class="form-control" name="other" id="other"
-                                                            type="text" min="0" value="0">
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" id="ca_e" style="display: none;">
+
+                            <div class="row" id="ca_nbt" style="display: none;">
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated
-                                                Entertainment</div>
+                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
                                             <div class="card">
                                                 <div class="card-body">
                                                     <div class="accordion" id="accordionPanelsStayOpenExample">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button"
-                                                                    data-bs-toggle="collapse"
-                                                                    data-bs-target="#enter-collapseOne"
-                                                                    aria-expanded="true"
-                                                                    aria-controls="enter-collapseOne">
-                                                                    Entertainment Detail #1
+                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                    Non Business Trip
                                                                 </button>
                                                             </h2>
-                                                            <div id="enter-collapseOne"
-                                                                class="accordion-collapse collapse show"
-                                                                aria-labelledby="enter-headingOne">
+                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
                                                                 <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment
-                                                                            Type</label>
-                                                                        <select name="enter_type_1" id="enter_type_1"
-                                                                            class="form-select">
-                                                                            <option value="">-</option>
-                                                                            <option value="food_cost">
-                                                                                Food/Beverages/Souvenir</option>
-                                                                            <option value="transport">Transport</option>
-                                                                            <option value="accommodation">Accommodation
-                                                                            </option>
-                                                                            <option value="gift">Gift</option>
-                                                                            <option value="fund">Fund</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment Fee
-                                                                            Detail</label>
-                                                                        <textarea name="enter_fee_1" id="enter_fee_1" class="form-control"></textarea>
-                                                                    </div>
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-append">
-                                                                            <span class="input-group-text">Rp</span>
+                                                                    <div id="form-container">
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Tanggal</label>
+                                                                            <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
-                                                                        <input class="form-control" name="nominal_1"
-                                                                            id="nominal_1" type="text" min="0"
-                                                                            value="0">
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Keterangan</label>
+                                                                            <textarea name="keterangan_nbt[]" class="form-control"></textarea>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Accommodation</label>
+                                                                        </div>
+                                                                        <div class="input-group mb-3">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control" name="nominal_nbt[]" id="nominal_nbt" type="text" min="0" value="0">
+                                                                        </div>
+                                                                        <hr class="border border-primary border-1 opacity-50">
                                                                     </div>
+                                                                    <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingTwo">
-                                                                <button class="accordion-button fw-medium collapsed"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#enter-collapseTwo"
-                                                                    aria-expanded="false"
-                                                                    aria-controls="enter-collapseTwo">
-                                                                    Entertainment Detail #2
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseTwo"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="enter-headingTwo">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment
-                                                                            Type</label>
-                                                                        <select name="enter_type_2" id="enter_type_2"
-                                                                            class="form-select">
-                                                                            <option value="">-</option>
-                                                                            <option value="food_cost">
-                                                                                Food/Beverages/Souvenir</option>
-                                                                            <option value="transport">Transport</option>
-                                                                            <option value="accommodation">Accommodation
-                                                                            </option>
-                                                                            <option value="gift">Gift</option>
-                                                                            <option value="fund">Fund</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment Fee
-                                                                            Detail</label>
-                                                                        <textarea name="enter_fee_2" id="enter_fee_2" class="form-control"></textarea>
-                                                                    </div>
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-append">
-                                                                            <span class="input-group-text">Rp</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" id="ca_e" style="display: none;">
+                                <div class="col-md-12">
+                                    <div class="table-responsive-sm">
+                                        <div class="d-flex flex-column gap-2">
+                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
+                                                <div class="card">
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
+                                                    </div>
+                                                    <div id="entertain-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionEntertain">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="headingEntertain">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="true" aria-controls="collapseEntertain">
+                                                                        Rencana Entertain
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapseEntertain" class="accordion-collapse collapse show" aria-labelledby="headingEntertain">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-e-detail">
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Entertainment Type</label>
+                                                                                <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
+                                                                                    <option value="">-</option>
+                                                                                    <option value="food_cost">Food/Beverages/Souvenir</option>
+                                                                                    <option value="transport">Transport</option>
+                                                                                    <option value="accommodation">Accommodation</option>
+                                                                                    <option value="gift">Gift</option>
+                                                                                    <option value="fund">Fund</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Entertainment Fee Detail</label>
+                                                                                <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control"></textarea>
+                                                                            </div>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control" name="nominal_e_detail[]" id="nominal_e_detail[]" type="text" min="0" value="0">
+                                                                            </div>
+                                                                            <hr class="border border-primary border-1 opacity-50">
                                                                         </div>
-                                                                        <input class="form-control" name="nominal_2"
-                                                                            id="nominal_2" type="text" min="0"
-                                                                            value="0">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingThree">
-                                                                <button class="accordion-button fw-medium collapsed"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#enter-collapseThree"
-                                                                    aria-expanded="false"
-                                                                    aria-controls="enter-collapseThree">
-                                                                    Entertainment Detail #3
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseThree"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="enter-headingThree">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment
-                                                                            Type</label>
-                                                                        <select name="enter_type_3" id="enter_type_3"
-                                                                            class="form-select">
-                                                                            <option value="">-</option>
-                                                                            <option value="food_cost">
-                                                                                Food/Beverages/Souvenir</option>
-                                                                            <option value="transport">Transport</option>
-                                                                            <option value="accommodation">Accommodation
-                                                                            </option>
-                                                                            <option value="gift">Gift</option>
-                                                                            <option value="fund">Fund</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment Fee
-                                                                            Detail</label>
-                                                                        <textarea name="enter_fee_3" id="enter_fee_3" class="form-control"></textarea>
-                                                                    </div>
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-append">
-                                                                            <span class="input-group-text">Rp</span>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Total Entertain</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_e_detail[]" id="total_e_detail[]" type="text" min="0" value="0" readonly>
+                                                                            </div>
                                                                         </div>
-                                                                        <input class="form-control" name="nominal_3"
-                                                                            id="nominal_3" type="text" min="0"
-                                                                            value="0">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingFour">
-                                                                <button class="accordion-button fw-medium collapsed"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#enter-collapseFour"
-                                                                    aria-expanded="false"
-                                                                    aria-controls="enter-collapseFour">
-                                                                    Entertainment Detail #4
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseFour"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="enter-headingFour">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment
-                                                                            Type</label>
-                                                                        <select name="enter_type_4" id="enter_type_4"
-                                                                            class="form-select">
-                                                                            <option value="">-</option>
-                                                                            <option value="food_cost">
-                                                                                Food/Beverages/Souvenir</option>
-                                                                            <option value="transport">Transport</option>
-                                                                            <option value="accommodation">Accommodation
-                                                                            </option>
-                                                                            <option value="gift">Gift</option>
-                                                                            <option value="fund">Fund</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment Fee
-                                                                            Detail</label>
-                                                                        <textarea name="enter_fee_4" id="enter_fee_4" class="form-control"></textarea>
-                                                                    </div>
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-append">
-                                                                            <span class="input-group-text">Rp</span>
-                                                                        </div>
-                                                                        <input class="form-control" name="nominal_4"
-                                                                            id="nominal_4" type="text" min="0"
-                                                                            value="0">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingFive">
-                                                                <button class="accordion-button fw-medium collapsed"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#enter-collapseFive"
-                                                                    aria-expanded="false"
-                                                                    aria-controls="enter-collapseFive">
-                                                                    Entertainment Detail #5
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseFive"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="enter-headingFive">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment
-                                                                            Type</label>
-                                                                        <select name="enter_type_5" id="enter_type_5"
-                                                                            class="form-select">
-                                                                            <option value="">-</option>
-                                                                            <option value="food_cost">
-                                                                                Food/Beverages/Souvenir</option>
-                                                                            <option value="transport">Transport</option>
-                                                                            <option value="accommodation">Accommodation
-                                                                            </option>
-                                                                            <option value="gift">Gift</option>
-                                                                            <option value="fund">Fund</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Entertainment Fee
-                                                                            Detail</label>
-                                                                        <textarea name="enter_fee_5" id="enter_fee_5" class="form-control"></textarea>
-                                                                    </div>
-                                                                    <div class="input-group">
-                                                                        <div class="input-group-append">
-                                                                            <span class="input-group-text">Rp</span>
-                                                                        </div>
-                                                                        <input class="form-control" name="nominal_5"
-                                                                            id="nominal_5" type="text" min="0"
-                                                                            value="0">
+                                                                        <button type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {{-- ------------------------------------------------- --}}
-                                                    <br>
-                                                    <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="relation-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button"
-                                                                    data-bs-toggle="collapse"
-                                                                    data-bs-target="#relation-collapseOne"
-                                                                    aria-expanded="true"
-                                                                    aria-controls="relation-collapseOne">
-                                                                    Relation Detail #1
-                                                                </button>
-                                                            </h2>
-                                                            <div id="relation-collapseOne"
-                                                                class="accordion-collapse collapse show"
-                                                                aria-labelledby="relation-headingOne">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Name</label>
-                                                                        <input type="text" name="rname_1"
-                                                                            id="rname_1" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Position</label>
-                                                                        <input type="text" name="rposition_1"
-                                                                            id="rposition_1" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Company</label>
-                                                                        <input type="text" name="rcompany_1"
-                                                                            id="rcompany_1" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Purpose</label>
-                                                                        <input type="text" name="rpurpose_1"
-                                                                            id="rpurpose_1" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="relation-headingTwo">
-                                                                <button class="accordion-button fw-medium collapsed"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#relation-collapseTwo"
-                                                                    aria-expanded="false"
-                                                                    aria-controls="relation-collapseTwo">
-                                                                    Relation Detail #2
-                                                                </button>
-                                                            </h2>
-                                                            <div id="relation-collapseTwo"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="relation-headingTwo">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Name</label>
-                                                                        <input type="text" name="rname_2"
-                                                                            id="rname_2" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Position</label>
-                                                                        <input type="text" name="rposition_2"
-                                                                            id="rposition_2" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Company</label>
-                                                                        <input type="text" name="rcompany_2"
-                                                                            id="rcompany_2" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Purpose</label>
-                                                                        <input type="text" name="rpurpose_2"
-                                                                            id="rpurpose_2" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="relation-headingThree">
-                                                                <button class="accordion-button fw-medium collapsed"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#relation-collapseThree"
-                                                                    aria-expanded="false"
-                                                                    aria-controls="relation-collapseThree">
-                                                                    Relation Detail #3
-                                                                </button>
-                                                            </h2>
-                                                            <div id="relation-collapseThree"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="relation-headingThree">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Name</label>
-                                                                        <input type="text" name="rname_3"
-                                                                            id="rname_3" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Position</label>
-                                                                        <input type="text" name="rposition_3"
-                                                                            id="rposition_3" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Company</label>
-                                                                        <input type="text" name="rcompany_3"
-                                                                            id="rcompany_3" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Purpose</label>
-                                                                        <input type="text" name="rpurpose_3"
-                                                                            id="rpurpose_3" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="relation-headingFour">
-                                                                <button class="accordion-button fw-medium collapsed"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#relation-collapseFour"
-                                                                    aria-expanded="false"
-                                                                    aria-controls="relation-collapseFour">
-                                                                    Relation Detail #4
-                                                                </button>
-                                                            </h2>
-                                                            <div id="relation-collapseFour"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="relation-headingFour">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Name</label>
-                                                                        <input type="text" name="rname_4"
-                                                                            id="rname_4" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Position</label>
-                                                                        <input type="text" name="rposition_4"
-                                                                            id="rposition_4" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Company</label>
-                                                                        <input type="text" name="rcompany_4"
-                                                                            id="rcompany_4" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Purpose</label>
-                                                                        <input type="text" name="rpurpose_4"
-                                                                            id="rpurpose_4" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="relation-headingFive">
-                                                                <button class="accordion-button fw-medium collapsed"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#relation-collapseFive"
-                                                                    aria-expanded="false"
-                                                                    aria-controls="relation-collapseFive">
-                                                                    Relation Detail #5
-                                                                </button>
-                                                            </h2>
-                                                            <div id="relation-collapseFive"
-                                                                class="accordion-collapse collapse"
-                                                                aria-labelledby="relation-headingFive">
-                                                                <div class="accordion-body">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Name</label>
-                                                                        <input type="text" name="rname_5"
-                                                                            id="rname_5" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Position</label>
-                                                                        <input type="text" name="rposition_5"
-                                                                            id="rposition_5" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Company</label>
-                                                                        <input type="text" name="rcompany_5"
-                                                                            id="rcompany_5" class="form-control">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label"
-                                                                            for="start">Purpose</label>
-                                                                        <input type="text" name="rpurpose_5"
-                                                                            id="rpurpose_5" class="form-control">
+
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
+                                                    </div>
+                                                    <div id="relation-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionRelation">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="headingRelation">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="true" aria-controls="collapseRelation">
+                                                                        Rencana Relation
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapseRelation" class="accordion-collapse collapse show" aria-labelledby="headingRelation">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-e-relation">
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Relation Type</label>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" id="food_cost_e_relation_${index}" name="food_cost_e_relation[${index}]" value="Food/Beverages/Souvenir">
+                                                                                    <label class="form-check-label" for="food_cost_e_relation_${index}">Food/Beverages/Souvenir</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" id="transport_e_relation${index}" name="transport_e_relation[${index}]" value="Transport">
+                                                                                    <label class="form-check-label" for="transport_e_relation${index}">Transport</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" id="accommodation_e_relation${index}" name="accommodation_e_relation[${index}]" value="Accommodation">
+                                                                                    <label class="form-check-label" for="accommodation_e_relation${index}">Accommodation</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" id="gift_e_relation${index}" name="gift_e_relation[${index}]" value="Gift">
+                                                                                    <label class="form-check-label" for="gift_e_relation${index}">Gift</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="checkbox" id="fund_e_relation${index}" name="fund_e_relation[${index}]" value="Fund">
+                                                                                    <label class="form-check-label" for="fund_e_relation${index}">Fund</label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="start">Name</label>
+                                                                                <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" class="form-control">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="start">Position</label>
+                                                                                <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" class="form-control">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="start">Company</label>
+                                                                                <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" class="form-control">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="start">Purpose</label>
+                                                                                <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" class="form-control">
+                                                                            </div>
+                                                                            <hr class="border border-primary border-1 opacity-50">
+                                                                        </div>
+                                                                        <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -648,6 +599,9 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <br>
+
                             <div class="row">
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label">Total Cash Advanced</label>
@@ -691,21 +645,25 @@
             var div_allowance = document.getElementById("div_allowance");
 
             if (ca_type.value === "dns") {
-                ca_nbt.style.display = "block";
+                ca_bt.style.display = "block";
+                ca_nbt.style.display = "none";
                 ca_e.style.display = "none";
                 div_bisnis_numb.style.display = "block";
                 div_allowance.style.display = "block";
-            } else if (ca_type.value === "ndns") {
+            } else if (ca_type.value === "ndns"){
+                ca_bt.style.display = "none";
                 ca_nbt.style.display = "block";
                 ca_e.style.display = "none";
                 div_bisnis_numb.style.display = "none";
                 bisnis_numb.style.value = "";
                 div_allowance.style.display = "none";
-            } else if (ca_type.value === "entr") {
+            } else if (ca_type.value === "entr"){
+                ca_bt.style.display = "none";
                 ca_nbt.style.display = "none";
                 ca_e.style.display = "block";
                 div_bisnis_numb.style.display = "block";
-            } else {
+            } else{
+                ca_bt.style.display = "none";
                 ca_nbt.style.display = "none";
                 ca_e.style.display = "none";
                 div_bisnis_numb.style.display = "none";
@@ -835,6 +793,18 @@
                 input.addEventListener('input', () => formatInput(input));
             });
         });
+
+        document.getElementById('end_date').addEventListener('change', function() {
+            const endDate = new Date(this.value);
+            const declarationEstimateDate = new Date(endDate);
+            declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+            const year = declarationEstimateDate.getFullYear();
+            const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');
+            const day = String(declarationEstimateDate.getDate()).padStart(2, '0');
+
+            document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
+        });
     </script>
 
     <script>
@@ -843,6 +813,357 @@
                 theme: "bootstrap-5",
 
             });
+        });
+
+        $(document).ready(function() {
+            function toggleCard(buttonId, cardId) {
+                var $button = $(buttonId);
+                var $card = $(cardId);
+                var isVisible = $card.is(':visible');
+
+                $card.slideToggle('fast', function() {
+                    if (isVisible) {
+                        $card.find('input[type="text"], input[type="date"], textarea').val('');
+                        $card.find('select').prop('selectedIndex', 0);
+                        $card.find('input[readonly]').val(0);
+                        $card.find('input[type="number"]').val(0);
+
+                        $button.html('<i class="bi bi-plus-circle"></i> ' + $button.text().split(' ')[1]);
+                        $button.data('state', 'false');
+                    } else {
+                        $button.html('<i class="bi bi-dash-circle"></i> ' + $button.text().split(' ')[1]);
+                        $button.data('state', 'true');
+                    }
+                });
+            }
+
+            $('#toggle-bt-perdiem').click(function() {
+                toggleCard('#toggle-bt-perdiem', '#perdiem-card');
+            });
+
+            $('#toggle-bt-transport').click(function() {
+                toggleCard('#toggle-bt-transport', '#transport-card');
+            });
+
+            $('#toggle-bt-penginapan').click(function() {
+                toggleCard('#toggle-bt-penginapan', '#penginapan-card');
+            });
+
+            $('#toggle-bt-lainnya').click(function() {
+                toggleCard('#toggle-bt-lainnya', '#lainnya-card');
+            });
+
+            $('#toggle-e-detail').click(function() {
+                toggleCard('#toggle-e-detail', '#entertain-card');
+            });
+
+            $('#toggle-e-relation').click(function() {
+                toggleCard('#toggle-e-relation', '#relation-card');
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainer = document.getElementById('form-container');
+
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function formatInput(input) {
+                let value = input.value.replace(/\./g, '');
+                value = parseFloat(value);
+                if (!isNaN(value)) {
+                    input.value = formatNumber(Math.floor(value));
+                } else {
+                    input.value = formatNumber(0);
+                }
+                calculateTotalNominal();
+            }
+
+            function calculateTotalNominal() {
+                let total = 0;
+                document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
+                    total += parseNumber(input.value);
+                });
+                document.getElementById('totalca').value = formatNumber(total);
+            }
+
+            document.getElementById('add-more').addEventListener('click', function () {
+                const newForm = document.createElement('div');
+                newForm.classList.add('mb-2', 'form-group');
+
+                newForm.innerHTML = `
+                    <div class="mb-2">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Keterangan</label>
+                        <textarea name="keterangan_nbt[]" class="form-control"></textarea>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control" name="nominal_nbt[]" type="text" min="0" value="0">
+                    </div>
+                    <button type="button" class="btn btn-danger remove-form">Remove</button>
+                    <hr class="border border-primary border-1 opacity-50">
+                `;
+
+                formContainer.appendChild(newForm);
+
+                // Attach input event to the newly added nominal field
+                newForm.querySelector('input[name="nominal_nbt[]"]').addEventListener('input', function() {
+                    formatInput(this);
+                });
+
+                // Attach click event to the remove button
+                newForm.querySelector('.remove-form').addEventListener('click', function() {
+                    newForm.remove();
+                    calculateTotalNominal();
+                });
+
+                // Update the date constraints for the new 'tanggal_nbt[]' input fields
+                const startDateInput = document.getElementById('start_date').value;
+                const endDateInput = document.getElementById('end_date').value;
+
+                newForm.querySelectorAll('input[name="tanggal_nbt[]"]').forEach(function(input) {
+                    input.min = startDateInput;
+                    input.max = endDateInput;
+                });
+            });
+
+            // Attach input event to the existing nominal fields
+            document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    formatInput(this);
+                });
+            });
+
+            // Initial calculation for the total nominal
+            calculateTotalNominal();
+
+            // Note Kalo dpt Revisi di suruh di kunci
+            // document.getElementById('start_date').addEventListener('change', handleDateChange);
+            // document.getElementById('end_date').addEventListener('change', handleDateChange);
+
+            // function handleDateChange() {
+            //     const startDateInput = document.getElementById('start_date');
+            //     const endDateInput = document.getElementById('end_date');
+
+            //     const startDate = new Date(startDateInput.value);
+            //     const endDate = new Date(endDateInput.value);
+
+            //     // Set the min attribute of the end_date input to the selected start_date
+            //     endDateInput.min = startDateInput.value;
+
+            //     // Validate dates
+            //     if (endDate < startDate) {
+            //         alert("End Date cannot be earlier than Start Date.");
+            //         endDateInput.value = '';
+            //     }
+
+            //     // Update the min and max attributes for all 'tanggal_nbt[]' inputs
+            //     const tanggalNbtInputs = document.querySelectorAll('input[name="tanggal_nbt[]"]');
+            //     tanggalNbtInputs.forEach(function(input) {
+            //         input.min = startDateInput.value;
+            //         input.max = endDateInput.value;
+
+            //         // Reset the value if it's out of the allowed range
+            //         if (input.value < startDateInput.value || input.value > endDateInput.value) {
+            //             input.value = '';
+            //         }
+            //     });
+            // }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainerEDetail = document.getElementById('form-container-e-detail');
+            const formContainerERelation = document.getElementById('form-container-e-relation');
+
+            // Function to update checkboxes visibility based on selected options
+            function updateCheckboxVisibility() {
+                // Gather all selected options from enter_type_e_detail
+                const selectedOptions = Array.from(document.querySelectorAll('select[name="enter_type_e_detail[]"]'))
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+
+                // Update visibility for each checkbox in enter_type_e_relation
+                formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
+                    const checkbox = checkDiv.querySelector('input.form-check-input');
+                    const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
+                    if (selectedOptions.includes(checkboxValue)) {
+                        checkDiv.style.display = 'block';
+                    } else {
+                        checkDiv.style.display = 'none';
+                    }
+                });
+            }
+
+            // Function to format number with thousands separator
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            // Function to parse number from formatted string
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            // Function to format input fields
+            function formatInput(input) {
+                let value = input.value.replace(/\./g, '');
+                value = parseFloat(value);
+                if (!isNaN(value)) {
+                    input.value = formatNumber(Math.floor(value));
+                } else {
+                    input.value = formatNumber(0);
+                }
+                calculateTotalNominalEDetail();
+            }
+
+            // Function to calculate the total nominal value for EDetail
+            function calculateTotalNominalEDetail() {
+                let total = 0;
+                document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
+                    total += parseNumber(input.value);
+                });
+                document.querySelector('input[name="total_e_detail[]"]').value = formatNumber(total);
+                document.getElementById('totalca').value = formatNumber(total);
+            }
+
+            // Function to add new EDetail form
+            function addNewEDetailForm() {
+                const newFormEDetail = document.createElement('div');
+                newFormEDetail.classList.add('mb-2');
+
+                newFormEDetail.innerHTML = `
+                    <div class="mb-2">
+                        <label class="form-label">Entertainment Type</label>
+                        <select name="enter_type_e_detail[]" class="form-select">
+                            <option value="">-</option>
+                            <option value="food_cost">Food/Beverages/Souvenir</option>
+                            <option value="transport">Transport</option>
+                            <option value="accommodation">Accommodation</option>
+                            <option value="gift">Gift</option>
+                            <option value="fund">Fund</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Entertainment Fee Detail</label>
+                        <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control" name="nominal_e_detail[]" type="text" min="0" value="0">
+                    </div>
+                    <button type="button" class="btn btn-danger remove-form-e-detail">Remove</button>
+                    <hr class="border border-primary border-1 opacity-50">
+                `;
+
+                formContainerEDetail.appendChild(newFormEDetail);
+
+                // Attach input event to the newly added nominal field
+                newFormEDetail.querySelector('input[name="nominal_e_detail[]"]').addEventListener('input', function() {
+                    formatInput(this);
+                });
+
+                // Attach change event to update checkbox visibility
+                newFormEDetail.querySelector('select[name="enter_type_e_detail[]"]').addEventListener('change', updateCheckboxVisibility);
+
+                // Attach click event to the remove button
+                newFormEDetail.querySelector('.remove-form-e-detail').addEventListener('click', function() {
+                    newFormEDetail.remove();
+                    updateCheckboxVisibility();
+                    calculateTotalNominalEDetail();
+                });
+            }
+
+            // Function to add new ERelation form
+            function addNewERelationForm() {
+                const newFormERelation = document.createElement('div');
+                newFormERelation.classList.add('mb-2');
+
+                newFormERelation.innerHTML = `
+                    <div class="mb-2">
+                        <label class="form-label">Relation Type</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="Food/Beverages/Souvenir">
+                            <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="Transport">
+                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="Accommodation">
+                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="Gift">
+                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="Fund">
+                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="rname_e_relation[]" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Position</label>
+                        <input type="text" name="rposition_e_relation[]" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Company</label>
+                        <input type="text" name="rcompany_e_relation[]" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Purpose</label>
+                        <input type="text" name="rpurpose_e_relation[]" class="form-control">
+                    </div>
+                    <button type="button" class="btn btn-danger remove-form-e-relation">Remove</button>
+                    <hr class="border border-primary border-1 opacity-50">
+                `;
+
+                formContainerERelation.appendChild(newFormERelation);
+
+                // Initial update of checkbox visibility
+                updateCheckboxVisibility();
+
+                // Attach click event to the remove button
+                newFormERelation.querySelector('.remove-form-e-relation').addEventListener('click', function() {
+                    newFormERelation.remove();
+                    updateCheckboxVisibility();
+                });
+            }
+
+            document.getElementById('add-more-e-detail').addEventListener('click', addNewEDetailForm);
+            document.getElementById('add-more-e-relation').addEventListener('click', addNewERelationForm);
+
+            // Attach input event to the existing nominal fields
+            document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    formatInput(this);
+                });
+            });
+
+            // Attach change event to existing select fields for checkbox visibility
+            document.querySelectorAll('select[name="enter_type_e_detail[]"]').forEach(select => {
+                select.addEventListener('change', updateCheckboxVisibility);
+            });
+
+            calculateTotalNominalEDetail();
+            updateCheckboxVisibility();
         });
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
