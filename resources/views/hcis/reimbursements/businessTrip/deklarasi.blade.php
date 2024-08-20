@@ -12,7 +12,7 @@
             <div class="col-md-8">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Deklarasi Data</h4>
+                        <h4 class="mb-0">Declaration Data</h4>
                         <a href="{{ route('businessTrip') }}" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">

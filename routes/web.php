@@ -187,12 +187,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
 
-    //ADMIIN BT
+    //ADMIN BT
     Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin']) -> name('businessTrip.admin');
     Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin']) -> name('businessTrip-filterDate.admin');
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
     Route::get('/businessTrip/deklarasi/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin']) -> name('businessTrip.deklarasi.admin');
+    //Export BT excel
+    Route::get('businessTrip/export/excel/', [BusinessTripController::class, 'exportExcel'])->name('export.excel');
 
     //APPROVAL BT
     Route::get('/businessTrip/approval', [BusinessTripController::class, 'approval']) -> name('businessTrip.approval');
@@ -200,8 +202,7 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
-    //Export BT excel
-    Route::get('businessTrip/export/excel/', [BusinessTripController::class, 'exportExcel'])->name('export.excel');
+
 
 
 

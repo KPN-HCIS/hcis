@@ -9,31 +9,51 @@
 
         .table {
             border-collapse: separate;
+            width: 100%;
+            position: relative;
+            overflow: auto;
         }
 
-        .table th,
-        .table td {
-            position: -webkit-sticky;
+        .table thead th {
+            position: -webkit-sticky !important;
             /* For Safari */
-            position: sticky;
-            background: #fff;
-            /* or the background color of your choice */
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            background-color: #fff !important;
+            border-bottom: 2px solid #ddd !important;
+            padding-right: 6px;
+            box-shadow: inset 2px 0 0 #fff;
         }
 
-        .table th.sticky-col,
+        .table tbody td {
+            background-color: #fff !important;
+            padding-right: 10px;
+            position: relative;
+        }
+
+        .table th.sticky-col-header {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 3 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
         .table td.sticky-col {
-            left: 0;
-            z-index: 10;
-            /* Higher z-index to ensure it stays on top */
-            border-right: 1px solid #ddd;
-            /* Optional: Add border for visual separation */
-        }
-
-        .table th.sticky-col:first-child,
-        .table td.sticky-col:first-child {
-            left: 0;
-            z-index: 11;
-            /* Ensure the first sticky column is above other sticky columns */
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 6px 0 0 #fff;
         }
     </style>
 @endsection
@@ -108,7 +128,7 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
-                                            <th class="sticky-col">No SPPD</th>
+                                            <th class="sticky-col-header">No SPPD</th>
                                             <th>Destination</th>
                                             <th>Start</th>
                                             <th>End</th>
@@ -323,7 +343,11 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
-                    //    let table = new DataTable('#scheduleTable');
+                    window.addEventListener('resize', function() {
+                        document.body.style.display = 'none';
+                        document.body.offsetHeight; // Force a reflow
+                        document.body.style.display = '';
+                    });
 
                     function getDate() {
                         var today = new Date();

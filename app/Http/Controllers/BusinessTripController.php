@@ -8,6 +8,7 @@ use App\Models\BTApproval;
 use App\Models\BusinessTrip;
 use App\Models\ca_transaction;
 use App\Models\Company;
+use App\Models\Designation;
 use App\Models\Employee;
 use App\Models\Hotel;
 use App\Models\Location;
@@ -51,12 +52,13 @@ class BusinessTripController extends Controller
 
     public function delete($id)
     {
-        $n = BusinessTrip::find($id);
+        $n = BusinessTrip::findOrFail($id);
         if ($n) {
             $n->delete(); // Perform soft delete
         }
         return redirect()->route('businessTrip')->with('success', 'Business Trip marked as deleted.');
     }
+
     public function formUpdate($id)
     {
         $n = BusinessTrip::find($id);
@@ -127,10 +129,38 @@ class BusinessTripController extends Controller
         if (!$n) {
             return redirect()->back()->with('error', 'Business trip not found');
         }
+        if ($request->tujuan === 'Others' && !empty($request->others_location)) {
+            $tujuan = $request->others_location;  // Use the value from the text box
+        } else {
+            $tujuan = $request->tujuan;  // Use the selected dropdown value
+        }
 
         // Store old SPPD number for later use
         $oldNoSppd = $n->no_sppd;
+        $userId = Auth::id();
+        $employee = Employee::where('id', $userId)->first();
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
 
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+
+        $deptHeadManager = findDepartmentHead($employee);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
         // Update business trip record
         $n->update([
             'nama' => $request->nama,
@@ -145,7 +175,7 @@ class BusinessTripController extends Controller
             'no_sppd' => $oldNoSppd,  // Preserve old SPPD number
             'mulai' => $request->mulai,
             'kembali' => $request->kembali,
-            'tujuan' => $request->tujuan,
+            'tujuan' => $tujuan,
             'keperluan' => $request->keperluan,
             'bb_perusahaan' => $request->bb_perusahaan,
             'norek_krywn' => $request->norek_krywn,
@@ -156,6 +186,12 @@ class BusinessTripController extends Controller
             'hotel' => $request->hotel,
             'taksi' => $request->taksi,
             'status' => $request->status,
+            'manager_l1_id' => $managerL1,
+            'manager_l2_id' => $managerL2,
+            'id_ca' => $request->id_ca,
+            'id_tiket' => $request->id_tiket,
+            'id_hotel' => $request->id_hotel,
+            'id_taksi' => $request->id_taksi,
         ]);
 
         // Handle "Taksi" update
@@ -584,6 +620,28 @@ class BusinessTripController extends Controller
         $userId = Auth::id();
         $employee = Employee::where('id', $userId)->first();
 
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
+
         BusinessTrip::create([
             'id' => $bt->id,
             'user_id' => $userId,
@@ -610,8 +668,12 @@ class BusinessTripController extends Controller
             'hotel' => $request->hotel,
             'taksi' => $request->taksi,
             'status' => $request->status,
-            'manager_l1_id' => $employee->manager_l1_id,
-            'manager_l2_id' => $employee->manager_l2_id,
+            'manager_l1_id' => $managerL1,
+            'manager_l2_id' => $managerL2,
+            'id_ca' => $request->id_ca,
+            'id_tiket' => $request->id_tiket,
+            'id_hotel' => $request->id_hotel,
+            'id_taksi' => $request->id_taksi,
         ]);
         if ($request->taksi === 'Ya') {
             $taksi = new Taksi();
@@ -771,7 +833,7 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
 
-        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->get();
+        $sppd = BusinessTrip::where('status', '!=', 'Draft')->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -784,36 +846,67 @@ class BusinessTripController extends Controller
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
-        $link = 'Business Trip';
+        $link = 'Business Trip (Admin)';
 
         return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
+
     public function filterDateAdmin(Request $request)
     {
-        $user = Auth::user();
+        // Retrieve the start and end dates from the request
         $startDate = $request->query('start-date');
         $endDate = $request->query('end-date');
 
-        $sppd = BusinessTrip::query();
+        // Build the query to exclude drafts and apply date filtering
+        $query = BusinessTrip::where('status', '!=', 'Draft');
 
         if ($startDate && $endDate) {
-            $sppd = $sppd->whereBetween('mulai', [$startDate, $endDate]);
+            $query->whereBetween('mulai', [$startDate, $endDate])
+                ->orderBy('mulai', 'asc');
+        } else {
+            $query->orderBy('mulai', 'asc');
         }
 
-        $sppd = $sppd->orderBy('mulai', 'asc')->get();
-
+        // Execute the query and get the results
+        $sppd = $query->get();
         $sppdNos = $sppd->pluck('no_sppd');
+
+        // Fetch related data based on the filtered SPPD numbers
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $parentLink = 'Reimbursement';
-        $link = 'Business Trip';
-        $showData = true;
+        $link = 'Business Trip (Admin)';
 
-        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData'));
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
+
+    public function exportExcel(Request $request)
+    {
+        // Retrieve query parameters
+        $startDate = $request->query('start-date');
+        $endDate = $request->query('end-date');
+
+        // Initialize query builder
+        $query = BusinessTrip::query();
+
+        // Apply filters if both dates are present
+        if ($startDate && $endDate) {
+            $query->whereBetween('mulai', [$startDate, $endDate]);
+        }
+
+        // Exclude drafts
+        $query->where('status', '<>', 'draft'); // Adjust 'status' and 'draft' as needed
+
+        // Fetch the filtered data
+        $businessTrips = $query->get();
+
+        // Pass the filtered data to the export class
+        return Excel::download(new BusinessTripExport($businessTrips), 'Data Perjalanan Dinas.xlsx');
+    }
+
     public function approval()
     {
         $user = Auth::user();
@@ -1033,21 +1126,6 @@ class BusinessTripController extends Controller
         $newNoSppd = "$newNumber/SPPD-CA/$romanMonth/$currentYear";
 
         return $newNoSppd;
-    }
-    public function exportExcel(Request $request)
-    {
-        $startDate = $request->query('start_date');
-        $endDate = $request->query('end_date');
-
-        $query = BusinessTrip::query();
-
-        if ($startDate && $endDate) {
-            $query->whereBetween('mulai', [$startDate, $endDate]);
-        }
-
-        $businessTrips = $query->get();
-
-        return Excel::download(new BusinessTripExport($businessTrips), 'Data Perjalanan Dinas.xlsx');
     }
 
 

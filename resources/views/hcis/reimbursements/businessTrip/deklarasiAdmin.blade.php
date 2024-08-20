@@ -12,7 +12,7 @@
             <div class="col-md-8">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Deklarasi Data</h4>
+                        <h4 class="mb-0">Data Declaration (Admin)</h4>
                         <a href="{{ route('businessTrip.admin') }}" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
@@ -40,7 +40,7 @@
 
                             <!-- View-only Table -->
                             <div class="mb-2">
-                                <h5 class="mb-2">Estimasi Uang Muka</h5>
+                                <h5 class="mb-2">Estimated Down Payment</h5>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped">
                                         <thead class="table-light">
@@ -92,7 +92,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="3">Total Uang Muka</th>
+                                                <th colspan="3">Total Down Payment</th>
                                                 <th>Rp. 160,000</th>
                                             </tr>
                                         </tfoot>
@@ -177,7 +177,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="3">Total Uang Realisasi</th>
+                                                <th colspan="3">Total Realized Money</th>
                                                 <th><input type="number" class="form-control" name="total_realisasi"
                                                         readonly></th>
                                                 <th></th>
@@ -206,7 +206,7 @@
                                         File</a>
                                 </div>
                             </div>
-                            <div class="mb-2">
+                            <div class="mb-3">
                                 <label class="form-label">Accept Status</label>
                                 <select class="form-select" name="accept_status" id="accept-status" required>
                                     <option value="" selected disabled>--- Choose Acceptance Status ---</option>
@@ -215,7 +215,7 @@
                                     <option value="Return/Refund">Return/Refund</option>
                                 </select>
                             </div>
-                            <div class="mb-2" id="refund-amount-div" style="display: none;">
+                            <div class="mb-3" id="refund-amount-div" style="display: none;">
                                 <label for="refund-amount" class="form-label">Refund Amount</label>
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>

@@ -6,6 +6,55 @@
             font-size: 28px !important;
             vertical-align: middle !important;
         }
+
+        .table {
+            border-collapse: separate;
+            width: 100%;
+            position: relative;
+            overflow: auto;
+        }
+
+        .table thead th {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            background-color: #fff !important;
+            border-bottom: 2px solid #ddd !important;
+            padding-right: 6px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
+        .table tbody td {
+            background-color: #fff !important;
+            padding-right: 10px;
+            position: relative;
+        }
+
+        .table th.sticky-col-header {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 3 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
+        .table td.sticky-col {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 6px 0 0 #fff;
+        }
     </style>
 @endsection
 
@@ -72,7 +121,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Name</th>
-                                            <th>No SPPD</th>
+                                            <th class="sticky-col-header">No SPPD</th>
                                             <th>Destination</th>
                                             <th>Start</th>
                                             <th>End</th>
@@ -81,7 +130,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th style="width: 145px">Action</th>
+                                            <th style="width: 155px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -92,11 +141,11 @@
                                                     {{ $loop->iteration }}
                                                 </th>
                                                 <td>{{ $n->nama }}</td>
-                                                <td>{{ $n->no_sppd }}</td>
+                                                <td class="sticky-col">{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-M-Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-M-Y') }}</td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -115,7 +164,7 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -145,7 +194,7 @@
 
 
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -170,7 +219,7 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->taksi == 'Ya' && isset($taksi[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -221,8 +270,8 @@
                                                         <input type="hidden" name="status_approval"
                                                             value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}">
                                                         <button type="submit"
-                                                            class="btn btn-outline-success rounded-pill"
-                                                            style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                            class="btn btn-outline-success rounded-pill mb-1"
+                                                            style="font-size: 0.75rem; padding: 0.30rem 0.5rem;">
                                                             Approve
                                                         </button>
                                                     </form>
@@ -233,7 +282,8 @@
                                                         @method('PUT')
                                                         <input type="hidden" name="status_approval" value="Rejected">
                                                         <button type="submit"
-                                                            class="btn btn-sm btn-outline-danger rounded-pill" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                            class="btn btn-sm btn-outline-danger rounded-pill mb-1"
+                                                            style="font-size: 0.75rem; padding: 0.30rem 0.5rem;">
                                                             Decline
                                                         </button>
                                                     </form>
@@ -295,6 +345,12 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
+                    window.addEventListener('resize', function() {
+                        document.body.style.display = 'none';
+                        document.body.offsetHeight; // Force a reflow
+                        document.body.style.display = '';
+                    });
+
                     document.addEventListener('DOMContentLoaded', function() {
                         const forms = document.querySelectorAll('.status-form');
                         forms.forEach(form => {

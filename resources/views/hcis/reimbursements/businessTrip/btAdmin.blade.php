@@ -6,6 +6,55 @@
             font-size: 28px !important;
             vertical-align: middle !important;
         }
+
+        .table {
+            border-collapse: separate;
+            width: 100%;
+            position: relative;
+            overflow: auto;
+        }
+
+        .table thead th {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            background-color: #fff !important;
+            border-bottom: 2px solid #ddd !important;
+            padding-right: 6px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
+        .table tbody td {
+            background-color: #fff !important;
+            padding-right: 10px;
+            position: relative;
+        }
+
+        .table th.sticky-col-header {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 3 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
+        .table td.sticky-col {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 6px 0 0 #fff;
+        }
     </style>
 @endsection
 
@@ -27,19 +76,24 @@
                 </div>
             </div>
 
-            <!-- Add Data Button -->
+            <!-- Export Excel -->
             <div class="col-md-6 mt-4 text-end">
-                <a href="/businessTrip/form/add" class="btn btn-outline-primary rounded-pill" style="font-size: 18px">
-                    <i class="bi bi-plus-circle"></i> Add Data
+                <a href="{{ route('export.excel', [
+                    'start-date' => request()->query('start-date'),
+                    'end-date' => request()->query('end-date'),
+                ]) }}"
+                    class="btn btn-outline-success rounded-pill btn-action">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
             </div>
+
         </div>
     </div>
 
 
     <div class="card">
         <div class="card-body">
-            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}">
+            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate.admin') }}">
                 <div class="row align-items-end">
                     <h3 class="card-title">Data SPPD</h3>
                     <div class="col-md-5">
@@ -79,7 +133,7 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
-                                            <th>No SPPD</th>
+                                            <th class="sticky-col-header">No SPPD</th>
                                             <th>Destination</th>
                                             <th>Start</th>
                                             <th>End</th>
@@ -98,10 +152,10 @@
                                                 <th scope="row" style="text-align: center;">
                                                     {{ $loop->iteration }}
                                                 </th>
-                                                <td>{{ $n->no_sppd }}</td>
+                                                <td class="sticky-col">{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-m-Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-m-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-M-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-M-Y') }}</td>
                                                 <td style="text-align: center">
                                                     @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
@@ -114,8 +168,8 @@
                                                                 'CA Total' => $caTransactions[$n->no_sppd]->total_ca,
                                                                 'Total Real' => $caTransactions[$n->no_sppd]->total_real,
                                                                 'Total Cost' => $caTransactions[$n->no_sppd]->total_cost,
-                                                                'Start' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
-                                                                'End' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
+                                                                'Start' => date('d-M-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
+                                                                'End' => date('d-M-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
                                                             ]) }}"><u>Details</u></a>
                                                     @else
                                                         -
@@ -137,9 +191,9 @@
                                                                         'Phone No.' => $ticket->tlp_tkt,
                                                                         'From' => $ticket->dari_tkt,
                                                                         'To' => $ticket->ke_tkt,
-                                                                        'Departure Date' => date('d-m-Y', strtotime($ticket->tgl_brkt_tkt)),
+                                                                        'Departure Date' => date('d-M-Y', strtotime($ticket->tgl_brkt_tkt)),
                                                                         'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
-                                                                        'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-m-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
+                                                                        'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-M-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
                                                                         'Return Time' => !empty($ticket->jam_plg_tkt) ? date('H:i', strtotime($ticket->jam_plg_tkt)) : 'No Data',
                                                                     ];
                                                                 }),
@@ -148,7 +202,6 @@
                                                     @else
                                                         -
                                                     @endif
-
 
                                                 </td>
                                                 <td style="text-align: center">
@@ -165,8 +218,8 @@
                                                                         'Location' => $hotel->lokasi_htl,
                                                                         'Room' => $hotel->jmlkmr_htl,
                                                                         'Bed' => $hotel->bed_htl,
-                                                                        'Check In' => date('d-m-Y', strtotime($hotel->tgl_masuk_htl)),
-                                                                        'Check Out' => date('d-m-Y', strtotime($hotel->tgl_keluar_htl)),
+                                                                        'Check In' => date('d-M-Y', strtotime($hotel->tgl_masuk_htl)),
+                                                                        'Check Out' => date('d-M-Y', strtotime($hotel->tgl_keluar_htl)),
                                                                         'Total Days' => $hotel->total_hari,
                                                                     ];
                                                                 }),
@@ -191,24 +244,28 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    <p type="button"
-                                                        class="btn btn-sm rounded-pill btn-{{ $n->status == 'Approved'
+                                                <td style="align-content: center;">
+                                                    <span
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved'
                                                             ? 'success'
-                                                            : ($n->status == 'Return' || $n->status == 'return/refunds'
+                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
                                                                 ? 'danger'
                                                                 : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
                                                                     ? 'warning'
-                                                                    : (in_array($n->status, ['Doc Accepted', 'verified'])
-                                                                        ? 'primary'
-                                                                        : 'secondary'))) }}"
-                                                        style="pointer-events: none">
+                                                                    : ($n->status == 'Draft'
+                                                                        ? 'secondary'
+                                                                        : (in_array($n->status, ['Doc Accepted', 'verified'])
+                                                                            ? 'primary'
+                                                                            : 'secondary')))) }}"
+                                                        style="
+                                                    font-size: 12px;
+                                                    padding: 0.5rem 1rem;">
                                                         {{ $n->status }}
-                                                    </p>
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
-                                                        class="btn btn-outline-info rounded-pill">
+                                                        class="btn btn-outline-info rounded-pill mb-1">
                                                         <i class="bi bi-download"></i>
                                                     </a>
 
@@ -220,22 +277,12 @@
                                                             action="/businessTrip/deklarasi/admin/{{ $n->id }}"
                                                             style="display: inline-block;">
                                                             <button type="submit"
-                                                                class="btn btn-outline-success rounded-pill"
+                                                                class="btn btn-outline-success rounded-pill mb-1"
                                                                 data-toggle="tooltip" title="Deklarasi">
                                                                 <i class="bi bi-card-checklist"></i>
                                                             </button>
                                                         </form>
                                                     @else
-                                                        {{-- <form method="GET"
-                                                            action="/businessTrip/form/update/{{ $n->id }}"
-                                                            style="display: inline-block;">
-                                                            <button type="submit"
-                                                                class="btn btn-outline-warning rounded-pill my-1"
-                                                                {{ $n->status === 'Diterima' ? 'disabled' : '' }}
-                                                                data-toggle="tooltip" title="Edit">
-                                                                <i class="bi bi-pencil-square"></i>
-                                                            </button>
-                                                        </form> --}}
                                                         <form id="deleteForm_{{ $n->id }}" method="POST"
                                                             action="/businessTrip/delete/{{ $n->id }}"
                                                             style="display: inline-block;">
@@ -243,7 +290,7 @@
                                                             @method('DELETE')
 
                                                             <button type="button"
-                                                                class="btn btn-outline-danger rounded-pill"
+                                                                class="btn btn-outline-danger rounded-pill mb-1"
                                                                 onclick="confirmDelete('{{ $n->id }}')"
                                                                 {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
                                                                 <i class="bi bi-trash-fill"></i>
@@ -277,7 +324,8 @@
                                 <div id="detailContent"></div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-primary rounded-pill"
+                                    data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
@@ -287,7 +335,11 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
-                    //    let table = new DataTable('#scheduleTable');
+                    window.addEventListener('resize', function() {
+                        document.body.style.display = 'none';
+                        document.body.offsetHeight; // Force a reflow
+                        document.body.style.display = '';
+                    });
 
                     function getDate() {
                         var today = new Date();
@@ -355,7 +407,7 @@
 
                             function createTableHtml(data, title) {
                                 var tableHtml = '<h5>' + title + '</h5>';
-                                tableHtml += '<table class="table table-sm"><thead><tr>';
+                                tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
                                 var isArray = Array.isArray(data) && data.length > 0;
 
                                 // Assuming all objects in the data array have the same keys, use the first object to create headers

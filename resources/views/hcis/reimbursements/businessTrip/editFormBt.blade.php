@@ -58,8 +58,7 @@
                             </div>
                             <div class="mb-2">
                                 <label for="tujuan" class="form-label">Destination</label>
-                                <select class="form-select" name="tujuan" id="tujuan" onchange="toggleOthers()"
-                                    required>
+                                <select class="form-select" name="tujuan" id="tujuan" onchange="toggleOthers()" required>
                                     <option value="">--- Choose Destination ---</option>
                                     @foreach ($locations as $location)
                                         <option value="{{ $location->area }}"
@@ -67,13 +66,13 @@
                                             {{ $location->area . ' (' . $location->city . ')' }}
                                         </option>
                                     @endforeach
-                                    <option value="Others" {{ $n->tujuan === 'Others' ? 'selected' : '' }}>Others</option>
+                                    <option value="Others" {{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? 'selected' : '' }}>Others</option>
                                 </select>
                                 <br>
                                 <input type="text" name="others_location" id="others_location" class="form-control"
                                     placeholder="Other Location"
-                                    value="{{ $n->tujuan === 'Others' ? $n->others_location : '' }}"
-                                    style="{{ $n->tujuan === 'Others' ? '' : 'display: none;' }}">
+                                    value="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? $n->tujuan : '' }}"
+                                    style="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? '' : 'display: none;' }}">
                             </div>
 
                             <div class="mb-3">
@@ -978,17 +977,27 @@
 
 
         function toggleOthers() {
-            // ca_type ca_nbt ca_e
             var locationFilter = document.getElementById("tujuan");
             var others_location = document.getElementById("others_location");
+            var selectedValue = locationFilter.value;
+            var options = Array.from(locationFilter.options).map(option => option.value);
 
-            if (locationFilter.value === "Others") {
+            // Check if the selected value is "Others" or not in the list
+            if (selectedValue === "Others" || !options.includes(selectedValue)) {
                 others_location.style.display = "block";
+
+                if (!options.includes(selectedValue)) {
+                    locationFilter.value = "Others"; // Select "Others"
+                    others_location.value = selectedValue; // Show the unlisted value in the text field
+                }
             } else {
                 others_location.style.display = "none";
-                others_location.value = "";
+                others_location.value = ""; // Clear the input field
             }
         }
+
+        // Call the function on page load to handle any pre-filled values
+        window.onload = toggleOthers;
 
         function validateDates(index) {
             // Get the departure and return date inputs for the given form index
