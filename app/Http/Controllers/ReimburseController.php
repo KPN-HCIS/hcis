@@ -66,7 +66,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $no_sppds = BusinessTrip::orderBy('no_sppd')->get();
 
         function findDepartmentHead($employee)
         {
@@ -164,14 +164,91 @@ class ReimburseController extends Controller
         $model->date_required = $req->ca_required;
         $model->total_days = $req->totaldays;
         if ($req->ca_type == 'dns') {
+            // Menyiapkan array untuk menyimpan detail dari setiap bagian
+            $detail_perdiem = [];
+            $detail_transport = [];
+            $detail_penginapan = [];
+            $detail_lainnya = [];
+
+            // Loop untuk Perdiem
+            if ($req->has('start_bt_perdiem')) {
+                foreach ($req->start_bt_perdiem as $key => $startDate) {
+                    $endDate = $req->end_bt_perdiem[$key];
+                    $totalDays = $req->total_days_bt_perdiem[$key];
+                    $location = $req->location_bt_perdiem[$key];
+                    $companyCode = $req->company_bt_perdiem[$key];
+                    $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+
+                    $detail_perdiem[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'location' => $location,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
+            }
+
+            // Loop untuk Transport
+            if ($req->has('tanggal_bt_transport')) {
+                foreach ($req->tanggal_bt_transport as $key => $tanggal) {
+                    $keterangan = $req->keterangan_bt_transport[$key];
+                    $companyCode = $req->company_bt_transport[$key];
+                    $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+
+                    $detail_transport[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
+            }
+
+            // Loop untuk Penginapan
+            if ($req->has('start_bt_penginapan')) {
+                foreach ($req->start_bt_penginapan as $key => $startDate) {
+                    $endDate = $req->end_bt_penginapan[$key];
+                    $totalDays = $req->total_days_bt_penginapan[$key];
+                    $hotelName = $req->hotel_name_bt_penginapan[$key];
+                    $companyCode = $req->company_bt_penginapan[$key];
+                    $nominal = str_replace('.', '', $req->nominal_bt_penginapan[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+
+                    $detail_penginapan[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'hotel_name' => $hotelName,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
+            }
+
+            // Loop untuk Lainnya
+            if ($req->has('tanggal_bt_lainnya')) {
+                foreach ($req->tanggal_bt_lainnya as $key => $tanggal) {
+                    $keterangan = $req->keterangan_bt_lainnya[$key];
+                    $nominal = str_replace('.', '', $req->nominal_bt_lainnya[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+
+                    $detail_lainnya[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'nominal' => $nominal,
+                    ];
+                }
+            }
+
+            // Konversi array menjadi JSON untuk disimpan di database
             $detail_ca = [
-                'allowance' => $req->allowance,
-                'transport' => $req->transport,
-                'accommodation' => $req->accommodation,
-                'other' => $req->other,
+                'detail_perdiem' => $detail_perdiem,
+                'detail_transport' => $detail_transport,
+                'detail_penginapan' => $detail_penginapan,
+                'detail_lainnya' => $detail_lainnya,
             ];
-            $detail_ca_json = json_encode($detail_ca);
-            $model->detail_ca = $detail_ca_json;
+
+            $model->detail_ca = json_encode($detail_ca);
         } else if ($req->ca_type == 'ndns') {
             // Menyiapkan array untuk menyimpan detail 'ndns'
             $detail_ndns = [];

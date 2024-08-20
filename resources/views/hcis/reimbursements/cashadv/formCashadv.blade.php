@@ -145,7 +145,7 @@
                                     <select class="form-control select2" id="bisnis_numb" name="bisnis_numb">
                                         <option value="">Select</option>
                                         @foreach ($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_ca }}">{{ $no_sppd->no_ca }}</option>
+                                            <option value="{{ $no_sppd->no_sppd }}">{{ $no_sppd->no_sppd }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -159,7 +159,7 @@
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
                                             <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                            {{-- <div class="card">
+                                            <div class="card">
                                                 <div class="card-body text-center">
                                                     <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
                                                 </div>
@@ -176,11 +176,11 @@
                                                                     <div id="form-container-bt-perdiem">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Start Perdiem</label>
-                                                                            <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy" required>
+                                                                            <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">End Perdiem</label>
-                                                                            <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" placeholder="mm/dd/yyyy" required>
+                                                                            <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Total Days</label>
@@ -193,7 +193,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Location Agency</label>
-                                                                            <select class="form-control" id="locationFilter" name="location_bt_perdiem[]" onchange="toggleOthers()" required>
+                                                                            <select class="form-control" id="locationFilter" name="location_bt_perdiem[]" onchange="toggleOthers()">
                                                                                 <option value="">Select location...</option>
                                                                                 @foreach($locations as $location)
                                                                                     <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
@@ -204,7 +204,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]" required>
+                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
                                                                                 <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -255,11 +255,11 @@
                                                                     <div id="form-container-bt-transport">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Tanggal Transport</label>
-                                                                            <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" required>
+                                                                            <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_transport[]" required>
+                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_transport[]">
                                                                                 <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -268,7 +268,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_nb_transport[]" class="form-control"></textarea>
+                                                                            <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Amount</label>
@@ -314,11 +314,11 @@
                                                                     <div id="form-container-bt-penginapan">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Start Penginapan</label>
-                                                                            <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy" required>
+                                                                            <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">End Penginapan</label>
-                                                                            <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy" required>
+                                                                            <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="start">Total Days</label>
@@ -331,11 +331,11 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Hotel Name</label>
-                                                                            <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel" required>
+                                                                            <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]" required>
+                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
                                                                                 <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -387,7 +387,7 @@
                                                                     <div id="form-container-bt-lainnya">
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Tanggal</label>
-                                                                            <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy" required>
+                                                                            <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Keterangan</label>
@@ -419,7 +419,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> --}}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -549,24 +549,24 @@
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Relation Type</label>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="food_cost_e_relation_${index}" name="food_cost_e_relation[${index}]" value="Food/Beverages/Souvenir">
-                                                                                    <label class="form-check-label" for="food_cost_e_relation_${index}">Food/Beverages/Souvenir</label>
+                                                                                    <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="Food/Beverages/Souvenir">
+                                                                                    <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="transport_e_relation${index}" name="transport_e_relation[${index}]" value="Transport">
-                                                                                    <label class="form-check-label" for="transport_e_relation${index}">Transport</label>
+                                                                                    <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="Accommodation">
+                                                                                    <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="accommodation_e_relation${index}" name="accommodation_e_relation[${index}]" value="Accommodation">
-                                                                                    <label class="form-check-label" for="accommodation_e_relation${index}">Accommodation</label>
+                                                                                    <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="Transport">
+                                                                                    <label class="form-check-label" for="transport_e_relation[]">Transport</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="gift_e_relation${index}" name="gift_e_relation[${index}]" value="Gift">
-                                                                                    <label class="form-check-label" for="gift_e_relation${index}">Gift</label>
+                                                                                    <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="Gift">
+                                                                                    <label class="form-check-label" for="gift_e_relation[]">Gift</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="fund_e_relation${index}" name="fund_e_relation[${index}]" value="Fund">
-                                                                                    <label class="form-check-label" for="fund_e_relation${index}">Fund</label>
+                                                                                    <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="Fund">
+                                                                                    <label class="form-check-label" for="fund_e_relation[]">Fund</label>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="mb-2">
@@ -618,11 +618,11 @@
 
                     <br>
                     <div class="row">
-                        <div class="col-md d-md-flex justify-content-end text-center">
+                        <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('cashadvanced') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary btn-pill px-4">Submit</button>
+                            <button type="submit" class=" btn btn-primary btn-pill px-4">Submit</button>
                         </div>
                     </div>
                     </form>
@@ -863,6 +863,520 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
+            const formContainerBT = document.getElementById('form-container-bt-perdiem');
+
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function formatInput(input) {
+                let value = input.value.replace(/\./g, '');
+                value = parseFloat(value);
+                if (!isNaN(value)) {
+                    input.value = formatNumber(Math.floor(value));
+                } else {
+                    input.value = formatNumber(0);
+                }
+                calculateTotalNominalBT();
+            }
+
+            function calculateTotalNominalBT() {
+                let total = 0;
+                document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
+                    total += parseNumber(input.value);
+                });
+                document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+            }
+
+            function calculateTotalDays(input) {
+                const formGroup = input.closest('.mb-2').parentElement;
+                const startDate = new Date(formGroup.querySelector('input[name="start_bt_perdiem[]"]').value);
+                const endDate = new Date(formGroup.querySelector('input[name="end_bt_perdiem[]"]').value);
+
+                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
+                    const diffTime = Math.abs(endDate - startDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = diffDays;
+                } else {
+                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = 0;
+                }
+            }
+
+            function addNewPerdiemForm() {
+                const newFormBT = document.createElement('div');
+                newFormBT.classList.add('mb-2');
+
+                newFormBT.innerHTML = `
+                    <div class="mb-2">
+                        <label class="form-label">Start Perdiem</label>
+                        <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy" >
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">End Perdiem</label>
+                        <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" placeholder="mm/dd/yyyy" >
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="start">Total Days</label>
+                        <div class="input-group">
+                            <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="0" readonly>
+                            <div class="input-group-append">
+                                <span class="input-group-text">days</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="name">Location Agency</label>
+                        <select class="form-control select2" name="location_bt_perdiem[]" onchange="toggleOthers()" >
+                            <option value="">Select location...</option>
+                            @foreach($locations as $location)
+                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                            @endforeach
+                            <option value="Others">Others</option>
+                        </select>
+                        <br><input type="text" name="others_location" class="form-control" placeholder="Other Location" value="" style="display: none;">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="name">Company Code</label>
+                        <select class="form-control select2" name="company_bt_perdiem[]" >
+                            <option value="">Select Company...</option>
+                            @foreach($companies as $company)
+                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Amount</label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
+                    </div>
+                    <button type="button" class="btn btn-danger remove-form">Remove</button>
+                    <hr class="border border-primary border-1 opacity-50">
+                `;
+
+                formContainerBT.appendChild(newFormBT);
+
+                // Attach input event to the newly added nominal field
+                newFormBT.querySelector('input[name="nominal_bt_perdiem[]"]').addEventListener('input', function() {
+                    formatInput(this);
+                });
+
+                // Attach change event to the date fields to calculate total days
+                newFormBT.querySelector('input[name="start_bt_perdiem[]"]').addEventListener('change', function() {
+                    calculateTotalDays(this);
+                });
+
+                newFormBT.querySelector('input[name="end_bt_perdiem[]"]').addEventListener('change', function() {
+                    calculateTotalDays(this);
+                });
+
+                // Attach click event to the remove button
+                newFormBT.querySelector('.remove-form').addEventListener('click', function() {
+                    newFormBT.remove();
+                    calculateTotalNominalBT();
+                });
+
+                // Update the date constraints for the new 'start_bt_perdiem[]' and 'end_bt_perdiem[]' input fields
+                const startDateInput = document.getElementById('start_date').value;
+                const endDateInput = document.getElementById('end_date').value;
+
+                newFormBT.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
+                    input.min = startDateInput;
+                    input.max = endDateInput;
+                });
+
+                newFormBT.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
+                    input.min = startDateInput;
+                    input.max = endDateInput;
+                });
+            }
+
+            document.getElementById('add-more-bt-perdiem').addEventListener('click', addNewPerdiemForm);
+
+            // Attach input event to the existing nominal fields
+            document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    formatInput(this);
+                });
+            });
+
+            // Attach change event to the existing start and end date fields to calculate total days
+            document.querySelectorAll('input[name="start_bt_perdiem[]"], input[name="end_bt_perdiem[]"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    calculateTotalDays(this);
+                });
+            });
+
+            // Initial calculation for the total nominal
+            calculateTotalNominalBT();
+
+            document.getElementById('start_date').addEventListener('change', handleDateChange);
+            document.getElementById('end_date').addEventListener('change', handleDateChange);
+
+            function handleDateChange() {
+                const startDateInput = document.getElementById('start_date');
+                const endDateInput = document.getElementById('end_date');
+
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+
+                // Set the min attribute of the end_date input to the selected start_date
+                endDateInput.min = startDateInput.value;
+
+                // Validate dates
+                if (endDate < startDate) {
+                    alert("End Date cannot be earlier than Start Date");
+                    endDateInput.value = "";
+                }
+
+                // Update min and max values for all dynamic perdiem date fields
+                document.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
+                    input.min = startDateInput.value;
+                    input.max = endDateInput.value;
+                });
+
+                document.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
+                    input.min = startDateInput.value;
+                    input.max = endDateInput.value;
+                });
+
+                document.querySelectorAll('input[name="total_days_bt_perdiem[]"]').forEach(function(input) {
+                    calculateTotalDays(input);
+                });
+            }
+
+            // Attach click event to the remove button for existing forms
+            document.querySelectorAll('.remove-form').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.mb-2').remove();
+                    calculateTotalNominalBT();
+                });
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainerBT = document.getElementById('form-container-bt-transport');
+
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function formatInput(input) {
+                let value = input.value.replace(/\./g, '');
+                value = parseFloat(value);
+                if (!isNaN(value)) {
+                    input.value = formatNumber(Math.floor(value));
+                } else {
+                    input.value = formatNumber(0);
+                }
+                calculateTotalNominalBT();
+            }
+
+            function calculateTotalNominalBT() {
+                let total = 0;
+                document.querySelectorAll('input[name="nominal_bt_transport[]"]').forEach(input => {
+                    total += parseNumber(input.value);
+                });
+                document.querySelector('input[name="total_bt_transport[]"]').value = formatNumber(total);
+            }
+
+            function addNewTransportForm() {
+                const newFormBT = document.createElement('div');
+                newFormBT.classList.add('mb-2');
+
+                newFormBT.innerHTML = `
+                    <div class="mb-2">
+                        <label class="form-label">Tanggal Transport</label>
+                        <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="name">Company Code</label>
+                        <select class="form-control select2" name="company_bt_transport[]" >
+                            <option value="">Select Company...</option>
+                            <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Keterangan</label>
+                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Amount</label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control" name="nominal_bt_transport[]" type="text" min="0" value="0">
+                    </div>
+                    <button type="button" class="btn btn-danger remove-form">Remove</button>
+                    <hr class="border border-primary border-1 opacity-50">
+                `;
+
+                formContainerBT.appendChild(newFormBT);
+
+                // Attach input event to the newly added nominal field
+                newFormBT.querySelector('input[name="nominal_bt_transport[]"]').addEventListener('input', function() {
+                    formatInput(this);
+                });
+
+                // Attach click event to the remove button
+                newFormBT.querySelector('.remove-form').addEventListener('click', function() {
+                    newFormBT.remove();
+                    calculateTotalNominalBT();
+                });
+            }
+
+            document.getElementById('add-more-bt-transport').addEventListener('click', addNewTransportForm);
+
+            // Attach input event to the existing nominal fields
+            document.querySelectorAll('input[name="nominal_bt_transport[]"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    formatInput(this);
+                });
+            });
+
+            // Initial calculation for the total nominal
+            calculateTotalNominalBT();
+
+            // Attach click event to the remove button for existing forms
+            document.querySelectorAll('.remove-form').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.mb-2').remove();
+                    calculateTotalNominalBT();
+                });
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainerBT = document.getElementById('form-container-bt-penginapan');
+
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function formatInput(input) {
+                let value = input.value.replace(/\./g, '');
+                value = parseFloat(value);
+                if (!isNaN(value)) {
+                    input.value = formatNumber(Math.floor(value));
+                } else {
+                    input.value = formatNumber(0);
+                }
+                calculateTotalNominalBT();
+            }
+
+            function calculateTotalNominalBT() {
+                let total = 0;
+                document.querySelectorAll('input[name="nominal_bt_penginapan[]"]').forEach(input => {
+                    total += parseNumber(input.value);
+                });
+                document.querySelector('input[name="total_bt_penginapan[]"]').value = formatNumber(total);
+            }
+
+            function calculateTotalDays(input) {
+                const formGroup = input.closest('.mb-2').parentElement;
+                const startDate = new Date(formGroup.querySelector('input[name="start_bt_penginapan[]"]').value);
+                const endDate = new Date(formGroup.querySelector('input[name="end_bt_penginapan[]"]').value);
+
+                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
+                    const diffTime = Math.abs(endDate - startDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    formGroup.querySelector('input[name="total_days_bt_penginapan[]"]').value = diffDays;
+                } else {
+                    formGroup.querySelector('input[name="total_days_bt_penginapan[]"]').value = 0;
+                }
+            }
+
+            function addNewPenginapanForm() {
+                const newFormBT = document.createElement('div');
+                newFormBT.classList.add('mb-2');
+
+                newFormBT.innerHTML = `
+                    <div class="mb-2">
+                        <label class="form-label">Start Penginapan</label>
+                        <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">End Penginapan</label>
+                        <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="start">Total Days</label>
+                        <div class="input-group">
+                            <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="0" readonly>
+                            <div class="input-group-append">
+                                <span class="input-group-text">days</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="name">Hotel Name</label>
+                        <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="name">Company Code</label>
+                        <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
+                            <option value="">Select Company...</option>
+                            @foreach($companies as $company)
+                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Amount</label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="0">
+                    </div>
+                    <button type="button" class="btn btn-danger remove-form">Remove</button>
+                    <hr class="border border-primary border-1 opacity-50">
+                `;
+
+                formContainerBT.appendChild(newFormBT);
+
+                // Attach input event to the newly added nominal field
+                newFormBT.querySelector('input[name="nominal_bt_penginapan[]"]').addEventListener('input', function() {
+                    formatInput(this);
+                });
+
+                // Attach change event to the date fields to calculate total days
+                newFormBT.querySelector('input[name="start_bt_penginapan[]"]').addEventListener('change', function() {
+                    calculateTotalDays(this);
+                });
+
+                newFormBT.querySelector('input[name="end_bt_penginapan[]"]').addEventListener('change', function() {
+                    calculateTotalDays(this);
+                });
+
+                // Attach click event to the remove button
+                newFormBT.querySelector('.remove-form').addEventListener('click', function() {
+                    newFormBT.remove();
+                    calculateTotalNominalBT();
+                });
+            }
+
+            document.getElementById('add-more-bt-penginapan').addEventListener('click', addNewPenginapanForm);
+
+            // Attach input event to the existing nominal fields
+            document.querySelectorAll('input[name="nominal_bt_penginapan[]"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    formatInput(this);
+                });
+            });
+
+            // Attach change event to the existing start and end date fields to calculate total days
+            document.querySelectorAll('input[name="start_bt_penginapan[]"], input[name="end_bt_penginapan[]"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    calculateTotalDays(this);
+                });
+            });
+
+            // Initial calculation for existing fields
+            calculateTotalNominalBT();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainerLainnya = document.getElementById('form-container-bt-lainnya');
+
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function formatInput(input) {
+                let value = input.value.replace(/\./g, '');
+                value = parseFloat(value);
+                if (!isNaN(value)) {
+                    input.value = formatNumber(Math.floor(value));
+                } else {
+                    input.value = formatNumber(0);
+                }
+                calculateTotalNominalLainnya();
+            }
+
+            function calculateTotalNominalLainnya() {
+                let total = 0;
+                document.querySelectorAll('input[name="nominal_bt_lainnya[]"]').forEach(input => {
+                    total += parseNumber(input.value);
+                });
+                document.querySelector('input[name="total_bt_lainnya[]"]').value = formatNumber(total);
+            }
+
+            function addNewLainnyaForm() {
+                const newFormLainnya = document.createElement('div');
+                newFormLainnya.classList.add('mb-2');
+
+                newFormLainnya.innerHTML = `
+                    <div class="mb-2">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Keterangan</label>
+                        <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Accommodation</label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control" name="nominal_bt_lainnya[]" type="text" min="0" value="0">
+                    </div>
+                    <button type="button" class="btn btn-danger remove-form">Remove</button>
+                    <hr class="border border-primary border-1 opacity-50">
+                `;
+
+                formContainerLainnya.appendChild(newFormLainnya);
+
+                // Attach input event to the newly added nominal field
+                newFormLainnya.querySelector('input[name="nominal_bt_lainnya[]"]').addEventListener('input', function() {
+                    formatInput(this);
+                });
+
+                // Attach click event to the remove button
+                newFormLainnya.querySelector('.remove-form').addEventListener('click', function() {
+                    newFormLainnya.remove();
+                    calculateTotalNominalLainnya();
+                });
+            }
+
+            document.getElementById('add-more-bt-lainnya').addEventListener('click', addNewLainnyaForm);
+
+            // Attach input event to the existing nominal fields
+            document.querySelectorAll('input[name="nominal_bt_lainnya[]"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    formatInput(this);
+                });
+            });
+
+            // Initial calculation for the total nominal
+            calculateTotalNominalLainnya();
+        });
+
+        //
+
+        document.addEventListener('DOMContentLoaded', function() {
             const formContainer = document.getElementById('form-container');
 
             function formatNumber(num) {
@@ -1095,23 +1609,23 @@
                     <div class="mb-2">
                         <label class="form-label">Relation Type</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="Food/Beverages/Souvenir">
+                            <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="food_cost">
                             <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="Transport">
+                            <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="transport">
                             <label class="form-check-label" for="transport_e_relation[]">Transport</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="Accommodation">
+                            <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="accommodation">
                             <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="Gift">
+                            <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="gift">
                             <label class="form-check-label" for="gift_e_relation[]">Gift</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="Fund">
+                            <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="fund">
                             <label class="form-check-label" for="fund_e_relation[]">Fund</label>
                         </div>
                     </div>
@@ -1165,6 +1679,7 @@
             calculateTotalNominalEDetail();
             updateCheckboxVisibility();
         });
+
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
