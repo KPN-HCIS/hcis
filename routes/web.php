@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\BusinessTripController;
 use App\Http\Controllers\BussinessTripController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\ExportExcelController;
 use App\Http\Controllers\MedicalController;
 use App\Http\Controllers\ProfileController;
@@ -33,7 +34,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use App\Http\Controllers\ReimburseController;
-
+use App\Models\Designation;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -46,8 +47,10 @@ Route::get('dbauth', [SsoController::class, 'dbauth']);
 Route::get('sourcermb/dbauth', [SsoController::class, 'dbauthReimburse']);
 
 Route::get('fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
+Route::get('inactive-employees', [EmployeeController::class, 'EmployeeInactive']);
 Route::get('updmenu-employees', [EmployeeController::class, 'updateEmployeeAccessMenu']);
 Route::get('daily-schedules', [ScheduleController::class, 'reminderDailySchedules']);
+Route::get('update-designtaion', [DesignationController::class, 'UpdateDesignation']);
 
 Route::get('/test-email', function () {
     $messages = '<p>This is a test message with <strong>bold</strong> text.</p>';
