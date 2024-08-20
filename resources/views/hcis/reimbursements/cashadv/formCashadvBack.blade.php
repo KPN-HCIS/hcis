@@ -191,32 +191,17 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <!-- HTML -->
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Location Agency</label>
-                                                                            <select class="form-control select2 location-select" name="location_bt_perdiem[]">
+                                                                            <select class="form-control" id="locationFilter" name="location_bt_perdiem[]" onchange="toggleOthers()">
                                                                                 <option value="">Select location...</option>
                                                                                 @foreach($locations as $location)
                                                                                     <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
                                                                                 @endforeach
                                                                                 <option value="Others">Others</option>
                                                                             </select>
-                                                                            <br>
-                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
+                                                                            <br><input type="text" name="others_location" id="others_location" class="form-control" placeholder="Other Location" value="" style="display: none;">
                                                                         </div>
-
-                                                                        {{-- <div class="mb-2">
-                                                                            <label class="form-label" for="location">Location Agency</label>
-                                                                            <select class="form-control select2" name="location_bt_perdiem[]" onchange="toggleOthers(this)">
-                                                                                <option value="">Select location...</option>
-                                                                                @foreach($locations as $location)
-                                                                                    <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
-                                                                                @endforeach
-                                                                                <option value="Others">Others</option>
-                                                                            </select>
-                                                                            <br>
-                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control mt-2" placeholder="Please specify other location" style="display: none;">
-                                                                        </div> --}}
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
                                                                             <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
@@ -1364,8 +1349,6 @@
                 });
             });
         });
-
-
 
         //
 
