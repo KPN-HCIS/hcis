@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
+@extends('layouts_.vertical', ['page_title' => 'Approve Cash Advanced'])
 
 @section('css')
     <!-- Sertakan CSS Bootstrap jika diperlukan -->
@@ -14,7 +14,7 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('cashadvanced') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('approval') }}">{{ $parentLink }}</a></li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -25,12 +25,13 @@
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Data</h4>
+                    <a href=""></a>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data <b>"{{ $transactions->no_ca }}"</h4>
                     <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced.submit') }}">@csrf
+                        <form id="scheduleForm" method="post" action="{{ route('approval.cashadvancedApproved', encrypt($transactions->id)) }}">@csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="start">Employee ID</label>
@@ -60,85 +61,81 @@
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Costing Company</label>
-                                    <select class="form-control select2" id="companyFilter" name="companyFilter" required>
+                                    <select class="form-control bg-light" id="companyFilter" name="companyFilter" disabled>
                                         <option value="">Select Company...</option>
-                                        @foreach ($companies as $company)
-                                            <option value="{{ $company->contribution_level_code }}">
-                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                            </option>
+                                        @foreach($companies as $company)
+                                        <option value="{{ $company->contribution_level_code }}" {{ $company->contribution_level_code == $transactions->contribution_level_code ? 'selected' : '' }}>
+                                            {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Destination</label>
-                                    <select class="form-control select2" id="locationFilter" name="locationFilter"
-                                        onchange="toggleOthers()" required>
+                                    <select class="form-control bg-light" id="locationFilter" name="locationFilter" onchange="toggleOthers()" disabled>
                                         <option value="">Select location...</option>
-                                        @foreach ($locations as $location)
-                                            <option value="{{ $location->area }}">
-                                                {{ $location->area . ' (' . $location->company_name . ')' }}</option>
+                                        <p>{{ $transactions->destination }}</p>
+                                        @foreach($locations as $location)
+                                        <option value="{{ $location->area }}" {{ $location->area == $transactions->destination ? 'selected' : '' }}>
+                                            {{ $location->area." (".$location->company_name.")" }}
+                                        </option>
                                         @endforeach
-                                        <option value="Others">Others</option>
+                                        <option value="Others" {{ $transactions->destination == 'Others' ? 'selected' : '' }}>Others</option>
                                     </select>
-                                    <br><input type="text" name="others_location" id="others_location"
-                                        class="form-control" placeholder="Other Location" value=""
-                                        style="display: none;">
+                                    <br><input type="text" name="others_location" id="others_location" class="form-control bg-light" placeholder="Other Location" value="{{ $transactions->others_location }}" readonly style="{{ $transactions->destination == 'Others' ? 'display: block;' : 'display: none;' }}">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label" for="name">CA Purposes</label>
-                                    <textarea name="ca_needs" id="ca_needs" class="form-control"></textarea>
+                                    <textarea name="ca_needs" id="ca_needs" class="form-control bg-light" disabled>{{ $transactions->ca_needs }}</textarea>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 mb-2">
                                     <label class="form-label" for="start">Start Date</label>
-                                    <input type="date" name="start_date" id="start_date" class="form-control"
-                                        placeholder="mm/dd/yyyy" required>
+                                    <input type="date" name="start_date" id="start_date" class="form-control bg-light" value="{{ $transactions->start_date }}" readonly>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <label class="form-label" for="start">End Date</label>
-                                    <input type="date" name="end_date" id="end_date" class="form-control"
-                                        placeholder="mm/dd/yyyy" required>
+                                    <input type="date" name="end_date" id="end_date" class="form-control bg-light" value="{{ $transactions->end_date }}" readonly>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <label class="form-label" for="start">Total Days</label>
                                     <div class="input-group">
-                                        <input class="form-control bg-light" id="totaldays" name="totaldays"
-                                            type="text" min="0" value="0" readonly>
+                                        <input class="form-control bg-light" id="totaldays" name="totaldays" type="text" min="0" value="{{ $transactions->total_days }}" readonly>
                                         <div class="input-group-append">
                                             <span class="input-group-text">days</span>
                                         </div>
                                     </div>
-                                    <input class="form-control" id="perdiem" name="perdiem" type="hidden"
-                                        value="{{ $perdiem->amount }}" readonly>
+                                    <input class="form-control" id="perdiem" name="perdiem" type="hidden" value="{{ $perdiem->amount }}" readonly>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="start">CA Date Required</label>
-                                    <input type="date" name="ca_required" id="ca_required" class="form-control"
-                                        placeholder="mm/dd/yyyy" required>
+                                    <input type="date" name="ca_required" id="ca_required" class="form-control bg-light" value="{{ $transactions->date_required }}" readonly>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Declaration Estimate</label>
-                                        <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" placeholder="mm/dd/yyyy" readonly>
+                                        <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" value="{{ $transactions->declare_estimate }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="type">CA Type</label>
-                                    <select name="ca_type" id="ca_type" class="form-select" onchange="toggleDivs()"
-                                        readonly>
+                                    <select name="ca_type" id="ca_type" class="form-control bg-light" disabled>
                                         <option value="">-</option>
-                                        <option value="dns">Business Trip</option>
-                                        <option value="ndns">Non Business Trip</option>
-                                        <option value="entr">Entertainment</option>
+                                        <option value="dns" {{ $transactions->type_ca == 'dns' ? 'selected' : '' }}>Business Trip</option>
+                                        <option value="ndns" {{ $transactions->type_ca == 'ndns' ? 'selected' : '' }}>Non Business Trip</option>
+                                        <option value="entr" {{ $transactions->type_ca == 'entr' ? 'selected' : '' }}>Entertainment</option>
                                     </select>
                                 </div>
                             </div>
+                            @php
+                                $details = json_decode($transactions->detail_ca, true) ?? [];
+                            @endphp
                             <div class="row" id="div_bisnis_numb" style="display: none;">
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label" for="name">Business Trip Number</label>
@@ -622,9 +619,9 @@
                     <div class="row">
                         <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_draft" value="Draft" class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
-                            <button type="submit" name="action_ca_submit" value="Pending" class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
+                            <a href="{{ route('cashadvanced') }}" type="button"
+                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
+                            <button type="submit" class=" btn btn-primary btn-pill px-4">Submit</button>
                         </div>
                     </div>
                     </form>
@@ -637,7 +634,7 @@
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
     <script>
-        function toggleDivs() {
+        document.addEventListener("DOMContentLoaded", function() {
             // ca_type ca_nbt ca_e
             var ca_type = document.getElementById("ca_type");
             var ca_nbt = document.getElementById("ca_nbt");
@@ -646,32 +643,37 @@
             var bisnis_numb = document.getElementById("bisnis_numb");
             var div_allowance = document.getElementById("div_allowance");
 
-            if (ca_type.value === "dns") {
-                ca_bt.style.display = "block";
-                ca_nbt.style.display = "none";
-                ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "block";
-                div_allowance.style.display = "block";
-            } else if (ca_type.value === "ndns"){
-                ca_bt.style.display = "none";
-                ca_nbt.style.display = "block";
-                ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "none";
-                bisnis_numb.style.value = "";
-                div_allowance.style.display = "none";
-            } else if (ca_type.value === "entr"){
-                ca_bt.style.display = "none";
-                ca_nbt.style.display = "none";
-                ca_e.style.display = "block";
-                div_bisnis_numb.style.display = "block";
-            } else{
-                ca_bt.style.display = "none";
-                ca_nbt.style.display = "none";
-                ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "none";
-                bisnis_numb.style.value = "";
+            function toggleDivs() {
+                if (ca_type.value === "dns") {
+                    ca_bt.style.display = "block";
+                    ca_nbt.style.display = "none";
+                    ca_e.style.display = "none";
+                    div_bisnis_numb.style.display = "block";
+                    div_allowance.style.display = "block";
+                } else if (ca_type.value === "ndns"){
+                    ca_bt.style.display = "none";
+                    ca_nbt.style.display = "block";
+                    ca_e.style.display = "none";
+                    div_bisnis_numb.style.display = "none";
+                    bisnis_numb.style.value = "";
+                    div_allowance.style.display = "none";
+                } else if (ca_type.value === "entr"){
+                    ca_bt.style.display = "none";
+                    ca_nbt.style.display = "none";
+                    ca_e.style.display = "block";
+                    div_bisnis_numb.style.display = "block";
+                } else{
+                    ca_bt.style.display = "none";
+                    ca_nbt.style.display = "none";
+                    ca_e.style.display = "none";
+                    div_bisnis_numb.style.display = "none";
+                    bisnis_numb.style.value = "";
+                }
             }
-        }
+
+            toggleDivs();
+            ca_type.addEventListener("change", toggleDivs);
+        });
 
         function toggleOthers() {
             // ca_type ca_nbt ca_e

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\OnBehalfController as AdminOnBehalfController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SendbackController as AdminSendbackController;
 use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\ApprovalReimburseController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\BusinessTripController;
 use App\Http\Controllers\BussinessTripController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\ExportExcelController;
 use App\Http\Controllers\MedicalController;
 use App\Http\Controllers\ProfileController;
@@ -33,7 +35,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use App\Http\Controllers\ReimburseController;
-
+use App\Models\Designation;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -46,8 +48,10 @@ Route::get('dbauth', [SsoController::class, 'dbauth']);
 Route::get('sourcermb/dbauth', [SsoController::class, 'dbauthReimburse']);
 
 Route::get('fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
+Route::get('inactive-employees', [EmployeeController::class, 'EmployeeInactive']);
 Route::get('updmenu-employees', [EmployeeController::class, 'updateEmployeeAccessMenu']);
 Route::get('daily-schedules', [ScheduleController::class, 'reminderDailySchedules']);
+Route::get('update-designtaion', [DesignationController::class, 'UpdateDesignation']);
 
 Route::get('/test-email', function () {
     $messages = '<p>This is a test message with <strong>bold</strong> text.</p>';
@@ -74,7 +78,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-                    ->name('password.request');
+        ->name('password.request');
 
     Route::get('reset-password-email', [PasswordResetLinkController::class, 'selfResetView']);
 
@@ -106,6 +110,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/cashadvanced/edit/{id}', [ReimburseController::class, 'cashadvancedEdit'])->name('cashadvanced.edit');
     Route::post('/cashadvanced/update/{id}', [ReimburseController::class, 'cashadvancedUpdate'])->name('cashadvanced.update');
     Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
+    Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
+
+    // Approval Reimburse
+    Route::get('/approval', [ApprovalReimburseController::class, 'approval'])->name('approval');
+    Route::get('/approval/cashadvanced/{id}', [ApprovalReimburseController::class, 'cashadvancedFormApproval'])->name('approval.cashadvanced');
+    Route::post('/approval/cashadvanced/{id}', [ReimburseController::class, 'cashadvancedActionApproval'])->name('approval.cashadvancedApproved');
 
     // My Hotel
     Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');
@@ -166,18 +176,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/changes-company', [ReportController::class, 'changesCompany']);
 
     //Medical
-    Route::get('/medical', [MedicalController::class, 'medical']) -> name('medical');
+    Route::get('/medical', [MedicalController::class, 'medical'])->name('medical');
 
     //Taksi Form
-    Route::get('/taksi', [TaksiController::class, 'taksi']) -> name('taksi');
-    Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd']) -> name('medical.form.add');
-    Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate']) -> name('medical.form.post');
+    Route::get('/taksi', [TaksiController::class, 'taksi'])->name('taksi');
+    Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd'])->name('medical.form.add');
+    Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate'])->name('medical.form.post');
 
     //Business Trip
-    Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip']) -> name('businessTrip');
-    Route::get('/businessTrip/form/add', [BusinessTripController::class, 'businessTripformAdd']) -> name('businessTrip.add');
-    Route::post('/businessTrip/form/post', [BusinessTripController::class, 'businessTripCreate']) -> name('businessTrip.post');
-    Route::get('/businessTrip/form/update/{id}', [BusinessTripController::class, 'formUpdate']) -> name('businessTrip.update');
+    Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip'])->name('businessTrip');
+    Route::get('/businessTrip/form/add', [BusinessTripController::class, 'businessTripformAdd'])->name('businessTrip.add');
+    Route::post('/businessTrip/form/post', [BusinessTripController::class, 'businessTripCreate'])->name('businessTrip.post');
+    Route::get('/businessTrip/form/update/{id}', [BusinessTripController::class, 'formUpdate'])->name('businessTrip.update');
     Route::put('/businessTrip/update/{id}', [BusinessTripController::class, 'update'])->name('update.bt');
     Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
     Route::post('/businessTrip/saveDraft', [BusinessTripController::class, 'saveDraft'])->name('businessTrip.saveDraft');

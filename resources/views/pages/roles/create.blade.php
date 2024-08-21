@@ -88,7 +88,7 @@
                     </ul>
                     <div class="tab-pane fade p-3 active show" id="list-onBehalf-accessibility" role="tabpanel" aria-labelledby="onBehalf-accessibility">
                       <div class="form-check mb-3">
-                        <input type="hidden" name="adminMenu" value="{{ 9 }}">
+                        <input type="hidden" name="adminMenu" value="{{ 11 }}">
                         <input class="form-check-input" type="checkbox" id="onBehalfView" value="{{ $permissions[0]->id }}" name="onBehalfView">
                         <label class="form-check-label" for="onBehalfView">
                           View On Behalfs
