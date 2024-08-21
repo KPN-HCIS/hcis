@@ -130,7 +130,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th style="width: 155px">Action</th>
+                                            <th style="width: 80px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -253,40 +253,12 @@
                                                         {{ $n->status }}
                                                     </span>
                                                 </td>
-                                                <td style="align-content: center;">
-                                                    {{-- <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
-                                                        class="btn btn-outline-info rounded-pill">
-                                                        <i class="bi bi-download"></i>
-                                                    </a> --}}
-
-                                                    @php
-                                                        $today = \Carbon\Carbon::today()->format('Y-m-d');
-                                                    @endphp
-                                                    <form method="POST"
-                                                        action="{{ route('confirm.status', ['id' => $n->id]) }}"
-                                                        style="display: inline-block;" class="status-form">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <input type="hidden" name="status_approval"
-                                                            value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}">
-                                                        <button type="submit"
-                                                            class="btn btn-outline-success rounded-pill mb-1"
-                                                            style="font-size: 0.75rem; padding: 0.30rem 0.5rem;">
-                                                            Approve
-                                                        </button>
-                                                    </form>
-                                                    <form method="POST"
-                                                        action="{{ route('confirm.status', ['id' => $n->id]) }}"
-                                                        style="display: inline-block;" class="status-form">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <input type="hidden" name="status_approval" value="Rejected">
-                                                        <button type="submit"
-                                                            class="btn btn-sm btn-outline-danger rounded-pill mb-1"
-                                                            style="font-size: 0.75rem; padding: 0.30rem 0.5rem;">
-                                                            Decline
-                                                        </button>
-                                                    </form>
+                                                <td style="text-align: center; vertical-align: middle;">
+                                                    <a class="btn btn-primary rounded-pill"
+                                                       href="{{ route('businessTrip.approvalDetail', ['id' => $n->id]) }}"
+                                                       style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                       Review
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach

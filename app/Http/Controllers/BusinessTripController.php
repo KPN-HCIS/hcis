@@ -935,6 +935,69 @@ class BusinessTripController extends Controller
 
         return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
+
+    public function approvalDetail($id)
+    {
+        $n = BusinessTrip::find($id);
+        $userId = Auth::id();
+        $employee_data = Employee::where('id', $userId)->first();
+
+        // Retrieve the taxi data for the specific BusinessTrip
+        $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
+
+        // Retrieve all hotels for the specific BusinessTrip
+        $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare hotel data for the view
+        $hotelData = [];
+        foreach ($hotels as $index => $hotel) {
+            $hotelData[] = [
+                'nama_htl' => $hotel->nama_htl,
+                'lokasi_htl' => $hotel->lokasi_htl,
+                'jmlkmr_htl' => $hotel->jmlkmr_htl,
+                'bed_htl' => $hotel->bed_htl,
+                'tgl_masuk_htl' => $hotel->tgl_masuk_htl,
+                'tgl_keluar_htl' => $hotel->tgl_keluar_htl,
+                'total_hari' => $hotel->total_hari,
+                'more_htl' => ($index < count($hotels) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve all tickets for the specific BusinessTrip
+        $tickets = Tiket::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare ticket data for the view
+        $ticketData = [];
+        foreach ($tickets as $index => $ticket) {
+            $ticketData[] = [
+                'noktp_tkt' => $ticket->noktp_tkt,
+                'dari_tkt' => $ticket->dari_tkt,
+                'ke_tkt' => $ticket->ke_tkt,
+                'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                'jenis_tkt' => $ticket->jenis_tkt,
+                'type_tkt' => $ticket->type_tkt,
+                'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'more_tkt' => ($index < count($tickets) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve locations and companies data for the dropdowns
+        $locations = Location::orderBy('id')->get();
+        $companies = Company::orderBy('contribution_level')->get();
+        // dd($taksi->toArray());
+
+        return view('hcis.reimbursements.businessTrip.btApprovalDetail', [
+            'n' => $n,
+            'hotelData' => $hotelData,
+            'taksiData' => $taksi, // Pass the taxi data
+            'ticketData' => $ticketData,
+            'employee_data' => $employee_data,
+            'companies' => $companies,
+            'locations' => $locations,
+        ]);
+    }
     public function updateStatus($id, Request $request)
     {
         $user = Auth::user();
