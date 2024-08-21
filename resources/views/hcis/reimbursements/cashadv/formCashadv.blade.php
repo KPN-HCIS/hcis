@@ -635,9 +635,9 @@
                     <div class="row">
                         <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('cashadvanced') }}" type="button"
-                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" class=" btn btn-primary btn-pill px-4">Submit</button>
+                            <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-outline-secondary px-4 me-2">Cancel</a>
+                            <button type="submit" name="action_ca_draft" value="Draft" class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
+                            <button type="submit" name="action_ca_submit" value="Pending" class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
                         </div>
                     </div>
                     </form>

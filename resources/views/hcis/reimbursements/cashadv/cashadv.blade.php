@@ -56,7 +56,6 @@
                                         <th>No</th>
                                         <th>Type</th>
                                         <th>Cash Advance No</th>
-                                        <th>Requestor</th>
                                         <th>Company</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
@@ -79,7 +78,6 @@
                                                 <td>Entertainment</td>
                                             @endif
                                             <td class="text-center">{{ $ca_transaction->no_ca }}</td>
-                                            <td>{{ $ca_transaction->employee->fullname }}</td>
                                             <td>{{ $ca_transaction->contribution_level_code }}</td>
                                             <td>{{ $ca_transaction->formatted_start_date }}</td>
                                             <td>{{ $ca_transaction->formatted_end_date }}</td>

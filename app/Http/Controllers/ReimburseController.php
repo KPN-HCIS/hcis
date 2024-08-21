@@ -4,18 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\BusinessTrip;
 use App\Models\ca_transaction;
+use App\Models\CAApproval;
 use App\Models\Hotel;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Designation;
 use App\Models\Location;
 use App\Models\Employee;
+use App\Models\MatrixApproval;
 use App\Models\ListPerdiem;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
 use App\Models\CATransaction;
 use App\Http\Controllers\Log;
+use App\Models\ca_approval;
 use App\Models\htl_transaction;
 use App\Models\tkt_transaction;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -129,7 +132,7 @@ class ReimburseController extends Controller
     public function cashadvancedSubmit(Request $req)
     {
         $userId = Auth::id();
-
+        $employee_data = Employee::where('id', $userId)->first();
         $currentYear = date('Y');
         $currentYearShort = date('y'); // Mengambil 2 digit terakhir dari tahun
         $prefix = 'CA';
@@ -148,8 +151,9 @@ class ReimburseController extends Controller
         $newNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
         $newNoCa = "$prefix$currentYearShort$newNumber";
 
+        $uuid = Str::uuid();
         $model = new CATransaction;
-        $model->id = Str::uuid();
+        $model->id = $uuid;
         $model->type_ca = $req->ca_type;
         $model->no_ca = $newNoCa;
         $model->no_sppd = $req->bisnis_numb;
@@ -316,17 +320,109 @@ class ReimburseController extends Controller
                 'detail_e' => $detail_e,
                 'relation_e' => $relation_e,
             ];
-
             $model->detail_ca = json_encode($detail_ca);
         }
 
         $model->total_ca = str_replace('.', '', $req->totalca);
         $model->total_real = "0";
         $model->total_cost = str_replace('.', '', $req->totalca);
-        $model->approval_status = "Draft";
+
+        if($req->input('action_ca_draft')){
+            $model->approval_status = $req->input('action_ca_draft');
+        }
+        if($req->input('action_ca_submit')){
+            $model->approval_status = $req->input('action_ca_submit');
+        }
+
         $model->created_by = $userId;
         $model->save();
 
+        if($req->input('action_ca_submit')){
+            function findDepartmentHead($employee)
+            {
+                $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+                if (!$manager) {
+                    return null;
+                }
+
+                $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+                if ($designation->dept_head_flag == 'T') {
+                    return $manager;
+                } else {
+                    return findDepartmentHead($manager);
+                }
+                return null;
+            }
+            $deptHeadManager = findDepartmentHead($employee_data);
+
+            $managerL1 = $deptHeadManager->employee_id;
+            $managerL2 = $deptHeadManager->manager_l1_id;
+
+            $cek_director_id = Employee::select([
+                'dsg.department_level2',
+                'dsg2.director_flag',
+                DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
+                'dsg2.designation_name',
+                'dsg2.job_code',
+                'emp.fullname',
+                'emp.employee_id',
+            ])
+                ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
+                ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
+                ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
+                ->where('employees.designation_code', '=', $employee_data->designation_code)
+                ->where('dsg2.director_flag', '=', 'T')
+                ->get();
+
+            $director_id = "";
+
+            if ($cek_director_id->isNotEmpty()) {
+                $director_id = $cek_director_id->first()->employee_id;
+            }
+            //cek matrix approval 
+            $total_ca=str_replace('.', '', $req->totalca);
+            $data_matrix_approvals = MatrixApproval::where(function($query) use ($req) {
+                if ($req->ca_type === 'dns') {
+                    $query->where('modul', 'dns');
+                } else {
+                    $query->where('modul', 'like', '%'.$req->ca_type.'%');
+                }
+            })
+            ->where('group_company', 'like', '%'.$employee_data->group_company.'%')
+            ->where('contribution_level_code', 'like', '%'.$req->companyFilter.'%')
+            ->whereRaw('
+            ? BETWEEN 
+            CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND 
+            CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)', 
+            [$total_ca])
+            ->get();
+
+            foreach($data_matrix_approvals as $data_matrix_approval){
+
+                if($data_matrix_approval->employee_id == "cek_L1"){
+                    $employee_id = $managerL1;
+                }else if($data_matrix_approval->employee_id == "cek_L2"){
+                    $employee_id = $managerL2;
+                }else if($data_matrix_approval->employee_id == "cek_director"){
+                    $employee_id = $director_id;
+                }else{
+                    $employee_id = $data_matrix_approval->employee_id;
+                }
+
+                $model = new ca_approval;
+                $model->ca_id = $uuid;
+                $model->role_name = $data_matrix_approval->desc;
+                $model->employee_id = $employee_id;
+                $model->layer = $data_matrix_approval->layer;
+                $model->approval_status = 'Pending';
+
+                // Simpan data ke database
+                $model->save();
+            }
+        }
+        
         Alert::success('Success');
         return redirect()->intended(route('cashadvanced', absolute: false));
     }
