@@ -58,6 +58,14 @@ class BusinessTripController extends Controller
         }
         return redirect()->route('businessTrip')->with('success', 'Business Trip marked as deleted.');
     }
+    public function deleteAdmin($id)
+    {
+        $n = BusinessTrip::findOrFail($id);
+        if ($n) {
+            $n->delete(); // Perform soft delete
+        }
+        return redirect()->route('businessTrip.admin')->with('success', 'Business Trip marked as deleted.');
+    }
 
     public function formUpdate($id)
     {
@@ -390,13 +398,7 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         return view('hcis.reimbursements.businessTrip.deklarasi', ['n' => $n, 'companies' => $companies]);
     }
-    public function deklarasiAdmin($id)
-    {
-        $companies = Company::orderBy('contribution_level')->get();
 
-        $n = BusinessTrip::find($id);
-        return view('hcis.reimbursements.businessTrip.deklarasiAdmin', ['n' => $n, 'companies' => $companies]);
-    }
 
     public function filterDate(Request $request)
     {
@@ -833,7 +835,7 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
 
-        $sppd = BusinessTrip::where('status', '!=', 'Draft')->get();
+        $sppd = BusinessTrip::where('status', '!=', 'Draft')->orderBy('mulai', 'desc')->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -881,6 +883,31 @@ class BusinessTripController extends Controller
         $link = 'Business Trip (Admin)';
 
         return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
+    }
+     public function deklarasiAdmin($id)
+    {
+        $companies = Company::orderBy('contribution_level')->get();
+
+        $n = BusinessTrip::find($id);
+
+        return view('hcis.reimbursements.businessTrip.deklarasiAdmin', ['n' => $n, 'companies' => $companies]);
+    }
+    public function deklarasiStatusAdmin(Request $request, $id)
+    {
+        $n = BusinessTrip::find($id);
+        $companies = Company::orderBy('contribution_level')->get();
+        // $ca = ca_transaction::find($id);
+
+        $status = $request->input('accept_status');
+        $n->status = $status;
+
+        // $ca = $n->ca;
+        // $ca->approval_status = $status;
+        // $ca->save();
+
+        $n->save();
+
+        return redirect()->route('businessTrip.admin');
     }
 
     public function exportExcel(Request $request)

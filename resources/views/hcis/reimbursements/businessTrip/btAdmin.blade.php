@@ -254,8 +254,8 @@
                                                                     ? 'warning'
                                                                     : ($n->status == 'Draft'
                                                                         ? 'secondary'
-                                                                        : (in_array($n->status, ['Doc Accepted', 'verified'])
-                                                                            ? 'primary'
+                                                                        : (in_array($n->status, ['Doc Accepted', 'Verified'])
+                                                                            ? 'info'
                                                                             : 'secondary')))) }}"
                                                         style="
                                                     font-size: 12px;
@@ -264,6 +264,20 @@
                                                     </span>
                                                 </td>
                                                 <td>
+                                                    <form id="deleteForm_{{ $n->id }}" method="POST"
+                                                        action="/businessTrip/admin/delete/{{ $n->id }}"
+                                                        style="display: inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger rounded-pill mb-1"
+                                                            onclick="confirmDelete('{{ $n->id }}')"
+                                                            {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button>
+                                                    </form>
+
                                                     <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
                                                         class="btn btn-outline-info rounded-pill mb-1">
                                                         <i class="bi bi-download"></i>
@@ -272,7 +286,7 @@
                                                     @php
                                                         $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                     @endphp
-                                                    @if ($n->kembali < $today && $n->status == 'Approved')
+                                                    @if ($n->status != 'Pending L1' && $n->status != 'Pending L2' && $n->status != 'Rejected')
                                                         <form method="GET"
                                                             action="/businessTrip/deklarasi/admin/{{ $n->id }}"
                                                             style="display: inline-block;">
@@ -280,20 +294,6 @@
                                                                 class="btn btn-outline-success rounded-pill mb-1"
                                                                 data-toggle="tooltip" title="Deklarasi">
                                                                 <i class="bi bi-card-checklist"></i>
-                                                            </button>
-                                                        </form>
-                                                    @else
-                                                        <form id="deleteForm_{{ $n->id }}" method="POST"
-                                                            action="/businessTrip/delete/{{ $n->id }}"
-                                                            style="display: inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-
-                                                            <button type="button"
-                                                                class="btn btn-outline-danger rounded-pill mb-1"
-                                                                onclick="confirmDelete('{{ $n->id }}')"
-                                                                {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
-                                                                <i class="bi bi-trash-fill"></i>
                                                             </button>
                                                         </form>
                                                     @endif

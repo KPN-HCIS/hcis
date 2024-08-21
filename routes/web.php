@@ -204,6 +204,10 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
     Route::get('/businessTrip/deklarasi/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin']) -> name('businessTrip.deklarasi.admin');
+    Route::put('/businessTrip/deklarasi/admin/status/{id}', [BusinessTripController::class, 'deklarasiStatusAdmin']) -> name('businessTrip.deklarasi.admin.status');
+    Route::delete('/businessTrip/admin/delete/{id}', [BusinessTripController::class, 'deleteAdmin'])->name('delete.btAdmin');
+
+
     //Export BT excel
     Route::get('businessTrip/export/excel/', [BusinessTripController::class, 'exportExcel'])->name('export.excel');
 

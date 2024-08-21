@@ -23,7 +23,7 @@ class BusinessTripExport implements FromCollection, WithMapping, ShouldAutoSize,
     public function __construct($businessTrips)
     {
         $this->businessTrips = $businessTrips;
-        Log::info('BusinessTripExport received ' . $this->businessTrips->count() . ' records.');
+        // Log::info('BusinessTripExport received ' . $this->businessTrips->count() . ' records.');
     }
 
     public function collection()
@@ -42,14 +42,14 @@ class BusinessTripExport implements FromCollection, WithMapping, ShouldAutoSize,
             $businessTrip->kembali,
             $businessTrip->tujuan,
             $businessTrip->bb_perusahaan,
-            // $businessTrip->uang_muka,
-            // $businessTrip->realisasi,
-            // $businessTrip->sisa_kurang,
+            $businessTrip->uang_muka,
+            $businessTrip->realisasi,
+            $businessTrip->sisa_kurang,
             $businessTrip->created_at,
-            // $businessTrip->tanggal_diterima_hrd,
-            // $businessTrip->tanggal_diproses_hrd,
-            // $businessTrip->tanggal_penyerahan_ke,
-            // $businessTrip->hari_berjalan,
+            $businessTrip->tanggal_diterima_hrd,
+            $businessTrip->tanggal_diproses_hrd,
+            $businessTrip->tanggal_penyerahan_ke,
+            $businessTrip->hari_berjalan,
         ];
     }
 

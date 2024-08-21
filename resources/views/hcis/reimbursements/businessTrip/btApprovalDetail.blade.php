@@ -591,7 +591,7 @@
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="status_approval" value="Rejected">
-                                <button type="submit" class="btn btn-outline-danger rounded-pill"
+                                <button type="submit" class="btn btn-primary rounded-pill"
                                     style="padding: 0.5rem 1rem; margin-right: 5px">
                                     Decline
                                 </button>
@@ -603,7 +603,7 @@
                                 @method('PUT')
                                 <input type="hidden" name="status_approval"
                                     value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}">
-                                <button type="submit" class="btn btn-outline-success rounded-pill"
+                                <button type="submit" class="btn btn-success rounded-pill"
                                     style="padding: 0.5rem 1rem;">
                                     Approve
                                 </button>

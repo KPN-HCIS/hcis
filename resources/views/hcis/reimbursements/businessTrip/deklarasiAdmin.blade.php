@@ -16,7 +16,7 @@
                         <a href="{{ route('businessTrip.admin') }}" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
-                        <form action="/businessTrip/update/{{ $n->id }}" method="POST"
+                        <form action="/businessTrip/deklarasi/admin/status/{{ $n->id }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
@@ -219,7 +219,7 @@
                                 <label for="refund-amount" class="form-label">Refund Amount</label>
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="text" name="refund_amount" id="refund-amount" class="form-control">
+                                    <input type="text" name="refund_amount" id="refund-amount" class="form-control" placeholder="ex: 10X.XXX">
                                 </div>
                             </div>
                             <div class="text-end">
