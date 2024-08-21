@@ -8,23 +8,23 @@
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="row">
-            <div class="col-12">
-                <div class="page-title-box">
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item">{{ $parentLink }}</li>
-                            <li class="breadcrumb-item active">{{ $link }}</li>
-                        </ol>
-                    </div>
-                    <h4 class="page-title">{{ $link }}</h4>
+            <!-- Breadcrumb Navigation -->
+            <div class="col-md-6 mt-3">
+                <div class="page-title-box d-flex align-items-center">
+                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
+                        <li class="breadcrumb-item" style="font-size: 25px; display: flex; align-items: center;">
+                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                            {{ $parentLink }}
+                        </li>
+                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                            {{ $link }}
+                        </li>
+                    </ol>
                 </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col">
-                <a href="/reimbursements" class="btn btn-primary btn-action">
-                    <i class="bi bi-caret-left-fill"></i> Back
-                </a>
             </div>
         </div>
 
@@ -132,12 +132,12 @@
                                             <td>Rp. {{ number_format($transaction->total_real) }}</td>
                                             <td>Rp. {{ number_format($transaction->total_cost) }}</td>
                                             <td>
-                                                <p type="button" class="btn btn-sm rounded-pill btn-{{ $transaction->approval_status == 'Approved' ? 'success' : ($transaction->approval_status == 'Rejected' ? 'danger' : 'warning') }}" style="pointer-events: none">
+                                                <p class="badge text-bg-{{ $transaction->approval_status == 'Approved' ? 'success' : ($transaction->approval_status == 'Rejected' ? 'danger' : 'warning') }}">
                                                     {{ $transaction->approval_status }}
                                                 </p>
                                             </td>
                                             <td class="text-center">
-                                                <a href="{{ route('approval.cashadvanced', encrypt($transaction->id)) }}" class="btn btn-sm rounded-pill btn-outline-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                                <a href="{{ route('approval.cashadvanced', encrypt($transaction->id)) }}" class="btn btn-outline-info" title="Approve" ><i class="bi bi-card-checklist"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach

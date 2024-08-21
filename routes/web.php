@@ -115,7 +115,7 @@ Route::middleware('auth')->group(function () {
     // Approval Reimburse
     Route::get('/approval', [ApprovalReimburseController::class, 'approval'])->name('approval');
     Route::get('/approval/cashadvanced/{id}', [ApprovalReimburseController::class, 'cashadvancedFormApproval'])->name('approval.cashadvanced');
-    Route::post('/approval/cashadvanced/{id}', [ReimburseController::class, 'cashadvancedActionApproval'])->name('approval.cashadvancedApproved');
+    Route::post('/approval/cashadvanced/{id}', [ApprovalReimburseController::class, 'cashadvancedActionApproval'])->name('approval.cashadvancedApproved');
 
     // My Hotel
     Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');

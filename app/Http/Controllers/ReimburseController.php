@@ -177,7 +177,7 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-                $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
+                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -185,7 +185,7 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
-                    $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
+                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
                     $for_perdiem[] = [
                         'start_date' => $startDate,
@@ -337,17 +337,16 @@ class ReimburseController extends Controller
         $model->total_real = "0";
         $model->total_cost = str_replace('.', '', $req->totalca);
 
-        if($req->input('action_ca_draft')){
+        if ($req->input('action_ca_draft')) {
             $model->approval_status = $req->input('action_ca_draft');
         }
-        if($req->input('action_ca_submit')){
+        if ($req->input('action_ca_submit')) {
             $model->approval_status = $req->input('action_ca_submit');
         }
 
         $model->created_by = $userId;
-        $model->save();
 
-        if($req->input('action_ca_submit')){
+        if ($req->input('action_ca_submit')) {
             function findDepartmentHead($employee)
             {
                 $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
@@ -370,6 +369,8 @@ class ReimburseController extends Controller
             $managerL1 = $deptHeadManager->employee_id;
             $managerL2 = $deptHeadManager->manager_l1_id;
 
+            $model->status_id = $managerL1;
+
             $cek_director_id = Employee::select([
                 'dsg.department_level2',
                 'dsg2.director_flag',
@@ -391,48 +392,52 @@ class ReimburseController extends Controller
             if ($cek_director_id->isNotEmpty()) {
                 $director_id = $cek_director_id->first()->employee_id;
             }
-            //cek matrix approval 
-            $total_ca=str_replace('.', '', $req->totalca);
-            $data_matrix_approvals = MatrixApproval::where(function($query) use ($req) {
+            //cek matrix approval
+            $total_ca = str_replace('.', '', $req->totalca);
+            $data_matrix_approvals = MatrixApproval::where(function ($query) use ($req) {
                 if ($req->ca_type === 'dns') {
                     $query->where('modul', 'dns');
                 } else {
-                    $query->where('modul', 'like', '%'.$req->ca_type.'%');
+                    $query->where('modul', 'like', '%' . $req->ca_type . '%');
                 }
             })
-            ->where('group_company', 'like', '%'.$employee_data->group_company.'%')
-            ->where('contribution_level_code', 'like', '%'.$req->companyFilter.'%')
-            ->whereRaw('
-            ? BETWEEN 
-            CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND 
-            CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)', 
-            [$total_ca])
-            ->get();
+                ->where('group_company', 'like', '%' . $employee_data->group_company . '%')
+                ->where('contribution_level_code', 'like', '%' . $req->companyFilter . '%')
+                ->whereRaw(
+                    '
+            ? BETWEEN
+            CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND
+            CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
+                    [$total_ca]
+                )
+                ->get();
 
-            foreach($data_matrix_approvals as $data_matrix_approval){
+            foreach ($data_matrix_approvals as $data_matrix_approval) {
 
-                if($data_matrix_approval->employee_id == "cek_L1"){
+                if ($data_matrix_approval->employee_id == "cek_L1") {
                     $employee_id = $managerL1;
-                }else if($data_matrix_approval->employee_id == "cek_L2"){
+                } else if ($data_matrix_approval->employee_id == "cek_L2") {
                     $employee_id = $managerL2;
-                }else if($data_matrix_approval->employee_id == "cek_director"){
+                } else if ($data_matrix_approval->employee_id == "cek_director") {
                     $employee_id = $director_id;
-                }else{
+                } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
 
-                $model = new ca_approval;
-                $model->ca_id = $uuid;
-                $model->role_name = $data_matrix_approval->desc;
-                $model->employee_id = $employee_id;
-                $model->layer = $data_matrix_approval->layer;
-                $model->approval_status = 'Pending';
+                $model_approval = new ca_approval;
+                $model_approval->ca_id = $uuid;
+                $model_approval->role_name = $data_matrix_approval->desc;
+                $model_approval->employee_id = $employee_id;
+                $model_approval->layer = $data_matrix_approval->layer;
+                $model_approval->approval_status = 'Pending';
 
                 // Simpan data ke database
-                $model->save();
+                $model_approval->save();
             }
         }
-        
+
+        $model->save();
+
         Alert::success('Success');
         return redirect()->intended(route('cashadvanced', absolute: false));
     }
@@ -447,8 +452,9 @@ class ReimburseController extends Controller
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
-        $transactions = CATransaction::find($key);
-
+        // $transactions = CATransaction::find($key);
+        $transactions = CATransaction::findByRouteKey($key);
+        // dd($key);
         return view('hcis.reimbursements.cashadv.editCashadv', [
             'link' => $link,
             'parentLink' => $parentLink,

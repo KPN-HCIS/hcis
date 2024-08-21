@@ -27,11 +27,11 @@
                 <div class="card-header d-flex bg-white justify-content-between">
                     <a href=""></a>
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data <b>"{{ $transactions->no_ca }}"</h4>
-                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
+                    <a href="{{ route('approval') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('approval.cashadvancedApproved', encrypt($transactions->id)) }}">@csrf
+                        <form id="scheduleForm" method="post" action="{{ route('approval.cashadvancedApproved', $transactions->id) }}">@csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="start">Employee ID</label>
@@ -147,10 +147,11 @@
                                     </select>
                                 </div>
                             </div>
-
+                            @php
+                                $detailCA = json_decode($transactions->detail_ca, true) ?? [];
+                            @endphp
                             <br>
 
-                            {{-- Pls ini buat CA_NBT dia masih error --}}
                             <div class="row" id="ca_bt" style="display: none;">
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
@@ -425,43 +426,47 @@
                             </div>
 
                             <div class="row" id="ca_nbt" style="display: none;">
-                                <div class="col-md-12">
-                                    <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                    Non Business Trip
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Tanggal</label>
-                                                                            <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_nbt[]" class="form-control"></textarea>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Accommodation</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                @if ($transactions->type_ca == 'ndns')
+                                    <div class="col-md-12">
+                                        <div class="table-responsive-sm">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="accordion" id="accordionPanelsStayOpenExample">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="enter-headingOne">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                        Non Business Trip
+                                                                    </button>
+                                                                </h2>
+                                                                @foreach ($detailCA as $item)
+                                                                <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container">
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Tanggal</label>
+                                                                                <input type="date" name="tanggal_nbt[]" class="form-control" value="{{ $item['tanggal_nbt'] }}">
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_nbt[]" id="nominal_nbt" type="text" min="0" value="0">
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Keterangan</label>
+                                                                                <textarea name="keterangan_nbt[]" class="form-control">{{ $item['keterangan_nbt'] }}</textarea>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Accommodation</label>
+                                                                            </div>
+                                                                            <div class="input-group mb-3">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control" name="nominal_nbt[]" id="nominal_nbt" type="text" min="0" value="{{ number_format($item['nominal_nbt'], 0, ',', '.') }}">
+                                                                            </div>
+                                                                            <hr class="border border-primary border-1 opacity-50">
                                                                         </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
+                                                                        {{-- <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button> --}}
                                                                     </div>
-                                                                    <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button>
                                                                 </div>
+                                                                @endforeach
                                                             </div>
                                                         </div>
                                                     </div>
@@ -469,7 +474,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
 
                             <div class="row" id="ca_e" style="display: none;">
@@ -609,9 +614,19 @@
                                             <span class="input-group-text">Rp</span>
                                         </div>
                                         <input class="form-control bg-light" name="totalca" id="totalca"
-                                            type="text" min="0" value="0" readonly>
+                                            type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Persetujuan</label>
+                                    <select name="approval_status" id="approval_status" class="form-select">
+                                        <option value="">-</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
+                                </div>
+                                {{-- {{ dd($transactions) }} --}}
                             </div>
                     </div>
 
@@ -619,7 +634,7 @@
                     <div class="row">
                         <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('cashadvanced') }}" type="button"
+                            <a href="{{ route('approval') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
                             <button type="submit" class=" btn btn-primary btn-pill px-4">Submit</button>
                         </div>
@@ -811,7 +826,7 @@
         });
     </script>
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $('.select2').select2({
                 theme: "bootstrap-5",
@@ -866,803 +881,7 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const formContainerBTPerdiem = document.getElementById('form-container-bt-perdiem');
-            const formContainerBTTransport = document.getElementById('form-container-bt-transport');
-            const formContainerBTPenginapan = document.getElementById('form-container-bt-penginapan');
-            const formContainerBTLainnya = document.getElementById('form-container-bt-lainnya');
-
-            function toggleOthersBT(selectElement) {
-                const formGroup = selectElement.closest('.mb-2').parentElement;
-                const othersInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
-
-                if (selectElement.value === "Others") {
-                    othersInput.style.display = 'block';
-                    othersInput.required = true;
-                } else {
-                    othersInput.style.display = 'none';
-                    othersInput.required = false;
-                    othersInput.value = "";
-                }
-            }
-
-            document.querySelectorAll('.location-select').forEach(function(selectElement) {
-                selectElement.addEventListener('change', function() {
-                    toggleOthersBT(this);
-                });
-            });
-
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
-
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-                calculateTotalNominalBTPerdiem();
-                calculateTotalNominalBTTransport();
-                calculateTotalNominalBTPenginapan();
-                calculateTotalNominalBTLainnya();
-                calculateTotalNominalBTTotal();
-            }
-
-            function calculateTotalNominalBTPerdiem() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
-            }
-
-            function calculateTotalNominalBTTransport() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_bt_transport[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_bt_transport[]"]').value = formatNumber(total);
-            }
-
-            function calculateTotalNominalBTPenginapan() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_bt_penginapan[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_bt_penginapan[]"]').value = formatNumber(total);
-            }
-
-            function calculateTotalNominalBTLainnya() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_bt_lainnya[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_bt_lainnya[]"]').value = formatNumber(total);
-            }
-
-            function calculateTotalNominalBTTotal() {
-                let total = 0;
-                document.querySelectorAll('input[name="total_bt_perdiem[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelectorAll('input[name="total_bt_transport[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelectorAll('input[name="total_bt_penginapan[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelectorAll('input[name="total_bt_lainnya[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="totalca"]').value = formatNumber(total);
-            }
-
-            function calculateTotalDaysPerdiem(input) {
-                const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_perdiem[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_perdiem[]"]').value);
-
-                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
-                    const diffTime = Math.abs(endDate - startDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = diffDays;
-                } else {
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = 0;
-                }
-            }
-
-            function calculateTotalDaysPenginapan(input) {
-                const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_penginapan[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_penginapan[]"]').value);
-
-                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
-                    const diffTime = Math.abs(endDate - startDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    formGroup.querySelector('input[name="total_days_bt_penginapan[]"]').value = diffDays;
-                } else {
-                    formGroup.querySelector('input[name="total_days_bt_penginapan[]"]').value = 0;
-                }
-            }
-
-            function addNewPerdiemForm() {
-                const newFormBTPerdiem = document.createElement('div');
-                newFormBTPerdiem.classList.add('mb-2');
-
-                newFormBTPerdiem.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Start Perdiem</label>
-                        <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy" >
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">End Perdiem</label>
-                        <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" placeholder="mm/dd/yyyy" >
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="start">Total Days</label>
-                        <div class="input-group">
-                            <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="0" readonly>
-                            <div class="input-group-append">
-                                <span class="input-group-text">days</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="name">Location Agency</label>
-                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                            <option value="">Select location...</option>
-                            <!-- Daftar lokasi lainnya -->
-                            <option value="Others">Others</option>
-                        </select>
-                        <br>
-                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" name="company_bt_perdiem[]" >
-                            <option value="">Select Company...</option>
-                            @foreach($companies as $company)
-                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Amount</label>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                document.getElementById('form-container-bt-perdiem').appendChild(newFormBTPerdiem);
-
-                formContainerBTPerdiem.appendChild(newFormBTPerdiem);
-
-                newFormBTPerdiem.querySelector('.location-select').addEventListener('change', function() {
-                    toggleOthersBT(this);
-                });
-
-
-                // Attach input event to the newly added nominal field
-                newFormBTPerdiem.querySelector('input[name="nominal_bt_perdiem[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
-
-                // Attach change event to the date fields to calculate total days
-                newFormBTPerdiem.querySelector('input[name="start_bt_perdiem[]"]').addEventListener('change', function() {
-                    calculateTotalDaysPerdiem(this);
-                });
-
-                newFormBTPerdiem.querySelector('input[name="end_bt_perdiem[]"]').addEventListener('change', function() {
-                    calculateTotalDaysPerdiem(this);
-                });
-
-                // Attach click event to the remove button
-                newFormBTPerdiem.querySelector('.remove-form').addEventListener('click', function() {
-                    newFormBTPerdiem.remove();
-                    calculateTotalNominalBTPerdiem();
-                    calculateTotalNominalBTTotal();
-                });
-
-                // Update the date constraints for the new 'start_bt_perdiem[]' and 'end_bt_perdiem[]' input fields
-                const startDateInput = document.getElementById('start_date').value;
-                const endDateInput = document.getElementById('end_date').value;
-
-                newFormBTPerdiem.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
-                    input.min = startDateInput;
-                    input.max = endDateInput;
-                });
-
-                newFormBTPerdiem.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
-                    input.min = startDateInput;
-                    input.max = endDateInput;
-                });
-            }
-
-            function addNewTransportForm() {
-                const newFormBTTransport = document.createElement('div');
-                newFormBTTransport.classList.add('mb-2');
-
-                newFormBTTransport.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Tanggal Transport</label>
-                        <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" name="company_bt_transport[]" >
-                            <option value="">Select Company...</option>
-                            @foreach($companies as $company)
-                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Amount</label>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_bt_transport[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerBTTransport.appendChild(newFormBTTransport);
-
-                // Attach input event to the newly added nominal field
-                newFormBTTransport.querySelector('input[name="nominal_bt_transport[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
-
-                // Attach click event to the remove button
-                newFormBTTransport.querySelector('.remove-form').addEventListener('click', function() {
-                    newFormBTTransport.remove();
-                    calculateTotalNominalBTTransport();
-                    calculateTotalNominalBTTotal();
-                });
-            }
-
-            function addNewPenginapanForm() {
-                const newFormBTPenginapan = document.createElement('div');
-                newFormBTPenginapan.classList.add('mb-2');
-
-                newFormBTPenginapan.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Start Penginapan</label>
-                        <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">End Penginapan</label>
-                        <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="start">Total Days</label>
-                        <div class="input-group">
-                            <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="0" readonly>
-                            <div class="input-group-append">
-                                <span class="input-group-text">days</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="name">Hotel Name</label>
-                        <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
-                            <option value="">Select Company...</option>
-                            @foreach($companies as $company)
-                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Amount</label>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerBTPenginapan.appendChild(newFormBTPenginapan);
-
-                // Attach input event to the newly added nominal field
-                newFormBTPenginapan.querySelector('input[name="nominal_bt_penginapan[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
-
-                // Attach change event to the date fields to calculate total days
-                newFormBTPenginapan.querySelector('input[name="start_bt_penginapan[]"]').addEventListener('change', function() {
-                    calculateTotalDaysPenginapan(this);
-                });
-
-                newFormBTPenginapan.querySelector('input[name="end_bt_penginapan[]"]').addEventListener('change', function() {
-                    calculateTotalDaysPenginapan(this);
-                });
-
-                // Attach click event to the remove button
-                newFormBTPenginapan.querySelector('.remove-form').addEventListener('click', function() {
-                    newFormBTPenginapan.remove();
-                    calculateTotalNominalBTPenginapan();
-                    calculateTotalNominalBTTotal();
-                });
-            }
-
-            function addNewLainnyaForm() {
-                const newFormBTLainnya = document.createElement('div');
-                newFormBTLainnya.classList.add('mb-2');
-
-                newFormBTLainnya.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
-                        <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Accommodation</label>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_bt_lainnya[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerBTLainnya.appendChild(newFormBTLainnya);
-
-                // Attach input event to the newly added nominal field
-                newFormBTLainnya.querySelector('input[name="nominal_bt_lainnya[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
-
-                // Attach click event to the remove button
-                newFormBTLainnya.querySelector('.remove-form').addEventListener('click', function() {
-                    newFormBTLainnya.remove();
-                    calculateTotalNominalBTLainnya();
-                    calculateTotalNominalBTTotal();
-                });
-            }
-
-            document.getElementById('add-more-bt-perdiem').addEventListener('click', addNewPerdiemForm);
-            document.getElementById('add-more-bt-transport').addEventListener('click', addNewTransportForm);
-            document.getElementById('add-more-bt-penginapan').addEventListener('click', addNewPenginapanForm);
-            document.getElementById('add-more-bt-lainnya').addEventListener('click', addNewLainnyaForm);
-
-            // Attach input event to the existing nominal fields
-            document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            document.querySelectorAll('input[name="nominal_bt_transport[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            document.querySelectorAll('input[name="nominal_bt_penginapan[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            // Attach change event to the existing start and end date fields to calculate total days
-            document.querySelectorAll('input[name="start_bt_perdiem[]"], input[name="end_bt_perdiem[]"]').forEach(input => {
-                input.addEventListener('change', function() {
-                    calculateTotalDaysPerdiem(this);
-                });
-            });
-
-            document.querySelectorAll('input[name="start_bt_penginapan[]"], input[name="end_bt_penginapan[]"]').forEach(input => {
-                input.addEventListener('change', function() {
-                    calculateTotalDaysPenginapan(this);
-                });
-            });
-
-            document.querySelectorAll('input[name="nominal_bt_lainnya[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            // Initial calculation for the total nominal
-            calculateTotalNominalBTPerdiem();
-            calculateTotalNominalBTTransport();
-            calculateTotalNominalBTPenginapan();
-            calculateTotalNominalBTLainnya();
-            calculateTotalNominalBTTotal();
-
-            document.getElementById('start_date').addEventListener('change', handleDateChange);
-            document.getElementById('end_date').addEventListener('change', handleDateChange);
-
-            function handleDateChange() {
-                const startDateInput = document.getElementById('start_date');
-                const endDateInput = document.getElementById('end_date');
-
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-
-                // Set the min attribute of the end_date input to the selected start_date
-                endDateInput.min = startDateInput.value;
-
-                // Validate dates
-                if (endDate < startDate) {
-                    alert("End Date cannot be earlier than Start Date");
-                    endDateInput.value = "";
-                }
-
-                // Update min and max values for all dynamic perdiem date fields
-                document.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
-                    input.min = startDateInput.value;
-                    input.max = endDateInput.value;
-                });
-
-                document.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
-                    input.min = startDateInput.value;
-                    input.max = endDateInput.value;
-                });
-
-                document.querySelectorAll('input[name="total_days_bt_perdiem[]"]').forEach(function(input) {
-                    calculateTotalDaysPerdiem(input);
-                });
-            }
-
-
-
-            // Attach click event to the remove button for existing forms
-            document.querySelectorAll('.remove-form').forEach(button => {
-                button.addEventListener('click', function() {
-                    this.closest('.mb-2').remove();
-                    calculateTotalNominalBTPerdiem();
-                    calculateTotalNominalBTTransport();
-                    calculateTotalNominalBTPenginapan();
-                    calculateTotalNominalBTLainnya();
-                    calculateTotalNominalBTTotal();
-                });
-            });
-        });
-
-
-
-        //
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const formContainer = document.getElementById('form-container');
-
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
-
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-                calculateTotalNominal();
-            }
-
-            function calculateTotalNominal() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.getElementById('totalca').value = formatNumber(total);
-            }
-
-            document.getElementById('add-more').addEventListener('click', function () {
-                const newForm = document.createElement('div');
-                newForm.classList.add('mb-2', 'form-group');
-
-                newForm.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
-                        <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan_nbt[]" class="form-control"></textarea>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_nbt[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainer.appendChild(newForm);
-
-                // Attach input event to the newly added nominal field
-                newForm.querySelector('input[name="nominal_nbt[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
-
-                // Attach click event to the remove button
-                newForm.querySelector('.remove-form').addEventListener('click', function() {
-                    newForm.remove();
-                    calculateTotalNominal();
-                });
-
-                // Update the date constraints for the new 'tanggal_nbt[]' input fields
-                const startDateInput = document.getElementById('start_date').value;
-                const endDateInput = document.getElementById('end_date').value;
-
-                newForm.querySelectorAll('input[name="tanggal_nbt[]"]').forEach(function(input) {
-                    input.min = startDateInput;
-                    input.max = endDateInput;
-                });
-            });
-
-            // Attach input event to the existing nominal fields
-            document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            // Initial calculation for the total nominal
-            calculateTotalNominal();
-
-            // Note Kalo dpt Revisi di suruh di kunci
-            // document.getElementById('start_date').addEventListener('change', handleDateChange);
-            // document.getElementById('end_date').addEventListener('change', handleDateChange);
-
-            // function handleDateChange() {
-            //     const startDateInput = document.getElementById('start_date');
-            //     const endDateInput = document.getElementById('end_date');
-
-            //     const startDate = new Date(startDateInput.value);
-            //     const endDate = new Date(endDateInput.value);
-
-            //     // Set the min attribute of the end_date input to the selected start_date
-            //     endDateInput.min = startDateInput.value;
-
-            //     // Validate dates
-            //     if (endDate < startDate) {
-            //         alert("End Date cannot be earlier than Start Date.");
-            //         endDateInput.value = '';
-            //     }
-
-            //     // Update the min and max attributes for all 'tanggal_nbt[]' inputs
-            //     const tanggalNbtInputs = document.querySelectorAll('input[name="tanggal_nbt[]"]');
-            //     tanggalNbtInputs.forEach(function(input) {
-            //         input.min = startDateInput.value;
-            //         input.max = endDateInput.value;
-
-            //         // Reset the value if it's out of the allowed range
-            //         if (input.value < startDateInput.value || input.value > endDateInput.value) {
-            //             input.value = '';
-            //         }
-            //     });
-            // }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const formContainerEDetail = document.getElementById('form-container-e-detail');
-            const formContainerERelation = document.getElementById('form-container-e-relation');
-
-            // Function to update checkboxes visibility based on selected options
-            function updateCheckboxVisibility() {
-                // Gather all selected options from enter_type_e_detail
-                const selectedOptions = Array.from(document.querySelectorAll('select[name="enter_type_e_detail[]"]'))
-                    .map(select => select.value)
-                    .filter(value => value !== "");
-
-                // Update visibility for each checkbox in enter_type_e_relation
-                formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
-                    const checkbox = checkDiv.querySelector('input.form-check-input');
-                    const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
-                    if (selectedOptions.includes(checkboxValue)) {
-                        checkDiv.style.display = 'block';
-                    } else {
-                        checkDiv.style.display = 'none';
-                    }
-                });
-            }
-
-            // Function to format number with thousands separator
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            // Function to parse number from formatted string
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
-
-            // Function to format input fields
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-                calculateTotalNominalEDetail();
-            }
-
-            // Function to calculate the total nominal value for EDetail
-            function calculateTotalNominalEDetail() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_e_detail[]"]').value = formatNumber(total);
-                document.getElementById('totalca').value = formatNumber(total);
-            }
-
-            // Function to add new EDetail form
-            function addNewEDetailForm() {
-                const newFormEDetail = document.createElement('div');
-                newFormEDetail.classList.add('mb-2');
-
-                newFormEDetail.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Entertainment Type</label>
-                        <select name="enter_type_e_detail[]" class="form-select">
-                            <option value="">-</option>
-                            <option value="food_cost">Food/Beverages/Souvenir</option>
-                            <option value="transport">Transport</option>
-                            <option value="accommodation">Accommodation</option>
-                            <option value="gift">Gift</option>
-                            <option value="fund">Fund</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Entertainment Fee Detail</label>
-                        <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_e_detail[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form-e-detail">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerEDetail.appendChild(newFormEDetail);
-
-                // Attach input event to the newly added nominal field
-                newFormEDetail.querySelector('input[name="nominal_e_detail[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
-
-                // Attach change event to update checkbox visibility
-                newFormEDetail.querySelector('select[name="enter_type_e_detail[]"]').addEventListener('change', updateCheckboxVisibility);
-
-                // Attach click event to the remove button
-                newFormEDetail.querySelector('.remove-form-e-detail').addEventListener('click', function() {
-                    newFormEDetail.remove();
-                    updateCheckboxVisibility();
-                    calculateTotalNominalEDetail();
-                });
-            }
-
-            // Function to add new ERelation form
-            function addNewERelationForm() {
-                const newFormERelation = document.createElement('div');
-                newFormERelation.classList.add('mb-2');
-
-                newFormERelation.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Relation Type</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="food_cost">
-                            <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="transport">
-                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="accommodation">
-                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="gift">
-                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="fund">
-                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="rname_e_relation[]" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Position</label>
-                        <input type="text" name="rposition_e_relation[]" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Company</label>
-                        <input type="text" name="rcompany_e_relation[]" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Purpose</label>
-                        <input type="text" name="rpurpose_e_relation[]" class="form-control">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form-e-relation">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerERelation.appendChild(newFormERelation);
-
-                // Initial update of checkbox visibility
-                updateCheckboxVisibility();
-
-                // Attach click event to the remove button
-                newFormERelation.querySelector('.remove-form-e-relation').addEventListener('click', function() {
-                    newFormERelation.remove();
-                    updateCheckboxVisibility();
-                });
-            }
-
-            document.getElementById('add-more-e-detail').addEventListener('click', addNewEDetailForm);
-            document.getElementById('add-more-e-relation').addEventListener('click', addNewERelationForm);
-
-            // Attach input event to the existing nominal fields
-            document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            // Attach change event to existing select fields for checkbox visibility
-            document.querySelectorAll('select[name="enter_type_e_detail[]"]').forEach(select => {
-                select.addEventListener('change', updateCheckboxVisibility);
-            });
-
-            calculateTotalNominalEDetail();
-            updateCheckboxVisibility();
-        });
-
-    </script>
+    </script> --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>

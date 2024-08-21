@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ca_approval;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CATransaction;
 use App\Models\Company;
@@ -21,26 +22,33 @@ class ApprovalReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced Approval';
-        // Mengambil transaksi dengan user_id yang sesuai dan mengikutsertakan relasi employee
-        $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
-        $company = Company::with('companies')->where('contribution_level_code', 'company_name')->get();
-        $pendingCACount = CATransaction::where('approval_status', 'Pending')->count();
+        $employeeId = auth()->user()->employee_id;
+
+        // Ambil ca_approval berdasarkan employee_id
+        $ca_approval = ca_approval::with('employee')->where('employee_id', $employeeId)->where('approval_status', 'Pending')->get();
+
+        $ca_approvals_with_transactions = $ca_approval->map(function ($approval) {
+            $approval->transactions = CATransaction::where('id', $approval->ca_id)->get();
+            return $approval;
+        });
+        $pendingCACount = ca_approval::where('employee_id', $employeeId)->where('approval_status', 'Pending')->count();
         $pendingHTLCount = htl_transaction::where('approval_status', 'Pending')->count();
 
-        // Memformat tanggal
-        foreach ($ca_transactions as $transaction) {
-            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
-            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+        foreach ($ca_approval as $ca_approvals) {
+            foreach ($ca_approvals->transactions as $transaction) {
+                $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+                $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+            }
         }
-        //dd($ca_transactions);
-        return view('hcis.reimbursements.approval.approval', [
+
+        return view('hcis.reimbursements.approval.approvalCashadv', [
             'pendingCACount' => $pendingCACount,
             'pendingHTLCount' => $pendingHTLCount,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
-            'ca_transactions' => $ca_transactions,
-            'company' => $company,
+            'ca_approval' => $ca_approvals_with_transactions,
+            // 'company' => $company,
         ]);
     }
     public function cashadvancedApproval()
@@ -74,7 +82,7 @@ class ApprovalReimburseController extends Controller
     {
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
-        $link = 'Cash Advanced';
+        $link = 'Cash Advanced Approval';
 
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
@@ -95,15 +103,16 @@ class ApprovalReimburseController extends Controller
             'transactions' => $transactions,
         ]);
     }
-    function cashadvancedActionApproval(Request $req, $key)
+    function cashadvancedActionApproval(Request $req, $ca_id)
     {
-        $userId = Auth::id();
-        $model = CATransaction::findByRouteKey($key);
-        $model->approval_status         = $req->approval_status;
-        $model->created_by      = $userId;
+        $model = ca_approval::where('ca_id', $ca_id)->firstOrFail();
+
+        // Update data sesuai dengan input
+        $model->approval_status = $req->approval_status;
+        $model->approved_at = Carbon::now();
         $model->save();
 
-        Alert::success('Success Approve');
-        return redirect()->intended(route('approval', absolute: false));
+        Alert::success('Success', 'Approval updated successfully.');
+        return redirect()->route('approval');
     }
 }
