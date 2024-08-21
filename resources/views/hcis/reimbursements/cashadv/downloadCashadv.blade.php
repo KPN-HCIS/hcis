@@ -148,7 +148,7 @@
         <tr>
             <td class="label">Keperluan</td>
             <td class="colon">:</td>
-            <td class="value">{{ $transactions->descript }}</td>
+            <td class="value">{{ $transactions->ca_needs }}</td>
         </tr>
     </table>
 

@@ -162,6 +162,7 @@ class ReimburseController extends Controller
         $model->start_date = $req->start_date;
         $model->end_date = $req->end_date;
         $model->date_required = $req->ca_required;
+        $model->declare_estimate = $req->ca_decla;
         $model->total_days = $req->totaldays;
         if ($req->ca_type == 'dns') {
             // Menyiapkan array untuk menyimpan detail dari setiap bagian
@@ -172,19 +173,24 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
+                $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
                     $location = $req->location_bt_perdiem[$key];
+                    $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
-                    $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+                    $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
+                    $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
-                    $detail_perdiem[] = [
+                    $for_perdiem[] = [
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'total_days' => $totalDays,
                         'location' => $location,
+                        'other_location' => $other_location,
                         'company_code' => $companyCode,
+                        'nominal' => $nominal,
                         'nominal' => $nominal,
                     ];
                 }
@@ -195,7 +201,7 @@ class ReimburseController extends Controller
                 foreach ($req->tanggal_bt_transport as $key => $tanggal) {
                     $keterangan = $req->keterangan_bt_transport[$key];
                     $companyCode = $req->company_bt_transport[$key];
-                    $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+                    $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
                     $detail_transport[] = [
                         'tanggal' => $tanggal,
@@ -213,7 +219,8 @@ class ReimburseController extends Controller
                     $totalDays = $req->total_days_bt_penginapan[$key];
                     $hotelName = $req->hotel_name_bt_penginapan[$key];
                     $companyCode = $req->company_bt_penginapan[$key];
-                    $nominal = str_replace('.', '', $req->nominal_bt_penginapan[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+                    $nominal = str_replace('.', '', $req->nominal_bt_penginapan[$key]);
+                    $totalPenginapan = str_replace('.', '', $req->total_bt_penginapan[$key]);
 
                     $detail_penginapan[] = [
                         'start_date' => $startDate,
@@ -222,6 +229,7 @@ class ReimburseController extends Controller
                         'hotel_name' => $hotelName,
                         'company_code' => $companyCode,
                         'nominal' => $nominal,
+                        'totalPenginapan' => $totalPenginapan,
                     ];
                 }
             }
@@ -230,12 +238,14 @@ class ReimburseController extends Controller
             if ($req->has('tanggal_bt_lainnya')) {
                 foreach ($req->tanggal_bt_lainnya as $key => $tanggal) {
                     $keterangan = $req->keterangan_bt_lainnya[$key];
-                    $nominal = str_replace('.', '', $req->nominal_bt_lainnya[$key]); // Menghapus titik dari nominal sebelum menyimpannya
+                    $nominal = str_replace('.', '', $req->nominal_bt_lainnya[$key]);
+                    $totalLainnya = str_replace('.', '', $req->total_bt_lainnya[$key]);
 
                     $detail_lainnya[] = [
                         'tanggal' => $tanggal,
                         'keterangan' => $keterangan,
                         'nominal' => $nominal,
+                        'totalLainnya' => $totalLainnya,
                     ];
                 }
             }
@@ -371,6 +381,7 @@ class ReimburseController extends Controller
         $model->start_date = $req->start_date;
         $model->end_date = $req->end_date;
         $model->date_required = $req->ca_required;
+        $model->declare_estimate = $req->ca_decla;
         $model->total_days = $req->totaldays;
         if ($req->ca_type == 'dns') {
             $detail_ca = [
@@ -478,7 +489,7 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
 
         // return view('hcis.reimbursements.cashadv.downloadCashadv', [
-        $pdf = PDF::loadView('hcis.reimbursements.cashadv.downloadCashadv', [
+        $pdf = PDF::loadView('hcis.reimbursements.cashadv.printCashadv', [
             'link' => $link,
             // 'pdf' => $pdf,
             'parentLink' => $parentLink,
