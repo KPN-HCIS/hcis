@@ -173,7 +173,6 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-                $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -181,7 +180,6 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
-                    $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
                     $for_perdiem[] = [
                         'start_date' => $startDate,
