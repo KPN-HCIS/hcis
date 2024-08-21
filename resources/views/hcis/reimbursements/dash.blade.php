@@ -61,7 +61,7 @@ h4 {
     <!-- Begin Page Content -->
     {{-- {{ "Hallo ".$userId." berasal dari system ".session('system') }} --}}
     <br>
-    
+
     <div class="container-fluid">
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 row-cols-xxl-8 text-center">
             <div class="col">
@@ -126,6 +126,18 @@ h4 {
                     </div> <!-- end card-->
                 </a>
             </div>
+
+            <div class="col-md-3">
+                <a href="{{ route('approval') }}">
+                    <div class="card" style="height: 215px">
+                        <div class="card-body">
+                            <img src="/images/menu/cashadv.png" alt="logo">
+                            <h4 class="my-3">Approval</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div> <!-- end col-->
+
 
         </div> <!-- end row -->
     </div>

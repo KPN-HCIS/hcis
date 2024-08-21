@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\OnBehalfController as AdminOnBehalfController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SendbackController as AdminSendbackController;
 use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\ApprovalReimburseController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -111,6 +112,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
     Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
 
+    // Approval Reimburse
+    Route::get('/approval', [ApprovalReimburseController::class, 'approval'])->name('approval');
+    Route::get('/approval/cashadvanced/{id}', [ApprovalReimburseController::class, 'cashadvancedFormApproval'])->name('approval.cashadvanced');
+    Route::post('/approval/cashadvanced/{id}', [ReimburseController::class, 'cashadvancedActionApproval'])->name('approval.cashadvancedApproved');
+
     // My Hotel
     Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');
     Route::get('/hotel/form', [ReimburseController::class, 'hotelCreate'])->name('hotel.form');
@@ -193,8 +199,8 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
     Route::post('/businessTrip/saveDraft', [BusinessTripController::class, 'saveDraft'])->name('businessTrip.saveDraft');
-     //DEKLARASI BT
-     Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi']) -> name('businessTrip.deklarasi');
+    //DEKLARASI BT
+    Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi'])->name('businessTrip.deklarasi');
 
     //pdf BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
@@ -204,15 +210,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate'])->name('businessTrip-filterDate');
 
     //ADMIIN BT
-    Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin']) -> name('businessTrip.admin');
-    Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin']) -> name('businessTrip-filterDate.admin');
+    Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin'])->name('businessTrip.admin');
+    Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin'])->name('businessTrip-filterDate.admin');
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
-    Route::get('/businessTrip/deklarasi/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin']) -> name('businessTrip.deklarasi.admin');
+    Route::get('/businessTrip/deklarasi/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin'])->name('businessTrip.deklarasi.admin');
 
     //APPROVAL BT
-    Route::get('/businessTrip/approval', [BusinessTripController::class, 'approval']) -> name('businessTrip.approval');
-    Route::get('/businessTrip/approval/filterDate', [BusinessTripController::class, 'filterDateApproval']) -> name('businessTrip-filterDate.approval');
+    Route::get('/businessTrip/approval', [BusinessTripController::class, 'approval'])->name('businessTrip.approval');
+    Route::get('/businessTrip/approval/filterDate', [BusinessTripController::class, 'filterDateApproval'])->name('businessTrip-filterDate.approval');
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
