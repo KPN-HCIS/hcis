@@ -446,11 +446,11 @@
                                                                         <div id="form-container">
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Tanggal</label>
-                                                                                <input type="date" name="tanggal_nbt[]" class="form-control" value="{{ $item['tanggal_nbt'] }}">
+                                                                                <input type="date" name="tanggal_nbt[]" class="form-control bg-light" value="{{ $item['tanggal_nbt'] }}" readonly>
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Keterangan</label>
-                                                                                <textarea name="keterangan_nbt[]" class="form-control">{{ $item['keterangan_nbt'] }}</textarea>
+                                                                                <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>{{ $item['keterangan_nbt'] }}</textarea>
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Accommodation</label>
@@ -459,7 +459,7 @@
                                                                                 <div class="input-group-append">
                                                                                     <span class="input-group-text">Rp</span>
                                                                                 </div>
-                                                                                <input class="form-control" name="nominal_nbt[]" id="nominal_nbt" type="text" min="0" value="{{ number_format($item['nominal_nbt'], 0, ',', '.') }}">
+                                                                                <input class="form-control bg-light" name="nominal_nbt[]" id="nominal_nbt" type="text" min="0" value="{{ number_format($item['nominal_nbt'], 0, ',', '.') }}" readonly>
                                                                             </div>
                                                                             <hr class="border border-primary border-1 opacity-50">
                                                                         </div>
@@ -579,7 +579,7 @@
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label" for="start">Position</label>
-                                                                                <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" class="form-control">
+                                                                                <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" class="form-control" readonly>
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label" for="start">Company</label>
@@ -617,7 +617,7 @@
                                             type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-2">
+                                {{-- <div class="col-md-6 mb-2">
                                     <label class="form-label">Persetujuan</label>
                                     <select name="approval_status" id="approval_status" class="form-select">
                                         <option value="">-</option>
@@ -625,7 +625,7 @@
                                         <option value="Approved">Approved</option>
                                         <option value="Pending">Pending</option>
                                     </select>
-                                </div>
+                                </div> --}}
                                 {{-- {{ dd($transactions) }} --}}
                             </div>
                     </div>
@@ -636,7 +636,8 @@
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('approval') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" class=" btn btn-primary btn-pill px-4">Submit</button>
+                            <button type="submit" name="action_ca_reject" value="Pending" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                            <button type="submit" name="action_ca_approve" value="Draft" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
                         </div>
                     </div>
                     </form>

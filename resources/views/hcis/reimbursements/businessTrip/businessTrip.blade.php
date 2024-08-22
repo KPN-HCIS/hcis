@@ -6,6 +6,7 @@
             font-size: 28px !important;
             vertical-align: middle !important;
         }
+
     </style>
 @endsection
 

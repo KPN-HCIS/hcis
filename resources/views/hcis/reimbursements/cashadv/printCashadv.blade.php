@@ -146,41 +146,43 @@
             <td colspan="3"><b>Detail Pengajuan CA:</b></td>
         </tr>
         <tr>
-            <td class="label">PT</td>
+            <td class="label">Costing Company</td>
+            <td class="colon">:</td>
+            <td class="value">
+                {{ $transactions->contribution_level_code }}
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Lokasi</td>
             <td class="colon">:</td>
             <td class="value">
                 {{ $transactions->destination == 'Others' ? $transactions->others_location : $transactions->destination }}
             </td>
         </tr>
         <tr>
-            <td class="label">Lokasi</td>
-            <td class="colon">:</td>
-            <td class="value"></td>
-        </tr>
-        <tr>
             <td class="label">Mulai</td>
             <td class="colon">:</td>
-            <td class="value">{{ $transactions->start_date }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($transactions->start_date)->format('d-M-y') }}</td>
         </tr>
         <tr>
             <td class="label">Berakhir</td>
             <td class="colon">:</td>
-            <td class="value">{{ $transactions->end_date }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($transactions->end_date)->format('d-M-y') }}</td>
         </tr>
         <tr>
-            <td class="label">Total</td>
+            <td class="label">Total Hari</td>
             <td class="colon">:</td>
-            <td class="value">{{ $transactions->total_days }}</td>
+            <td class="value">{{ $transactions->total_days }} Hari</td>
         </tr>
         <tr>
             <td class="label">Tanggal CA dibutuhkan</td>
             <td class="colon">:</td>
-            <td class="value">{{ $transactions->date_required }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($transactions->date_required)->format('d-M-y') }}</td>
         </tr>
         <tr>
             <td class="label">Estimasi Deklarasi</td>
             <td class="colon">:</td>
-            <td class="value">{{ $transactions->declare_estimate }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($transactions->declare_estimate)->format('d-M-y') }}</td>
         </tr>
         <tr>
             <td class="label">Keperluan</td>
@@ -203,7 +205,7 @@
                 <td>Selesai</td>
                 <td>Lokasi dinas</td>
                 <td>Company Code</td>
-                <td>Jl Hr</td>
+                <td>Jumlah Hari</td>
                 <td>Amount</td>
             </tr>
 
@@ -213,17 +215,17 @@
                 <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
                 <td>{{ $perdiem['location'] == 'Others' ? $perdiem['company_code'] : $perdiem['location'] }}</td>
                 <td>{{ $perdiem['company_code'] }}</td>
-                <td>{{ $perdiem['total_days'] }}</td>
-                <td> {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                <td>{{ $perdiem['total_days'] }} Hari</td>
+                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
-                <td colspan="4">Total</td>
+                <td colspan="4" class="head-row">Total</td>
                 <td>
-                    {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }}
+                    {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
                 </td>
                 <td>
-                    {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
+                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
         </table>
@@ -244,13 +246,13 @@
                 <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
                 <td>{{ $transport['keterangan'] }}</td>
                 <td>{{ $transport['company_code'] }}</td>
-                <td> {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
-                <td colspan="3">Total</td>
+                <td colspan="3" class="head-row">Total</td>
                 <td>
-                    {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
+                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
         </table>
@@ -264,7 +266,7 @@
                 <td>Selesai</td>
                 <td>Nama Hotel</td>
                 <td>Company Code</td>
-                <td>Jl Hr</td>
+                <td>Jumlah Hari</td>
                 <td>Amount</td>
             </tr>
 
@@ -274,17 +276,17 @@
                 <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
                 <td>{{ $perdiem['hotel_name'] }}</td>
                 <td>{{ $perdiem['company_code'] }}</td>
-                <td>{{ $perdiem['total_days'] }}</td>
-                <td> {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                <td>{{ $perdiem['total_days'] }} Hari</td>
+                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
-                <td colspan="4">Total</td>
+                <td colspan="4" class="head-row">Total</td>
                 <td>
-                    {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }}
+                    {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Hari
                 </td>
                 <td>
-                    {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
+                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
         </table>
@@ -303,13 +305,13 @@
             <tr style="text-align: center">
                 <td>{{ \Carbon\Carbon::parse($perdiem['tanggal'])->format('d-M-y') }}</td>
                 <td>{{ $perdiem['keterangan'] }}</td>
-                <td> {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
-                <td colspan="2">Total</td>
+                <td colspan="2" class="head-row">Total</td>
                 <td>
-                    {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
+                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
         </table>
@@ -319,22 +321,22 @@
                 <th colspan="3"><b>Detail Entertain :</b></th>
             </tr>
             <tr class="head-row">
-                <td>Mulai</td>
-                <td>Selesai</td>
-                <td>Lokasi dinas</td>
+                <td>Tanggal</td>
+                <td>Keterangan</td>
+                <td>Nominal</td>
             </tr>
 
             @foreach($detailCA as $item)
             <tr style="text-align: center">
                 <td>{{ \Carbon\Carbon::parse($item['tanggal_nbt'])->format('d-M-y') }}</td>
                 <td>{{ $item['keterangan_nbt'] }}</td>
-                <td> {{ number_format($item['nominal_nbt'], 0, ',', '.') }}</td>
+                <td>Rp. {{ number_format($item['nominal_nbt'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="2" class="head-row">Total</td>
                 <td>
-                    {{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}
+                    Rp. {{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}
                 </td>
             </tr>
         </table>
@@ -362,13 +364,13 @@
                 @endphp
                 <td>{{ $typeMap[$detail['type']] ?? $detail['type'] }}</td>
                 <td>{{ $detail['fee_detail'] }}</td>
-                <td>{{ number_format($detail['nominal'], 0, ',', '.') }}</td>
+                <td>Rp. {{ number_format($detail['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="2" class="head-row">Total</td>
                 <td>
-                    {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
+                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
         </table>
@@ -413,6 +415,14 @@
             </tr>
         </table>
     @endif
+
+    <table>
+        <tr>
+            <td class="label"><b>Total Cash Advanced</b></td>
+            <td class="colon">:</td>
+            <td class="value">Rp. {{ number_format($transactions->total_cost), 0, ',', '.' }}</td>
+        </tr>
+    </table>
 </body>
 
 </html>
