@@ -244,22 +244,24 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td style="align-content: center;">
-                                                    <span
-                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved'
-                                                            ? 'success'
-                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
-                                                                ? 'danger'
-                                                                : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
-                                                                    ? 'warning'
-                                                                    : ($n->status == 'Draft'
-                                                                        ? 'secondary'
-                                                                        : (in_array($n->status, ['Doc Accepted', 'Verified'])
-                                                                            ? 'info'
-                                                                            : 'secondary')))) }}"
-                                                        style="
-                                                    font-size: 12px;
-                                                    padding: 0.5rem 1rem;">
+                                                <td style="align-content: center">
+                                                    <span class="badge rounded-pill bg-{{ $n->status == 'Approved'
+                                                        ? 'success'
+                                                        : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
+                                                            ? 'danger'
+                                                            : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
+                                                                ? 'warning'
+                                                                : ($n->status == 'Draft'
+                                                                    ? 'secondary'
+                                                                    : (in_array($n->status, ['Doc Accepted', 'verified'])
+                                                                        ? 'primary'
+                                                                        : 'secondary')))) }}"
+                                                        style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                        @if ($n->status == 'Pending L1')
+                                                            title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
+                                                        @elseif ($n->status == 'Pending L2')
+                                                            title="L2 Manager: {{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}"
+                                                        @endif>
                                                         {{ $n->status }}
                                                     </span>
                                                 </td>

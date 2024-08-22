@@ -172,12 +172,12 @@
         <tr>
             <td class="label">Dari Tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ Carbon::parse($sppd->mulai)->format('d F Y') }}</td>
+            <td class="value">{{ Carbon::parse($sppd->mulai)->format('d M Y') }}</td>
         </tr>
         <tr>
             <td class="label">Sampai dengan tanggal</td>
             <td class="colon">:</td>
-            <td class="value">{{ Carbon::parse($sppd->kembali)->format('d F Y') }}</td>
+            <td class="value">{{ Carbon::parse($sppd->kembali)->format('d M Y') }}</td>
         </tr>
         <tr>
             <td class="label">Status</td>

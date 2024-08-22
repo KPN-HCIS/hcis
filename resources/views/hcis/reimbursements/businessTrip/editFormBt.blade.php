@@ -131,8 +131,8 @@
                                 <div class="col-md-12">
                                     <label for="ca" class="form-label">Cash Advanced</label>
                                     <select class="form-select" id="ca" name="ca">
-                                        <option value="Tidak">Tidak</option>
-                                        <option value="Ya">Ya</option>
+                                        <option value="Tidak" {{ $n->ca == 'Tidak' ? 'selected' : '' }}>Tidak</option>
+                                        <option value="Ya" {{ $n->ca == 'Ya' ? 'selected' : '' }}>Ya</option>
                                     </select>
 
                                     <div class="row mt-2" id="ca_div" style="display: none;">

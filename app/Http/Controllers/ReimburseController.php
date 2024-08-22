@@ -177,7 +177,7 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-                $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
+                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -185,7 +185,7 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
-                    $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
+                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
                     $for_perdiem[] = [
                         'start_date' => $startDate,
@@ -391,7 +391,7 @@ class ReimburseController extends Controller
             if ($cek_director_id->isNotEmpty()) {
                 $director_id = $cek_director_id->first()->employee_id;
             }
-            //cek matrix approval 
+            //cek matrix approval
             $total_ca=str_replace('.', '', $req->totalca);
             $data_matrix_approvals = MatrixApproval::where(function($query) use ($req) {
                 if ($req->ca_type === 'dns') {
@@ -403,9 +403,9 @@ class ReimburseController extends Controller
             ->where('group_company', 'like', '%'.$employee_data->group_company.'%')
             ->where('contribution_level_code', 'like', '%'.$req->companyFilter.'%')
             ->whereRaw('
-            ? BETWEEN 
-            CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND 
-            CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)', 
+            ? BETWEEN
+            CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND
+            CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
             [$total_ca])
             ->get();
 
@@ -432,7 +432,7 @@ class ReimburseController extends Controller
                 $model->save();
             }
         }
-        
+
         Alert::success('Success');
         return redirect()->intended(route('cashadvanced', absolute: false));
     }

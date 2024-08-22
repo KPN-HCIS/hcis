@@ -7,6 +7,7 @@ use App\Exports\UsersExport;
 use App\Models\BTApproval;
 use App\Models\BusinessTrip;
 use App\Models\ca_transaction;
+use App\Models\CATransaction;
 use App\Models\Company;
 use App\Models\Designation;
 use App\Models\Employee;
@@ -36,19 +37,21 @@ class BusinessTripController extends Controller
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
 
-        // No sppd
+        // Fetch related data
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
-        // dd($tickets);
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+
+        // Get manager names
+        $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
+        $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
 
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names'));
     }
-
 
     public function delete($id)
     {
@@ -72,6 +75,7 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
+        $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
         // Retrieve the taxi data for the specific BusinessTrip
         $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
@@ -127,6 +131,7 @@ class BusinessTripController extends Controller
             'employee_data' => $employee_data,
             'companies' => $companies,
             'locations' => $locations,
+            'ca' => $ca,
         ]);
     }
 
@@ -583,12 +588,14 @@ class BusinessTripController extends Controller
         $employee_data = Employee::where('id', $userId)->first();
         $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
+        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         return view(
             'hcis.reimbursements.businessTrip.formBusinessTrip',
             [
                 'employee_data' => $employee_data,
                 'companies' => $companies,
                 'locations' => $locations,
+                'no_sppds' => $no_sppds,
             ]
         );
     }
@@ -616,7 +623,7 @@ class BusinessTripController extends Controller
         }
 
         $noSppd = $this->generateNoSppd();
-        $noSppdCa = $this->generateNoSppdCa();
+        // $noSppdCa = $this->generateNoSppdCa();
         $noSppdTkt = $this->generateNoSppdTkt();
         $noSppdHtl = $this->generateNoSppdHtl();
         $userId = Auth::id();
@@ -771,17 +778,33 @@ class BusinessTripController extends Controller
 
 
         if ($request->ca === 'Ya') {
-            $ca = new ca_transaction();
+            $ca = new CATransaction();
+
+            $currentYear = date('Y');
+            $currentYearShort = date('y');
+            $prefix = 'CA';
+
+            $lastTransaction = CATransaction::whereYear('created_at', $currentYear)
+                ->orderBy('no_ca', 'desc')
+                ->first();
+
+            if ($lastTransaction && preg_match('/CA' . $currentYearShort . '(\d{6})/', $lastTransaction->no_ca, $matches)) {
+                $lastNumber = intval($matches[1]);
+            } else {
+                $lastNumber = 0;
+            }
+
+            $newNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
+            $newNoCa = "$prefix$currentYearShort$newNumber";
+
             $ca->id = (string) Str::uuid();
             $ca->type_ca = 'dns';
-            $ca->no_ca = $noSppdCa;
+            $ca->no_ca = $newNoCa;
             $ca->no_sppd = $noSppd;
             $ca->user_id = $userId;
             $ca->unit = $request->divisi;
 
-            $company = Company::find($request->bb_perusahaan);
-
-            $ca->contribution_level_code = $company->contribution_level_code;
+            $ca->contribution_level_code = $request->bb_perusahaan;
             $ca->destination = $request->tujuan;
             $ca->others_location = $request->others_location;
 
@@ -789,17 +812,110 @@ class BusinessTripController extends Controller
             $ca->start_date = $request->mulai;
             $ca->end_date = $request->kembali;
 
-            $ca->date_required = $request->date_required;
-            $ca->total_days = $request->total_days;
+            $ca->date_required = Carbon::parse($request->kembali)->addDays(3);
+            $ca->total_days = Carbon::parse($request->mulai)->diffInDays(Carbon::parse($request->kembali));
             $ca->detail_ca = $request->detail_ca;
-            $ca->total_ca = $request->total_ca;
-            $ca->total_real = $request->total_real;
-            $ca->total_cost = $request->total_cost;
+            $ca->total_ca = (int) str_replace('.', '', $request->totalca);  // Convert to integer
+            $ca->total_real = '0';
+            $ca->total_cost = (int) str_replace('.', '', $request->totalca);
 
             $ca->approval_status = $request->status;
             $ca->approval_sett = $request->approval_sett;
             $ca->approval_extend = $request->approval_extend;
+            $ca->created_by = $userId;
 
+            $detail_perdiem = [];
+            $detail_transport = [];
+            $detail_penginapan = [];
+            $detail_lainnya = [];
+
+            if ($request->has('start_bt_perdiem')) {
+                // $totalPerdiem = str_replace('.', '', $request->total_bt_perdiem[]);
+                foreach ($request->start_bt_perdiem as $key => $startDate) {
+                    $endDate = $request->end_bt_perdiem[$key];
+                    $totalDays = $request->total_days_bt_perdiem[$key];
+                    $location = $request->location_bt_perdiem[$key];
+                    $other_location = $request->other_location_bt_perdiem[$key];
+                    $companyCode = $request->company_bt_perdiem[$key];
+                    $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key]);
+                    // $totalPerdiem = str_replace('.', '', $request->total_bt_perdiem[]);
+
+                    $for_perdiem[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'location' => $location,
+                        'other_location' => $other_location,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                        'nominal' => $nominal,
+                    ];
+                }
+            }
+
+            // Loop untuk Transport
+            if ($request->has('tanggal_bt_transport')) {
+                foreach ($request->tanggal_bt_transport as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_transport[$key];
+                    $companyCode = $request->company_bt_transport[$key];
+                    $nominal = str_replace('.', '', $request->nominal_bt_transport[$key]);
+
+                    $detail_transport[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
+            }
+
+            // Loop untuk Penginapan
+            if ($request->has('start_bt_penginapan')) {
+                foreach ($request->start_bt_penginapan as $key => $startDate) {
+                    $endDate = $request->end_bt_penginapan[$key];
+                    $totalDays = $request->total_days_bt_penginapan[$key];
+                    $hotelName = $request->hotel_name_bt_penginapan[$key];
+                    $companyCode = $request->company_bt_penginapan[$key];
+                    $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key]);
+                    $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key]);
+
+                    $detail_penginapan[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'hotel_name' => $hotelName,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                        'totalPenginapan' => $totalPenginapan,
+                    ];
+                }
+            }
+
+            // Loop untuk Lainnya
+            if ($request->has('tanggal_bt_lainnya')) {
+                foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_lainnya[$key];
+                    $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key]);
+                    $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key]);
+
+                    $detail_lainnya[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'nominal' => $nominal,
+                        'totalLainnya' => $totalLainnya,
+                    ];
+                }
+            }
+
+            // Konversi array menjadi JSON untuk disimpan di database
+            $detail_ca = [
+                'detail_perdiem' => $detail_perdiem,
+                'detail_transport' => $detail_transport,
+                'detail_penginapan' => $detail_penginapan,
+                'detail_lainnya' => $detail_lainnya,
+            ];
+
+            $ca->detail_ca = json_encode($detail_ca);
 
             $ca->save();
         }
@@ -846,11 +962,13 @@ class BusinessTripController extends Controller
         // dd($tickets);
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
+        $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
 
         $parentLink = 'Reimbursement';
         $link = 'Business Trip (Admin)';
 
-        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names'));
     }
 
     public function filterDateAdmin(Request $request)
@@ -884,13 +1002,14 @@ class BusinessTripController extends Controller
 
         return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
     }
-     public function deklarasiAdmin($id)
+    public function deklarasiAdmin($id)
     {
         $companies = Company::orderBy('contribution_level')->get();
 
         $n = BusinessTrip::find($id);
+        $ca = ca_transaction::find($id);
 
-        return view('hcis.reimbursements.businessTrip.deklarasiAdmin', ['n' => $n, 'companies' => $companies]);
+        return view('hcis.reimbursements.businessTrip.deklarasiAdmin', ['n' => $n, 'ca' => $ca, 'companies' => $companies]);
     }
     public function deklarasiStatusAdmin(Request $request, $id)
     {

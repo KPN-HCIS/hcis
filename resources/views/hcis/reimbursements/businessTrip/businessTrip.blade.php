@@ -160,9 +160,9 @@
                                                                 'No. SPPD' => $caTransactions[$n->no_sppd]->no_sppd,
                                                                 'Unit' => $caTransactions[$n->no_sppd]->unit,
                                                                 'Destination' => $caTransactions[$n->no_sppd]->destination,
-                                                                'CA Total' => $caTransactions[$n->no_sppd]->total_ca,
-                                                                'Total Real' => $caTransactions[$n->no_sppd]->total_real,
-                                                                'Total Cost' => $caTransactions[$n->no_sppd]->total_cost,
+                                                                'CA Total' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_ca, 0, ',', '.'),
+                                                                'Total Real' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_real, 0, ',', '.'),
+                                                                'Total Cost' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_cost, 0, ',', '.'),
                                                                 'Start' => date('d-M-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
                                                                 'End' => date('d-M-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
                                                             ]) }}"><u>Details</u></a>
@@ -241,21 +241,23 @@
                                                     @endif
                                                 </td>
                                                 <td style="align-content: center">
-                                                    <span
-                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved'
-                                                            ? 'success'
-                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
-                                                                ? 'danger'
-                                                                : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
-                                                                    ? 'warning'
-                                                                    : ($n->status == 'Draft'
-                                                                        ? 'secondary'
-                                                                        : (in_array($n->status, ['Doc Accepted', 'verified'])
-                                                                            ? 'primary'
-                                                                            : 'secondary')))) }}"
-                                                        style="
-                                                        font-size: 12px;
-                                                        padding: 0.5rem 1rem;">
+                                                    <span class="badge rounded-pill bg-{{ $n->status == 'Approved'
+                                                        ? 'success'
+                                                        : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
+                                                            ? 'danger'
+                                                            : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
+                                                                ? 'warning'
+                                                                : ($n->status == 'Draft'
+                                                                    ? 'secondary'
+                                                                    : (in_array($n->status, ['Doc Accepted', 'verified'])
+                                                                        ? 'primary'
+                                                                        : 'secondary')))) }}"
+                                                        style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                        @if ($n->status == 'Pending L1')
+                                                            title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
+                                                        @elseif ($n->status == 'Pending L2')
+                                                            title="L2 Manager: {{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}"
+                                                        @endif>
                                                         {{ $n->status }}
                                                     </span>
                                                 </td>

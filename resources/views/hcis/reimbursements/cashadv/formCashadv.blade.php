@@ -24,9 +24,9 @@
         </div>
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
-                <div class="card-header d-flex bg-primary text-white justify-content-between">
+                <div class="card-header d-flex bg-white justify-content-between">
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Add Data</h4>
-                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close btn-close-white"></a>
+                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
@@ -61,7 +61,7 @@
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Costing Company</label>
                                     <select class="form-control select2" id="companyFilter" name="companyFilter" required>
-                                        <option value="">--- Select Company---</option>
+                                        <option value="">Select Company...</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}">
                                                 {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
@@ -73,7 +73,7 @@
                                     <label class="form-label" for="name">Destination</label>
                                     <select class="form-control select2" id="locationFilter" name="locationFilter"
                                         onchange="toggleOthers()" required>
-                                        <option value="">--- Select location ---</option>
+                                        <option value="">Select location...</option>
                                         @foreach ($locations as $location)
                                             <option value="{{ $location->area }}">
                                                 {{ $location->area . ' (' . $location->company_name . ')' }}</option>
@@ -88,7 +88,7 @@
                             <div class="row">
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label" for="name">CA Purposes</label>
-                                    <textarea name="ca_needs" id="ca_needs" class="form-control" placeholder="Write your CA Purposes ..."></textarea>
+                                    <textarea name="ca_needs" id="ca_needs" class="form-control"></textarea>
                                 </div>
                             </div>
                             <div class="row">
@@ -128,7 +128,7 @@
                                         <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" placeholder="mm/dd/yyyy" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mb-2">
+                                <div class="col-md-6 mb-2">
                                     <label class="form-label" for="type">CA Type</label>
                                     <select name="ca_type" id="ca_type" class="form-select" onchange="toggleDivs()"
                                         readonly>
@@ -207,7 +207,7 @@
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
                                                                             <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
-                                                                                <option value="">--- Select Company ---</option>
+                                                                                <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
                                                                                 @endforeach
@@ -270,7 +270,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."></textarea>
+                                                                            <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Amount</label>
@@ -333,7 +333,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Hotel Name</label>
-                                                                            <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="ex: Westin">
+                                                                            <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
@@ -393,7 +393,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."></textarea>
+                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Accommodation</label>
@@ -450,7 +450,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_nbt[]" class="form-control" placeholder="Write your CA Purposes ..."></textarea>
+                                                                            <textarea name="keterangan_nbt[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Accommodation</label>
@@ -508,7 +508,7 @@
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Entertainment Fee Detail</label>
-                                                                                <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control" placeholder="Write your Entertainment Fee Detail ..."></textarea>
+                                                                                <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control"></textarea>
                                                                             </div>
                                                                             <div class="input-group">
                                                                                 <div class="input-group-append">
@@ -573,19 +573,19 @@
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label" for="start">Name</label>
-                                                                                <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" class="form-control" placeholder="ex: John Doe">
+                                                                                <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" class="form-control">
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label" for="start">Position</label>
-                                                                                <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" class="form-control" placeholder="ex: Manager">
+                                                                                <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" class="form-control">
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label" for="start">Company</label>
-                                                                                <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" class="form-control" placeholder="PT. Agrinusa Persada Mulia">
+                                                                                <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" class="form-control">
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label" for="start">Purpose</label>
-                                                                                <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" class="form-control" placeholder="Write your CA Purposes...">
+                                                                                <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" class="form-control">
                                                                             </div>
                                                                             <hr class="border border-primary border-1 opacity-50">
                                                                         </div>
@@ -622,9 +622,9 @@
                     <div class="row">
                         <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-outline-secondary rounded-pill px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_draft" value="Draft" class=" btn btn-secondary rounded-pill px-4 me-2">Draft</button>
-                            <button type="submit" name="action_ca_submit" value="Pending" class=" btn btn-primary rounded-pill px-4 me-2">Submit</button>
+                            <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-outline-secondary px-4 me-2">Cancel</a>
+                            <button type="submit" name="action_ca_draft" value="Draft" class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
+                            <button type="submit" name="action_ca_submit" value="Pending" class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
                         </div>
                     </div>
                     </form>
@@ -1016,7 +1016,9 @@
                         <label class="form-label" for="name">Location Agency</label>
                         <select class="form-control select2 location-select" name="location_bt_perdiem[]">
                             <option value="">Select location...</option>
-                            <!-- Daftar lokasi lainnya -->
+                            @foreach($locations as $location)
+                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                            @endforeach
                             <option value="Others">Others</option>
                         </select>
                         <br>

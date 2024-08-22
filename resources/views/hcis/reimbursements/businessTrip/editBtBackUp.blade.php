@@ -17,8 +17,8 @@
                 </div>
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
-                        <h4 class="mb-0">Detail Data</h4>
-                        <a href="/businessTrip/approval" type="button" class="btn-close btn-close-white"></a>
+                        <h4 class="mb-0">Add Data</h4>
+                        <a href="/businessTrip" type="button" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
                         @if (session('error'))
@@ -29,165 +29,154 @@
                             </div>
                         @endif
 
-                        {{-- <form action="{{ route('update.bt', ['id' => $n->id]) }}" method="POST" id="btEditForm"> --}}
-                        {{-- @csrf
-                            @method('PUT') --}}
+                        <form id="btFrom" action="/businessTrip/form/post" method="POST">
+                            @csrf
 
-                        <div class="mb-3">
-                            <label for="nama" class="form-label">Name</label>
-                            <input type="text" class="form-control bg-light" id="nama" name="nama"
-                                style="cursor:not-allowed;" value="{{ $n->nama }}" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="divisi" class="form-label">Divison</label>
-                            <input type="text" class="form-control bg-light" id="divisi" name="divisi"
-                                style="cursor:not-allowed;" value="{{ $n->divisi }}" readonly>
-
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="mulai" class="form-label">Start Date</label>
-                                <input type="date" class="form-control datepicker bg-light" id="mulai" name="mulai"
-                                    placeholder="Tanggal Mulai" value="{{ $n->mulai }}" readonly>
+                            <div class="mb-3">
+                                <label for="nama" class="form-label">Name</label>
+                                <input type="text" class="form-control bg-light" id="nama" name="nama"
+                                    style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
                             </div>
-                            <div class="col-md-6">
-                                <label for="kembali" class="form-label">End Date</label>
-                                <input type="date" class="form-control datepicker bg-light" id="kembali" name="kembali"
-                                    placeholder="Tanggal Kembali" value="{{ $n->kembali }}" readonly>
+                            <div class="mb-3">
+                                <label for="divisi" class="form-label">Divison</label>
+                                <input type="text" class="form-control bg-light" id="divisi" name="divisi"
+                                    style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
+
                             </div>
-                        </div>
-                        <div class="mb-2">
-                            <label for="tujuan" class="form-label">Destination</label>
-                            <select class="form-select bg-light" name="tujuan" id="tujuan" onchange="toggleOthers()"
-                                disabled>
-                                <option value="">--- Choose Destination ---</option>
-                                @foreach ($locations as $location)
-                                    <option value="{{ $location->area }}"
-                                        {{ $n->tujuan === $location->area ? 'selected' : '' }}>
-                                        {{ $location->area . ' (' . $location->city . ')' }}
-                                    </option>
-                                @endforeach
-                                <option value="Others"
-                                    {{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? 'selected' : '' }}>
-                                    Others</option>
-                            </select>
-                            <br>
-                            <input type="text" name="others_location" id="others_location" class="form-control"
-                                placeholder="Other Location"
-                                value="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? $n->tujuan : '' }}"
-                                style="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? '' : 'display: none;' }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="keperluan" class="form-label">Need (To be filled in according to visit
-                                service)</label>
-                            <textarea class="form-control bg-light" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
-                                readonly>{{ $n->keperluan }}</textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="bb_perusahaan" class="form-label">
-                                Company Cost Expenses (PT Service Needs / Not PT Payroll)
-                            </label>
-                            <select class="form-select bg-light" id="bb_perusahaan" name="bb_perusahaan" disabled>
-                                <option value="">--- Choose PT ---</option>
-                                @foreach ($companies as $company)
-                                    <option value="{{ $company->contribution_level_code }}"
-                                        {{ $company->contribution_level_code == $n->bb_perusahaan ? 'selected' : '' }}>
-                                        {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="norek_krywn" class="form-label">Employee Account Number</label>
-                            <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
-                                value="{{ $n->norek_krywn }}" readonly>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
-                            <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
-                                name="nama_pemilik_rek" value="{{ $n->nama_pemilik_rek }}" readonly>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="nama_bank" class="form-label">Bank Name</label>
-                            <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
-                                value="{{ $n->nama_bank }}" placeholder="ex. BCA" readonly>
-                        </div>
-
-                        <!-- HTML Part -->
-                        <div class="col-md-14 mb-3">
-                            <label for="jns_dinas" class="form-label">Type of Service</label>
-                            <select class="form-select" id="jns_dinas" name="jns_dinas" disabled
-                                onchange="toggleAdditionalFields()">
-                                <option value="" selected disabled>-- Choose Type of Service --</option>
-                                <option value="dalam kota" {{ $n->jns_dinas == 'dalam kota' ? 'selected' : '' }}>Dinas
-                                    Dalam Kota</option>
-                                <option value="luar kota" {{ $n->jns_dinas == 'luar kota' ? 'selected' : '' }}>Dinas
-                                    Luar Kota</option>
-                            </select>
-                        </div>
-
-                        <div id="additional-fields" class="row mb-3" style="display: none;">
-                            <div class="col-md-12">
-                                <label for="ca" class="form-label">Cash Advanced</label>
-                                <select class="form-select" id="ca" name="ca">
-                                    <option value="Tidak">Tidak</option>
-                                    <option value="Ya">Ya</option>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="mulai" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control datepicker" id="mulai" name="mulai"
+                                        placeholder="Tanggal Mulai" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="kembali" class="form-label">End Date</label>
+                                    <input type="date" class="form-control datepicker" id="kembali" name="kembali"
+                                        placeholder="Tanggal Kembali" required>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="tujuan" class="form-label">Destination</label>
+                                <select class="form-select" name="tujuan" id="tujuan" onchange="toggleOthers()"
+                                    required>
+                                    <option value="">--- Choose Destination ---</option>
+                                    @foreach ($locations as $location)
+                                        <option value="{{ $location->area }}">
+                                            {{ $location->area . ' (' . $location->city . ')' }}
+                                        </option>
+                                    @endforeach
+                                    <option value="Others">Others</option>
                                 </select>
+                                <br><input type="text" name="others_location" id="others_location" class="form-control"
+                                    placeholder="Other Location" value="" style="display: none;">
+                            </div>
 
-                                <div class="row mt-2" id="ca_div" style="display: none;">
-                                    <div class="col-md-12">
-                                        <div class="table-responsive-sm">
-                                            <div class="d-flex flex-column gap-2">
-                                                <div class="text-bg-primary p-2"
-                                                    style="text-align:center; border-radius:4px;">Cash Advanced</div>
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <div class="mb-2" id="div_allowance">
-                                                            <label class="form-label">Allowance (Perdiem)</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">Rp</span>
+                            <div class="mb-3">
+                                <label for="keperluan" class="form-label">Need (To be filled in according to visit
+                                    service)</label>
+                                <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="bb_perusahaan" class="form-label">Company Cost Expenses (PT Service Needs / Not
+                                    PT Payroll)</label>
+                                <select class="form-select" id="bb_perusahaan" name="bb_perusahaan" required>
+                                    <option value="">--- Choose PT ---</option>
+                                    @foreach ($companies as $company)
+                                        <option value="{{ $company->contribution_level_code }}">
+                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="norek_krywn" class="form-label">Employee Account Number</label>
+                                <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
+                                    value="{{ $employee_data->bank_account_number }}" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
+                                <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
+                                    name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nama_bank" class="form-label">Bank Name</label>
+                                <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
+                                    placeholder="ex. BCA" value="{{ $employee_data->bank_name }}" readonly>
+                            </div>
+
+                            <!-- HTML Part -->
+                            <div class="col-md-14 mb-3">
+                                <label for="jns_dinas" class="form-label">Type of Service</label>
+                                <select class="form-select" id="jns_dinas" name="jns_dinas" required>
+                                    <option value="" selected disabled>-- Choose Type of Service --</option>
+                                    <option value="dalam kota">Dinas Dalam Kota</option>
+                                    <option value="luar kota">Dinas Luar Kota</option>
+                                </select>
+                            </div>
+
+                            <div id="additional-fields" class="row mb-3" style="display: none;">
+                                <div class="col-md-12">
+                                    <label for="ca" class="form-label">Cash Advanced</label>
+                                    <select class="form-select" id="ca" name="ca">
+                                        <option value="Tidak">Tidak</option>
+                                        <option value="Ya">Ya</option>
+                                    </select>
+
+                                    <div class="row mt-2" id="ca_div" style="display: none;">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="text-bg-primary p-2"
+                                                        style="text-align:center; border-radius:4px;">Cash Advanced</div>
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="mb-2" id="div_allowance">
+                                                                <label class="form-label">Allowance (Perdiem)</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">Rp</span>
+                                                                    </div>
+                                                                    <input class="form-control bg-light" name="allowance"
+                                                                        id="allowance" type="text" min="0"
+                                                                        value="0" readonly>
                                                                 </div>
-                                                                <input class="form-control bg-light" name="allowance"
-                                                                    id="allowance" type="text" min="0"
-                                                                    value="0" readonly>
                                                             </div>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Transportation</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">Rp</span>
+                                                            <div class="mb-2">
+                                                                <label class="form-label">Transportation</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">Rp</span>
+                                                                    </div>
+                                                                    <input class="form-control" name="transport"
+                                                                        id="transport" type="text" min="0"
+                                                                        value="0">
                                                                 </div>
-                                                                <input class="form-control" name="transport"
-                                                                    id="transport" type="text" min="0"
-                                                                    value="0">
                                                             </div>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Accommodation</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">Rp</span>
+                                                            <div class="mb-2">
+                                                                <label class="form-label">Accommodation</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">Rp</span>
+                                                                    </div>
+                                                                    <input class="form-control" name="accommodation"
+                                                                        id="accommodation" type="text" min="0"
+                                                                        value="0">
                                                                 </div>
-                                                                <input class="form-control" name="accommodation"
-                                                                    id="accommodation" type="text" min="0"
-                                                                    value="0">
                                                             </div>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Other</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">Rp</span>
+                                                            <div class="mb-2">
+                                                                <label class="form-label">Other</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text">Rp</span>
+                                                                    </div>
+                                                                    <input class="form-control" name="other"
+                                                                        id="other" type="text" min="0"
+                                                                        value="0">
                                                                 </div>
-                                                                <input class="form-control" name="other" id="other"
-                                                                    type="text" min="0" value="0">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -196,40 +185,30 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="col-md-12 mt-3">
-                                <label for="tiket" class="form-label">Ticket</label>
-                                <select class="form-select" id="tiket" name="tiket">
-                                    <option value="Tidak" {{ count($ticketData) == 0 ? 'selected' : '' }}>Tidak
-                                    </option>
-                                    <option value="Ya" {{ count($ticketData) > 0 ? 'selected' : '' }}>Ya</option>
-                                </select>
-
-                                <div class="row mt-2" id="tiket_div"
-                                    style="display: {{ count($ticketData) > 0 ? 'block' : 'none' }};">
-                                    <div class="col-md-12">
-                                        <div class="table-responsive-sm">
-                                            <div class="d-flex flex-column gap-2" id="ticket_forms_container">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    @php
-                                                        $ticket = $ticketData[$i - 1] ?? null;
-                                                    @endphp
-                                                    <div class="ticket-form" id="ticket-form-{{ $i }}"
-                                                        style="display: {{ $i === 1 || ($ticket && $i <= count($ticketData)) ? 'block' : 'none' }};">
+                                <div class="col-md-12 mt-3">
+                                    <label for="tiket" class="form-label">Ticket</label>
+                                    <select class="form-select" id="tiket" name="tiket">
+                                        <option value="Tidak">Tidak</option>
+                                        <option value="Ya">Ya</option>
+                                    </select>
+                                    <div class="row mt-2" id="tiket_div" style="display: none;">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2" id="ticket_forms_container">
+                                                    <?php for ($i = 1; $i <= 5; $i++) : ?>
+                                                    <div class="ticket-form" id="ticket-form-<?php echo $i; ?>"
+                                                        style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
                                                         <div class="text-bg-primary p-2"
-                                                            style="text-align:center; border-radius:4px;">
-                                                            Ticket {{ $i }}
-                                                        </div>
+                                                            style="text-align:center; border-radius:4px;">Ticket
+                                                            <?php echo $i; ?></div>
                                                         <div class="card">
                                                             <div class="card-body">
                                                                 <div class="mb-2">
                                                                     <label class="form-label">NIK</label>
                                                                     <div class="input-group">
                                                                         <input class="form-control" name="noktp_tkt[]"
-                                                                            type="number"
-                                                                            value="{{ $ticket['noktp_tkt'] ?? '' }}"
-                                                                            placeholder="ex: 3521XXXXXXXXXXXX">
+                                                                            type="number" placeholder="ex: 3521XXXXXXXXXXXX">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -237,8 +216,7 @@
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
                                                                             name="dari_tkt[]" type="text"
-                                                                            placeholder="ex. Yogyakarta (YIA)"
-                                                                            value="{{ $ticket['dari_tkt'] ?? '' }}">
+                                                                            placeholder="ex. Yogyakarta (YIA)">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -246,149 +224,121 @@
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
                                                                             name="ke_tkt[]" type="text"
-                                                                            placeholder="ex. Jakarta (CGK)"
-                                                                            value="{{ $ticket['ke_tkt'] ?? '' }}">
+                                                                            placeholder="ex. Jakarta (CGK)">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label">Date</label>
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
-                                                                            id="tgl_brkt_tkt_{{ $i }}"
+                                                                            id="tgl_brkt_tkt_<?php echo $i; ?>"
                                                                             name="tgl_brkt_tkt[]" type="date"
-                                                                            value="{{ $ticket['tgl_brkt_tkt'] ?? '' }}"
-                                                                            onchange="validateDates({{ $i }})">
+                                                                            onchange="validateDates(<?php echo $i; ?>)">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label">Time</label>
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
-                                                                            id="jam_brkt_tkt_{{ $i }}"
+                                                                            id="jam_brkt_tkt_<?php echo $i; ?>"
                                                                             name="jam_brkt_tkt[]" type="time"
-                                                                            value="{{ $ticket['jam_brkt_tkt'] ?? '' }}"
-                                                                            onchange="validateDates({{ $i }})">
+                                                                            onchange="validateDates(<?php echo $i; ?>)">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label"
-                                                                        for="jenis_tkt_{{ $i }}">Transportation
+                                                                        for="jenis_tkt_<?php echo $i; ?>">Transportation
                                                                         Type</label>
                                                                     <div class="input-group">
                                                                         <select class="form-select" name="jenis_tkt[]"
-                                                                            id="jenis_tkt_{{ $i }}">
-                                                                            <option value="">Select
-                                                                                Transportation Type</option>
-                                                                            <option value="Train"
-                                                                                {{ ($ticket['jenis_tkt'] ?? '') == 'Train' ? 'selected' : '' }}>
-                                                                                Train</option>
-                                                                            <option value="Bus"
-                                                                                {{ ($ticket['jenis_tkt'] ?? '') == 'Bus' ? 'selected' : '' }}>
-                                                                                Bus</option>
-                                                                            <option value="Airplane"
-                                                                                {{ ($ticket['jenis_tkt'] ?? '') == 'Airplane' ? 'selected' : '' }}>
-                                                                                Airplane</option>
-                                                                            <option value="Car"
-                                                                                {{ ($ticket['jenis_tkt'] ?? '') == 'Car' ? 'selected' : '' }}>
-                                                                                Car</option>
-                                                                            <option value="Ferry"
-                                                                                {{ ($ticket['jenis_tkt'] ?? '') == 'Ferry' ? 'selected' : '' }}>
-                                                                                Ferry</option>
+                                                                            id="jenis_tkt">
+                                                                            <option value="">Select Transportation
+                                                                                Type</option>
+                                                                            <option value="Train">Train</option>
+                                                                            <option value="Bus">Bus</option>
+                                                                            <option value="Airplane">Airplane</option>
+                                                                            <option value="Car">Car</option>
+                                                                            <option value="Ferry">Ferry</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
-                                                                    <label for="type_tkt_{{ $i }}"
+                                                                    <label for="type_tkt_<?php echo $i; ?>"
                                                                         class="form-label">Ticket Type</label>
                                                                     <select class="form-select" name="type_tkt[]"
                                                                         required>
-                                                                        <option value="One Way"
-                                                                            {{ ($ticket['type_tkt'] ?? '') == 'One Way' ? 'selected' : '' }}>
-                                                                            One Way</option>
-                                                                        <option value="Round Trip"
-                                                                            {{ ($ticket['type_tkt'] ?? '') == 'Round Trip' ? 'selected' : '' }}>
-                                                                            Round Trip</option>
+                                                                        <option value="One Way">One Way</option>
+                                                                        <option value="Round Trip">Round Trip</option>
                                                                     </select>
                                                                 </div>
-                                                                <div class="round-trip-options"
-                                                                    style="display: {{ ($ticket['type_tkt'] ?? '') == 'Round Trip' ? 'block' : 'none' }};">
+                                                                <div class="round-trip-options" style="display: none;">
                                                                     <div class="mb-2">
                                                                         <label class="form-label">Return Date</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
                                                                                 name="tgl_plg_tkt[]" type="date"
-                                                                                id="tgl_plg_tkt_{{ $i }}"
-                                                                                value="{{ $ticket['tgl_plg_tkt'] ?? '' }}"
-                                                                                onchange="validateDates({{ $i }})">
+                                                                                id="tgl_plg_tkt_<?php echo $i; ?>"
+                                                                                onchange="validateDates(<?php echo $i; ?>)">
                                                                         </div>
                                                                     </div>
                                                                     <div class="mb-2">
                                                                         <label class="form-label">Return Time</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
-                                                                                id="jam_plg_tkt_{{ $i }}"
+                                                                                id="jam_plg_tkt_<?php echo $i; ?>"
                                                                                 name="jam_plg_tkt[]" type="time"
-                                                                                value="{{ $ticket['jam_plg_tkt'] ?? '' }}"
-                                                                                onchange="validateDates({{ $i }})">
+                                                                                onchange="validateDates(<?php echo $i; ?>)">
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                @if ($i < 5)
-                                                                    <div class="mt-3">
-                                                                        <label class="form-label">Add more
-                                                                            ticket</label>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input" type="radio"
-                                                                                id="more_tkt_no_{{ $i }}"
-                                                                                name="more_tkt_{{ $i }}"
-                                                                                value="Tidak"
-                                                                                {{ ($ticket['more_tkt'] ?? 'Tidak') == 'Tidak' ? 'checked' : '' }}>
-                                                                            <label class="form-check-label"
-                                                                                for="more_tkt_no_{{ $i }}">Tidak</label>
-                                                                        </div>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input" type="radio"
-                                                                                id="more_tkt_yes_{{ $i }}"
-                                                                                name="more_tkt_{{ $i }}"
-                                                                                value="Ya"
-                                                                                {{ ($ticket['more_tkt'] ?? 'Tidak') == 'Ya' ? 'checked' : '' }}>
-                                                                            <label class="form-check-label"
-                                                                                for="more_tkt_yes_{{ $i }}">Ya</label>
-                                                                        </div>
+
+                                                                <?php if ($i < 5) : ?>
+                                                                <div class="mt-3">
+                                                                    <label class="form-label">Add more ticket</label>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            id="more_tkt_no_<?php echo $i; ?>"
+                                                                            name="more_tkt_<?php echo $i; ?>"
+                                                                            value="Tidak" checked>
+                                                                        <label class="form-check-label"
+                                                                            for="more_tkt_no_<?php echo $i; ?>">Tidak</label>
                                                                     </div>
-                                                                @endif
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            id="more_tkt_yes_<?php echo $i; ?>"
+                                                                            name="more_tkt_<?php echo $i; ?>"
+                                                                            value="Ya">
+                                                                        <label class="form-check-label"
+                                                                            for="more_tkt_yes_<?php echo $i; ?>">Ya</label>
+                                                                    </div>
+                                                                </div>
+                                                                <?php endif; ?>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                @endfor
+                                                    <?php endfor; ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="col-md-12 mt-3">
-                                <label for="hotel" class="form-label">Hotel</label>
-                                <select class="form-select" id="hotel" name="hotel">
-                                    <option value="Tidak" {{ count($hotelData) == 0 ? 'selected' : '' }}>Tidak
-                                    </option>
-                                    <option value="Ya" {{ count($hotelData) > 0 ? 'selected' : '' }}>Ya</option>
-                                </select>
-
-                                <div class="row mt-2" id="hotel_div"
-                                    style="display: {{ count($hotelData) > 0 ? 'block' : 'none' }};">
-                                    <div class="col-md-12">
-                                        <div class="table-responsive-sm">
-                                            <div class="d-flex flex-column gap-2" id="hotel_forms_container">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    @php
-                                                        $hotel = $hotelData[$i - 1] ?? null;
-                                                    @endphp
-                                                    <div class="hotel-form" id="hotel-form-{{ $i }}"
-                                                        style="display: {{ $i === 1 || ($hotel && $i <= count($hotelData)) ? 'block' : 'none' }};">
+                                <div class="col-md-12 mt-3">
+                                    <label for="hotel" class="form-label">Hotel</label>
+                                    <select class="form-select" id="hotel" name="hotel">
+                                        <option value="Tidak">Tidak</option>
+                                        <option value="Ya">Ya</option>
+                                    </select>
+                                    <div class="row mt-2" id="hotel_div" style="display: none;">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2" id="hotel_forms_container">
+                                                    <?php for ($i = 1; $i <= 5; $i++) : ?>
+                                                    <div class="hotel-form" id="hotel-form-<?php echo $i; ?>"
+                                                        style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
                                                         <div class="text-bg-primary p-2"
                                                             style="text-align:center; border-radius:4px;">
-                                                            Hotel {{ $i }}
+                                                            Hotel <?php echo $i; ?>
                                                         </div>
                                                         <div class="card">
                                                             <div class="card-body">
@@ -397,8 +347,7 @@
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
                                                                             name="nama_htl[]" type="text"
-                                                                            value="{{ $hotel['nama_htl'] ?? '' }}"
-                                                                            placeholder="ex: Westin">
+                                                                            placeholder="ex: Hyatt">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -406,7 +355,6 @@
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
                                                                             name="lokasi_htl[]" type="text"
-                                                                            value="{{ $hotel['lokasi_htl'] ?? '' }}"
                                                                             placeholder="ex: Jakarta">
                                                                     </div>
                                                                 </div>
@@ -415,207 +363,138 @@
                                                                     <div class="input-group">
                                                                         <input class="form-control bg-white"
                                                                             name="jmlkmr_htl[]" type="number"
-                                                                            min="1"
-                                                                            value="{{ $hotel['jmlkmr_htl'] ?? '' }}"
-                                                                            placeholder="ex: 1">
+                                                                            min="1" placeholder="ex: 1">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label">Bed Size</label>
                                                                     <select class="form-select" name="bed_htl[]" required>
-                                                                        <option value="Single Bed"
-                                                                            {{ ($hotel['bed_htl'] ?? '') == 'Single Bed' ? 'selected' : '' }}>
-                                                                            Single Bed
+                                                                        <option value="Single Bed">Single Bed</option>
+                                                                        <option value="Twin Bed">Twin Bed</option>
+                                                                        <option value="King Bed">King Bed</option>
+                                                                        <option value="Super King Bed">Super King Bed
                                                                         </option>
-                                                                        <option value="Twin Bed"
-                                                                            {{ ($hotel['bed_htl'] ?? '') == 'Twin Bed' ? 'selected' : '' }}>
-                                                                            Twin Bed
-                                                                        </option>
-                                                                        <option value="King Bed"
-                                                                            {{ ($hotel['bed_htl'] ?? '') == 'King Bed' ? 'selected' : '' }}>
-                                                                            King Bed
-                                                                        </option>
-                                                                        <option value="Super King Bed"
-                                                                            {{ ($hotel['bed_htl'] ?? '') == 'Super King Bed' ? 'selected' : '' }}>
-                                                                            Super King Bed
-                                                                        </option>
-                                                                        <option value="Extra Bed"
-                                                                            {{ ($hotel['bed_htl'] ?? '') == 'Extra Bed' ? 'selected' : '' }}>
-                                                                            Extra Bed
-                                                                        </option>
-                                                                        <option value="Baby Cot"
-                                                                            {{ ($hotel['bed_htl'] ?? '') == 'Baby Cot' ? 'selected' : '' }}>
-                                                                            Baby Cot
-                                                                        </option>
-                                                                        <option value="Sofa Bed"
-                                                                            {{ ($hotel['bed_htl'] ?? '') == 'Sofa Bed' ? 'selected' : '' }}>
-                                                                            Sofa Bed
-                                                                        </option>
+                                                                        <option value="Extra Bed">Extra Bed</option>
+                                                                        <option value="Baby Cot">Baby Cot</option>
+                                                                        <option value="Sofa Bed">Sofa Bed</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label">Check In Date</label>
-                                                                    <input type="date"
-                                                                        class="form-control datepicker check-in-date"
+                                                                    <input type="date" class="form-control datepicker"
                                                                         name="tgl_masuk_htl[]"
-                                                                        value="{{ $hotel['tgl_masuk_htl'] ?? '' }}"
-                                                                        data-index="{{ $i }}"
-                                                                        onchange="calculateTotalDays(this)">
+                                                                        onchange="calculateTotalDays(<?php echo $i; ?>)">
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label">Check Out Date</label>
-                                                                    <input type="date"
-                                                                        class="form-control datepicker check-out-date"
+                                                                    <input type="date" class="form-control datepicker"
                                                                         name="tgl_keluar_htl[]"
-                                                                        value="{{ $hotel['tgl_keluar_htl'] ?? '' }}"
-                                                                        data-index="{{ $i }}"
-                                                                        onchange="calculateTotalDays(this)">
+                                                                        onchange="calculateTotalDays(<?php echo $i; ?>)">
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label">Total Days</label>
                                                                     <input type="number"
-                                                                        class="form-control datepicker bg-light total-days"
-                                                                        name="total_hari[]"
-                                                                        value="{{ $hotel['total_hari'] ?? '' }}" readonly>
+                                                                        class="form-control datepicker bg-light"
+                                                                        name="total_hari[]" readonly>
                                                                 </div>
-                                                                @if ($i < 5)
-                                                                    <div class="mt-3">
-                                                                        <label class="form-label">Add more
-                                                                            hotel</label>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input" type="radio"
-                                                                                id="more_htl_no_{{ $i }}"
-                                                                                name="more_htl_{{ $i }}"
-                                                                                value="Tidak"
-                                                                                {{ ($hotel['more_htl'] ?? 'Tidak') == 'Tidak' ? 'checked' : '' }}>
-                                                                            <label class="form-check-label"
-                                                                                for="more_htl_no_{{ $i }}">Tidak</label>
-                                                                        </div>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input" type="radio"
-                                                                                id="more_htl_yes_{{ $i }}"
-                                                                                name="more_htl_{{ $i }}"
-                                                                                value="Ya"
-                                                                                {{ ($hotel['more_htl'] ?? 'Tidak') == 'Ya' ? 'checked' : '' }}>
-                                                                            <label class="form-check-label"
-                                                                                for="more_htl_yes_{{ $i }}">Ya</label>
-                                                                        </div>
+                                                                <?php if ($i < 5) : ?>
+                                                                <div class="mt-3">
+                                                                    <label class="form-label">Add more hotel</label>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            id="more_htl_no_<?php echo $i; ?>"
+                                                                            name="more_htl_<?php echo $i; ?>"
+                                                                            value="Tidak" checked>
+                                                                        <label class="form-check-label"
+                                                                            for="more_htl_no_<?php echo $i; ?>">Tidak</label>
                                                                     </div>
-                                                                @endif
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            id="more_htl_yes_<?php echo $i; ?>"
+                                                                            name="more_htl_<?php echo $i; ?>"
+                                                                            value="Ya">
+                                                                        <label class="form-check-label"
+                                                                            for="more_htl_yes_<?php echo $i; ?>">Ya</label>
+                                                                    </div>
+                                                                </div>
+                                                                <?php endif; ?>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                @endfor
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 mt-3">
-                                <label for="taksi" class="form-label">Taxi Voucher</label>
-                                <select class="form-select" id="taksi" name="taksi">
-                                    <option value="Tidak" {{ $n->taksi === 'Tidak' ? 'selected' : '' }}>Tidak
-                                    </option>
-                                    <option value="Ya" {{ $n->taksi === 'Ya' ? 'selected' : '' }}>Ya</option>
-                                </select>
-                                <div class="row mt-2" id="taksi_div"
-                                    style="display: {{ $n->taksi === 'Ya' ? 'block' : 'none' }};">
-                                    <div class="col-md-12">
-                                        <div class="table-responsive-sm">
-                                            <div class="d-flex flex-column gap-2">
-                                                <div class="text-bg-primary p-2 r-3"
-                                                    style="text-align:center; border-radius:4px;">
-                                                    Taxi Voucher
-                                                </div>
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <div class="mb-2">
-                                                            <label class="form-label">How Much Ticket</label>
-                                                            <div class="input-group">
-                                                                <input class="form-control" name="no_vt" id="no_vt"
-                                                                    type="number" value="{{ $taksiData->no_vt ?? '' }}"
-                                                                    placeholder="0">
-                                                            </div>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Voucher Nominal</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Rp</span>
-                                                                </div>
-                                                                <input class="form-control" name="nominal_vt"
-                                                                    id="nominal_vt" type="text"
-                                                                    placeholder="ex. 12.000"
-                                                                    value="{{ $taksiData->nominal_vt ?? '' }}"
-                                                                    oninput="formatCurrency(this)">
-                                                            </div>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Voucher Keeper</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text">Rp</span>
-                                                                </div>
-                                                                <input class="form-control" name="keeper_vt"
-                                                                    id="keeper_vt" type="text"
-                                                                    placeholder="ex. 12.000"
-                                                                    value="{{ $taksiData->keeper_vt ?? '' }}"
-                                                                    oninput="formatCurrency(this)">
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <?php endfor; ?>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-md-12 mt-3">
+                                    <label for="taksi" class="form-label">Taxi Voucher</label>
+                                    <select class="form-select" id="taksi" name="taksi">
+                                        <option value="Tidak">Tidak</option>
+                                        <option value="Ya">Ya</option>
+                                    </select>
+                                    <div class="row mt-2" id="taksi_div" style="display: none;">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="text-bg-primary p-2 r-3"
+                                                        style="text-align:center; border-radius:4px;">Taxi Voucher</div>
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="mb-2" id="taksi_div">
+                                                                <label class="form-label">Total Ticket</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-append">
+                                                                    </div>
+                                                                    <input class="form-control bg-white" name="no_vt"
+                                                                        id="no_vt" type="number" min="0"
+                                                                        placeholder="ex: 2">
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <label class="form-label">Voucher Nominal</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Rp</span>
+                                                                    </div>
+                                                                    <input class="form-control" name="nominal_vt"
+                                                                        id="nominal_vt" type="text"
+                                                                        placeholder="ex. 12.000"
+                                                                        oninput="formatCurrency(this)">
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <label class="form-label">Voucher Keeper</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Rp</span>
+                                                                    </div>
+                                                                    <input class="form-control" name="keeper_vt"
+                                                                        id="keeper_vt" type="text"
+                                                                        placeholder="ex. 12.000"
+                                                                        oninput="formatCurrency(this)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
-                        </div>
-                        <div class="d-flex justify-content-end mt-3">
-                            <form method="POST" action="{{ route('confirm.status', ['id' => $n->id]) }}"
-                                style="display: inline-block;" class="status-form">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="status_approval" value="Rejected">
-                                <button type="submit" class="btn btn-outline-danger rounded-pill"
-                                    style="padding: 0.5rem 1rem; margin-right: 5px">
-                                    Decline
-                                </button>
-                            </form>
+                            <input type="hidden" name="status" value="Pending L1" id="status">
 
-                            <form method="POST" action="{{ route('confirm.status', ['id' => $n->id]) }}"
-                                style="display: inline-block; margin-right: 5px;" class="status-form">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="status_approval"
-                                    value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}">
-                                <button type="submit" class="btn btn-outline-success rounded-pill"
-                                    style="padding: 0.5rem 1rem;">
-                                    Approve
-                                </button>
-                            </form>
-                        </div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                    id="save-draft">Save as Draft</button>
+                                <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
+                            </div>
 
-                        {{-- </form> --}}
+                        </form>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Success Modal -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-light rounded-4 border-0 shadow" style="border-radius: 1rem;">
-                <div class="modal-body text-center p-5" style="padding: 2rem;">
-                    <div class="mb-4">
-                        <i class="bi bi-check-circle-fill" style="font-size: 100px; color: #AB2F2B !important;"></i>
-                    </div>
-                    <h4 class="mb-3 fw-bold" style="font-size: 32px; color: #AB2F2B !important;">Success!</h4>
-                    <p class="mb-4" id="successModalBody" style="font-size: 20px;">
-                        <!-- The success message will be inserted here -->
-                    </p>
-                    <button type="button" class="btn btn-outline-primary rounded-pill px-4"
-                        data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -623,84 +502,32 @@
 
     <!-- JavaScript Part -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const forms = document.querySelectorAll('.status-form');
-            forms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const action = this.querySelector('input[name="status_approval"]').value;
-                    const confirmMessage = action === 'Rejected' ?
-                        'Are you sure you want to reject this?' :
-                        'Are you sure you want to confirm this?';
-
-                    if (confirm(confirmMessage)) {
-                        const formData = new FormData(this);
-                        fetch(this.action, {
-                                method: 'POST',
-                                body: formData,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Update the success modal content
-                                    document.getElementById('successModalBody').textContent =
-                                        data.message;
-
-                                    // Show the success modal
-                                    var successModal = new bootstrap.Modal(document
-                                        .getElementById('successModal'));
-                                    successModal.show();
-
-                                    // Reload the page after modal is closed
-                                    document.getElementById('successModal').addEventListener(
-                                        'hidden.bs.modal',
-                                        function() {
-                                            window.location.href = '/businessTrip/approval';
-                                        });
-                                } else {
-                                    alert('An error occurred. Please try again.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('An error occurred. Please try again.');
-                            });
-                    }
-                });
-            });
-        });
-
         function formatCurrency(input) {
             var cursorPos = input.selectionStart;
-            var value = input.value.replace(/[^\d]/g, ''); // Remove everything that is not a digit
-            var formattedValue = '';
+            var value = input.value.replace(/[^\d]/g, '');
 
-            // Format the value with dots
-            if (value.length > 3) {
-                formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            } else {
-                formattedValue = value;
-            }
+            // Format the number with thousands separators
+            var formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
+            // Update the input value
             input.value = formattedValue;
 
-            // Adjust the cursor position after formatting
+            // Adjust cursor position
             cursorPos += (formattedValue.length - value.length);
+
+            // Set the cursor position
             input.setSelectionRange(cursorPos, cursorPos);
         }
-
-        document.getElementById('btEditForm').addEventListener('submit', function(event) {
+        document.getElementById('btFrom').addEventListener('submit', function(event) {
             // Unformat the voucher fields before submission
             var nominalField = document.getElementById('nominal_vt');
             var keeperField = document.getElementById('keeper_vt');
 
-            // Remove dots from the formatted value to keep the number intact
+            // Remove dots from the formatted value
             nominalField.value = nominalField.value.replace(/\./g, '');
             keeperField.value = keeperField.value.replace(/\./g, '');
         });
+
 
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -755,6 +582,12 @@
                 totalDaysInput.value = ''; // Clear total days
                 return;
             }
+            if (checkInDate > kembaliDate) {
+                alert('Check In date cannot be more than End date.');
+                checkInInput.value = ''; // Reset the Check In field
+                totalDaysInput.value = ''; // Clear total days
+                return;
+            }
 
             // Ensure Check Out Date is not earlier than Check In Date
             if (checkOutDate < checkInDate) {
@@ -791,21 +624,12 @@
             var jnsDinasSelect = document.getElementById('jns_dinas');
             var additionalFields = document.getElementById('additional-fields');
 
-            function showAdditionalFields() {
-                if (jnsDinasSelect.value === 'luar kota') {
+            jnsDinasSelect.addEventListener('change', function() {
+                if (this.value === 'luar kota') {
                     additionalFields.style.display = 'block';
                 } else {
                     additionalFields.style.display = 'none';
-                }
-            }
-
-            // Show additional fields on page load if 'luar kota' is selected
-            showAdditionalFields();
-
-            jnsDinasSelect.addEventListener('change', function() {
-                showAdditionalFields();
-                if (this.value !== 'luar kota') {
-                    // Reset all fields to "Tidak" if not 'luar kota'
+                    // Reset all fields to "Tidak"
                     document.getElementById('ca').value = 'Tidak';
                     document.getElementById('tiket').value = 'Tidak';
                     document.getElementById('hotel').value = 'Tidak';
@@ -813,8 +637,8 @@
                 }
             });
         });
-
         document.addEventListener('DOMContentLoaded', function() {
+            // Elements
             const caSelect = document.getElementById('ca');
             const caNbtDiv = document.getElementById('ca_div');
 
@@ -827,15 +651,29 @@
             const tiketSelect = document.getElementById('tiket');
             const tiketDiv = document.getElementById('tiket_div');
 
+            // Function to reset fields in the target div
+            function resetFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
+                });
+            }
 
+            // Function to toggle display and reset fields
             function toggleDisplay(selectElement, targetDiv) {
                 if (selectElement.value === 'Ya') {
                     targetDiv.style.display = 'block';
                 } else {
                     targetDiv.style.display = 'none';
+                    resetFields(targetDiv); // Reset fields when hiding the target div
                 }
             }
 
+            // Event listeners for select elements
             caSelect.addEventListener('change', function() {
                 toggleDisplay(caSelect, caNbtDiv);
             });
@@ -851,7 +689,84 @@
             tiketSelect.addEventListener('change', function() {
                 toggleDisplay(tiketSelect, tiketDiv);
             });
+        });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const ticketSelect = document.getElementById('tiket');
+            const ticketDiv = document.getElementById('tiket_div');
+
+            // Hide/show ticket form based on select option
+            ticketSelect.addEventListener('change', function() {
+                if (this.value === 'Ya') {
+                    ticketDiv.style.display = 'block';
+                } else {
+                    ticketDiv.style.display = 'none';
+                    // Reset all input fields within the ticketDiv when 'Tidak' is selected
+                    resetTicketFields(ticketDiv);
+                }
+            });
+
+            // Function to reset ticket fields
+            function resetTicketFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                // Also reset select fields if needed
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0; // or set to a specific default value
+                });
+            }
+
+            // Handling form visibility and reset for multiple ticket forms
+            for (let i = 1; i <= 4; i++) {
+                const yesRadio = document.getElementById(`more_tkt_yes_${i}`);
+                const noRadio = document.getElementById(`more_tkt_no_${i}`);
+                const nextForm = document.getElementById(`ticket-form-${i + 1}`);
+
+                yesRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'block';
+                    }
+                });
+
+                noRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'none';
+                        // Hide all subsequent forms
+                        for (let j = i + 1; j <= 5; j++) {
+                            const form = document.getElementById(`ticket-form-${j}`);
+                            if (form) {
+                                form.style.display = 'none';
+                                // Reset the form when it is hidden
+                                resetTicketFields(form);
+                            }
+                        }
+                        // Reset radio buttons for subsequent forms
+                        for (let j = i + 1; j <= 4; j++) {
+                            const noRadioButton = document.getElementById(`more_tkt_no_${j}`);
+                            if (noRadioButton) {
+                                noRadioButton.checked = true;
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Handle Round Trip options
+            const ticketTypes = document.querySelectorAll('select[name="type_tkt[]"]');
+            ticketTypes.forEach((select, index) => {
+                select.addEventListener('change', function() {
+                    const roundTripOptions = this.closest('.card-body').querySelector(
+                        '.round-trip-options');
+                    if (this.value === 'Round Trip') {
+                        roundTripOptions.style.display = 'block';
+                    } else {
+                        roundTripOptions.style.display = 'none';
+                    }
+                });
+            });
         });
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -927,43 +842,40 @@
                     }
                 });
             });
-            // Handle hotel forms
+
+            // Hotel form handling
             for (let i = 1; i <= 4; i++) {
                 const yesRadio = document.getElementById(`more_htl_yes_${i}`);
                 const noRadio = document.getElementById(`more_htl_no_${i}`);
                 const nextForm = document.getElementById(`hotel-form-${i + 1}`);
 
-                if (yesRadio) {
-                    yesRadio.addEventListener('change', function() {
-                        if (this.checked) {
-                            nextForm.style.display = 'block';
-                        }
-                    });
-                }
+                yesRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'block';
+                    }
+                });
 
-                if (noRadio) {
-                    noRadio.addEventListener('change', function() {
-                        if (this.checked) {
-                            nextForm.style.display = 'none';
-                            // Hide all subsequent forms
-                            for (let j = i + 1; j <= 5; j++) {
-                                const form = document.getElementById(`hotel-form-${j}`);
-                                if (form) {
-                                    form.style.display = 'none';
-                                    // Reset the form when it is hidden
-                                    resetHotelFields(form);
-                                }
-                            }
-                            // Reset radio buttons for subsequent forms
-                            for (let j = i + 1; j <= 4; j++) {
-                                const noRadioButton = document.getElementById(`more_htl_no_${j}`);
-                                if (noRadioButton) {
-                                    noRadioButton.checked = true;
-                                }
+                noRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'none';
+                        // Hide all subsequent forms
+                        for (let j = i + 1; j <= 5; j++) {
+                            const form = document.getElementById(`hotel-form-${j}`);
+                            if (form) {
+                                form.style.display = 'none';
+                                // Reset the form when it is hidden
+                                resetHotelFields(form);
                             }
                         }
-                    });
-                }
+                        // Reset radio buttons for subsequent forms
+                        for (let j = i + 1; j <= 4; j++) {
+                            const noRadioButton = document.getElementById(`more_htl_no_${j}`);
+                            if (noRadioButton) {
+                                noRadioButton.checked = true;
+                            }
+                        }
+                    }
+                });
             }
 
             // Function to reset hotel fields
@@ -1006,7 +918,7 @@
                 }
             }
 
-            // Add event listeners for date inputs in hotel forms
+            // Add event listeners for date inputs
             for (let i = 1; i <= 5; i++) {
                 const checkIn = document.querySelector(`#hotel-form-${i} input[name="tgl_masuk_htl[]"]`);
                 const checkOut = document.querySelector(`#hotel-form-${i} input[name="tgl_keluar_htl[]"]`);
@@ -1019,8 +931,8 @@
 
             // Handle date validation for the return date
             document.getElementById('kembali').addEventListener('change', function() {
-                const mulaiDate = document.getElementById('mulai').value;
-                const kembaliDate = this.value;
+                var mulaiDate = document.getElementById('mulai').value;
+                var kembaliDate = this.value;
 
                 if (kembaliDate < mulaiDate) {
                     alert('Return date cannot be earlier than Start date.');
@@ -1028,8 +940,6 @@
                 }
             });
         });
-
-
 
         document.getElementById('tgl_keluar_htl').addEventListener('change', function() {
             var masukHtl = document.getElementById('tgl_masuk_htl').value;
@@ -1057,27 +967,17 @@
 
 
         function toggleOthers() {
+            // ca_type ca_nbt ca_e
             var locationFilter = document.getElementById("tujuan");
             var others_location = document.getElementById("others_location");
-            var selectedValue = locationFilter.value;
-            var options = Array.from(locationFilter.options).map(option => option.value);
 
-            // Check if the selected value is "Others" or not in the list
-            if (selectedValue === "Others" || !options.includes(selectedValue)) {
+            if (locationFilter.value === "Others") {
                 others_location.style.display = "block";
-
-                if (!options.includes(selectedValue)) {
-                    locationFilter.value = "Others"; // Select "Others"
-                    others_location.value = selectedValue; // Show the unlisted value in the text field
-                }
             } else {
                 others_location.style.display = "none";
-                others_location.value = ""; // Clear the input field
+                others_location.value = "";
             }
         }
-
-        // Call the function on page load to handle any pre-filled values
-        window.onload = toggleOthers;
 
         function validateDates(index) {
             // Get the departure and return date inputs for the given form index
@@ -1117,8 +1017,6 @@
                 }
             }
         }
-
-
 
 
         document.getElementById('nik').addEventListener('change', function() {

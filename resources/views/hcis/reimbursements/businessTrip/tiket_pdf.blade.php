@@ -116,7 +116,7 @@
                 <td class="colon">:</td>
                 <td class="value">
                     @php
-                        $formattedDate = Carbon\Carbon::parse($passenger->tgl_brkt_tkt)->format('d F Y');
+                        $formattedDate = Carbon\Carbon::parse($passenger->tgl_brkt_tkt)->format('d M Y');
                         $formattedTime = Carbon\Carbon::parse($passenger->jam_brkt_tkt)->format('H:i');
                     @endphp
                     {{ $formattedDate }}, {{ $formattedTime }} WIB
@@ -128,7 +128,7 @@
                     <td class="colon">:</td>
                     <td class="value">
                         @php
-                            $formattedReturnDate = Carbon\Carbon::parse($passenger->tgl_plg_tkt)->format('d F Y');
+                            $formattedReturnDate = Carbon\Carbon::parse($passenger->tgl_plg_tkt)->format('d M Y');
                             $formattedReturnTime = Carbon\Carbon::parse($passenger->jam_plg_tkt)->format('H:i');
                         @endphp
                         {{ $formattedReturnDate }}, {{ $formattedReturnTime }} WIB

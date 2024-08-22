@@ -128,7 +128,7 @@
                 <td class="colon">:</td>
                 <td class="value">
                     @php
-                        $formattedCheckInDate = \Carbon\Carbon::parse($hotel->tgl_masuk_htl)->format('d F Y');
+                        $formattedCheckInDate = \Carbon\Carbon::parse($hotel->tgl_masuk_htl)->format('d M Y');
                     @endphp
                     {{ $formattedCheckInDate }}
                 </td>
@@ -138,7 +138,7 @@
                 <td class="colon">:</td>
                 <td class="value">
                     @php
-                        $formattedCheckOutDate = \Carbon\Carbon::parse($hotel->tgl_keluar_htl)->format('d F Y');
+                        $formattedCheckOutDate = \Carbon\Carbon::parse($hotel->tgl_keluar_htl)->format('d M Y');
                     @endphp
                     {{ $formattedCheckOutDate }}
                 </td>

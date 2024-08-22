@@ -209,10 +209,10 @@
                             <div class="mb-3">
                                 <label class="form-label">Accept Status</label>
                                 <select class="form-select" name="accept_status" id="accept-status" required>
-                                    <option value="" selected disabled>--- Choose Acceptance Status ---</option>
-                                    <option value="Verified">Verified</option>
-                                    <option value="Doc Accepted">Doc Accepted</option>
-                                    <option value="Return/Refund">Return/Refund</option>
+                                    <option value="" disabled {{ !in_array($n->status, ['Verified', 'Doc Accepted', 'Return/Refund']) ? 'selected' : '' }}>--- Choose Acceptance Status ---</option>
+                                    <option value="Verified" {{ old('accept_status', $n->status) == 'Verified' ? 'selected' : '' }}>Verified</option>
+                                    <option value="Doc Accepted" {{ old('accept_status', $n->status) == 'Doc Accepted' ? 'selected' : '' }}>Doc Accepted</option>
+                                    <option value="Return/Refund" {{ old('accept_status', $n->status) == 'Return/Refund' ? 'selected' : '' }}>Return/Refund</option>
                                 </select>
                             </div>
                             <div class="mb-3" id="refund-amount-div" style="display: none;">

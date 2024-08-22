@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\BusinessTrip;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -38,8 +39,8 @@ class BusinessTripExport implements FromCollection, WithMapping, ShouldAutoSize,
             $businessTrip->nama,
             $businessTrip->divisi,
             $businessTrip->no_sppd,
-            $businessTrip->mulai,
-            $businessTrip->kembali,
+            Carbon::parse($businessTrip->mulai)->format('d-m-Y'),
+            Carbon::parse($businessTrip->kembali)->format('d-m-Y'),
             $businessTrip->tujuan,
             $businessTrip->bb_perusahaan,
             $businessTrip->uang_muka,
