@@ -833,6 +833,10 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
+                                                                    <label for="ket_tkt" class="form-label">Information</label>
+                                                                    <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3" placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                                                                </div>
+                                                                <div class="mb-2">
                                                                     <label class="form-label"
                                                                         for="jenis_tkt_<?php echo $i; ?>">Transportation
                                                                         Type</label>

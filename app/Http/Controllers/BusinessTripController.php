@@ -114,6 +114,7 @@ class BusinessTripController extends Controller
                 'type_tkt' => $ticket->type_tkt,
                 'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
                 'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'ket_tkt' => $ticket->ket_tkt,
                 'more_tkt' => ($index < count($tickets) - 1) ? 'Ya' : 'Tidak'
             ];
         }
@@ -321,6 +322,7 @@ class BusinessTripController extends Controller
                         'type_tkt' => $request->type_tkt[$key] ?? null,
                         'tgl_plg_tkt' => $request->tgl_plg_tkt[$key] ?? null,
                         'jam_plg_tkt' => $request->jam_plg_tkt[$key] ?? null,
+                        'ket_tkt' => $request->ket_tkt[$key] ?? null,
                     ];
 
                     // Fetch employee data to get jk_tkt
@@ -741,6 +743,7 @@ class BusinessTripController extends Controller
                 'jam_plg_tkt' => $request->jam_plg_tkt,
                 'jenis_tkt' => $request->jenis_tkt,
                 'type_tkt' => $request->type_tkt,
+                'ket_tkt' => $request->ket_tkt,
             ];
 
             foreach ($ticketData['noktp_tkt'] as $key => $value) {
@@ -770,6 +773,7 @@ class BusinessTripController extends Controller
                     $tiket->jam_plg_tkt = $ticketData['jam_plg_tkt'][$key] ?? null;
                     $tiket->jenis_tkt = $ticketData['jenis_tkt'][$key] ?? null;
                     $tiket->type_tkt = $ticketData['type_tkt'][$key] ?? null;
+                    $tiket->ket_tkt = $ticketData['ket_tkt'][$key] ?? null;
 
                     $tiket->save();
                 }

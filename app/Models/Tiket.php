@@ -47,6 +47,7 @@ class Tiket extends Model
         'jam_plg_tkt',
         'jenis_tkt',
         'type_tkt',
+        'ket_tkt',
     ];
     protected $table = 'tkt_transactions';
 }

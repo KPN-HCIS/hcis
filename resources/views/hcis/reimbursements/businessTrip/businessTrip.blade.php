@@ -186,6 +186,8 @@
                                                                         'Phone No.' => $ticket->tlp_tkt,
                                                                         'From' => $ticket->dari_tkt,
                                                                         'To' => $ticket->ke_tkt,
+                                                                        // 'Ticket Type' => $ticket->type_tkt,
+                                                                        'Information' => $ticket->ket_tkt ?? 'No Data',
                                                                         'Departure Date' => date('d-M-Y', strtotime($ticket->tgl_brkt_tkt)),
                                                                         'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
                                                                         'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-M-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
@@ -250,7 +252,7 @@
                                                                 : ($n->status == 'Draft'
                                                                     ? 'secondary'
                                                                     : (in_array($n->status, ['Doc Accepted', 'verified'])
-                                                                        ? 'primary'
+                                                                        ? 'info'
                                                                         : 'secondary')))) }}"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"
                                                         @if ($n->status == 'Pending L1')

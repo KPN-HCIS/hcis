@@ -268,6 +268,10 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="mb-2">
+                                                                        <label for="ket_tkt_{{ $i }}" class="form-label">Information</label>
+                                                                        <textarea class="form-control" id="ket_tkt_{{ $i }}" name="ket_tkt[]" rows="3" placeholder="This field is for editing ticket details, e.g., Citilink, Garuda Indonesia, etc.">{{ $ticket['ket_tkt'] ?? '' }}</textarea>
+                                                                    </div>
+                                                                    <div class="mb-2">
                                                                         <label class="form-label"
                                                                             for="jenis_tkt_{{ $i }}">Transportation
                                                                             Type</label>
