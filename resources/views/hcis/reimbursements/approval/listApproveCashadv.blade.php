@@ -14,7 +14,7 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('approval') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('approval.cashadvanced') }}">{{ $parentLink }}</a></li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -27,7 +27,7 @@
                 <div class="card-header d-flex bg-white justify-content-between">
                     <a href=""></a>
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data <b>"{{ $transactions->no_ca }}"</h4>
-                    <a href="{{ route('approval') }}" type="button" class="btn btn-close"></a>
+                    <a href="{{ route('approval.cashadvanced') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
@@ -617,16 +617,6 @@
                                             type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
-                                {{-- <div class="col-md-6 mb-2">
-                                    <label class="form-label">Persetujuan</label>
-                                    <select name="approval_status" id="approval_status" class="form-select">
-                                        <option value="">-</option>
-                                        <option value="Rejected">Rejected</option>
-                                        <option value="Approved">Approved</option>
-                                        <option value="Pending">Pending</option>
-                                    </select>
-                                </div> --}}
-                                {{-- {{ dd($transactions) }} --}}
                             </div>
                     </div>
 
@@ -634,10 +624,10 @@
                     <div class="row">
                         <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('approval') }}" type="button"
+                            <a href="{{ route('approval.cashadvanced') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_reject" value="Pending" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
-                            <button type="submit" name="action_ca_approve" value="Draft" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
+                            <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                            <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
                         </div>
                     </div>
                     </form>

@@ -31,7 +31,7 @@
         <div class="row g-2 justify-content-center">
             <div class=" col-6 col-sm-auto">
                 <div class="mb-2">
-                    <a href="{{ route('approval') }}" class="btn btn-primary rounded-pill shadow w-100 position-relative">
+                    <a href="{{ route('approval.cashadvanced') }}" class="btn btn-primary rounded-pill shadow w-100 position-relative">
                         Cash Advanced
                         @if ( $pendingCACount >= 1 )
                             <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingCACount }}</span>
@@ -112,35 +112,33 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($ca_approval as $ca_approvals)
-                                    @foreach($ca_approvals->transactions as $transaction)
-                                        <tr>
-                                            <td>{{ $loop->parent->index + 1 }}</td>
-                                            @if($transaction->type_ca == 'dns')
-                                                <td>Business Trip</td>
-                                            @elseif($transaction->type_ca == 'ndns')
-                                                <td>Non Business Trip</td>
-                                            @elseif($transaction->type_ca == 'entr')
-                                                <td>Entertainment</td>
-                                            @endif
-                                            <td>{{ $transaction->no_ca }}</td>
-                                            <td>{{ $transaction->employee->fullname }}</td>
-                                            <td>{{ $transaction->contribution_level_code }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-m-Y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-m-Y') }}</td>
-                                            <td>Rp. {{ number_format($transaction->total_ca) }}</td>
-                                            <td>Rp. {{ number_format($transaction->total_real) }}</td>
-                                            <td>Rp. {{ number_format($transaction->total_cost) }}</td>
-                                            <td>
-                                                <p class="badge text-bg-{{ $transaction->approval_status == 'Approved' ? 'success' : ($transaction->approval_status == 'Rejected' ? 'danger' : 'warning') }}">
-                                                    {{ $transaction->approval_status }}
-                                                </p>
-                                            </td>
-                                            <td class="text-center">
-                                                <a href="{{ route('approval.cashadvanced', encrypt($transaction->id)) }}" class="btn btn-outline-info" title="Approve" ><i class="bi bi-card-checklist"></i></a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                @foreach($ca_transactions as $transaction)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        @if($transaction->type_ca == 'dns')
+                                            <td>Business Trip</td>
+                                        @elseif($transaction->type_ca == 'ndns')
+                                            <td>Non Business Trip</td>
+                                        @elseif($transaction->type_ca == 'entr')
+                                            <td>Entertainment</td>
+                                        @endif
+                                        <td>{{ $transaction->no_ca }}</td>
+                                        <td>{{ $transaction->employee->fullname }}</td>
+                                        <td>{{ $transaction->contribution_level_code }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-m-Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-m-Y') }}</td>
+                                        <td>Rp. {{ number_format($transaction->total_ca) }}</td>
+                                        <td>Rp. {{ number_format($transaction->total_real) }}</td>
+                                        <td>Rp. {{ number_format($transaction->total_cost) }}</td>
+                                        <td>
+                                            <p class="badge text-bg-{{ $transaction->approval_status == 'Approved' ? 'success' : ($transaction->approval_status == 'Rejected' ? 'danger' : 'warning') }}">
+                                                {{ $transaction->approval_status }}
+                                            </p>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ route('approval.cashadvancedForm', encrypt($transaction->id)) }}" class="btn btn-outline-info" title="Approve" ><i class="bi bi-card-checklist"></i></a>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
