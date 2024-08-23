@@ -301,11 +301,11 @@ class ReimburseController extends Controller
                         'company' => $req->rcompany_e_relation[$key],
                         'purpose' => $req->rpurpose_e_relation[$key],
                         'relation_type' => array_filter([
-                            'Food/Beverages/Souvenir' => in_array('food_cost', $req->food_cost_e_relation ?? []),
-                            'Transport' => in_array('transport', $req->transport_e_relation ?? []),
-                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? []),
-                            'Gift' => in_array('gift', $req->gift_e_relation ?? []),
-                            'Fund' => in_array('fund', $req->fund_e_relation ?? []),
+                            'Food' => in_array('food', $req->food_e_relation ?? [$key]),
+                            'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
+                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
+                            'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
+                            'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
                         ], fn($checked) => $checked),
                     ];
                 }
@@ -606,11 +606,11 @@ class ReimburseController extends Controller
                         'company' => $req->rcompany_e_relation[$key],
                         'purpose' => $req->rpurpose_e_relation[$key],
                         'relation_type' => array_filter([
-                            'Food/Beverages/Souvenir' => in_array('food_cost', $req->food_cost_e_relation ?? []),
-                            'Transport' => in_array('transport', $req->transport_e_relation ?? []),
-                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? []),
-                            'Gift' => in_array('gift', $req->gift_e_relation ?? []),
-                            'Fund' => in_array('fund', $req->fund_e_relation ?? []),
+                            'Food' => in_array('food', $req->food_e_relation ?? [$key]),
+                            'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
+                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
+                            'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
+                            'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
                         ], fn($checked) => $checked),
                     ];
                 }

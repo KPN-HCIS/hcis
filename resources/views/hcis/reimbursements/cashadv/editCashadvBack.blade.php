@@ -26,7 +26,7 @@
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-white justify-content-between">
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Cash Advance -
-                        <b>{{ $transactions->no_sppd }}</b></h4>
+                        <b>{{ $transactions->no_ca }}</b></h4>
                     <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
@@ -161,267 +161,288 @@
                             </script>
                             <br>
                             <div class="row" id="ca_bt" style="display: none;">
-                                <div class="col-md-12">
-                                    <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                            <div class="card">
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                </div>
-                                                <div id="perdiem-card" class="card-body" style="display: none;">
-                                                    <div class="accordion" id="accordionPerdiem">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                    Rencana Perdiem
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-bt-perdiem">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Start Perdiem</label>
-                                                                            <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">End Perdiem</label>
-                                                                            <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="start">Total Days</label>
-                                                                            <div class="input-group">
-                                                                                <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="0" readonly>
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">days</span>
+                                @if ($transactions->type_ca == 'dns')
+                                    <div class="col-md-12">
+                                        <div class="table-responsive-sm">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
+                                                <div class="card">
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
+                                                    </div>
+                                                    <div id="perdiem-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionPerdiem">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="enter-headingOne">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                        Rencana Perdiem
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-bt-perdiem">
+                                                                            @foreach ($detailCA['detail_perdiem'] as $perdiem)
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Start Perdiem</label>
+                                                                                    <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" value="{{$perdiem['start_date']}}" placeholder="mm/dd/yyyy">
                                                                                 </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <!-- HTML -->
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Location Agency</label>
-                                                                            <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                                                                                <option value="">Select location...</option>
-                                                                                @foreach($locations as $location)
-                                                                                    <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
-                                                                                @endforeach
-                                                                                <option value="Others">Others</option>
-                                                                            </select>
-                                                                            <br>
-                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
-                                                                                <option value="">Select Company...</option>
-                                                                                @foreach($companies as $company)
-                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Amount</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Perdiem</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Button and Card for Transport -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
-                                                </div>
-                                                <div id="transport-card" class="card-body" style="display: none;">
-                                                    <div class="accordion" id="accordionTransport">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="headingTransport">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
-                                                                    Rencana Transport
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-bt-transport">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Tanggal Transport</label>
-                                                                            <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_transport[]">
-                                                                                <option value="">Select Company...</option>
-                                                                                @foreach($companies as $company)
-                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Amount</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Transport</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Button and Card for Penginapan -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                </div>
-                                                <div id="penginapan-card" class="card-body" style="display: none;">
-                                                    <div class="accordion" id="accordionPenginapan">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="headingPenginapan">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                    Rencana Penginapan
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-bt-penginapan">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Start Penginapan</label>
-                                                                            <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">End Penginapan</label>
-                                                                            <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="start">Total Days</label>
-                                                                            <div class="input-group">
-                                                                                <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="0" readonly>
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">days</span>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">End Perdiem</label>
+                                                                                    <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" value="{{$perdiem['end_date']}}" placeholder="mm/dd/yyyy">
                                                                                 </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label" for="start">Total Days</label>
+                                                                                    <div class="input-group">
+                                                                                        <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="{{$perdiem['total_days']}}" readonly>
+                                                                                        <div class="input-group-append">
+                                                                                            <span class="input-group-text">days</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- HTML -->
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label" for="name">Location Agency</label>
+                                                                                    <select class="form-control select2 location-select" name="location_bt_perdiem[]">
+                                                                                        <option value="">Select location...</option>
+                                                                                        @foreach($locations as $location)
+                                                                                            <option value="{{ $location->area }}"
+                                                                                                @if($location->area == $perdiem['location']) selected @endif>
+                                                                                                {{ $location->area." (".$location->company_name.")" }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                        <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
+                                                                                    </select>
+                                                                                    <br>
+                                                                                    <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label" for="name">Company Code</label>
+                                                                                    <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
+                                                                                        <option value="">Select Company...</option>
+                                                                                        @foreach($companies as $company)
+                                                                                            <option value="{{ $company->contribution_level_code }}"
+                                                                                                @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
+                                                                                                {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Amount</label>
+                                                                                </div>
+                                                                                <div class="input-group mb-3">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}">
+                                                                                </div>
+                                                                                <hr class="border border-primary border-1 opacity-50">
+                                                                            @endforeach
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Total Perdiem</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Hotel Name</label>
-                                                                            <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
-                                                                                <option value="">Select Company...</option>
-                                                                                @foreach($companies as $company)
-                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Amount</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
+                                                                        <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Penginapan</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
+                                                    <!-- Button and Card for Transport -->
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
+                                                    </div>
+                                                    <div id="transport-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionTransport">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="headingTransport">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
+                                                                        Rencana Transport
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-bt-transport">
+                                                                            @foreach ($detailCA['detail_transport'] as $transport)
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Tanggal Transport</label>
+                                                                                <input type="date" name="tanggal_bt_transport[]" class="form-control" value="{{$transport['tanggal']}}">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="name">Company Code</label>
+                                                                                <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
+                                                                                    <option value="">Select Company...</option>
+                                                                                    @foreach($companies as $company)
+                                                                                        <option value="{{ $company->contribution_level_code }}"
+                                                                                            @if($company->contribution_level_code == $transport['company_code']) selected @endif>
+                                                                                            {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                                                                        </option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Keterangan</label>
+                                                                                <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport['keterangan']}}</textarea>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Amount</label>
+                                                                            </div>
+                                                                            <div class="input-group mb-3">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="{{number_format($transport['nominal'], 0, ',', '.')}}">
+                                                                            </div>
+                                                                            <hr class="border border-primary border-1 opacity-50">
+                                                                            @endforeach
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Total Transport</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-                                                <!-- Button and Card for Lainnya -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                </div>
-                                                <div id="lainnya-card" class="card-body" style="display: none;">
-                                                    <div class="accordion" id="accordionLainnya">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="headingLainnya">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                    Rencana Lainnya
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-bt-lainnya">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Tanggal</label>
-                                                                            <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
+                                                    <!-- Button and Card for Penginapan -->
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
+                                                    </div>
+                                                    <div id="penginapan-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionPenginapan">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="headingPenginapan">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
+                                                                        Rencana Penginapan
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-bt-penginapan">
+                                                                            @foreach($detailCA['detail_penginapan'] as $penginapan)
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Start Penginapan</label>
+                                                                                    <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" value="{{$penginapan['start_date']}}" placeholder="mm/dd/yyyy">
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">End Penginapan</label>
+                                                                                    <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" value="{{$penginapan['end_date']}}" placeholder="mm/dd/yyyy">
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label" for="start">Total Days</label>
+                                                                                    <div class="input-group">
+                                                                                        <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="{{$penginapan['total_days']}}" readonly>
+                                                                                        <div class="input-group-append">
+                                                                                            <span class="input-group-text">days</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label" for="name">Hotel Name</label>
+                                                                                    <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" value="{{$penginapan['hotel_name']}}" placeholder="Hotel">
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label" for="name">Company Code</label>
+                                                                                    <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
+                                                                                        <option value="">Select Company...</option>
+                                                                                        @foreach($companies as $company)
+                                                                                            <option value="{{ $company->contribution_level_code }}"
+                                                                                                @if($company->contribution_level_code == $penginapan['company_code']) selected @endif>
+                                                                                                {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Amount</label>
+                                                                                </div>
+                                                                                <div class="input-group mb-3">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="{{$penginapan['nominal']}}">
+                                                                                </div>
+                                                                                <hr class="border border-primary border-1 opacity-50">
+                                                                            @endforeach
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Accommodation</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                                            <label class="form-label">Total Penginapan</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya" type="text" min="0" value="0">
                                                                         </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
+                                                                        <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Lainnya</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Button and Card for Lainnya -->
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
+                                                    </div>
+                                                    <div id="lainnya-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionLainnya">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="headingLainnya">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
+                                                                        Rencana Lainnya
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-bt-lainnya">
+                                                                            @foreach ($detailCA['detail_lainnya'] as $perdiem)
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Tanggal</label>
+                                                                                    <input type="date" name="tanggal_bt_lainnya[]" class="form-control" value="{{$perdiem['tanggal']}}" placeholder="mm/dd/yyyy">
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Keterangan</label>
+                                                                                    <textarea name="keterangan_bt_lainnya[]" class="form-control">{{ $perdiem['keterangan'] }}</textarea>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Accommodation</label>
+                                                                                </div>
+                                                                                <div class="input-group mb-3">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya" type="text" min="0" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}">
+                                                                                </div>
+                                                                                <hr class="border border-primary border-1 opacity-50">
+                                                                            @endforeach
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Total Lainnya</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
                                                                             </div>
-                                                                            <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
                                                                         </div>
+                                                                        <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
-                                                                    <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -430,9 +451,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
-
                             <div class="row" id="ca_nbt" style="display: none;">
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
@@ -462,120 +482,126 @@
                                 </div>
                             </div>
                             <div class="row" id="ca_e" style="display: none;">
-                                <div class="col-md-12">
-                                    <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
-                                                <div class="card">
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
-                                                    </div>
-                                                    <div id="entertain-card" class="card-body" style="display: none;">
-                                                        <div class="accordion" id="accordionEntertain">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="headingEntertain">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="true" aria-controls="collapseEntertain">
-                                                                        Rencana Entertain
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapseEntertain" class="accordion-collapse collapse show" aria-labelledby="headingEntertain">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-e-detail">
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Entertainment Type</label>
-                                                                                <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
-                                                                                    <option value="">-</option>
-                                                                                    <option value="food_cost">Food/Beverages/Souvenir</option>
-                                                                                    <option value="transport">Transport</option>
-                                                                                    <option value="accommodation">Accommodation</option>
-                                                                                    <option value="gift">Gift</option>
-                                                                                    <option value="fund">Fund</option>
-                                                                                </select>
+                                @if ($transactions->type_ca == 'entr')
+                                    <div class="col-md-12">
+                                        <div class="table-responsive-sm">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
+                                                    <div class="card">
+                                                        <div class="card-body text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
+                                                        </div>
+                                                        <div id="entertain-card" class="card-body" style="display: none;">
+                                                            <div class="accordion" id="accordionEntertain">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="headingEntertain">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="true" aria-controls="collapseEntertain">
+                                                                            Rencana Entertain
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapseEntertain" class="accordion-collapse collapse show" aria-labelledby="headingEntertain">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-e-detail">
+                                                                                @foreach ($detailCA['detail_e'] as $detail)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Entertainment Type</label>
+                                                                                        <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
+                                                                                            <option value="">-</option>
+                                                                                            <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
+                                                                                            <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
+                                                                                            <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
+                                                                                            <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                                                                            <option value="fund" {{ $detail['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Entertainment Fee Detail</label>
+                                                                                        <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control">{{ $detail['fee_detail'] }}<</textarea>
+                                                                                    </div>
+                                                                                    <div class="input-group">
+                                                                                        <div class="input-group-append">
+                                                                                            <span class="input-group-text">Rp</span>
+                                                                                        </div>
+                                                                                        <input class="form-control" name="nominal_e_detail[]" id="nominal_e_detail[]" type="text" min="0" value="{{ number_format($detail['nominal'], 0, ',', '.') }}">
+                                                                                    </div>
+                                                                                    <hr class="border border-primary border-1 opacity-50">
+                                                                                @endforeach
                                                                             </div>
                                                                             <div class="mb-2">
-                                                                                <label class="form-label">Entertainment Fee Detail</label>
-                                                                                <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control"></textarea>
-                                                                            </div>
-                                                                            <div class="input-group">
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">Rp</span>
+                                                                                <label class="form-label">Total Entertain</label>
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="total_e_detail[]" id="total_e_detail[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
-                                                                                <input class="form-control" name="nominal_e_detail[]" id="nominal_e_detail[]" type="text" min="0" value="0">
                                                                             </div>
-                                                                            <hr class="border border-primary border-1 opacity-50">
+                                                                            <button type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Total Entertain</label>
-                                                                            <div class="input-group">
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">Rp</span>
-                                                                                </div>
-                                                                                <input class="form-control bg-light" name="total_e_detail[]" id="total_e_detail[]" type="text" min="0" value="0" readonly>
-                                                                            </div>
-                                                                        </div>
-                                                                        <button type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
-                                                    </div>
-                                                    <div id="relation-card" class="card-body" style="display: none;">
-                                                        <div class="accordion" id="accordionRelation">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="headingRelation">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="true" aria-controls="collapseRelation">
-                                                                        Rencana Relation
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapseRelation" class="accordion-collapse collapse show" aria-labelledby="headingRelation">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-e-relation">
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Relation Type</label>
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="Food/Beverages/Souvenir">
-                                                                                    <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
-                                                                                </div>
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="Accommodation">
-                                                                                    <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
-                                                                                </div>
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="Transport">
-                                                                                    <label class="form-check-label" for="transport_e_relation[]">Transport</label>
-                                                                                </div>
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="Gift">
-                                                                                    <label class="form-check-label" for="gift_e_relation[]">Gift</label>
-                                                                                </div>
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="Fund">
-                                                                                    <label class="form-check-label" for="fund_e_relation[]">Fund</label>
-                                                                                </div>
+                                                        <div class="card-body text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
+                                                        </div>
+                                                        <div id="relation-card" class="card-body" style="display: none;">
+                                                            <div class="accordion" id="accordionRelation">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="headingRelation">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="true" aria-controls="collapseRelation">
+                                                                            Rencana Relation
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapseRelation" class="accordion-collapse collapse show" aria-labelledby="headingRelation">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-e-relation">
+                                                                                @foreach($detailCA['relation_e'] as $relation)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Relation Type</label>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation[]" value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="transport_e_relation[]" type="checkbox" id="transport_e_relation[]" value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="gift_e_relation[]" type="checkbox" id="gift_e_relation[]" value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="food_e_relation[]" type="checkbox" id="food_e_relation[]" value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Name</label>
+                                                                                        <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" value="{{ $relation['name'] }}" class="form-control">
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Position</label>
+                                                                                        <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" value="{{ $relation['position'] }}" class="form-control">
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Company</label>
+                                                                                        <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" value="{{ $relation['company'] }}" class="form-control">
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Purpose</label>
+                                                                                        <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" value="{{ $relation['purpose'] }}" class="form-control">
+                                                                                    </div>
+                                                                                    <hr class="border border-primary border-1 opacity-50">
+                                                                                @endforeach
                                                                             </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label" for="start">Name</label>
-                                                                                <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" class="form-control">
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label" for="start">Position</label>
-                                                                                <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" class="form-control">
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label" for="start">Company</label>
-                                                                                <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" class="form-control">
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label" for="start">Purpose</label>
-                                                                                <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" class="form-control">
-                                                                            </div>
-                                                                            <hr class="border border-primary border-1 opacity-50">
+                                                                            <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
-                                                                        <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -585,10 +611,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                             <div class="row">
-                                {{ $transactions->total_cost }}
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label">Total Cash Advanced</label>
                                     <div class="input-group">
@@ -601,7 +626,7 @@
                                 </div>
                             </div>
                     </div>
-                    <input type="hidden" name="no_ca" id="no_ca" value="{{ $transactions->id }}"
+                    <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
                         class="form-control bg-light" readonly>
                     <input type="hidden" name="no_ca" id="no_ca" value="{{ $transactions->no_ca }}"
                         class="form-control bg-light" readonly>
@@ -613,7 +638,8 @@
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('cashadvanced') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary btn-pill  px-4">Submit to Approval</button>
+                            <button type="submit" name="action_ca_draft" value="Draft" class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
+                            <button type="submit" name="action_ca_submit" value="Pending" class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
                         </div>
                     </div>
                     </form>
@@ -711,31 +737,31 @@
                 return parseFloat(value.replace(/\./g, '')) || 0;
             }
 
-            // function calculateTotalDays() {
-            //     const startDate = new Date(startDateInput.value);
-            //     const endDate = new Date(endDateInput.value);
-            //     if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
-            //         const timeDiff = endDate - startDate;
-            //         const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-            //         const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
-            //         totalDaysInput.value = totalDays;
+            function calculateTotalDays() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
+                    const timeDiff = endDate - startDate;
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
+                    totalDaysInput.value = totalDays;
 
-            //         const perdiem = parseFloat(perdiemInput.value) || 0;
-            //         let allowance = totalDays * perdiem;
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
 
-            //         if (othersLocationInput.value.trim() !== '') {
-            //             allowance *= 1; // allowance * 50%
-            //         } else {
-            //             allowance *= 0.5;
-            //         }
+                    if (othersLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 50%
+                    } else {
+                        allowance *= 0.5;
+                    }
 
-            //         allowanceInput.value = formatNumber(Math.floor(allowance));
-            //     } else {
-            //         totalDaysInput.value = 0;
-            //         allowanceInput.value = 0;
-            //     }
-            //     calculateTotalCA();
-            // }
+                    allowanceInput.value = formatNumber(Math.floor(allowance));
+                } else {
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
+                }
+                calculateTotalCA();
+            }
 
             // function formatInput(input) {
             //     let value = input.value.replace(/\./g, '');
@@ -856,6 +882,19 @@
             $('#toggle-e-relation').click(function() {
                 toggleCard('#toggle-e-relation', '#relation-card');
             });
+
+            // Logika untuk membuka kartu berdasarkan nilai ca_type
+            var caType = $('input[name="ca_type"]').val();
+
+            if (caType === 'dns') {
+                $('#toggle-bt-perdiem').click();
+                $('#toggle-bt-transport').click();
+                $('#toggle-bt-penginapan').click();
+                $('#toggle-bt-lainnya').click();
+            } else if (caType === 'entr') {
+                $('#toggle-e-detail').click();
+                $('#toggle-e-relation').click();
+            }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -940,7 +979,7 @@
             }
 
             function calculateTotalNominalBTTotal() {
-                // let total = 0;
+                let total = 0;
                 document.querySelectorAll('input[name="total_bt_perdiem[]"]').forEach(input => {
                     total += parseNumber(input.value);
                 });
@@ -1348,8 +1387,6 @@
             });
         });
 
-
-
         //
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1494,7 +1531,7 @@
 
             // Function to calculate the total nominal value for EDetail
             function calculateTotalNominalEDetail() {
-                // let total = 0;
+                let total = 0;
                 document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
                     total += parseNumber(input.value);
                 });
@@ -1512,7 +1549,7 @@
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" class="form-select">
                             <option value="">-</option>
-                            <option value="food_cost">Food/Beverages/Souvenir</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
                             <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
                             <option value="gift">Gift</option>
@@ -1560,24 +1597,24 @@
                     <div class="mb-2">
                         <label class="form-label">Relation Type</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="food_cost">
-                            <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="transport">
+                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="transport_e_relation[]" value="transport">
                             <label class="form-check-label" for="transport_e_relation[]">Transport</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="accommodation">
+                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
                             <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="gift">
+                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation[]" value="gift">
                             <label class="form-check-label" for="gift_e_relation[]">Gift</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="fund">
+                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
                             <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="food_e_relation[]" name="food_e_relation[]" value="food">
+                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
                         </div>
                     </div>
                     <div class="mb-2">

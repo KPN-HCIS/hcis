@@ -499,7 +499,7 @@
                                                                                 <label class="form-label">Entertainment Type</label>
                                                                                 <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
                                                                                     <option value="">-</option>
-                                                                                    <option value="food_cost">Food/Beverages/Souvenir</option>
+                                                                                    <option value="food">Food/Beverages/Souvenir</option>
                                                                                     <option value="transport">Transport</option>
                                                                                     <option value="accommodation">Accommodation</option>
                                                                                     <option value="gift">Gift</option>
@@ -551,24 +551,24 @@
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Relation Type</label>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="Food/Beverages/Souvenir">
-                                                                                    <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
-                                                                                </div>
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="Accommodation">
+                                                                                    <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
                                                                                     <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="Transport">
+                                                                                    <input class="form-check-input" name="transport_e_relation[]" type="checkbox" id="transport_e_relation[]" value="transport">
                                                                                     <label class="form-check-label" for="transport_e_relation[]">Transport</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="Gift">
+                                                                                    <input class="form-check-input" name="gift_e_relation[]" type="checkbox" id="gift_e_relation[]" value="gift">
                                                                                     <label class="form-check-label" for="gift_e_relation[]">Gift</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="Fund">
+                                                                                    <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
                                                                                     <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" name="food_e_relation[]" type="checkbox" id="food_e_relation[]" value="food">
+                                                                                    <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="mb-2">
@@ -1543,7 +1543,7 @@
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" class="form-select">
                             <option value="">-</option>
-                            <option value="food_cost">Food/Beverages/Souvenir</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
                             <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
                             <option value="gift">Gift</option>
@@ -1591,24 +1591,24 @@
                     <div class="mb-2">
                         <label class="form-label">Relation Type</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="food_cost">
-                            <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="transport">
+                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="transport_e_relation[]" value="transport">
                             <label class="form-check-label" for="transport_e_relation[]">Transport</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="accommodation">
+                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
                             <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="gift">
+                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation[]" value="gift">
                             <label class="form-check-label" for="gift_e_relation[]">Gift</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="fund">
+                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
                             <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="food_e_relation[]" name="food_e_relation[]" value="food">
+                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
                         </div>
                     </div>
                     <div class="mb-2">

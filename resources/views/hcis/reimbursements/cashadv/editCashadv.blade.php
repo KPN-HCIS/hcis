@@ -453,7 +453,6 @@
                                     </div>
                                 @endif
                             </div>
-
                             <div class="row" id="ca_nbt" style="display: none;">
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
@@ -508,7 +507,7 @@
                                                                                         <label class="form-label">Entertainment Type</label>
                                                                                         <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
                                                                                             <option value="">-</option>
-                                                                                            <option value="food_cost" {{ $detail['type'] == 'food_cost' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
+                                                                                            <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                                                                             <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
                                                                                             <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
                                                                                             <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
@@ -558,49 +557,48 @@
                                                                     <div id="collapseRelation" class="accordion-collapse collapse show" aria-labelledby="headingRelation">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-e-relation">
-                                                                                <div class="mb-2">
-                                                                                    @foreach($detailCA['relation_e'] as $relation)
-
-                                                                                    @endforeach
-                                                                                    <label class="form-label">Relation Type</label>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="Food/Beverages/Souvenir">
-                                                                                        <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
+                                                                                @foreach($detailCA['relation_e'] as $relation)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Relation Type</label>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation[]" value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="transport_e_relation[]" type="checkbox" id="transport_e_relation[]" value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="gift_e_relation[]" type="checkbox" id="gift_e_relation[]" value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="food_e_relation[]" type="checkbox" id="food_e_relation[]" value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
+                                                                                        </div>
                                                                                     </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="Accommodation">
-                                                                                        <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Name</label>
+                                                                                        <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" value="{{ $relation['name'] }}" class="form-control">
                                                                                     </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="Transport">
-                                                                                        <label class="form-check-label" for="transport_e_relation[]">Transport</label>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Position</label>
+                                                                                        <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" value="{{ $relation['position'] }}" class="form-control">
                                                                                     </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="Gift">
-                                                                                        <label class="form-check-label" for="gift_e_relation[]">Gift</label>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Company</label>
+                                                                                        <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" value="{{ $relation['company'] }}" class="form-control">
                                                                                     </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="Fund">
-                                                                                        <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Purpose</label>
+                                                                                        <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" value="{{ $relation['purpose'] }}" class="form-control">
                                                                                     </div>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="start">Name</label>
-                                                                                    <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" value="{{ $relation['name'] }}" class="form-control">
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="start">Position</label>
-                                                                                    <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" value="{{ $relation['position'] }}" class="form-control">
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="start">Company</label>
-                                                                                    <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" value="{{ $relation['company'] }}" class="form-control">
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="start">Purpose</label>
-                                                                                    <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" value="{{ $relation['purpose'] }}" class="form-control">
-                                                                                </div>
-                                                                                <hr class="border border-primary border-1 opacity-50">
+                                                                                    <hr class="border border-primary border-1 opacity-50">
+                                                                                @endforeach
                                                                             </div>
                                                                             <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
@@ -884,6 +882,19 @@
             $('#toggle-e-relation').click(function() {
                 toggleCard('#toggle-e-relation', '#relation-card');
             });
+
+            // Logika untuk membuka kartu berdasarkan nilai ca_type
+            var caType = $('input[name="ca_type"]').val();
+
+            if (caType === 'dns') {
+                $('#toggle-bt-perdiem').click();
+                $('#toggle-bt-transport').click();
+                $('#toggle-bt-penginapan').click();
+                $('#toggle-bt-lainnya').click();
+            } else if (caType === 'entr') {
+                $('#toggle-e-detail').click();
+                $('#toggle-e-relation').click();
+            }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1538,7 +1549,7 @@
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" class="form-select">
                             <option value="">-</option>
-                            <option value="food_cost">Food/Beverages/Souvenir</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
                             <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
                             <option value="gift">Gift</option>
@@ -1586,24 +1597,24 @@
                     <div class="mb-2">
                         <label class="form-label">Relation Type</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="food_cost">
-                            <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="transport">
+                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="transport_e_relation[]" value="transport">
                             <label class="form-check-label" for="transport_e_relation[]">Transport</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="accommodation">
+                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
                             <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="gift">
+                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation[]" value="gift">
                             <label class="form-check-label" for="gift_e_relation[]">Gift</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="fund">
+                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
                             <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="food_e_relation[]" name="food_e_relation[]" value="food">
+                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
                         </div>
                     </div>
                     <div class="mb-2">
