@@ -177,6 +177,7 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
+                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -184,6 +185,7 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
+                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
                     $for_perdiem[] = [
                         'start_date' => $startDate,
@@ -256,7 +258,6 @@ class ReimburseController extends Controller
             ];
 
             $model->detail_ca = json_encode($detail_ca);
-            $model->declare_ca = json_encode($detail_ca);
         } else if ($req->ca_type == 'ndns') {
             $detail_ndns = [];
             if ($req->has('tanggal_nbt')) {
@@ -273,7 +274,6 @@ class ReimburseController extends Controller
             }
             $detail_ndns_json = json_encode($detail_ndns);
             $model->detail_ca = $detail_ndns_json;
-            $model->declare_ca = $detail_ndns_json;
         } else if ($req->ca_type == 'entr') {
             $detail_e = [];
             $relation_e = [];
@@ -317,7 +317,6 @@ class ReimburseController extends Controller
                 'relation_e' => $relation_e,
             ];
             $model->detail_ca = json_encode($detail_ca);
-            $model->declare_ca = json_encode($detail_ca);
         }
 
         $model->total_ca = str_replace('.', '', $req->totalca);
@@ -799,21 +798,15 @@ class ReimburseController extends Controller
 
         // Validasi file yang diupload
         $req->validate([
-            'prove_declare' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Aturan validasi file gambar
+            'prove_declare' => 'required|image|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Aturan validasi file gambar
         ]);
 
-        // Pengecekan apakah file baru di-upload
         if ($req->hasFile('prove_declare')) {
             $file = $req->file('prove_declare');
             $filename = time() . '_' . $file->getClientOriginalName();
-
-            // Mengunggah file ke direktori yang diinginkan
             $file->move(public_path('uploads/proofs'), $filename);
-
-            // Simpan nama file baru di model
             $model->prove_declare = $filename;
         } else {
-            // Simpan nama file yang sudah ada jika tidak ada file baru yang di-upload
             $model->prove_declare = $req->input('existing_prove_declare');
         }
 
