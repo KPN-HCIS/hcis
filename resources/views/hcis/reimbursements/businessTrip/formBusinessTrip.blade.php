@@ -9,7 +9,7 @@
 @section('content')
     <div class="container mt-4">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="mb-3">
                     {{-- <a href="{{ url()->previous() }}" class="btn btn-outline-primary">
                     <i class="bi bi-caret-left-fill"></i> Kembali
@@ -133,620 +133,567 @@
                                                     <div class="text-bg-primary p-2"
                                                         style="text-align:center; border-radius:4px;">Cash Advanced</div>
                                                     {{-- <div class="card"> --}}
-                                                        {{-- <div class="card-body"> --}}
+                                                    {{-- <div class="card-body"> --}}
 
-                                                            {{-- <div class="row"> --}}
-                                                                <div class="row" id="ca_bt" style="">
-                                                                    <div class="col-md-12">
-                                                                        <div class="table-responsive-sm">
-                                                                            <div class="d-flex flex-column gap-2">
-                                                                                <div class="card">
-                                                                                    <div class="card-body text-center">
-                                                                                        <button type="button"
-                                                                                            style="width: 60%"
-                                                                                            id="toggle-bt-perdiem"
-                                                                                            class="btn btn-primary mt-3"
-                                                                                            data-state="false"><i
-                                                                                                class="bi bi-plus-circle"></i>
-                                                                                            Perdiem</button>
-                                                                                    </div>
-                                                                                    <div id="perdiem-card"
-                                                                                        class="card-body"
-                                                                                        style="display: none;">
-                                                                                        <div class="accordion"
-                                                                                            id="accordionPerdiem">
-                                                                                            <div class="accordion-item">
-                                                                                                <h2 class="accordion-header"
-                                                                                                    id="enter-headingOne">
-                                                                                                    <button
-                                                                                                        class="accordion-button fw-medium"
-                                                                                                        type="button"
-                                                                                                        data-bs-toggle="collapse"
-                                                                                                        data-bs-target="#enter-collapseOne"
-                                                                                                        aria-expanded="true"
-                                                                                                        aria-controls="enter-collapseOne">
-                                                                                                        Perdiem Plan
-                                                                                                    </button>
-                                                                                                </h2>
-                                                                                                <div id="enter-collapseOne"
-                                                                                                    class="accordion-collapse show"
-                                                                                                    aria-labelledby="enter-headingOne">
+                                                    {{-- <div class="row"> --}}
+                                                    <div class="row" id="ca_bt" style="">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive-sm">
+                                                                <div class="d-flex flex-column gap-2">
+                                                                    <div class="card">
+                                                                        <div class="card-body text-center">
+                                                                            <button type="button" style="width: 60%"
+                                                                                id="toggle-bt-perdiem"
+                                                                                class="btn btn-primary mt-3"
+                                                                                data-state="false"><i
+                                                                                    class="bi bi-plus-circle"></i>
+                                                                                Perdiem</button>
+                                                                        </div>
+                                                                        <div id="perdiem-card" class="card-body"
+                                                                            style="display: none;">
+                                                                            <div class="accordion" id="accordionPerdiem">
+                                                                                <div class="accordion-item">
+                                                                                    <h2 class="accordion-header"
+                                                                                        id="enter-headingOne">
+                                                                                        <button
+                                                                                            class="accordion-button fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#enter-collapseOne"
+                                                                                            aria-expanded="true"
+                                                                                            aria-controls="enter-collapseOne">
+                                                                                            Perdiem Plan
+                                                                                        </button>
+                                                                                    </h2>
+                                                                                    <div id="enter-collapseOne"
+                                                                                        class="accordion-collapse show"
+                                                                                        aria-labelledby="enter-headingOne">
+                                                                                        <div class="accordion-body">
+                                                                                            <div
+                                                                                                id="form-container-bt-perdiem">
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Start
+                                                                                                        Perdiem</label>
+                                                                                                    <input type="date"
+                                                                                                        name="start_bt_perdiem[]"
+                                                                                                        class="form-control start-perdiem"
+                                                                                                        placeholder="mm/dd/yyyy">
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">End
+                                                                                                        Perdiem</label>
+                                                                                                    <input type="date"
+                                                                                                        name="end_bt_perdiem[]"
+                                                                                                        class="form-control end-perdiem"
+                                                                                                        placeholder="mm/dd/yyyy">
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="start">Total
+                                                                                                        Days</label>
                                                                                                     <div
-                                                                                                        class="accordion-body">
+                                                                                                        class="input-group">
+                                                                                                        <input
+                                                                                                            class="form-control bg-light total-days-perdiem"
+                                                                                                            id="total_days_bt_perdiem[]"
+                                                                                                            name="total_days_bt_perdiem[]"
+                                                                                                            type="text"
+                                                                                                            min="0"
+                                                                                                            value="0"
+                                                                                                            readonly>
                                                                                                         <div
-                                                                                                            id="form-container-bt-perdiem">
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Start
-                                                                                                                    Perdiem</label>
-                                                                                                                <input
-                                                                                                                    type="date"
-                                                                                                                    name="start_bt_perdiem[]"
-                                                                                                                    class="form-control start-perdiem"
-                                                                                                                    placeholder="mm/dd/yyyy">
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">End
-                                                                                                                    Perdiem</label>
-                                                                                                                <input
-                                                                                                                    type="date"
-                                                                                                                    name="end_bt_perdiem[]"
-                                                                                                                    class="form-control end-perdiem"
-                                                                                                                    placeholder="mm/dd/yyyy">
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label"
-                                                                                                                    for="start">Total
-                                                                                                                    Days</label>
-                                                                                                                <div
-                                                                                                                    class="input-group">
-                                                                                                                    <input
-                                                                                                                        class="form-control bg-light total-days-perdiem"
-                                                                                                                        id="total_days_bt_perdiem[]"
-                                                                                                                        name="total_days_bt_perdiem[]"
-                                                                                                                        type="text"
-                                                                                                                        min="0"
-                                                                                                                        value="0"
-                                                                                                                        readonly>
-                                                                                                                    <div
-                                                                                                                        class="input-group-append">
-                                                                                                                        <span
-                                                                                                                            class="input-group-text">days</span>
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                            <!-- HTML -->
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label"
-                                                                                                                    for="name">Location
-                                                                                                                    Agency</label>
-                                                                                                                <select
-                                                                                                                    class="form-control select2 location-select"
-                                                                                                                    name="location_bt_perdiem[]">
-                                                                                                                    <option
-                                                                                                                        value="">
-                                                                                                                        Select
-                                                                                                                        location...
-                                                                                                                    </option>
-                                                                                                                    @foreach ($locations as $location)
-                                                                                                                        <option
-                                                                                                                            value="{{ $location->area }}">
-                                                                                                                            {{ $location->area . ' (' . $location->company_name . ')' }}
-                                                                                                                        </option>
-                                                                                                                    @endforeach
-                                                                                                                    <option
-                                                                                                                        value="Others">
-                                                                                                                        Others
-                                                                                                                    </option>
-                                                                                                                </select>
-                                                                                                                <br>
-                                                                                                                <input
-                                                                                                                    type="text"
-                                                                                                                    name="other_location_bt_perdiem[]"
-                                                                                                                    class="form-control other-location"
-                                                                                                                    placeholder="Other Location"
-                                                                                                                    value=""
-                                                                                                                    style="display: none;">
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label"
-                                                                                                                    for="name">Company
-                                                                                                                    Code</label>
-                                                                                                                <select
-                                                                                                                    class="form-control select2"
-                                                                                                                    id="companyFilter"
-                                                                                                                    name="company_bt_perdiem[]">
-                                                                                                                    <option
-                                                                                                                        value="">
-                                                                                                                        ---
-                                                                                                                        Select
-                                                                                                                        Company
-                                                                                                                        ---
-                                                                                                                    </option>
-                                                                                                                    @foreach ($companies as $company)
-                                                                                                                        <option
-                                                                                                                            value="{{ $company->contribution_level_code }}">
-                                                                                                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                                        </option>
-                                                                                                                    @endforeach
-                                                                                                                </select>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Amount</label>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="input-group mb-3">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                <input
-                                                                                                                    class="form-control"
-                                                                                                                    name="nominal_bt_perdiem[]"
-                                                                                                                    id="nominal_bt_perdiem"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="0">
-                                                                                                            </div>
-                                                                                                            <hr
-                                                                                                                class="border border-primary border-1 opacity-50">
+                                                                                                            class="input-group-append">
+                                                                                                            <span
+                                                                                                                class="input-group-text">days</span>
                                                                                                         </div>
-                                                                                                        <div
-                                                                                                            class="mb-2">
-                                                                                                            <label
-                                                                                                                class="form-label">Total
-                                                                                                                Perdiem</label>
-                                                                                                            <div
-                                                                                                                class="input-group">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                <input
-                                                                                                                    class="form-control bg-light"
-                                                                                                                    name="total_bt_perdiem[]"
-                                                                                                                    id="total_bt_perdiem[]"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="0"
-                                                                                                                    readonly>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            id="add-more-bt-perdiem"
-                                                                                                            class="btn btn-primary mt-3">Add
-                                                                                                            More</button>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-
-                                                                                    <!-- Button and Card for Transport -->
-                                                                                    <div class="card-body text-center">
-                                                                                        <button type="button"
-                                                                                            style="width: 60%"
-                                                                                            id="toggle-bt-transport"
-                                                                                            class="btn btn-primary mt-3"
-                                                                                            data-state="false"><i
-                                                                                                class="bi bi-plus-circle"></i>
-                                                                                            Transport</button>
-                                                                                    </div>
-                                                                                    <div id="transport-card"
-                                                                                        class="card-body"
-                                                                                        style="display: none;">
-                                                                                        <div class="accordion"
-                                                                                            id="accordionTransport">
-                                                                                            <div class="accordion-item">
-                                                                                                <h2 class="accordion-header"
-                                                                                                    id="headingTransport">
-                                                                                                    <button
-                                                                                                        class="accordion-button fw-medium"
-                                                                                                        type="button"
-                                                                                                        data-bs-toggle="collapse"
-                                                                                                        data-bs-target="#collapseTransport"
-                                                                                                        aria-expanded="true"
-                                                                                                        aria-controls="collapseTransport">
-                                                                                                        Rencana Transport
-                                                                                                    </button>
-                                                                                                </h2>
-                                                                                                <div id="collapseTransport"
-                                                                                                    class="accordion-collapse collapse show"
-                                                                                                    aria-labelledby="headingTransport">
+                                                                                                <!-- HTML -->
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="name">Location
+                                                                                                        Agency</label>
+                                                                                                    <select
+                                                                                                        class="form-control select2 location-select"
+                                                                                                        name="location_bt_perdiem[]">
+                                                                                                        <option
+                                                                                                            value="">
+                                                                                                            Select
+                                                                                                            location...
+                                                                                                        </option>
+                                                                                                        @foreach ($locations as $location)
+                                                                                                            <option
+                                                                                                                value="{{ $location->area }}">
+                                                                                                                {{ $location->area . ' (' . $location->company_name . ')' }}
+                                                                                                            </option>
+                                                                                                        @endforeach
+                                                                                                        <option
+                                                                                                            value="Others">
+                                                                                                            Others
+                                                                                                        </option>
+                                                                                                    </select>
+                                                                                                    <br>
+                                                                                                    <input type="text"
+                                                                                                        name="other_location_bt_perdiem[]"
+                                                                                                        class="form-control other-location"
+                                                                                                        placeholder="Other Location"
+                                                                                                        value=""
+                                                                                                        style="display: none;">
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="name">Company
+                                                                                                        Code</label>
+                                                                                                    <select
+                                                                                                        class="form-control select2"
+                                                                                                        id="companyFilter"
+                                                                                                        name="company_bt_perdiem[]">
+                                                                                                        <option
+                                                                                                            value="">
+                                                                                                            ---
+                                                                                                            Select
+                                                                                                            Company
+                                                                                                            ---
+                                                                                                        </option>
+                                                                                                        @foreach ($companies as $company)
+                                                                                                            <option
+                                                                                                                value="{{ $company->contribution_level_code }}">
+                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                                                                            </option>
+                                                                                                        @endforeach
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Amount</label>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    class="input-group mb-3">
                                                                                                     <div
-                                                                                                        class="accordion-body">
-                                                                                                        <div
-                                                                                                            id="form-container-bt-transport">
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Tanggal
-                                                                                                                    Transport</label>
-                                                                                                                <input
-                                                                                                                    type="date"
-                                                                                                                    name="tanggal_bt_transport[]"
-                                                                                                                    class="form-control"
-                                                                                                                    placeholder="mm/dd/yyyy">
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label"
-                                                                                                                    for="name">Company
-                                                                                                                    Code</label>
-                                                                                                                <select
-                                                                                                                    class="form-control select2"
-                                                                                                                    id="companyFilter"
-                                                                                                                    name="company_bt_transport[]">
-                                                                                                                    <option
-                                                                                                                        value="">
-                                                                                                                        Select
-                                                                                                                        Company...
-                                                                                                                    </option>
-                                                                                                                    @foreach ($companies as $company)
-                                                                                                                        <option
-                                                                                                                            value="{{ $company->contribution_level_code }}">
-                                                                                                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                                        </option>
-                                                                                                                    @endforeach
-                                                                                                                </select>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Keterangan</label>
-                                                                                                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."></textarea>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Amount</label>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="input-group mb-3">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                <input
-                                                                                                                    class="form-control"
-                                                                                                                    name="nominal_bt_transport[]"
-                                                                                                                    id="nominal_bt_transport[]"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="0">
-                                                                                                            </div>
-                                                                                                            <hr
-                                                                                                                class="border border-primary border-1 opacity-50">
-                                                                                                        </div>
-                                                                                                        <div
-                                                                                                            class="mb-2">
-                                                                                                            <label
-                                                                                                                class="form-label">Total
-                                                                                                                Transport</label>
-                                                                                                            <div
-                                                                                                                class="input-group">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                <input
-                                                                                                                    class="form-control bg-light"
-                                                                                                                    name="total_bt_transport[]"
-                                                                                                                    id="total_bt_transport[]"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="0"
-                                                                                                                    readonly>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            id="add-more-bt-transport"
-                                                                                                            class="btn btn-primary mt-3">Add
-                                                                                                            More</button>
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
                                                                                                     </div>
+                                                                                                    <input
+                                                                                                        class="form-control"
+                                                                                                        name="nominal_bt_perdiem[]"
+                                                                                                        id="nominal_bt_perdiem"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="0">
+                                                                                                </div>
+                                                                                                <hr
+                                                                                                    class="border border-primary border-1 opacity-50">
+                                                                                            </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Total
+                                                                                                    Perdiem</label>
+                                                                                                <div class="input-group">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_perdiem[]"
+                                                                                                        id="total_bt_perdiem[]"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="0"
+                                                                                                        readonly>
                                                                                                 </div>
                                                                                             </div>
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-perdiem"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
                                                                                         </div>
                                                                                     </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
 
-                                                                                    <!-- Button and Card for Penginapan -->
-                                                                                    <div class="card-body text-center">
-                                                                                        <button type="button"
-                                                                                            style="width: 60%"
-                                                                                            id="toggle-bt-penginapan"
-                                                                                            class="btn btn-primary mt-3"
-                                                                                            data-state="false"><i
-                                                                                                class="bi bi-plus-circle"></i>
-                                                                                            Accommodation</button>
-                                                                                    </div>
-                                                                                    <div id="penginapan-card"
-                                                                                        class="card-body"
-                                                                                        style="display: none;">
-                                                                                        <div class="accordion"
-                                                                                            id="accordionPenginapan">
-                                                                                            <div class="accordion-item">
-                                                                                                <h2 class="accordion-header"
-                                                                                                    id="headingPenginapan">
-                                                                                                    <button
-                                                                                                        class="accordion-button fw-medium"
-                                                                                                        type="button"
-                                                                                                        data-bs-toggle="collapse"
-                                                                                                        data-bs-target="#collapsePenginapan"
-                                                                                                        aria-expanded="true"
-                                                                                                        aria-controls="collapsePenginapan">
-                                                                                                        Rencana Penginapan
-                                                                                                    </button>
-                                                                                                </h2>
-                                                                                                <div id="collapsePenginapan"
-                                                                                                    class="accordion-collapse collapse show"
-                                                                                                    aria-labelledby="headingPenginapan">
+                                                                        <!-- Button and Card for Transport -->
+                                                                        <div class="card-body text-center">
+                                                                            <button type="button" style="width: 60%"
+                                                                                id="toggle-bt-transport"
+                                                                                class="btn btn-primary mt-3"
+                                                                                data-state="false"><i
+                                                                                    class="bi bi-plus-circle"></i>
+                                                                                Transport</button>
+                                                                        </div>
+                                                                        <div id="transport-card" class="card-body"
+                                                                            style="display: none;">
+                                                                            <div class="accordion"
+                                                                                id="accordionTransport">
+                                                                                <div class="accordion-item">
+                                                                                    <h2 class="accordion-header"
+                                                                                        id="headingTransport">
+                                                                                        <button
+                                                                                            class="accordion-button fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseTransport"
+                                                                                            aria-expanded="true"
+                                                                                            aria-controls="collapseTransport">
+                                                                                            Rencana Transport
+                                                                                        </button>
+                                                                                    </h2>
+                                                                                    <div id="collapseTransport"
+                                                                                        class="accordion-collapse collapse show"
+                                                                                        aria-labelledby="headingTransport">
+                                                                                        <div class="accordion-body">
+                                                                                            <div
+                                                                                                id="form-container-bt-transport">
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Tanggal
+                                                                                                        Transport</label>
+                                                                                                    <input type="date"
+                                                                                                        name="tanggal_bt_transport[]"
+                                                                                                        class="form-control"
+                                                                                                        placeholder="mm/dd/yyyy">
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="name">Company
+                                                                                                        Code</label>
+                                                                                                    <select
+                                                                                                        class="form-control select2"
+                                                                                                        id="companyFilter"
+                                                                                                        name="company_bt_transport[]">
+                                                                                                        <option
+                                                                                                            value="">
+                                                                                                            Select
+                                                                                                            Company...
+                                                                                                        </option>
+                                                                                                        @foreach ($companies as $company)
+                                                                                                            <option
+                                                                                                                value="{{ $company->contribution_level_code }}">
+                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                                                                            </option>
+                                                                                                        @endforeach
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Keterangan</label>
+                                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."></textarea>
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Amount</label>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    class="input-group mb-3">
                                                                                                     <div
-                                                                                                        class="accordion-body">
-                                                                                                        <div
-                                                                                                            id="form-container-bt-penginapan">
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Start
-                                                                                                                    Penginapan</label>
-                                                                                                                <input
-                                                                                                                    type="date"
-                                                                                                                    name="start_bt_penginapan[]"
-                                                                                                                    class="form-control start-penginapan"
-                                                                                                                    placeholder="mm/dd/yyyy">
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">End
-                                                                                                                    Penginapan</label>
-                                                                                                                <input
-                                                                                                                    type="date"
-                                                                                                                    name="end_bt_penginapan[]"
-                                                                                                                    class="form-control end-penginapan"
-                                                                                                                    placeholder="mm/dd/yyyy">
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label"
-                                                                                                                    for="start">Total
-                                                                                                                    Days</label>
-                                                                                                                <div
-                                                                                                                    class="input-group">
-                                                                                                                    <input
-                                                                                                                        class="form-control bg-light total-days-penginapan"
-                                                                                                                        id="total_days_bt_penginapan[]"
-                                                                                                                        name="total_days_bt_penginapan[]"
-                                                                                                                        type="text"
-                                                                                                                        min="0"
-                                                                                                                        value="0"
-                                                                                                                        readonly>
-                                                                                                                    <div
-                                                                                                                        class="input-group-append">
-                                                                                                                        <span
-                                                                                                                            class="input-group-text">days</span>
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label"
-                                                                                                                    for="name">Hotel
-                                                                                                                    Name</label>
-                                                                                                                <input
-                                                                                                                    type="text"
-                                                                                                                    name="hotel_name_bt_penginapan[]"
-                                                                                                                    class="form-control"
-                                                                                                                    placeholder="ex: Westin">
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label"
-                                                                                                                    for="name">Company
-                                                                                                                    Code</label>
-                                                                                                                <select
-                                                                                                                    class="form-control select2"
-                                                                                                                    id="companyFilter"
-                                                                                                                    name="company_bt_penginapan[]">
-                                                                                                                    <option
-                                                                                                                        value="">
-                                                                                                                        Select
-                                                                                                                        Company...
-                                                                                                                    </option>
-                                                                                                                    @foreach ($companies as $company)
-                                                                                                                        <option
-                                                                                                                            value="{{ $company->contribution_level_code }}">
-                                                                                                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                                        </option>
-                                                                                                                    @endforeach
-                                                                                                                </select>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Amount</label>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="input-group mb-3">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                <input
-                                                                                                                    class="form-control"
-                                                                                                                    name="nominal_bt_penginapan[]"
-                                                                                                                    id="nominal_bt_penginapan[]"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="0">
-                                                                                                            </div>
-                                                                                                            <hr
-                                                                                                                class="border border-primary border-1 opacity-50">
-                                                                                                        </div>
-                                                                                                        <div
-                                                                                                            class="mb-2">
-                                                                                                            <label
-                                                                                                                class="form-label">Total
-                                                                                                                Penginapan</label>
-                                                                                                            <div
-                                                                                                                class="input-group">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                <input
-                                                                                                                    class="form-control bg-light"
-                                                                                                                    name="total_bt_penginapan[]"
-                                                                                                                    id="total_bt_penginapan"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="0"
-                                                                                                                    readonly>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            id="add-more-bt-penginapan"
-                                                                                                            class="btn btn-primary mt-3">Add
-                                                                                                            More</button>
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
                                                                                                     </div>
+                                                                                                    <input
+                                                                                                        class="form-control"
+                                                                                                        name="nominal_bt_transport[]"
+                                                                                                        id="nominal_bt_transport[]"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="0">
+                                                                                                </div>
+                                                                                                <hr
+                                                                                                    class="border border-primary border-1 opacity-50">
+                                                                                            </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Total
+                                                                                                    Transport</label>
+                                                                                                <div class="input-group">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_transport[]"
+                                                                                                        id="total_bt_transport[]"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="0"
+                                                                                                        readonly>
                                                                                                 </div>
                                                                                             </div>
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-transport"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
                                                                                         </div>
                                                                                     </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
 
-
-                                                                                    <!-- Button and Card for Lainnya -->
-                                                                                    <div class="card-body text-center">
-                                                                                        <button type="button"
-                                                                                            style="width: 60%"
-                                                                                            id="toggle-bt-lainnya"
-                                                                                            class="btn btn-primary mt-3"
-                                                                                            data-state="false"><i
-                                                                                                class="bi bi-plus-circle"></i>
-                                                                                            Others</button>
-                                                                                    </div>
-                                                                                    <div id="lainnya-card"
-                                                                                        class="card-body"
-                                                                                        style="display: none;">
-                                                                                        <div class="accordion"
-                                                                                            id="accordionLainnya">
-                                                                                            <div class="accordion-item">
-                                                                                                <h2 class="accordion-header"
-                                                                                                    id="headingLainnya">
-                                                                                                    <button
-                                                                                                        class="accordion-button fw-medium"
-                                                                                                        type="button"
-                                                                                                        data-bs-toggle="collapse"
-                                                                                                        data-bs-target="#collapseLainnya"
-                                                                                                        aria-expanded="true"
-                                                                                                        aria-controls="collapseLainnya">
-                                                                                                        Rencana Lainnya
-                                                                                                    </button>
-                                                                                                </h2>
-                                                                                                <div id="collapseLainnya"
-                                                                                                    class="accordion-collapse collapse show"
-                                                                                                    aria-labelledby="headingLainnya">
+                                                                        <!-- Button and Card for Penginapan -->
+                                                                        <div class="card-body text-center">
+                                                                            <button type="button" style="width: 60%"
+                                                                                id="toggle-bt-penginapan"
+                                                                                class="btn btn-primary mt-3"
+                                                                                data-state="false"><i
+                                                                                    class="bi bi-plus-circle"></i>
+                                                                                Accommodation</button>
+                                                                        </div>
+                                                                        <div id="penginapan-card" class="card-body"
+                                                                            style="display: none;">
+                                                                            <div class="accordion"
+                                                                                id="accordionPenginapan">
+                                                                                <div class="accordion-item">
+                                                                                    <h2 class="accordion-header"
+                                                                                        id="headingPenginapan">
+                                                                                        <button
+                                                                                            class="accordion-button fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapsePenginapan"
+                                                                                            aria-expanded="true"
+                                                                                            aria-controls="collapsePenginapan">
+                                                                                            Rencana Penginapan
+                                                                                        </button>
+                                                                                    </h2>
+                                                                                    <div id="collapsePenginapan"
+                                                                                        class="accordion-collapse collapse show"
+                                                                                        aria-labelledby="headingPenginapan">
+                                                                                        <div class="accordion-body">
+                                                                                            <div
+                                                                                                id="form-container-bt-penginapan">
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Start
+                                                                                                        Penginapan</label>
+                                                                                                    <input type="date"
+                                                                                                        name="start_bt_penginapan[]"
+                                                                                                        class="form-control start-penginapan"
+                                                                                                        placeholder="mm/dd/yyyy">
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">End
+                                                                                                        Penginapan</label>
+                                                                                                    <input type="date"
+                                                                                                        name="end_bt_penginapan[]"
+                                                                                                        class="form-control end-penginapan"
+                                                                                                        placeholder="mm/dd/yyyy">
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="start">Total
+                                                                                                        Days</label>
                                                                                                     <div
-                                                                                                        class="accordion-body">
+                                                                                                        class="input-group">
+                                                                                                        <input
+                                                                                                            class="form-control bg-light total-days-penginapan"
+                                                                                                            id="total_days_bt_penginapan[]"
+                                                                                                            name="total_days_bt_penginapan[]"
+                                                                                                            type="text"
+                                                                                                            min="0"
+                                                                                                            value="0"
+                                                                                                            readonly>
                                                                                                         <div
-                                                                                                            id="form-container-bt-lainnya">
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Tanggal</label>
-                                                                                                                <input
-                                                                                                                    type="date"
-                                                                                                                    name="tanggal_bt_lainnya[]"
-                                                                                                                    class="form-control"
-                                                                                                                    placeholder="mm/dd/yyyy">
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Keterangan</label>
-                                                                                                                <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."></textarea>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="mb-2">
-                                                                                                                <label
-                                                                                                                    class="form-label">Accommodation</label>
-                                                                                                            </div>
-                                                                                                            <div
-                                                                                                                class="input-group mb-3">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                <input
-                                                                                                                    class="form-control"
-                                                                                                                    name="nominal_bt_lainnya[]"
-                                                                                                                    id="nominal_bt_lainnya"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="0">
-                                                                                                            </div>
-                                                                                                            <hr
-                                                                                                                class="border border-primary border-1 opacity-50">
+                                                                                                            class="input-group-append">
+                                                                                                            <span
+                                                                                                                class="input-group-text">days</span>
                                                                                                         </div>
-                                                                                                        <div
-                                                                                                            class="mb-2">
-                                                                                                            <label
-                                                                                                                class="form-label">Total
-                                                                                                                Lainnya</label>
-                                                                                                            <div
-                                                                                                                class="input-group">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                <input
-                                                                                                                    class="form-control bg-light"
-                                                                                                                    name="total_bt_lainnya[]"
-                                                                                                                    id="total_bt_lainnya"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="0"
-                                                                                                                    readonly>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            id="add-more-bt-lainnya"
-                                                                                                            class="btn btn-primary mt-3">Add
-                                                                                                            More</button>
                                                                                                     </div>
                                                                                                 </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="name">Hotel
+                                                                                                        Name</label>
+                                                                                                    <input type="text"
+                                                                                                        name="hotel_name_bt_penginapan[]"
+                                                                                                        class="form-control"
+                                                                                                        placeholder="ex: Westin">
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="name">Company
+                                                                                                        Code</label>
+                                                                                                    <select
+                                                                                                        class="form-control select2"
+                                                                                                        id="companyFilter"
+                                                                                                        name="company_bt_penginapan[]">
+                                                                                                        <option
+                                                                                                            value="">
+                                                                                                            Select
+                                                                                                            Company...
+                                                                                                        </option>
+                                                                                                        @foreach ($companies as $company)
+                                                                                                            <option
+                                                                                                                value="{{ $company->contribution_level_code }}">
+                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                                                                            </option>
+                                                                                                        @endforeach
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Amount</label>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    class="input-group mb-3">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control"
+                                                                                                        name="nominal_bt_penginapan[]"
+                                                                                                        id="nominal_bt_penginapan[]"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="0">
+                                                                                                </div>
+                                                                                                <hr
+                                                                                                    class="border border-primary border-1 opacity-50">
                                                                                             </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Total
+                                                                                                    Penginapan</label>
+                                                                                                <div class="input-group">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_penginapan[]"
+                                                                                                        id="total_bt_penginapan"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="0"
+                                                                                                        readonly>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-penginapan"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
                                                                                         </div>
                                                                                     </div>
-                                                                                {{-- </div> --}}
-                                                                            {{-- </div> --}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <!-- Button and Card for Lainnya -->
+                                                                        <div class="card-body text-center">
+                                                                            <button type="button" style="width: 60%"
+                                                                                id="toggle-bt-lainnya"
+                                                                                class="btn btn-primary mt-3"
+                                                                                data-state="false"><i
+                                                                                    class="bi bi-plus-circle"></i>
+                                                                                Others</button>
+                                                                        </div>
+                                                                        <div id="lainnya-card" class="card-body"
+                                                                            style="display: none;">
+                                                                            <div class="accordion" id="accordionLainnya">
+                                                                                <div class="accordion-item">
+                                                                                    <h2 class="accordion-header"
+                                                                                        id="headingLainnya">
+                                                                                        <button
+                                                                                            class="accordion-button fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseLainnya"
+                                                                                            aria-expanded="true"
+                                                                                            aria-controls="collapseLainnya">
+                                                                                            Rencana Lainnya
+                                                                                        </button>
+                                                                                    </h2>
+                                                                                    <div id="collapseLainnya"
+                                                                                        class="accordion-collapse collapse show"
+                                                                                        aria-labelledby="headingLainnya">
+                                                                                        <div class="accordion-body">
+                                                                                            <div
+                                                                                                id="form-container-bt-lainnya">
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Tanggal</label>
+                                                                                                    <input type="date"
+                                                                                                        name="tanggal_bt_lainnya[]"
+                                                                                                        class="form-control"
+                                                                                                        placeholder="mm/dd/yyyy">
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Keterangan</label>
+                                                                                                    <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."></textarea>
+                                                                                                </div>
+                                                                                                <div class="mb-2">
+                                                                                                    <label
+                                                                                                        class="form-label">Accommodation</label>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    class="input-group mb-3">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control"
+                                                                                                        name="nominal_bt_lainnya[]"
+                                                                                                        id="nominal_bt_lainnya"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="0">
+                                                                                                </div>
+                                                                                                <hr
+                                                                                                    class="border border-primary border-1 opacity-50">
+                                                                                            </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Total
+                                                                                                    Lainnya</label>
+                                                                                                <div class="input-group">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_lainnya[]"
+                                                                                                        id="total_bt_lainnya"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="0"
+                                                                                                        readonly>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-lainnya"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        {{-- </div> --}}
+                                                                        {{-- </div> --}}
                                                                         {{-- </div> --}}
                                                                     </div>
                                                                 </div>
@@ -833,8 +780,10 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
-                                                                    <label for="ket_tkt" class="form-label">Information</label>
-                                                                    <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3" placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                                                                    <label for="ket_tkt"
+                                                                        class="form-label">Information</label>
+                                                                    <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3"
+                                                                        placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
                                                                 </div>
                                                                 <div class="mb-2">
                                                                     <label class="form-label"
@@ -1627,6 +1576,36 @@
         });
 
         //CA JS
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all date input fields
+            const startPerdiemInputs = document.querySelectorAll('input[name="start_bt_perdiem[]"]');
+            const endPerdiemInputs = document.querySelectorAll('input[name="end_bt_perdiem[]"]');
+
+            // Function to validate date ranges
+            function validateDates() {
+                startPerdiemInputs.forEach((startInput, index) => {
+                    const endInput = endPerdiemInputs[index];
+                    if (startInput.value && endInput.value) {
+                        const startDate = new Date(startInput.value);
+                        const endDate = new Date(endInput.value);
+
+                        if (endDate < startDate) {
+                            endInput.setCustomValidity("End date cannot be earlier than start date.");
+                        } else {
+                            endInput.setCustomValidity(""); // Clear the validation message
+                        }
+                    }
+                });
+            }
+
+            // Add event listeners to date inputs for real-time validation
+            startPerdiemInputs.forEach(input => input.addEventListener('change', validateDates));
+            endPerdiemInputs.forEach(input => input.addEventListener('change', validateDates));
+
+            // Initialize validation on page load
+            validateDates();
+        });
+
         function toggleDivs() {
             // ca_type ca_nbt ca_e
             var ca_type = document.getElementById("ca_type");
@@ -1966,10 +1945,20 @@
 
             function calculateTotalDaysPerdiem(input) {
                 const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_perdiem[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_perdiem[]"]').value);
+                const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
+                const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
 
-                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+
+                if (!isNaN(startDate) && !isNaN(endDate)) {
+                    if (startDate > endDate) {
+                        alert('End date cannot be earlier than start date.');
+                        endDateInput.value = ''; // Clear the end date field
+                        formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = 0;
+                        return; // Exit the function to prevent further calculation
+                    }
+
                     const diffTime = Math.abs(endDate - startDate);
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                     formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = diffDays;
@@ -1978,12 +1967,23 @@
                 }
             }
 
+
             function calculateTotalDaysPenginapan(input) {
                 const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_penginapan[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_penginapan[]"]').value);
+                const startDateInput = formGroup.querySelector('input[name="start_bt_penginapan[]"]');
+                const endDateInput = formGroup.querySelector('input[name="end_bt_penginapan[]"]');
 
-                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+
+                if (!isNaN(startDate) && !isNaN(endDate)) {
+                    if (startDate > endDate) {
+                        alert('End date cannot be earlier than start date.');
+                        endDateInput.value = ''; // Clear the end date field
+                        formGroup.querySelector('input[name="total_days_bt_penginapan[]"]').value = 0;
+                        return; // Exit the function to prevent further calculation
+                    }
+
                     const diffTime = Math.abs(endDate - startDate);
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                     formGroup.querySelector('input[name="total_days_bt_penginapan[]"]').value = diffDays;
@@ -1991,6 +1991,7 @@
                     formGroup.querySelector('input[name="total_days_bt_penginapan[]"]').value = 0;
                 }
             }
+
 
             function addNewPerdiemForm() {
                 const newFormBTPerdiem = document.createElement('div');
@@ -2018,8 +2019,8 @@
                         <label class="form-label" for="name">Location Agency</label>
                         <select class="form-control select2 location-select" name="location_bt_perdiem[]">
                             <option value="">Select location...</option>
-                            @foreach($locations as $location)
-                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                            @foreach ($locations as $location)
+                                <option value="{{ $location->area }}">{{ $location->area . ' (' . $location->company_name . ')' }}</option>
                             @endforeach
                             <option value="Others">Others</option>
                         </select>
