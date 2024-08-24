@@ -14,7 +14,7 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('approval.cashadvanced') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('approval.cashadvancedDeklarasi') }}">{{ $parentLink }}</a></li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -26,12 +26,12 @@
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-white justify-content-between">
                     <a href=""></a>
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Approval Data - <b>"{{ $transactions->no_ca }}"</h4>
-                    <a href="{{ route('approval.cashadvanced') }}" type="button" class="btn btn-close"></a>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Deklarasi Data - <b>"{{ $transactions->no_ca }}"</h4>
+                    <a href="{{ route('approval.cashadvancedDeklarasi') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('approval.cashadvancedApproved', $transactions->id) }}">@csrf
+                        <form id="scheduleForm" method="post" action="{{ route('approval.cashadvancedDeclare', $transactions->id) }}">@csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="start">Employee ID</label>
@@ -149,6 +149,7 @@
                             </div>
                             @php
                                 $detailCA = json_decode($transactions->detail_ca, true) ?? [];
+                                $declaCA = json_decode($transactions->declare_ca, true) ?? [];
                             @endphp
                             <br>
 
@@ -429,44 +430,88 @@
                                 @if ($transactions->type_ca == 'ndns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="d-flex flex-column gap-2">
-                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="enter-headingOne">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                        Non Business Trip
-                                                                    </button>
-                                                                </h2>
-                                                                @foreach ($detailCA as $item)
-                                                                <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container">
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Tanggal</label>
-                                                                                <input type="date" name="tanggal_nbt[]" class="form-control bg-light" value="{{ $item['tanggal_nbt'] }}" readonly>
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Keterangan</label>
-                                                                                <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>{{ $item['keterangan_nbt'] }}</textarea>
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Accommodation</label>
-                                                                            </div>
-                                                                            <div class="input-group mb-3">
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">Rp</span>
+                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
+                                            <div class="d-flex flex-row gap-2">
+                                                <div class="col-md-6">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="accordion" id="accordionPanelsStayOpenExample">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="enter-headingOne">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                            Non Business Trip
+                                                                        </button>
+                                                                    </h2>
+                                                                    @foreach ($detailCA as $item)
+                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container">
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Tanggal</label>
+                                                                                    <input type="date" name="tanggal_nbt[]" class="form-control bg-light" value="{{ $item['tanggal_nbt'] }}" readonly>
                                                                                 </div>
-                                                                                <input class="form-control bg-light" name="nominal_nbt[]" id="nominal_nbt" type="text" min="0" value="{{ number_format($item['nominal_nbt'], 0, ',', '.') }}" readonly>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Keterangan</label>
+                                                                                    <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>{{ $item['keterangan_nbt'] }}</textarea>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Accommodation</label>
+                                                                                </div>
+                                                                                <div class="input-group mb-3">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="nominal_nbt[]" id="nominal_nbt" type="text" min="0" value="{{ number_format($item['nominal_nbt'], 0, ',', '.') }}" readonly>
+                                                                                </div>
+                                                                                <hr class="border border-primary border-1 opacity-50">
                                                                             </div>
-                                                                            <hr class="border border-primary border-1 opacity-50">
+                                                                            {{-- <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button> --}}
                                                                         </div>
-                                                                        {{-- <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button> --}}
                                                                     </div>
+                                                                    @endforeach
                                                                 </div>
-                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="accordion" id="accordionPanelsStayOpenExample">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="enter-headingOne">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                            Non Business Trip
+                                                                        </button>
+                                                                    </h2>
+                                                                    @foreach ($declaCA as $item)
+                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container">
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Tanggal</label>
+                                                                                    <input type="date" name="tanggal_nbt[]" class="form-control bg-light" value="{{ $item['tanggal_nbt'] }}" readonly>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Keterangan</label>
+                                                                                    <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>{{ $item['keterangan_nbt'] }}</textarea>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Accommodation</label>
+                                                                                </div>
+                                                                                <div class="input-group mb-3">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="nominal_nbt[]" id="nominal_nbt" type="text" min="0" value="{{ number_format($item['nominal_nbt'], 0, ',', '.') }}" readonly>
+                                                                                </div>
+                                                                                <hr class="border border-primary border-1 opacity-50">
+                                                                            </div>
+                                                                            {{-- <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button> --}}
+                                                                        </div>
+                                                                    </div>
+                                                                    @endforeach
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -608,6 +653,33 @@
 
                             <div class="row">
                                 <div class="col-md-12 mb-2">
+                                    <label for="prove_declare" class="form-label">Proof</label>
+                                    <!-- Show existing file -->
+                                    <div id="existing-file-preview" class="mt-2">
+                                        @if($transactions->prove_declare)
+                                            @php
+                                                $extension = pathinfo($transactions->prove_declare, PATHINFO_EXTENSION);
+                                            @endphp
+
+                                            @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
+                                                <!-- Tampilkan gambar -->
+                                                <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" target="_blank">
+                                                    <img id="existing-image" src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" alt="Proof Image" style="max-width: 200px;">
+                                                </a>
+                                                <p>Click on the image to view the full size</p>
+                                            @elseif($extension == 'pdf')
+                                                <!-- Tampilkan tautan untuk PDF -->
+                                                <a id="existing-pdf" href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" target="_blank">
+                                                    <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File" style="max-width: 48px;">
+                                                    <p>Click to view PDF</p>
+                                                </a>
+                                            @else
+                                                <p>File type not supported.</p>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-2">
                                     <label class="form-label">Total Cash Advanced</label>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -617,20 +689,29 @@
                                             type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Total Cash Advanced Deklarasi</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Rp</span>
+                                        </div>
+                                        <input class="form-control bg-light" name="totalca" id="totalca"
+                                            type="text" min="0" value="{{ number_format($transactions->total_real, 0, ',', '.') }}" readonly>
+                                    </div>
+                                </div>
                             </div>
+                            <br>
+                            <div class="row">
+                                <div class="p-3 col-md d-md-flex justify-content-end text-center">
+                                    <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
+                                    <a href="{{ route('approval.cashadvancedDeklarasi') }}" type="button"
+                                        class="btn btn-outline-secondary px-4 me-2">Cancel</a>
+                                    <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                                    <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-
-                    <br>
-                    <div class="row">
-                        <div class="p-3 col-md d-md-flex justify-content-end text-center">
-                            <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('approval.cashadvanced') }}" type="button"
-                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
-                            <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
-                        </div>
-                    </div>
-                    </form>
                 </div>
             </div>
         </div>

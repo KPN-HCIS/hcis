@@ -82,12 +82,12 @@
                                         <td>Rp. {{ number_format($transaction->total_real) }}</td>
                                         <td>Rp. {{ number_format($transaction->total_cost) }}</td>
                                         <td>
-                                            <p class="badge text-bg-{{ $transaction->approval_status == 'Approved' ? 'success' : ($transaction->approval_status == 'Rejected' ? 'danger' : 'warning') }}">
-                                                {{ $transaction->approval_status }}
+                                            <p class="badge text-bg-{{ $transaction->approval_sett == 'Approved' ? 'success' : ($transaction->approval_sett == 'Rejected' ? 'danger' : 'warning') }}">
+                                                {{ $transaction->approval_sett }}
                                             </p>
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ route('approval.cashadvancedForm', encrypt($transaction->id)) }}" class="btn btn-outline-info" title="Approve" ><i class="bi bi-card-checklist"></i></a>
+                                            <a href="{{ route('approval.cashadvancedFormDeklarasi', encrypt($transaction->id)) }}" class="btn btn-outline-info" title="Approve" ><i class="bi bi-card-checklist"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach

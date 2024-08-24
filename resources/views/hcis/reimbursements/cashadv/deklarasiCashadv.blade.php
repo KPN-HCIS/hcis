@@ -782,7 +782,6 @@
         });
 
         function toggleOthers() {
-            // ca_type ca_nbt ca_e
             var locationFilter = document.getElementById("locationFilter");
             var others_location = document.getElementById("others_location");
 
@@ -795,7 +794,6 @@
         }
 
         function validateInput(input) {
-            //input.value = input.value.replace(/[^0-9,]/g, '');
             input.value = input.value.replace(/[^0-9]/g, '');
         }
 
@@ -850,48 +848,6 @@
                 }
                 calculateTotalCA();
             }
-
-            // function formatInput(input) {
-            //     let value = input.value.replace(/\./g, '');
-            //     value = parseFloat(value);
-            //     if (!isNaN(value)) {
-            //         // input.value = formatNumber(value);
-            //         input.value = formatNumber(Math.floor(value));
-            //     } else {
-            //         input.value = formatNumber(0);
-            //     }
-
-            //     calculateTotalCA();
-            // }
-
-            // function calculateTotalCA() {
-            //     const allowance = parseNumber(allowanceInput.value);
-            //     const transport = parseNumber(transportInput.value);
-            //     const accommodation = parseNumber(accommodationInput.value);
-            //     const other = parseNumber(otherInput.value);
-            //     const nominal_1 = parseNumber(nominal_1Input.value);
-            //     const nominal_2 = parseNumber(nominal_2Input.value);
-            //     const nominal_3 = parseNumber(nominal_3Input.value);
-            //     const nominal_4 = parseNumber(nominal_4Input.value);
-            //     const nominal_5 = parseNumber(nominal_5Input.value);
-
-            //     // Perbaiki penulisan caTypeInput.value
-            //     const ca_type = caTypeInput.value;
-
-            //     let totalca = 0;
-            //     if (ca_type === 'dns') {
-            //         totalca = allowance + transport + accommodation + other;
-            //     } else if (ca_type === 'ndns') {
-            //         totalca = transport + accommodation + other;
-            //         allowanceInput.value = 0;
-            //     } else if (ca_type === 'entr') {
-            //         totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
-            //         allowanceInput.value = 0;
-            //     }
-
-            //     // totalcaInput.value = formatNumber(totalca.toFixed(2));
-            //     totalcaInput.value = formatNumber(Math.floor(totalca));
-            // }
 
             startDateInput.addEventListener('change', calculateTotalDays);
             endDateInput.addEventListener('change', calculateTotalDays);
