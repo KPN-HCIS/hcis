@@ -357,8 +357,6 @@ class ReimburseController extends Controller
             $managerL1 = $deptHeadManager->employee_id;
             $managerL2 = $deptHeadManager->manager_l1_id;
 
-            $model->sett_id = $managerL1;
-
             $cek_director_id = Employee::select([
                 'dsg.department_level2',
                 'dsg2.director_flag',
@@ -412,15 +410,15 @@ class ReimburseController extends Controller
                     $employee_id = $data_matrix_approval->employee_id;
                 }
 
-                $model_approval = new ca_approval;
-                $model_approval->ca_id = $uuid;
-                $model_approval->role_name = $data_matrix_approval->desc;
-                $model_approval->employee_id = $employee_id;
-                $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = 'Pending';
+                $model = new ca_approval;
+                $model->ca_id = $req->id;
+                $model->role_name = $data_matrix_approval->desc;
+                $model->employee_id = $employee_id;
+                $model->layer = $data_matrix_approval->layer;
+                $model->approval_status = 'Pending';
 
                 // Simpan data ke database
-                $model_approval->save();
+                $model->save();
             }
         }
 
@@ -564,6 +562,7 @@ class ReimburseController extends Controller
                 'detail_lainnya' => $detail_lainnya,
             ];
 
+            $model->declare_ca = json_encode($detail_ca);
             $model->detail_ca = json_encode($detail_ca);
         } else if ($req->ca_type == 'ndns') {
             $detail_ndns = [];
@@ -580,6 +579,7 @@ class ReimburseController extends Controller
                 }
             }
             $detail_ndns_json = json_encode($detail_ndns);
+            $model->declare_ca = $detail_ndns_json;
             $model->detail_ca = $detail_ndns_json;
         } else if ($req->ca_type == 'entr') {
             $detail_e = [];
@@ -624,6 +624,7 @@ class ReimburseController extends Controller
                 'relation_e' => $relation_e,
             ];
             $model->detail_ca = json_encode($detail_ca);
+            $model->declare_ca = json_encode($detail_ca);
         }
         $model->total_ca = str_replace('.', '', $req->totalca);
         $model->total_real = "0";
@@ -657,7 +658,7 @@ class ReimburseController extends Controller
             $managerL1 = $deptHeadManager->employee_id;
             $managerL2 = $deptHeadManager->manager_l1_id;
 
-            $model->sett_id = $managerL1;
+            $model->status_id = $managerL1;
 
             $cek_director_id = Employee::select([
                 'dsg.department_level2',
@@ -713,7 +714,7 @@ class ReimburseController extends Controller
                 }
 
                 $model_approval = new ca_approval;
-                $model_approval->ca_id = $uuid;
+                $model_approval->ca_id = $req->no_id;
                 $model_approval->role_name = $data_matrix_approval->desc;
                 $model_approval->employee_id = $employee_id;
                 $model_approval->layer = $data_matrix_approval->layer;
@@ -809,8 +810,10 @@ class ReimburseController extends Controller
             $file->move(public_path('uploads/proofs'), $filename);
 
             $model->prove_declare = $filename;
+            dd($model->prove_declare = $filename);
         } else {
             $model->prove_declare = $req->input('existing_prove_declare');
+            dd($model->prove_declare = $req->input('existing_prove_declare'));
         }
 
         $model->no_ca = $req->no_ca;
@@ -1043,7 +1046,7 @@ class ReimburseController extends Controller
                 }
 
                 $model_approval = new ca_sett_approval;
-                $model_approval->ca_id = $uuid;
+                $model_approval->ca_id = $req->no_id;
                 $model_approval->role_name = $data_matrix_approval->desc;
                 $model_approval->employee_id = $employee_id;
                 $model_approval->layer = $data_matrix_approval->layer;

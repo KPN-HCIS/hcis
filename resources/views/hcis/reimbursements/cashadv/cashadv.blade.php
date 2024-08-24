@@ -144,8 +144,8 @@
                                                 <td>Entertainment</td>
                                             @endif
                                             <td>{{ $ca_transaction->contribution_level_code }}</td>
-                                            <td>{{ $ca_transaction->formatted_start_date }}</td>
-                                            <td>{{ $ca_transaction->formatted_end_date }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($ca_transaction->start_date)->format('d-M-y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($ca_transaction->end_date)->format('d-M-y') }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>

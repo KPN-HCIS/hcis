@@ -27,7 +27,7 @@
                 <div class="card-header d-flex bg-white justify-content-between">
                     <p></p>
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Deklarasi Cash Advance -
-                        <b>{{ $transactions->no_ca }}</b></h4>
+                        <b>"{{ $transactions->no_ca }}"</b></h4>
                     <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
@@ -665,6 +665,7 @@
 
                                     <!-- Input file -->
                                     <input type="file" id="prove_declare" name="prove_declare" accept="image/*,.pdf" class="form-control" onchange="previewFile()">
+                                    <input type="hidden" name="existing_prove_declare" value="{{ $transactions->prove_declare }}">
 
                                     <!-- Show existing file -->
                                     <div id="existing-file-preview" class="mt-2">
