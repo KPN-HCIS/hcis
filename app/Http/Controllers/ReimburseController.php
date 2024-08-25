@@ -47,8 +47,10 @@ class ReimburseController extends Controller
 
         // Memformat tanggal
         foreach ($ca_transactions as $transaction) {
-            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
-            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+            if ($transaction->approval_status == 'Approved' && Carbon::parse($transaction->declare_estimate)->isToday() || Carbon::parse($transaction->declare_estimate)->isPast()) {
+                $transaction->approval_status = 'Declaration';
+                $transaction->save();
+            }
         }
 
         return view('hcis.reimbursements.cashadv.cashadv', [
@@ -331,9 +333,6 @@ class ReimburseController extends Controller
         if ($req->input('action_ca_submit')) {
             $model->approval_status = $req->input('action_ca_submit');
         }
-
-        $model->created_by = $userId;
-
         if ($req->input('action_ca_submit')) {
             function findDepartmentHead($employee)
             {
@@ -357,6 +356,8 @@ class ReimburseController extends Controller
             $managerL1 = $deptHeadManager->employee_id;
             $managerL2 = $deptHeadManager->manager_l1_id;
 
+            $model->status_id = $managerL1;
+
             $cek_director_id = Employee::select([
                 'dsg.department_level2',
                 'dsg2.director_flag',
@@ -370,7 +371,7 @@ class ReimburseController extends Controller
                 ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
                 ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
                 ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'T')
+                ->where('dsg2.director_flag', '=', 'F')
                 ->get();
 
             $director_id = "";
@@ -410,18 +411,19 @@ class ReimburseController extends Controller
                     $employee_id = $data_matrix_approval->employee_id;
                 }
 
-                $model = new ca_approval;
-                $model->ca_id = $req->id;
-                $model->role_name = $data_matrix_approval->desc;
-                $model->employee_id = $employee_id;
-                $model->layer = $data_matrix_approval->layer;
-                $model->approval_status = 'Pending';
+                $model_approval = new ca_approval;
+                $model_approval->ca_id = $uuid;
+                $model_approval->role_name = $data_matrix_approval->desc;
+                $model_approval->employee_id = $employee_id;
+                $model_approval->layer = $data_matrix_approval->layer;
+                $model_approval->approval_status = 'Pending';
 
                 // Simpan data ke database
-                $model->save();
+                $model_approval->save();
             }
         }
 
+        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success');
@@ -673,7 +675,7 @@ class ReimburseController extends Controller
                 ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
                 ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
                 ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'T')
+                ->where('dsg2.director_flag', '=', 'F')
                 ->get();
 
             $director_id = "";
@@ -724,7 +726,6 @@ class ReimburseController extends Controller
                 $model_approval->save();
             }
         }
-        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success Update');
@@ -810,10 +811,8 @@ class ReimburseController extends Controller
             $file->move(public_path('uploads/proofs'), $filename);
 
             $model->prove_declare = $filename;
-            dd($model->prove_declare = $filename);
         } else {
             $model->prove_declare = $req->input('existing_prove_declare');
-            dd($model->prove_declare = $req->input('existing_prove_declare'));
         }
 
         $model->no_ca = $req->no_ca;
