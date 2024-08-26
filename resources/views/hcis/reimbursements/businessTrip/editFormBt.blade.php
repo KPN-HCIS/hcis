@@ -1223,13 +1223,25 @@
                                                                                                                 <span
                                                                                                                     class="input-group-text">Rp</span>
                                                                                                             </div>
+                                                                                                              @php
+                                                                                                                // Assuming $totalLainnya is available and holds the total value for 'lainnya'
+                                                                                                                $totalLainnya =
+                                                                                                                    $totalLainnya ??
+                                                                                                                    0; // Default to 0 if $totalLainnya is not set
+                                                                                                                $formattedTotalLainnya = number_format(
+                                                                                                                    $totalLainnya,
+                                                                                                                    0,
+                                                                                                                    ',',
+                                                                                                                    '.',
+                                                                                                                );
+                                                                                                            @endphp
                                                                                                             <input
                                                                                                                 class="form-control bg-light"
                                                                                                                 name="total_bt_lainnya[]"
                                                                                                                 id="total_bt_lainnya"
                                                                                                                 type="text"
                                                                                                                 min="0"
-                                                                                                                value="0"
+                                                                                                                 value="{{ old('total_bt_lainnya.' . $index, $formattedTotalLainnya) }}"
                                                                                                                 readonly>
                                                                                                         </div>
                                                                                                     </div>

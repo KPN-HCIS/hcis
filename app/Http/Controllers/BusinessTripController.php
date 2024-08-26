@@ -15,6 +15,7 @@ use App\Models\Hotel;
 use App\Models\Location;
 use App\Models\Taksi;
 use App\Models\Tiket;
+use App\Models\ListPerdiem;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Http\Request;
@@ -515,6 +516,7 @@ class BusinessTripController extends Controller
             ];
 
             $ca->detail_ca = json_encode($detail_ca);
+            $ca->declare_ca = json_encode($detail_ca);
             $ca->save();
         } else {
             // If CA is not selected, remove existing CA transaction for this no_sppd
@@ -526,10 +528,80 @@ class BusinessTripController extends Controller
 
     public function deklarasi($id)
     {
+        $n = BusinessTrip::find($id);
+        $userId = Auth::id();
+        $employee_data = Employee::where('id', $userId)->first();
+
+        $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
+
+        // Initialize caDetail with an empty array if it's null
+        $caDetail = $ca ? json_decode($ca->detail_ca, true) : [];
+        $declareCa = $ca ? json_decode($ca->declare_ca, true) : [];
+
+        // Safely access nominalPerdiem with default '0' if caDetail is empty
+        $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
+        $nominalPerdiemDeclare = isset($declareCa['detail_perdiem'][0]['nominal']) ? $declareCa['detail_perdiem'][0]['nominal'] : '0';
+
+        // Retrieve the taxi data for the specific BusinessTrip
+        $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
+
+        // Retrieve all hotels for the specific BusinessTrip
+        $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare hotel data for the view
+        $hotelData = [];
+        foreach ($hotels as $index => $hotel) {
+            $hotelData[] = [
+                'nama_htl' => $hotel->nama_htl,
+                'lokasi_htl' => $hotel->lokasi_htl,
+                'jmlkmr_htl' => $hotel->jmlkmr_htl,
+                'bed_htl' => $hotel->bed_htl,
+                'tgl_masuk_htl' => $hotel->tgl_masuk_htl,
+                'tgl_keluar_htl' => $hotel->tgl_keluar_htl,
+                'total_hari' => $hotel->total_hari,
+                'more_htl' => ($index < count($hotels) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve all tickets for the specific BusinessTrip
+        $tickets = Tiket::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare ticket data for the view
+        $ticketData = [];
+        foreach ($tickets as $index => $ticket) {
+            $ticketData[] = [
+                'noktp_tkt' => $ticket->noktp_tkt,
+                'dari_tkt' => $ticket->dari_tkt,
+                'ke_tkt' => $ticket->ke_tkt,
+                'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                'jenis_tkt' => $ticket->jenis_tkt,
+                'type_tkt' => $ticket->type_tkt,
+                'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'ket_tkt' => $ticket->ket_tkt,
+                'more_tkt' => ($index < count($tickets) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve locations and companies data for the dropdowns
+        $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
 
-        $n = BusinessTrip::find($id);
-        return view('hcis.reimbursements.businessTrip.deklarasi', ['n' => $n, 'companies' => $companies]);
+        return view('hcis.reimbursements.businessTrip.deklarasi', [
+            'n' => $n,
+            'hotelData' => $hotelData,
+            'taksiData' => $taksi, // Pass the taxi data
+            'ticketData' => $ticketData,
+            'employee_data' => $employee_data,
+            'companies' => $companies,
+            'locations' => $locations,
+            'caDetail' => $caDetail,
+            'declareCa' => $declareCa,
+            'ca' => $ca,
+            'nominalPerdiem' => $nominalPerdiem,
+            'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
+        ]);
     }
 
 
@@ -567,10 +639,11 @@ class BusinessTripController extends Controller
     public function pdfDownload($id)
     {
         $sppd = BusinessTrip::findOrFail($id);
+        // $transactions = CATransaction::find($id);
         $response = ['sppd' => $sppd];
 
         $types = [
-            'ca' => ca_transaction::class,
+            'ca' => CATransaction::class,
             'tiket' => Tiket::class,
             'hotel' => Hotel::class,
             'taksi' => Taksi::class
@@ -621,12 +694,30 @@ class BusinessTripController extends Controller
                             $data = ['sppd' => $sppd];
                             break;
                         case 'ca':
-                            $ca = ca_transaction::where('no_sppd', $sppd->no_sppd)->first();
+                            $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
                             if (!$ca)
                                 continue 2;
+
+                            // Change the viewPath to the new file
                             $pdfName = 'CA.pdf';
-                            $viewPath = 'hcis.reimbursements.businessTrip.ca_pdf';
-                            $data = ['ca' => $ca];
+                            $viewPath = 'hcis.reimbursements.cashadv.printCashadv'; // Update this path to the correct view file
+                            $employee_data = Employee::where('id', $user->id)->first();
+                            $companies = Company::orderBy('contribution_level')->get();
+                            $locations = Location::orderBy('area')->get();
+                            $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+                            $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
+
+                            $data = [
+                                'link' => 'Cash Advanced',
+                                'parentLink' => 'Reimbursement',
+                                'userId' => $user->id,
+                                'companies' => $companies,
+                                'locations' => $locations,
+                                'employee_data' => $employee_data,
+                                'perdiem' => $perdiem,
+                                'no_sppds' => $no_sppds,
+                                'transactions' => $ca,
+                            ];
                             break;
                         case 'tiket':
                             $tickets = Tiket::where('no_sppd', $sppd->no_sppd)->get();
@@ -1037,6 +1128,7 @@ class BusinessTripController extends Controller
             ];
 
             $ca->detail_ca = json_encode($detail_ca);
+            $ca->declare_ca = json_encode($detail_ca);
             $ca->save();
         }
 
