@@ -26,7 +26,7 @@
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-white justify-content-between">
                     <a href=""></a>
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Deklarasi Data - <b>"{{ $transactions->no_ca }}"</h4>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Approval Deklarasi Cash Advanced - <b>"{{ $transactions->no_ca }}"</h4>
                     <a href="{{ route('approval.cashadvancedDeklarasi') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>

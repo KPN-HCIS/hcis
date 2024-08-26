@@ -130,10 +130,14 @@ class ApprovalReimburseController extends Controller
 
         // Cek jika tombol reject ditekan
         if ($req->input('action_ca_reject')) {
-            $model->approval_status = 'Reject'; // Berikan status yang sesuai
-            $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
-            $model->save();
-            Alert::success('Success', 'Approval rejected successfully.');
+            ca_approval::where('ca_id', $ca_id)->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
+            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_status = 'Rejected';
+                $caTransaction->save();
+            }
+
+            Alert::success('Success', 'All approvals rejected successfully.');
             return redirect()->route('approval.cashadvanced');
         }
 
@@ -255,11 +259,15 @@ class ApprovalReimburseController extends Controller
 
         // Cek jika tombol reject ditekan
         if ($req->input('action_ca_reject')) {
-            $model->approval_status = 'Reject'; // Berikan status yang sesuai
-            $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
-            $model->save();
-            Alert::success('Success', 'Approval rejected successfully.');
-            return redirect()->route('approval.cashadvancedDeklarasi');
+            ca_sett_approval::where('ca_id', $ca_id)->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
+            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_sett = 'Rejected';
+                $caTransaction->save();
+            }
+
+            Alert::success('Success', 'All approvals rejected successfully.');
+            return redirect()->route('approval.cashadvanced');
         }
 
         // Cek jika tombol approve ditekan
