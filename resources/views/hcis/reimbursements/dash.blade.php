@@ -128,7 +128,7 @@ h4 {
             </div> --}}
 
             <div class="col-md-3">
-                <a href="{{ route('approval') }}">
+                <a href="{{ route('approval.cashadvanced') }}">
                     <div class="card" style="height: 215px">
                         <div class="card-body">
                             <img src="{{ asset('images/menu/cashadv.png')}}" alt="logo">

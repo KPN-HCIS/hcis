@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class ca_approval extends Model
+class ca_sett_approval extends Model
 {
     use HasFactory;
 

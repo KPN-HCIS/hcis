@@ -9,7 +9,6 @@ use App\Models\Hotel;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Designation;
-use App\Models\ca_sett_approval;
 use App\Models\Location;
 use App\Models\Employee;
 use App\Models\MatrixApproval;
@@ -25,8 +24,6 @@ use App\Models\tkt_transaction;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\CashAdvancedExport;
 
 class ReimburseController extends Controller
 {
@@ -47,14 +44,11 @@ class ReimburseController extends Controller
         $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
         $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
 
+        // Memformat tanggal
         foreach ($ca_transactions as $transaction) {
-            if ($transaction->approval_status == 'Approved' && Carbon::parse($transaction->declare_estimate)->isToday() || Carbon::parse($transaction->declare_estimate)->isPast()) {
-                $transaction->approval_status = 'Declaration';
-                $transaction->save();
-            }
+            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
         }
-
-
 
         return view('hcis.reimbursements.cashadv.cashadv', [
             'pendingCACount' => $pendingCACount,
@@ -63,45 +57,6 @@ class ReimburseController extends Controller
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
         ]);
-    }
-    public function cashadvancedAdmin()
-    {
-        $userId = Auth::id();
-        $parentLink = 'Reimbursement';
-        $link = 'Report CA';
-        $ca_transactions = CATransaction::with('employee')->get();
-        $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
-
-        // Memformat tanggal
-        foreach ($ca_transactions as $transaction) {
-            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
-            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
-        }
-
-        return view('hcis.reimbursements.cashadv.adminCashadv', [
-            'pendingCACount' => $pendingCACount,
-            'link' => $link,
-            'parentLink' => $parentLink,
-            'userId' => $userId,
-            'ca_transactions' => $ca_transactions,
-        ]);
-    }
-    public function filterCaTransactions(Request $request)
-    {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        
-        // Lakukan query untuk memfilter transaksi berdasarkan tanggal
-        $ca_transactions = CATransaction::with('employee')->whereBetween('start_date', [$startDate, $endDate])
-                                        ->get();
-        foreach ($ca_transactions as $transaction) {
-            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
-            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
-        }
-        
-        // dd($ca_transactions);
-        // Kembalikan tampilan tabel yang telah difilter
-        return view('hcis.reimbursements.cashadv.CaTransactionsTable', compact('ca_transactions'))->render();
     }
     function cashadvancedCreate()
     {
@@ -222,7 +177,7 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-           // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
+                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -232,7 +187,7 @@ class ReimburseController extends Controller
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
                     // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
-                    $detail_perdiem[] = [
+                    $for_perdiem[] = [
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'total_days' => $totalDays,
@@ -303,7 +258,6 @@ class ReimburseController extends Controller
             ];
 
             $model->detail_ca = json_encode($detail_ca);
-            $model->declare_ca = json_encode($detail_ca);
         } else if ($req->ca_type == 'ndns') {
             $detail_ndns = [];
             if ($req->has('tanggal_nbt')) {
@@ -320,7 +274,6 @@ class ReimburseController extends Controller
             }
             $detail_ndns_json = json_encode($detail_ndns);
             $model->detail_ca = $detail_ndns_json;
-            $model->declare_ca = $detail_ndns_json;
         } else if ($req->ca_type == 'entr') {
             $detail_e = [];
             $relation_e = [];
@@ -364,7 +317,6 @@ class ReimburseController extends Controller
                 'relation_e' => $relation_e,
             ];
             $model->detail_ca = json_encode($detail_ca);
-            $model->declare_ca = json_encode($detail_ca);
         }
 
         $model->total_ca = str_replace('.', '', $req->totalca);
@@ -377,6 +329,9 @@ class ReimburseController extends Controller
         if ($req->input('action_ca_submit')) {
             $model->approval_status = $req->input('action_ca_submit');
         }
+
+        $model->created_by = $userId;
+
         if ($req->input('action_ca_submit')) {
             function findDepartmentHead($employee)
             {
@@ -415,7 +370,7 @@ class ReimburseController extends Controller
                 ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
                 ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
                 ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
+                ->where('dsg2.director_flag', '=', 'T')
                 ->get();
 
             $director_id = "";
@@ -467,7 +422,6 @@ class ReimburseController extends Controller
             }
         }
 
-        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success');
@@ -528,6 +482,7 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
+                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -535,13 +490,14 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
+                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
-                    $detail_perdiem[] = [
+                    $for_perdiem[] = [
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'total_days' => $totalDays,
                         'location' => $location,
-                        // 'other_location' => $other_location,
+                        'other_location' => $other_location,
                         'company_code' => $companyCode,
                         'nominal' => $nominal,
                     ];
@@ -606,7 +562,6 @@ class ReimburseController extends Controller
                 'detail_lainnya' => $detail_lainnya,
             ];
 
-            $model->declare_ca = json_encode($detail_ca);
             $model->detail_ca = json_encode($detail_ca);
         } else if ($req->ca_type == 'ndns') {
             $detail_ndns = [];
@@ -623,7 +578,6 @@ class ReimburseController extends Controller
                 }
             }
             $detail_ndns_json = json_encode($detail_ndns);
-            $model->declare_ca = $detail_ndns_json;
             $model->detail_ca = $detail_ndns_json;
         } else if ($req->ca_type == 'entr') {
             $detail_e = [];
@@ -668,7 +622,6 @@ class ReimburseController extends Controller
                 'relation_e' => $relation_e,
             ];
             $model->detail_ca = json_encode($detail_ca);
-            $model->declare_ca = json_encode($detail_ca);
         }
         $model->total_ca = str_replace('.', '', $req->totalca);
         $model->total_real = "0";
@@ -679,10 +632,7 @@ class ReimburseController extends Controller
         if ($req->input('action_ca_submit')) {
             $model->approval_status = $req->input('action_ca_submit');
         }
-
-        $model->created_by = $userId;
-
-        if($req->input('action_ca_submit')){
+        if ($req->input('action_ca_submit')) {
             function findDepartmentHead($employee)
             {
                 $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
@@ -720,7 +670,7 @@ class ReimburseController extends Controller
                 ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
                 ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
                 ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
+                ->where('dsg2.director_flag', '=', 'T')
                 ->get();
 
             $director_id = "";
@@ -771,6 +721,7 @@ class ReimburseController extends Controller
                 $model_approval->save();
             }
         }
+        $model->created_by = $userId;
         $model->save();
 
         Alert::success('Success Update');
@@ -825,7 +776,6 @@ class ReimburseController extends Controller
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $transactions = CATransaction::findByRouteKey($key);
-        // dd($transactions);
 
         return view('hcis.reimbursements.cashadv.deklarasiCashadv', [
             'link' => $link,
@@ -846,16 +796,15 @@ class ReimburseController extends Controller
         $model = CATransaction::findByRouteKey($key);
         $employee_data = Employee::where('id', $userId)->first();
 
+        // Validasi file yang diupload
         $req->validate([
-            'prove_declare' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Aturan validasi file gambar
+            'prove_declare' => 'required|image|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Aturan validasi file gambar
         ]);
 
         if ($req->hasFile('prove_declare')) {
             $file = $req->file('prove_declare');
             $filename = time() . '_' . $file->getClientOriginalName();
-
             $file->move(public_path('uploads/proofs'), $filename);
-
             $model->prove_declare = $filename;
         } else {
             $model->prove_declare = $req->input('existing_prove_declare');
@@ -870,7 +819,9 @@ class ReimburseController extends Controller
             $detail_penginapan = [];
             $detail_lainnya = [];
 
+            // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
+                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -878,8 +829,9 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
+                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
-                    $detail_perdiem[] = [
+                    $for_perdiem[] = [
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'total_days' => $totalDays,
@@ -891,9 +843,11 @@ class ReimburseController extends Controller
                 }
             }
 
+            // Loop untuk Transport
             if ($req->has('tanggal_bt_transport')) {
                 foreach ($req->tanggal_bt_transport as $key => $tanggal) {
                     $keterangan = $req->keterangan_bt_transport[$key];
+                    // $companyCode = $req->company_bt_transport[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
                     $detail_transport[] = [
@@ -905,6 +859,7 @@ class ReimburseController extends Controller
                 }
             }
 
+            // Loop untuk Penginapan
             if ($req->has('start_bt_penginapan')) {
                 foreach ($req->start_bt_penginapan as $key => $startDate) {
                     $endDate = $req->end_bt_penginapan[$key];
@@ -924,6 +879,7 @@ class ReimburseController extends Controller
                 }
             }
 
+            // Loop untuk Lainnya
             if ($req->has('tanggal_bt_lainnya')) {
                 foreach ($req->tanggal_bt_lainnya as $key => $tanggal) {
                     $keterangan = $req->keterangan_bt_lainnya[$key];
@@ -937,6 +893,7 @@ class ReimburseController extends Controller
                 }
             }
 
+            // Konversi array menjadi JSON untuk disimpan di database
             $declare_ca = [
                 'detail_perdiem' => $detail_perdiem,
                 'detail_transport' => $detail_transport,
@@ -950,7 +907,7 @@ class ReimburseController extends Controller
             if ($req->has('tanggal_nbt')) {
                 foreach ($req->tanggal_nbt as $key => $tanggal) {
                     $keterangan_nbt = $req->keterangan_nbt[$key];
-                    $nominal_nbt = str_replace('.', '', $req->nominal_nbt[$key]);
+                    $nominal_nbt = str_replace('.', '', $req->nominal_nbt[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
                     $detail_ndns[] = [
                         'tanggal_nbt' => $tanggal,
@@ -965,10 +922,11 @@ class ReimburseController extends Controller
             $detail_e = [];
             $relation_e = [];
 
+            // Mengumpulkan detail entertain
             if ($req->has('enter_type_e_detail')) {
                 foreach ($req->enter_type_e_detail as $key => $type) {
                     $fee_detail = $req->enter_fee_e_detail[$key];
-                    $nominal = str_replace('.', '', $req->nominal_e_detail[$key]);
+                    $nominal = str_replace('.', '', $req->nominal_e_detail[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
                     $detail_e[] = [
                         'type' => $type,
@@ -978,6 +936,7 @@ class ReimburseController extends Controller
                 }
             }
 
+            // Mengumpulkan detail relation
             if ($req->has('rname_e_relation')) {
                 foreach ($req->rname_e_relation as $key => $name) {
                     $relation_e[] = [
@@ -996,6 +955,7 @@ class ReimburseController extends Controller
                 }
             }
 
+            // Gabungkan detail entertain dan relation, lalu masukkan ke detail_ca
             $declare_ca = [
                 'detail_e' => $detail_e,
                 'relation_e' => $relation_e,
@@ -1005,102 +965,102 @@ class ReimburseController extends Controller
         $model->total_ca = str_replace('.', '', $req->totalca);
         $model->total_real = str_replace('.', '', $req->totalca_deklarasi);
         $model->total_cost = str_replace('.', '', $req->totalca);
-
         if ($req->input('action_ca_draft')) {
             $model->approval_sett = $req->input('action_ca_draft');
         }
         if ($req->input('action_ca_submit')) {
-            $model->approval_sett = $req->input('action_ca_submit');
+            // $model->approval_status = $req->input('action_ca_submit');
+            $model->approval_sett = 'Pending';
         }
-        if ($req->input('action_ca_submit')) {
-            function findDepartmentHead($employee)
-            {
-                $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+        // if ($req->input('action_ca_submit')) {
+        //     function findDepartmentHead($employee)
+        //     {
+        //         $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
 
-                if (!$manager) {
-                    return null;
-                }
+        //         if (!$manager) {
+        //             return null;
+        //         }
 
-                $designation = Designation::where('job_code', $manager->designation_code)->first();
+        //         $designation = Designation::where('job_code', $manager->designation_code)->first();
 
-                if ($designation->dept_head_flag == 'T') {
-                    return $manager;
-                } else {
-                    return findDepartmentHead($manager);
-                }
-                return null;
-            }
-            $deptHeadManager = findDepartmentHead($employee_data);
+        //         if ($designation->dept_head_flag == 'T') {
+        //             return $manager;
+        //         } else {
+        //             return findDepartmentHead($manager);
+        //         }
+        //         return null;
+        //     }
+        //     $deptHeadManager = findDepartmentHead($employee_data);
 
-            $managerL1 = $deptHeadManager->employee_id;
-            $managerL2 = $deptHeadManager->manager_l1_id;
+        //     $managerL1 = $deptHeadManager->employee_id;
+        //     $managerL2 = $deptHeadManager->manager_l1_id;
 
-            $model->sett_id = $managerL1;
+        //     $model->status_id = $managerL1;
 
-            $cek_director_id = Employee::select([
-                'dsg.department_level2',
-                'dsg2.director_flag',
-                DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
-                'dsg2.designation_name',
-                'dsg2.job_code',
-                'emp.fullname',
-                'emp.employee_id',
-            ])
-                ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
-                ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
-                ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
-                ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
-                ->get();
+        //     $cek_director_id = Employee::select([
+        //         'dsg.department_level2',
+        //         'dsg2.director_flag',
+        //         DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
+        //         'dsg2.designation_name',
+        //         'dsg2.job_code',
+        //         'emp.fullname',
+        //         'emp.employee_id',
+        //     ])
+        //         ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
+        //         ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
+        //         ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
+        //         ->where('employees.designation_code', '=', $employee_data->designation_code)
+        //         ->where('dsg2.director_flag', '=', 'T')
+        //         ->get();
 
-            $director_id = "";
+        //     $director_id = "";
 
-            if ($cek_director_id->isNotEmpty()) {
-                $director_id = $cek_director_id->first()->employee_id;
-            }
-            //cek matrix approval
-            $total_ca = str_replace('.', '', $req->totalca);
-            $data_matrix_approvals = MatrixApproval::where(function ($query) use ($req) {
-                if ($req->ca_type === 'dns') {
-                    $query->where('modul', 'dns');
-                } else {
-                    $query->where('modul', 'like', '%' . $req->ca_type . '%');
-                }
-            })
-                ->where('group_company', 'like', '%' . $employee_data->group_company . '%')
-                ->where('contribution_level_code', 'like', '%' . $req->companyFilter . '%')
-                ->whereRaw(
-                    '
-            ? BETWEEN
-            CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND
-            CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
-                    [$total_ca]
-                )
-                ->get();
+        //     if ($cek_director_id->isNotEmpty()) {
+        //         $director_id = $cek_director_id->first()->employee_id;
+        //     }
+        //     //cek matrix approval
+        //     $total_ca = str_replace('.', '', $req->totalca);
+        //     $data_matrix_approvals = MatrixApproval::where(function ($query) use ($req) {
+        //         if ($req->ca_type === 'dns') {
+        //             $query->where('modul', 'dns');
+        //         } else {
+        //             $query->where('modul', 'like', '%' . $req->ca_type . '%');
+        //         }
+        //     })
+        //         ->where('group_company', 'like', '%' . $employee_data->group_company . '%')
+        //         ->where('contribution_level_code', 'like', '%' . $req->companyFilter . '%')
+        //         ->whereRaw(
+        //             '
+        //     ? BETWEEN
+        //     CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND
+        //     CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
+        //             [$total_ca]
+        //         )
+        //         ->get();
 
-            foreach ($data_matrix_approvals as $data_matrix_approval) {
+        //     foreach ($data_matrix_approvals as $data_matrix_approval) {
 
-                if ($data_matrix_approval->employee_id == "cek_L1") {
-                    $employee_id = $managerL1;
-                } else if ($data_matrix_approval->employee_id == "cek_L2") {
-                    $employee_id = $managerL2;
-                } else if ($data_matrix_approval->employee_id == "cek_director") {
-                    $employee_id = $director_id;
-                } else {
-                    $employee_id = $data_matrix_approval->employee_id;
-                }
+        //         if ($data_matrix_approval->employee_id == "cek_L1") {
+        //             $employee_id = $managerL1;
+        //         } else if ($data_matrix_approval->employee_id == "cek_L2") {
+        //             $employee_id = $managerL2;
+        //         } else if ($data_matrix_approval->employee_id == "cek_director") {
+        //             $employee_id = $director_id;
+        //         } else {
+        //             $employee_id = $data_matrix_approval->employee_id;
+        //         }
 
-                $model_approval = new ca_sett_approval;
-                $model_approval->ca_id = $req->no_id;
-                $model_approval->role_name = $data_matrix_approval->desc;
-                $model_approval->employee_id = $employee_id;
-                $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = 'Pending';
+        //         $model_approval = new ca_approval;
+        //         $model_approval->ca_id = $req->no_id;
+        //         $model_approval->role_name = $data_matrix_approval->desc;
+        //         $model_approval->employee_id = $employee_id;
+        //         $model_approval->layer = $data_matrix_approval->layer;
+        //         $model_approval->approval_status = 'Pending';
 
-                // Simpan data ke database
-                $model_approval->save();
-            }
-        }
+        //         // Simpan data ke database
+        //         $model_approval->save();
+        //     }
+        // }
         $model->declaration_at = Carbon::now();
         $model->save();
 
@@ -1425,9 +1385,5 @@ class ReimburseController extends Controller
         $model = tkt_transaction::findByRouteKey($key);
         $model->delete();
         return redirect()->intended(route('ticket', absolute: false));
-    }
-    public function exportExcel()
-    {
-        return Excel::download(new CashAdvancedExport, 'cash_advanced.xlsx');
     }
 }

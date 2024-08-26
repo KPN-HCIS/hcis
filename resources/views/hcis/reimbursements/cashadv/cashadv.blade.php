@@ -1,11 +1,76 @@
 @extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
 
 @section('css')
+<style>
+    .table {
+            border-collapse: separate;
+            width: 100%;
+            position: relative;
+            overflow: auto;
+        }
+
+        .table thead th {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            background-color: #fff !important;
+            border-bottom: 2px solid #ddd !important;
+            padding-right: 6px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
+        .table tbody td {
+            background-color: #fff !important;
+            padding-right: 10px;
+            position: relative;
+        }
+
+        .table th.sticky-col-header {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 3 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
+        .table td.sticky-col {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 6px 0 0 #fff;
+        }
+</style>
 @endsection
 
 @section('content')
     <!-- Begin Page Content -->
     <div class="container-fluid">
+        {{-- <style>
+            thead th.sticky {
+                position: sticky;
+                left: 0;
+                background-color: white; /* Pastikan background tidak transparan */
+                z-index: 1; /* Agar tetap di atas elemen lain */
+            }
+
+            tbody td.sticky {
+                position: sticky;
+                left: 0;
+                background-color: white;
+                z-index: 1;
+            }
+        </style> --}}
         <!-- Page Heading -->
         <div class="row">
             <!-- Breadcrumb Navigation -->
@@ -54,8 +119,8 @@
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th>No</th>
+                                        <th class="sticky-col-header" style="background-color: white">Cash Advance No</th>
                                         <th>Type</th>
-                                        <th>Cash Advance No</th>
                                         <th>Company</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
@@ -69,7 +134,8 @@
                                 <tbody>
                                     @foreach ($ca_transactions as $ca_transaction)
                                         <tr>
-                                            <td class="text-center">{{ $loop->index + 1 }}</td>
+                                            <td class="text-center" >{{ $loop->index + 1 }}</td>
+                                            <td style="background-color: white;" class="sticky-col">{{ $ca_transaction->no_ca }}</td>
                                             @if ($ca_transaction->type_ca == 'dns')
                                                 <td>Business Trip</td>
                                             @elseif($ca_transaction->type_ca == 'ndns')
@@ -77,27 +143,25 @@
                                             @elseif($ca_transaction->type_ca == 'entr')
                                                 <td>Entertainment</td>
                                             @endif
-                                            <td class="text-center">{{ $ca_transaction->no_ca }}</td>
                                             <td>{{ $ca_transaction->contribution_level_code }}</td>
-                                            <td>{{ date('j M Y', strtotime($ca_transaction->formatted_start_date)) }}</td>
-                                            <td>{{ date('j M Y', strtotime($ca_transaction->formatted_end_date)) }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($ca_transaction->start_date)->format('d-M-y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($ca_transaction->end_date)->format('d-M-y') }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
                                             <td>
                                                 <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: none">
-                                                    {{ $ca_transaction->approval_status }}
+                                                    {{ $ca_transaction->approval_status }}  {{ $ca_transaction->approval_sett }}
                                                 </p>
                                             </td>
                                             <td class="text-center">
                                                 @if ($ca_transaction->approval_status == 'Approved')
                                                     <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_status == 'Declaration')
-                                                    <a href="{{ route('cashadvanced.edit', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                                 @elseif ($ca_transaction->approval_status == 'Pending')
                                                     <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_status == 'Reject')
-
                                                 @elseif ($ca_transaction->approval_status == 'Draft')
                                                     <a href="{{ route('cashadvanced.edit', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                                     {{-- <a href="{{ route('cashadvanced.show', $ca_transaction->id) }}" class="btn btn-outline-info" title="Edit"><i class="bi bi-card-checklist"></i></a> --}}
@@ -107,6 +171,8 @@
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </form>
+                                                @elseif ($ca_transaction->end_date == \Carbon\Carbon::today())
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                                 @else
 
                                                 @endif

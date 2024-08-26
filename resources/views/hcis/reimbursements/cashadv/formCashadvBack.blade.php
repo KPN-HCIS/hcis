@@ -191,16 +191,18 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        <!-- HTML -->
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Location Agency</label>
-                                                                            <select class="form-control" id="locationFilter" name="location_bt_perdiem[]" onchange="toggleOthers()">
+                                                                            <select class="form-control select2 location-select" name="location_bt_perdiem[]">
                                                                                 <option value="">Select location...</option>
                                                                                 @foreach($locations as $location)
                                                                                     <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
                                                                                 @endforeach
                                                                                 <option value="Others">Others</option>
                                                                             </select>
-                                                                            <br><input type="text" name="others_location" id="others_location" class="form-control" placeholder="Other Location" value="" style="display: none;">
+                                                                            <br>
+                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
@@ -497,7 +499,7 @@
                                                                                 <label class="form-label">Entertainment Type</label>
                                                                                 <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
                                                                                     <option value="">-</option>
-                                                                                    <option value="food_cost">Food/Beverages/Souvenir</option>
+                                                                                    <option value="foodcost">Food/Beverages/Souvenir</option>
                                                                                     <option value="transport">Transport</option>
                                                                                     <option value="accommodation">Accommodation</option>
                                                                                     <option value="gift">Gift</option>
@@ -549,8 +551,8 @@
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Relation Type</label>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="Food/Beverages/Souvenir">
-                                                                                    <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
+                                                                                    <input class="form-check-input" type="checkbox" id="foodcost_e_relation[]" value="Food/Beverages/Souvenir">
+                                                                                    <label class="form-check-label" for="foodcost_e_relation[]">Food/Beverages/Souvenir</label>
                                                                                 </div>
                                                                                 <div class="form-check">
                                                                                     <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="Accommodation">
@@ -620,9 +622,9 @@
                     <div class="row">
                         <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('cashadvanced') }}" type="button"
-                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" class=" btn btn-primary btn-pill px-4">Submit</button>
+                            <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-outline-secondary px-4 me-2">Cancel</a>
+                            <button type="submit" name="action_ca_draft" value="Draft" class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
+                            <button type="submit" name="action_ca_submit" value="Pending" class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
                         </div>
                     </div>
                     </form>
@@ -1014,7 +1016,9 @@
                         <label class="form-label" for="name">Location Agency</label>
                         <select class="form-control select2 location-select" name="location_bt_perdiem[]">
                             <option value="">Select location...</option>
-                            <!-- Daftar lokasi lainnya -->
+                            @foreach($locations as $location)
+                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                            @endforeach
                             <option value="Others">Others</option>
                         </select>
                         <br>
@@ -1350,6 +1354,8 @@
             });
         });
 
+
+
         //
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1486,7 +1492,7 @@
                 // Update visibility for each checkbox in enter_type_e_relation
                 formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
                     const checkbox = checkDiv.querySelector('input.form-check-input');
-                    const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
+                    const checkboxValue = checkbox.value.toLowerCase();
                     if (selectedOptions.includes(checkboxValue)) {
                         checkDiv.style.display = 'block';
                     } else {
@@ -1537,7 +1543,7 @@
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" class="form-select">
                             <option value="">-</option>
-                            <option value="food_cost">Food/Beverages/Souvenir</option>
+                            <option value="foodcost">Food/Beverages/Souvenir</option>
                             <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
                             <option value="gift">Gift</option>
@@ -1585,23 +1591,23 @@
                     <div class="mb-2">
                         <label class="form-label">Relation Type</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="food_cost_e_relation[]" value="food_cost">
-                            <label class="form-check-label" for="food_cost_e_relation[]">Food/Beverages/Souvenir</label>
+                            <input class="form-check-input" type="checkbox" name="foodcost_e_relation[]" value="foodcost">
+                            <label class="form-check-label" for="foodcost_e_relation[]">Food/Beverages/Souvenir</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="transport">
+                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" value="transport">
                             <label class="form-check-label" for="transport_e_relation[]">Transport</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="accommodation">
+                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" value="accommodation">
                             <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="gift">
+                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" value="gift">
                             <label class="form-check-label" for="gift_e_relation[]">Gift</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="fund">
+                            <input class="form-check-input" type="checkbox" name="fund_e_relation[]" value="fund">
                             <label class="form-check-label" for="fund_e_relation[]">Fund</label>
                         </div>
                     </div>
@@ -1655,6 +1661,7 @@
             calculateTotalNominalEDetail();
             updateCheckboxVisibility();
         });
+
 
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

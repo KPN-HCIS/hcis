@@ -116,11 +116,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
     Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
     Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
+    Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
+    Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
+    
+    // Approval Reimburse
+    Route::get('/approval/cashadvanced', [ApprovalReimburseController::class, 'cashadvancedApproval'])->name('approval.cashadvanced');
+    Route::get('/approval/cashadvanced/form/{id}', [ApprovalReimburseController::class, 'cashadvancedFormApproval'])->name('approval.cashadvancedForm');
+    Route::post('/approval/cashadvanced/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionApproval'])->name('approval.cashadvancedApproved');
 
     // Approval Reimburse
-    Route::get('/approval', [ApprovalReimburseController::class, 'approval'])->name('approval');
-    Route::get('/approval/cashadvanced/{id}', [ApprovalReimburseController::class, 'cashadvancedFormApproval'])->name('approval.cashadvanced');
-    Route::post('/approval/cashadvanced/{id}', [ReimburseController::class, 'cashadvancedActionApproval'])->name('approval.cashadvancedApproved');
+    Route::get('/approval/cashadvancedDeklarasi', [ApprovalReimburseController::class, 'cashadvancedDeklarasi'])->name('approval.cashadvancedDeklarasi');
+    Route::get('/approval/cashadvancedDeklarasi/form/{id}', [ApprovalReimburseController::class, 'cashadvancedFormDeklarasi'])->name('approval.cashadvancedFormDeklarasi');
+    Route::post('/approval/cashadvancedDeklarasi/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasi'])->name('approval.cashadvancedDeclare');
 
     // My Hotel
     Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');

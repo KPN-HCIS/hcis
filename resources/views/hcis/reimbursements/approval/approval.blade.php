@@ -121,30 +121,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-
-                                @foreach($ca_transactions->where('approval_status', 'Pending') as $ca_transaction)
-                                <tr>
-                                    <td>{{ $loop->index + 1 }}</td>
-                                    @if($ca_transaction->type_ca == 'dns')
-                                        <td>Business Trip</td>
-                                    @elseif($ca_transaction->type_ca == 'ndns')
-                                        <td>Non Business Trip</td>
-                                    @elseif($ca_transaction->type_ca == 'entr')
-                                        <td>Entertainment</td>
-                                    @endif
-                                    <td>{{ $ca_transaction->no_ca ." ($ca_transaction->contribution_level_code)"}}</td>
-                                    <td>{{ $ca_transaction->employee->fullname }}</td>
-                                    <td>{{ date('j M Y', strtotime($ca_transaction->formatted_start_date))." to ".date('j M Y', strtotime($ca_transaction->formatted_end_date)) }}</td>
-                                    <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
-                                    <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
-                                    <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
-                                    <td>
-                                        <p type="button" class="btn btn-sm rounded-pill btn-warning" style="pointer-events: none" title="cecek">{{ $ca_transaction->approval_status }}</p>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('approval.cashadvanced', encrypt($transaction->id)) }}" class="btn btn-outline-info" title="Approve" ><i class="bi bi-card-checklist"></i></a>
-                                    </td>
-                                </tr>
+                                @foreach($ca_approval as $ca_approvals)
+                                    @foreach($ca_approvals->transactions as $transaction)
+                                        <tr>
+                                            <td>{{ $loop->parent->index + 1 }}</td>
+                                            @if($transaction->type_ca == 'dns')
+                                                <td>Business Trip</td>
+                                            @elseif($transaction->type_ca == 'ndns')
+                                                <td>Non Business Trip</td>
+                                            @elseif($transaction->type_ca == 'entr')
+                                                <td>Entertainment</td>
+                                            @endif
+                                            <td>{{ $transaction->no_ca }}</td>
+                                            <td>{{ $transaction->employee->fullname }}</td>
+                                            <td>{{ $transaction->contribution_level_code }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-m-Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-m-Y') }}</td>
+                                            <td>Rp. {{ number_format($transaction->total_ca) }}</td>
+                                            <td>Rp. {{ number_format($transaction->total_real) }}</td>
+                                            <td>Rp. {{ number_format($transaction->total_cost) }}</td>
+                                            <td>
+                                                <p type="button" class="btn btn-sm rounded-pill btn-{{ $transaction->approval_status == 'Approved' ? 'success' : ($transaction->approval_status == 'Rejected' ? 'danger' : 'warning') }}" style="pointer-events: none">
+                                                    {{ $transaction->approval_status }}
+                                                </p>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="{{ route('approval.cashadvanced', encrypt($transaction->id)) }}" class="btn btn-sm rounded-pill btn-outline-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
                             </tbody>
                         </table>
