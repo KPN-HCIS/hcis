@@ -76,8 +76,8 @@
                                         <td>{{ $transaction->no_ca }}</td>
                                         <td>{{ $transaction->employee->fullname }}</td>
                                         <td>{{ $transaction->contribution_level_code }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-m-Y') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-m-Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-M-y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-M-y') }}</td>
                                         <td>Rp. {{ number_format($transaction->total_ca) }}</td>
                                         <td>Rp. {{ number_format($transaction->total_real) }}</td>
                                         <td>Rp. {{ number_format($transaction->total_cost) }}</td>

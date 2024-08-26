@@ -154,267 +154,269 @@
                             <br>
 
                             <div class="row" id="ca_bt" style="display: none;">
-                                <div class="col-md-12">
-                                    <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                            <div class="card">
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                </div>
-                                                <div id="perdiem-card" class="card-body" style="display: none;">
-                                                    <div class="accordion" id="accordionPerdiem">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                    Rencana Perdiem
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-bt-perdiem">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Start Perdiem</label>
-                                                                            <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">End Perdiem</label>
-                                                                            <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="start">Total Days</label>
-                                                                            <div class="input-group">
-                                                                                <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="0" readonly>
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">days</span>
+                                @if ($transactions->type_ca == 'dns')
+                                    <div class="col-md-12">
+                                        <div class="table-responsive-sm">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
+                                                <div class="card">
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
+                                                    </div>
+                                                    <div id="perdiem-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionPerdiem">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="enter-headingOne">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                        Rencana Perdiem
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-bt-perdiem">
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Start Perdiem</label>
+                                                                                <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">End Perdiem</label>
+                                                                                <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" placeholder="mm/dd/yyyy">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="start">Total Days</label>
+                                                                                <div class="input-group">
+                                                                                    <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="0" readonly>
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">days</span>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <!-- HTML -->
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Location Agency</label>
-                                                                            <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                                                                                <option value="">Select location...</option>
-                                                                                @foreach($locations as $location)
-                                                                                    <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
-                                                                                @endforeach
-                                                                                <option value="Others">Others</option>
-                                                                            </select>
-                                                                            <br>
-                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
-                                                                                <option value="">Select Company...</option>
-                                                                                @foreach($companies as $company)
-                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Amount</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                                            <!-- HTML -->
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="name">Location Agency</label>
+                                                                                <select class="form-control select2 location-select" name="location_bt_perdiem[]">
+                                                                                    <option value="">Select location...</option>
+                                                                                    @foreach($locations as $location)
+                                                                                        <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                                                                                    @endforeach
+                                                                                    <option value="Others">Others</option>
+                                                                                </select>
+                                                                                <br>
+                                                                                <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Perdiem</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="name">Company Code</label>
+                                                                                <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
+                                                                                    <option value="">Select Company...</option>
+                                                                                    @foreach($companies as $company)
+                                                                                        <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                                                                    @endforeach
+                                                                                </select>
                                                                             </div>
-                                                                            <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Button and Card for Transport -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
-                                                </div>
-                                                <div id="transport-card" class="card-body" style="display: none;">
-                                                    <div class="accordion" id="accordionTransport">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="headingTransport">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
-                                                                    Rencana Transport
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-bt-transport">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Tanggal Transport</label>
-                                                                            <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_transport[]">
-                                                                                <option value="">Select Company...</option>
-                                                                                @foreach($companies as $company)
-                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Amount</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Amount</label>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Transport</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Button and Card for Penginapan -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                </div>
-                                                <div id="penginapan-card" class="card-body" style="display: none;">
-                                                    <div class="accordion" id="accordionPenginapan">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="headingPenginapan">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                    Rencana Penginapan
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-bt-penginapan">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Start Penginapan</label>
-                                                                            <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">End Penginapan</label>
-                                                                            <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="start">Total Days</label>
-                                                                            <div class="input-group">
-                                                                                <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="0" readonly>
+                                                                            <div class="input-group mb-3">
                                                                                 <div class="input-group-append">
-                                                                                    <span class="input-group-text">days</span>
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="0">
+                                                                            </div>
+                                                                            <hr class="border border-primary border-1 opacity-50">
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Total Perdiem</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Button and Card for Transport -->
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
+                                                    </div>
+                                                    <div id="transport-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionTransport">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="headingTransport">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
+                                                                        Rencana Transport
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-bt-transport">
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Tanggal Transport</label>
+                                                                                <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="name">Company Code</label>
+                                                                                <select class="form-control select2" id="companyFilter" name="company_bt_transport[]">
+                                                                                    <option value="">Select Company...</option>
+                                                                                    @foreach($companies as $company)
+                                                                                        <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Keterangan</label>
+                                                                                <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Amount</label>
+                                                                            </div>
+                                                                            <div class="input-group mb-3">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="0">
+                                                                            </div>
+                                                                            <hr class="border border-primary border-1 opacity-50">
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Total Transport</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Button and Card for Penginapan -->
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
+                                                    </div>
+                                                    <div id="penginapan-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionPenginapan">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="headingPenginapan">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
+                                                                        Rencana Penginapan
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-bt-penginapan">
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Start Penginapan</label>
+                                                                                <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">End Penginapan</label>
+                                                                                <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="start">Total Days</label>
+                                                                                <div class="input-group">
+                                                                                    <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="0" readonly>
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">days</span>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Hotel Name</label>
-                                                                            <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
-                                                                                <option value="">Select Company...</option>
-                                                                                @foreach($companies as $company)
-                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Amount</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="name">Hotel Name</label>
+                                                                                <input type="text" name="hotel_name_bt_penginapan[]" class="form-control" placeholder="Hotel">
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Penginapan</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label" for="name">Company Code</label>
+                                                                                <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
+                                                                                    <option value="">Select Company...</option>
+                                                                                    @foreach($companies as $company)
+                                                                                        <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                                                                    @endforeach
+                                                                                </select>
                                                                             </div>
-                                                                            <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Amount</label>
+                                                                            </div>
+                                                                            <div class="input-group mb-3">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="0">
+                                                                            </div>
+                                                                            <hr class="border border-primary border-1 opacity-50">
                                                                         </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Total Penginapan</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
-                                                                    <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
 
-                                                <!-- Button and Card for Lainnya -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                </div>
-                                                <div id="lainnya-card" class="card-body" style="display: none;">
-                                                    <div class="accordion" id="accordionLainnya">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="headingLainnya">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                    Rencana Lainnya
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-bt-lainnya">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Tanggal</label>
-                                                                            <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
-                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Accommodation</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                    <!-- Button and Card for Lainnya -->
+                                                    <div class="card-body text-center">
+                                                        <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
+                                                    </div>
+                                                    <div id="lainnya-card" class="card-body" style="display: none;">
+                                                        <div class="accordion" id="accordionLainnya">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header" id="headingLainnya">
+                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
+                                                                        Rencana Lainnya
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                    <div class="accordion-body">
+                                                                        <div id="form-container-bt-lainnya">
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Tanggal</label>
+                                                                                <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya" type="text" min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Lainnya</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Keterangan</label>
+                                                                                <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
                                                                             </div>
-                                                                            <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Accommodation</label>
+                                                                            </div>
+                                                                            <div class="input-group mb-3">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya" type="text" min="0" value="0">
+                                                                            </div>
+                                                                            <hr class="border border-primary border-1 opacity-50">
                                                                         </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label">Total Lainnya</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
                                                                     </div>
-                                                                    <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -423,7 +425,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
 
                             <div class="row" id="ca_nbt" style="display: none;">

@@ -45,13 +45,14 @@ class ReimburseController extends Controller
         $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
         $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
 
-        // Memformat tanggal
         foreach ($ca_transactions as $transaction) {
             if ($transaction->approval_status == 'Approved' && Carbon::parse($transaction->declare_estimate)->isToday() || Carbon::parse($transaction->declare_estimate)->isPast()) {
                 $transaction->approval_status = 'Declaration';
                 $transaction->save();
             }
         }
+
+
 
         return view('hcis.reimbursements.cashadv.cashadv', [
             'pendingCACount' => $pendingCACount,
@@ -188,7 +189,7 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
 
-                    $for_perdiem[] = [
+                    $detail_perdiem[] = [
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'total_days' => $totalDays,
@@ -484,7 +485,6 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -492,14 +492,13 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
-                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
-                    $for_perdiem[] = [
+                    $detail_perdiem[] = [
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'total_days' => $totalDays,
                         'location' => $location,
-                        'other_location' => $other_location,
+                        // 'other_location' => $other_location,
                         'company_code' => $companyCode,
                         'nominal' => $nominal,
                     ];
@@ -780,6 +779,7 @@ class ReimburseController extends Controller
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $transactions = CATransaction::findByRouteKey($key);
+        // dd($transactions);
 
         return view('hcis.reimbursements.cashadv.deklarasiCashadv', [
             'link' => $link,
@@ -833,7 +833,7 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
 
-                    $for_perdiem[] = [
+                    $detail_perdiem[] = [
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'total_days' => $totalDays,
