@@ -112,6 +112,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
     Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
 
+    // My Cash Advanced
+    Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+    Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
+    Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
+
     // Approval Reimburse
     Route::get('/approval', [ApprovalReimburseController::class, 'approval'])->name('approval');
     Route::get('/approval/cashadvanced/{id}', [ApprovalReimburseController::class, 'cashadvancedFormApproval'])->name('approval.cashadvanced');
@@ -204,7 +209,7 @@ Route::middleware('auth')->group(function () {
 
     //pdf BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
-    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
+    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('exportbt');
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search'])->name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate'])->name('businessTrip-filterDate');
@@ -229,7 +234,7 @@ Route::middleware('auth')->group(function () {
 
     //PDF BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
-    Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('export');
+    Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('exportbttype');
 
 
     // Authentication

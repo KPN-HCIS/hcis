@@ -25,6 +25,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->date('date_required');
+            $table->date('declare_estimate');
             $table->integer('total_days')->default(0);
             $table->json('detail_ca')->nullable();
             $table->integer('total_ca')->default(0);

@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%"
+                            <table class="table table-hover table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
@@ -79,8 +79,8 @@
                                             @endif
                                             <td class="text-center">{{ $ca_transaction->no_ca }}</td>
                                             <td>{{ $ca_transaction->contribution_level_code }}</td>
-                                            <td>{{ $ca_transaction->formatted_start_date }}</td>
-                                            <td>{{ $ca_transaction->formatted_end_date }}</td>
+                                            <td>{{ date('j M Y', strtotime($ca_transaction->formatted_start_date)) }}</td>
+                                            <td>{{ date('j M Y', strtotime($ca_transaction->formatted_end_date)) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>

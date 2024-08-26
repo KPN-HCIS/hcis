@@ -4,40 +4,41 @@
     <!-- Brand Logo Light -->
     <a href="{{ Url('/') }}" class="logo logo-light">
         <span class="logo-lg">
-            <img src="/images/logo.png" alt="logo">
+            <img src="{{ asset('images/logo.png')}}" alt="logo">
+            
         </span>
         <span class="logo-sm">
-            <img src="/images/logo-sm.png" alt="small logo">
+            <img src="{{ asset('images/logo-sm.png')}}" alt="small logo">
         </span>
     </a>
 
     <!-- Brand Logo Dark -->
     <a href="{{ Url('/') }}" class="logo logo-dark">
         <span class="logo-lg">
-            <img src="/images/logo-dark.png" alt="logo">
+            <img src="{{ asset('images/logo-dark.png')}}" alt="logo">
         </span>
         <span class="logo-sm">
-            <img src="/images/logo-sm.png" alt="small logo">
+            <img src="{{ asset('images/logo-sm.png')}}" alt="small logo">
         </span>
     </a>
     @else
     <!-- Brand Logo Light -->
     <a href="" class="logo logo-light">
         <span class="logo-lg">
-            <img src="/images/logo_hcis_ori.png" alt="logo">
+            <img src="{{ asset('images/logo_hcis_ori.png')}}" alt="logo">
         </span>
         <span class="logo-sm">
-            <img src="/images/logo-sm_ori.png" alt="small logo">
+            <img src="{{ asset('images/logo-sm_ori.png')}}" alt="small logo">
         </span>
     </a>
 
     <!-- Brand Logo Dark -->
     <a href="" class="logo logo-dark">
         <span class="logo-lg">
-            <img src="/images/logo-dark_hcis_ori.png" alt="logo">
+            <img src="{{ asset('images/logo-dark_hcis_ori.png')}}" alt="logo">
         </span>
         <span class="logo-sm">
-            <img src="/images/logo-sm_ori.png" alt="small logo">
+            <img src="{{ asset('images/logo-sm_ori.png')}}" alt="small logo">
         </span>
     </a>
     @endif

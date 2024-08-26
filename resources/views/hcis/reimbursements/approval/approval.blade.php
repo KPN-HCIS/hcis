@@ -1,6 +1,17 @@
 @extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
 
 @section('css')
+<style>
+.btn-hoverable {
+    pointer-events: auto;
+}
+
+.btn-hoverable:disabled {
+    cursor: not-allowed; /* Change cursor to indicate the button is not clickable */
+    opacity: 0.6; /* Reduce opacity to give a disabled look */
+}
+
+</style>
 @endsection
 
 @section('content')
@@ -101,9 +112,7 @@
                                     <th>Type</th>
                                     <th>No CA</th>
                                     <th>Requestor</th>
-                                    <th>Company</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
+                                    <th>Date</th>
                                     <th>Total CA</th>
                                     <th>Total Settlement</th>
                                     <th>Balance</th>
@@ -123,21 +132,17 @@
                                     @elseif($ca_transaction->type_ca == 'entr')
                                         <td>Entertainment</td>
                                     @endif
-                                    <td>{{ $ca_transaction->no_ca }}</td>
+                                    <td>{{ $ca_transaction->no_ca ." ($ca_transaction->contribution_level_code)"}}</td>
                                     <td>{{ $ca_transaction->employee->fullname }}</td>
-                                    <td>{{ $ca_transaction->contribution_level_code }}</td>
-                                    <td>{{ $ca_transaction->formatted_start_date }}</td>
-                                    <td>{{ $ca_transaction->formatted_end_date }}</td>
-                                    <td>{{ $ca_transaction->total_ca }}</td>
-                                    <td>{{ $ca_transaction->total_real }}</td>
-                                    <td>{{ $ca_transaction->total_cost }}</td>
+                                    <td>{{ date('j M Y', strtotime($ca_transaction->formatted_start_date))." to ".date('j M Y', strtotime($ca_transaction->formatted_end_date)) }}</td>
+                                    <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
+                                    <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
+                                    <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
                                     <td>
-                                        <p type="button" class="btn btn-sm rounded-pill btn-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : 'warning') }}" style="pointer-events: none">
-                                            {{ $ca_transaction->approval_status }}
-                                        </p>
+                                        <p type="button" class="btn btn-sm rounded-pill btn-warning" style="pointer-events: none" title="cecek">{{ $ca_transaction->approval_status }}</p>
                                     </td>
                                     <td class="text-center">
-                                        <a href="{{ route('approval.cashadvanced', encrypt($ca_transaction->id)) }}" class="btn btn-sm rounded-pill btn-outline-primary" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                        <a href="{{ route('approval.cashadvanced', encrypt($transaction->id)) }}" class="btn btn-outline-info" title="Approve" ><i class="bi bi-card-checklist"></i></a>
                                     </td>
                                 </tr>
                                 @endforeach

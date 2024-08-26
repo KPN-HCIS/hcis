@@ -24,6 +24,8 @@ use App\Models\tkt_transaction;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CashAdvancedExport;
 
 class ReimburseController extends Controller
 {
@@ -57,6 +59,45 @@ class ReimburseController extends Controller
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
         ]);
+    }
+    public function cashadvancedAdmin()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Report CA';
+        $ca_transactions = CATransaction::with('employee')->get();
+        $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
+
+        // Memformat tanggal
+        foreach ($ca_transactions as $transaction) {
+            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+        }
+
+        return view('hcis.reimbursements.cashadv.adminCashadv', [
+            'pendingCACount' => $pendingCACount,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
+        ]);
+    }
+    public function filterCaTransactions(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        
+        // Lakukan query untuk memfilter transaksi berdasarkan tanggal
+        $ca_transactions = CATransaction::with('employee')->whereBetween('start_date', [$startDate, $endDate])
+                                        ->get();
+        foreach ($ca_transactions as $transaction) {
+            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+        }
+        
+        // dd($ca_transactions);
+        // Kembalikan tampilan tabel yang telah difilter
+        return view('hcis.reimbursements.cashadv.CaTransactionsTable', compact('ca_transactions'))->render();
     }
     function cashadvancedCreate()
     {
@@ -177,7 +218,7 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-                $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
+                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -185,7 +226,7 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
-                    $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
+                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
                     $for_perdiem[] = [
                         'start_date' => $startDate,
@@ -345,7 +386,6 @@ class ReimburseController extends Controller
         }
 
         $model->created_by = $userId;
-        $model->save();
 
         if($req->input('action_ca_submit')){
             function findDepartmentHead($employee)
@@ -369,6 +409,8 @@ class ReimburseController extends Controller
 
             $managerL1 = $deptHeadManager->employee_id;
             $managerL2 = $deptHeadManager->manager_l1_id;
+
+            $model->status_id = $managerL1;
 
             $cek_director_id = Employee::select([
                 'dsg.department_level2',
@@ -421,17 +463,19 @@ class ReimburseController extends Controller
                     $employee_id = $data_matrix_approval->employee_id;
                 }
 
-                $model = new ca_approval;
-                $model->ca_id = $uuid;
-                $model->role_name = $data_matrix_approval->desc;
-                $model->employee_id = $employee_id;
-                $model->layer = $data_matrix_approval->layer;
-                $model->approval_status = 'Pending';
+                $model_approval = new ca_approval;
+                $model_approval->ca_id = $uuid;
+                $model_approval->role_name = $data_matrix_approval->desc;
+                $model_approval->employee_id = $employee_id;
+                $model_approval->layer = $data_matrix_approval->layer;
+                $model_approval->approval_status = 'Pending';
 
                 // Simpan data ke database
-                $model->save();
+                $model_approval->save();
             }
         }
+
+        $model->save();
         
         Alert::success('Success');
         return redirect()->intended(route('cashadvanced', absolute: false));
@@ -447,8 +491,9 @@ class ReimburseController extends Controller
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
-        $transactions = CATransaction::find($key);
-
+        // $transactions = CATransaction::find($key);
+        $transactions = CATransaction::findByRouteKey($key);
+        // dd($key);
         return view('hcis.reimbursements.cashadv.editCashadv', [
             'link' => $link,
             'parentLink' => $parentLink,
@@ -918,5 +963,9 @@ class ReimburseController extends Controller
         $model = tkt_transaction::findByRouteKey($key);
         $model->delete();
         return redirect()->intended(route('ticket', absolute: false));
+    }
+    public function exportExcel()
+    {
+        return Excel::download(new CashAdvancedExport, 'cash_advanced.xlsx');
     }
 }

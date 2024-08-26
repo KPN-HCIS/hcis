@@ -35,15 +35,19 @@ class CATransaction extends Model
     {
         try {
             $id = decrypt($key);
+            
             return self::findOrFail($id);
         } catch (\Exception $e) {
             abort(404);
         }
     }
 
-
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'user_id', 'id');
+    }
+    public function approvals()
+    {
+        return $this->hasMany(ca_approval::class, 'id', 'id');
     }
 }

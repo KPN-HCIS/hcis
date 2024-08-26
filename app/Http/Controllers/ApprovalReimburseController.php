@@ -11,6 +11,7 @@ use App\Models\Location;
 use App\Models\ListPerdiem;
 use Carbon\Carbon;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 
@@ -21,8 +22,18 @@ class ApprovalReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced Approval';
+        $employee_data = Employee::where('id', $userId)->first();
         // Mengambil transaksi dengan user_id yang sesuai dan mengikutsertakan relasi employee
-        $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
+        $ca_transactions = CATransaction::where('status_id', $employee_data->employee_id)->get();
+        // ->leftJoin('ca_approvals', 'ca_transactions.id', '=', 'ca_approvals.id')
+        // ->select('ca_transactions.*', 
+        //     DB::raw('GROUP_CONCAT(ca_approvals.employee_id SEPARATOR ", ") as app_employee_ids'), 
+        //     DB::raw('GROUP_CONCAT(ca_approvals.layer SEPARATOR ", ") as app_layers'), 
+        //     DB::raw('GROUP_CONCAT(ca_approvals.approval_status SEPARATOR ", ") as app_approval_statuses')
+        // )
+        // ->where('ca_transactions.user_id', $userId)
+        
+        // ->get();
         $company = Company::with('companies')->where('contribution_level_code', 'company_name')->get();
         $pendingCACount = CATransaction::where('approval_status', 'Pending')->count();
         $pendingHTLCount = htl_transaction::where('approval_status', 'Pending')->count();
