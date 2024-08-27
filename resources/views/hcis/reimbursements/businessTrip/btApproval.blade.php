@@ -115,6 +115,25 @@
                                         aria-label="search" aria-describedby="search">
                                 </div>
                             </div>
+                            @php
+                            $currentFilter = request('filter', 'all');
+                        @endphp
+
+                        <form method="GET" action="{{ route('businessTrip.approval') }}">
+                            <button type="submit" name="filter" value="all"
+                                class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                All
+                            </button>
+                            <button type="submit" name="filter" value="request"
+                                class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                Request
+                            </button>
+                            <button type="submit" name="filter" value="declaration"
+                                class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                Declaration
+                            </button>
+                        </form>
+
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
@@ -240,7 +259,7 @@
                                                             ? 'success'
                                                             : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
                                                                 ? 'danger'
-                                                                : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
+                                                                : (in_array($n->status, ['Pending L1', 'Pending L2', 'Declaration L1', 'Declaration L2', 'Waiting Submitted'])
                                                                     ? 'warning'
                                                                     : ($n->status == 'Draft'
                                                                         ? 'secondary'
@@ -255,9 +274,9 @@
                                                 </td>
                                                 <td style="text-align: center; vertical-align: middle;">
                                                     <a class="btn btn-primary rounded-pill"
-                                                       href="{{ route('businessTrip.approvalDetail', ['id' => $n->id]) }}"
-                                                       style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-                                                       Review
+                                                        href="{{ $n->status === 'Declaration L1' || $n->status === 'Declaration L2' ? route('businessTrip.approvalDetail.dekalrasi', ['id' => $n->id]) : route('businessTrip.approvalDetail', ['id' => $n->id]) }}"
+                                                        style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                        Review
                                                     </a>
                                                 </td>
                                             </tr>

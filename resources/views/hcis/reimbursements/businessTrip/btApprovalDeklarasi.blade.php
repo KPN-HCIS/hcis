@@ -13,7 +13,7 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Declaration Data</h4>
-                        <a href="{{ route('businessTrip') }}" class="btn-close btn-close-white"></a>
+                        <a href="{{ route('businessTrip.approval') }}" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
                         <form action="/businessTrip/deklarasi/update/{{ $n->id }}" method="POST" id="btEditForm"
@@ -2431,35 +2431,135 @@
                                 </div>
                             </div>
                             @php
-                                use Illuminate\Support\Facades\Storage;
-                            @endphp
-                           <div class="col-md-8 mb-3">
-                            <label for="prove_declare" class="form-label">Upload Proof</label>
-                            <div class="d-flex align-items-center">
-                                <input type="file" id="prove_declare" name="prove_declare"
-                                    accept="image/*,application/pdf" class="form-control me-2">
+                            use Illuminate\Support\Facades\Storage;
 
-                                @if (isset($ca->prove_declare) && $ca->prove_declare)
-                                    <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
-                                        class="btn btn-primary rounded-pill">View</a>
-                                @endif
+                            // Check if file exists and get its URL
+                            $filePath = $ca->prove_declare ?? null;
+                            $fileUrl = $filePath ? Storage::url($filePath) : null;
+                            $fileExists = $filePath ? Storage::exists($filePath) : false;
+                            $fileType = $fileExists ? Storage::mimeType($filePath) : null;
+                        @endphp
+
+                        <div class="mb-3">
+                            <label for="prove_declare" class="form-label">View Proof</label>
+                            <div class="d-flex align-items-center">
+                                {{-- <input type="file" id="prove_declare" name="prove_declare"
+                                       accept="image/*,application/pdf" class="form-control me-2"> --}}
+
+                                       @if ($fileExists)
+                                       @if (str_contains($fileType, 'pdf'))
+                                           <a href="{{ $fileUrl }}" target="_blank" class="btn btn-primary btn-sm rounded-pill" style="padding: 0.25rem 0.75rem;">View PDF</a>
+                                       @elseif (str_contains($fileType, 'image'))
+                                           <a href="{{ $fileUrl }}" target="_blank" class="btn btn-primary btn-sm rounded-pill" style="padding: 0.25rem 0.75rem;">View Image</a>
+                                       @else
+                                           <a href="{{ $fileUrl }}" target="_blank" class="btn btn-primary btn-sm rounded-pill" style="padding: 0.25rem 0.75rem;">View File</a>
+                                       @endif
+                                   @else
+                                       <span class="text-muted" style="color: red; margin-left: 0.5rem;">No Proof</span>
+                                   @endif
                             </div>
                         </div>
-                            <input type="hidden" name="status" value="Declaration L1" id="status">
 
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                                    id="save-draft">Save as Draft</button>
-                                <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
-                            </div>
                         </form>
+                        <div class="d-flex justify-content-end mt-3">
+                            <form method="POST" action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}"
+                                style="display: inline-block;" class="status-form">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="status_approval" value="Declaration Rejected">
+                                <button type="submit" class="btn btn-primary rounded-pill"
+                                    style="padding: 0.5rem 1rem; margin-right: 5px">
+                                    Decline
+                                </button>
+                            </form>
+
+                            <form method="POST" action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}"
+                                style="display: inline-block; margin-right: 5px;" class="status-form">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="status_approval"
+                                    value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Declaration Approved' }}">
+                                <button type="submit" class="btn btn-success rounded-pill"
+                                    style="padding: 0.5rem 1rem;">
+                                    Approve
+                                </button>
+                            </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+     <!-- Success Modal -->
+     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-light rounded-4 border-0 shadow" style="border-radius: 1rem;">
+                <div class="modal-body text-center p-5" style="padding: 2rem;">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill" style="font-size: 100px; color: #AB2F2B !important;"></i>
+                    </div>
+                    <h4 class="mb-3 fw-bold" style="font-size: 32px; color: #AB2F2B !important;">Success!</h4>
+                    <p class="mb-4" id="successModalBody" style="font-size: 20px;">
+                        <!-- The success message will be inserted here -->
+                    </p>
+                    <button type="button" class="btn btn-outline-primary rounded-pill px-4"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('.status-form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const action = this.querySelector('input[name="status_approval"]').value;
+                    const confirmMessage = action === 'Rejected' ?
+                        'Are you sure you want to reject this?' :
+                        'Are you sure you want to confirm this?';
+
+                    if (confirm(confirmMessage)) {
+                        const formData = new FormData(this);
+                        fetch(this.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Update the success modal content
+                                    document.getElementById('successModalBody').textContent =
+                                        data.message;
+
+                                    // Show the success modal
+                                    var successModal = new bootstrap.Modal(document
+                                        .getElementById('successModal'));
+                                    successModal.show();
+
+                                    // Reload the page after modal is closed
+                                    document.getElementById('successModal').addEventListener(
+                                        'hidden.bs.modal',
+                                        function() {
+                                            window.location.href = '/businessTrip/approval';
+                                        });
+                                } else {
+                                    alert('An error occurred. Please try again.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('An error occurred. Please try again.');
+                            });
+                    }
+                });
+            });
+        });
+
         function formatCurrency(input) {
             var cursorPos = input.selectionStart;
             var value = input.value.replace(/[^\d]/g, ''); // Remove everything that is not a digit

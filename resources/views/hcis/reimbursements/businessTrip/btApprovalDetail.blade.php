@@ -1313,6 +1313,8 @@
                                                                                                                             class="input-group-text">Rp</span>
                                                                                                                     </div>
                                                                                                                     @php
+                                                                                                                    $index =
+                                                                                                                    $index ?? 0;
                                                                                                                         $formattedTotalLainnya = number_format(
                                                                                                                             old(
                                                                                                                                 'total_bt_lainnya.' .
@@ -1353,6 +1355,9 @@
                                                                                                                     class="input-group-text">Rp</span>
                                                                                                             </div>
                                                                                                             @php
+                                                                                                              $index =
+                                                                                                                                $index ??
+                                                                                                                                0;
                                                                                                                 // Assuming $totalLainnya is available and holds the total value for 'lainnya'
                                                                                                                 $totalLainnya =
                                                                                                                     $totalLainnya ??

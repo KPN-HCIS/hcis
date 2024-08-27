@@ -29,11 +29,38 @@ use Illuminate\Support\Facades\Log;
 
 class BusinessTripController extends Controller
 {
-    public function businessTrip()
+    public function businessTrip(Request $request)
     {
         $user = Auth::user();
+        $query = BusinessTrip::where('user_id', $user->id)->orderBy('created_at', 'desc');
 
-        $sppd = BusinessTrip::where('user_id', $user->id)->orderBy('mulai', 'asc')->get();
+        // Get the filter value, default to 'all' if not provided
+        $filter = $request->input('filter', 'all');
+
+        if ($filter === 'request') {
+            // Show all data where the date is < today and status is in ['Pending L1', 'Pending L2', 'Draft']
+            $query->where(function ($query) {
+                $query->whereDate('kembali', '<', now())
+                    ->whereIn('status', ['Pending L1', 'Pending L2', 'Draft']);
+            });
+        } elseif ($filter === 'declaration') {
+            // Show data with Approved, Declaration L1, Declaration L2, Draft Declaration
+            $query->where(function ($query) {
+                $query->whereIn('status', ['Approved', 'Declaration L1', 'Declaration L2', 'Declaration Draft']);
+            });
+        } elseif ($filter === 'done') {
+            // Show data with Rejected, Refund, Doc Accepted, Verified
+            $query->where(function ($query) {
+                $query->whereIn('status', ['Rejected', 'Refund', 'Doc Accepted', 'Verified']);
+            });
+        }
+
+        // If 'all' is selected or no filter is applied, just get all data
+        if ($filter === 'all') {
+            // No additional where clauses needed for 'all'
+        }
+
+        $sppd = $query->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -51,7 +78,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter'));
     }
 
     public function delete($id)
@@ -542,6 +569,7 @@ class BusinessTripController extends Controller
         $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
         $nominalPerdiemDeclare = isset($declareCa['detail_perdiem'][0]['nominal']) ? $declareCa['detail_perdiem'][0]['nominal'] : '0';
 
+        $hasCaData = $ca !== null;
         // Retrieve the taxi data for the specific BusinessTrip
         $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
 
@@ -601,8 +629,145 @@ class BusinessTripController extends Controller
             'ca' => $ca,
             'nominalPerdiem' => $nominalPerdiem,
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
+            'hasCaData' => $hasCaData, // Pass the flag to the view
         ]);
     }
+    public function deklarasiCreate(Request $request, $id)
+    {
+        // Fetch the business trip record to update
+        $n = BusinessTrip::find($id);
+
+        // Update the status field in the BusinessTrip record
+        $n->update([
+            'status' => $request->status,
+        ]);
+
+        // Store old SPPD number for later use
+        $oldNoSppd = $n->no_sppd;
+        $userId = Auth::id();
+
+        // Handle "CA Transaction" update
+        $ca = CATransaction::where('no_sppd', $oldNoSppd)->first();
+
+        if (!$ca) {
+            // Create a new CA transaction if it doesn't exist
+            $ca = new CATransaction();
+
+            // Generate new 'no_ca' code
+            $currentYear = date('Y');
+            $currentYearShort = date('y');
+            $prefix = 'CA';
+            $lastTransaction = CATransaction::whereYear('created_at', $currentYear)
+                ->orderBy('no_ca', 'desc')
+                ->first();
+
+            $lastNumber = $lastTransaction && preg_match('/CA' . $currentYearShort . '(\d{6})/', $lastTransaction->no_ca, $matches) ? intval($matches[1]) : 0;
+            $newNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
+            $newNoCa = "$prefix$currentYearShort$newNumber";
+
+            $ca->id = (string) Str::uuid();
+            $ca->no_ca = $newNoCa;
+        }
+
+        // Assign or update values to $ca model
+        $ca->no_sppd = $oldNoSppd;
+        $ca->user_id = $userId;
+        // Update approval_status based on the status value from the request
+        if ($request->status === 'Declaration L1') {
+            $ca->approval_sett = 'Pending';
+        } elseif ($request->status === 'Declaration Draft') {
+            $ca->approval_sett = 'Draft';
+        } else {
+            $ca->approval_sett = $request->status;
+        }
+
+        $total_real = (int) str_replace('.', '', $request->totalca);
+        $total_ca = $ca->total_ca;
+
+        // Assign total_real and calculate total_cost
+        $ca->total_real = $total_real;
+        $ca->total_cost = $total_ca - $total_real;
+
+        // Initialize arrays for details
+        $detail_perdiem = [];
+        $detail_transport = [];
+        $detail_penginapan = [];
+        $detail_lainnya = [];
+
+        // Populate detail_perdiem
+        if ($request->has('start_bt_perdiem')) {
+            foreach ($request->start_bt_perdiem as $key => $startDate) {
+                $detail_perdiem[] = [
+                    'start_date' => $startDate,
+                    'end_date' => $request->end_bt_perdiem[$key] ?? '',
+                    'total_days' => $request->total_days_bt_perdiem[$key] ?? '',
+                    'location' => $request->location_bt_perdiem[$key] ?? '',
+                    'other_location' => $request->other_location_bt_perdiem[$key] ?? '',
+                    'company_code' => $request->company_bt_perdiem[$key] ?? '',
+                    'nominal' => str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0'),
+                ];
+            }
+        }
+
+        // Populate detail_transport
+        if ($request->has('tanggal_bt_transport')) {
+            foreach ($request->tanggal_bt_transport as $key => $tanggal) {
+                $detail_transport[] = [
+                    'tanggal' => $tanggal,
+                    'keterangan' => $request->keterangan_bt_transport[$key] ?? '',
+                    'company_code' => $request->company_bt_transport[$key] ?? '',
+                    'nominal' => str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0'),
+                ];
+            }
+        }
+
+        // Populate detail_penginapan
+        if ($request->has('start_bt_penginapan')) {
+            foreach ($request->start_bt_penginapan as $key => $startDate) {
+                $detail_penginapan[] = [
+                    'start_date' => $startDate,
+                    'end_date' => $request->end_bt_penginapan[$key] ?? '',
+                    'total_days' => $request->total_days_bt_penginapan[$key] ?? '',
+                    'hotel_name' => $request->hotel_name_bt_penginapan[$key] ?? '',
+                    'company_code' => $request->company_bt_penginapan[$key] ?? '',
+                    'nominal' => str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0'),
+                    'totalPenginapan' => str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0'),
+                ];
+            }
+        }
+
+        // Populate detail_lainnya
+        if ($request->has('tanggal_bt_lainnya')) {
+            foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
+                $detail_lainnya[] = [
+                    'tanggal' => $tanggal,
+                    'keterangan' => $request->keterangan_bt_lainnya[$key] ?? '',
+                    'nominal' => str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0'),
+                    'totalLainnya' => str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0'),
+                ];
+            }
+        }
+
+        // Save the details
+        $declare_ca = [
+            'detail_perdiem' => $detail_perdiem,
+            'detail_transport' => $detail_transport,
+            'detail_penginapan' => $detail_penginapan,
+            'detail_lainnya' => $detail_lainnya,
+        ];
+        if ($request->hasFile('prove_declare')) {
+            $file = $request->file('prove_declare');
+            $path = $file->store('public/proofs'); // Store in 'public/proofs' directory
+            $ca->prove_declare = $path;
+        }
+
+        $ca->declare_ca = json_encode($declare_ca);
+        $ca->save();
+
+        return redirect('/businessTrip')->with('success', 'Business trip updated successfully');
+    }
+
+
 
 
     public function filterDate(Request $request)
@@ -1164,7 +1329,7 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
 
-        $sppd = BusinessTrip::where('status', '!=', 'Draft')->orderBy('mulai', 'desc')->get();
+        $sppd = BusinessTrip::where('status', '!=', 'Draft')->orderBy('created_at', 'desc')->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -1274,19 +1439,44 @@ class BusinessTripController extends Controller
         return Excel::download(new BusinessTripExport($businessTrips, $caData), 'Data_Perjalanan_Dinas.xlsx');
     }
 
-    public function approval()
+    public function approval(Request $request)
     {
         $user = Auth::user();
-        $sppd = BusinessTrip::where(function ($query) use ($user) {
-            $query->where('manager_l1_id', $user->employee_id)
-                ->where('status', 'Pending L1')
-                ->orWhere(function ($query) use ($user) {
-                    $query->where('manager_l2_id', $user->employee_id)
+        $filter = $request->input('filter', 'all');
+
+        $query = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L1', 'Declaration L1']);
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L2', 'Declaration L2']);
+            });
+        });
+
+        if ($filter === 'request') {
+            $query->where(function ($q) use ($user) {
+                $q->where(function ($subQ) use ($user) {
+                    $subQ->where('manager_l1_id', $user->employee_id)
+                        ->where('status', 'Pending L1');
+                })->orWhere(function ($subQ) use ($user) {
+                    $subQ->where('manager_l2_id', $user->employee_id)
                         ->where('status', 'Pending L2');
                 });
-        })
-            ->orderBy('mulai', 'asc')
-            ->get();
+            });
+        } elseif ($filter === 'declaration') {
+            $query->where(function ($q) use ($user) {
+                $q->where(function ($subQ) use ($user) {
+                    $subQ->where('manager_l1_id', $user->employee_id)
+                        ->where('status', 'Declaration L1');
+                })->orWhere(function ($subQ) use ($user) {
+                    $subQ->where('manager_l2_id', $user->employee_id)
+                        ->where('status', 'Declaration L2');
+                });
+            });
+        }
+
+        $sppd = $query->orderBy('created_at', 'desc')->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -1300,9 +1490,8 @@ class BusinessTripController extends Controller
         $parentLink = 'Approval';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
+        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'filter'));
     }
-
     public function approvalDetail($id)
     {
         $n = BusinessTrip::find($id);
@@ -1430,6 +1619,141 @@ class BusinessTripController extends Controller
         }
         // Redirect back to the previous page with a success message
         return redirect()->back()->with('success', $message);
+    }
+    public function updateStatusDeklarasi($id, Request $request)
+    {
+        $user = Auth::user();
+        $employeeId = $user->employee_id;
+        $approval = new BTApproval();
+        $approval->id = (string) Str::uuid();
+
+        // Find the business trip by ID
+        $businessTrip = BusinessTrip::findOrFail($id);
+
+        // Determine the new status and layer based on the action and manager's role
+        $action = $request->input('status_approval');
+        if ($action == 'Rejected') {
+            $statusValue = 'Rejected';
+            if ($employeeId == $businessTrip->manager_l1_id) {
+                $layer = 1;
+            } elseif ($employeeId == $businessTrip->manager_l2_id) {
+                $layer = 2;
+            } else {
+                return redirect()->back()->with('error', 'Unauthorized action.');
+            }
+        } elseif ($employeeId == $businessTrip->manager_l1_id) {
+            $statusValue = 'Declaration L2';
+            $layer = 1;
+        } elseif ($employeeId == $businessTrip->manager_l2_id) {
+            $statusValue = 'Waiting Submitted';
+            $layer = 2;
+        } else {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        // Update the status in the BusinessTrip table
+        $businessTrip->update(['status' => $statusValue]);
+
+        // Record the approval or rejection in the BTApproval table
+        $approval->bt_id = $businessTrip->id;
+        $approval->layer = $layer;
+        $approval->approval_status = $statusValue;
+        $approval->approved_at = now();
+        $approval->employee_id = $employeeId;
+
+        // Save the approval record
+        $approval->save();
+        $message = $statusValue === 'Rejected'
+            ? 'The request has been successfully' . ' Rejected.'
+            : 'The request has been successfully' . ' Accepted.';
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+        }
+        // Redirect back to the previous page with a success message
+        return redirect()->back()->with('success', $message);
+    }
+    public function ApprovalDeklarasi($id)
+    {
+        $n = BusinessTrip::find($id);
+        $userId = Auth::id();
+        $employee_data = Employee::where('id', $userId)->first();
+
+        $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
+
+        // Initialize caDetail with an empty array if it's null
+        $caDetail = $ca ? json_decode($ca->detail_ca, true) : [];
+        $declareCa = $ca ? json_decode($ca->declare_ca, true) : [];
+
+        // Safely access nominalPerdiem with default '0' if caDetail is empty
+        $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
+        $nominalPerdiemDeclare = isset($declareCa['detail_perdiem'][0]['nominal']) ? $declareCa['detail_perdiem'][0]['nominal'] : '0';
+
+        $hasCaData = $ca !== null;
+        // Retrieve the taxi data for the specific BusinessTrip
+        $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
+
+        // Retrieve all hotels for the specific BusinessTrip
+        $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare hotel data for the view
+        $hotelData = [];
+        foreach ($hotels as $index => $hotel) {
+            $hotelData[] = [
+                'nama_htl' => $hotel->nama_htl,
+                'lokasi_htl' => $hotel->lokasi_htl,
+                'jmlkmr_htl' => $hotel->jmlkmr_htl,
+                'bed_htl' => $hotel->bed_htl,
+                'tgl_masuk_htl' => $hotel->tgl_masuk_htl,
+                'tgl_keluar_htl' => $hotel->tgl_keluar_htl,
+                'total_hari' => $hotel->total_hari,
+                'more_htl' => ($index < count($hotels) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve all tickets for the specific BusinessTrip
+        $tickets = Tiket::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare ticket data for the view
+        $ticketData = [];
+        foreach ($tickets as $index => $ticket) {
+            $ticketData[] = [
+                'noktp_tkt' => $ticket->noktp_tkt,
+                'dari_tkt' => $ticket->dari_tkt,
+                'ke_tkt' => $ticket->ke_tkt,
+                'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                'jenis_tkt' => $ticket->jenis_tkt,
+                'type_tkt' => $ticket->type_tkt,
+                'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'ket_tkt' => $ticket->ket_tkt,
+                'more_tkt' => ($index < count($tickets) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve locations and companies data for the dropdowns
+        $locations = Location::orderBy('id')->get();
+        $companies = Company::orderBy('contribution_level')->get();
+
+        return view('hcis.reimbursements.businessTrip.btApprovalDeklarasi', [
+            'n' => $n,
+            'hotelData' => $hotelData,
+            'taksiData' => $taksi, // Pass the taxi data
+            'ticketData' => $ticketData,
+            'employee_data' => $employee_data,
+            'companies' => $companies,
+            'locations' => $locations,
+            'caDetail' => $caDetail,
+            'declareCa' => $declareCa,
+            'ca' => $ca,
+            'nominalPerdiem' => $nominalPerdiem,
+            'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
+            'hasCaData' => $hasCaData, // Pass the flag to the view
+        ]);
     }
 
 

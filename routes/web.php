@@ -194,6 +194,7 @@ Route::middleware('auth')->group(function () {
 
      //DEKLARASI BT
     Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi']) -> name('businessTrip.deklarasi');
+    Route::put('/businessTrip/deklarasi/update/{id}', [BusinessTripController::class, 'deklarasiCreate']) -> name('businessTrip.deklarasi.create');
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search']) -> name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate']) -> name('businessTrip-filterDate');
@@ -214,8 +215,10 @@ Route::middleware('auth')->group(function () {
     //APPROVAL BT
     Route::get('/businessTrip/approval', [BusinessTripController::class, 'approval']) -> name('businessTrip.approval');
     Route::get('/businessTrip/approval/detail/{id}', [BusinessTripController::class, 'approvalDetail']) -> name('businessTrip.approvalDetail');
+    Route::get('/businessTrip/approval/detail/deklarasi/{id}', [BusinessTripController::class, 'ApprovalDeklarasi']) -> name('businessTrip.approvalDetail.dekalrasi');
     Route::get('/businessTrip/approval/filterDate', [BusinessTripController::class, 'filterDateApproval']) -> name('businessTrip-filterDate.approval');
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
+    Route::put('businessTrip/status/confirm/deklarasi/{id}', [BusinessTripController::class, 'updateStatusDeklarasi'])->name('confirm.deklarasi');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
 
