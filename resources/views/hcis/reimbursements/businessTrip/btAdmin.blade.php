@@ -280,7 +280,7 @@
                                                         </button>
                                                     </form>
 
-                                                    <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
+                                                    <a href="{{ route('export.admin', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
                                                         class="btn btn-outline-info rounded-pill mb-1">
                                                         <i class="bi bi-download"></i>
                                                     </a>

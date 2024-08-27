@@ -1224,7 +1224,7 @@
                                                                                                                     class="input-group-text">Rp</span>
                                                                                                             </div>
                                                                                                               @php
-                                                                                                                // Assuming $totalLainnya is available and holds the total value for 'lainnya'
+                                                                                                               $index = $index ?? 0;
                                                                                                                 $totalLainnya =
                                                                                                                     $totalLainnya ??
                                                                                                                     0; // Default to 0 if $totalLainnya is not set

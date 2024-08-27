@@ -203,7 +203,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin']) -> name('businessTrip.admin');
     Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin']) -> name('businessTrip-filterDate.admin');
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
-    Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
     Route::get('/businessTrip/deklarasi/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin']) -> name('businessTrip.deklarasi.admin');
     Route::put('/businessTrip/deklarasi/admin/status/{id}', [BusinessTripController::class, 'deklarasiStatusAdmin']) -> name('businessTrip.deklarasi.admin.status');
     Route::delete('/businessTrip/admin/delete/{id}', [BusinessTripController::class, 'deleteAdmin'])->name('delete.btAdmin');
@@ -226,6 +225,9 @@ Route::middleware('auth')->group(function () {
     //PDF BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
     Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('export');
+//ADMIN PDF
+    Route::get('/businessTrip/pdf/admin/{id}', [BusinessTripController::class, 'pdfDownloadAdmin'])->name('pdf.admin');
+    Route::get('/businessTrip/export/admin/{id}/{types?}', [BusinessTripController::class, 'exportAdmin'])->name('export.admin');
 
 
     // Authentication
