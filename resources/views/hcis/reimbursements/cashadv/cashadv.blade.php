@@ -74,7 +74,7 @@
         <!-- Page Heading -->
         <div class="row">
             <!-- Breadcrumb Navigation -->
-            <div class="col-md-6 mt-3">
+            <div class="col-md-6 mt-3 ms-mb-3">
                 <div class="page-title-box d-flex align-items-center">
                     <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
                         <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
@@ -93,7 +93,7 @@
             </div>
 
             <!-- Add Data Button -->
-            <div class="col-md-6 mt-4 text-end">
+            <div class="col-md-6 mt-4 ms-mb-3 text-end">
                 <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
                     <i class="bi bi-plus-circle"></i> Add Data
                 </a>

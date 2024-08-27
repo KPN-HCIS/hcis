@@ -267,7 +267,7 @@ class ApprovalReimburseController extends Controller
             }
 
             Alert::success('Success', 'All approvals rejected successfully.');
-            return redirect()->route('approval.cashadvanced');
+            return redirect()->route('approval.cashadvancedDeklarasi');
         }
 
         // Cek jika tombol approve ditekan
