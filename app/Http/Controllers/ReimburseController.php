@@ -44,18 +44,69 @@ class ReimburseController extends Controller
         $link = 'Cash Advanced';
         $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
         $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
+        $today = Carbon::today();
 
         foreach ($ca_transactions as $transaction) {
-            if ($transaction->approval_status == 'Approved' && Carbon::parse($transaction->declare_estimate)->isToday() || Carbon::parse($transaction->declare_estimate)->isPast()) {
+            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
+            if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
                 $transaction->approval_status = 'Declaration';
-                $transaction->save();
             }
+            if (is_null($transaction->approval_sett)) {
+                $transaction->approval_sett = 'Waiting for Declaration';
+            }
+            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
+            if ($transaction->declare_estimate <= $today) {
+                $transaction->approval_sett = 'Declaration';
+            }
+            // Simpan perubahan
+            $transaction->save();
         }
 
+        $deklarasiCACount = CATransaction::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_sett', 'Waiting for Declaration')
+                    ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Draft');
+            })
+            ->where('end_date', '<=', $today)
+            ->count();
 
-
-        return view('hcis.reimbursements.cashadv.cashadv', [
+        return view('hcis.reimbursements.cashadv.cashadvRequest', [
+            'deklarasiCACount' => $deklarasiCACount,
             'pendingCACount' => $pendingCACount,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
+        ]);
+    }
+    public function deklarasiCashadvanced()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+        $today = Carbon::today();
+
+        $ca_transactions = CATransaction::with('employee')
+            ->where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Approved')
+                    ->orWhere('approval_status', 'Declaration');
+            })
+            ->where('end_date', '<=', $today)
+            ->get();
+
+        $deklarasiCACount = CATransaction::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_sett', 'Waiting for Declaration')
+                    ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Draft');
+            })
+            ->where('end_date', '<=', $today)
+            ->count();
+
+        return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
+            'deklarasiCACount' => $deklarasiCACount,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
@@ -744,13 +795,10 @@ class ReimburseController extends Controller
 
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
-        // $kantor = Company::where('contribution_level', $companies->contribution_level_code)->first();
         $locations = Location::orderBy('area')->get();
-        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $transactions = CATransaction::find($key);
+        $approval = ca_approval::with('employee')->where('ca_id', $key)->get();
 
-        // return view('hcis.reimbursements.cashadv.downloadCashadv', [
         $pdf = PDF::loadView('hcis.reimbursements.cashadv.printCashadv', [
             'link' => $link,
             // 'pdf' => $pdf,
@@ -759,9 +807,34 @@ class ReimburseController extends Controller
             'companies' => $companies,
             'locations' => $locations,
             'employee_data' => $employee_data,
-            'perdiem' => $perdiem,
-            'no_sppds' => $no_sppds,
             'transactions' => $transactions,
+            'approval' => $approval,
+        ]);
+
+        return $pdf->stream('Cash Advanced ' . $key . '.pdf');
+    }
+    function cashadvancedDownloadDeklarasi($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $transactions = CATransaction::find($key);
+        $approval = ca_approval::with('employee')->where('ca_id', $key)->get();
+
+        $pdf = PDF::loadView('hcis.reimbursements.cashadv.printDeklarasiCashadv', [
+            'link' => $link,
+            // 'pdf' => $pdf,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'transactions' => $transactions,
+            'approval' => $approval,
         ]);
 
         return $pdf->stream('Cash Advanced ' . $key . '.pdf');
@@ -1059,7 +1132,7 @@ class ReimburseController extends Controller
         $model->save();
 
         Alert::success('Success Update');
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->intended(route('cashadvancedDeklarasi', absolute: false));
     }
 
     public function hotel()

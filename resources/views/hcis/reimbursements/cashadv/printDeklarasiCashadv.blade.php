@@ -201,12 +201,8 @@
                     <td class="label">{{ $role->role_name }}</td>
                     <td class="colon">:</td>
                     <td class="value">
-                        @if ($role->employee == 'Approved')
                         {{ $role->employee ? $role->employee->fullname : 'Data tidak tersedia' }}
                         ({{ \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') }})
-                        @else
-                        
-                        @endif
                     </td>
                 </tr>
             @endforeach

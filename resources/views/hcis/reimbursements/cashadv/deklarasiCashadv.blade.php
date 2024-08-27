@@ -401,7 +401,7 @@
 
                                                         <!-- Button and Card for Lainnya -->
                                                         <div class="card-body p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya-deklarasi" class="btn btn-primary mb-3" data-state="false" disab><i class="bi bi-plus-circle"></i> Lainnya</button>
+                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Lainnya</button>
                                                         </div>
                                                         <div id="lainnya-card-deklarasi" class="card-body p-0" style="display: none;">
                                                             <div class="accordion" id="accordionLainnya">
@@ -462,11 +462,11 @@
                                                             <div class="accordion" id="accordionPerdiem">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="enter-headingOne">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="false" aria-controls="enter-collapseOne">
                                                                             Deklarasi Rencana Perdiem
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse mb-3 show" aria-labelledby="enter-headingOne">
+                                                                    <div id="enter-collapseOne" class="accordion-collapse mb-3" aria-labelledby="enter-headingOne">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-perdiem">
                                                                                 @foreach ($declareCA['detail_perdiem'] as $perdiem)
@@ -1078,7 +1078,7 @@
                                     <label for="prove_declare" class="form-label">Upload Proof</label>
 
                                     <!-- Input file -->
-                                    <input type="file" id="prove_declare" name="prove_declare" accept="image/*, application/pdf" class="form-control" onchange="previewFile()"  @if(isset($transactions->prove_declare) && $transactions->prove_declare) required @endif>
+                                    <input type="file" id="prove_declare" name="prove_declare" accept="image/*, application/pdf" class="form-control" onchange="previewFile()" required>
                                     <input type="hidden" name="existing_prove_declare" value="{{ $transactions->prove_declare }}">
 
                                     <!-- Show existing file -->

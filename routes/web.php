@@ -113,8 +113,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
 
     // My Cash Advanced Deklarasi
+    Route::get('/cashadvanced/deklarasi', [ReimburseController::class, 'deklarasiCashadvanced'])->name('cashadvancedDeklarasi');
     Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
     Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
+    Route::get('/cashadvanced/deklarasi/download/{id}', [ReimburseController::class, 'cashadvancedDownloadDeklarasi'])->name('cashadvanced.downloadDeclare');
 
     // Approval Reimburse
     Route::get('/approval/cashadvanced', [ApprovalReimburseController::class, 'cashadvancedApproval'])->name('approval.cashadvanced');

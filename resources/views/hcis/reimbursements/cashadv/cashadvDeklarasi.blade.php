@@ -91,14 +91,8 @@
                     </ol>
                 </div>
             </div>
-
-            <!-- Add Data Button -->
-            <div class="col-md-6 mt-4 ms-mb-3 text-end">
-                <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
-                    <i class="bi bi-plus-circle"></i> Add Data
-                </a>
-            </div>
         </div>
+
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
@@ -113,6 +107,7 @@
                                 <input type="text" name="customsearch" id="customsearch" class="form-control w-  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search" >
                             </div>
                         </div>
+                        @include('hcis.reimbursements.cashadv.navigation.navigationCashadv')
                         <div class="table-responsive">
                             <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%"
                                 cellspacing="0">
@@ -150,31 +145,22 @@
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: none">
-                                                    {{ $ca_transaction->approval_status }}  {{ $ca_transaction->approval_sett }}
+                                                <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : 'info')))) }}" style="pointer-events: none">
+                                                    {{ $ca_transaction->approval_sett }}
                                                 </p>
                                             </td>
                                             <td class="text-center">
-                                                @if ($ca_transaction->approval_status == 'Approved')
-                                                    <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                                @elseif ($ca_transaction->approval_status == 'Declaration')
+                                                @if ($ca_transaction->approval_sett == 'Approved')
+                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                @elseif ($ca_transaction->approval_sett == 'Declaration')
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                                @elseif ($ca_transaction->approval_status == 'Pending')
-                                                    <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                                @elseif ($ca_transaction->approval_status == 'Reject')
-                                                @elseif ($ca_transaction->approval_status == 'Draft')
-                                                    <a href="{{ route('cashadvanced.edit', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                                    {{-- <a href="{{ route('cashadvanced.show', $ca_transaction->id) }}" class="btn btn-outline-info" title="Edit"><i class="bi bi-card-checklist"></i></a> --}}
-                                                    <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-outline-danger" title="Delete">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </button>
-                                                    </form>
-                                                @elseif ($ca_transaction->end_date == \Carbon\Carbon::today())
+                                                @elseif ($ca_transaction->approval_sett == 'Pending')
+                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                @elseif ($ca_transaction->approval_sett == 'Reject')
+                                                @elseif ($ca_transaction->approval_sett == 'Draft')
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                                 @else
-
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                                 @endif
                                             </td>
                                         </tr>
