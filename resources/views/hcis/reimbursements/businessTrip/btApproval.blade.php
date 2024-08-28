@@ -276,7 +276,7 @@
                                                     <a class="btn btn-primary rounded-pill"
                                                         href="{{ $n->status === 'Declaration L1' || $n->status === 'Declaration L2' ? route('businessTrip.approvalDetail.dekalrasi', ['id' => $n->id]) : route('businessTrip.approvalDetail', ['id' => $n->id]) }}"
                                                         style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-                                                        Review
+                                                        Act
                                                     </a>
                                                 </td>
                                             </tr>

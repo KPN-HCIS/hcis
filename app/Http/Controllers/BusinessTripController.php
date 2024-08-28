@@ -1701,8 +1701,9 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
 
-        $query = BusinessTrip::orderBy('created_at', 'desc');
+        $query = BusinessTrip::where('status', '!=', 'Draft')->orderBy('created_at', 'desc');
         $filter = $request->input('filter', 'all');
+        // dd($filter);
 
         if ($filter === 'request') {
             $query->whereDate('kembali', '<', now())
@@ -1711,11 +1712,6 @@ class BusinessTripController extends Controller
             $query->whereIn('status', ['Approved Declaration', 'Declaration L1', 'Declaration L2']);
         } elseif ($filter === 'done') {
             $query->whereIn('status', ['Rejected', 'Return/Refund', 'Doc Accepted', 'Verified']);
-        }
-
-        // If 'all' is selected or no filter is applied, just get all data
-        if ($filter === 'all') {
-            // No additional where clauses needed for 'all'
         }
 
         $sppd = BusinessTrip::where('status', '!=', 'Draft')->orderBy('created_at', 'desc')->get();

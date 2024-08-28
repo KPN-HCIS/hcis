@@ -1290,7 +1290,7 @@
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="card">
                                                                 <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%"
+                                                                    <button type="button" style="width: 60%" disabled
                                                                         id="toggle-bt-perdiem"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
@@ -1398,7 +1398,7 @@
                                                                                                     <input type="date"
                                                                                                         name="start_bt_perdiem[]"
                                                                                                         class="form-control start-perdiem"
-                                                                                                        value="{{ old('start_bt_perdiem.' . $index, $perdiem2['start_date'] ?? '') }}">
+                                                                                                        value="{{ old('start_bt_perdiem.' . $index, $perdiem2['start_date'] ?? '') }}" disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1407,7 +1407,7 @@
                                                                                                     <input type="date"
                                                                                                         name="end_bt_perdiem[]"
                                                                                                         class="form-control end-perdiem"
-                                                                                                        value="{{ old('end_bt_perdiem.' . $index, $perdiem2['end_date'] ?? '') }}">
+                                                                                                        value="{{ old('end_bt_perdiem.' . $index, $perdiem2['end_date'] ?? '') }}" disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1438,7 +1438,7 @@
                                                                                                         Agency</label>
                                                                                                     <select
                                                                                                         class="form-control select2 location-select"
-                                                                                                        name="location_bt_perdiem[]">
+                                                                                                        name="location_bt_perdiem[]" disabled>
                                                                                                         <option
                                                                                                             value="">
                                                                                                             Select
@@ -1463,7 +1463,7 @@
                                                                                                         class="form-control other-location"
                                                                                                         placeholder="Other Location"
                                                                                                         value="{{ old('other_location_bt_perdiem.' . $index, $perdiem2['other_location'] ?? '') }}"
-                                                                                                        style="{{ ($perdiem2['location'] ?? '') == 'Others' ? 'display:block;' : 'display:none;' }}">
+                                                                                                        style="{{ ($perdiem2['location'] ?? '') == 'Others' ? 'display:block;' : 'display:none;' }}" disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1473,7 +1473,7 @@
                                                                                                     <select
                                                                                                         class="form-control select2"
                                                                                                         id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_perdiem[]">
+                                                                                                        name="company_bt_perdiem[]" disabled>
                                                                                                         <option
                                                                                                             value="">
                                                                                                             ---
@@ -1524,7 +1524,7 @@
                                                                                                         id="nominal_bt_perdiem_{{ $index }}"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominal2) }}">
+                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominal2) }}" disabled>
                                                                                                 </div>
                                                                                                 <hr
                                                                                                     class="border border-primary border-1 opacity-50">
@@ -1537,7 +1537,7 @@
                                                                                                     Perdiem</label>
                                                                                                 <input type="date"
                                                                                                     name="start_bt_perdiem[]"
-                                                                                                    class="form-control start-perdiem">
+                                                                                                    class="form-control start-perdiem" disabled>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
@@ -1545,7 +1545,7 @@
                                                                                                     Perdiem</label>
                                                                                                 <input type="date"
                                                                                                     name="end_bt_perdiem[]"
-                                                                                                    class="form-control end-perdiem">
+                                                                                                    class="form-control end-perdiem" disabled>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label class="form-label"
@@ -1572,7 +1572,7 @@
                                                                                                     Agency</label>
                                                                                                 <select
                                                                                                     class="form-control select2 location-select"
-                                                                                                    name="location_bt_perdiem[]">
+                                                                                                    name="location_bt_perdiem[]" disabled>
                                                                                                     <option value="">
                                                                                                         Select
                                                                                                         location...
@@ -1592,7 +1592,7 @@
                                                                                                     name="other_location_bt_perdiem[]"
                                                                                                     class="form-control other-location"
                                                                                                     placeholder="Other Location"
-                                                                                                    style="display:none;">
+                                                                                                    style="display:none;" disabled>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label class="form-label"
@@ -1628,7 +1628,7 @@
                                                                                                     name="nominal_bt_perdiem[]"
                                                                                                     id="nominal_bt_perdiem_0"
                                                                                                     type="text"
-                                                                                                    min="0">
+                                                                                                    min="0" disabled>
                                                                                             </div>
                                                                                             <hr
                                                                                                 class="border border-primary border-1 opacity-50">
@@ -1664,11 +1664,6 @@
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
-
-                                                                                    <button type="button"
-                                                                                        id="add-more-bt-perdiem"
-                                                                                        class="btn btn-primary mt-3">Add
-                                                                                        More</button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1677,7 +1672,7 @@
 
                                                                 <!-- Button and Card for Transport -->
                                                                 <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%"
+                                                                    <button type="button" style="width: 60%" disabled
                                                                         id="toggle-bt-transport"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
@@ -1735,7 +1730,7 @@
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
                                                                                                         placeholder="mm/dd/yyyy"
-                                                                                                        value="{{ old('tanggal_bt_transport.' . $index, $transport2['tanggal'] ?? '') }}">
+                                                                                                        value="{{ old('tanggal_bt_transport.' . $index, $transport2['tanggal'] ?? '') }}" disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1745,7 +1740,7 @@
                                                                                                     <select
                                                                                                         class="form-control select2"
                                                                                                         id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_transport[]">
+                                                                                                        name="company_bt_transport[]" disabled>
                                                                                                         <option
                                                                                                             value="">
                                                                                                             Select
@@ -1763,7 +1758,7 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">Keterangan</label>
-                                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here...">{{ old('keterangan_bt_transport.' . $index, $transport2['keterangan'] ?? '') }}</textarea>
+                                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..." disabled>{{ old('keterangan_bt_transport.' . $index, $transport2['keterangan'] ?? '') }}</textarea>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1782,7 +1777,7 @@
                                                                                                         id="nominal_bt_transport_{{ $index }}"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ old('nominal_bt_transport.' . $index, $transport2['nominal'] ?? '0') }}">
+                                                                                                        value="{{ old('nominal_bt_transport.' . $index, $transport2['nominal'] ?? '0') }}" disabled>
                                                                                                 </div>
 
                                                                                                 <hr
@@ -1797,7 +1792,7 @@
                                                                                                 <input type="date"
                                                                                                     name="tanggal_bt_transport[]"
                                                                                                     class="form-control"
-                                                                                                    placeholder="mm/dd/yyyy">
+                                                                                                    placeholder="mm/dd/yyyy" disabled>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label class="form-label"
@@ -1806,7 +1801,7 @@
                                                                                                 <select
                                                                                                     class="form-control select2"
                                                                                                     id="companyFilter_0"
-                                                                                                    name="company_bt_transport[]">
+                                                                                                    name="company_bt_transport[]" disabled>
                                                                                                     <option value="">
                                                                                                         Select
                                                                                                         Company...
@@ -1822,7 +1817,7 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Keterangan</label>
-                                                                                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."></textarea>
+                                                                                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..." disabled></textarea>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
@@ -1838,7 +1833,7 @@
                                                                                                     name="nominal_bt_transport[]"
                                                                                                     id="nominal_bt_transport_0"
                                                                                                     type="text"
-                                                                                                    min="0">
+                                                                                                    min="0" disabled>
                                                                                             </div>
 
                                                                                             <hr
@@ -1875,10 +1870,10 @@
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
-                                                                                    <button type="button"
+                                                                                    {{-- <button type="button"
                                                                                         id="add-more-bt-transport"
                                                                                         class="btn btn-primary mt-3">Add
-                                                                                        More</button>
+                                                                                        More</button> --}}
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1887,7 +1882,7 @@
 
                                                                 <!-- Button and Card for Penginapan -->
                                                                 <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%"
+                                                                    <button type="button" style="width: 60%" disabled
                                                                         id="toggle-bt-penginapan"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
@@ -1950,7 +1945,7 @@
                                                                                                             name="start_bt_penginapan[]"
                                                                                                             class="form-control start-penginapan"
                                                                                                             placeholder="mm/dd/yyyy"
-                                                                                                            value="{{ old('start_bt_penginapan.' . $index, $item2['start_date'] ?? '') }}">
+                                                                                                            value="{{ old('start_bt_penginapan.' . $index, $item2['start_date'] ?? '') }}" disabled>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -1961,7 +1956,7 @@
                                                                                                             name="end_bt_penginapan[]"
                                                                                                             class="form-control end-penginapan"
                                                                                                             placeholder="mm/dd/yyyy"
-                                                                                                            value="{{ old('end_bt_penginapan.' . $index, $item2['end_date'] ?? '') }}">
+                                                                                                            value="{{ old('end_bt_penginapan.' . $index, $item2['end_date'] ?? '') }}" disabled>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -1995,7 +1990,7 @@
                                                                                                             name="hotel_name_bt_penginapan[]"
                                                                                                             class="form-control"
                                                                                                             placeholder="ex: Westin"
-                                                                                                            value="{{ old('hotel_name_bt_penginapan.' . $index, $item2['hotel_name'] ?? '') }}">
+                                                                                                            value="{{ old('hotel_name_bt_penginapan.' . $index, $item2['hotel_name'] ?? '') }}" disabled>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -2005,7 +2000,7 @@
                                                                                                         <select
                                                                                                             class="form-control select2"
                                                                                                             id="companyFilter_{{ $index }}"
-                                                                                                            name="company_bt_penginapan[]">
+                                                                                                            name="company_bt_penginapan[]" disabled>
                                                                                                             <option
                                                                                                                 value="">
                                                                                                                 Select
@@ -2037,7 +2032,7 @@
                                                                                                             id="nominal_bt_penginapan_{{ $index }}"
                                                                                                             type="text"
                                                                                                             min="0"
-                                                                                                            value="{{ old('nominal_bt_penginapan.' . $index, $item2['nominal'] ?? '0') }}">
+                                                                                                            value="{{ old('nominal_bt_penginapan.' . $index, $item2['nominal'] ?? '0') }}" disabled>
                                                                                                     </div>
 
                                                                                                     <hr
@@ -2052,7 +2047,7 @@
                                                                                                     <input type="date"
                                                                                                         name="start_bt_penginapan[]"
                                                                                                         class="form-control start-penginapan"
-                                                                                                        placeholder="mm/dd/yyyy">
+                                                                                                        placeholder="mm/dd/yyyy" disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -2061,7 +2056,7 @@
                                                                                                     <input type="date"
                                                                                                         name="end_bt_penginapan[]"
                                                                                                         class="form-control end-penginapan"
-                                                                                                        placeholder="mm/dd/yyyy">
+                                                                                                        placeholder="mm/dd/yyyy" disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -2092,7 +2087,7 @@
                                                                                                     <input type="text"
                                                                                                         name="hotel_name_bt_penginapan[]"
                                                                                                         class="form-control"
-                                                                                                        placeholder="ex: Westin">
+                                                                                                        placeholder="ex: Westin" disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -2102,7 +2097,7 @@
                                                                                                     <select
                                                                                                         class="form-control select2"
                                                                                                         id="companyFilter_0"
-                                                                                                        name="company_bt_penginapan[]">
+                                                                                                        name="company_bt_penginapan[]" disabled>
                                                                                                         <option
                                                                                                             value="">
                                                                                                             Select
@@ -2132,7 +2127,7 @@
                                                                                                         name="nominal_bt_penginapan[]"
                                                                                                         id="nominal_bt_penginapan_0"
                                                                                                         type="text"
-                                                                                                        min="0">
+                                                                                                        min="0" disabled>
                                                                                                 </div>
 
                                                                                                 <hr
@@ -2171,11 +2166,10 @@
                                                                                             </div>
                                                                                         </div>
 
-
-                                                                                        <button type="button"
+                                                                                        {{-- <button type="button"
                                                                                             id="add-more-bt-penginapan"
                                                                                             class="btn btn-primary mt-3">Add
-                                                                                            More</button>
+                                                                                            More</button> --}}
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -2186,7 +2180,7 @@
 
                                                                 <!-- Button and Card for Lainnya -->
                                                                 <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%"
+                                                                    <button type="button" style="width: 60%" disabled
                                                                         id="toggle-bt-lainnya"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
@@ -2250,13 +2244,13 @@
                                                                                                                 name="tanggal_bt_lainnya[]"
                                                                                                                 class="form-control"
                                                                                                                 value="{{ old('tanggal_bt_lainnya.' . $index, $lainnyaItem2['tanggal'] ?? '') }}"
-                                                                                                                placeholder="mm/dd/yyyy">
+                                                                                                                placeholder="mm/dd/yyyy" disabled>
                                                                                                         </div>
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
                                                                                                                 class="form-label">Keterangan</label>
-                                                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ...">{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem2['keterangan'] ?? '') }}</textarea>
+                                                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled>{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem2['keterangan'] ?? '') }}</textarea>
                                                                                                         </div>
                                                                                                         <div
                                                                                                             class="mb-2">
@@ -2274,7 +2268,7 @@
                                                                                                                     name="nominal_bt_lainnya[]"
                                                                                                                     type="text"
                                                                                                                     min="0"
-                                                                                                                    value="{{ old('nominal_bt_lainnya.' . $index, $lainnyaItem2['nominal'] ?? '0') }}">
+                                                                                                                    value="{{ old('nominal_bt_lainnya.' . $index, $lainnyaItem2['nominal'] ?? '0') }}" disabled>
                                                                                                             </div>
                                                                                                         </div>
                                                                                                         <hr
@@ -2290,12 +2284,12 @@
                                                                                                             type="date"
                                                                                                             name="tanggal_bt_lainnya[]"
                                                                                                             class="form-control"
-                                                                                                            placeholder="mm/dd/yyyy">
+                                                                                                            placeholder="mm/dd/yyyy" disabled>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">Keterangan</label>
-                                                                                                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."></textarea>
+                                                                                                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled></textarea>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -2312,7 +2306,7 @@
                                                                                                                 name="nominal_bt_lainnya[]"
                                                                                                                 type="text"
                                                                                                                 min="0"
-                                                                                                                value="0">
+                                                                                                                value="0" disabled>
                                                                                                         </div>
                                                                                                     </div>
                                                                                                     <hr
@@ -2348,10 +2342,10 @@
                                                                                                 </div>
                                                                                             </div>
 
-                                                                                            <button type="button"
+                                                                                            {{-- <button type="button"
                                                                                                 id="add-more-bt-lainnya"
                                                                                                 class="btn btn-primary mt-3">Add
-                                                                                                More</button>
+                                                                                                More</button> --}}
                                                                                         </div>
 
                                                                                     </div>

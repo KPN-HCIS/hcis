@@ -141,16 +141,16 @@
                                                             <div class="table-responsive-sm">
                                                                 <div class="d-flex flex-column gap-2">
                                                                     <div class="card">
-                                                                        <div class="card-body text-center">
+                                                                        {{-- <div class="card-body text-center">
                                                                             <button type="button" style="width: 60%"
                                                                                 id="toggle-bt-perdiem"
                                                                                 class="btn btn-primary mt-3"
                                                                                 data-state="false"><i
                                                                                     class="bi bi-plus-circle"></i>
                                                                                 Perdiem</button>
-                                                                        </div>
+                                                                        </div> --}}
                                                                         <div id="perdiem-card" class="card-body"
-                                                                            style="display: none;">
+                                                                            style="display: ">
                                                                             <div class="accordion" id="accordionPerdiem">
                                                                                 <div class="accordion-item">
                                                                                     <h2 class="accordion-header"
@@ -321,16 +321,16 @@
                                                                         </div>
 
                                                                         <!-- Button and Card for Transport -->
-                                                                        <div class="card-body text-center">
+                                                                        {{-- <div class="card-body text-center">
                                                                             <button type="button" style="width: 60%"
                                                                                 id="toggle-bt-transport"
                                                                                 class="btn btn-primary mt-3"
                                                                                 data-state="false"><i
                                                                                     class="bi bi-plus-circle"></i>
                                                                                 Transport</button>
-                                                                        </div>
+                                                                        </div> --}}
                                                                         <div id="transport-card" class="card-body"
-                                                                            style="display: none;">
+                                                                            style="display:">
                                                                             <div class="accordion"
                                                                                 id="accordionTransport">
                                                                                 <div class="accordion-item">
@@ -441,16 +441,16 @@
                                                                         </div>
 
                                                                         <!-- Button and Card for Penginapan -->
-                                                                        <div class="card-body text-center">
+                                                                        {{-- <div class="card-body text-center">
                                                                             <button type="button" style="width: 60%"
                                                                                 id="toggle-bt-penginapan"
                                                                                 class="btn btn-primary mt-3"
                                                                                 data-state="false"><i
                                                                                     class="bi bi-plus-circle"></i>
                                                                                 Accommodation</button>
-                                                                        </div>
+                                                                        </div> --}}
                                                                         <div id="penginapan-card" class="card-body"
-                                                                            style="display: none;">
+                                                                            style="display: ">
                                                                             <div class="accordion"
                                                                                 id="accordionPenginapan">
                                                                                 <div class="accordion-item">
@@ -598,16 +598,16 @@
 
 
                                                                         <!-- Button and Card for Lainnya -->
-                                                                        <div class="card-body text-center">
+                                                                        {{-- <div class="card-body text-center">
                                                                             <button type="button" style="width: 60%"
                                                                                 id="toggle-bt-lainnya"
                                                                                 class="btn btn-primary mt-3"
                                                                                 data-state="false"><i
                                                                                     class="bi bi-plus-circle"></i>
                                                                                 Others</button>
-                                                                        </div>
+                                                                        </div> --}}
                                                                         <div id="lainnya-card" class="card-body"
-                                                                            style="display: none;">
+                                                                            style="display:">
                                                                             <div class="accordion" id="accordionLainnya">
                                                                                 <div class="accordion-item">
                                                                                     <h2 class="accordion-header"

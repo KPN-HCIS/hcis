@@ -128,7 +128,7 @@
                                         aria-label="search" aria-describedby="search">
                                 </div>
                             </div>
-                            @php
+                            {{-- @php
                                 // Get the current filter value from the request
                                 $currentFilter = request('filter');
                             @endphp
@@ -150,7 +150,7 @@
                                     class="btn {{ $filter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm mb-3">
                                     Done
                                 </button>
-                            </form>
+                            </form> --}}
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">

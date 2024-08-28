@@ -277,7 +277,7 @@
                                                                     ? 'warning'
                                                                     : ($n->status == 'Draft'
                                                                         ? 'secondary'
-                                                                        : (in_array($n->status, ['Doc Accepted', 'verified'])
+                                                                        : (in_array($n->status, ['Doc Accepted', 'Verified'])
                                                                             ? 'info'
                                                                             : 'secondary')))) }}"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"
