@@ -70,7 +70,7 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    @if(auth()->check())
+    {{-- @if(auth()->check())
     @can('adminmenu')
 
     <div class="sidebar-heading">
@@ -95,7 +95,7 @@
                 @can('viewrole')
                     <a class="collapse-item" href="{{ route('roles') }}">Role</a>
                 @endcan
-                {{-- <a class="collapse-item" href="{{ route('employees') }}">Employee</a> --}}
+                
             </div>
         </div>
     </li>
@@ -121,7 +121,7 @@
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
     @endcan
-    @endif
+    @endif --}}
 
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">

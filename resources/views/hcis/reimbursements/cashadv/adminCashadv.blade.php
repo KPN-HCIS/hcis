@@ -20,7 +20,6 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            
                             <li class="breadcrumb-item">{{ $parentLink }}</li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
@@ -32,35 +31,42 @@
         </div>
         <!-- Content Row -->
         <div class="row">
-            <div class="col-md-12">
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="input-group" style="width: 50%;">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-white w-border-dark-subtle"><i class="ri-search-line"></i></span>
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <div class="col-md-7">
+                        <form action="{{ route('cashadvanced.admin') }}" method="GET">
+                            <div class="input-group">
+                                <label class="col-form-label">Start Date : </label>
+                                <input type="date" class="form-control mx-2" id="start_date" name="start_date" placeholder="Start Date" title="Start Date" value="{{ $startDate }}">
+                                <label class="col-form-label"> - </label>
+                                <input type="date" class="form-control mx-2" id="end_date" name="end_date" placeholder="End Date" title="End Date" value="{{ $endDate }}">
+                                <div class="input-group-append mx-2">
+                                    <button class="btn btn-primary" type="submit">Filter</button>
                                 </div>
-                                <input type="text" name="customsearch" id="customsearch" class="form-control w-border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search" >&nbsp;&nbsp;&nbsp;
-                                <input type="text" class="form-control date" id="singledaterange" data-toggle="date-picker" data-cancel-class="btn-warning" name="daterange" title="Start Date Range">
-                            </div>
-                            <div class="input-group justify-content-end" style="width: 50%;">
-                                <form action="{{ route('exportca.excel') }}" method="GET">
-                                    <button type="submit"  class="btn btn-success">
+                                <div class="input-group-append">
+                                    <button class="btn btn-success" type="button" onclick="redirectToExportExcel()">
                                         <i class="ri-file-excel-2-line"></i> Export to Excel
                                     </button>
-                                </form>
+                                </div>
                             </div>
-                        </div>                        
-                    </div>
+                        </form>
+                    </div>     
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row" id="tableFilter">
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="card-title">{{ $link }}</h3>
+                            <div class="input-group" style="width: 30%;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white w-border-dark-subtle"><i class="ri-search-line"></i></span>
+                                </div>
+                                <input type="text" name="customsearch" id="customsearch" class="form-control w-border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search" >
+                                {{-- &nbsp;&nbsp;&nbsp; --}}
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
@@ -144,6 +150,34 @@
         if (successMessage) {
             alert(successMessage);
         }
+        function redirectToExportExcel() {
+            const route = "{{ route('exportca.excel') }}";
+
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            
+            // Create a form element
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = route;
+
+            const startDateInput = document.createElement('input');
+            startDateInput.type = 'hidden';
+            startDateInput.name = 'start_date';
+            startDateInput.value = startDate;
+
+            const endDateInput = document.createElement('input');
+            endDateInput.type = 'hidden';
+            endDateInput.name = 'end_date';
+            endDateInput.value = endDate;
+
+            form.appendChild(startDateInput);
+            form.appendChild(endDateInput);
+
+            // Append the form to the body and submit it
+            document.body.appendChild(form);
+            form.submit();
+        }
 
         // Event listener untuk menangkap date range yang dipilih
         $('#singledaterange').on('apply.daterangepicker', function(ev, picker) {
@@ -157,7 +191,7 @@
         // Fungsi untuk mengirimkan tanggal yang dipilih ke server dan memperbarui tabel
         function filterTableByDateRange(startDate, endDate) {
             $.ajax({
-                url: '{{ route("filter.ca.transactions") }}', // Route yang sudah Anda buat
+                url: '{{ route("cashadvanced.admin") }}', // Route yang sudah Anda buat
                 type: 'GET',
                 data: {
                     start_date: startDate,
@@ -165,10 +199,11 @@
                 },
                 success: function(response) {
                     // Perbarui tabel dengan data yang difilter
-                    $('#scheduleTable tbody').html(response);
+                    // $('#scheduleTable tbody').html(response);
+                    // $('#tableFilter').html(response);
                 },
                 error: function(xhr) {
-                    console.error(xhr);
+                    // console.error(xhr);
                 }
             });
         }

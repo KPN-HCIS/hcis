@@ -76,7 +76,7 @@
             </li>
             @endif
             @if(session('system') == 'kpnpm')
-                <li class="side-nav-item">
+                {{-- <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#sidebarEmail" aria-expanded="false" aria-controls="sidebarEmail" class="side-nav-link">
                         <i class="ri-star-line"></i>
                         <span> Goals </span>
@@ -94,7 +94,7 @@
                             @endif
                         </ul>
                     </div>
-                </li>
+                </li> --}}
             @elseif(session('system') == 'kpnreimburse')
                 <li class="side-nav-item">
                     <a href="{{ route('reimbursements') }}"  aria-controls="sidebarEmail" class="side-nav-link">
@@ -103,14 +103,14 @@
                     </a>
                 </li>
             @endif
-            @if (auth()->user()->isApprover())
+            {{-- @if (auth()->user()->isApprover())
             <li class="side-nav-item">
                 <a href="{{ url('/reports') }}" class="side-nav-link">
                     <i class="ri-file-chart-line"></i>
                     <span> Reports </span>
                 </a>
             </li>
-            @endif
+            @endif --}}
             <li class="side-nav-item">
                 <a href="{{ url('/guides') }}" class="side-nav-link">
                     <i class="ri-file-text-line"></i>
@@ -118,7 +118,7 @@
                 </a>
             </li>
 
-            @if(auth()->check())
+            {{-- @if(auth()->check())
             @can('adminmenu')
             <li class="side-nav-title">Admin</li>
 
@@ -172,7 +172,7 @@
             </li>
 
             @endcan
-            @endif
+            @endif --}}
 
         </ul>
         <!--- End Sidemenu -->

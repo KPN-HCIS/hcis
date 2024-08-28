@@ -54,8 +54,6 @@ class ReimburseController extends Controller
             }
         }
 
-
-
         return view('hcis.reimbursements.cashadv.cashadv', [
             'pendingCACount' => $pendingCACount,
             'link' => $link,
@@ -64,12 +62,28 @@ class ReimburseController extends Controller
             'ca_transactions' => $ca_transactions,
         ]);
     }
-    public function cashadvancedAdmin()
-    {
+    public function cashadvancedAdmin(Request $request)
+    {       
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Report CA';
-        $ca_transactions = CATransaction::with('employee')->get();
+        $query = CATransaction::with('employee');
+
+        $startDate = date('Y-m-d');
+        $endDate = date('Y-m-d');
+        //dd($startDate);
+
+        // Cek apakah ada nilai start_date dan end_date dalam request
+        if ($request->has(['start_date', 'end_date'])) {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            
+            // Tambahkan kondisi whereBetween pada query
+            $query->whereBetween('start_date', [$startDate, $endDate]);
+        }
+
+        // Eksekusi query untuk mendapatkan data yang difilter
+        $ca_transactions = $query->get();
         $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
 
         // Memformat tanggal
@@ -84,6 +98,8 @@ class ReimburseController extends Controller
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
     }
     public function filterCaTransactions(Request $request)
@@ -1426,8 +1442,11 @@ class ReimburseController extends Controller
         $model->delete();
         return redirect()->intended(route('ticket', absolute: false));
     }
-    public function exportExcel()
+    public function exportExcel(Request $request)
     {
-        return Excel::download(new CashAdvancedExport, 'cash_advanced.xlsx');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return Excel::download(new CashAdvancedExport($startDate, $endDate), 'cash_advanced.xlsx');
     }
 }
