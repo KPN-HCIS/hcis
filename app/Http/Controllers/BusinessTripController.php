@@ -243,7 +243,7 @@ class BusinessTripController extends Controller
             'status' => $request->status,
             'manager_l1_id' => $managerL1,
             'manager_l2_id' => $managerL2,
-            'id_ca' => $request->id_ca,
+            // 'id_ca' => $request->id_ca,
             'id_tiket' => $request->id_tiket,
             'id_hotel' => $request->id_hotel,
             'id_taksi' => $request->id_taksi,
@@ -408,7 +408,7 @@ class BusinessTripController extends Controller
         $oldNoCa = $request->old_no_ca; // Ensure you have the old `no_ca`
 
         if ($request->ca === 'Ya') {
-            // Check if a CA transaction already exists for the given no_sppd
+            $businessTripStatus = $request->input('status');
             $ca = CATransaction::where('no_sppd', $oldNoSppd)->first();
             if (!$ca) {
                 // Create a new CA transaction
@@ -547,71 +547,65 @@ class BusinessTripController extends Controller
 
             $ca->detail_ca = json_encode($detail_ca);
             $ca->declare_ca = json_encode($detail_ca);
+            $ca->save();
 
+            if ($businessTripStatus !== 'Draft') {
+                $model = $ca;
 
-            $model = $ca;
+                $model->status_id = $managerL1;
 
-            $model->status_id = $managerL1;
+                $cek_director_id = Employee::select([
+                    'dsg.department_level2',
+                    'dsg2.director_flag',
+                    DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
+                    'dsg2.designation_name',
+                    'dsg2.job_code',
+                    'emp.fullname',
+                    'emp.employee_id',
+                ])
+                    ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
+                    ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
+                    ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
+                    ->where('employees.designation_code', '=', $employee->designation_code)
+                    ->where('dsg2.director_flag', '=', 'F')
+                    ->get();
 
-            $cek_director_id = Employee::select([
-                'dsg.department_level2',
-                'dsg2.director_flag',
-                DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
-                'dsg2.designation_name',
-                'dsg2.job_code',
-                'emp.fullname',
-                'emp.employee_id',
-            ])
-                ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
-                ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
-                ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
-                ->where('employees.designation_code', '=', $employee->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
-                ->get();
+                $director_id = "";
 
-            $director_id = "";
-
-            if ($cek_director_id->isNotEmpty()) {
-                $director_id = $cek_director_id->first()->employee_id;
-            }
-            //cek matrix approval
-
-            $total_ca = str_replace('.', '', $request->totalca);
-            // dd($total_ca);
-            // dd($employee->group_company);
-            // dd($request->bb_perusahaan);
-            $data_matrix_approvals = MatrixApproval::where('modul', 'dns')
-                ->where('group_company', 'like', '%' . $employee->group_company . '%')
-                ->where('contribution_level_code', 'like', '%' . $request->bb_perusahaan . '%')
-                ->whereRaw(
-                    '
-            ? BETWEEN
-            CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND
-            CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
-                    [$total_ca]
-                )
-                ->get();
-            foreach ($data_matrix_approvals as $data_matrix_approval) {
-
-                if ($data_matrix_approval->employee_id == "cek_L1") {
-                    $employee_id = $managerL1;
-                } else if ($data_matrix_approval->employee_id == "cek_L2") {
-                    $employee_id = $managerL2;
-                } else if ($data_matrix_approval->employee_id == "cek_director") {
-                    $employee_id = $director_id;
-                } else {
-                    $employee_id = $data_matrix_approval->employee_id;
+                if ($cek_director_id->isNotEmpty()) {
+                    $director_id = $cek_director_id->first()->employee_id;
                 }
-                // $uuid = Str::uuid();
-                $model_approval = new ca_approval;
-                $model_approval->ca_id = $id;
-                $model_approval->role_name = $data_matrix_approval->desc;
-                $model_approval->employee_id = $employee_id;
-                $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = 'Pending';
 
-                // Simpan data ke database
-                $model_approval->save();
+                $total_ca = str_replace('.', '', $request->totalca);
+                $data_matrix_approvals = MatrixApproval::where('modul', 'dns')
+                    ->where('group_company', 'like', '%' . $employee->group_company . '%')
+                    ->where('contribution_level_code', 'like', '%' . $request->bb_perusahaan . '%')
+                    ->whereRaw(
+                        '? BETWEEN CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
+                        [$total_ca]
+                    )
+                    ->get();
+
+                foreach ($data_matrix_approvals as $data_matrix_approval) {
+                    if ($data_matrix_approval->employee_id == "cek_L1") {
+                        $employee_id = $managerL1;
+                    } else if ($data_matrix_approval->employee_id == "cek_L2") {
+                        $employee_id = $managerL2;
+                    } else if ($data_matrix_approval->employee_id == "cek_director") {
+                        $employee_id = $director_id;
+                    } else {
+                        $employee_id = $data_matrix_approval->employee_id;
+                    }
+
+                    $model_approval = new ca_approval;
+                    $model_approval->ca_id = $ca->id;  // Use $ca->id instead of $request->id_ca
+                    $model_approval->role_name = $data_matrix_approval->desc;
+                    $model_approval->employee_id = $employee_id;
+                    $model_approval->layer = $data_matrix_approval->layer;
+                    $model_approval->approval_status = 'Pending';
+
+                    $model_approval->save();
+                }
             }
         } else {
             // If CA is not selected, remove existing CA transaction for this no_sppd
@@ -857,67 +851,62 @@ class BusinessTripController extends Controller
 
         $model->sett_id = $managerL1;
 
-        $cek_director_id = Employee::select([
-            'dsg.department_level2',
-            'dsg2.director_flag',
-            DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
-            'dsg2.designation_name',
-            'dsg2.job_code',
-            'emp.fullname',
-            'emp.employee_id',
-        ])
-            ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
-            ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
-            ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
-            ->where('employees.designation_code', '=', $employee->designation_code)
-            ->where('dsg2.director_flag', '=', 'F')
-            ->get();
+        // Only proceed with approval process if not 'Declaration Draft'
+        if ($request->status !== 'Declaration Draft') {
+            $cek_director_id = Employee::select([
+                'dsg.department_level2',
+                'dsg2.director_flag',
+                DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
+                'dsg2.designation_name',
+                'dsg2.job_code',
+                'emp.fullname',
+                'emp.employee_id',
+            ])
+                ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
+                ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
+                ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
+                ->where('employees.designation_code', '=', $employee->designation_code)
+                ->where('dsg2.director_flag', '=', 'F')
+                ->get();
 
-        $director_id = "";
+            $director_id = "";
 
-        if ($cek_director_id->isNotEmpty()) {
-            $director_id = $cek_director_id->first()->employee_id;
-        }
-        //cek matrix approval
-
-        $total_ca = str_replace('.', '', $request->totalca);
-        // dd($total_ca);
-        // dd($employee->group_company);
-        // dd($request->bb_perusahaan);
-        $data_matrix_approvals = MatrixApproval::where('modul', 'dns')
-            ->where('group_company', 'like', '%' . $employee->group_company . '%')
-            ->where('contribution_level_code', 'like', '%' . $request->bb_perusahaan . '%')
-            ->whereRaw(
-                '
-            ? BETWEEN
-            CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND
-            CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
-                [$total_ca]
-            )
-            ->get();
-        // dd($request->bb_perusahaan);
-        foreach ($data_matrix_approvals as $data_matrix_approval) {
-
-            if ($data_matrix_approval->employee_id == "cek_L1") {
-                $employee_id = $managerL1;
-            } else if ($data_matrix_approval->employee_id == "cek_L2") {
-                $employee_id = $managerL2;
-            } else if ($data_matrix_approval->employee_id == "cek_director") {
-                $employee_id = $director_id;
-            } else {
-                $employee_id = $data_matrix_approval->employee_id;
+            if ($cek_director_id->isNotEmpty()) {
+                $director_id = $cek_director_id->first()->employee_id;
             }
-            // $uuid = Str::uuid();
-            $model_approval = new ca_sett_approval;
-            $model_approval->ca_id = $request->no_id;
-            $model_approval->role_name = $data_matrix_approval->desc;
-            $model_approval->employee_id = $employee_id;
-            $model_approval->layer = $data_matrix_approval->layer;
-            $model_approval->approval_status = 'Pending';
 
-            // Simpan data ke database
-            $model_approval->save();
+            $total_ca = str_replace('.', '', $request->totalca);
+            $data_matrix_approvals = MatrixApproval::where('modul', 'dns')
+                ->where('group_company', 'like', '%' . $employee->group_company . '%')
+                ->where('contribution_level_code', 'like', '%' . $request->bb_perusahaan . '%')
+                ->whereRaw(
+                    '? BETWEEN CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
+                    [$total_ca]
+                )
+                ->get();
+
+            foreach ($data_matrix_approvals as $data_matrix_approval) {
+                if ($data_matrix_approval->employee_id == "cek_L1") {
+                    $employee_id = $managerL1;
+                } else if ($data_matrix_approval->employee_id == "cek_L2") {
+                    $employee_id = $managerL2;
+                } else if ($data_matrix_approval->employee_id == "cek_director") {
+                    $employee_id = $director_id;
+                } else {
+                    $employee_id = $data_matrix_approval->employee_id;
+                }
+
+                $model_approval = new ca_sett_approval;
+                $model_approval->ca_id = $request->no_id;
+                $model_approval->role_name = $data_matrix_approval->desc;
+                $model_approval->employee_id = $employee_id;
+                $model_approval->layer = $data_matrix_approval->layer;
+                $model_approval->approval_status = 'Pending';
+
+                $model_approval->save();
+            }
         }
+
         $ca->save();
         return redirect('/businessTrip')->with('success', 'Business trip updated successfully');
     }
@@ -1075,7 +1064,6 @@ class BusinessTripController extends Controller
                                 'hotels' => $hotels // Pass all hotels for detailed view
                             ];
                             break;
-
 
                         case 'taksi':
                             $taksi = Taksi::where('no_sppd', $sppd->no_sppd)->first();
@@ -1709,9 +1697,26 @@ class BusinessTripController extends Controller
     }
 
 
-    public function admin()
+    public function admin(Request $request)
     {
         $user = Auth::user();
+
+        $query = BusinessTrip::orderBy('created_at', 'desc');
+        $filter = $request->input('filter', 'all');
+
+        if ($filter === 'request') {
+            $query->whereDate('kembali', '<', now())
+                  ->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
+        } elseif ($filter === 'declaration') {
+            $query->whereIn('status', ['Approved Declaration', 'Declaration L1', 'Declaration L2']);
+        } elseif ($filter === 'done') {
+            $query->whereIn('status', ['Rejected', 'Return/Refund', 'Doc Accepted', 'Verified']);
+        }
+
+        // If 'all' is selected or no filter is applied, just get all data
+        if ($filter === 'all') {
+            // No additional where clauses needed for 'all'
+        }
 
         $sppd = BusinessTrip::where('status', '!=', 'Draft')->orderBy('created_at', 'desc')->get();
 
@@ -1730,7 +1735,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Business Trip (Admin)';
 
-        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names'));
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter'));
     }
 
     public function filterDateAdmin(Request $request)
@@ -1847,15 +1852,108 @@ class BusinessTripController extends Controller
     {
         $n = BusinessTrip::find($id);
         $companies = Company::orderBy('contribution_level')->get();
-        // $ca = ca_transaction::find($id);
+        $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
+
+        $totalCa = (int) str_replace('.', '', $request->totalca_deklarasi);
+        $totalReal = (int) str_replace('.', '', $request->totalca);
+
+        $ca->total_real = $totalReal;
+        $ca->total_cost = $totalCa - $totalReal;
 
         $status = $request->input('accept_status');
-        $n->status = $status;
+        $n->status = $request->accept_status;
 
-        // $ca = $n->ca;
-        // $ca->approval_status = $status;
-        // $ca->save();
+        $detail_perdiem = [];
+            $detail_transport = [];
+            $detail_penginapan = [];
+            $detail_lainnya = [];
 
+            // Populate detail_perdiem
+            if ($request->has('start_bt_perdiem')) {
+                foreach ($request->start_bt_perdiem as $key => $startDate) {
+                    $endDate = $request->end_bt_perdiem[$key] ?? '';
+                    $totalDays = $request->total_days_bt_perdiem[$key] ?? '';
+                    $location = $request->location_bt_perdiem[$key] ?? '';
+                    $other_location = $request->other_location_bt_perdiem[$key] ?? '';
+                    $companyCode = $request->company_bt_perdiem[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
+
+                    $detail_perdiem[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'location' => $location,
+                        'other_location' => $other_location,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
+            }
+
+            // Populate detail_transport
+            if ($request->has('tanggal_bt_transport')) {
+                foreach ($request->tanggal_bt_transport as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_transport[$key] ?? '';
+                    $companyCode = $request->company_bt_transport[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
+
+                    $detail_transport[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
+            }
+
+            // Populate detail_penginapan
+            if ($request->has('start_bt_penginapan')) {
+                foreach ($request->start_bt_penginapan as $key => $startDate) {
+                    $endDate = $request->end_bt_penginapan[$key] ?? '';
+                    $totalDays = $request->total_days_bt_penginapan[$key] ?? '';
+                    $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
+                    $companyCode = $request->company_bt_penginapan[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
+                    $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
+
+                    $detail_penginapan[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'hotel_name' => $hotelName,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                        'totalPenginapan' => $totalPenginapan,
+                    ];
+                }
+            }
+
+            // Populate detail_lainnya
+            if ($request->has('tanggal_bt_lainnya')) {
+                foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
+                    $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
+
+                    $detail_lainnya[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'nominal' => $nominal,
+                        'totalLainnya' => $totalLainnya,
+                    ];
+                }
+            }
+
+            // Save the details
+            $declare_ca = [
+                'detail_perdiem' => $detail_perdiem,
+                'detail_transport' => $detail_transport,
+                'detail_penginapan' => $detail_penginapan,
+                'detail_lainnya' => $detail_lainnya,
+            ];
+
+            $ca->declare_ca = json_encode($declare_ca);
+        $ca->save();
         $n->save();
 
         return redirect()->route('businessTrip.admin');

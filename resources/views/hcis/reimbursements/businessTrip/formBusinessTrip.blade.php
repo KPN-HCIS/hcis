@@ -81,7 +81,7 @@
                                 <label for="bb_perusahaan" class="form-label">Company Cost Expenses (PT Service Needs / Not
                                     PT Payroll)</label>
                                 <select class="form-select" id="bb_perusahaan" name="bb_perusahaan" required>
-                                    <option value="">--- Choose PT ---</option>
+                                    <option value="" disabled selected>--- Choose PT ---</option>
                                     @foreach ($companies as $company)
                                         <option value="{{ $company->contribution_level_code }}">
                                             {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}

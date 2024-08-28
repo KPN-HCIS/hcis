@@ -1731,6 +1731,7 @@
                             </div>
 
                             <input type="hidden" name="status" value="Pending L1" id="status">
+                            <input type="hidden" name="id_ca" value="{{ $ca->id }}">
 
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="button" class="btn btn-outline-primary rounded-pill me-2"

@@ -16,8 +16,8 @@
                         <a href="{{ route('businessTrip.admin') }}" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
-                        <form action="/businessTrip/deklarasi/admin/status/{{ $n->id }}" method="POST" id="btEditForm"
-                            enctype="multipart/form-data">
+                        <form action="/businessTrip/deklarasi/admin/status/{{ $n->id }}" method="POST"
+                            id="btEditForm" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="row mb-3">
@@ -293,7 +293,8 @@
                                                                                                             class="input-group-text">Rp</span>
                                                                                                     </div>
                                                                                                     @php
-                                                                                                    $index = $index ?? 0;
+                                                                                                        $index =
+                                                                                                            $index ?? 0;
                                                                                                         $nominalPerdiem =
                                                                                                             $nominalPerdiem ??
                                                                                                             0; // Default to 0 if $totalPerdiem is not set
@@ -439,7 +440,8 @@
                                                                                                 </div>
 
                                                                                                 @php
-                                                                                                $index = $index ?? 0;
+                                                                                                    $index =
+                                                                                                        $index ?? 0;
                                                                                                     $totalPerdiem =
                                                                                                         $totalPerdiem ??
                                                                                                         0; // Default to 0 if $totalPerdiem is not set
@@ -1262,7 +1264,12 @@
                                                                 $totalTransport +
                                                                 $totalPenginapan +
                                                                 $totalLainnya;
-                                                            $formattedTotalCashAdvanced = number_format($totalCashAdvanced, 0, ',', '.');
+                                                            $formattedTotalCashAdvanced = number_format(
+                                                                $totalCashAdvanced,
+                                                                0,
+                                                                ',',
+                                                                '.',
+                                                            );
                                                         @endphp
                                                         <div class="col-md-12 mb-2">
                                                             <label class="form-label">Total Cash Advanced</label>
@@ -1273,7 +1280,7 @@
                                                                 <input class="form-control bg-light"
                                                                     name="totalca_deklarasi" id="totalca_deklarasi"
                                                                     type="text" min="0"
-                                                                    value="{{ $formattedTotalCashAdvanced  }}" readonly>
+                                                                    value="{{ $formattedTotalCashAdvanced }}" readonly>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2467,25 +2474,34 @@
                             <div class="mb-3">
                                 <label class="form-label">Accept Status</label>
                                 <select class="form-select" name="accept_status" id="accept-status" required>
-                                    <option value="" disabled {{ !in_array($n->status, ['Verified', 'Doc Accepted', 'Return/Refund']) ? 'selected' : '' }}>--- Choose Acceptance Status ---</option>
-                                    <option value="Verified" {{ old('accept_status', $n->status) == 'Verified' ? 'selected' : '' }}>Verified</option>
-                                    <option value="Doc Accepted" {{ old('accept_status', $n->status) == 'Doc Accepted' ? 'selected' : '' }}>Doc Accepted</option>
-                                    <option value="Return/Refund" {{ old('accept_status', $n->status) == 'Return/Refund' ? 'selected' : '' }}>Return/Refund</option>
+                                    <option value="" disabled
+                                        {{ !in_array($n->status, ['Verified', 'Doc Accepted', 'Return/Refund']) ? 'selected' : '' }}>
+                                        --- Choose Acceptance Status ---</option>
+                                    <option value="Verified"
+                                        {{ old('accept_status', $n->status) == 'Verified' ? 'selected' : '' }}>Verified
+                                    </option>
+                                    <option value="Doc Accepted"
+                                        {{ old('accept_status', $n->status) == 'Doc Accepted' ? 'selected' : '' }}>Doc
+                                        Accepted</option>
+                                    <option value="Return/Refund"
+                                        {{ old('accept_status', $n->status) == 'Return/Refund' ? 'selected' : '' }}>
+                                        Return/Refund</option>
                                 </select>
                             </div>
-                            <div class="mb-3" id="refund-amount-div" style="display: none;">
+                            {{-- <div class="mb-3" id="refund-amount-div" style="display: none;">
                                 <label for="refund-amount" class="form-label">Refund Amount</label>
                                 <div class="input-group">
                                     <span class="input-group-text">Rp</span>
-                                    <input type="text" name="refund_amount" id="refund-amount" class="form-control" placeholder="ex: 10X.XXX">
+                                    <input type="text" name="refund_amount" id="refund-amount"
+                                        class="form-control bg-light" value="" readonly>
                                 </div>
-                            </div>
-                            <input type="hidden" name="status" value="Declaration L1" id="status">
+                            </div> --}}
+                            {{-- <input type="hidden" name="status" value="Declaration L1" id="status"> --}}
                             <div class="d-flex justify-content-end mt-3">
                                 @if (isset($ca->prove_declare) && $ca->prove_declare)
-                                <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
-                                    class="btn btn-outline-primary rounded-pill" style="margin-right: 4px;">View</a>
-                            @endif
+                                    <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
+                                        class="btn btn-outline-primary rounded-pill" style="margin-right: 4px;">View</a>
+                                @endif
                                 <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
                             </div>
                         </form>
@@ -2496,6 +2512,44 @@
     </div>
 
     <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            const totalca = document.getElementById('totalca');
+            const totalcaDeklarasi = document.getElementById('totalca_deklarasi');
+            const refundAmount = document.getElementById('refund-amount');
+
+            function calculateRefund() {
+                const total = parseFloat(totalca.value) || 0;
+                const declaration = parseFloat(totalcaDeklarasi.value) || 0;
+                const difference = declaration - total;
+                refundAmount.value = difference.toFixed(2);
+            }
+
+            // Calculate initially
+            calculateRefund();
+
+            // Recalculate on input
+            totalca.addEventListener('input', calculateRefund);
+            totalcaDeklarasi.addEventListener('input', calculateRefund);
+        });
+
+        document.getElementById('accept-status').addEventListener('change', function() {
+            var refundDiv = document.getElementById('refund-amount-div');
+            if (this.value === 'Return/Refund') {
+                refundDiv.style.display = 'block';
+            } else {
+                refundDiv.style.display = 'none';
+            }
+        });
+
+        // Ensure the field is shown if "Return/Refund" was previously selected
+        window.addEventListener('load', function() {
+            var acceptStatus = document.getElementById('accept-status').value;
+            var refundDiv = document.getElementById('refund-amount-div');
+            if (acceptStatus === 'Return/Refund') {
+                refundDiv.style.display = 'block';
+            }
+        });
+
         function formatCurrency(input) {
             var cursorPos = input.selectionStart;
             var value = input.value.replace(/[^\d]/g, ''); // Remove everything that is not a digit
@@ -3087,6 +3141,7 @@
             const accommodationInput = document.getElementById('accommodation');
             const otherInput = document.getElementById('other');
             const totalcaInput = document.getElementById('totalca');
+            const refundAmount = document.getElementById('refund-amount');
             const nominal_1Input = document.getElementById('nominal_1');
             const nominal_2Input = document.getElementById('nominal_2');
             const nominal_3Input = document.getElementById('nominal_3');
