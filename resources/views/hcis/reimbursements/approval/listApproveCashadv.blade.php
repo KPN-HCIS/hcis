@@ -473,7 +473,27 @@
                                                                     </h2>
                                                                     <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
                                                                         <div class="accordion-body">
-                                                                            <div id="form-container-nbt"></div>
+                                                                            <div id="form-container-nbt">
+                                                                                @foreach ($detailCA as $lainnya)
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Tanggal</label>
+                                                                                    <input type="date" name="tanggal_nbt[]" class="form-control bg-light" value="{{ $lainnya['tanggal_nbt'] }}" readonly>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Keterangan</label>
+                                                                                    <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>{{ $lainnya['keterangan_nbt'] }}</textarea>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Accommodation</label>
+                                                                                </div>
+                                                                                <div class="input-group mb-3">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="nominal_nbt[]" type="text" min="0" value="{{ number_format($lainnya['nominal_nbt'], 0, ',', '.') }}" readonly>
+                                                                                </div>
+                                                                                @endforeach
+                                                                            </div>
                                                                             <button style="display: none" type="button" id="add-more" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
                                                                     </div>
@@ -607,7 +627,7 @@
                                                                                     <hr class="border border-primary border-1 opacity-50">
                                                                                 @endforeach
                                                                             </div>
-                                                                            <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button style="display: none;" type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>

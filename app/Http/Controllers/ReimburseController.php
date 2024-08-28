@@ -47,17 +47,26 @@ class ReimburseController extends Controller
         $today = Carbon::today();
 
         foreach ($ca_transactions as $transaction) {
-            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
-            if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
-                $transaction->approval_status = 'Declaration';
+            if ($transaction->approval_status == 'Approved') {
+                $transaction->approval_sett = 'On Progress';
             }
-            if (is_null($transaction->approval_sett)) {
+            if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved') {
                 $transaction->approval_sett = 'Waiting for Declaration';
             }
-            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
-            if ($transaction->declare_estimate <= $today) {
+            if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
                 $transaction->approval_sett = 'Declaration';
             }
+            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
+            // if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
+            //     $transaction->approval_status = 'Declaration';
+            // }
+            // if (is_null($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved')) {
+            //     $transaction->approval_sett = 'Waiting for Declaration';
+            // }
+            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
+            // if ($transaction->declare_estimate <= $today  && $transaction->approval_status == 'Approved') {
+            //     $transaction->approval_sett = 'Declaration';
+            // }
             // Simpan perubahan
             $transaction->save();
         }
@@ -450,7 +459,7 @@ class ReimburseController extends Controller
                     [$total_ca]
                 )
                 ->get();
-
+            // dd($data_matrix_approvals);
             foreach ($data_matrix_approvals as $data_matrix_approval) {
 
                 if ($data_matrix_approval->employee_id == "cek_L1") {

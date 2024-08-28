@@ -145,7 +145,7 @@
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : 'info')))) }}" style="pointer-events: none">
+                                                <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : ($ca_transaction->approval_sett == 'On Progress' ? 'warning' : 'info'))))) }}" style="pointer-events: none">
                                                     {{ $ca_transaction->approval_sett }}
                                                 </p>
                                             </td>
@@ -159,6 +159,7 @@
                                                 @elseif ($ca_transaction->approval_sett == 'Reject')
                                                 @elseif ($ca_transaction->approval_sett == 'Draft')
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                                @elseif ($ca_transaction->approval_sett == 'On Progress')
                                                 @else
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                                 @endif

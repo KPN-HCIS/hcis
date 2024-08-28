@@ -111,7 +111,7 @@
                                             <span class="input-group-text">days</span>
                                         </div>
                                     </div>
-                                    <input class="form-control" id="perdiem" name="perdiem" type="blcok"
+                                    <input class="form-control" id="perdiem" name="perdiem" type="hidden"
                                         value="{{ $perdiem->amount }}" readonly>
                                 </div>
                             </div>
@@ -160,10 +160,7 @@
                                         <div class="d-flex flex-column gap-2">
                                             <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
                                             <div class="card">
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                </div>
-                                                <div id="perdiem-card" class="card-body" style="display: none;">
+                                                <div id="perdiem-card" class="card-body">
                                                     <div class="accordion" id="accordionPerdiem">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="enter-headingOne">
@@ -220,7 +217,7 @@
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="0">
+                                                                            <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="0" readonly>
                                                                         </div>
                                                                         <hr class="border border-primary border-1 opacity-50">
                                                                     </div>
@@ -240,19 +237,15 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Button and Card for Transport -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
-                                                </div>
-                                                <div id="transport-card" class="card-body" style="display: none;">
+                                                <div id="transport-card" class="card-body">
                                                     <div class="accordion" id="accordionTransport">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingTransport">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="false" aria-controls="collapseTransport">
                                                                     Rencana Transport
                                                                 </button>
                                                             </h2>
-                                                            <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                            <div id="collapseTransport" class="accordion-collapse collapse" aria-labelledby="headingTransport">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-transport">
                                                                         <div class="mb-2">
@@ -299,19 +292,15 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Button and Card for Penginapan -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                </div>
-                                                <div id="penginapan-card" class="card-body" style="display: none;">
+                                                <div id="penginapan-card" class="card-body">
                                                     <div class="accordion" id="accordionPenginapan">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingPenginapan">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="false" aria-controls="collapsePenginapan">
                                                                     Rencana Penginapan
                                                                 </button>
                                                             </h2>
-                                                            <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                            <div id="collapsePenginapan" class="accordion-collapse collapse" aria-labelledby="headingPenginapan">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-penginapan">
                                                                         <div class="mb-2">
@@ -371,20 +360,15 @@
                                                     </div>
                                                 </div>
 
-
-                                                <!-- Button and Card for Lainnya -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                </div>
-                                                <div id="lainnya-card" class="card-body" style="display: none;">
+                                                <div id="lainnya-card" class="card-body">
                                                     <div class="accordion" id="accordionLainnya">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingLainnya">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="false" aria-controls="collapseLainnya">
                                                                     Rencana Lainnya
                                                                 </button>
                                                             </h2>
-                                                            <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                            <div id="collapseLainnya" class="accordion-collapse collapse" aria-labelledby="headingLainnya">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-lainnya">
                                                                         <div class="mb-2">
@@ -437,7 +421,7 @@
                                                     <div class="accordion" id="accordionPanelsStayOpenExample">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="false" aria-controls="enter-collapseOne">
                                                                     Non Business Trip
                                                                 </button>
                                                             </h2>
@@ -481,10 +465,7 @@
                                         <div class="d-flex flex-column gap-2">
                                             <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
                                                 <div class="card">
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
-                                                    </div>
-                                                    <div id="entertain-card" class="card-body" style="display: none;">
+                                                    <div id="entertain-card" class="card-body">
                                                         <div class="accordion" id="accordionEntertain">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingEntertain">
@@ -534,18 +515,15 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
-                                                    </div>
-                                                    <div id="relation-card" class="card-body" style="display: none;">
+                                                    <div id="relation-card" class="card-body">
                                                         <div class="accordion" id="accordionRelation">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingRelation">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="true" aria-controls="collapseRelation">
+                                                                    <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="false" aria-controls="collapseRelation">
                                                                         Rencana Relation
                                                                     </button>
                                                                 </h2>
-                                                                <div id="collapseRelation" class="accordion-collapse collapse show" aria-labelledby="headingRelation">
+                                                                <div id="collapseRelation" class="accordion-collapse collapse" aria-labelledby="headingRelation">
                                                                     <div class="accordion-body">
                                                                         <div id="form-container-e-relation">
                                                                             <div class="mb-2">
@@ -817,53 +795,6 @@
             });
         });
 
-        $(document).ready(function() {
-            function toggleCard(buttonId, cardId) {
-                var $button = $(buttonId);
-                var $card = $(cardId);
-                var isVisible = $card.is(':visible');
-
-                $card.slideToggle('fast', function() {
-                    if (isVisible) {
-                        $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        $card.find('select').prop('selectedIndex', 0);
-                        $card.find('input[readonly]').val(0);
-                        $card.find('input[type="number"]').val(0);
-
-                        $button.html('<i class="bi bi-plus-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'false');
-                    } else {
-                        $button.html('<i class="bi bi-dash-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'true');
-                    }
-                });
-            }
-
-            $('#toggle-bt-perdiem').click(function() {
-                toggleCard('#toggle-bt-perdiem', '#perdiem-card');
-            });
-
-            $('#toggle-bt-transport').click(function() {
-                toggleCard('#toggle-bt-transport', '#transport-card');
-            });
-
-            $('#toggle-bt-penginapan').click(function() {
-                toggleCard('#toggle-bt-penginapan', '#penginapan-card');
-            });
-
-            $('#toggle-bt-lainnya').click(function() {
-                toggleCard('#toggle-bt-lainnya', '#lainnya-card');
-            });
-
-            $('#toggle-e-detail').click(function() {
-                toggleCard('#toggle-e-detail', '#entertain-card');
-            });
-
-            $('#toggle-e-relation').click(function() {
-                toggleCard('#toggle-e-relation', '#relation-card');
-            });
-        });
-
         document.addEventListener('DOMContentLoaded', function() {
             const formContainerBTPerdiem = document.getElementById('form-container-bt-perdiem');
             const formContainerBTTransport = document.getElementById('form-container-bt-transport');
@@ -894,8 +825,16 @@
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
+
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function parseNumberPerdiem(value) {
+                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
             }
 
             function formatInput(input) {
@@ -916,10 +855,14 @@
             function calculateTotalNominalBTPerdiem() {
                 let total = 0;
                 document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-                    total += parseNumber(input.value);
+                    total += parseNumberPerdiem(input.value);
                 });
+                console.log("Total Perdiem:", total); // Debugging
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+
+                calculateTotalNominalBTTotal();
             }
+
 
             function calculateTotalNominalBTTransport() {
                 let total = 0;
@@ -964,15 +907,37 @@
 
             function calculateTotalDaysPerdiem(input) {
                 const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_perdiem[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_perdiem[]"]').value);
+                const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
+                const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
+                const totalDaysInput = formGroup.querySelector('input[name="total_days_bt_perdiem[]"]');
+                const perdiemInput = document.getElementById('perdiem');
+                const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+                const locationSelect = formGroup.querySelector('select[name="location_bt_perdiem[]"]');
+                const otherLocationInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
+
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
 
                 if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
                     const diffTime = Math.abs(endDate - startDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = diffDays;
+                    const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    // Memeriksa lokasi untuk menentukan persentase allowance
+                    if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 100%
+                    } else {
+                        allowance *= 0.5; // allowance * 50%
+                    }
+
+                    allowanceInput.value = formatNumberPerdiem(allowance);
+                    calculateTotalNominalBTPerdiem();
                 } else {
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = 0;
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
                 }
             }
 

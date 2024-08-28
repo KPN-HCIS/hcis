@@ -205,7 +205,7 @@
                         {{ $role->employee ? $role->employee->fullname : 'Data tidak tersedia' }}
                         ({{ \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') }})
                         @else
-                        
+
                         @endif
                     </td>
                 </tr>
@@ -263,33 +263,41 @@
             </tr>
         </table>
 
-        <table class="table-approve">
-            <tr>
-                <th colspan="4"><b>Rencana Transport :</b></th>
-            </tr>
-            <tr class="head-row">
-                <td>Tanggal</td>
-                <td>Keterangan</td>
-                <td>Company Code</td>
-                <td>Amount</td>
-            </tr>
+        @if ()
 
-            @foreach($detailCA['detail_transport'] as $transport)
-            <tr style="text-align: center">
-                <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
-                <td>{{ $transport['keterangan'] }}</td>
-                <td>{{ $transport['company_code'] }}</td>
-                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
-            </tr>
-            @endforeach
-            <tr class="total-row">
-                <td colspan="3" class="head-row">Total</td>
-                <td>
-                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
-                </td>
-            </tr>
-        </table>
+        @else
+            <table class="table-approve">
+                <tr>
+                    <th colspan="4"><b>Rencana Transport :</b></th>
+                </tr>
+                <tr class="head-row">
+                    <td>Tanggal</td>
+                    <td>Keterangan</td>
+                    <td>Company Code</td>
+                    <td>Amount</td>
+                </tr>
 
+                @foreach($detailCA['detail_transport'] as $transport)
+                <tr style="text-align: center">
+                    <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
+                    <td>{{ $transport['keterangan'] }}</td>
+                    <td>{{ $c }}</td>
+                    <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                </tr>
+                @endforeach
+                <tr class="total-row">
+                    <td colspan="3" class="head-row">Total</td>
+                    <td>
+                        Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
+                    </td>
+                </tr>
+            </table>
+        @endif
+
+        @if ($detailCA['detail_penginapan'] && collect($detailCA['detail_penginapan'])->contains(function ($perdiem) {
+            return $perdiem['hotel_name'] !== '';
+        }))
+        @else
         <table class="table-approve">
             <tr>
                 <th colspan="6"><b>Rencana Penginapan :</b></th>
@@ -304,14 +312,14 @@
             </tr>
 
             @foreach($detailCA['detail_penginapan'] as $perdiem)
-            <tr style="text-align: center">
-                <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
-                <td>{{ $perdiem['hotel_name'] }}</td>
-                <td>{{ $perdiem['company_code'] }}</td>
-                <td>{{ $perdiem['total_days'] }} Hari</td>
-                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
-            </tr>
+                <tr style="text-align: center">
+                    <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
+                    <td>{{ $perdiem['hotel_name'] }}</td>
+                    <td>{{ $perdiem['company_code'] }}</td>
+                    <td>{{ $perdiem['total_days'] }} Hari</td>
+                    <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="4" class="head-row">Total</td>
@@ -323,6 +331,7 @@
                 </td>
             </tr>
         </table>
+        @endif
 
         <table class="table-approve">
             <tr>
@@ -388,7 +397,7 @@
             <tr style="text-align: center">
                 @php
                     $typeMap = [
-                        'food_cost' => 'Food/Beverages/Souvenir',
+                        'food' => 'Food/Beverages/Souvenir',
                         'transport' => 'Transport',
                         'accommodation' => 'Accommodation',
                         'gift' => 'Gift',
@@ -410,7 +419,7 @@
 
         <table class="table-approve">
             <tr>
-                <td colspan="5"><b>Relation Entertain :</b></td>
+                <td colspan="5"><b>Relation Entertain:</b></td>
             </tr>
             <tr class="head-row">
                 <th>Nama</th>
@@ -422,23 +431,30 @@
 
             @foreach($detailCA['relation_e'] as $relation)
             <tr style="text-align: center">
-                @php
-                    $typeMap = [
-                        'food_cost' => 'Food/Beverages/Souvenir',
-                        'transport' => 'Transport',
-                        'accommodation' => 'Accommodation',
-                        'gift' => 'Gift',
-                        'fund' => 'Fund',
-                    ];
-                @endphp
                 <td>{{ $relation['name'] }}</td>
                 <td>{{ $relation['position'] }}</td>
                 <td>{{ $relation['company'] }}</td>
                 <td>{{ $relation['purpose'] }}</td>
                 <td>
-                    @foreach($relation['relation_type'] as $type)
-                        {{ $typeMap[$type] ?? $type }} @if (!$loop->last), @endif
-                    @endforeach
+                    @php
+                        $relationTypes = [];
+                        $typeMap = [
+                            'Food' => 'Food/Beverages/Souvenir',
+                            'Gift' => 'Gift',
+                            'Transport' => 'Transport',
+                            'Accommodation' => 'Accommodation',
+                            'Fund' => 'Fund',
+                        ];
+
+                        // Mengumpulkan semua tipe relasi yang berstatus true
+                        foreach($relation['relation_type'] as $type => $status) {
+                            if ($status && isset($typeMap[$type])) {
+                                $relationTypes[] = $typeMap[$type]; // Menggunakan pemetaan untuk mendapatkan deskripsi
+                            }
+                        }
+                    @endphp
+
+                    {{ implode(', ', $relationTypes) }} {{-- Menggabungkan tipe relasi yang relevan menjadi string --}}
                 </td>
             </tr>
             @endforeach
@@ -457,94 +473,96 @@
         </tr>
     </table>
 
-    <div class="flex-container">
-        <table class="table-approve" style="width: 20%; margin-top:100px; text-align:center; margin-bottom:-220px">
-            <tr>
-                <td>Diajukan</td>
-            </tr>
-            <tr>
-                <td>User</td>
-            </tr>
-            <tr>
-                <td><br><br><br><br></td>
-            </tr>
-            <tr>
-                <td>{{ $transactions->employee->fullname }}</td>
-            </tr>
-            <tr>
-                <td>Tgl..</td>
-            </tr>
-        </table>
-        @if ($approval && count($approval) > 0)
-            <table class="table-approve" style="margin-left:279px; margin-top:-160px; width: 60%; text-align:center;">
+    @if ( $transactions->approval_status == 'Approved' )
+        <div class="flex-container">
+            <table class="table-approve" style="width: 20%; margin-top:100px; text-align:center; margin-bottom:-220px">
                 <tr>
-                    <td colspan="{{ count($approval) }}">Verifikasi</td>
+                    <td>Diajukan</td>
                 </tr>
                 <tr>
-                    @foreach ($approval as $role)
-                        <td>{{ $role->role_name }}</td>
-                    @endforeach
+                    <td>User</td>
                 </tr>
                 <tr>
-                    @foreach ($approval as $role)
-                        <td><br><br><br><br></td>
-                    @endforeach
+                    <td><br><br><br><br></td>
                 </tr>
                 <tr>
-                    @foreach ($approval as $role)
-                        <td>{{ $role->employee ? $role->employee->fullname : 'Data tidak tersedia' }}</td>
-                    @endforeach
+                    <td>{{ $transactions->employee->fullname }}</td>
                 </tr>
                 <tr>
-                    @foreach ($approval as $role)
-                        <td>
-                            Tanggal: {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') : 'Data tidak tersedia' }}
-                        </td>
-                    @endforeach
+                    <td>Tgl..</td>
                 </tr>
             </table>
-        @else
-        <table>
-            <tr>
-                <td colspan="3">Tidak ada data approval.</td>
-            </tr>
-        </table>
-        @endif
+            @if ($approval && count($approval) > 0)
+                <table class="table-approve" style="margin-left:279px; margin-top:-160px; width: 60%; text-align:center;">
+                    <tr>
+                        <td colspan="{{ count($approval) }}">Verifikasi</td>
+                    </tr>
+                    <tr>
+                        @foreach ($approval as $role)
+                            <td>{{ $role->role_name }}</td>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        @foreach ($approval as $role)
+                            <td><br><br><br><br></td>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        @foreach ($approval as $role)
+                            <td>{{ $role->employee ? $role->employee->fullname : 'Data tidak tersedia' }}</td>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        @foreach ($approval as $role)
+                            <td>
+                                Tanggal: {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') : 'Data tidak tersedia' }}
+                            </td>
+                        @endforeach
+                    </tr>
+                </table>
+            @else
+            <table>
+                <tr>
+                    <td colspan="3">Tidak ada data approval.</td>
+                </tr>
+            </table>
+            @endif
 
-        <table class="table-approve" style="width: 100%; text-align:center;">
-            <tr>
-                <td colspan="5">Approval</td>
-            </tr>
-            <tr>
-                <td style="width: 20%">Div Head User</td>
-                <td>Director User</td>
-                <td>Div Head HC</td>
-                <td>CFO</td>
-                <td>CEO</td>
-            </tr>
-            <tr>
-                <td><br><br><br><br></td>
-                <td><br><br><br><br></td>
-                <td><br><br><br><br></td>
-                <td><br><br><br><br></td>
-                <td><br><br><br><br></td>
-            </tr>
-            <tr>
-                <td>Ivan</td>
-                <td>...</td>
-                <td>...</td>
-                <td>...</td>
-                <td>...</td>
-            </tr>
-            <tr>
-                <td>Tgl..</td>
-                <td>Tgl..</td>
-                <td>Tgl..</td>
-                <td>Tgl..</td>
-                <td>Tgl..</td>
-            </tr>
-        </table>
-    </div>
+            <table class="table-approve" style="width: 100%; text-align:center;">
+                <tr>
+                    <td colspan="5">Approval</td>
+                </tr>
+                <tr>
+                    <td style="width: 20%">Div Head User</td>
+                    <td>Director User</td>
+                    <td>Div Head HC</td>
+                    <td>CFO</td>
+                    <td>CEO</td>
+                </tr>
+                <tr>
+                    <td><br><br><br><br></td>
+                    <td><br><br><br><br></td>
+                    <td><br><br><br><br></td>
+                    <td><br><br><br><br></td>
+                    <td><br><br><br><br></td>
+                </tr>
+                <tr>
+                    <td>Ivan</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                </tr>
+                <tr>
+                    <td>Tgl..</td>
+                    <td>Tgl..</td>
+                    <td>Tgl..</td>
+                    <td>Tgl..</td>
+                    <td>Tgl..</td>
+                </tr>
+            </table>
+        </div>
+    @endif
 </body>
 
 </html>
