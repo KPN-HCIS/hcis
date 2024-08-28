@@ -2481,7 +2481,7 @@
                                 </div>
                             </div>
                             <input type="hidden" name="status" value="Declaration L1" id="status">
-                            <div class="d-flex justify-content-end mt-3" ">
+                            <div class="d-flex justify-content-end mt-3">
                                 @if (isset($ca->prove_declare) && $ca->prove_declare)
                                 <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
                                     class="btn btn-outline-primary rounded-pill" style="margin-right: 4px;">View</a>

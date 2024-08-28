@@ -10,7 +10,7 @@
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="card shadow-sm mb-4">
+                <div class="card shadow-sm mb-3">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Declaration Data</h4>
                         <a href="{{ route('businessTrip') }}" class="btn-close btn-close-white"></a>
@@ -20,7 +20,7 @@
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
-                            <div class="row mb-4">
+                            <div class="row mb-2">
                                 <div class="col-md-4">
                                     <label for="no_sppd" class="form-label">No SPPD</label>
                                     <input type="text" class="form-control bg-light" id="no_sppd" name="no_sppd"
@@ -39,6 +39,10 @@
                                         value="{{ $n->kembali }}" readonly>
                                     {{-- </div> --}}
                                 </div>
+                            </div>
+                            <div class="" style="visibility: hidden">
+                                <input class="form-select" id="bb_perusahaan" name="bb_perusahaan" value="{{ $n->bb_perusahaan }}">
+                                </input>
                             </div>
                             <!-- 1st Form -->
                             <div class="row mt-2" id="ca_div">
@@ -2446,6 +2450,8 @@
                             </div>
                         </div>
                             <input type="hidden" name="status" value="Declaration L1" id="status">
+                            <input type="hidden" name="no_id" value="{{ $ca->id }}">
+                            <input type="hidden" name="ca_id" value="{{ $ca->no_ca }}">
 
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="button" class="btn btn-outline-primary rounded-pill me-2"

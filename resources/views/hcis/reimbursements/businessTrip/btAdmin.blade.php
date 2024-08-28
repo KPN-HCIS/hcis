@@ -134,7 +134,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th class="sticky-col-header">No SPPD</th>
-                                            <th>Destination</th>
+                                            <th style="width: 100px">Destination</th>
                                             <th>Start</th>
                                             <th>End</th>
                                             <th>CA</th>
@@ -142,7 +142,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                            <th style="width: 160px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -245,7 +245,7 @@
                                                     @endif
                                                 </td>
                                                 <td style="align-content: center">
-                                                    <span class="badge rounded-pill bg-{{ $n->status == 'Approved'
+                                                    <span class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved'
                                                         ? 'success'
                                                         : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
                                                             ? 'danger'

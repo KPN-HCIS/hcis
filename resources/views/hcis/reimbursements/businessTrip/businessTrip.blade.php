@@ -269,7 +269,7 @@
                                                 </td>
                                                 <td style="align-content: center">
                                                     <span
-                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved'
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved'
                                                             ? 'success'
                                                             : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
                                                                 ? 'danger'
