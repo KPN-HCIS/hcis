@@ -1290,6 +1290,7 @@ class BusinessTripController extends Controller
 
         if ($request->ca === 'Ya') {
             $ca = new CATransaction();
+            $businessTripStatus = $request->input('status');
 
             // Generate new 'no_ca' code
             $currentYear = date('Y');
@@ -1421,73 +1422,75 @@ class BusinessTripController extends Controller
 
             $ca->detail_ca = json_encode($detail_ca);
             $ca->declare_ca = json_encode($detail_ca);
+            $ca->save();
 
-            $model = $ca;
+            if ($businessTripStatus !== 'Draft') {
 
-            $model->status_id = $managerL1;
+                $model = $ca;
 
-            $cek_director_id = Employee::select([
-                'dsg.department_level2',
-                'dsg2.director_flag',
-                DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
-                'dsg2.designation_name',
-                'dsg2.job_code',
-                'emp.fullname',
-                'emp.employee_id',
-            ])
-                ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
-                ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
-                ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
-                ->where('employees.designation_code', '=', $employee->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
-                ->get();
+                $model->status_id = $managerL1;
 
-            $director_id = "";
+                $cek_director_id = Employee::select([
+                    'dsg.department_level2',
+                    'dsg2.director_flag',
+                    DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
+                    'dsg2.designation_name',
+                    'dsg2.job_code',
+                    'emp.fullname',
+                    'emp.employee_id',
+                ])
+                    ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
+                    ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
+                    ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
+                    ->where('employees.designation_code', '=', $employee->designation_code)
+                    ->where('dsg2.director_flag', '=', 'F')
+                    ->get();
 
-            if ($cek_director_id->isNotEmpty()) {
-                $director_id = $cek_director_id->first()->employee_id;
-            }
-            //cek matrix approval
+                $director_id = "";
 
-            $total_ca = str_replace('.', '', $request->totalca);
-            // dd($total_ca);
-            // dd($employee->group_company);
-            // dd($request->bb_perusahaan);
-            $data_matrix_approvals = MatrixApproval::where('modul', 'dns')
-                ->where('group_company', 'like', '%' . $employee->group_company . '%')
-                ->where('contribution_level_code', 'like', '%' . $request->bb_perusahaan . '%')
-                ->whereRaw(
-                    '
+                if ($cek_director_id->isNotEmpty()) {
+                    $director_id = $cek_director_id->first()->employee_id;
+                }
+                //cek matrix approval
+
+                $total_ca = str_replace('.', '', $request->totalca);
+                // dd($total_ca);
+                // dd($employee->group_company);
+                // dd($request->bb_perusahaan);
+                $data_matrix_approvals = MatrixApproval::where('modul', 'dns')
+                    ->where('group_company', 'like', '%' . $employee->group_company . '%')
+                    ->where('contribution_level_code', 'like', '%' . $request->bb_perusahaan . '%')
+                    ->whereRaw(
+                        '
             ? BETWEEN
             CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND
             CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
-                    [$total_ca]
-                )
-                ->get();
-            // dd($data_matrix_approvals);
-            foreach ($data_matrix_approvals as $data_matrix_approval) {
+                        [$total_ca]
+                    )
+                    ->get();
+                foreach ($data_matrix_approvals as $data_matrix_approval) {
 
-                if ($data_matrix_approval->employee_id == "cek_L1") {
-                    $employee_id = $managerL1;
-                } else if ($data_matrix_approval->employee_id == "cek_L2") {
-                    $employee_id = $managerL2;
-                } else if ($data_matrix_approval->employee_id == "cek_director") {
-                    $employee_id = $director_id;
-                } else {
-                    $employee_id = $data_matrix_approval->employee_id;
+                    if ($data_matrix_approval->employee_id == "cek_L1") {
+                        $employee_id = $managerL1;
+                    } else if ($data_matrix_approval->employee_id == "cek_L2") {
+                        $employee_id = $managerL2;
+                    } else if ($data_matrix_approval->employee_id == "cek_director") {
+                        $employee_id = $director_id;
+                    } else {
+                        $employee_id = $data_matrix_approval->employee_id;
+                    }
+                    // $uuid = Str::uuid();
+                    $model_approval = new ca_approval;
+                    $model_approval->ca_id = $ca_id;
+                    $model_approval->role_name = $data_matrix_approval->desc;
+                    $model_approval->employee_id = $employee_id;
+                    $model_approval->layer = $data_matrix_approval->layer;
+                    $model_approval->approval_status = 'Pending';
+
+                    // Simpan data ke database
+                    $model_approval->save();
                 }
-                // $uuid = Str::uuid();
-                $model_approval = new ca_approval;
-                $model_approval->ca_id = $ca_id;
-                $model_approval->role_name = $data_matrix_approval->desc;
-                $model_approval->employee_id = $employee_id;
-                $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = 'Pending';
-
-                // Simpan data ke database
-                $model_approval->save();
             }
-            $ca->save();
         }
 
         return redirect('/businessTrip');
@@ -1881,7 +1884,6 @@ class BusinessTripController extends Controller
         } elseif ($employeeId == $businessTrip->manager_l2_id) {
             $statusValue = 'Approved';
             $layer = 2;
-
             // Handle CA approval for L2
             if ($businessTrip->ca == 'Ya') {
                 $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
@@ -1892,30 +1894,22 @@ class BusinessTripController extends Controller
                         ['approval_status' => 'Approved', 'approved_at' => now()]
                     );
 
-                    // Count the total and approved layers
-                    $totalApprovals = ca_approval::where('ca_id', $caTransaction->id)->count();
-                    $approvedCount = ca_approval::where('ca_id', $caTransaction->id)
-                        ->where('approval_status', 'Approved')
-                        ->count();
-
-                    if ($approvedCount == $totalApprovals) {
-                        // All layers approved, set final approval
-                        $caTransaction->update(['approval_status' => 'Approved', 'status_id' => null]);
-                    } else {
-                        // Not all layers approved, set next approval or pending status
-                        $nextApproval = ca_approval::where('ca_id', $caTransaction->id)
-                        ->where('layer', '>', $layer)
-                        ->where('approval_status', '!=', 'Approved')
+                    // Find the next approver (Layer 3) explicitly
+                    $nextApproval = ca_approval::where('ca_id', $caTransaction->id)
+                        ->where('layer', $layer + 1) // This will ensure it gets the immediate next layer (3)
                         ->first();
 
-                        if ($nextApproval) {
-                            $caTransaction->update(['status_id' => $nextApproval->employee_id]);
-                        } else {
-                            $caTransaction->update(['approval_status' => 'Pending']);
-                        }
+                    if ($nextApproval) {
+                        $updateCa = CATransaction::where('id', $caTransaction->id)->first();
+                        $updateCa->status_id = $nextApproval->employee_id;
+                        $updateCa->save();
+                    } else {
+                        // Handle the case where there is no next layer
+                        $caTransaction->update(['approval_status' => 'Pending']);
                     }
                 }
             }
+
         } else {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
