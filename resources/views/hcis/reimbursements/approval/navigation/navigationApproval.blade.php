@@ -1,4 +1,4 @@
-<div class="row g-2 justify-content-center">
+<div class="row g-2 mb-3 justify-content-start">
     <div class=" col-6 col-sm-auto">
         <div class="mb-2">
             <a href="{{ route('approval.cashadvanced') }}"

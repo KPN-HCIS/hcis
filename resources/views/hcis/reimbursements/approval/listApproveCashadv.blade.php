@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
+@extends('layouts_.vertical', ['page_title' => 'Approval Cash Advanced'])
 
 @section('css')
     <!-- Sertakan CSS Bootstrap jika diperlukan -->
@@ -27,13 +27,13 @@
                 <div class="card-header d-flex bg-white justify-content-between">
                     <p></p>
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Approval Cash Advance -
-                        <b>{{ $transactions->no_ca }}</b></h4>
+                        <b>"{{ $transactions->no_ca }}"</b></h4>
                     <a href="{{ route('approval.cashadvanced') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post"
-                            action="{{ route('approval.cashadvancedApproved', $transactions->id) }}">@csrf
+                        <form enctype="multipart/form-data" id="scheduleForm" method="post" action="{{ route('approval.cashadvancedApproved',$transactions->id) }}">
+                            @csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="start">Employee ID</label>
@@ -73,7 +73,7 @@
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Destination</label>
-                                    <select class="form-control select2" id="locationFilter" name="locationFilter"
+                                    <select class="form-control bg-light" id="locationFilter" name="locationFilter"
                                         onchange="toggleOthers()" disabled>
                                         <option value="">Select location...</option>
                                         <p>{{ $transactions->destination }}</p>
@@ -155,294 +155,295 @@
                             </div>
                             @php
                                 $detailCA = json_decode($transactions->detail_ca, true) ?? [];
+                                // $detailCA = json_decode($transactions->declare_ca, true) ?? [];
                             @endphp
                             <script>
-                                // Pass the PHP array into a JavaScript variable
-                                const initialDetailCA = @json($detailCA);
                             </script>
                             <br>
                             <div class="row" id="ca_bt" style="display: none;">
                                 @if ($transactions->type_ca == 'dns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="d-flex flex-column gap-2">
-                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                                <div class="card">
-                                                    <div class="card-body text-center" style="display: none;">
-                                                        <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                    </div>
-                                                    <div id="perdiem-card" class="card-body" style="display: none;">
-                                                        <div class="accordion" id="accordionPerdiem">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="enter-headingOne">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                        Rencana Perdiem
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-bt-perdiem">
-                                                                            @foreach ($detailCA['detail_perdiem'] as $perdiem)
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Start Perdiem</label>
-                                                                                    <input type="date" name="start_bt_perdiem[]" class="form-control bg-light start-perdiem " value="{{$perdiem['start_date']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">End Perdiem</label>
-                                                                                    <input type="date" name="end_bt_perdiem[]" class="form-control bg-light end-perdiem"  value="{{$perdiem['end_date']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="start">Total Days</label>
-                                                                                    <div class="input-group">
-                                                                                        <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="{{$perdiem['total_days']}}" readonly>
-                                                                                        <div class="input-group-append">
-                                                                                            <span class="input-group-text">days</span>
+                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
+                                            <div class="d-flex flex-row gap-2">
+                                                <div class="col-md-12">
+                                                    <div class="card">
+                                                        <div class="card-body text-center" style="display: none">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Perdiem</button>
+                                                        </div>
+                                                        <div id="perdiem-card" class="card-body" style="display: none;">
+                                                            <div class="accordion" id="accordionPerdiem">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="enter-headingOne">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                            Rencana Perdiem
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-bt-perdiem">
+                                                                                @foreach ($detailCA['detail_perdiem'] as $perdiem)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Start Perdiem</label>
+                                                                                        <input type="date" name="start_bt_perdiem[]" class="form-control bg-light start-perdiem" value="{{$perdiem['start_date']}}" placeholder="mm/dd/yyyy" readonly>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">End Perdiem</label>
+                                                                                        <input type="date" name="end_bt_perdiem[]" class="form-control bg-light end-perdiem" value="{{$perdiem['end_date']}}" placeholder="mm/dd/yyyy" readonly>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Total Days</label>
+                                                                                        <div class="input-group">
+                                                                                            <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="{{$perdiem['total_days']}}" readonly>
+                                                                                            <div class="input-group-append">
+                                                                                                <span class="input-group-text">days</span>
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
+                                                                                    <!-- HTML -->
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="name">Location Agency</label>
+                                                                                        <select class="form-control bg-light location-select" name="location_bt_perdiem[]" disabled>
+                                                                                            <option value="">Select location...</option>
+                                                                                            @foreach($locations as $location)
+                                                                                                <option value="{{ $location->area }}"
+                                                                                                    @if($location->area == $perdiem['location']) selected @endif>
+                                                                                                    {{ $location->area." (".$location->company_name.")" }}
+                                                                                                </option>
+                                                                                            @endforeach
+                                                                                            <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
+                                                                                        </select>
+                                                                                        <br>
+                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control bg-light other-location" placeholder="Other Location" value="" style="display: none;" readonly>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="name">Company Code</label>
+                                                                                        <select class="form-control bg-light select2" id="companyFilter" name="company_bt_perdiem[]" disabled>
+                                                                                            <option value="">Select Company...</option>
+                                                                                            @foreach($companies as $company)
+                                                                                                <option value="{{ $company->contribution_level_code }}"
+                                                                                                    @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
+                                                                                                    {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                                                                                </option>
+                                                                                            @endforeach
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Amount</label>
+                                                                                    </div>
+                                                                                    <div class="input-group mb-3">
+                                                                                        <div class="input-group-append">
+                                                                                            <span class="input-group-text">Rp</span>
+                                                                                        </div>
+                                                                                        <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" readonly>
+                                                                                    </div>
+                                                                                    <hr class="border border-primary border-1 opacity-50">
+                                                                                @endforeach
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Total Perdiem</label>
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
-                                                                                <!-- HTML -->
+                                                                            </div>
+                                                                            <button style="display: none" type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Button and Card for Transport -->
+                                                        <div class="card-body text-center" style="display: none">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Transport</button>
+                                                        </div>
+                                                        <div id="transport-card" class="card-body" style="display: none;">
+                                                            <div class="accordion" id="accordionTransport">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="headingTransport">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
+                                                                            Rencana Transport
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-bt-transport">
+                                                                                @foreach ($detailCA['detail_transport'] as $transport)
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label" for="name">Location Agency</label>
-                                                                                    <select class="form-control location-select" name="location_bt_perdiem[]" disabled>
-                                                                                        <option value="">Select location...</option>
-                                                                                        @foreach($locations as $location)
-                                                                                            <option value="{{ $location->area }}"
-                                                                                                @if($location->area == $perdiem['location']) selected @endif>
-                                                                                                {{ $location->area." (".$location->company_name.")" }}
-                                                                                            </option>
-                                                                                        @endforeach
-                                                                                        <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
-                                                                                    </select>
-                                                                                    <br>
-                                                                                    <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;" readonly>
+                                                                                    <label class="form-label">Tanggal Transport</label>
+                                                                                    <input type="date" name="tanggal_bt_transport[]" class="form-control bg-light" value="{{$transport['tanggal']}}" readonly>
                                                                                 </div>
                                                                                 <div class="mb-2">
                                                                                     <label class="form-label" for="name">Company Code</label>
-                                                                                    <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]" disabled>
+                                                                                    <select class="form-control bg-light" id="companyFilter" name="company_bt_perdiem[]" disabled>
                                                                                         <option value="">Select Company...</option>
                                                                                         @foreach($companies as $company)
                                                                                             <option value="{{ $company->contribution_level_code }}"
-                                                                                                @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
+                                                                                                @if($company->contribution_level_code == $transport['company_code']) selected @endif>
                                                                                                 {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
                                                                                             </option>
                                                                                         @endforeach
                                                                                     </select>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Amount</label>
-                                                                                </div>
-                                                                                <div class="input-group mb-3">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" readonly>
-                                                                                </div>
-                                                                                <hr class="border border-primary border-1 opacity-50">
-                                                                            @endforeach
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Total Perdiem</label>
-                                                                            <div class="input-group">
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">Rp</span>
-                                                                                </div>
-                                                                                <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
-                                                                            </div>
-                                                                        </div>
-                                                                        <button style="display: none;" type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Button and Card for Transport -->
-                                                    <div class="card-body text-center" style="display:none;">
-                                                        <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
-                                                    </div>
-                                                    <div id="transport-card" class="card-body" style="display: none;">
-                                                        <div class="accordion" id="accordionTransport">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="headingTransport">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
-                                                                        Rencana Transport
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-bt-transport">
-                                                                            @foreach ($detailCA['detail_transport'] as $transport)
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Tanggal Transport</label>
-                                                                                <input type="date" name="tanggal_bt_transport[]" class="form-control bg-light" value="{{$transport['tanggal']}}" readonly>
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label" for="name">Company Code</label>
-                                                                                <select class="form-control bg-light" id="companyFilter" name="company_bt_perdiem[]" disabled>
-                                                                                    <option value="">Select Company...</option>
-                                                                                    @foreach($companies as $company)
-                                                                                        <option value="{{ $company->contribution_level_code }}"
-                                                                                            @if($company->contribution_level_code == $transport['company_code']) selected @endif>
-                                                                                            {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                                                                        </option>
-                                                                                    @endforeach
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Keterangan</label>
-                                                                                <textarea name="keterangan_bt_transport[]" class="form-control bg-light" readonly>{{$transport['keterangan']}}</textarea>
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Amount</label>
-                                                                            </div>
-                                                                            <div class="input-group mb-3">
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">Rp</span>
-                                                                                </div>
-                                                                                <input class="form-control bg-light" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="{{number_format($transport['nominal'], 0, ',', '.')}}" readonly>
-                                                                            </div>
-                                                                            <hr class="border border-primary border-1 opacity-50">
-                                                                            @endforeach
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Total Transport</label>
-                                                                            <div class="input-group">
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">Rp</span>
-                                                                                </div>
-                                                                                <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
-                                                                            </div>
-                                                                        </div>
-                                                                        <button style="display: none;" type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Button and Card for Penginapan -->
-                                                    <div class="card-body text-center" style="display: none;">
-                                                        <button type="button" style="width: 60%;" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                    </div>
-                                                    <div id="penginapan-card" class="card-body" style="display: none;">
-                                                        <div class="accordion" id="accordionPenginapan">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="headingPenginapan">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                        Rencana Penginapan
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-bt-penginapan">
-                                                                            @foreach($detailCA['detail_penginapan'] as $penginapan)
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Start Penginapan</label>
-                                                                                    <input type="date" name="start_bt_penginapan[]" class="form-control bg-light start-penginapan" value="{{$penginapan['start_date']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">End Penginapan</label>
-                                                                                    <input type="date" name="end_bt_penginapan[]" class="form-control bg-light end-penginapan" value="{{$penginapan['end_date']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="start">Total Days</label>
-                                                                                    <div class="input-group">
-                                                                                        <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="{{$penginapan['total_days']}}" readonly>
-                                                                                        <div class="input-group-append">
-                                                                                            <span class="input-group-text">days</span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="name">Hotel Name</label>
-                                                                                    <input type="text" name="hotel_name_bt_penginapan[]" class="form-control bg-light" value="{{$penginapan['hotel_name']}}" placeholder="Hotel" readonly>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="name">Company Code</label>
-                                                                                    <select class="form-control bg-light" id="companyFilter" name="company_bt_penginapan[]">
-                                                                                        <option value="">Select Company...</option>
-                                                                                        @foreach($companies as $company)
-                                                                                            <option value="{{ $company->contribution_level_code }}"
-                                                                                                @if($company->contribution_level_code == $penginapan['company_code']) selected @endif>
-                                                                                                {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                                                                            </option>
-                                                                                        @endforeach
-                                                                                    </select>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Amount</label>
-                                                                                </div>
-                                                                                <div class="input-group mb-3">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="{{$penginapan['nominal']}}" readonly>
-                                                                                </div>
-                                                                                <hr class="border border-primary border-1 opacity-50">
-                                                                            @endforeach
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Total Penginapan</label>
-                                                                            <div class="input-group">
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">Rp</span>
-                                                                                </div>
-                                                                                <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
-                                                                            </div>
-                                                                        </div>
-                                                                        <button style="display: none" type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Button and Card for Lainnya -->
-                                                    <div class="card-body text-center" style="display: none">
-                                                        <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                    </div>
-                                                    <div id="lainnya-card" class="card-body" style="display: none;">
-                                                        <div class="accordion" id="accordionLainnya">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="headingLainnya">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                        Rencana Lainnya
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-bt-lainnya">
-                                                                            @foreach ($detailCA['detail_lainnya'] as $perdiem)
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Tanggal</label>
-                                                                                    <input type="date" name="tanggal_bt_lainnya[]" class="form-control bg-light" value="{{$perdiem['tanggal']}}" placeholder="mm/dd/yyyy" readonly>
                                                                                 </div>
                                                                                 <div class="mb-2">
                                                                                     <label class="form-label">Keterangan</label>
-                                                                                    <textarea name="keterangan_bt_lainnya[]" class="form-control bg-light" readonly>{{ $perdiem['keterangan'] }}</textarea>
+                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control bg-light" readonly>{{$transport['keterangan']}}</textarea>
                                                                                 </div>
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label">Accommodation</label>
+                                                                                    <label class="form-label">Amount</label>
                                                                                 </div>
                                                                                 <div class="input-group mb-3">
                                                                                     <div class="input-group-append">
                                                                                         <span class="input-group-text">Rp</span>
                                                                                     </div>
-                                                                                    <input class="form-control bg-light" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya" type="text" min="0" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" readonly>
+                                                                                    <input class="form-control bg-light" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="{{number_format($transport['nominal'], 0, ',', '.')}}" readonly>
                                                                                 </div>
                                                                                 <hr class="border border-primary border-1 opacity-50">
-                                                                            @endforeach
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Total Lainnya</label>
-                                                                            <div class="input-group">
-                                                                                <div class="input-group-append">
-                                                                                    <span class="input-group-text">Rp</span>
-                                                                                </div>
-                                                                                <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
+                                                                                @endforeach
                                                                             </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Total Transport</label>
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                            <button style="display: none" type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
-                                                                        <button style="display: none" type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Button and Card for Penginapan -->
+                                                        <div class="card-body text-center" style="display: none">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
+                                                        </div>
+                                                        <div id="penginapan-card" class="card-body" style="display: none;">
+                                                            <div class="accordion" id="accordionPenginapan">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="headingPenginapan">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
+                                                                            Rencana Penginapan
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-bt-penginapan">
+                                                                                @foreach($detailCA['detail_penginapan'] as $penginapan)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Start Penginapan</label>
+                                                                                        <input type="date" name="start_bt_penginapan[]" class="form-control bg-light start-penginapan" value="{{$penginapan['start_date']}}" placeholder="mm/dd/yyyy" readonly>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">End Penginapan</label>
+                                                                                        <input type="date" name="end_bt_penginapan[]" class="form-control bg-light end-penginapan" value="{{$penginapan['end_date']}}" placeholder="mm/dd/yyyy" readonly>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Total Days</label>
+                                                                                        <div class="input-group">
+                                                                                            <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="{{$penginapan['total_days']}}" readonly>
+                                                                                            <div class="input-group-append">
+                                                                                                <span class="input-group-text">days</span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="name">Hotel Name</label>
+                                                                                        <input type="text" name="hotel_name_bt_penginapan[]" class="form-control bg-light" value="{{$penginapan['hotel_name']}}" placeholder="Hotel" readonly>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="name">Company Code</label>
+                                                                                        <select class="form-control bg-light" id="companyFilter" name="company_bt_penginapan[]" disabled>
+                                                                                            <option value="">Select Company...</option>
+                                                                                            @foreach($companies as $company)
+                                                                                                <option value="{{ $company->contribution_level_code }}"
+                                                                                                    @if($company->contribution_level_code == $penginapan['company_code']) selected @endif>
+                                                                                                    {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                                                                                </option>
+                                                                                            @endforeach
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Amount</label>
+                                                                                    </div>
+                                                                                    <div class="input-group mb-3">
+                                                                                        <div class="input-group-append">
+                                                                                            <span class="input-group-text">Rp</span>
+                                                                                        </div>
+                                                                                        <input class="form-control bg-light" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="{{$penginapan['nominal']}}" readonly>
+                                                                                    </div>
+                                                                                    <hr class="border border-primary border-1 opacity-50">
+                                                                                @endforeach
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Total Penginapan</label>
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                            <button style="display: none" type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Button and Card for Lainnya -->
+                                                        <div class="card-body text-center" style="display: none">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
+                                                        </div>
+                                                        <div id="lainnya-card" class="card-body" style="display: none;">
+                                                            <div class="accordion" id="accordionLainnya">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="headingLainnya">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
+                                                                            Rencana Lainnya
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-bt-lainnya">
+                                                                                @foreach ($detailCA['detail_lainnya'] as $perdiem)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Tanggal</label>
+                                                                                        <input type="date" name="tanggal_bt_lainnya[]" class="form-control bg-light" value="{{$perdiem['tanggal']}}" placeholder="mm/dd/yyyy" readonly>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Keterangan</label>
+                                                                                        <textarea name="keterangan_bt_lainnya[]" class="form-control bg-light" readonly>{{ $perdiem['keterangan'] }}</textarea>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Accommodation</label>
+                                                                                    </div>
+                                                                                    <div class="input-group mb-3">
+                                                                                        <div class="input-group-append">
+                                                                                            <span class="input-group-text">Rp</span>
+                                                                                        </div>
+                                                                                        <input class="form-control bg-light" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya" type="text" min="0" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" readonly>
+                                                                                    </div>
+                                                                                    <hr class="border border-primary border-1 opacity-50">
+                                                                                @endforeach
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Total Lainnya</label>
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                            <button style="display: none" type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -455,25 +456,48 @@
                                 @endif
                             </div>
                             <div class="row" id="ca_nbt" style="display: none;">
-                                <div class="col-md-12">
-                                    <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
+                                @if ($transactions->type_ca == 'ndns')
+                                    <div class="col-md-12">
+                                        <div class="table-responsive-sm">
                                             <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                    Non Business Trip
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container"></div>
-                                                                    {{-- <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button> --}}
+                                            <div class="d-flex flex-row gap-2">
+                                                <div class="col-md-12">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="accordion" id="accordionPanelsStayOpenExample">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="enter-headingOne">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                            Non Business Trip
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-nbt">
+                                                                                @foreach ($detailCA as $lainnya)
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Tanggal</label>
+                                                                                    <input type="date" name="tanggal_nbt[]" class="form-control bg-light" value="{{ $lainnya['tanggal_nbt'] }}" readonly>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Keterangan</label>
+                                                                                    <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>{{ $lainnya['keterangan_nbt'] }}</textarea>
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <label class="form-label">Accommodation</label>
+                                                                                </div>
+                                                                                <div class="input-group mb-3">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="nominal_nbt[]" type="text" min="0" value="{{ number_format($lainnya['nominal_nbt'], 0, ',', '.') }}" readonly>
+                                                                                </div>
+                                                                                @endforeach
+                                                                            </div>
+                                                                            <button style="display: none" type="button" id="add-more" class="btn btn-primary mt-3">Add More</button>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                @endforeach
                                                             </div>
                                                         </div>
                                                     </div>
@@ -487,8 +511,9 @@
                                 @if ($transactions->type_ca == 'entr')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="d-flex flex-column gap-2">
-                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
+                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
+                                            <div class="d-flex flex-row gap-2">
+                                                <div class="col-md-12">
                                                     <div class="card">
                                                         <div class="card-body text-center" style="display: none">
                                                             <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
@@ -507,7 +532,7 @@
                                                                                 @foreach ($detailCA['detail_e'] as $detail)
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label">Entertainment Type</label>
-                                                                                        <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-control bg-light" disabled>
+                                                                                        <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select bg-light" disabled>
                                                                                             <option value="">-</option>
                                                                                             <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                                                                             <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
@@ -538,7 +563,7 @@
                                                                                     <input class="form-control bg-light" name="total_e_detail[]" id="total_e_detail[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            <button style="display: none;" type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button style="display: none" type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -602,7 +627,7 @@
                                                                                     <hr class="border border-primary border-1 opacity-50">
                                                                                 @endforeach
                                                                             </div>
-                                                                            <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button style="display: none;" type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -622,20 +647,10 @@
                                         <div class="input-group-append">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input class="form-control bg-light" name="totalca" id="totalca"
-                                            type="text" min="0" value="{{ number_format($transactions->total_ca) }}" readonly>
+                                        <input class="form-control bg-light" name="totalca" id="totalca_declarasi"
+                                            type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label">Persetujuan</label>
-                                    <select name="approval_status" id="approval_status" class="form-select">
-                                        <option value="">-</option>
-                                        <option value="Rejected">Rejected</option>
-                                        <option value="Approved">Approved</option>
-                                        <option value="Pending">Pending</option>
-                                    </select>
-                                </div>
-                                {{-- {{ dd($transactions) }} --}}
                             </div>
                     </div>
                     <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
@@ -646,12 +661,12 @@
                         class="form-control bg-light" readonly>
                     <br>
                     <div class="row">
-                        <div class="p-3 col-md d-md-flex justify-content-end text-center">
+                        <div class="p-4 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('approval.cashadvanced') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
-                            <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
+                                <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                                <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
                         </div>
                     </div>
                     </form>
@@ -706,7 +721,6 @@
         });
 
         function toggleOthers() {
-            // ca_type ca_nbt ca_e
             var locationFilter = document.getElementById("locationFilter");
             var others_location = document.getElementById("others_location");
 
@@ -719,7 +733,6 @@
         }
 
         function validateInput(input) {
-            //input.value = input.value.replace(/[^0-9,]/g, '');
             input.value = input.value.replace(/[^0-9]/g, '');
         }
 
@@ -775,48 +788,6 @@
                 calculateTotalCA();
             }
 
-            // function formatInput(input) {
-            //     let value = input.value.replace(/\./g, '');
-            //     value = parseFloat(value);
-            //     if (!isNaN(value)) {
-            //         // input.value = formatNumber(value);
-            //         input.value = formatNumber(Math.floor(value));
-            //     } else {
-            //         input.value = formatNumber(0);
-            //     }
-
-            //     calculateTotalCA();
-            // }
-
-            // function calculateTotalCA() {
-            //     const allowance = parseNumber(allowanceInput.value);
-            //     const transport = parseNumber(transportInput.value);
-            //     const accommodation = parseNumber(accommodationInput.value);
-            //     const other = parseNumber(otherInput.value);
-            //     const nominal_1 = parseNumber(nominal_1Input.value);
-            //     const nominal_2 = parseNumber(nominal_2Input.value);
-            //     const nominal_3 = parseNumber(nominal_3Input.value);
-            //     const nominal_4 = parseNumber(nominal_4Input.value);
-            //     const nominal_5 = parseNumber(nominal_5Input.value);
-
-            //     // Perbaiki penulisan caTypeInput.value
-            //     const ca_type = caTypeInput.value;
-
-            //     let totalca = 0;
-            //     if (ca_type === 'dns') {
-            //         totalca = allowance + transport + accommodation + other;
-            //     } else if (ca_type === 'ndns') {
-            //         totalca = transport + accommodation + other;
-            //         allowanceInput.value = 0;
-            //     } else if (ca_type === 'entr') {
-            //         totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
-            //         allowanceInput.value = 0;
-            //     }
-
-            //     // totalcaInput.value = formatNumber(totalca.toFixed(2));
-            //     totalcaInput.value = formatNumber(Math.floor(totalca));
-            // }
-
             startDateInput.addEventListener('change', calculateTotalDays);
             endDateInput.addEventListener('change', calculateTotalDays);
             othersLocationInput.addEventListener('input', calculateTotalDays);
@@ -841,7 +812,40 @@
         });
     </script>
 
-    {{-- <script>
+    <script>
+        function previewFile() {
+            const fileInput = document.getElementById('prove_declare');
+            const file = fileInput.files[0];
+            const preview = document.getElementById('existing-file-preview');
+            preview.innerHTML = ''; // Kosongkan preview sebelumnya
+
+            if (file) {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                    const img = document.createElement('img');
+                    img.style.maxWidth = '200px';
+                    img.src = URL.createObjectURL(file);
+                    preview.appendChild(img);
+                } else if (fileExtension === 'pdf') {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(file);
+                    link.target = '_blank';
+                    const icon = document.createElement('img');
+                    icon.src = "https://img.icons8.com/color/48/000000/pdf.png";
+                    icon.style.maxWidth = '48px';
+                    link.appendChild(icon);
+                    const text = document.createElement('p');
+                    text.textContent = "Click to view PDF";
+                    preview.appendChild(link);
+                    preview.appendChild(text);
+                } else {
+                    preview.textContent = 'File type not supported.';
+                }
+            }
+        }
+
+
         $(document).ready(function() {
             $('.select2').select2({
                 theme: "bootstrap-5",
@@ -908,7 +912,6 @@
                 $('#toggle-e-relation').click();
             }
         });
-    </script> --}}
         document.addEventListener('DOMContentLoaded', function() {
             const formContainerBTPerdiem = document.getElementById('form-container-bt-perdiem');
             const formContainerBTTransport = document.getElementById('form-container-bt-transport');
@@ -1004,7 +1007,7 @@
                 document.querySelectorAll('input[name="total_bt_lainnya[]"]').forEach(input => {
                     total += parseNumber(input.value);
                 });
-                document.querySelector('input[name="totalca"]').value = formatNumber(total);
+                document.querySelector('input[name="totalca_deklarasi"]').value = formatNumber(total);
             }
 
             function calculateTotalDaysPerdiem(input) {
@@ -1402,7 +1405,7 @@
         //
 
         document.addEventListener('DOMContentLoaded', function() {
-            const formContainer = document.getElementById('form-container');
+            const formContainer = document.getElementById('form-container-nbt');
 
             function formatNumber(num) {
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -1448,6 +1451,9 @@
                         <label class="form-label">Keterangan</label>
                         <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>${keteranganValue}</textarea>
                     </div>
+                    <div class="mb-2">
+                        <label class="form-label">Accommodation</label>
+                    </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">
                             <span class="input-group-text">Rp</span>
@@ -1455,6 +1461,11 @@
                         <input class="form-control bg-light" name="nominal_nbt[]" type="text" min="0" value="${nominalValue}" readonly>
                     </div>
                 `;
+
+                // Only add Remove button if it's not the first form
+                if (!isFirst) {
+                    newForm.innerHTML += `<button style="display: none;" type="button" class="btn btn-danger remove-form">Remove</button>`;
+                }
 
                 newForm.innerHTML += `<hr class="border border-primary border-1 opacity-50">`;
                 formContainer.appendChild(newForm);

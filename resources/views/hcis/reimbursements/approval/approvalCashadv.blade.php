@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
+@extends('layouts_.vertical', ['page_title' => 'Approval Cash Advanced'])
 
 @section('css')
 @endsection
@@ -17,18 +17,16 @@
                                 <i class="bi bi-arrow-left"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item" style="font-size: 20px; display: flex; align-items: center; margin-left: 10px;">
                             {{ $parentLink }}
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item" style="font-size: 20px; display: flex; align-items: center; margin-left: 10px;">
                             {{ $link }}
                         </li>
                     </ol>
                 </div>
             </div>
         </div>
-
-        @include('hcis.reimbursements.approval.navigation.navigationApproval')
 
         <!-- Content Row -->
         <div class="row">
@@ -44,6 +42,7 @@
                             <input type="text" name="customsearch" id="customsearch" class="form-control w-  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search" >
                         </div>
                     </div>
+                    @include('hcis.reimbursements.approval.navigation.navigationApproval')
                     <div class="table-responsive">
                         <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
                             <thead class="thead-light">

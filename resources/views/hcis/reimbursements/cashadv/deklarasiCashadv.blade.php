@@ -30,7 +30,7 @@
                         <b>"{{ $transactions->no_ca }}"</b></h4>
                     <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
                 </div>
-                <div class="card-body" @style('overflow-y: auto;')>
+                <div class="card-body p-0" @style('overflow-y: auto;')>
                     <div class="container-fluid">
                         <form enctype="multipart/form-data" id="scheduleForm" method="post" action="{{ route('cashadvanced.declare', encrypt($transactions->id)) }}">
                             @csrf
@@ -166,23 +166,23 @@
                                 @if ($transactions->type_ca == 'dns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                            <div class="d-flex flex-row gap-2">
+                                            <div class="row">
                                                 <div class="col-md-6">
+                                                    <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Cash Advanced Request</div>
                                                     <div class="card">
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Perdiem</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Perdiem</button>
                                                         </div>
-                                                        <div id="perdiem-card-deklarasi" class="card-body" style="display: none;">
-                                                            <div class="accordion" id="accordionPerdiem">
+                                                        <div id="perdiem-card-deklarasi" class="card-body p-0" style="display: none;">
+                                                            <div class="accordion mb-3" id="accordionPerdiem">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="enter-headingOne">
                                                                         <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
                                                                             Rencana Perdiem
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                        <div class="accordion-body">
+                                                                    <div id="enter-collapseOne" class="accordion-collapse  show" aria-labelledby="enter-headingOne">
+                                                                        <div class="accordion-body mb-3">
                                                                             <div id="form-container-bt-perdiem-deklarasi">
                                                                                 @foreach ($detailCA['detail_perdiem'] as $perdiem)
                                                                                     <div class="mb-2">
@@ -251,7 +251,7 @@
                                                                                     <input class="form-control bg-light" name="total_bt_perdiem_deklarasi[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            {{-- <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button> --}}
+                                                                            {{-- <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mb-3">Add More</button> --}}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -259,18 +259,18 @@
                                                         </div>
 
                                                         <!-- Button and Card for Transport -->
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-transport-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Transport</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-transport-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Transport</button>
                                                         </div>
-                                                        <div id="transport-card-deklarasi" class="card-body" style="display: none;">
-                                                            <div class="accordion" id="accordionTransport">
+                                                        <div id="transport-card-deklarasi" class="card-body p-0" style="display: none;">
+                                                            <div class="accordion mb-3" id="accordionTransport">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingTransport">
                                                                         <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
                                                                             Rencana Transport
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                    <div id="collapseTransport" class="accordion-collapse collapse mb-3 show" aria-labelledby="headingTransport">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-transport-deklarasi">
                                                                                 @foreach ($detailCA['detail_transport'] as $transport)
@@ -315,7 +315,7 @@
                                                                                     <input class="form-control bg-light" name="total_bt_transport_deklarasi[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            {{-- <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button> --}}
+                                                                            {{-- <button type="button" id="add-more-bt-transport" class="btn btn-primary mb-3">Add More</button> --}}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -323,12 +323,12 @@
                                                         </div>
 
                                                         <!-- Button and Card for Penginapan -->
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Penginapan</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Penginapan</button>
                                                         </div>
-                                                        <div id="penginapan-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="penginapan-card-deklarasi" class="card-body p-0" style="display: none;">
                                                             <div class="accordion" id="accordionPenginapan">
-                                                                <div class="accordion-item">
+                                                                <div class="accordion-item mb-3">
                                                                     <h2 class="accordion-header" id="headingPenginapan">
                                                                         <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
                                                                             Rencana Penginapan
@@ -392,7 +392,7 @@
                                                                                     <input class="form-control bg-light" name="total_bt_penginapan_deklarasi[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            {{-- <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button> --}}
+                                                                            {{-- <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mb-3">Add More</button> --}}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -400,10 +400,10 @@
                                                         </div>
 
                                                         <!-- Button and Card for Lainnya -->
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya-deklarasi" class="btn btn-primary mt-3" data-state="false" disab><i class="bi bi-plus-circle"></i> Lainnya</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Lainnya</button>
                                                         </div>
-                                                        <div id="lainnya-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="lainnya-card-deklarasi" class="card-body p-0" style="display: none;">
                                                             <div class="accordion" id="accordionLainnya">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingLainnya">
@@ -444,7 +444,7 @@
                                                                                     <input class="form-control bg-light" name="total_bt_lainnya_deklarasi[]" id="total_bt_lainnya_deklarasi" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            {{-- <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button> --}}
+                                                                            {{-- <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mb-3">Add More</button> --}}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -453,19 +453,20 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <div class="card">
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
+                                                    <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Cash Advanced Deklarasi</div>
+                                                    <div class="card ">
+                                                        <div class="card-body  p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mb-3 mb-2" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
                                                         </div>
-                                                        <div id="perdiem-card" class="card-body" style="display: none;">
+                                                        <div id="perdiem-card" class="card-body mb-3 p-0" style="display: none;">
                                                             <div class="accordion" id="accordionPerdiem">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="enter-headingOne">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                            Rencana Perdiem
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="false" aria-controls="enter-collapseOne">
+                                                                            Deklarasi Rencana Perdiem
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                    <div id="enter-collapseOne" class="accordion-collapse mb-3" aria-labelledby="enter-headingOne">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-perdiem">
                                                                                 @foreach ($declareCA['detail_perdiem'] as $perdiem)
@@ -535,7 +536,7 @@
                                                                                     <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mb-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -543,18 +544,18 @@
                                                         </div>
 
                                                         <!-- Button and Card for Transport -->
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mb-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
                                                         </div>
-                                                        <div id="transport-card" class="card-body" style="display: none;">
+                                                        <div id="transport-card" class="card-body mb-3 p-0" style="display: none;">
                                                             <div class="accordion" id="accordionTransport">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingTransport">
                                                                         <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
-                                                                            Rencana Transport
+                                                                            Deklarasi Rencana Transport
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                    <div id="collapseTransport" class="accordion-collapse mb-3 collapse show" aria-labelledby="headingTransport">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-transport">
                                                                                 @foreach ($declareCA['detail_transport'] as $transport)
@@ -599,7 +600,7 @@
                                                                                     <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button type="button" id="add-more-bt-transport" class="btn btn-primary mb-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -607,15 +608,15 @@
                                                         </div>
 
                                                         <!-- Button and Card for Penginapan -->
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mb-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
                                                         </div>
-                                                        <div id="penginapan-card" class="card-body" style="display: none;">
+                                                        <div id="penginapan-card" class="card-body mb-3 p-0" style="display: none;">
                                                             <div class="accordion" id="accordionPenginapan">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingPenginapan">
                                                                         <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                            Rencana Penginapan
+                                                                            Deklarasi Rencana Penginapan
                                                                         </button>
                                                                     </h2>
                                                                     <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
@@ -676,7 +677,7 @@
                                                                                     <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button type="button" id="add-more-bt-penginapan" class="btn btn-primary mb-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -684,15 +685,15 @@
                                                         </div>
 
                                                         <!-- Button and Card for Lainnya -->
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mb-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
                                                         </div>
-                                                        <div id="lainnya-card" class="card-body" style="display: none;">
+                                                        <div id="lainnya-card" class="card-body p-0" style="display: none;">
                                                             <div class="accordion" id="accordionLainnya">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingLainnya">
                                                                         <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                            Rencana Lainnya
+                                                                            Deklarasi Rencana Lainnya
                                                                         </button>
                                                                     </h2>
                                                                     <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
@@ -728,7 +729,7 @@
                                                                                     <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button type="button" id="add-more-bt-lainnya" class="btn btn-primary mb-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -745,11 +746,11 @@
                                 @if ($transactions->type_ca == 'ndns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                            <div class="d-flex flex-row gap-2">
+                                            <div class="row">
                                                 <div class="col-md-6">
+                                                    <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Cash Advanced</div>
                                                     <div class="card">
-                                                        <div class="card-body">
+                                                        <div class="card-body p-0">
                                                             <div class="accordion" id="accordionPanelsStayOpenExample">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="enter-headingOne">
@@ -780,7 +781,7 @@
                                                                                 </div>
                                                                                 <hr class="border border-primary border-1 opacity-50">
                                                                             </div>
-                                                                            {{-- <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button> --}}
+                                                                            {{-- <button type="button" id="add-more" class="btn btn-primary mb-3">Add More</button> --}}
                                                                         </div>
                                                                     </div>
                                                                     @endforeach
@@ -790,19 +791,20 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
+                                                    <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Cash Advanced Deklarasi</div>
                                                     <div class="card">
-                                                        <div class="card-body">
+                                                        <div class="card-body p-0">
                                                             <div class="accordion" id="accordionPanelsStayOpenExample">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="enter-headingOne">
                                                                         <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                            Non Business Trip
+                                                                            Deklarasi Non Business Trip
                                                                         </button>
                                                                     </h2>
                                                                     <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-nbt"></div>
-                                                                            <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button type="button" id="add-more" class="btn btn-primary mb-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -819,14 +821,14 @@
                                 @if ($transactions->type_ca == 'entr')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
-                                            <div class="d-flex flex-row gap-2">
+                                            <div class="row">
                                                 <div class="col-md-6">
+                                                    <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Entertainment</div>
                                                     <div class="card">
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-e-detail-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Entertain</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-e-detail-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Entertain</button>
                                                         </div>
-                                                        <div id="entertain-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="entertain-card-deklarasi" class="card-body mb-3 p-0" style="display: none;">
                                                             <div class="accordion" id="accordionEntertain">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingEntertain">
@@ -871,17 +873,17 @@
                                                                                     <input class="form-control bg-light" name="total_e_detail_deklarasi[]" id="total_e_detail_deklarasi[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            {{-- <button type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button> --}}
+                                                                            {{-- <button type="button" id="add-more-e-detail" class="btn btn-primary mb-3">Add More</button> --}}
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-e-relation-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Relation</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-e-relation-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Relation</button>
                                                         </div>
-                                                        <div id="relation-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="relation-card-deklarasi" class="card-body mb-3 p-0" style="display: none;">
                                                             <div class="accordion" id="accordionRelation">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingRelation">
@@ -935,7 +937,7 @@
                                                                                     <hr class="border border-primary border-1 opacity-50">
                                                                                 @endforeach
                                                                             </div>
-                                                                            {{-- <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button> --}}
+                                                                            {{-- <button type="button" id="add-more-e-relation" class="btn btn-primary mb-3">Add More</button> --}}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -944,11 +946,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
+                                                    <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Entertainment Deklarasi</div>
                                                     <div class="card">
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mb-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
                                                         </div>
-                                                        <div id="entertain-card" class="card-body" style="display: none;">
+                                                        <div id="entertain-card" class="card-body mb-3 p-0" style="display: none;">
                                                             <div class="accordion" id="accordionEntertain">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingEntertain">
@@ -993,17 +996,17 @@
                                                                                     <input class="form-control bg-light" name="total_e_detail[]" id="total_e_detail[]" type="text" min="0" value="0" readonly>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button type="button" id="add-more-e-detail" class="btn btn-primary mb-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
+                                                        <div class="card-body p-0 text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mb-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
                                                         </div>
-                                                        <div id="relation-card" class="card-body" style="display: none;">
+                                                        <div id="relation-card" class="card-body mb-3 p-0" style="display: none;">
                                                             <div class="accordion" id="accordionRelation">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingRelation">
@@ -1057,7 +1060,7 @@
                                                                                     <hr class="border border-primary border-1 opacity-50">
                                                                                 @endforeach
                                                                             </div>
-                                                                            <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button type="button" id="add-more-e-relation" class="btn btn-primary mb-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1384,20 +1387,20 @@
                 toggleCard('#toggle-e-detail', '#entertain-card');
             });
 
-            $('#toggle-e-detail').click(function() {
-                toggleCard('#toggle-e-detail', '#entertain-card-deklarasi');
+            $('#toggle-e-detail-deklarasi').click(function() {
+                toggleCard('#toggle-e-detail-deklarasi', '#entertain-card-deklarasi');
             });
 
             $('#toggle-e-relation').click(function() {
                 toggleCard('#toggle-e-relation', '#relation-card');
             });
 
-            $('#toggle-e-relation').click(function() {
-                toggleCard('#toggle-e-relation', '#relation-card-deklarasi');
+            $('#toggle-e-relation-deklarasi').click(function() {
+                toggleCard('#toggle-e-relation-deklarasi', '#relation-card-deklarasi');
             });
 
-            // Logika untuk membuka kartu berdasarkan nilai ca_type
             var caType = $('input[name="ca_type"]').val();
+            console.log(caType);
 
             if (caType === 'dns') {
                 $('#toggle-bt-perdiem').click();
@@ -1409,9 +1412,9 @@
                 $('#toggle-bt-penginapan-deklarasi').click();
                 $('#toggle-bt-lainnya-deklarasi').click();
             } else if (caType === 'entr') {
+                $('#toggle-e-detail-deklarasi').click();
                 $('#toggle-e-detail').click();
                 $('#toggle-e-relation').click();
-                $('#toggle-e-detail-deklarasi').click();
                 $('#toggle-e-relation-deklarasi').click();
             }
         });

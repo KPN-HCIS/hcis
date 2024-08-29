@@ -102,6 +102,41 @@ class ReimburseController extends Controller
             'endDate' => $endDate,
         ]);
     }
+    public function deklarasiCashadvanced()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+        $today = Carbon::today();
+
+        $ca_transactions = CATransaction::with('employee')
+            ->where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Approved')
+                    ->orWhere('approval_status', 'Declaration');
+            })
+            ->where('end_date', '<=', $today)
+            ->get();
+
+        $deklarasiCACount = CATransaction::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_sett', 'Waiting for Declaration')
+                    ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Draft');
+            })
+            ->where('end_date', '<=', $today)
+            ->count();
+
+        return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
+            'deklarasiCACount' => $deklarasiCACount,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]);
+    }
     public function filterCaTransactions(Request $request)
     {
         $startDate = $request->input('start_date');
@@ -458,7 +493,7 @@ class ReimburseController extends Controller
                     [$total_ca]
                 )
                 ->get();
-
+            // dd($data_matrix_approvals);
             foreach ($data_matrix_approvals as $data_matrix_approval) {
 
                 if ($data_matrix_approval->employee_id == "cek_L1") {
@@ -813,6 +848,10 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
 
         // return view('hcis.reimbursements.cashadv.downloadCashadv', [
+        // $locations = Location::orderBy('area')->get();
+        // $transactions = CATransaction::find($key);
+        $approval = ca_approval::with('employee')->where('ca_id', $key)->get();
+
         $pdf = PDF::loadView('hcis.reimbursements.cashadv.printCashadv', [
             'link' => $link,
             // 'pdf' => $pdf,
@@ -824,6 +863,34 @@ class ReimburseController extends Controller
             'perdiem' => $perdiem,
             'no_sppds' => $no_sppds,
             'transactions' => $transactions,
+            'transactions' => $transactions,
+            'approval' => $approval,
+        ]);
+
+        return $pdf->stream('Cash Advanced ' . $key . '.pdf');
+    }
+    function cashadvancedDownloadDeklarasi($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $transactions = CATransaction::find($key);
+        $approval = ca_approval::with('employee')->where('ca_id', $key)->get();
+
+        $pdf = PDF::loadView('hcis.reimbursements.cashadv.printDeklarasiCashadv', [
+            'link' => $link,
+            // 'pdf' => $pdf,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'transactions' => $transactions,
+            'approval' => $approval,
         ]);
 
         return $pdf->stream('Cash Advanced ' . $key . '.pdf');
@@ -1121,7 +1188,7 @@ class ReimburseController extends Controller
         $model->save();
 
         Alert::success('Success Update');
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->intended(route('cashadvancedDeklarasi', absolute: false));
     }
 
     public function hotel()

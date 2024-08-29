@@ -28,8 +28,6 @@
             </div>
         </div>
 
-        @include('hcis.reimbursements.approval.navigation.navigationApproval')
-
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
@@ -44,6 +42,7 @@
                             <input type="text" name="customsearch" id="customsearch" class="form-control w-  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search" >
                         </div>
                     </div>
+                    @include('hcis.reimbursements.approval.navigation.navigationApproval')
                     <div class="table-responsive">
                         <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
                             <thead class="thead-light">

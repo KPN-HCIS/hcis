@@ -60,7 +60,7 @@ class ApprovalReimburseController extends Controller
     {
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
-        $link = 'Cash Advanced';
+        $link = 'Cash Advanced Approval';
         $employeeId = auth()->user()->employee_id;
 
         $ca_transactions = CATransaction::with('employee')->where('status_id', $employeeId)->where('approval_status', 'Pending')->get();
@@ -267,7 +267,7 @@ class ApprovalReimburseController extends Controller
             }
 
             Alert::success('Success', 'All approvals rejected successfully.');
-            return redirect()->route('approval.cashadvanced');
+            return redirect()->route('approval.cashadvancedDeklarasi');
         }
 
         // Cek jika tombol approve ditekan
