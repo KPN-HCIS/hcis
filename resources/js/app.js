@@ -6,13 +6,13 @@ window.DataTable = DataTable;
 import Swal from "sweetalert2";
 window.Swal = Swal;
 
-//import './plugins/bootstrap-wizard.js';
+import './plugins/bootstrap-wizard.js';
 import { Tab } from "bootstrap";
 window.Tab = Tab;
 
 
-// import select2 from "select2/dist/js/select2.min.js";
-// window.select2 = select2;
+import select2 from "select2/dist/js/select2.min.js";
+window.select2 = select2;
 
 import Alpine from "alpinejs";
 

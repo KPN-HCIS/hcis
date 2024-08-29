@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/ico" href="{{ asset('favicon.ico') }}?v={{ config('app.version') }}" />
-    <title>Performance Management</title>
+    <title>HC System</title>
     <!-- Fonts and icons -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Font Awesome Icons -->
@@ -102,7 +102,7 @@
               <script>
                 document.write(new Date().getFullYear());
               </script>
-              KPN Performance Management by HCIS.
+              HC System by HCIS.
             </p>
           </div>
         </div>
