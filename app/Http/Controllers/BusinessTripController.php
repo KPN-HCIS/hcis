@@ -462,7 +462,7 @@ class BusinessTripController extends Controller
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);
             $ca->total_real = '0';
             $ca->total_cost = (int) str_replace('.', '', $request->totalca);
-            $ca->approval_status = $request->status;
+            $ca->approval_status = 'Pending';
             $ca->approval_sett = $request->approval_sett;
             $ca->approval_extend = $request->approval_extend;
             $ca->created_by = $userId;
@@ -1099,7 +1099,7 @@ class BusinessTripController extends Controller
                                 continue 2;
                             }
                             $pdfName = 'Deklarasi.pdf';
-                            $viewPath = 'hcis.reimbursements.cashadv.printCashadv';
+                            $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
                             $employee_data = Employee::where('id', $user->id)->first();
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
@@ -1280,7 +1280,7 @@ class BusinessTripController extends Controller
                                     continue 2;
                                 }
                                 $pdfName = 'Deklarasi.pdf';
-                                $viewPath = 'hcis.reimbursements.cashadv.printCashadv';
+                                $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
                                 $employee_data = Employee::where('id', $user->id)->first();
                                 $companies = Company::orderBy('contribution_level')->get();
                                 $locations = Location::orderBy('area')->get();

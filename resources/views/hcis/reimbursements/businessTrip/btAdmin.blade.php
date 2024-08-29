@@ -172,7 +172,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th style="width: 180px">Action</th>
+                                            <th style="width: 185px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>

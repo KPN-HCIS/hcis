@@ -345,7 +345,7 @@
                                                                                             data-bs-target="#collapseTransport"
                                                                                             aria-expanded="true"
                                                                                             aria-controls="collapseTransport">
-                                                                                            Rencana Transport
+                                                                                            Transport Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseTransport"
@@ -465,7 +465,7 @@
                                                                                             data-bs-target="#collapsePenginapan"
                                                                                             aria-expanded="true"
                                                                                             aria-controls="collapsePenginapan">
-                                                                                            Rencana Penginapan
+                                                                                            Accommodation Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapsePenginapan"
@@ -476,8 +476,8 @@
                                                                                                 id="form-container-bt-penginapan">
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Start
-                                                                                                        Penginapan</label>
+                                                                                                        class="form-label">Accommodation
+                                                                                                        Start</label>
                                                                                                     <input type="date"
                                                                                                         name="start_bt_penginapan[]"
                                                                                                         class="form-control start-penginapan"
@@ -485,8 +485,8 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">End
-                                                                                                        Penginapan</label>
+                                                                                                        class="form-label">Accommodation
+                                                                                                        End</label>
                                                                                                     <input type="date"
                                                                                                         name="end_bt_penginapan[]"
                                                                                                         class="form-control end-penginapan"
@@ -570,8 +570,8 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Total
-                                                                                                    Penginapan</label>
+                                                                                                    class="form-label">Accommodation
+                                                                                                    Total</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -621,7 +621,7 @@
                                                                                             data-bs-target="#collapseLainnya"
                                                                                             aria-expanded="true"
                                                                                             aria-controls="collapseLainnya">
-                                                                                            Rencana Lainnya
+                                                                                            Others Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseLainnya"
@@ -632,7 +632,7 @@
                                                                                                 id="form-container-bt-lainnya">
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Tanggal</label>
+                                                                                                        class="form-label">Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_lainnya[]"
                                                                                                         class="form-control"
@@ -640,7 +640,7 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Keterangan</label>
+                                                                                                        class="form-label">Information</label>
                                                                                                     <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."></textarea>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
@@ -667,8 +667,7 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Total
-                                                                                                    Lainnya</label>
+                                                                                                    class="form-label">Others Total</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -2140,7 +2139,7 @@
 
                 newFormBTTransport.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal Transport</label>
+                        <label class="form-label">Transport Date</label>
                         <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
                     </div>
                     <div class="mb-2">
@@ -2153,8 +2152,8 @@
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                        <label class="form-label">Information</label>
+                        <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here ..."></textarea>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Amount</label>
@@ -2191,11 +2190,11 @@
 
                 newFormBTPenginapan.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Start Penginapan</label>
+                        <label class="form-label">Accommodation Start</label>
                         <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">End Penginapan</label>
+                        <label class="form-label">Accommodation End</label>
                         <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
@@ -2266,12 +2265,12 @@
 
                 newFormBTLainnya.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
+                        <label class="form-label">Date</label>
                         <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                        <label class="form-label">Information</label>
+                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your information here ..."></textarea>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Accommodation</label>

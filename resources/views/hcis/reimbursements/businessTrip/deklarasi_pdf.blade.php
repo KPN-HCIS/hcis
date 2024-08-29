@@ -102,7 +102,7 @@
     <div class="header">
         <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
     </div>
-    <h5 class="center">CASH ADVANCE (CA) TRANSACTION</h5>
+    <h5 class="center">DECLARATION</h5>
     <h5 class="center">No. {{ $transactions->no_ca }}</h5>
 
     <table>

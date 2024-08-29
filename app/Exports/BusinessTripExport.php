@@ -39,6 +39,7 @@ class BusinessTripExport implements FromCollection, WithMapping, ShouldAutoSize,
         $relatedCA = $this->caData->firstWhere('no_sppd', $businessTrip->no_sppd);
         $totalCA = $relatedCA ? $relatedCA->total_ca : 0;
         $totalReal = $relatedCA ? $relatedCA->total_real : 0;
+        $totalCost = $relatedCA ? $relatedCA->total_cost : 0;
 
         return [
             $businessTrip->jns_dinas,
@@ -49,10 +50,9 @@ class BusinessTripExport implements FromCollection, WithMapping, ShouldAutoSize,
             Carbon::parse($businessTrip->kembali)->format('d-m-Y'),
             $businessTrip->tujuan,
             $businessTrip->bb_perusahaan,
-            $totalCA,
-            $totalReal, // Example field
-            // $businessTrip->realisasi,
-            $businessTrip->sisa_kurang ?? '-',
+            $totalCA !== null ? $totalCA : '-',
+            $totalReal !== null ? $totalReal : '-',
+            $totalCost !== null ? $totalCost : '-',
             $businessTrip->created_at,
             $businessTrip->tanggal_diterima_hrd ?? '-',
             $businessTrip->tanggal_diproses_hrd ?? '-',
@@ -96,6 +96,7 @@ class BusinessTripExport implements FromCollection, WithMapping, ShouldAutoSize,
         // Apply styles to specific columns (update column letters as needed)
         $sheet->getStyle('I2:I' . ($sheet->getHighestRow()))->applyFromArray($currencyStyle); // For total_ca
         $sheet->getStyle('J2:J' . ($sheet->getHighestRow()))->applyFromArray($currencyStyle); // For total_real
+        $sheet->getStyle('K2:K' . ($sheet->getHighestRow()))->applyFromArray($currencyStyle); // For total_cost
 
         // Apply styles to headers at A1:P1
         $sheet->getStyle('A1:P1')->applyFromArray([
