@@ -254,7 +254,8 @@ class ReimburseController extends Controller
         $prefix = 'CA';
 
         // Ambil nomor urut terakhir dari tahun berjalan menggunakan Eloquent
-        $lastTransaction = CATransaction::whereYear('created_at', $currentYear)
+        $lastTransaction = CATransaction::withTrashed()
+            ->whereYear('created_at', $currentYear)
             ->orderBy('no_ca', 'desc')
             ->first();
 
@@ -858,7 +859,7 @@ class ReimburseController extends Controller
     {
         $model = ca_transaction::find($id);
         $model->delete();
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->intended(route('cashadvanced.admin', absolute: false));
     }
     function cashadvancedDownload($key)
     {
