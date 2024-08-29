@@ -125,6 +125,38 @@ class ReimburseController extends Controller
             'ca_transactions' => $ca_transactions,
         ]);
     }
+    public function doneCashadvanced()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+        $today = Carbon::today();
+
+        $ca_transactions = CATransaction::with('employee')
+            ->where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Done');
+            })
+            ->where('end_date', '<=', $today)
+            ->get();
+
+        $deklarasiCACount = CATransaction::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_sett', 'Waiting for Declaration')
+                    ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Draft');
+            })
+            ->where('end_date', '<=', $today)
+            ->count();
+
+        return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
+            'deklarasiCACount' => $deklarasiCACount,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
+        ]);
+    }
     function cashadvancedCreate()
     {
 
