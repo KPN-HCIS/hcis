@@ -222,7 +222,7 @@ Route::middleware('auth')->group(function () {
 
     //pdf BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
-    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
+    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('exportbt');
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search'])->name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate'])->name('businessTrip-filterDate');
@@ -247,7 +247,7 @@ Route::middleware('auth')->group(function () {
 
     //PDF BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
-    Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('export');
+    Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('exportbttype');
 
 
     // Authentication

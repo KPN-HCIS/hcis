@@ -498,6 +498,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                @endforeach
                                                             </div>
                                                         </div>
                                                     </div>
@@ -651,6 +652,16 @@
                                             type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Persetujuan</label>
+                                    <select name="approval_status" id="approval_status" class="form-select">
+                                        <option value="">-</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
+                                </div>
+                                {{-- {{ dd($transactions) }} --}}
                             </div>
                     </div>
                     <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"

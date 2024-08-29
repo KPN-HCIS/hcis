@@ -133,8 +133,7 @@ class ReimburseController extends Controller
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
+            
         ]);
     }
     public function filterCaTransactions(Request $request)

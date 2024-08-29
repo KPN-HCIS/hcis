@@ -1,6 +1,17 @@
 @extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
 
 @section('css')
+<style>
+.btn-hoverable {
+    pointer-events: auto;
+}
+
+.btn-hoverable:disabled {
+    cursor: not-allowed; /* Change cursor to indicate the button is not clickable */
+    opacity: 0.6; /* Reduce opacity to give a disabled look */
+}
+
+</style>
 @endsection
 
 @section('content')
@@ -101,9 +112,7 @@
                                     <th>Type</th>
                                     <th>No CA</th>
                                     <th>Requestor</th>
-                                    <th>Company</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
+                                    <th>Date</th>
                                     <th>Total CA</th>
                                     <th>Total Settlement</th>
                                     <th>Balance</th>
