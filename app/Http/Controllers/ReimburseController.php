@@ -47,15 +47,18 @@ class ReimburseController extends Controller
         $today = Carbon::today();
 
         foreach ($ca_transactions as $transaction) {
-            if ($transaction->approval_status == 'Approved') {
-                $transaction->approval_sett = 'On Progress';
+            if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
+                $transaction->approval_status = 'Done';
             }
-            if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved') {
-                $transaction->approval_sett = 'Waiting for Declaration';
-            }
-            if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
-                $transaction->approval_sett = 'Declaration';
-            }
+            // if ($transaction->approval_status == 'Approved') {
+            //     $transaction->approval_sett = 'On Progress';
+            // }
+            // if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved') {
+            //     $transaction->approval_sett = 'Waiting for Declaration';
+            // }
+            // if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
+            //     $transaction->approval_sett = 'Declaration';
+            // }
             // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
             // if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
             //     $transaction->approval_status = 'Declaration';
@@ -472,12 +475,17 @@ class ReimburseController extends Controller
                     $employee_id = $data_matrix_approval->employee_id;
                 }
 
-                $model_approval = new ca_approval;
-                $model_approval->ca_id = $uuid;
-                $model_approval->role_name = $data_matrix_approval->desc;
-                $model_approval->employee_id = $employee_id;
-                $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = 'Pending';
+                if ($employee_id !=  null) {
+                    $model_approval = new ca_approval;
+                    $model_approval->ca_id = $uuid;
+                    $model_approval->role_name = $data_matrix_approval->desc;
+                    $model_approval->employee_id = $employee_id;
+                    $model_approval->layer = $data_matrix_approval->layer;
+                    $model_approval->approval_status = 'Pending';
+
+                    // Simpan data ke database
+                    $model_approval->save();
+                }
 
                 // Simpan data ke database
                 $model_approval->save();
@@ -762,6 +770,7 @@ class ReimburseController extends Controller
                 )
                 ->get();
 
+            // dd($data_matrix_approvals);
             foreach ($data_matrix_approvals as $data_matrix_approval) {
 
                 if ($data_matrix_approval->employee_id == "cek_L1") {
@@ -773,16 +782,17 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
+                if ($employee_id !=  null) {
+                    $model_approval = new ca_approval;
+                    $model_approval->ca_id = $req->no_id;
+                    $model_approval->role_name = $data_matrix_approval->desc;
+                    $model_approval->employee_id = $employee_id;
+                    $model_approval->layer = $data_matrix_approval->layer;
+                    $model_approval->approval_status = 'Pending';
 
-                $model_approval = new ca_approval;
-                $model_approval->ca_id = $req->no_id;
-                $model_approval->role_name = $data_matrix_approval->desc;
-                $model_approval->employee_id = $employee_id;
-                $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = 'Pending';
-
-                // Simpan data ke database
-                $model_approval->save();
+                    // Simpan data ke database
+                    $model_approval->save();
+                }
             }
         }
         $model->save();
@@ -806,7 +816,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $transactions = CATransaction::find($key);
-        $approval = ca_approval::with('employee')->where('ca_id', $key)->get();
+        $approval = ca_approval::with('employee')->where('ca_id', $key)->orderBy('layer', 'asc')->get();
 
         $pdf = PDF::loadView('hcis.reimbursements.cashadv.printCashadv', [
             'link' => $link,
@@ -832,7 +842,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $transactions = CATransaction::find($key);
-        $approval = ca_approval::with('employee')->where('ca_id', $key)->get();
+        $approval = ca_approval::with('employee')->where('ca_id', $key)->orderBy('layer', 'asc')->get();
 
         $pdf = PDF::loadView('hcis.reimbursements.cashadv.printDeklarasiCashadv', [
             'link' => $link,
@@ -1040,7 +1050,7 @@ class ReimburseController extends Controller
         }
         $model->total_ca = str_replace('.', '', $req->totalca);
         $model->total_real = str_replace('.', '', $req->totalca_deklarasi);
-        $model->total_cost = str_replace('.', '', $req->totalca);
+        $model->total_cost = $model->total_ca - $model->total_real;
 
         if ($req->input('action_ca_draft')) {
             $model->approval_sett = $req->input('action_ca_draft');
@@ -1113,7 +1123,6 @@ class ReimburseController extends Controller
                     [$total_ca]
                 )
                 ->get();
-
             foreach ($data_matrix_approvals as $data_matrix_approval) {
 
                 if ($data_matrix_approval->employee_id == "cek_L1") {
@@ -1125,16 +1134,29 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
+                if ($employee_id !=  null) {
+                    $model_approval = new ca_sett_approval;
+                    $model_approval->ca_id = $req->no_id;
+                    $model_approval->role_name = $data_matrix_approval->desc;
+                    $model_approval->employee_id = $employee_id;
+                    $model_approval->layer = $data_matrix_approval->layer;
+                    $model_approval->approval_status = 'Pending';
 
-                $model_approval = new ca_sett_approval;
-                $model_approval->ca_id = $req->no_id;
-                $model_approval->role_name = $data_matrix_approval->desc;
-                $model_approval->employee_id = $employee_id;
-                $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = 'Pending';
+                    // Simpan data ke database
+                    $model_approval->save();
+                }
 
-                // Simpan data ke database
-                $model_approval->save();
+                if ($employee_id !=  null) {
+                    $model_approval = new ca_sett_approval;
+                    $model_approval->ca_id = $req->no_id;
+                    $model_approval->role_name = $data_matrix_approval->desc;
+                    $model_approval->employee_id = $employee_id;
+                    $model_approval->layer = $data_matrix_approval->layer;
+                    $model_approval->approval_status = 'Pending';
+
+                    // Simpan data ke database
+                    $model_approval->save();
+                }
             }
         }
         $model->declaration_at = Carbon::now();

@@ -201,7 +201,7 @@
                     <td class="label">{{ $role->role_name }}</td>
                     <td class="colon">:</td>
                     <td class="value">
-                        @if ($role->employee == 'Approved')
+                        @if ($role->approval_status == 'Approved')
                         {{ $role->employee ? $role->employee->fullname : 'Data tidak tersedia' }}
                         ({{ \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') }})
                         @else
@@ -229,6 +229,7 @@
     @endphp
 
     @if ( $transactions->type_ca == 'dns' )
+        @if (count($detailCA['detail_perdiem']) > 0 && !empty($detailCA['detail_perdiem'][0]['company_code']))
         <table class="table-approve">
             <tr>
                 <th colspan="6"><b>Rencana Perjalanan :</b></th>
@@ -246,7 +247,7 @@
             <tr style="text-align: center">
                 <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
                 <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
-                <td>{{ $perdiem['location'] == 'Others' ? $perdiem['company_code'] : $perdiem['location'] }}</td>
+                <td>{{ $perdiem['location'] == 'Others' ? $perdiem['other_location'] : $perdiem['location'] }}</td>
                 <td>{{ $perdiem['company_code'] }}</td>
                 <td>{{ $perdiem['total_days'] }} Hari</td>
                 <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
@@ -262,42 +263,40 @@
                 </td>
             </tr>
         </table>
-
-        @if ()
-
-        @else
-            <table class="table-approve">
-                <tr>
-                    <th colspan="4"><b>Rencana Transport :</b></th>
-                </tr>
-                <tr class="head-row">
-                    <td>Tanggal</td>
-                    <td>Keterangan</td>
-                    <td>Company Code</td>
-                    <td>Amount</td>
-                </tr>
-
-                @foreach($detailCA['detail_transport'] as $transport)
-                <tr style="text-align: center">
-                    <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
-                    <td>{{ $transport['keterangan'] }}</td>
-                    <td>{{ $c }}</td>
-                    <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
-                </tr>
-                @endforeach
-                <tr class="total-row">
-                    <td colspan="3" class="head-row">Total</td>
-                    <td>
-                        Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
-                    </td>
-                </tr>
-            </table>
         @endif
 
-        @if ($detailCA['detail_penginapan'] && collect($detailCA['detail_penginapan'])->contains(function ($perdiem) {
-            return $perdiem['hotel_name'] !== '';
-        }))
-        @else
+        @if (count($detailCA['detail_transport']) > 0 && !empty($detailCA['detail_transport'][0]['company_code']))
+        <table class="table-approve">
+            <tr>
+                <th colspan="4"><b>Rencana Transport :</b></th>
+            </tr>
+            <tr class="head-row">
+                <td>Tanggal</td>
+                <td>Keterangan</td>
+                <td>Company Code</td>
+                <td>Amount</td>
+            </tr>
+
+            @foreach($detailCA['detail_transport'] as $transport)
+            @if (!empty($transport['company_code']))
+            <tr style="text-align: center">
+                <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
+                <td>{{ $transport['keterangan'] }}</td>
+                <td>{{ $transport['company_code'] }}</td>
+                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+            </tr>
+            @endif
+            @endforeach
+            <tr class="total-row">
+                <td colspan="3" class="head-row">Total</td>
+                <td>
+                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
+                </td>
+            </tr>
+        </table>
+        @endif
+
+        @if (count($detailCA['detail_penginapan']) > 0 && !empty($detailCA['detail_penginapan'][0]['company_code']))
         <table class="table-approve">
             <tr>
                 <th colspan="6"><b>Rencana Penginapan :</b></th>
@@ -333,6 +332,7 @@
         </table>
         @endif
 
+        @if (count($detailCA['detail_lainnya']) > 0 && !empty($detailCA['detail_lainnya'][0]['keterangan']))
         <table class="table-approve">
             <tr>
                 <th colspan="3"><b>Rencana Lainnya :</b></th>
@@ -357,6 +357,8 @@
                 </td>
             </tr>
         </table>
+        @endif
+
     @elseif ( $transactions->type_ca == 'ndns' )
         <table class="table-approve">
             <tr>

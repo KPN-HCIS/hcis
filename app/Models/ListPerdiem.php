@@ -10,6 +10,8 @@ class ListPerdiem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'grade','amount'
+        'grade',
+        'amount',
+        'job_level'
     ];
 }

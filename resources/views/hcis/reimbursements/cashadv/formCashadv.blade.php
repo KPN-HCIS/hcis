@@ -164,11 +164,11 @@
                                                     <div class="accordion" id="accordionPerdiem">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="false" aria-controls="enter-collapseOne">
                                                                     Rencana Perdiem
                                                                 </button>
                                                             </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                            <div id="enter-collapseOne" class="accordion-collapse collapse" aria-labelledby="enter-headingOne">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-perdiem">
                                                                         <div class="mb-2">

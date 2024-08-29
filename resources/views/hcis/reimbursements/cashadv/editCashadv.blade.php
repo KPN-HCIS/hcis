@@ -167,10 +167,7 @@
                                             <div class="d-flex flex-column gap-2">
                                                 <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
                                                 <div class="card">
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                    </div>
-                                                    <div id="perdiem-card" class="card-body" style="display: none;">
+                                                    <div id="perdiem-card" class="card-body">
                                                         <div class="accordion" id="accordionPerdiem">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="enter-headingOne">
@@ -256,28 +253,26 @@
                                                     </div>
 
                                                     <!-- Button and Card for Transport -->
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
-                                                    </div>
-                                                    <div id="transport-card" class="card-body" style="display: none;">
+
+                                                    <div id="transport-card" class="card-body">
                                                         <div class="accordion" id="accordionTransport">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingTransport">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
+                                                                    <button class="accordion-button @if($detailCA['detail_transport'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="@if($detailCA['detail_transport'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseTransport">
                                                                         Rencana Transport
                                                                     </button>
                                                                 </h2>
-                                                                <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                <div id="collapseTransport" class="accordion-collapse collapse @if($detailCA['detail_transport'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingTransport" data-bs-parent="#accordionTransport">
                                                                     <div class="accordion-body">
                                                                         <div id="form-container-bt-transport">
                                                                             @foreach ($detailCA['detail_transport'] as $transport)
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Tanggal Transport</label>
-                                                                                <input type="date" name="tanggal_bt_transport[]" class="form-control" value="{{$transport['tanggal']}}">
+                                                                                <input type="date" name="tanggal_bt_transport[]" class="form-control" value="@if($transport['tanggal'] !== null){{$transport['tanggal']}}@endif" data-clear-on-collapse>
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label" for="name">Company Code</label>
-                                                                                <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
+                                                                                <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]" data-clear-on-collapse>
                                                                                     <option value="">Select Company...</option>
                                                                                     @foreach($companies as $company)
                                                                                         <option value="{{ $company->contribution_level_code }}"
@@ -289,7 +284,7 @@
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Keterangan</label>
-                                                                                <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport['keterangan']}}</textarea>
+                                                                                <textarea name="keterangan_bt_transport[]" class="form-control" data-clear-on-collapse>@if($transport['keterangan'] !== null){{$transport['keterangan']}}@endif</textarea>
                                                                             </div>
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Amount</label>
@@ -298,7 +293,7 @@
                                                                                 <div class="input-group-append">
                                                                                     <span class="input-group-text">Rp</span>
                                                                                 </div>
-                                                                                <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="{{number_format($transport['nominal'], 0, ',', '.')}}">
+                                                                                <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="{{$transport['nominal']}}" data-clear-on-collapse>
                                                                             </div>
                                                                             <hr class="border border-primary border-1 opacity-50">
                                                                             @endforeach
@@ -320,10 +315,7 @@
                                                     </div>
 
                                                     <!-- Button and Card for Penginapan -->
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                    </div>
-                                                    <div id="penginapan-card" class="card-body" style="display: none;">
+                                                    <div id="penginapan-card" class="card-body">
                                                         <div class="accordion" id="accordionPenginapan">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingPenginapan">
@@ -397,10 +389,7 @@
                                                     </div>
 
                                                     <!-- Button and Card for Lainnya -->
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                    </div>
-                                                    <div id="lainnya-card" class="card-body" style="display: none;">
+                                                    <div id="lainnya-card" class="card-body">
                                                         <div class="accordion" id="accordionLainnya">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingLainnya">
@@ -837,64 +826,18 @@
             });
         });
 
-        $(document).ready(function() {
-            function toggleCard(buttonId, cardId) {
-                var $button = $(buttonId);
-                var $card = $(cardId);
-                var isVisible = $card.is(':visible');
-
-                $card.slideToggle('fast', function() {
-                    if (isVisible) {
-                        $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        $card.find('select').prop('selectedIndex', 0);
-                        $card.find('input[readonly]').val(0);
-                        $card.find('input[type="number"]').val(0);
-
-                        $button.html('<i class="bi bi-plus-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'false');
-                    } else {
-                        $button.html('<i class="bi bi-dash-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'true');
+        document.addEventListener('DOMContentLoaded', function() {
+            var collapseTransport = document.getElementById('collapseTransport');
+            collapseTransport.addEventListener('show.bs.collapse', function() {
+                var inputsToReset = collapseTransport.querySelectorAll('[data-clear-on-collapse]');
+                inputsToReset.forEach(function(input) {
+                    if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
+                        input.value = '';
+                    } else if (input.tagName === 'SELECT') {
+                        input.selectedIndex = 0;
                     }
                 });
-            }
-
-            $('#toggle-bt-perdiem').click(function() {
-                toggleCard('#toggle-bt-perdiem', '#perdiem-card');
             });
-
-            $('#toggle-bt-transport').click(function() {
-                toggleCard('#toggle-bt-transport', '#transport-card');
-            });
-
-            $('#toggle-bt-penginapan').click(function() {
-                toggleCard('#toggle-bt-penginapan', '#penginapan-card');
-            });
-
-            $('#toggle-bt-lainnya').click(function() {
-                toggleCard('#toggle-bt-lainnya', '#lainnya-card');
-            });
-
-            $('#toggle-e-detail').click(function() {
-                toggleCard('#toggle-e-detail', '#entertain-card');
-            });
-
-            $('#toggle-e-relation').click(function() {
-                toggleCard('#toggle-e-relation', '#relation-card');
-            });
-
-            // Logika untuk membuka kartu berdasarkan nilai ca_type
-            var caType = $('input[name="ca_type"]').val();
-
-            if (caType === 'dns') {
-                $('#toggle-bt-perdiem').click();
-                $('#toggle-bt-transport').click();
-                $('#toggle-bt-penginapan').click();
-                $('#toggle-bt-lainnya').click();
-            } else if (caType === 'entr') {
-                $('#toggle-e-detail').click();
-                $('#toggle-e-relation').click();
-            }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -927,8 +870,16 @@
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
+
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function parseNumberPerdiem(value) {
+                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
             }
 
             function formatInput(input) {
@@ -949,10 +900,14 @@
             function calculateTotalNominalBTPerdiem() {
                 let total = 0;
                 document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-                    total += parseNumber(input.value);
+                    total += parseNumberPerdiem(input.value);
                 });
+                console.log("Total Perdiem:", total); // Debugging
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+
+                calculateTotalNominalBTTotal();
             }
+
 
             function calculateTotalNominalBTTransport() {
                 let total = 0;
@@ -997,15 +952,37 @@
 
             function calculateTotalDaysPerdiem(input) {
                 const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_perdiem[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_perdiem[]"]').value);
+                const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
+                const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
+                const totalDaysInput = formGroup.querySelector('input[name="total_days_bt_perdiem[]"]');
+                const perdiemInput = document.getElementById('perdiem');
+                const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+                const locationSelect = formGroup.querySelector('select[name="location_bt_perdiem[]"]');
+                const otherLocationInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
+
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
 
                 if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
                     const diffTime = Math.abs(endDate - startDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = diffDays;
+                    const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    // Memeriksa lokasi untuk menentukan persentase allowance
+                    if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 100%
+                    } else {
+                        allowance *= 0.5; // allowance * 50%
+                    }
+
+                    allowanceInput.value = formatNumberPerdiem(allowance);
+                    calculateTotalNominalBTPerdiem();
                 } else {
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = 0;
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
                 }
             }
 
