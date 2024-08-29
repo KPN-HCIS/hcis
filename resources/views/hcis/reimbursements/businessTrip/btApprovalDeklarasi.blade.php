@@ -2500,7 +2500,7 @@
                     form.addEventListener('submit', function(e) {
                         e.preventDefault();
                         const action = this.querySelector('input[name="status_approval"]').value;
-                        const confirmMessage = action === 'Rejected' ?
+                        const confirmMessage = action === 'Declaration Rejected' ?
                             'Are you sure you want to reject this?' :
                             'Are you sure you want to confirm this?';
 

@@ -52,10 +52,20 @@ class BusinessTripController extends Controller
             $query->where(function ($query) {
                 $query->whereIn('status', ['Approved', 'Declaration L1', 'Declaration L2', 'Declaration Draft']);
             });
+        } elseif ($filter === 'rejected') {
+            // Show data with Rejected, Refund, Doc Accepted, Verified
+            $query->where(function ($query) {
+                $query->whereIn('status', ['Rejected', 'Declaration Rejected']);
+            });
         } elseif ($filter === 'done') {
             // Show data with Rejected, Refund, Doc Accepted, Verified
             $query->where(function ($query) {
-                $query->whereIn('status', ['Rejected', 'Refund', 'Doc Accepted', 'Verified']);
+                $query->whereIn('status', ['Return/Refund', 'Doc Accepted', 'Verified']);
+            });
+        } elseif ($filter === 'draft') {
+            // Show data with Rejected, Refund, Doc Accepted, Verified
+            $query->where(function ($query) {
+                $query->whereIn('status', ['Draft', 'Declaration Draft']);
             });
         }
 
@@ -953,7 +963,8 @@ class BusinessTripController extends Controller
             'ca' => ca_transaction::class,
             'tiket' => Tiket::class,
             'hotel' => Hotel::class,
-            'taksi' => Taksi::class
+            'taksi' => Taksi::class,
+            'deklarasi' => ca_transaction::class,
         ];
 
         foreach ($types as $type => $model) {
@@ -981,6 +992,10 @@ class BusinessTripController extends Controller
                 $types = ['sppd', 'ca', 'tiket', 'hotel', 'taksi'];
             } else {
                 $types = explode(',', $types);
+            }
+
+            if (!in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2'])) {
+                $types[] = 'deklarasi';
             }
 
             $zip = new ZipArchive();
@@ -1073,14 +1088,31 @@ class BusinessTripController extends Controller
                             $viewPath = 'hcis.reimbursements.businessTrip.taksi_pdf';
                             $data = ['taksi' => $taksi];
                             break;
-                        // case 'deklarasi':
-                        //     $deklarasi = deklarasi::where('no_sppd', $sppd->no_sppd)->first();
-                        //     if (!$deklarasi)
-                        //         continue 2;
-                        //     $pdfName = 'Deklarasi.pdf';
-                        //     $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
-                        //     $data = ['deklarasi' => $deklarasi];
-                        //     break;
+                        case 'deklarasi':
+                            $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
+                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2'])) {
+                                continue 2;
+                            }
+                            $pdfName = 'Deklarasi.pdf';
+                            $viewPath = 'hcis.reimbursements.cashadv.printCashadv';
+                            $employee_data = Employee::where('id', $user->id)->first();
+                            $companies = Company::orderBy('contribution_level')->get();
+                            $locations = Location::orderBy('area')->get();
+                            $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+                            $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
+
+                            $data = [
+                                'link' => 'Cash Advanced',
+                                'parentLink' => 'Reimbursement',
+                                'userId' => $user->id,
+                                'companies' => $companies,
+                                'locations' => $locations,
+                                'employee_data' => $employee_data,
+                                'perdiem' => $perdiem,
+                                'no_sppds' => $no_sppds,
+                                'transactions' => $ca,
+                            ];
+                            break;
                         default:
                             continue 2;
                     }
@@ -1703,26 +1735,26 @@ class BusinessTripController extends Controller
 
         $query = BusinessTrip::where('status', '!=', 'Draft')->orderBy('created_at', 'desc');
         $filter = $request->input('filter', 'all');
-        // dd($filter);
 
         if ($filter === 'request') {
             $query->whereDate('kembali', '<', now())
-                  ->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
+                ->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
         } elseif ($filter === 'declaration') {
             $query->whereIn('status', ['Approved Declaration', 'Declaration L1', 'Declaration L2']);
         } elseif ($filter === 'done') {
-            $query->whereIn('status', ['Rejected', 'Return/Refund', 'Doc Accepted', 'Verified']);
+            $query->whereIn('status', ['Doc Accepted', 'Verified']);
+        } elseif ($filter === 'return_refund') {
+            $query->whereIn('status', ['Return/Refund']);
         }
 
-        $sppd = BusinessTrip::where('status', '!=', 'Draft')->orderBy('created_at', 'desc')->get();
+        $sppd = $query->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
 
-        // No sppd
+        // Related data
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
-        // dd($tickets);
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
         $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
@@ -1733,7 +1765,6 @@ class BusinessTripController extends Controller
 
         return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter'));
     }
-
     public function filterDateAdmin(Request $request)
     {
         // Retrieve the start and end dates from the request
@@ -1857,98 +1888,101 @@ class BusinessTripController extends Controller
         $ca->total_cost = $totalCa - $totalReal;
 
         $status = $request->input('accept_status');
+        if ($ca->total_cost < 0 && $status === 'Return/Refund') {
+            return redirect()->back()->with('error', 'Cannot set status to Return/Refund when the total cost is negative.');
+        }
         $n->status = $request->accept_status;
 
         $detail_perdiem = [];
-            $detail_transport = [];
-            $detail_penginapan = [];
-            $detail_lainnya = [];
+        $detail_transport = [];
+        $detail_penginapan = [];
+        $detail_lainnya = [];
 
-            // Populate detail_perdiem
-            if ($request->has('start_bt_perdiem')) {
-                foreach ($request->start_bt_perdiem as $key => $startDate) {
-                    $endDate = $request->end_bt_perdiem[$key] ?? '';
-                    $totalDays = $request->total_days_bt_perdiem[$key] ?? '';
-                    $location = $request->location_bt_perdiem[$key] ?? '';
-                    $other_location = $request->other_location_bt_perdiem[$key] ?? '';
-                    $companyCode = $request->company_bt_perdiem[$key] ?? '';
-                    $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
+        // Populate detail_perdiem
+        if ($request->has('start_bt_perdiem')) {
+            foreach ($request->start_bt_perdiem as $key => $startDate) {
+                $endDate = $request->end_bt_perdiem[$key] ?? '';
+                $totalDays = $request->total_days_bt_perdiem[$key] ?? '';
+                $location = $request->location_bt_perdiem[$key] ?? '';
+                $other_location = $request->other_location_bt_perdiem[$key] ?? '';
+                $companyCode = $request->company_bt_perdiem[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
 
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'location' => $location,
-                        'other_location' => $other_location,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
-                }
+                $detail_perdiem[] = [
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'total_days' => $totalDays,
+                    'location' => $location,
+                    'other_location' => $other_location,
+                    'company_code' => $companyCode,
+                    'nominal' => $nominal,
+                ];
             }
+        }
 
-            // Populate detail_transport
-            if ($request->has('tanggal_bt_transport')) {
-                foreach ($request->tanggal_bt_transport as $key => $tanggal) {
-                    $keterangan = $request->keterangan_bt_transport[$key] ?? '';
-                    $companyCode = $request->company_bt_transport[$key] ?? '';
-                    $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
+        // Populate detail_transport
+        if ($request->has('tanggal_bt_transport')) {
+            foreach ($request->tanggal_bt_transport as $key => $tanggal) {
+                $keterangan = $request->keterangan_bt_transport[$key] ?? '';
+                $companyCode = $request->company_bt_transport[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
 
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
-                }
+                $detail_transport[] = [
+                    'tanggal' => $tanggal,
+                    'keterangan' => $keterangan,
+                    'company_code' => $companyCode,
+                    'nominal' => $nominal,
+                ];
             }
+        }
 
-            // Populate detail_penginapan
-            if ($request->has('start_bt_penginapan')) {
-                foreach ($request->start_bt_penginapan as $key => $startDate) {
-                    $endDate = $request->end_bt_penginapan[$key] ?? '';
-                    $totalDays = $request->total_days_bt_penginapan[$key] ?? '';
-                    $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
-                    $companyCode = $request->company_bt_penginapan[$key] ?? '';
-                    $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
-                    $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
+        // Populate detail_penginapan
+        if ($request->has('start_bt_penginapan')) {
+            foreach ($request->start_bt_penginapan as $key => $startDate) {
+                $endDate = $request->end_bt_penginapan[$key] ?? '';
+                $totalDays = $request->total_days_bt_penginapan[$key] ?? '';
+                $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
+                $companyCode = $request->company_bt_penginapan[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
+                $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'hotel_name' => $hotelName,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                        'totalPenginapan' => $totalPenginapan,
-                    ];
-                }
+                $detail_penginapan[] = [
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'total_days' => $totalDays,
+                    'hotel_name' => $hotelName,
+                    'company_code' => $companyCode,
+                    'nominal' => $nominal,
+                    'totalPenginapan' => $totalPenginapan,
+                ];
             }
+        }
 
-            // Populate detail_lainnya
-            if ($request->has('tanggal_bt_lainnya')) {
-                foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
-                    $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
-                    $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
-                    $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
+        // Populate detail_lainnya
+        if ($request->has('tanggal_bt_lainnya')) {
+            foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
+                $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
+                $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'nominal' => $nominal,
-                        'totalLainnya' => $totalLainnya,
-                    ];
-                }
+                $detail_lainnya[] = [
+                    'tanggal' => $tanggal,
+                    'keterangan' => $keterangan,
+                    'nominal' => $nominal,
+                    'totalLainnya' => $totalLainnya,
+                ];
             }
+        }
 
-            // Save the details
-            $declare_ca = [
-                'detail_perdiem' => $detail_perdiem,
-                'detail_transport' => $detail_transport,
-                'detail_penginapan' => $detail_penginapan,
-                'detail_lainnya' => $detail_lainnya,
-            ];
+        // Save the details
+        $declare_ca = [
+            'detail_perdiem' => $detail_perdiem,
+            'detail_transport' => $detail_transport,
+            'detail_penginapan' => $detail_penginapan,
+            'detail_lainnya' => $detail_lainnya,
+        ];
 
-            $ca->declare_ca = json_encode($declare_ca);
+        $ca->declare_ca = json_encode($declare_ca);
         $ca->save();
         $n->save();
 
@@ -2235,8 +2269,8 @@ class BusinessTripController extends Controller
 
         // Determine the new status and layer based on the action and manager's role
         $action = $request->input('status_approval');
-        if ($action == 'Rejected') {
-            $statusValue = 'Rejected';
+        if ($action == 'Declaration Rejected') {
+            $statusValue = 'Declaration Rejected';
             if ($employeeId == $businessTrip->manager_l1_id) {
                 $layer = 1;
             } elseif ($employeeId == $businessTrip->manager_l2_id) {
@@ -2319,7 +2353,7 @@ class BusinessTripController extends Controller
         // Save the approval record
         $approval->save();
 
-        $message = $statusValue === 'Rejected'
+        $message = $statusValue === 'Declaration Rejected'
             ? 'The request has been successfully Rejected.'
             : 'The request has been successfully Accepted.';
 

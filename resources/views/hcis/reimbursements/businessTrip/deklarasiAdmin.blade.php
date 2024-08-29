@@ -20,6 +20,22 @@
                             id="btEditForm" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
+                            @if (session('error'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ session('error') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
+
+                            @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
+
                             <div class="row mb-3">
                                 <div class="col-md-4">
                                     <label for="no_sppd" class="form-label">No SPPD</label>
@@ -78,7 +94,8 @@
                                                                             <h2 class="accordion-header"
                                                                                 id="enter-headingOne">
                                                                                 <button class="accordion-button fw-medium"
-                                                                                    type="button" data-bs-toggle="collapse"
+                                                                                    type="button"
+                                                                                    data-bs-toggle="collapse"
                                                                                     data-bs-target="#enter-collapseOne"
                                                                                     aria-expanded="true"
                                                                                     aria-controls="enter-collapseOne">
@@ -2512,7 +2529,7 @@
     </div>
 
     <script>
-         document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const totalca = document.getElementById('totalca');
             const totalcaDeklarasi = document.getElementById('totalca_deklarasi');
             const refundAmount = document.getElementById('refund-amount');

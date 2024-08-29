@@ -143,8 +143,16 @@
                                     Declaration
                                 </button>
                                 <button type="submit" name="filter" value="done"
-                                    class="btn {{ $filter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm mb-3">
+                                    class="btn {{ $filter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                     Done
+                                </button>
+                                <button type="submit" name="filter" value="draft"
+                                    class="btn {{ $filter === 'draft' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    Draft
+                                </button>
+                                <button type="submit" name="filter" value="rejected"
+                                    class="btn {{ $filter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    Rejected
                                 </button>
                             </form>
 
@@ -271,7 +279,7 @@
                                                     <span
                                                         class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved'
                                                             ? 'success'
-                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
+                                                            : ($n->status == 'Rejected' || $n->status == 'Return/Refund' || $n->status == 'Declaration Rejected'
                                                                 ? 'danger'
                                                                 : (in_array($n->status, ['Pending L1', 'Pending L2', 'Declaration L1', 'Declaration L2', 'Waiting Submitted'])
                                                                     ? 'warning'
@@ -282,9 +290,10 @@
                                                                             : 'secondary')))) }}"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"
                                                         @if ($n->status == 'Pending L1') title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
-                                                        @elseif ($n->status == 'Pending L2')
-                                                            title="L2 Manager: {{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}" @endif>
-                                                        {{ $n->status }}
+                                                    @elseif ($n->status == 'Pending L2')
+                                                        title="L2 Manager: {{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}" @elseif($n->status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
+                                                        @elseif($n->status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}" @endif>
+                                                        {{ $n->status == 'Approved' ? 'Request Approved' : $n->status }}
                                                     </span>
                                                 </td>
                                                 <td style="align-content: center">
@@ -313,7 +322,7 @@
                                                             </button>
                                                         </form>
                                                     @else
-                                                        <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
+                                                        <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi','deklarasi']) }}"
                                                             class="btn btn-outline-info rounded-pill">
                                                             <i class="bi bi-download"></i>
                                                         </a>

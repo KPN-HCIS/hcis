@@ -128,29 +128,31 @@
                                         aria-label="search" aria-describedby="search">
                                 </div>
                             </div>
-                            {{-- @php
-                                // Get the current filter value from the request
-                                $currentFilter = request('filter');
-                            @endphp
-
                             <form method="GET" action="{{ route('businessTrip.admin') }}">
+                                @php
+                                    $currentFilter = request('filter', 'all');
+                                @endphp
                                 <button type="submit" name="filter" value="all"
-                                    class="btn {{ $filter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                     All
                                 </button>
                                 <button type="submit" name="filter" value="request"
-                                    class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                     Request
                                 </button>
                                 <button type="submit" name="filter" value="declaration"
-                                    class="btn {{ $filter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                     Declaration
                                 </button>
+                                <button type="submit" name="filter" value="return_refund"
+                                    class="btn {{ $currentFilter === 'return_refund' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    Return/Refund
+                                </button>
                                 <button type="submit" name="filter" value="done"
-                                    class="btn {{ $filter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm mb-3">
+                                    class="btn {{ $currentFilter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm mb-3">
                                     Done
                                 </button>
-                            </form> --}}
+                            </form>
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
@@ -268,24 +270,25 @@
                                                     @endif
                                                 </td>
                                                 <td style="align-content: center">
-                                                    <span class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved'
-                                                        ? 'success'
-                                                        : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'Return/Refund'
-                                                            ? 'danger'
-                                                            : (in_array($n->status, ['Pending L1', 'Pending L2', 'Declaration L1', 'Declaration L2', 'Waiting Submitted'])
-                                                                ? 'warning'
-                                                                : ($n->status == 'Draft'
-                                                                    ? 'secondary'
-                                                                    : (in_array($n->status, ['Doc Accepted', 'Verified'])
-                                                                        ? 'info'
-                                                                        : 'secondary')))) }}"
+                                                    <span
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved'
+                                                            ? 'success'
+                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'Return/Refund'
+                                                                ? 'danger'
+                                                                : (in_array($n->status, ['Pending L1', 'Pending L2', 'Declaration L1', 'Declaration L2', 'Waiting Submitted'])
+                                                                    ? 'warning'
+                                                                    : ($n->status == 'Draft'
+                                                                        ? 'secondary'
+                                                                        : (in_array($n->status, ['Doc Accepted', 'Verified'])
+                                                                            ? 'info'
+                                                                            : 'secondary')))) }}"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"
-                                                        @if ($n->status == 'Pending L1')
-                                                            title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
+                                                        @if ($n->status == 'Pending L1') title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
                                                         @elseif ($n->status == 'Pending L2')
                                                             title="L2 Manager: {{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}"
-                                                        @endif>
-                                                        {{ $n->status }}
+                                                            @elseif($n->status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
+                                                        @elseif($n->status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}" @endif>
+                                                        {{ $n->status == 'Approved' ? 'Request Approved' : $n->status }}
                                                     </span>
                                                 </td>
                                                 <td>
