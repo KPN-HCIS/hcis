@@ -1110,7 +1110,7 @@
                                             <span class="input-group-text">Rp</span>
                                         </div>
                                         <input class="form-control bg-light" name="totalca" id="totalca_declarasi"
-                                            type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
+                                            type="text" min="0" value="{{ number_format($transactions->total_ca, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
@@ -1120,7 +1120,18 @@
                                             <span class="input-group-text">Rp</span>
                                         </div>
                                         <input class="form-control bg-light" name="totalca_deklarasi" id="totalca"
-                                            type="text" min="0" value="{{ $transactions->total_cost }}" readonly>
+                                            type="text" min="0" value="{{ $transactions->total_real }}" readonly>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Total Cash Advanced Real</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Rp</span>
+                                        </div>
+                                        <input class="form-control bg-light" name="totalca_real"
+                                            type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                                     </div>
 
                                 </div>

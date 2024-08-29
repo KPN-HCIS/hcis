@@ -61,7 +61,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Costing Company</label>
-                                    <select class="form-control bg-light" id="companyFilter" name="companyFilter" disabled>
+                                    <select class="form-control bg-light" id="companyFilter" name="companyFilters" disabled>
                                         <option value="">Select Company...</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}"
@@ -71,6 +71,7 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <input type="hidden" name="companyFilter" value="{{ $transactions->contribution_level_code }}">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Destination</label>
                                     <select class="form-control bg-light" id="locationFilter" name="locationFilter"
@@ -266,11 +267,11 @@
                                                             <div class="accordion mb-3" id="accordionTransport">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingTransport">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
+                                                                        <button class="accordion-button @if($detailCA['detail_transport'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="@if($detailCA['detail_transport'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseTransport">
                                                                             Rencana Transport
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseTransport" class="accordion-collapse collapse mb-3 show" aria-labelledby="headingTransport">
+                                                                    <div id="collapseTransport" class="accordion-collapse collapse @if($detailCA['detail_transport'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingTransport" data-bs-parent="#accordionTransport">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-transport-deklarasi">
                                                                                 @foreach ($detailCA['detail_transport'] as $transport)
@@ -1449,8 +1450,16 @@
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
+
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function parseNumberPerdiem(value) {
+                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
             }
 
             function formatInput(input) {
@@ -1475,9 +1484,12 @@
             function calculateTotalNominalBTPerdiem() {
                 let total = 0;
                 document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-                    total += parseNumber(input.value);
+                    total += parseNumberPerdiem(input.value);
                 });
+                console.log("Total Perdiem:", total); // Debugging
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+
+                calculateTotalNominalBTTotal();
             }
 
             function calculateTotalNominalBTPerdiemDeklarasi() {
@@ -1555,15 +1567,37 @@
 
             function calculateTotalDaysPerdiem(input) {
                 const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_perdiem[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_perdiem[]"]').value);
+                const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
+                const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
+                const totalDaysInput = formGroup.querySelector('input[name="total_days_bt_perdiem[]"]');
+                const perdiemInput = document.getElementById('perdiem');
+                const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+                const locationSelect = formGroup.querySelector('select[name="location_bt_perdiem[]"]');
+                const otherLocationInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
+
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
 
                 if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
                     const diffTime = Math.abs(endDate - startDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = diffDays;
+                    const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    // Memeriksa lokasi untuk menentukan persentase allowance
+                    if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 100%
+                    } else {
+                        allowance *= 0.5; // allowance * 50%
+                    }
+
+                    allowanceInput.value = formatNumberPerdiem(allowance);
+                    calculateTotalNominalBTPerdiem();
                 } else {
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = 0;
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
                 }
             }
 
