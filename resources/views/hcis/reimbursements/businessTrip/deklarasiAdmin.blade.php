@@ -36,37 +36,37 @@
                                 </div>
                             @endif
 
-                            <div class="row mb-3">
+                            <div class="row mb-2">
                                 <div class="col-md-4">
                                     <label for="no_sppd" class="form-label">No SPPD</label>
                                     <input type="text" class="form-control bg-light" id="no_sppd" name="no_sppd"
                                         value="{{ $n->no_sppd }}" readonly>
                                 </div>
 
-                                {{-- <div class="row mb-4"> --}}
                                 <div class="col-md-4">
-                                    <label for="mulai" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control bg-light" id="mulai" name="mulai"
-                                        value="{{ $n->mulai }}" readonly>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="kembali" class="form-label">End Date</label>
-                                    <input type="date" class="form-control bg-light" id="kembali" name="kembali"
-                                        value="{{ $n->kembali }}" readonly>
-                                    {{-- </div> --}}
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
                                     <label for="name" class="form-label">Name</label>
                                     <input type="text" class="form-control bg-light" id="name" name="name"
                                         value="{{ $n->nama }}" readonly>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label for="divisi" class="form-label">Unit</label>
                                     <input type="text" class="form-control bg-light" id="divisi" name="divisi"
                                         value="{{ $n->divisi }}" readonly>
                                 </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="mulai" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control bg-light" id="mulai" name="mulai"
+                                        value="{{ $n->mulai }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="kembali" class="form-label">End Date</label>
+                                    <input type="date" class="form-control bg-light" id="kembali" name="kembali"
+                                        value="{{ $n->kembali }}" readonly>
+                                </div>
+                                <input class="form-control" id="perdiem" name="perdiem" type="hidden"
+                                value="{{ $perdiem->amount }}" readonly>
                             </div>
                             <!-- 1st Form -->
                             <div class="row mt-2" id="ca_div">
@@ -1548,12 +1548,12 @@
                                                                                                             : '';
                                                                                                     @endphp
                                                                                                     <input
-                                                                                                        class="form-control"
+                                                                                                        class="form-control bg-light"
                                                                                                         name="nominal_bt_perdiem[]"
                                                                                                         id="nominal_bt_perdiem_{{ $index }}"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominal2) }}">
+                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominal2) }}" readonly>
                                                                                                 </div>
                                                                                                 <hr
                                                                                                     class="border border-primary border-1 opacity-50">
@@ -2517,7 +2517,7 @@
                             <div class="d-flex justify-content-end mt-3">
                                 @if (isset($ca->prove_declare) && $ca->prove_declare)
                                     <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
-                                        class="btn btn-outline-primary rounded-pill" style="margin-right: 4px;">View</a>
+                                        class="btn btn-outline-primary rounded-pill" style="margin-right: 20px;">View</a>
                                 @endif
                                 <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
                             </div>
@@ -3438,6 +3438,12 @@
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
             }
+            function parseNumberPerdiem(value) {
+                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
+            }
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
 
             function formatInput(input) {
                 let value = input.value.replace(/\./g, '');
@@ -3507,9 +3513,36 @@
                 const formGroup = input.closest('.mb-2').parentElement;
                 const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
                 const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
+                const totalDaysInput = formGroup.querySelector('input[name="total_days_bt_perdiem[]"]');
+                const perdiemInput = document.getElementById('perdiem');
+                const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+                const locationSelect = formGroup.querySelector('select[name="location_bt_perdiem[]"]');
+                const otherLocationInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
 
                 const startDate = new Date(startDateInput.value);
                 const endDate = new Date(endDateInput.value);
+
+                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
+                    const diffTime = Math.abs(endDate - startDate);
+                    const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    // Memeriksa lokasi untuk menentukan persentase allowance
+                    if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 100%
+                    } else {
+                        allowance *= 0.5; // allowance * 50%
+                    }
+
+                    allowanceInput.value = formatNumberPerdiem(allowance);
+                    calculateTotalNominalBTPerdiem();
+                } else {
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
+                }
 
                 if (!isNaN(startDate) && !isNaN(endDate)) {
                     if (startDate > endDate) {
@@ -3602,7 +3635,7 @@
                     <div class="input-group-append">
                         <span class="input-group-text">Rp</span>
                     </div>
-                    <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
+                    <input class="form-control bg-light" name="nominal_bt_perdiem[]" type="text" min="0" value="0" readonly>
                 </div>
                 <button type="button" class="btn btn-danger remove-form">Remove</button>
                 <hr class="border border-primary border-1 opacity-50">

@@ -277,7 +277,7 @@
                                                 </td>
                                                 <td style="align-content: center">
                                                     <span
-                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved'
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved' || $n->status =='Verified'
                                                             ? 'success'
                                                             : ($n->status == 'Rejected' || $n->status == 'Return/Refund' || $n->status == 'Declaration Rejected'
                                                                 ? 'danger'
@@ -285,7 +285,7 @@
                                                                     ? 'warning'
                                                                     : ($n->status == 'Draft'
                                                                         ? 'secondary'
-                                                                        : (in_array($n->status, ['Doc Accepted', 'Verified'])
+                                                                        : (in_array($n->status, ['Doc Accepted'])
                                                                             ? 'info'
                                                                             : 'secondary')))) }}"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"

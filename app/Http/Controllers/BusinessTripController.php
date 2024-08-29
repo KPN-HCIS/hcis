@@ -45,12 +45,12 @@ class BusinessTripController extends Controller
             // Show all data where the date is < today and status is in ['Pending L1', 'Pending L2', 'Draft']
             $query->where(function ($query) {
                 $query->whereDate('kembali', '<', now())
-                    ->whereIn('status', ['Pending L1', 'Pending L2', 'Draft']);
+                    ->whereIn('status', ['Pending L1', 'Pending L2']);
             });
         } elseif ($filter === 'declaration') {
             // Show data with Approved, Declaration L1, Declaration L2, Draft Declaration
             $query->where(function ($query) {
-                $query->whereIn('status', ['Approved', 'Declaration L1', 'Declaration L2', 'Declaration Draft']);
+                $query->whereIn('status', ['Approved', 'Declaration L1', 'Declaration L2', 'Declaration Approved']);
             });
         } elseif ($filter === 'rejected') {
             // Show data with Rejected, Refund, Doc Accepted, Verified
@@ -131,6 +131,7 @@ class BusinessTripController extends Controller
 
         // Retrieve all hotels for the specific BusinessTrip
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
 
         // Prepare hotel data for the view
         $hotelData = [];
@@ -183,6 +184,7 @@ class BusinessTripController extends Controller
             'caDetail' => $caDetail,
             'ca' => $ca,
             'nominalPerdiem' => $nominalPerdiem,
+            'perdiem' => $perdiem,
         ]);
     }
 
@@ -647,6 +649,7 @@ class BusinessTripController extends Controller
 
         // Retrieve all hotels for the specific BusinessTrip
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
 
         // Prepare hotel data for the view
         $hotelData = [];
@@ -701,7 +704,8 @@ class BusinessTripController extends Controller
             'ca' => $ca,
             'nominalPerdiem' => $nominalPerdiem,
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
-            'hasCaData' => $hasCaData, // Pass the flag to the view
+            'hasCaData' => $hasCaData,
+            'perdiem' => $perdiem,
         ]);
     }
     public function deklarasiCreate(Request $request, $id)
@@ -776,6 +780,7 @@ class BusinessTripController extends Controller
             $ca->approval_sett = $request->status;
         }
 
+        $ca->declaration_at = Carbon::now();
         $total_real = (int) str_replace('.', '', $request->totalca);
         $total_ca = $ca->total_ca;
 
@@ -1174,6 +1179,9 @@ class BusinessTripController extends Controller
             } else {
                 $types = explode(',', $types);
             }
+            if (!in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2'])) {
+                $types[] = 'deklarasi';
+            }
 
             $zip = new ZipArchive();
             $zipFileName = 'Business Trip.zip';
@@ -1266,14 +1274,31 @@ class BusinessTripController extends Controller
                             $viewPath = 'hcis.reimbursements.businessTrip.taksi_pdf';
                             $data = ['taksi' => $taksi];
                             break;
-                        // case 'deklarasi':
-                        //     $deklarasi = deklarasi::where('no_sppd', $sppd->no_sppd)->first();
-                        //     if (!$deklarasi)
-                        //         continue 2;
-                        //     $pdfName = 'Deklarasi.pdf';
-                        //     $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
-                        //     $data = ['deklarasi' => $deklarasi];
-                        //     break;
+                            case 'deklarasi':
+                                $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
+                                if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2'])) {
+                                    continue 2;
+                                }
+                                $pdfName = 'Deklarasi.pdf';
+                                $viewPath = 'hcis.reimbursements.cashadv.printCashadv';
+                                $employee_data = Employee::where('id', $user->id)->first();
+                                $companies = Company::orderBy('contribution_level')->get();
+                                $locations = Location::orderBy('area')->get();
+                                $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+                                $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
+
+                                $data = [
+                                    'link' => 'Cash Advanced',
+                                    'parentLink' => 'Reimbursement',
+                                    'userId' => $user->id,
+                                    'companies' => $companies,
+                                    'locations' => $locations,
+                                    'employee_data' => $employee_data,
+                                    'perdiem' => $perdiem,
+                                    'no_sppds' => $no_sppds,
+                                    'transactions' => $ca,
+                                ];
+                                break;
                         default:
                             continue 2;
                     }
@@ -1305,6 +1330,7 @@ class BusinessTripController extends Controller
         $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         return view(
             'hcis.reimbursements.businessTrip.formBusinessTrip',
             [
@@ -1312,6 +1338,7 @@ class BusinessTripController extends Controller
                 'companies' => $companies,
                 'locations' => $locations,
                 'no_sppds' => $no_sppds,
+                'perdiem' => $perdiem,
             ]
         );
     }
@@ -1737,14 +1764,15 @@ class BusinessTripController extends Controller
         $filter = $request->input('filter', 'all');
 
         if ($filter === 'request') {
-            $query->whereDate('kembali', '<', now())
-                ->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
+            $query->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
         } elseif ($filter === 'declaration') {
-            $query->whereIn('status', ['Approved Declaration', 'Declaration L1', 'Declaration L2']);
+            $query->whereIn('status', ['Declaration Approved', 'Declaration L1', 'Declaration L2']);
         } elseif ($filter === 'done') {
             $query->whereIn('status', ['Doc Accepted', 'Verified']);
         } elseif ($filter === 'return_refund') {
             $query->whereIn('status', ['Return/Refund']);
+        } elseif ($filter === 'rejected') {
+            $query->whereIn('status', ['Rejected', 'Declaration Rejected']);
         }
 
         $sppd = $query->get();
@@ -1818,6 +1846,7 @@ class BusinessTripController extends Controller
 
         // Retrieve all hotels for the specific BusinessTrip
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
 
         // Prepare hotel data for the view
         $hotelData = [];
@@ -1872,7 +1901,8 @@ class BusinessTripController extends Controller
             'ca' => $ca,
             'nominalPerdiem' => $nominalPerdiem,
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
-            'hasCaData' => $hasCaData, // Pass the flag to the view
+            'hasCaData' => $hasCaData,
+            'perdiem' => $perdiem,
         ]);
     }
     public function deklarasiStatusAdmin(Request $request, $id)
@@ -2178,7 +2208,7 @@ class BusinessTripController extends Controller
                     // Update CA approval status for L1
                     ca_approval::updateOrCreate(
                         ['ca_id' => $caTransaction->id, 'employee_id' => $employeeId, 'layer' => $layer],
-                        ['approval_status' => 'Approved', 'approved_at' => now()]
+                        ['approval_status' => 'Approved', 'approved_at' => Carbon::now()]
                     );
 
                     // Find the next approver (Layer 2) from ca_approval

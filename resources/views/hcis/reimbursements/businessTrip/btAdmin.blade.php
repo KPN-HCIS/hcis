@@ -149,8 +149,12 @@
                                     Return/Refund
                                 </button>
                                 <button type="submit" name="filter" value="done"
-                                    class="btn {{ $currentFilter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm mb-3">
+                                    class="btn {{ $currentFilter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                     Done
+                                </button>
+                                <button type="submit" name="filter" value="rejected"
+                                    class="btn {{ $currentFilter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm mb-3">
+                                    Rejected
                                 </button>
                             </form>
                             <div class="table-responsive">
@@ -159,6 +163,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th class="sticky-col-header">No SPPD</th>
+                                            <th>Name</th>
                                             <th style="width: 100px">Destination</th>
                                             <th>Start</th>
                                             <th>End</th>
@@ -167,7 +172,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th style="width: 160px">Action</th>
+                                            <th style="width: 180px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -178,6 +183,7 @@
                                                     {{ $loop->iteration }}
                                                 </th>
                                                 <td class="sticky-col">{{ $n->no_sppd }}</td>
+                                                <td>{{ $n->nama }}</td>
                                                 <td>{{ $n->tujuan }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-M-Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-M-Y') }}</td>
@@ -271,15 +277,15 @@
                                                 </td>
                                                 <td style="align-content: center">
                                                     <span
-                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved'
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved' || $n->status == 'Verified'
                                                             ? 'success'
-                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'Return/Refund'
+                                                            : ($n->status == 'Rejected' || $n->status == 'Declaration Rejected' || $n->status == 'Return/Refund'
                                                                 ? 'danger'
                                                                 : (in_array($n->status, ['Pending L1', 'Pending L2', 'Declaration L1', 'Declaration L2', 'Waiting Submitted'])
                                                                     ? 'warning'
                                                                     : ($n->status == 'Draft'
                                                                         ? 'secondary'
-                                                                        : (in_array($n->status, ['Doc Accepted', 'Verified'])
+                                                                        : (in_array($n->status, ['Doc Accepted'])
                                                                             ? 'info'
                                                                             : 'secondary')))) }}"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"

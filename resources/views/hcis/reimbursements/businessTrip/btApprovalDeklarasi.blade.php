@@ -20,20 +20,30 @@
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
-                            <div class="row mb-4">
+                            <div class="row mb-2">
                                 <div class="col-md-4">
                                     <label for="no_sppd" class="form-label">No SPPD</label>
                                     <input type="text" class="form-control bg-light" id="no_sppd" name="no_sppd"
                                         value="{{ $n->no_sppd }}" readonly>
                                 </div>
-
-                                {{-- <div class="row mb-4"> --}}
                                 <div class="col-md-4">
+                                    <label for="nama" class="form-label">Name</label>
+                                    <input type="text" class="form-control bg-light" id="nama" name="nama"
+                                        value="{{ $n->nama }}" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="divisi" class="form-label">Unit</label>
+                                    <input type="text" class="form-control bg-light" id="divisi" name="divisi"
+                                        value="{{ $n->divisi }}" readonly>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control bg-light" id="mulai" name="mulai"
                                         value="{{ $n->mulai }}" readonly>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control bg-light" id="kembali" name="kembali"
                                         value="{{ $n->kembali }}" readonly>
@@ -2442,7 +2452,7 @@
                         <div class="d-flex justify-content-end mt-3">
                             @if (isset($ca->prove_declare) && $ca->prove_declare)
                                 <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
-                                    class="btn btn-outline-primary rounded-pill" style="margin-right: 4px;">View</a>
+                                    class="btn btn-outline-primary rounded-pill" style="margin-right: 20px;">View</a>
                             @endif
 
                             <form method="POST" action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}"

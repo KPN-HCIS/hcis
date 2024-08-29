@@ -54,6 +54,8 @@
                                     <input type="date" class="form-control datepicker" id="kembali" name="kembali"
                                         placeholder="Tanggal Kembali" required>
                                 </div>
+                                <input class="form-control" id="perdiem" name="perdiem" type="hidden"
+                                value="{{ $perdiem->amount }}" readonly>
                             </div>
                             <div class="mb-2">
                                 <label for="tujuan" class="form-label">Destination</label>
@@ -280,12 +282,12 @@
                                                                                                             class="input-group-text">Rp</span>
                                                                                                     </div>
                                                                                                     <input
-                                                                                                        class="form-control"
+                                                                                                        class="form-control bg-light"
                                                                                                         name="nominal_bt_perdiem[]"
                                                                                                         id="nominal_bt_perdiem"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="0">
+                                                                                                        value="0" readonly>
                                                                                                 </div>
                                                                                                 <hr
                                                                                                     class="border border-primary border-1 opacity-50">
@@ -1878,6 +1880,12 @@
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
             }
+            function parseNumberPerdiem(value) {
+                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
+            }
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
 
             function formatInput(input) {
                 let value = input.value.replace(/\./g, '');
@@ -1897,9 +1905,11 @@
             function calculateTotalNominalBTPerdiem() {
                 let total = 0;
                 document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-                    total += parseNumber(input.value);
+                    total += parseNumberPerdiem(input.value);
                 });
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+
+                calculateTotalNominalBTTotal();
             }
 
             function calculateTotalNominalBTTransport() {
@@ -1947,9 +1957,36 @@
                 const formGroup = input.closest('.mb-2').parentElement;
                 const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
                 const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
+                const totalDaysInput = formGroup.querySelector('input[name="total_days_bt_perdiem[]"]');
+                const perdiemInput = document.getElementById('perdiem');
+                const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+                const locationSelect = formGroup.querySelector('select[name="location_bt_perdiem[]"]');
+                const otherLocationInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
 
                 const startDate = new Date(startDateInput.value);
                 const endDate = new Date(endDateInput.value);
+
+                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
+                    const diffTime = Math.abs(endDate - startDate);
+                    const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    // Memeriksa lokasi untuk menentukan persentase allowance
+                    if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 100%
+                    } else {
+                        allowance *= 0.5; // allowance * 50%
+                    }
+
+                    allowanceInput.value = formatNumberPerdiem(allowance);
+                    calculateTotalNominalBTPerdiem();
+                } else {
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
+                }
 
                 if (!isNaN(startDate) && !isNaN(endDate)) {
                     if (startDate > endDate) {
@@ -2043,7 +2080,7 @@
                         <div class="input-group-append">
                             <span class="input-group-text">Rp</span>
                         </div>
-                        <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
+                        <input class="form-control bg-light" name="nominal_bt_perdiem[]" type="text" min="0" value="0" readonly>
                     </div>
                     <button type="button" class="btn btn-danger remove-form">Remove</button>
                     <hr class="border border-primary border-1 opacity-50">
