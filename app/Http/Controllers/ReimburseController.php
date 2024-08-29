@@ -46,6 +46,7 @@ class ReimburseController extends Controller
         $link = 'Cash Advanced';
         $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
         $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
+        $today = Carbon::today();
 
         foreach ($ca_transactions as $transaction) {
             if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
@@ -74,8 +75,17 @@ class ReimburseController extends Controller
             // Simpan perubahan
             $transaction->save();
         }
+        $deklarasiCACount = CATransaction::where('user_id', $userId)
+        ->where(function ($query) {
+            $query->where('approval_sett', 'Waiting for Declaration')
+                ->orWhere('approval_sett', 'Declaration')
+                ->orWhere('approval_sett', 'Draft');
+        })
+        ->where('end_date', '<=', $today)
+        ->count();
 
-        return view('hcis.reimbursements.cashadv.cashadv', [
+        return view('hcis.reimbursements.cashadv.cashadvRequest', [
+            'deklarasiCACount' => $deklarasiCACount,
             'pendingCACount' => $pendingCACount,
             'link' => $link,
             'parentLink' => $parentLink,
