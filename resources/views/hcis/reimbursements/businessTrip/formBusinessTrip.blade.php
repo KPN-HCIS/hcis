@@ -356,8 +356,8 @@
                                                                                                 id="form-container-bt-transport">
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Tanggal
-                                                                                                        Transport</label>
+                                                                                                        class="form-label">
+                                                                                                        Transport Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
@@ -387,7 +387,7 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Keterangan</label>
+                                                                                                        class="form-label">Information</label>
                                                                                                     <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."></textarea>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
@@ -570,8 +570,8 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Accommodation
-                                                                                                    Total</label>
+                                                                                                    class="form-label">Total Accommodation
+                                                                                                    </label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -621,7 +621,7 @@
                                                                                             data-bs-target="#collapseLainnya"
                                                                                             aria-expanded="true"
                                                                                             aria-controls="collapseLainnya">
-                                                                                            Others Plan
+                                                                                            Other Plans
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseLainnya"
@@ -645,7 +645,7 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Accommodation</label>
+                                                                                                        class="form-label">Amount</label>
                                                                                                 </div>
                                                                                                 <div
                                                                                                     class="input-group mb-3">
@@ -667,7 +667,7 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Others Total</label>
+                                                                                                    class="form-label">Total Others</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -2273,7 +2273,7 @@
                         <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your information here ..."></textarea>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Accommodation</label>
+                        <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">

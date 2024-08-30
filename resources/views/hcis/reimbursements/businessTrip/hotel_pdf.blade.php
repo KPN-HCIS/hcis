@@ -148,7 +148,7 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Lainnya:</b></td>
+            <td colspan="3"><b>Others :</b></td>
         </tr>
         <tr>
             <td class="label">PT</td>
@@ -164,25 +164,25 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Disetujui Oleh :</b></td>
+            <td colspan="3"><b>Approved By :</b></td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 1</td>
+            <td class="label">Manager Name 1</td>
             <td class="colon">:</td>
             <td class="value"> {{ $sppd->manager1->fullname ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value"> {{ $sppd->latestApprovalL1->approved_at ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 2</td>
+            <td class="label">Manager Name 2</td>
             <td class="colon">:</td>
             <td class="value">{{ $sppd->manager2->fullname ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value"> {{ $sppd->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>

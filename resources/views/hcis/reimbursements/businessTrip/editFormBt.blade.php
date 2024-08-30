@@ -503,11 +503,11 @@
                                                                                                                 class="input-group-text">Rp</span>
                                                                                                         </div>
                                                                                                         <input
-                                                                                                            class="form-control"
+                                                                                                            class="form-control bg-light"
                                                                                                             name="nominal_bt_perdiem[]"
                                                                                                             id="nominal_bt_perdiem_0"
                                                                                                             type="text"
-                                                                                                            min="0">
+                                                                                                            min="0" readonly>
                                                                                                     </div>
                                                                                                     <hr
                                                                                                         class="border border-primary border-1 opacity-50">
@@ -704,7 +704,7 @@
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Keterangan</label>
+                                                                                                            class="form-label">Information</label>
                                                                                                         <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."></textarea>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
@@ -1731,7 +1731,7 @@
                             </div>
 
                             <input type="hidden" name="status" value="Pending L1" id="status">
-                            <input type="hidden" name="id_ca" value="{{ $ca->id }}">
+                            <input type="hidden" name="id_ca" value="{{ $ca->id ?? 0 }}">
 
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="button" class="btn btn-outline-primary rounded-pill me-2"
@@ -2753,7 +2753,7 @@
                         <div class="input-group-append">
                             <span class="input-group-text">Rp</span>
                         </div>
-                        <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
+                        <input class="form-control bg-light" name="nominal_bt_perdiem[]" type="text" min="0" value="0" readonly>
                     </div>
                     <button type="button" class="btn btn-danger remove-form">Remove</button>
                     <hr class="border border-primary border-1 opacity-50">
@@ -2947,7 +2947,7 @@
                         <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your information here ..."></textarea>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Accommodation</label>
+                        <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">

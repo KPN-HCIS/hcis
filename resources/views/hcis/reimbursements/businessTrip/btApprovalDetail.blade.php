@@ -9,7 +9,7 @@
 @section('content')
     <div class="container mt-4">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="mb-3">
                 </div>
                 <div class="card">
@@ -147,16 +147,16 @@
                                                             <div class="table-responsive-sm">
                                                                 <div class="d-flex flex-column gap-2">
                                                                     <div class="card">
-                                                                        <div class="card-body text-center">
+                                                                        {{-- <div class="card-body text-center">
                                                                             <button type="button" style="width: 60%"
                                                                                 disabled id="toggle-bt-perdiem"
                                                                                 class="btn btn-primary mt-3"
                                                                                 data-state="false"><i
                                                                                     class="bi bi-plus-circle"></i>
                                                                                 Perdiem</button>
-                                                                        </div>
+                                                                        </div> --}}
                                                                         <div id="perdiem-card" class="card-body"
-                                                                            style="display: none;">
+                                                                            style="display:">
                                                                             <div class="accordion" id="accordionPerdiem">
                                                                                 <div class="accordion-item">
                                                                                     <h2 class="accordion-header"
@@ -579,16 +579,16 @@
                                                                         </div>
 
                                                                         <!-- Button and Card for Transport -->
-                                                                        <div class="card-body text-center">
+                                                                        {{-- <div class="card-body text-center">
                                                                             <button type="button" style="width: 60%"
                                                                                 disabled id="toggle-bt-transport"
                                                                                 class="btn btn-primary mt-3"
                                                                                 data-state="false"><i
                                                                                     class="bi bi-plus-circle"></i>
                                                                                 Transport</button>
-                                                                        </div>
+                                                                        </div> --}}
                                                                         <div id="transport-card" class="card-body"
-                                                                            style="display: none;">
+                                                                            style="display:">
                                                                             <div class="accordion"
                                                                                 id="accordionTransport">
                                                                                 <div class="accordion-item">
@@ -602,7 +602,7 @@
                                                                                             aria-expanded="true"
                                                                                             aria-controls="collapseTransport"
                                                                                             disabled>
-                                                                                            Rencana Transport
+                                                                                            Transport Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseTransport"
@@ -638,8 +638,8 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Tanggal
-                                                                                                                Transport</label>
+                                                                                                                class="form-label">
+                                                                                                                Transport Date</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="tanggal_bt_transport[]"
@@ -676,7 +676,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Keterangan</label>
+                                                                                                                class="form-label">Information</label>
                                                                                                             <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
                                                                                                                 disabled>{{ old('keterangan_bt_transport.' . $index, $transport['keterangan'] ?? '') }}</textarea>
                                                                                                         </div>
@@ -725,8 +725,8 @@
                                                                                                     <!-- Default empty fields if no data is available -->
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Tanggal
-                                                                                                            Transport</label>
+                                                                                                            class="form-label">
+                                                                                                            Transport Date</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="tanggal_bt_transport[]"
@@ -759,7 +759,7 @@
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Keterangan</label>
+                                                                                                            class="form-label">Information</label>
                                                                                                         <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
                                                                                                             value="No Data Inputed" disabled></textarea>
                                                                                                     </div>
@@ -826,16 +826,16 @@
                                                                         </div>
 
                                                                         <!-- Button and Card for Penginapan -->
-                                                                        <div class="card-body text-center">
+                                                                        {{-- <div class="card-body text-center">
                                                                             <button type="button" style="width: 60%"
                                                                                 disabled id="toggle-bt-penginapan"
                                                                                 class="btn btn-primary mt-3"
                                                                                 data-state="false"><i
                                                                                     class="bi bi-plus-circle"></i>
                                                                                 Accommodation</button>
-                                                                        </div>
+                                                                        </div> --}}
                                                                         <div id="penginapan-card" class="card-body"
-                                                                            style="display: none;">
+                                                                            style="display:">
                                                                             <div class="accordion"
                                                                                 id="accordionPenginapan">
                                                                                 <div class="accordion-item">
@@ -848,7 +848,7 @@
                                                                                             data-bs-target="#collapsePenginapan"
                                                                                             aria-expanded="true"
                                                                                             aria-controls="collapsePenginapan">
-                                                                                            Rencana Penginapan
+                                                                                            Accommodation Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapsePenginapan"
@@ -888,8 +888,7 @@
                                                                                                             <div
                                                                                                                 class="mb-2">
                                                                                                                 <label
-                                                                                                                    class="form-label">Start
-                                                                                                                    Penginapan</label>
+                                                                                                                    class="form-label">Accommodation Start</label>
                                                                                                                 <input
                                                                                                                     type="date"
                                                                                                                     name="start_bt_penginapan[]"
@@ -901,8 +900,8 @@
                                                                                                             <div
                                                                                                                 class="mb-2">
                                                                                                                 <label
-                                                                                                                    class="form-label">End
-                                                                                                                    Penginapan</label>
+                                                                                                                    class="form-label">
+                                                                                                                    Accommodation End</label>
                                                                                                                 <input
                                                                                                                     type="date"
                                                                                                                     name="end_bt_penginapan[]"
@@ -1019,8 +1018,8 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Start
-                                                                                                                Penginapan</label>
+                                                                                                                class="form-label">Accommodation
+                                                                                                                Start</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="start_bt_penginapan[]"
@@ -1031,8 +1030,8 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">End
-                                                                                                                Penginapan</label>
+                                                                                                                class="form-label">
+                                                                                                                Accommodation End</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="end_bt_penginapan[]"
@@ -1127,7 +1126,7 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">Total
-                                                                                                            Penginapan</label>
+                                                                                                            Accommodation</label>
                                                                                                         <div
                                                                                                             class="input-group">
                                                                                                             <div
@@ -1164,16 +1163,16 @@
 
 
                                                                         <!-- Button and Card for Lainnya -->
-                                                                        <div class="card-body text-center">
+                                                                        {{-- <div class="card-body text-center">
                                                                             <button type="button" style="width: 60%"
                                                                                 id="toggle-bt-lainnya"
                                                                                 class="btn btn-primary mt-3"
                                                                                 data-state="false" disabled><i
                                                                                     class="bi bi-plus-circle"></i>
                                                                                 Others</button>
-                                                                        </div>
+                                                                        </div> --}}
                                                                         <div id="lainnya-card" class="card-body"
-                                                                            style="display: none;">
+                                                                            style="display:">
                                                                             <div class="accordion" id="accordionLainnya">
                                                                                 <div class="accordion-item">
                                                                                     <h2 class="accordion-header"
@@ -1185,7 +1184,7 @@
                                                                                             data-bs-target="#collapseLainnya"
                                                                                             aria-expanded="true"
                                                                                             aria-controls="collapseLainnya">
-                                                                                            Rencana Lainnya
+                                                                                            Other Plans
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseLainnya"
@@ -1226,7 +1225,7 @@
                                                                                                                 <div
                                                                                                                     class="mb-2">
                                                                                                                     <label
-                                                                                                                        class="form-label">Tanggal</label>
+                                                                                                                        class="form-label">Date</label>
                                                                                                                     <input
                                                                                                                         type="date"
                                                                                                                         name="tanggal_bt_lainnya[]"
@@ -1238,7 +1237,7 @@
                                                                                                                 <div
                                                                                                                     class="mb-2">
                                                                                                                     <label
-                                                                                                                        class="form-label">Keterangan</label>
+                                                                                                                        class="form-label">Information</label>
                                                                                                                     <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled>{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem['keterangan'] ?? '') }}</textarea>
                                                                                                                 </div>
                                                                                                                 <div
@@ -1287,7 +1286,7 @@
                                                                                                             <div
                                                                                                                 class="mb-2">
                                                                                                                 <label
-                                                                                                                    class="form-label">Tanggal</label>
+                                                                                                                    class="form-label">Date</label>
                                                                                                                 <input
                                                                                                                     type="date"
                                                                                                                     name="tanggal_bt_lainnya[]"
@@ -1298,7 +1297,7 @@
                                                                                                             <div
                                                                                                                 class="mb-2">
                                                                                                                 <label
-                                                                                                                    class="form-label">Keterangan</label>
+                                                                                                                    class="form-label">Information</label>
                                                                                                                 <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled></textarea>
                                                                                                             </div>
                                                                                                             <div
@@ -1346,7 +1345,7 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">Total
-                                                                                                            Lainnya</label>
+                                                                                                            Others</label>
                                                                                                         <div
                                                                                                             class="input-group">
                                                                                                             <div
@@ -2967,7 +2966,7 @@
 
                 newFormBTTransport.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal Transport</label>
+                        <label class="form-label">Transport Date</label>
                         <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
                     </div>
                     <div class="mb-2">
@@ -2980,7 +2979,7 @@
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                     </div>
                     <div class="mb-2">

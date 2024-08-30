@@ -82,12 +82,12 @@
             <td colspan="3"><b>Identitas Pengaju:</b></td>
         </tr>
         <tr>
-            <td class="label">Nama</td>
+            <td class="label">Name</td>
             <td class="colon">:</td>
             <td class="value">{{ $taksi->employee->fullname }}</td>
         </tr>
         <tr>
-            <td class="label">Jabatan</td>
+            <td class="label">Position</td>
             <td class="colon">:</td>
             <td class="value">{{ $taksi->employee->designation }}</td>
         </tr>
@@ -108,7 +108,7 @@
             <td class="value">{{ $taksi->nominal_vt }}</td>
         </tr>
         <tr>
-            <td class="label">Keperluan</td>
+            <td class="label">Needs</td>
             <td class="colon">:</td>
             <td class="value">{{ $taksi->businessTrip->keperluan }}</td>
         </tr>
@@ -126,15 +126,15 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Disetujui Oleh :</b></td>
+            <td colspan="3"><b>Approved By :</b></td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 1</td>
+            <td class="label">Manager Name 1</td>
             <td class="colon">:</td>
             <td class="value">{{ $taksi->businessTrip->atasan_1 }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value">{{ $taksi->businessTrip->atasan_2 }}</td>
         </tr>
@@ -142,12 +142,12 @@
 
     <table>
         <tr>
-            <td class="label">Nama Atasan 2</td>
+            <td class="label">Manager Name 2</td>
             <td class="colon">:</td>
             <td class="value">{{ $taksi->businessTrip->atasan_2 }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value">{{ $taksi->businessTrip->tanggal_atasan_2 }}</td>
         </tr>

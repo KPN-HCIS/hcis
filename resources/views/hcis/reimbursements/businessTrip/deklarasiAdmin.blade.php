@@ -80,15 +80,15 @@
                                                     <div class="table-responsive-sm">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="card">
-                                                                <div class="card-body text-center">
+                                                                {{-- <div class="card-body text-center">
                                                                     <button type="button" style="width: 60%" disabled
                                                                         id="toggle-bt-perdiem-deklarasi"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
                                                                         Perdiem</button>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div id="perdiem-card-deklarasi" class="card-body"
-                                                                    style="display: none;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionPerdiem">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
@@ -487,15 +487,15 @@
                                                                 </div>
 
                                                                 <!-- Button and Card for Transport -->
-                                                                <div class="card-body text-center">
+                                                                {{-- <div class="card-body text-center">
                                                                     <button type="button" style="width: 60%" disabled
                                                                         id="toggle-bt-transport-deklarasi"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
                                                                         Transport</button>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div id="transport-card-deklarasi" class="card-body"
-                                                                    style="display: none;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionTransport">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
@@ -506,7 +506,7 @@
                                                                                     data-bs-target="#collapseTransport"
                                                                                     aria-expanded="true"
                                                                                     aria-controls="collapseTransport">
-                                                                                    Rencana Transport
+                                                                                    Transport Plan
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapseTransport"
@@ -576,7 +576,7 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Keterangan</label>
+                                                                                                        class="form-label">Information</label>
                                                                                                     <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
                                                                                                         disabled>{{ old('keterangan_bt_transport.' . $index, $transport['keterangan'] ?? '') }}</textarea>
                                                                                                 </div>
@@ -653,7 +653,7 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Keterangan</label>
+                                                                                                    class="form-label">Information</label>
                                                                                                 <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
                                                                                                     disabled></textarea>
                                                                                             </div>
@@ -718,15 +718,15 @@
                                                                 </div>
 
                                                                 <!-- Button and Card for Penginapan -->
-                                                                <div class="card-body text-center">
+                                                                {{-- <div class="card-body text-center">
                                                                     <button type="button" style="width: 60%" disabled
                                                                         id="toggle-bt-penginapan-deklarasi"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
                                                                         Accommodation</button>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div id="penginapan-card-deklarasi" class="card-body"
-                                                                    style="display: none;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionPenginapan">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
@@ -737,7 +737,7 @@
                                                                                     data-bs-target="#collapsePenginapan"
                                                                                     aria-expanded="true"
                                                                                     aria-controls="collapsePenginapan">
-                                                                                    Rencana Penginapan
+                                                                                    Accommodation Plan
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapsePenginapan"
@@ -1035,15 +1035,15 @@
 
 
                                                                 <!-- Button and Card for Lainnya -->
-                                                                <div class="card-body text-center">
+                                                                {{-- <div class="card-body text-center">
                                                                     <button type="button" style="width: 60%" disabled
                                                                         id="toggle-bt-lainnya-deklarasi"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
                                                                         Others</button>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div id="lainnya-card-deklarasi" class="card-body"
-                                                                    style="display: none;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionLainnya">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
@@ -1054,7 +1054,7 @@
                                                                                     data-bs-target="#collapseLainnya"
                                                                                     aria-expanded="true"
                                                                                     aria-controls="collapseLainnya">
-                                                                                    Rencana Lainnya
+                                                                                    Other Plans
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapseLainnya"
@@ -1107,7 +1107,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Keterangan</label>
+                                                                                                                class="form-label">Information</label>
                                                                                                             <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled>{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem['keterangan'] ?? '') }}</textarea>
                                                                                                         </div>
                                                                                                         <div
@@ -1162,7 +1162,7 @@
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Keterangan</label>
+                                                                                                            class="form-label">Information</label>
                                                                                                         <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled></textarea>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
@@ -1318,15 +1318,15 @@
                                                     <div class="table-responsive-sm">
                                                         <div class="d-flex flex-column gap-2">
                                                             <div class="card">
-                                                                <div class="card-body text-center">
+                                                                {{-- <div class="card-body text-center">
                                                                     <button type="button" style="width: 60%"
                                                                         id="toggle-bt-perdiem"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
                                                                         Perdiem</button>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div id="perdiem-card" class="card-body"
-                                                                    style="display: none;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionPerdiem">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
@@ -1705,15 +1705,15 @@
                                                                 </div>
 
                                                                 <!-- Button and Card for Transport -->
-                                                                <div class="card-body text-center">
+                                                                {{-- <div class="card-body text-center">
                                                                     <button type="button" style="width: 60%"
                                                                         id="toggle-bt-transport"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
                                                                         Transport</button>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div id="transport-card" class="card-body"
-                                                                    style="display: none;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionTransport">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
@@ -1724,7 +1724,7 @@
                                                                                     data-bs-target="#collapseTransport"
                                                                                     aria-expanded="true"
                                                                                     aria-controls="collapseTransport">
-                                                                                    Rencana Transport
+                                                                                    Transport Plan
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapseTransport"
@@ -1791,7 +1791,7 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Keterangan</label>
+                                                                                                        class="form-label">Information</label>
                                                                                                     <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here...">{{ old('keterangan_bt_transport.' . $index, $transport2['keterangan'] ?? '') }}</textarea>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
@@ -1915,15 +1915,15 @@
                                                                 </div>
 
                                                                 <!-- Button and Card for Penginapan -->
-                                                                <div class="card-body text-center">
+                                                                {{-- <div class="card-body text-center">
                                                                     <button type="button" style="width: 60%"
                                                                         id="toggle-bt-penginapan"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
                                                                         Accommodation</button>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div id="penginapan-card" class="card-body"
-                                                                    style="display: none;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionPenginapan">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
@@ -1934,7 +1934,7 @@
                                                                                     data-bs-target="#collapsePenginapan"
                                                                                     aria-expanded="true"
                                                                                     aria-controls="collapsePenginapan">
-                                                                                    Rencana Penginapan
+                                                                                    Accommodation Plan
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapsePenginapan"
@@ -1972,8 +1972,8 @@
                                                                                                 @foreach ($penginapan2 as $index => $item2)
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Start
-                                                                                                            Penginapan</label>
+                                                                                                            class="form-label">
+                                                                                                            Accommodation Start</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="start_bt_penginapan[]"
@@ -1983,8 +1983,8 @@
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">End
-                                                                                                            Penginapan</label>
+                                                                                                            class="form-label">
+                                                                                                            Accommodation End</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="end_bt_penginapan[]"
@@ -2071,13 +2071,14 @@
 
                                                                                                     <hr
                                                                                                         class="border border-primary border-1 opacity-50">
+                                                                                                    </div>
                                                                                                 @endforeach
                                                                                             @else
                                                                                                 <!-- Default empty fields if no data is available -->
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Start
-                                                                                                        Penginapan</label>
+                                                                                                        class="form-label">
+                                                                                                        Accommodation Start</label>
                                                                                                     <input type="date"
                                                                                                         name="start_bt_penginapan[]"
                                                                                                         class="form-control start-penginapan"
@@ -2085,8 +2086,8 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">End
-                                                                                                        Penginapan</label>
+                                                                                                        class="form-label">
+                                                                                                        Accommodation End</label>
                                                                                                     <input type="date"
                                                                                                         name="end_bt_penginapan[]"
                                                                                                         class="form-control end-penginapan"
@@ -2171,7 +2172,7 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
-                                                                                                    Penginapan</label>
+                                                                                                    Accommodation</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -2210,19 +2211,19 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
+                                                                {{-- </div> --}}
 
 
                                                                 <!-- Button and Card for Lainnya -->
-                                                                <div class="card-body text-center">
+                                                                {{-- <div class="card-body text-center">
                                                                     <button type="button" style="width: 60%"
                                                                         id="toggle-bt-lainnya"
                                                                         class="btn btn-primary mt-3" data-state="false"><i
                                                                             class="bi bi-plus-circle"></i>
                                                                         Others</button>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div id="lainnya-card" class="card-body"
-                                                                    style="display: none;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionLainnya">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
@@ -2233,7 +2234,7 @@
                                                                                     data-bs-target="#collapseLainnya"
                                                                                     aria-expanded="true"
                                                                                     aria-controls="collapseLainnya">
-                                                                                    Rencana Lainnya
+                                                                                    Other Plans
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapseLainnya"
@@ -2273,7 +2274,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Tanggal</label>
+                                                                                                                class="form-label">Date</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="tanggal_bt_lainnya[]"
@@ -2284,7 +2285,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Keterangan</label>
+                                                                                                                class="form-label">Information</label>
                                                                                                             <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ...">{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem2['keterangan'] ?? '') }}</textarea>
                                                                                                         </div>
                                                                                                         <div
@@ -2314,7 +2315,7 @@
                                                                                                 <div class="lainnya-item">
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Tanggal</label>
+                                                                                                            class="form-label">Date</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="tanggal_bt_lainnya[]"
@@ -2323,7 +2324,7 @@
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Keterangan</label>
+                                                                                                            class="form-label">Information</label>
                                                                                                         <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."></textarea>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
@@ -2359,7 +2360,7 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
-                                                                                                    Lainnya</label>
+                                                                                                    Others</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -3274,135 +3275,135 @@
             });
         });
 
-        $(document).ready(function() {
-            function toggleCard(buttonId, cardId) {
-                var $button = $(buttonId);
-                var $card = $(cardId);
-                var isVisible = $card.is(':visible');
+        // $(document).ready(function() {
+        //     function toggleCard(buttonId, cardId) {
+        //         var $button = $(buttonId);
+        //         var $card = $(cardId);
+        //         var isVisible = $card.is(':visible');
 
-                $card.slideToggle('fast', function() {
-                    if (isVisible) {
-                        // Clear form inputs (optional, uncomment if needed)
-                        // $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        // $card.find('select').prop('selectedIndex', 0);
-                        // $card.find('input[readonly]').val(0);
-                        // $card.find('input[type="number"]').val(0);
+        //         $card.slideToggle('fast', function() {
+        //             if (isVisible) {
+        //                 // Clear form inputs (optional, uncomment if needed)
+        //                 // $card.find('input[type="text"], input[type="date"], textarea').val('');
+        //                 // $card.find('select').prop('selectedIndex', 0);
+        //                 // $card.find('input[readonly]').val(0);
+        //                 // $card.find('input[type="number"]').val(0);
 
-                        // Set button text and icon
-                        var buttonText = $button.data('text') || $button.text();
-                        $button.html('<i class="bi bi-plus-circle"></i> ' + buttonText);
-                        $button.data('state', 'false');
-                    } else {
-                        // Set button text and icon
-                        var buttonText = $button.data('text') || $button.text();
-                        $button.html('<i class="bi bi-dash-circle"></i> ' + buttonText);
-                        $button.data('state', 'true');
-                    }
-                });
-            }
+        //                 // Set button text and icon
+        //                 var buttonText = $button.data('text') || $button.text();
+        //                 $button.html('<i class="bi bi-plus-circle"></i> ' + buttonText);
+        //                 $button.data('state', 'false');
+        //             } else {
+        //                 // Set button text and icon
+        //                 var buttonText = $button.data('text') || $button.text();
+        //                 $button.html('<i class="bi bi-dash-circle"></i> ' + buttonText);
+        //                 $button.data('state', 'true');
+        //             }
+        //         });
+        //     }
 
-            // Store the original button text
-            $('#toggle-bt-perdiem-deklarasi, #toggle-bt-transport-deklarasi, #toggle-bt-penginapan-deklarasi, #toggle-bt-lainnya-deklarasi')
-                .each(function() {
-                    $(this).data('text', $(this).text().trim());
-                });
+        //     // Store the original button text
+        //     $('#toggle-bt-perdiem-deklarasi, #toggle-bt-transport-deklarasi, #toggle-bt-penginapan-deklarasi, #toggle-bt-lainnya-deklarasi')
+        //         .each(function() {
+        //             $(this).data('text', $(this).text().trim());
+        //         });
 
-            // Click events for toggle buttons
-            $('#toggle-bt-perdiem-deklarasi').click(function() {
-                toggleCard('#toggle-bt-perdiem-deklarasi', '#perdiem-card-deklarasi');
-            });
+        //     // Click events for toggle buttons
+        //     $('#toggle-bt-perdiem-deklarasi').click(function() {
+        //         toggleCard('#toggle-bt-perdiem-deklarasi', '#perdiem-card-deklarasi');
+        //     });
 
-            $('#toggle-bt-transport-deklarasi').click(function() {
-                toggleCard('#toggle-bt-transport-deklarasi', '#transport-card-deklarasi');
-            });
+        //     $('#toggle-bt-transport-deklarasi').click(function() {
+        //         toggleCard('#toggle-bt-transport-deklarasi', '#transport-card-deklarasi');
+        //     });
 
-            $('#toggle-bt-penginapan-deklarasi').click(function() {
-                toggleCard('#toggle-bt-penginapan-deklarasi', '#penginapan-card-deklarasi');
-            });
+        //     $('#toggle-bt-penginapan-deklarasi').click(function() {
+        //         toggleCard('#toggle-bt-penginapan-deklarasi', '#penginapan-card-deklarasi');
+        //     });
 
-            $('#toggle-bt-lainnya-deklarasi').click(function() {
-                toggleCard('#toggle-bt-lainnya-deklarasi', '#lainnya-card-deklarasi');
-            });
+        //     $('#toggle-bt-lainnya-deklarasi').click(function() {
+        //         toggleCard('#toggle-bt-lainnya-deklarasi', '#lainnya-card-deklarasi');
+        //     });
 
-            // Automatically close cards if totalca_deklarasi is 0
-            var totalcaDeklarasi = parseInt($('#totalca_deklarasi').val().replace('.', '') || 0, 10);
+        //     // Automatically close cards if totalca_deklarasi is 0
+        //     var totalcaDeklarasi = parseInt($('#totalca_deklarasi').val().replace('.', '') || 0, 10);
 
-            if (totalcaDeklarasi >= 0) {
-                $('#perdiem-card-deklarasi').hide();
-                $('#transport-card-deklarasi').hide();
-                $('#penginapan-card-deklarasi').hide();
-                $('#lainnya-card-deklarasi').hide();
-                $('#toggle-bt-perdiem-deklarasi').html('<i class="bi bi-plus-circle"></i> ' + $(
-                    '#toggle-bt-perdiem-deklarasi').data('text')).data('state', 'false');
-                $('#toggle-bt-transport-deklarasi').html('<i class="bi bi-plus-circle"></i> ' + $(
-                    '#toggle-bt-transport-deklarasi').data('text')).data('state', 'false');
-                $('#toggle-bt-penginapan-deklarasi').html('<i class="bi bi-plus-circle"></i> ' + $(
-                    '#toggle-bt-penginapan-deklarasi').data('text')).data('state', 'false');
-                $('#toggle-bt-lainnya-deklarasi').html('<i class="bi bi-plus-circle"></i> ' + $(
-                    '#toggle-bt-lainnya-deklarasi').data('text')).data('state', 'false');
-            }
+        //     if (totalcaDeklarasi >= 0) {
+        //         $('#perdiem-card-deklarasi').hide();
+        //         $('#transport-card-deklarasi').hide();
+        //         $('#penginapan-card-deklarasi').hide();
+        //         $('#lainnya-card-deklarasi').hide();
+        //         $('#toggle-bt-perdiem-deklarasi').html('<i class="bi bi-plus-circle"></i> ' + $(
+        //             '#toggle-bt-perdiem-deklarasi').data('text')).data('state', 'false');
+        //         $('#toggle-bt-transport-deklarasi').html('<i class="bi bi-plus-circle"></i> ' + $(
+        //             '#toggle-bt-transport-deklarasi').data('text')).data('state', 'false');
+        //         $('#toggle-bt-penginapan-deklarasi').html('<i class="bi bi-plus-circle"></i> ' + $(
+        //             '#toggle-bt-penginapan-deklarasi').data('text')).data('state', 'false');
+        //         $('#toggle-bt-lainnya-deklarasi').html('<i class="bi bi-plus-circle"></i> ' + $(
+        //             '#toggle-bt-lainnya-deklarasi').data('text')).data('state', 'false');
+        //     }
 
-            // Trigger clicks for the toggle buttons on page load
-            $('#toggle-bt-perdiem-deklarasi').click();
-            $('#toggle-bt-transport-deklarasi').click();
-            $('#toggle-bt-penginapan-deklarasi').click();
-            $('#toggle-bt-lainnya-deklarasi').click();
-        });
+        //     // Trigger clicks for the toggle buttons on page load
+        //     $('#toggle-bt-perdiem-deklarasi').click();
+        //     $('#toggle-bt-transport-deklarasi').click();
+        //     $('#toggle-bt-penginapan-deklarasi').click();
+        //     $('#toggle-bt-lainnya-deklarasi').click();
+        // });
 
 
-        $(document).ready(function() {
-            function toggleCard(buttonId, cardId) {
-                var $button = $(buttonId);
-                var $card = $(cardId);
-                var isVisible = $card.is(':visible');
+        // $(document).ready(function() {
+        //     function toggleCard(buttonId, cardId) {
+        //         var $button = $(buttonId);
+        //         var $card = $(cardId);
+        //         var isVisible = $card.is(':visible');
 
-                $card.slideToggle('fast', function() {
-                    if (isVisible) {
-                        // Clear form inputs
-                        // $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        // $card.find('select').prop('selectedIndex', 0);
-                        // $card.find('input[readonly]').val(0);
-                        // $card.find('input[type="number"]').val(0);
+        //         $card.slideToggle('fast', function() {
+        //             if (isVisible) {
+        //                 // Clear form inputs
+        //                 // $card.find('input[type="text"], input[type="date"], textarea').val('');
+        //                 // $card.find('select').prop('selectedIndex', 0);
+        //                 // $card.find('input[readonly]').val(0);
+        //                 // $card.find('input[type="number"]').val(0);
 
-                        // Set button text and icon
-                        var buttonText = $button.data('text') || $button.text();
-                        $button.html('<i class="bi bi-plus-circle"></i> ' + buttonText);
-                        $button.data('state', 'false');
-                    } else {
-                        // Set button text and icon
-                        var buttonText = $button.data('text') || $button.text();
-                        $button.html('<i class="bi bi-dash-circle"></i> ' + buttonText);
-                        $button.data('state', 'true');
-                    }
-                });
-            }
+        //                 // Set button text and icon
+        //                 var buttonText = $button.data('text') || $button.text();
+        //                 $button.html('<i class="bi bi-plus-circle"></i> ' + buttonText);
+        //                 $button.data('state', 'false');
+        //             } else {
+        //                 // Set button text and icon
+        //                 var buttonText = $button.data('text') || $button.text();
+        //                 $button.html('<i class="bi bi-dash-circle"></i> ' + buttonText);
+        //                 $button.data('state', 'true');
+        //             }
+        //         });
+        //     }
 
-            // Store the original button text
-            $('#toggle-bt-perdiem, #toggle-bt-transport, #toggle-bt-penginapan, #toggle-bt-lainnya, #toggle-e-detail, #toggle-e-relation')
-                .each(function() {
-                    $(this).data('text', $(this).text().trim());
-                });
+        //     // Store the original button text
+        //     $('#toggle-bt-perdiem, #toggle-bt-transport, #toggle-bt-penginapan, #toggle-bt-lainnya, #toggle-e-detail, #toggle-e-relation')
+        //         .each(function() {
+        //             $(this).data('text', $(this).text().trim());
+        //         });
 
-            $('#toggle-bt-perdiem').click(function() {
-                toggleCard('#toggle-bt-perdiem', '#perdiem-card');
-            });
+        //     $('#toggle-bt-perdiem').click(function() {
+        //         toggleCard('#toggle-bt-perdiem', '#perdiem-card');
+        //     });
 
-            $('#toggle-bt-transport').click(function() {
-                toggleCard('#toggle-bt-transport', '#transport-card');
-            });
+        //     $('#toggle-bt-transport').click(function() {
+        //         toggleCard('#toggle-bt-transport', '#transport-card');
+        //     });
 
-            $('#toggle-bt-penginapan').click(function() {
-                toggleCard('#toggle-bt-penginapan', '#penginapan-card');
-            });
+        //     $('#toggle-bt-penginapan').click(function() {
+        //         toggleCard('#toggle-bt-penginapan', '#penginapan-card');
+        //     });
 
-            $('#toggle-bt-lainnya').click(function() {
-                toggleCard('#toggle-bt-lainnya', '#lainnya-card');
-            });
-            $('#toggle-bt-perdiem').click();
-            $('#toggle-bt-transport').click();
-            $('#toggle-bt-penginapan').click();
-            $('#toggle-bt-lainnya').click();
-        });
+        //     $('#toggle-bt-lainnya').click(function() {
+        //         toggleCard('#toggle-bt-lainnya', '#lainnya-card');
+        //     });
+        //     $('#toggle-bt-perdiem').click();
+        //     $('#toggle-bt-transport').click();
+        //     $('#toggle-bt-penginapan').click();
+        //     $('#toggle-bt-lainnya').click();
+        // });
 
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -3708,8 +3709,8 @@
                     </select>
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                    <label class="form-label">Information</label>
+                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here ..."></textarea>
                 </div>
                 <div class="mb-2">
                     <label class="form-label">Amount</label>
@@ -3746,11 +3747,11 @@
 
                 newFormBTPenginapan.innerHTML = `
                 <div class="mb-2">
-                    <label class="form-label">Start Penginapan</label>
+                    <label class="form-label">Accommodation Start</label>
                     <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">End Penginapan</label>
+                    <label class="form-label">Accommodation End</label>
                     <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                 </div>
                 <div class="mb-2">
@@ -3821,12 +3822,12 @@
 
                 newFormBTLainnya.innerHTML = `
                 <div class="mb-2">
-                    <label class="form-label">Tanggal</label>
+                    <label class="form-label">Date</label>
                     <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                    <label class="form-label">Information</label>
+                    <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your information here ..."></textarea>
                 </div>
                 <div class="mb-2">
                     <label class="form-label">Accommodation</label>
@@ -4003,8 +4004,8 @@
                     <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan_nbt[]" class="form-control"></textarea>
+                    <label class="form-label">Information</label>
+                    <textarea name="keterangan_nbt[]" class="form-control" placeholder="Write your information here ..."></textarea>
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-append">

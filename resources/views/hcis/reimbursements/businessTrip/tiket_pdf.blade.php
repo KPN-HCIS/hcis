@@ -79,8 +79,8 @@
     <h5 class="center">No. {{ $ticket->no_sppd }}</h5>
 
     <table>
-        <p>Harap dipesankan tiket sebagai berikut :</p>
-        <p><b>Detail tiket yang dipesan :</b></p>
+        <p>Please order tickets as follows:</p>
+        <p><b>Details of the ticket ordered:</b></p>
     </table>
 
     <table>
@@ -156,7 +156,7 @@
     </table>
     <table>
         <tr>
-            <td colspan="3"><b>Lainnya:</b></td>
+            <td colspan="3"><b>Others:</b></td>
         </tr>
         <tr>
             <td class="label">Company</td>
@@ -171,25 +171,25 @@
     </table>
     <table>
         <tr>
-            <td colspan="3"><b>Disetujui Oleh :</b></td>
+            <td colspan="3"><b>Approved By :</b></td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 1</td>
+            <td class="label">Manager Name 1</td>
             <td class="colon">:</td>
             <td class="value"> {{ $passenger->businessTrip->manager1->fullname ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value"> {{ $sppd->latestApprovalL1->approved_at ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 2</td>
+            <td class="label">Manager Name 2</td>
             <td class="colon">:</td>
             <td class="value">{{ $sppd->manager2->fullname ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value"> {{ $sppd->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
@@ -202,7 +202,7 @@
             <td class="value">{{ $ticket->businessTrip->hrd }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value">{{ $ticket->businessTrip->tanggal_hrd }}</td>
         </tr>
