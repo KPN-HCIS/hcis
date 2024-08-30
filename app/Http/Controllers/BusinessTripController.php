@@ -277,6 +277,7 @@ class BusinessTripController extends Controller
                     'no_sppd' => $oldNoSppd,
                     'nominal_vt' => (int) str_replace('.', '', $request->nominal_vt),  // Convert to integer
                     'keeper_vt' => (int) str_replace('.', '', $request->keeper_vt),
+                    'approval_status' => $request->status,
                 ];
 
                 // Check if there's an existing Taksi record to update
@@ -322,6 +323,7 @@ class BusinessTripController extends Controller
                             'tgl_masuk_htl' => $request->tgl_masuk_htl[$key],
                             'tgl_keluar_htl' => $request->tgl_keluar_htl[$key],
                             'total_hari' => $request->total_hari[$key],
+                            'approval_status' => $request->status,
                         ]);
 
                         $processedHotelIds[] = $hotelId;
@@ -340,6 +342,7 @@ class BusinessTripController extends Controller
                             'tgl_masuk_htl' => $request->tgl_masuk_htl[$key],
                             'tgl_keluar_htl' => $request->tgl_keluar_htl[$key],
                             'total_hari' => $request->total_hari[$key],
+                            'approval_status' => $request->status,
                         ]);
 
                         $processedHotelIds[] = $newHotel->id;
@@ -376,6 +379,7 @@ class BusinessTripController extends Controller
                         'tgl_plg_tkt' => $request->tgl_plg_tkt[$key] ?? null,
                         'jam_plg_tkt' => $request->jam_plg_tkt[$key] ?? null,
                         'ket_tkt' => $request->ket_tkt[$key] ?? null,
+                        'approval_status' => $request->status,
                     ];
 
                     // Fetch employee data to get jk_tkt
@@ -400,6 +404,7 @@ class BusinessTripController extends Controller
                             'id' => (string) Str::uuid(),
                             'no_tkt' => $this->generateNoSppdTkt(),
                             'noktp_tkt' => $value,
+                            'approval_status' => $request->status,
                         ]));
                     }
 
@@ -1426,6 +1431,8 @@ class BusinessTripController extends Controller
             'id_tiket' => $request->id_tiket,
             'id_hotel' => $request->id_hotel,
             'id_taksi' => $request->id_taksi,
+            'approval_status' => $request->status,
+
         ]);
         if ($request->taksi === 'Ya') {
             $taksi = new Taksi();
@@ -1435,7 +1442,8 @@ class BusinessTripController extends Controller
             $taksi->user_id = $userId;
             $taksi->unit = $request->divisi;
             $taksi->nominal_vt = (int) str_replace('.', '', $request->nominal_vt);  // Convert to integer
-            $taksi->keeper_vt = (int) str_replace('.', '', $request->keeper_vt);   // Convert to integer
+            $taksi->keeper_vt = (int) str_replace('.', '', $request->keeper_vt);
+            $taksi->approval_status = $request->status;
 
             $taksi->save();
         }
@@ -1450,6 +1458,7 @@ class BusinessTripController extends Controller
                 'tgl_masuk_htl' => $request->tgl_masuk_htl,
                 'tgl_keluar_htl' => $request->tgl_keluar_htl,
                 'total_hari' => $request->total_hari,
+                'approval_status' => $request->status,
             ];
 
             foreach ($hotelData['nama_htl'] as $key => $value) {
@@ -1467,6 +1476,7 @@ class BusinessTripController extends Controller
                     $hotel->tgl_masuk_htl = $hotelData['tgl_masuk_htl'][$key];
                     $hotel->tgl_keluar_htl = $hotelData['tgl_keluar_htl'][$key];
                     $hotel->total_hari = $hotelData['total_hari'][$key];
+                    $hotel->approval_status = $request->status;
 
                     $hotel->save();
                 }
@@ -1485,6 +1495,7 @@ class BusinessTripController extends Controller
                 'jenis_tkt' => $request->jenis_tkt,
                 'type_tkt' => $request->type_tkt,
                 'ket_tkt' => $request->ket_tkt,
+                'approval_status' => $request->status,
             ];
 
             foreach ($ticketData['noktp_tkt'] as $key => $value) {
@@ -1515,7 +1526,7 @@ class BusinessTripController extends Controller
                     $tiket->jenis_tkt = $ticketData['jenis_tkt'][$key] ?? null;
                     $tiket->type_tkt = $ticketData['type_tkt'][$key] ?? null;
                     $tiket->ket_tkt = $ticketData['ket_tkt'][$key] ?? null;
-
+                    $tiket->approval_status = $request->status;
                     $tiket->save();
                 }
             }
@@ -2201,6 +2212,34 @@ class BusinessTripController extends Controller
             $statusValue = 'Pending L2';
             $layer = 1;
 
+            if ($businessTrip->hotel == 'Ya') {
+                $hotel = Hotel::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($hotel) {
+                    // Update the existing hotel record with the new approval status
+                    $hotel->update([
+                        'approval_status' => $statusValue,
+                    ]);
+                }
+            }
+            if ($businessTrip->taksi == 'Ya') {
+                $taksi = Taksi::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($taksi) {
+                    // Update the existing hotel record with the new approval status
+                    $taksi->update([
+                        'approval_status' => $statusValue,
+                    ]);
+                }
+            }
+            if ($businessTrip->tiket == 'Ya') {
+                $tiket = Tiket::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($tiket) {
+                    // Update the existing hotel record with the new approval status
+                    $tiket->update([
+                        'approval_status' => $statusValue,
+                    ]);
+                }
+            }
+
             // Handle CA approval for L1
             if ($businessTrip->ca == 'Ya') {
                 $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
@@ -2229,7 +2268,33 @@ class BusinessTripController extends Controller
         } elseif ($employeeId == $businessTrip->manager_l2_id) {
             $statusValue = 'Approved';
             $layer = 2;
-
+            if ($businessTrip->hotel == 'Ya') {
+                $hotel = Hotel::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($hotel) {
+                    // Update the existing hotel record with the new approval status
+                    $hotel->update([
+                        'approval_status' => $statusValue,
+                    ]);
+                }
+            }
+            if ($businessTrip->taksi == 'Ya') {
+                $taksi = Taksi::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($taksi) {
+                    // Update the existing hotel record with the new approval status
+                    $taksi->update([
+                        'approval_status' => $statusValue,
+                    ]);
+                }
+            }
+            if ($businessTrip->tiket == 'Ya') {
+                $tiket = Tiket::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($tiket) {
+                    // Update the existing hotel record with the new approval status
+                    $tiket->update([
+                        'approval_status' => $statusValue,
+                    ]);
+                }
+            }
             // Handle CA approval for L2
             if ($businessTrip->ca == 'Ya') {
                 $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();

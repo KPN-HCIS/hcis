@@ -28,6 +28,7 @@ class Taksi extends Model
         'unit',
         'nominal_vt',
         'keeper_vt',
+        'approval_status',
     ];
     protected $table = 'vt_transaction';
 }
