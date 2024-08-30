@@ -46,8 +46,9 @@ class BusinessTrip extends Model
     public function latestApprovalL1()
     {
         return $this->hasOne(BTApproval::class, 'bt_id', 'id')
-            ->where('layer', 1)->where('approval_status', 'Pending L2')
-            ->latestOfMany()
+            ->where('layer', 1)
+            ->where('approval_status', 'Pending L2')
+            ->latest('approved_at')
             ->with('manager1');
     }
 

@@ -168,6 +168,11 @@
             <td class="colon">:</td>
             <td class="value"><b>{{ $passenger->cost_center ?? '0' }}</b></td>
         </tr>
+        <tr>
+            <td class="label">Ticket Status</td>
+            <td class="colon">:</td>
+            <td class="value"><b>{{ $ticket->approval_status ?? '-'}}</b></td>
+        </tr>
     </table>
     <table>
         <tr>

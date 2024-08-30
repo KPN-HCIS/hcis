@@ -182,7 +182,7 @@
         <tr>
             <td class="label">Status</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->status }}</td>
+            <td class="value"><b>{{ $sppd->status }}</b></td>
         </tr>
     </table>
 

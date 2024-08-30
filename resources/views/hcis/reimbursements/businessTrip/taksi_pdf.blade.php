@@ -122,6 +122,11 @@
             <td class="colon">:</td>
             <td class="value">{{ $taksi->cost_center ?? '0' }}</td>
         </tr>
+        <tr>
+            <td class="label">Voucher Status</td>
+            <td class="colon">:</td>
+            <td class="value"><b>{{ $taksi->approval_status ?? '-'}}</b></td>
+        </tr>
     </table>
 
     <table>

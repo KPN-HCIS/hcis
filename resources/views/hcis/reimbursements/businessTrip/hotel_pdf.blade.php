@@ -143,6 +143,11 @@
                     {{ $formattedCheckOutDate }}
                 </td>
             </tr>
+            <tr>
+                <td class="label">Hotel Status</td>
+                <td class="colon">:</td>
+                <td class="value"><b>{{ $hotel->approval_status ?? '-'}}</b></td>
+            </tr>
         </table>
     @endforeach
 
