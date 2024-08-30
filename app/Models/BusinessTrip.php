@@ -46,19 +46,19 @@ class BusinessTrip extends Model
     public function latestApprovalL1()
     {
         return $this->hasOne(BTApproval::class, 'bt_id', 'id')
-                    ->where('layer', 1) // or whatever column distinguishes the layer
-                    ->latestOfMany()
-                    ->with('manager1');
+            ->where('layer', 1)->where('approval_status', 'Pending L2')
+            ->latestOfMany()
+            ->with('manager1');
     }
 
-    public function latestApprovalL2()
+   public function latestApprovalL2()
     {
         return $this->hasOne(BTApproval::class, 'bt_id', 'id')
-                    ->where('layer', 2)
-                    ->latestOfMany('approved_at')
-                    ->with('manager2');
+            ->where('layer', 2)
+            ->where('approval_status', 'Approved')
+            ->latest('approved_at')
+            ->with('manager2');
     }
-
 
     protected $keyType = 'string';
     public $incrementing = false;
