@@ -42,20 +42,41 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
-        $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
-        $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
         $today = Carbon::today();
 
+        // Mengambil data karyawan yang sedang login
+        $employee_data = Employee::where('id', $userId)->first();
+
+        // Mendapatkan transaksi CA yang terkait dengan user yang sedang login
+        $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
+
+        // Mengambil fullname dari employee berdasarkan status_id
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
+            ->pluck('fullname', 'employee_id');
+
+        $pendingCACount = CATransaction::where('user_id', $userId)
+            ->where('approval_status', 'Pending')
+            ->count();
+
+        $deklarasiCACount = CATransaction::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_sett', 'Waiting for Declaration')
+                    ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Draft');
+            })
+            ->where('end_date', '<=', $today)
+            ->count();
+
         foreach ($ca_transactions as $transaction) {
-            if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
-                $transaction->approval_status = 'Done';
-            }
+            // if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
+            //     $transaction->approval_status = 'Done';
+            // }
             // if ($transaction->approval_status == 'Approved') {
             //     $transaction->approval_sett = 'On Progress';
             // }
-            // if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved') {
-            //     $transaction->approval_sett = 'Waiting for Declaration';
-            // }
+            if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved' && $transaction->approval_sett == 'On Progress') {
+                $transaction->approval_sett = 'Waiting for Declaration';
+            }
             // if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
             //     $transaction->approval_sett = 'Declaration';
             // }
@@ -74,6 +95,42 @@ class ReimburseController extends Controller
             $transaction->save();
         }
 
+        return view('hcis.reimbursements.cashadv.cashadv', [
+            'deklarasiCACount' => $deklarasiCACount,
+            'pendingCACount' => $pendingCACount,
+            'employee_data' => $employee_data,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
+            'fullnames' => $fullnames, // Pass fullnames ke view
+        ]);
+    }
+    public function requestCashadvanced()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Request for Cash Advanced';
+        $today = Carbon::today();
+
+        $employee_data = Employee::where('id', $userId)->first();
+
+        $ca_transactions = CATransaction::with('employee')
+            ->where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Pending')
+                    ->orWhere('approval_status', 'Draft');
+            })
+            ->where('end_date', '<=', $today)
+            ->get();
+
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
+            ->pluck('fullname', 'employee_id');
+
+        $pendingCACount = CATransaction::where('user_id', $userId)
+            ->where('approval_status', 'Pending')
+            ->count();
+
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
                 $query->where('approval_sett', 'Waiting for Declaration')
@@ -83,10 +140,18 @@ class ReimburseController extends Controller
             ->where('end_date', '<=', $today)
             ->count();
 
+        foreach ($ca_transactions as $transaction) {
+            if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved' && $transaction->approval_sett == 'On Progress') {
+                $transaction->approval_sett = 'Waiting for Declaration';
+            }
+            $transaction->save();
+        }
+
         return view('hcis.reimbursements.cashadv.cashadvRequest', [
             'deklarasiCACount' => $deklarasiCACount,
             'pendingCACount' => $pendingCACount,
             'link' => $link,
+            'fullnames' => $fullnames,
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
@@ -99,23 +164,44 @@ class ReimburseController extends Controller
         $link = 'Cash Advanced';
         $today = Carbon::today();
 
+        $employee_data = Employee::where('id', $userId)->first();
+
         $ca_transactions = CATransaction::with('employee')
             ->where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_status', 'Approved')
-                    ->orWhere('approval_status', 'Declaration');
+                $query->where('approval_sett', 'Waiting for Declaration')
+                    ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Pending')
+                    ->orWhere('approval_sett', 'Rejected')
+                    ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
             ->get();
+
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
+            ->pluck('fullname', 'employee_id');
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
                 $query->where('approval_sett', 'Waiting for Declaration')
                     ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
             ->count();
+
+        foreach ($ca_transactions as $transaction) {
+            if (
+                $transaction->end_date <= $today &&
+                $transaction->approval_status == 'Approved' &&
+                $transaction->approval_sett == 'On Progress'
+            ) {
+
+                $transaction->approval_sett = 'Waiting for Declaration';
+            }
+            $transaction->save();
+        }
 
         return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
             'deklarasiCACount' => $deklarasiCACount,
@@ -123,6 +209,8 @@ class ReimburseController extends Controller
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
+            'employee_data' => $employee_data,
+            'fullnames' => $fullnames,
         ]);
     }
     public function doneCashadvanced()
@@ -132,100 +220,93 @@ class ReimburseController extends Controller
         $link = 'Cash Advanced';
         $today = Carbon::today();
 
-        $ca_transactions = CATransaction::with('employee')
-            ->where('user_id', $userId)
-            ->where(function ($query) {
-                $query->where('approval_status', 'Done');
-            })
-            ->where('end_date', '<=', $today)
+        $employee_data = Employee::where('id', $userId)->first();
+
+        $ca_transactions = CATransaction::where('user_id', $userId)
+            ->where('approval_status', 'Done')
             ->get();
+
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
+            ->pluck('fullname', 'employee_id');
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
                 $query->where('approval_sett', 'Waiting for Declaration')
                     ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
             ->count();
 
-        return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
+        foreach ($ca_transactions as $transaction) {
+            if (
+                $transaction->end_date <= $today &&
+                $transaction->approval_status == 'Approved' &&
+                $transaction->approval_sett == 'On Progress'
+            ) {
+
+                $transaction->approval_sett = 'Waiting for Declaration';
+            }
+            $transaction->save();
+        }
+
+        return view('hcis.reimbursements.cashadv.cashadvDone', [
             'deklarasiCACount' => $deklarasiCACount,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
+            'employee_data' => $employee_data,
+            'fullnames' => $fullnames,
         ]);
     }
-    function cashadvancedCreate()
+    public function rejectCashadvanced()
     {
-
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
+        $today = Carbon::today();
 
         $employee_data = Employee::where('id', $userId)->first();
-        $companies = Company::orderBy('contribution_level')->get();
-        $locations = Location::orderBy('area')->get();
-        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::orderBy('no_sppd')->get();
 
-        function findDepartmentHead($employee)
-        {
-            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
-
-            if (!$manager) {
-                return null;
-            }
-
-            $designation = Designation::where('job_code', $manager->designation_code)->first();
-
-            if ($designation->dept_head_flag == 'T') {
-                return $manager;
-            } else {
-                return findDepartmentHead($manager);
-            }
-            return null;
-        }
-        $deptHeadManager = findDepartmentHead($employee_data);
-
-        $managerL1 = $deptHeadManager->employee_id;
-        $managerL2 = $deptHeadManager->manager_l1_id;
-
-        $cek_director_id = Employee::select([
-            'dsg.department_level2',
-            'dsg2.director_flag',
-            DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
-            'dsg2.designation_name',
-            'dsg2.job_code',
-            'emp.fullname',
-            'emp.employee_id',
-        ])
-            ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
-            ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
-            ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
-            ->where('employees.designation_code', '=', $employee_data->designation_code)
-            ->where('dsg2.director_flag', '=', 'T')
+        $ca_transactions = CATransaction::where('user_id', $userId)
+            ->where('approval_status', 'Rejected')
             ->get();
 
-        $director_id = "";
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
+            ->pluck('fullname', 'employee_id');
 
-        if ($cek_director_id->isNotEmpty()) {
-            $director_id = $cek_director_id->first()->employee_id;
+        $deklarasiCACount = CATransaction::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_sett', 'Waiting for Declaration')
+                    ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Rejected')
+                    ->orWhere('approval_sett', 'Draft');
+            })
+            ->where('end_date', '<=', $today)
+            ->count();
+
+        foreach ($ca_transactions as $transaction) {
+            if (
+                $transaction->end_date <= $today &&
+                $transaction->approval_status == 'Approved' &&
+                $transaction->approval_sett == 'On Progress'
+            ) {
+
+                $transaction->approval_sett = 'Waiting for Declaration';
+            }
+            $transaction->save();
         }
 
-        return view('hcis.reimbursements.cashadv.formCashadv', [
+        return view('hcis.reimbursements.cashadv.cashadvReject', [
+            'deklarasiCACount' => $deklarasiCACount,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
-            'companies' => $companies,
-            'locations' => $locations,
+            'ca_transactions' => $ca_transactions,
             'employee_data' => $employee_data,
-            'perdiem' => $perdiem,
-            'no_sppds' => $no_sppds,
-            'managerL1' => $managerL1,
-            'managerL2' => $managerL2,
-            'director_id' => $director_id,
+            'fullnames' => $fullnames,
         ]);
     }
     public function cashadvancedSubmit(Request $req)
@@ -1132,6 +1213,7 @@ class ReimburseController extends Controller
                 ->get();
 
             $director_id = "";
+            // dd($req->companyFilter);
 
             if ($cek_director_id->isNotEmpty()) {
                 $director_id = $cek_director_id->first()->employee_id;

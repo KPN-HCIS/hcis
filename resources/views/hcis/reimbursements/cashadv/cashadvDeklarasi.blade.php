@@ -151,14 +151,46 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : ($ca_transaction->approval_sett == 'On Progress' ? 'warning' : 'info'))))) }}" style="pointer-events: none">
+                                                @if ($ca_transaction->approval_sett == 'Approved' || $ca_transaction->approval_sett == 'Done')
+                                                    @if ($ca_transaction->approval_sett == 'Waiting for Declaration')
+                                                        <p class="badge rounded-pill text-bg-success"
+                                                        style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }} and Waiting for Declaration">
+                                                        {{ $ca_transaction->approval_sett }}
+                                                        </p>
+                                                    @else
+                                                        <p class="badge rounded-pill text-bg-success"
+                                                        style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
+                                                        {{ $ca_transaction->approval_sett }}
+                                                        </p>
+                                                    @endif
+                                                @elseif ($ca_transaction->approval_sett == 'Pending')
+                                                <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting Approve by: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
                                                     {{ $ca_transaction->approval_sett }}
                                                 </p>
+                                                @elseif ($ca_transaction->approval_sett == 'Rejected')
+                                                <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Rejected by: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
+                                                    {{ $ca_transaction->approval_sett }}
+                                                </p>
+                                                @elseif ($ca_transaction->approval_sett == 'Draft')
+                                                <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting for Submit">
+                                                    {{ $ca_transaction->approval_sett }}
+                                                </p>
+                                                @elseif ($ca_transaction->approval_sett == 'Waiting for Declaration')
+                                                <p class="badge rounded-pill text-bg-info"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting for Declaration">
+                                                    {{ $ca_transaction->approval_sett }}
+                                                </p>
+                                                @endif
                                             </td>
                                             <td class="text-center">
                                                 @if ($ca_transaction->approval_sett == 'Approved')
                                                     <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                                @elseif ($ca_transaction->approval_sett == 'Declaration')
+                                                @elseif ($ca_transaction->approval_sett == 'Waiting for Declaration')
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'Pending')
                                                     <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>

@@ -91,13 +91,6 @@
                     </ol>
                 </div>
             </div>
-
-            <!-- Add Data Button -->
-            <div class="col-md-6 mt-4 ms-mb-3 text-end">
-                <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
-                    <i class="bi bi-plus-circle"></i> Add Data
-                </a>
-            </div>
         </div>
 
         <!-- Content Row -->
@@ -157,11 +150,42 @@
                                                     <span class="text-success">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
                                                 @endif
                                             </td>
-
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: none">
+                                                @if ($ca_transaction->approval_status == 'Approved' || $ca_transaction->approval_status == 'Done')
+                                                    @if ($ca_transaction->approval_sett == 'Waiting for Declaration')
+                                                        <p class="badge rounded-pill text-bg-success"
+                                                        style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }} and Waiting for Declaration">
+                                                        {{ $ca_transaction->approval_status }}
+                                                        </p>
+                                                    @else
+                                                        <p class="badge rounded-pill text-bg-success"
+                                                        style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
+                                                        {{ $ca_transaction->approval_status }}
+                                                        </p>
+                                                    @endif
+                                                @elseif ($ca_transaction->approval_status == 'Pending')
+                                                <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting Approve by: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
                                                     {{ $ca_transaction->approval_status }}
                                                 </p>
+                                                @elseif ($ca_transaction->approval_status == 'Rejected')
+                                                <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Rejected by: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
+                                                    {{ $ca_transaction->approval_status }}
+                                                </p>
+                                                @elseif ($ca_transaction->approval_status == 'Draft')
+                                                <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting for Submit">
+                                                    {{ $ca_transaction->approval_status }}
+                                                </p>
+                                                @elseif ($ca_transaction->approval_status == 'Declaration')
+                                                <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting for Declaration">
+                                                    {{ $ca_transaction->approval_status }}
+                                                </p>
+                                                @endif
                                             </td>
                                             <td class="text-center">
                                                 @if ($ca_transaction->approval_status == 'Approved')

@@ -3,6 +3,14 @@
         <div class="mb-2">
             <a href="{{ route('cashadvanced') }}"
             class="btn {{ request()->routeIs('cashadvanced') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill shadow w-100 position-relative">
+                All
+            </a>
+        </div>
+    </div>
+    <div class="col-6 col-sm-auto">
+        <div class="mb-2">
+            <a href="{{ route('cashadvancedRequest') }}"
+            class="btn {{ request()->routeIs('cashadvancedRequest') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill shadow w-100 position-relative">
                 Request
             </a>
         </div>
@@ -26,6 +34,14 @@
                 {{-- @if ( $deklarasiCACount >= 1 ) --}}
                     {{-- <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $deklarasiCACount }}</span> --}}
                 {{-- @endif --}}
+            </a>
+        </div>
+    </div>
+    <div class="col-6 col-sm-auto">
+        <div class="mb-2">
+            <a href="{{ route('cashadvancedReject') }}"
+            class="btn {{ request()->routeIs('cashadvancedReject') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill shadow w-100 position-relative">
+                Rejected
             </a>
         </div>
     </div>

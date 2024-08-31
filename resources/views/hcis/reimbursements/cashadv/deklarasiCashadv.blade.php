@@ -61,7 +61,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Costing Company</label>
-                                    <select class="form-control bg-light" id="companyFilter" name="companyFilters" disabled>
+                                    <select class="form-control bg-light" id="companyFilter" disabled>
                                         <option value="">Select Company...</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}"
@@ -70,11 +70,11 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    <input type="hidden" name="companyFilter" value="{{ $transactions->contribution_level_code }}">
                                 </div>
-                                <input type="hidden" name="companyFilter" value="{{ $transactions->contribution_level_code }}">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Destination</label>
-                                    <select class="form-control bg-light" id="locationFilter" name="locationFilter"
+                                    <select class="form-control bg-light" id="locationFilter"
                                         onchange="toggleOthers()" disabled>
                                         <option value="">Select location...</option>
                                         <p>{{ $transactions->destination }}</p>
@@ -87,6 +87,7 @@
                                         <option value="Others"
                                             {{ $transactions->destination == 'Others' ? 'selected' : '' }}>Others</option>
                                     </select>
+                                    <input type="hidden" name="locationFilter" value="{{ $transactions->destination }}">
                                     <br><input type="text" name="others_location" id="others_location"
                                         class="form-control" placeholder="Other Location"
                                         value="{{ $transactions->others_location }}"

@@ -112,6 +112,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
     Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
 
+    Route::get('/cashadvanced/request', [ReimburseController::class, 'requestCashadvanced'])->name('cashadvancedRequest');
+
     // My Cash Advanced Deklarasi
     Route::get('/cashadvanced/deklarasi', [ReimburseController::class, 'deklarasiCashadvanced'])->name('cashadvancedDeklarasi');
     Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
@@ -120,6 +122,15 @@ Route::middleware('auth')->group(function () {
 
     // My Cash Advanced Done
     Route::get('/cashadvanced/done', [ReimburseController::class, 'doneCashadvanced'])->name('cashadvancedDone');
+
+    Route::get('/cashadvanced/reject', [ReimburseController::class, 'rejectCashadvanced'])->name('cashadvancedReject');
+
+    // My Cash Advanced
+    Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+    Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
+    Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
+    Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
+    Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
 
     // Approval Reimburse
     Route::get('/approval/cashadvanced', [ApprovalReimburseController::class, 'cashadvancedApproval'])->name('approval.cashadvanced');
@@ -167,7 +178,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/units-of-measurement', [TeamGoalController::class, 'unitOfMeasurement']);
 
     // Approval
-    Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
+    // Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
 
     // Sendback
     Route::post('/sendback/goal', [SendbackController::class, 'store'])->name('sendback.goal');
@@ -218,7 +229,7 @@ Route::middleware('auth')->group(function () {
 
     //pdf BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
-    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('export');
+    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('exportbt');
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search'])->name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate'])->name('businessTrip-filterDate');
@@ -243,7 +254,7 @@ Route::middleware('auth')->group(function () {
 
     //PDF BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
-    Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('export');
+    Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('exportbttype');
 
 
     // Authentication
