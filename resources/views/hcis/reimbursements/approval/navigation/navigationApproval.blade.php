@@ -21,7 +21,7 @@
             </a>
         </div>
     </div>
-    <div class="col-6 col-sm-auto">
+    <div class="col-6 col-sm-auto" style="display:none">
         <div class="mb-2">
             <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
                 Medical
@@ -33,7 +33,7 @@
             </a>
         </div>
     </div>
-    <div class="col-6 col-sm-auto">
+    <div class="col-6 col-sm-auto" style="display:none">
         <div class="mb-2">
             <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
                 Hometrip
@@ -41,7 +41,7 @@
             </a>
         </div>
     </div>
-    <div class="col-6 col-sm-auto">
+    <div class="col-6 col-sm-auto" style="display:none">
         <div class="mb-2">
             <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
                 Assessment

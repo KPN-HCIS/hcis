@@ -44,13 +44,15 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
-        $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
+        $ca_transactions = CATransaction::with(['employee', 'statusReqEmployee'])->where('user_id', $userId)->where('approval_status', '!=', 'Done')->get();
+        // dd($ca_transactions);
+        //tambah where status<>done
         $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
         $today = Carbon::today();
 
         foreach ($ca_transactions as $transaction) {
             if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
-                $transaction->approval_status = 'Done';
+                //$transaction->approval_status = 'Done';
             }
             // if ($transaction->approval_status == 'Approved') {
             //     $transaction->approval_sett = 'On Progress';
@@ -140,14 +142,15 @@ class ReimburseController extends Controller
         $link = 'Cash Advanced';
         $today = Carbon::today();
 
-        $ca_transactions = CATransaction::with('employee')
+        $ca_transactions = CATransaction::with(['employee', 'statusSettEmployee'])
             ->where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_status', 'Approved')
-                    ->orWhere('approval_status', 'Declaration');
+                $query->where('approval_status', 'Approved');
             })
             ->where('end_date', '<=', $today)
             ->get();
+        // dd($ca_transactions);
+        $settName = $ca_transactions->statusSettEmployee ? $ca_transactions->statusSettEmployee->fullname : '';
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
@@ -164,6 +167,7 @@ class ReimburseController extends Controller
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
+            'settName' => $settName,
             
         ]);
     }

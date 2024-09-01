@@ -652,7 +652,7 @@
                                             type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-2">
+                                <div class="col-md-6 mb-2" style="display: none">
                                     <label class="form-label">Persetujuan</label>
                                     <select name="approval_status" id="approval_status" class="form-select">
                                         <option value="">-</option>

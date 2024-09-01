@@ -50,4 +50,16 @@ class CATransaction extends Model
     {
         return $this->hasMany(ca_approval::class, 'id', 'id');
     }
+    public function statusReqEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'status_id', 'employee_id');
+    }
+    public function statusSettEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'sett_id', 'employee_id');
+    }
+    public function statusExtendEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'extend_id', 'employee_id');
+    }
 }

@@ -1076,7 +1076,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12 mb-2">
-                                    <label for="prove_declare" class="form-label">Upload Proof</label>
+                                    <label for="prove_declare" class="form-label">Upload Document</label>
 
                                     <!-- Input file -->
                                     <input type="file" id="prove_declare" name="prove_declare" accept="image/*, application/pdf" class="form-control" onchange="previewFile()" required>

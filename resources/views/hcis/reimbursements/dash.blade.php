@@ -131,7 +131,7 @@ h4 {
                 <a href="{{ route('approval.cashadvanced') }}">
                     <div class="card" style="height: 215px">
                         <div class="card-body">
-                            <img src="{{ asset('images/menu/cashadv.png')}}" alt="logo">
+                            <img src="{{ asset('images/menu/approval.png')}}" alt="logo">
                             <h4 class="my-3">Approval</h4>
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
@@ -145,7 +145,7 @@ h4 {
                 <a href="{{ route('cashadvanced.admin') }}">
                     <div class="card" style="height: 215px">
                         <div class="card-body">
-                            <img src="{{ asset('images/menu/cashadv.png')}}" alt="logo">
+                            <img src="{{ asset('images/menu/report.png')}}" alt="logo">
                             <h4 class="my-3">Cash Advanced (Admin)</h4>
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->

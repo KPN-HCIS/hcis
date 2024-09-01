@@ -75,17 +75,17 @@
         <div class="row">
             <!-- Breadcrumb Navigation -->
             <div class="col-md-6 mt-3 ms-mb-3">
-                <div class="page-title-box d-flex align-items-center">
-                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
-                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
+                <div class="page-title-box">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">
                             <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
                                 <i class="bi bi-arrow-left"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item">
                             {{ $parentLink }}
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item active">
                             {{ $link }}
                         </li>
                     </ol>
@@ -93,13 +93,13 @@
             </div>
 
             <!-- Add Data Button -->
-            <div class="col-md-6 mt-4 ms-mb-3 text-end">
-                <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
+            <div class="col-md-6 mt-4 ms-mb-3 text-end" style="padding-bottom: 10px;">
+                <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" >
                     <i class="bi bi-plus-circle"></i> Add Data
                 </a>
             </div>
         </div>
-
+        
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
@@ -116,7 +116,7 @@
                         </div>
                         @include('hcis.reimbursements.cashadv.navigation.navigationCashadv')
                         <div class="table-responsive">
-                            <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%"
+                            <table class="table table-hover table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
@@ -159,7 +159,7 @@
                                             </td>
 
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: none">
+                                                <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_status." - ".$ca_transaction->statusReqEmployee->fullname}}">
                                                     {{ $ca_transaction->approval_status }}
                                                 </p>
                                             </td>
