@@ -123,7 +123,11 @@ Route::middleware('auth')->group(function () {
     // My Cash Advanced Done
     Route::get('/cashadvanced/done', [ReimburseController::class, 'doneCashadvanced'])->name('cashadvancedDone');
 
+    // My Cash Advanced Reject
     Route::get('/cashadvanced/reject', [ReimburseController::class, 'rejectCashadvanced'])->name('cashadvancedReject');
+
+    // My Cash Advanced Extend
+    Route::post('/cashadvanced/extend', [ReimburseController::class, 'cashadvancedExtend'])->name('cashadvanced.extend');
 
     // My Cash Advanced
     Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');

@@ -197,13 +197,26 @@
                                                     <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'Waiting for Declaration')
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
+                                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend"
+                                                            data-no-id="{{ $ca_transaction->id }}"
+                                                            data-no-ca="{{ $ca_transaction->no_ca }}"
+                                                            data-start-date="{{ $ca_transaction->start_date }}"
+                                                            data-end-date="{{ $ca_transaction->end_date }}"
+                                                            data-total-days="{{ $ca_transaction->total_days }}">
+                                                        <i class="ri-calendar-line"></i>
+                                                    </button>
                                                 @elseif ($ca_transaction->approval_sett == 'Pending')
                                                     <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'Reject')
                                                 @elseif ($ca_transaction->approval_sett == 'Draft')
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'On Progress')
-                                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend">
+                                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend"
+                                                            data-no-id="{{ $ca_transaction->id }}"
+                                                            data-no-ca="{{ $ca_transaction->no_ca }}"
+                                                            data-start-date="{{ $ca_transaction->start_date }}"
+                                                            data-end-date="{{ $ca_transaction->end_date }}"
+                                                            data-total-days="{{ $ca_transaction->total_days }}">
                                                         <i class="ri-calendar-line"></i>
                                                     </button>
                                                     {{-- <a href="#" class="btn btn-outline-primary" title="Extend" ><i class="ri-calendar-line"></i></a> --}}
@@ -221,76 +234,89 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="modalExtend" tabindex="-1" aria-labelledby="modalExtendLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title text-center fs-5" id="modalExtendLabel">Extending End Date</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label" for="start">Start Date</label>
-                            <input type="date" name="start_date" id="start_date" class="form-control"
-                                placeholder="mm/dd/yyyy" readonly>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label" for="end">End Date</label>
-                            <input type="date" name="end_date" id="end_date" class="form-control"
-                                placeholder="mm/dd/yyyy" readonly>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label" for="total">Total Days</label>
-                            <div class="input-group">
-                                <input class="form-control bg-light" id="totaldays" name="totaldays"
-                                    type="text" min="0" value="0" readonly>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">days</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mb-2">
-                            <p class="text-center mt-2">--<b>Changing too</b>--</p>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label" for="start">Start Date</label>
-                            <input type="date" name="start_date" id="start_date" class="form-control"
-                                placeholder="mm/dd/yyyy" required>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label" for="end">New End Date</label>
-                            <input type="date" name="ext_end_date" id="ext_end_date" class="form-control"
-                                placeholder="mm/dd/yyyy" required>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label" for="total">Total Days</label>
-                            <div class="input-group">
-                                <input class="form-control bg-light" id="ext_totaldays" name="ext_totaldays"
-                                    type="text" min="0" value="0" readonly>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">days</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mb-2">
-                            <label class="form-label" for="name">Reason</label>
-                            <textarea name="ext_reason" id="ext_reason" class="form-control"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Entending</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @push('scripts')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+            const totalDaysInput = document.getElementById('totaldays');
+
+            const extStartDateInput = document.getElementById('ext_start_date');
+            const extEndDateInput = document.getElementById('ext_end_date');
+            const extTotalDaysInput = document.getElementById('ext_totaldays');
+
+            const extNoCa = document.getElementById('ext_no_ca');
+
+            // Menghitung total hari untuk start_date dan end_date
+            function calculateTotalDays() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                if (startDate && endDate && startDate <= endDate) {
+                    const timeDiff = endDate - startDate;
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    totalDaysInput.value = daysDiff;
+                } else {
+                    totalDaysInput.value = 0;
+                }
+            }
+
+            // Menghitung total hari untuk ext_start_date dan ext_end_date
+            function calculateExtTotalDays() {
+                const extStartDate = new Date(extStartDateInput.value);
+                const extEndDate = new Date(extEndDateInput.value);
+                if (extStartDate && extEndDate && extStartDate <= extEndDate) {
+                    const timeDiff = extEndDate - extStartDate;
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    extTotalDaysInput.value = daysDiff;
+                } else {
+                    extTotalDaysInput.value = 0;
+                }
+            }
+
+            // Mengatur min date untuk ext_end_date
+            function updateExtEndDateMin() {
+                const extStartDate = extStartDateInput.value;
+                extEndDateInput.min = extStartDate; // Set min date untuk ext_end_date
+            }
+
+            // Event listener untuk menghitung total hari saat tanggal berubah
+            startDateInput.addEventListener('change', calculateTotalDays);
+            endDateInput.addEventListener('change', calculateTotalDays);
+
+            extStartDateInput.addEventListener('change', function() {
+                updateExtEndDateMin(); // Update min date saat ext_start_date diubah
+                calculateExtTotalDays();
+            });
+
+            extEndDateInput.addEventListener('change', function() {
+                calculateExtTotalDays();
+            });
+
+            // Mengisi modal saat tombol edit ditekan
+            const editButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const startDate = this.getAttribute('data-start-date');
+                    const endDate = this.getAttribute('data-end-date');
+                    const caNumber = this.getAttribute('data-no-ca');
+                    const idNumber = this.getAttribute('data-no-id');
+
+                    startDateInput.value = startDate;
+                    endDateInput.value = endDate;
+                    extStartDateInput.value = startDate; // Mengisi ext_start_date dengan start_date
+                    extEndDateInput.value = endDate; // Mengisi ext_end_date dengan end_date
+
+                    document.getElementById('ext_no_ca').textContent = caNumber;
+                    document.getElementById('no_id').value = idNumber; // Mengisi input no_id
+
+                    calculateTotalDays(); // Hitung total hari saat modal dibuka
+                    calculateExtTotalDays(); // Hitung total hari untuk ext saat modal dibuka
+                    updateExtEndDateMin(); // Update min date saat modal dibuka
+                });
+            });
+        });
         // Periksa apakah ada pesan sukses
         var successMessage = "{{ session('success') }}";
 
