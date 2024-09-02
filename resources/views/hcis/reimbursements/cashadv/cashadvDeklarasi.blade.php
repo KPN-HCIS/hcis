@@ -153,7 +153,7 @@
                                             <td>
                                                 <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : ($ca_transaction->approval_sett == 'On Progress' ? 'warning' : 'default'))))) }}" style="pointer-events: auto; cursor: default;" title="{{
                                                     
-                                                    $ca_transaction->approval_sett." - ".$settName}}">
+                                                    $ca_transaction->approval_sett." - ".$ca_transaction->settName}}">
                                                     {{ $ca_transaction->approval_sett }}
                                                 </p>
                                             </td>

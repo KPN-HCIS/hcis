@@ -150,7 +150,10 @@ class ReimburseController extends Controller
             ->where('end_date', '<=', $today)
             ->get();
         // dd($ca_transactions);
-        $settName = $ca_transactions->statusSettEmployee ? $ca_transactions->statusSettEmployee->fullname : '';
+        foreach ($ca_transactions as $transaction) {
+            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
+        }
+        // $settName = $ca_transactions->statusSettEmployee ? $ca_transactions->statusSettEmployee->fullname : '';
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
@@ -167,7 +170,7 @@ class ReimburseController extends Controller
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
-            'settName' => $settName,
+            // 'settName' => $settName,
             
         ]);
     }
