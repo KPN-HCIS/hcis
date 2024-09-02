@@ -164,6 +164,12 @@
                                                         title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }} and Waiting for Declaration">
                                                         {{ $ca_transaction->approval_status }}
                                                         </p>
+                                                    @elseif ($ca_transaction->approval_sett == 'On Progress')
+                                                        <p class="badge rounded-pill text-bg-success"
+                                                        style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }} and Declaration at {{ \Carbon\Carbon::parse($ca_transaction->end_date)->format('d-M-y') }}">
+                                                        {{ $ca_transaction->approval_status }}
+                                                        </p>
                                                     @else
                                                         <p class="badge rounded-pill text-bg-success"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"

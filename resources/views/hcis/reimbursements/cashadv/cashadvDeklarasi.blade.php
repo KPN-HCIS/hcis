@@ -155,24 +155,24 @@
                                                     @if ($ca_transaction->approval_sett == 'Waiting for Declaration')
                                                         <p class="badge rounded-pill text-bg-success"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"
-                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }} and Waiting for Declaration">
+                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->sett_id]) ? $fullnames[$ca_transaction->sett_id] : 'Unknown Employee' }} and Waiting for Declaration">
                                                         {{ $ca_transaction->approval_sett }}
                                                         </p>
                                                     @else
                                                         <p class="badge rounded-pill text-bg-success"
                                                         style="font-size: 12px; padding: 0.5rem 1rem;"
-                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
+                                                        title="Approved By: {{ isset($fullnames[$ca_transaction->sett_id]) ? $fullnames[$ca_transaction->sett_id] : 'Unknown Employee' }}">
                                                         {{ $ca_transaction->approval_sett }}
                                                         </p>
                                                     @endif
                                                 @elseif ($ca_transaction->approval_sett == 'Pending')
                                                 <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : 'success')))) }}"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting Approve by: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting Approve by: {{ isset($fullnames[$ca_transaction->sett_id]) ? $fullnames[$ca_transaction->sett_id] : 'Unknown Employee' }}">
                                                     {{ $ca_transaction->approval_sett }}
                                                 </p>
                                                 @elseif ($ca_transaction->approval_sett == 'Rejected')
                                                 <p class="badge rounded-pill text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : 'success')))) }}"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Rejected by: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Rejected by: {{ isset($fullnames[$ca_transaction->sett_id]) ? $fullnames[$ca_transaction->sett_id] : 'Unknown Employee' }}">
                                                     {{ $ca_transaction->approval_sett }}
                                                 </p>
                                                 @elseif ($ca_transaction->approval_sett == 'Draft')
@@ -185,21 +185,30 @@
                                                     style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting for Declaration">
                                                     {{ $ca_transaction->approval_sett }}
                                                 </p>
+                                                @elseif ($ca_transaction->approval_sett == 'On Progress')
+                                                <p class="badge rounded-pill text-bg-warning"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting Until {{ \Carbon\Carbon::parse($ca_transaction->end_date)->format('d-M-y') }}">
+                                                    {{ $ca_transaction->approval_sett }}
+                                                </p>
                                                 @endif
                                             </td>
                                             <td class="text-center">
                                                 @if ($ca_transaction->approval_sett == 'Approved')
                                                     <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'Waiting for Declaration')
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'Pending')
                                                     <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'Reject')
                                                 @elseif ($ca_transaction->approval_sett == 'Draft')
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'On Progress')
+                                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend">
+                                                        <i class="ri-calendar-line"></i>
+                                                    </button>
+                                                    {{-- <a href="#" class="btn btn-outline-primary" title="Extend" ><i class="ri-calendar-line"></i></a> --}}
                                                 @else
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                 @endif
                                             </td>
                                         </tr>
@@ -208,6 +217,72 @@
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalExtend" tabindex="-1" aria-labelledby="modalExtendLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title text-center fs-5" id="modalExtendLabel">Extending End Date</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label" for="start">Start Date</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control"
+                                placeholder="mm/dd/yyyy" readonly>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label" for="end">End Date</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control"
+                                placeholder="mm/dd/yyyy" readonly>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label" for="total">Total Days</label>
+                            <div class="input-group">
+                                <input class="form-control bg-light" id="totaldays" name="totaldays"
+                                    type="text" min="0" value="0" readonly>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">days</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <p class="text-center mt-2">--<b>Changing too</b>--</p>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label" for="start">Start Date</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control"
+                                placeholder="mm/dd/yyyy" required>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label" for="end">New End Date</label>
+                            <input type="date" name="ext_end_date" id="ext_end_date" class="form-control"
+                                placeholder="mm/dd/yyyy" required>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label" for="total">Total Days</label>
+                            <div class="input-group">
+                                <input class="form-control bg-light" id="ext_totaldays" name="ext_totaldays"
+                                    type="text" min="0" value="0" readonly>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">days</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label" for="name">Reason</label>
+                            <textarea name="ext_reason" id="ext_reason" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Entending</button>
                 </div>
             </div>
         </div>

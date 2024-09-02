@@ -446,6 +446,7 @@
             </tr>
         </table>
     @elseif ( $transactions->type_ca == 'entr' )
+        @if (count($detailCA['detail_e']) > 0 && !empty($detailCA['detail_e'][0]['type']))
         <table class="table-approve">
             <tr>
                 <td colspan="3"><b>Detail Entertain :</b></td>
@@ -479,7 +480,45 @@
                 </td>
             </tr>
         </table>
+        @endif
 
+        @if (count($declareCA['detail_e']) > 0 && !empty($declareCA['detail_e'][0]['type']))
+        <table class="table-approve">
+            <tr>
+                <td colspan="3"><b>Detail Entertain :</b></td>
+            </tr>
+            <tr class="head-row">
+                <th>Type</th>
+                <th>Keterangan</th>
+                <th>Nominal</th>
+            </tr>
+
+            @foreach($declareCA['detail_e'] as $detail)
+            <tr style="text-align: center">
+                @php
+                    $typeMap = [
+                        'food' => 'Food/Beverages/Souvenir',
+                        'transport' => 'Transport',
+                        'accommodation' => 'Accommodation',
+                        'gift' => 'Gift',
+                        'fund' => 'Fund',
+                    ];
+                @endphp
+                <td>{{ $typeMap[$detail['type']] ?? $detail['type'] }}</td>
+                <td>{{ $detail['fee_detail'] }}</td>
+                <td>Rp. {{ number_format($detail['nominal'], 0, ',', '.') }}</td>
+            </tr>
+            @endforeach
+            <tr class="total-row">
+                <td colspan="2" class="head-row">Total</td>
+                <td>
+                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
+                </td>
+            </tr>
+        </table>
+        @endif
+
+        @if (count($detailCA['relation_e']) > 0 && !empty($detailCA['relation_e'][0]['name']))
         <table class="table-approve">
             <tr>
                 <td colspan="5"><b>Relation Entertain:</b></td>
@@ -526,6 +565,56 @@
                 <td>{{ count($detailCA['relation_e']) }}</td>
             </tr>
         </table>
+        @endif
+
+        @if (count($declareCA['relation_e']) > 0 && !empty($declareCA['relation_e'][0]['name']))
+        <table class="table-approve">
+            <tr>
+                <td colspan="5"><b>Relation Entertain:</b></td>
+            </tr>
+            <tr class="head-row">
+                <th>Nama</th>
+                <th>Posisi</th>
+                <th>Perusahaan</th>
+                <th>Tujuan</th>
+                <th>Tipe Relasi</th>
+            </tr>
+
+            @foreach($declareCA['relation_e'] as $relation)
+            <tr style="text-align: center">
+                <td>{{ $relation['name'] }}</td>
+                <td>{{ $relation['position'] }}</td>
+                <td>{{ $relation['company'] }}</td>
+                <td>{{ $relation['purpose'] }}</td>
+                <td>
+                    @php
+                        $relationTypes = [];
+                        $typeMap = [
+                            'Food' => 'Food/Beverages/Souvenir',
+                            'Gift' => 'Gift',
+                            'Transport' => 'Transport',
+                            'Accommodation' => 'Accommodation',
+                            'Fund' => 'Fund',
+                        ];
+
+                        // Mengumpulkan semua tipe relasi yang berstatus true
+                        foreach($relation['relation_type'] as $type => $status) {
+                            if ($status && isset($typeMap[$type])) {
+                                $relationTypes[] = $typeMap[$type]; // Menggunakan pemetaan untuk mendapatkan deskripsi
+                            }
+                        }
+                    @endphp
+
+                    {{ implode(', ', $relationTypes) }} {{-- Menggabungkan tipe relasi yang relevan menjadi string --}}
+                </td>
+            </tr>
+            @endforeach
+            <tr class="total-row">
+                <td colspan="4" class="head-row">Total Relation</td>
+                <td>{{ count($detailCA['relation_e']) }}</td>
+            </tr>
+        </table>
+        @endif
     @endif
 
     <table>

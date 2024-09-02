@@ -153,7 +153,6 @@
 
                             <br>
 
-                            {{-- Pls ini buat CA_NBT dia masih error --}}
                             <div class="row" id="ca_bt" style="display: none;">
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
@@ -163,12 +162,12 @@
                                                 <div id="perdiem-card" class="card-body">
                                                     <div class="accordion" id="accordionPerdiem">
                                                         <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="false" aria-controls="enter-collapseOne">
+                                                            <h2 class="accordion-header" id="headingPerdiem">
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePerdiem" aria-expanded="false" aria-controls="collapsePerdiem">
                                                                     Rencana Perdiem
                                                                 </button>
                                                             </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse collapse" aria-labelledby="enter-headingOne">
+                                                            <div id="collapsePerdiem" class="accordion-collapse collapse" aria-labelledby="headingPerdiem">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-perdiem">
                                                                         <div class="mb-2">

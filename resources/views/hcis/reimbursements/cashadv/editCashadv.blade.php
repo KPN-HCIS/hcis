@@ -171,11 +171,11 @@
                                                         <div class="accordion" id="accordionPerdiem">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="enter-headingOne">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                    <button class="accordion-button @if($detailCA['detail_perdiem'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="@if($detailCA['detail_perdiem'][0]['start_date'] !== null) true @else false @endif" aria-controls="enter-collapseOne">
                                                                         Rencana Perdiem
                                                                     </button>
                                                                 </h2>
-                                                                <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                <div id="enter-collapseOne" class="accordion-collapse @if($detailCA['detail_perdiem'][0]['start_date'] !== null) show @endif" aria-labelledby="enter-headingOne">
                                                                     <div class="accordion-body">
                                                                         <div id="form-container-bt-perdiem">
                                                                             @foreach ($detailCA['detail_perdiem'] as $perdiem)
@@ -293,7 +293,7 @@
                                                                                 <div class="input-group-append">
                                                                                     <span class="input-group-text">Rp</span>
                                                                                 </div>
-                                                                                <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="{{$transport['nominal']}}" data-clear-on-collapse>
+                                                                                <input class="form-control" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" placeholder="0" value="{{$transport['nominal']}}" data-clear-on-collapse>
                                                                             </div>
                                                                             <hr class="border border-primary border-1 opacity-50">
                                                                             @endforeach
@@ -304,7 +304,7 @@
                                                                                 <div class="input-group-append">
                                                                                     <span class="input-group-text">Rp</span>
                                                                                 </div>
-                                                                                <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
+                                                                                <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" placeholder="0" data-clear-on-collapse readonly>
                                                                             </div>
                                                                         </div>
                                                                         <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
@@ -319,11 +319,11 @@
                                                         <div class="accordion" id="accordionPenginapan">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingPenginapan">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
+                                                                    <button class="accordion-button @if($detailCA['detail_penginapan'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="@if($detailCA['detail_penginapan'][0]['start_date'] !== null) true @else false @endif" aria-controls="collapsePenginapan">
                                                                         Rencana Penginapan
                                                                     </button>
                                                                 </h2>
-                                                                <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                <div id="collapsePenginapan" class="accordion-collapse collapse @if($detailCA['detail_penginapan'][0]['start_date'] !== null) show @endif" aria-labelledby="headingPenginapan">
                                                                     <div class="accordion-body">
                                                                         <div id="form-container-bt-penginapan">
                                                                             @foreach($detailCA['detail_penginapan'] as $penginapan)
@@ -393,11 +393,11 @@
                                                         <div class="accordion" id="accordionLainnya">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingLainnya">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
+                                                                    <button class="accordion-button @if($detailCA['detail_lainnya'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="@if($detailCA['detail_lainnya'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseLainnya">
                                                                         Rencana Lainnya
                                                                     </button>
                                                                 </h2>
-                                                                <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                <div id="collapseLainnya" class="accordion-collapse collapse @if($detailCA['detail_lainnya'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingLainnya">
                                                                     <div class="accordion-body">
                                                                         <div id="form-container-bt-lainnya">
                                                                             @foreach ($detailCA['detail_lainnya'] as $perdiem)
@@ -477,18 +477,15 @@
                                             <div class="d-flex flex-column gap-2">
                                                 <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
                                                     <div class="card">
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
-                                                        </div>
-                                                        <div id="entertain-card" class="card-body" style="display: none;">
+                                                        <div id="entertain-card" class="card-body">
                                                             <div class="accordion" id="accordionEntertain">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingEntertain">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="true" aria-controls="collapseEntertain">
+                                                                        <button class="accordion-button @if($detailCA['detail_e'][0]['type'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="@if($detailCA['detail_e'][0]['type'] !== null) true @else false @endif" aria-controls="collapseEntertain">
                                                                             Rencana Entertain
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseEntertain" class="accordion-collapse collapse show" aria-labelledby="headingEntertain">
+                                                                    <div id="collapseEntertain" class="accordion-collapse collapse @if($detailCA['detail_e'][0]['type'] !== null) show @endif" aria-labelledby="headingEntertain">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-e-detail">
                                                                                 @foreach ($detailCA['detail_e'] as $detail)
@@ -532,18 +529,15 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
-                                                        </div>
-                                                        <div id="relation-card" class="card-body" style="display: none;">
+                                                        <div id="relation-card" class="card-body">
                                                             <div class="accordion" id="accordionRelation">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingRelation">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="true" aria-controls="collapseRelation">
+                                                                        <button class="accordion-button @if($detailCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="@if($detailCA['relation_e'][0]['name'] !== null) true @else false @endif" aria-controls="collapseRelation">
                                                                             Rencana Relation
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseRelation" class="accordion-collapse collapse show" aria-labelledby="headingRelation">
+                                                                    <div id="collapseRelation" class="accordion-collapse collapse @if($detailCA['relation_e'][0]['name'] !== null) show @endif" aria-labelledby="headingRelation">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-e-relation">
                                                                                 @foreach($detailCA['relation_e'] as $relation)

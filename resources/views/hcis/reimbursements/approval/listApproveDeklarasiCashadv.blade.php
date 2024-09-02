@@ -170,10 +170,7 @@
                                             <div class="d-flex flex-row gap-2">
                                                 <div class="col-md-6">
                                                     <div class="card">
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                        </div>
-                                                        <div id="perdiem-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="perdiem-card-deklarasi" class="card-body">
                                                             <div class="accordion" id="accordionPerdiem">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="enter-headingOne">
@@ -823,10 +820,7 @@
                                             <div class="d-flex flex-row gap-2">
                                                 <div class="col-md-6">
                                                     <div class="card">
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-e-detail-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Entertain</button>
-                                                        </div>
-                                                        <div id="entertain-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="entertain-card-deklarasi" class="card-body">
                                                             <div class="accordion" id="accordionEntertain">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingEntertain">
@@ -1057,7 +1051,7 @@
                                                                                     <hr class="border border-primary border-1 opacity-50">
                                                                                 @endforeach
                                                                             </div>
-                                                                            <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
+                                                                            <button style="display: none" type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>

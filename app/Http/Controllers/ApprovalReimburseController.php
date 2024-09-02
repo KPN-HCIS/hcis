@@ -65,6 +65,9 @@ class ApprovalReimburseController extends Controller
 
         $ca_transactions = CATransaction::with('employee')->where('status_id', $employeeId)->where('approval_status', 'Pending')->get();
 
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
+            ->pluck('fullname', 'employee_id');
+
         $pendingCACount = CATransaction::where('status_id', $employeeId)->where('approval_status', 'Pending')->count();
         $pendingDECCount = CATransaction::where('sett_id', $employeeId)->where('approval_sett', 'Pending')->count();
 
@@ -79,6 +82,7 @@ class ApprovalReimburseController extends Controller
         return view('hcis.reimbursements.approval.approvalCashadv', [
             'pendingCACount' => $pendingCACount,
             'pendingDECCount' => $pendingDECCount,
+            'fullnames' => $fullnames,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
@@ -164,6 +168,7 @@ class ApprovalReimburseController extends Controller
                 $caTransaction = ca_transaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->approval_status = 'Approved'; // Set ke ID user layer tertinggi
+                    $caTransaction->approval_sett = 'On Progress';
                     $caTransaction->save();
                 }
             } else {
@@ -194,6 +199,9 @@ class ApprovalReimburseController extends Controller
 
         $ca_transactions = CATransaction::with('employee')->where('sett_id', $employeeId)->where('approval_sett', 'Pending')->get();
 
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('sett_id'))
+            ->pluck('fullname', 'employee_id');
+
         $pendingCACount = CATransaction::where('status_id', $employeeId)->where('approval_status', 'Pending')->count();
         $pendingDECCount = CATransaction::where('sett_id', $employeeId)->where('approval_sett', 'Pending')->count();
 
@@ -209,6 +217,7 @@ class ApprovalReimburseController extends Controller
             'pendingCACount' => $pendingCACount,
             'pendingDECCount' => $pendingDECCount,
             'link' => $link,
+            'fullnames' => $fullnames,
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,

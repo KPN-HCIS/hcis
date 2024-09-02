@@ -68,8 +68,11 @@ class ReimburseController extends Controller
             ->count();
 
         foreach ($ca_transactions as $transaction) {
-            // if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
+            // if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved' && $transaction->total_cost >= 0) {
             //     $transaction->approval_status = 'Done';
+            // }
+            // if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved' && $transaction->total_cost = 0) {
+            //     $transaction->approval_status = '';
             // }
             // if ($transaction->approval_status == 'Approved') {
             //     $transaction->approval_sett = 'On Progress';
@@ -173,12 +176,13 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Pending')
                     ->orWhere('approval_sett', 'Rejected')
-                    ->orWhere('approval_sett', 'Draft');
+                    ->orWhere('approval_sett', 'Draft')
+                    ->orWhere('approval_sett', 'On Progress');
             })
-            ->where('end_date', '<=', $today)
+            // ->where('end_date', '<=', $today)
             ->get();
-
-        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
+        // dd($ca_transactions);
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('sett_id'))
             ->pluck('fullname', 'employee_id');
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
@@ -307,6 +311,77 @@ class ReimburseController extends Controller
             'ca_transactions' => $ca_transactions,
             'employee_data' => $employee_data,
             'fullnames' => $fullnames,
+        ]);
+    }
+    function cashadvancedCreate()
+    {
+
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = BusinessTrip::orderBy('no_sppd')->get();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
+
+        $cek_director_id = Employee::select([
+            'dsg.department_level2',
+            'dsg2.director_flag',
+            DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
+            'dsg2.designation_name',
+            'dsg2.job_code',
+            'emp.fullname',
+            'emp.employee_id',
+        ])
+            ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
+            ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
+            ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
+            ->where('employees.designation_code', '=', $employee_data->designation_code)
+            ->where('dsg2.director_flag', '=', 'T')
+            ->get();
+
+        $director_id = "";
+
+        if ($cek_director_id->isNotEmpty()) {
+            $director_id = $cek_director_id->first()->employee_id;
+        }
+
+        return view('hcis.reimbursements.cashadv.formCashadv', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'managerL1' => $managerL1,
+            'managerL2' => $managerL2,
+            'director_id' => $director_id,
         ]);
     }
     public function cashadvancedSubmit(Request $req)
@@ -955,7 +1030,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $transactions = CATransaction::find($key);
-        $approval = ca_approval::with('employee')->where('ca_id', $key)->orderBy('layer', 'asc')->get();
+        $approval = ca_sett_approval::with('employee')->where('ca_id', $key)->orderBy('layer', 'asc')->get();
 
         $pdf = PDF::loadView('hcis.reimbursements.cashadv.printDeklarasiCashadv', [
             'link' => $link,
@@ -1017,9 +1092,8 @@ class ReimburseController extends Controller
 
             $model->prove_declare = $filename;
         } else {
-            $model->prove_declare = $req->input('existing_prove_declare');
+            $model->prove_declare = $req->existing_prove_declare;
         }
-
         $model->no_ca = $req->no_ca;
         $model->no_sppd = $req->bisnis_numb;
 
@@ -1248,18 +1322,6 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
-                if ($employee_id !=  null) {
-                    $model_approval = new ca_sett_approval;
-                    $model_approval->ca_id = $req->no_id;
-                    $model_approval->role_name = $data_matrix_approval->desc;
-                    $model_approval->employee_id = $employee_id;
-                    $model_approval->layer = $data_matrix_approval->layer;
-                    $model_approval->approval_status = 'Pending';
-
-                    // Simpan data ke database
-                    $model_approval->save();
-                }
-
                 if ($employee_id !=  null) {
                     $model_approval = new ca_sett_approval;
                     $model_approval->ca_id = $req->no_id;
