@@ -93,10 +93,20 @@
             </div>
 
             <!-- Add Data Button -->
-            <div class="col-md-6 mt-4 ms-mb-3 text-end">
-                <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
+            <div class="col-md-6 mt-4 text-end">
+                @if ($pendingCACount >= 2)
+                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" style="font-size: 18px"
+                        onclick="alert('Tidak dapat menambahkan data, anda masih memiliki 2 CA Pending.'); return false; ">
+                        <i class="bi bi-plus-circle"></i> Add Data
+                    </a>
+                @else
+                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" style="font-size: 18px">
+                        <i class="bi bi-plus-circle"></i> Add Data
+                    </a>
+                @endif
+                {{-- <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
                     <i class="bi bi-plus-circle"></i> Add Data
-                </a>
+                </a> --}}
             </div>
         </div>
 
