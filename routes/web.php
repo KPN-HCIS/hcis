@@ -130,7 +130,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ticket/form', [ReimburseController::class, 'ticketCreate'])->name('ticket.form');
     Route::post('/ticket/submit', [ReimburseController::class, 'ticketSubmit'])->name('ticket.submit');
     Route::get('/ticket/edit/{id}', [ReimburseController::class, 'ticketEdit'])->name('ticket.edit');
-    Route::post('/ticket/update/{id}', [ReimburseController::class, 'ticketUpdate'])->name('ticket.update');
+    Route::put('/ticket/update/{id}', [ReimburseController::class, 'ticketUpdate'])->name('ticket.update');
     Route::post('/ticket/delete/{id}', [ReimburseController::class, 'ticketDelete'])->name('ticket.delete');
 
     // My Goals

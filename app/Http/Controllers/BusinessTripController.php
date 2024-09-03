@@ -156,6 +156,7 @@ class BusinessTripController extends Controller
         foreach ($tickets as $index => $ticket) {
             $ticketData[] = [
                 'noktp_tkt' => $ticket->noktp_tkt,
+                'tlp_tkt' => $ticket->tlp_tkt,
                 'dari_tkt' => $ticket->dari_tkt,
                 'ke_tkt' => $ticket->ke_tkt,
                 'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
@@ -1738,7 +1739,7 @@ class BusinessTripController extends Controller
                 $ca->save();
             }
         }
-
+        session()->flash('message', 'Successfully Added');
         return redirect('/businessTrip');
     }
 
@@ -2232,7 +2233,7 @@ class BusinessTripController extends Controller
             }
             if ($businessTrip->tiket == 'Ya') {
                 $tiket = Tiket::where('no_sppd', $businessTrip->no_sppd)->first();
-                if ($tiket) {
+                if ($tiket->tkt_only != 'Y') {
                     // Update the existing hotel record with the new approval status
                     $tiket->update([
                         'approval_status' => $statusValue,
@@ -2288,7 +2289,7 @@ class BusinessTripController extends Controller
             }
             if ($businessTrip->tiket == 'Ya') {
                 $tiket = Tiket::where('no_sppd', $businessTrip->no_sppd)->first();
-                if ($tiket) {
+                if ($tiket->tkt_only != 'Y') {
                     // Update the existing hotel record with the new approval status
                     $tiket->update([
                         'approval_status' => $statusValue,

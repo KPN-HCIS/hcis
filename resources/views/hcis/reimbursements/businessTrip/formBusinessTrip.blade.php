@@ -220,7 +220,7 @@
                                                                                                         for="name">Location
                                                                                                         Agency</label>
                                                                                                     <select
-                                                                                                        class="form-control select2 location-select"
+                                                                                                        class="form-control location-select"
                                                                                                         name="location_bt_perdiem[]">
                                                                                                         <option
                                                                                                             value="">
