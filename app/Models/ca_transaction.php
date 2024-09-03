@@ -33,7 +33,8 @@ class ca_transaction extends Model
         'total_cost',
         'approval_status',
         'approval_sett',
-        'approval_extend'
+        'approval_extend',
+        'ca_status'
     ];
 
     public function getRouteKey()

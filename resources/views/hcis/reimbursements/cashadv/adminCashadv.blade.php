@@ -31,9 +31,9 @@
         </div>
         <!-- Content Row -->
         <div class="row">
-            <div class="card shadow mb-4">
-                <div class="card-body">
-                    <div class="col-md-7">
+            <div class="col-md-12">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
                         <form action="{{ route('cashadvanced.admin') }}" method="GET">
                             <div class="input-group">
                                 <label class="col-form-label">Start Date : </label>
@@ -69,7 +69,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
+                            <table class="table table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
@@ -83,7 +83,9 @@
                                         <th>Total CA</th>
                                         <th>Total Settlement</th>
                                         <th>Balance</th>
-                                        <th>Status</th>
+                                        <th>Request</th>
+                                        <th>Settlement</th>
+                                        <th>Status CA</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -107,15 +109,32 @@
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: none">
+                                                <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'default')))) }}" style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_status." - ".$ca_transaction->statusReqEmployee->fullname}}">
                                                     {{ $ca_transaction->approval_status }}
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : 'default')))) }}" style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_sett." - ".$ca_transaction->settName}}">
+                                                    {{ $ca_transaction->approval_sett }}
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <p class="badge text-bg-{{ $ca_transaction->ca_status == 'Done' ? 'success' : 
+                                                ($ca_transaction->ca_status == 'Refund' ? 'danger' : 
+                                                ($ca_transaction->ca_status == 'On Progress' ? 'secondary' : 'default')) }}">
+                                                    {{ $ca_transaction->ca_status }}
                                                 </p>
                                             </td>
                                             <td class="text-center">
                                                 <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                {{-- menambahkan tombol untuk merubah status menjadi Done yang sebelumnya 
+                                                On Progress : perusahaan akan mengirimkan kekurangan CA ke karyawan
+                                                Refund : karyawan akan mengirimkan kelebihan CA ke perusahaan
+                                                Done : transaksi tersebut sudah diverifikasi dan dianggap selesai --}}
+                                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"  data-bs-target="#exampleModal" data-id="{{ $ca_transaction->id }}" data-status="{{ $ca_transaction->ca_status }}" title="Status Update"><i class="ri-file-edit-line"></i></button>
                                                 <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
                                                     @csrf
-                                                    <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-outline-danger" title="Delete">
+                                                    <button onclick="return confirm('Apakah anda yakin ingin menghapus transaksi ini?')" class="btn btn-outline-danger" title="Delete">
                                                         <i class="ri-delete-bin-line"></i>
                                                     </button>
                                                 </form>
@@ -127,6 +146,35 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Cash Advanced Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('cashadvanced.adupdate', ':id') }}" method="POST">@csrf
+                    <div class="modal-body">
+                            {{-- <label for="transaction-id-display" class="col-form-label">Transaction ID: </label> --}}
+                            {{-- <input type="text" class="form-control" id="transaction-id-display" readonly> --}}
+                            <input type="hidden" name="transaction_id" id="transaction_id">
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Status : </label>
+                            <select class="form-select" name="ca_status" id="ca_status">
+                                <option value="On Progress">On Progress</option>
+                                <option value="Refund">Refund</option>
+                                <option value="Done">Done</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -207,5 +255,30 @@
                 }
             });
         }
+        //script modal
+        document.addEventListener('DOMContentLoaded', function () {
+            var exampleModal = document.getElementById('exampleModal');
+            exampleModal.addEventListener('show.bs.modal', function (event) {
+                // Dapatkan tombol yang men-trigger modal
+                var button = event.relatedTarget;
+
+                // Ambil data-id dan data-status dari tombol tersebut
+                var transactionId = button.getAttribute('data-id');
+                var transactionStatus = button.getAttribute('data-status');
+
+                // Temukan form di dalam modal dan update action-nya
+                var form = exampleModal.querySelector('form');
+                var action = form.getAttribute('action');
+                form.setAttribute('action', action.replace(':id', transactionId));
+
+                // Set nilai transaction_id di input hidden
+                var transactionInput = form.querySelector('#transaction_id');
+                transactionInput.value = transactionId;
+
+                // Pilih status yang sesuai di dropdown
+                var statusSelect = form.querySelector('#ca_status');
+                statusSelect.value = transactionStatus;
+            });
+        });
     </script>
 @endpush

@@ -1083,7 +1083,7 @@
                                     <input type="hidden" name="existing_prove_declare" value="{{ $transactions->prove_declare }}">
 
                                     <!-- Show existing file -->
-                                    <div id="existing-file-preview" class="mt-2">
+                                    <div id="existing-file-preview" class="mt-2" style="display:none">
                                         @if($transactions->prove_declare)
                                             @php
                                                 $extension = pathinfo($transactions->prove_declare, PATHINFO_EXTENSION);
@@ -1114,7 +1114,7 @@
                                             <span class="input-group-text">Rp</span>
                                         </div>
                                         <input class="form-control bg-light" name="totalca" id="totalca_declarasi"
-                                            type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
+                                            type="text" min="0" value="{{ number_format($transactions->total_ca, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">

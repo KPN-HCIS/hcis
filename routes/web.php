@@ -116,8 +116,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
     Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
     Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
-    Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
-    Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
+    Route::post('/cashadvanced/adupdate/{id}', [ReimburseController::class, 'cashadvancedAdminUpdate'])->name('cashadvanced.adupdate');
+
+    // Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
+    // Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
     
     // My Cash Advanced Deklarasi
     Route::get('/cashadvanced/deklarasi', [ReimburseController::class, 'deklarasiCashadvanced'])->name('cashadvancedDeklarasi');

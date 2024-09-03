@@ -1072,10 +1072,10 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12 mb-2">
-                                    <label for="prove_declare" class="form-label">Upload Proof</label>
+                                    <label for="prove_declare" class="form-label">Upload Document</label>
 
                                     <!-- Input file -->
-                                    <input type="file" id="prove_declare" name="prove_declare" accept="image/*, application/pdf" class="form-control" onchange="previewFile()" disabled>
+                                    <input type="hidden" id="prove_declare" name="prove_declare" accept="image/*, application/pdf" class="form-control" onchange="previewFile()" disabled>
                                     <input type="hidden" name="existing_prove_declare" value="{{ $transactions->prove_declare }}">
 
                                     <!-- Show existing file -->
@@ -1085,7 +1085,7 @@
                                                 $extension = pathinfo($transactions->prove_declare, PATHINFO_EXTENSION);
                                             @endphp
 
-                                            @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
+                                            @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'JPG', 'JPEG', 'PNG']))
                                                 <!-- Tampilkan gambar -->
                                                 <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" target="_blank">
                                                     <img id="existing-image" src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" alt="Proof Image" style="max-width: 200px;">

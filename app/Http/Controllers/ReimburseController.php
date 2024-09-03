@@ -51,6 +51,7 @@ class ReimburseController extends Controller
         $today = Carbon::today();
 
         foreach ($ca_transactions as $transaction) {
+            $transaction->settName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
             if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
                 //$transaction->approval_status = 'Done';
             }
@@ -75,7 +76,7 @@ class ReimburseController extends Controller
             //     $transaction->approval_sett = 'Declaration';
             // }
             // Simpan perubahan
-            $transaction->save();
+            // $transaction->save();
         }
         $deklarasiCACount = CATransaction::where('user_id', $userId)
         ->where(function ($query) {
@@ -100,7 +101,7 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Report CA';
-        $query = CATransaction::with('employee');
+        $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
 
         $startDate = date('Y-m-d');
         $endDate = date('Y-m-d');
@@ -117,7 +118,12 @@ class ReimburseController extends Controller
 
         // Eksekusi query untuk mendapatkan data yang difilter
         $ca_transactions = $query->get();
-        $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
+
+        foreach ($ca_transactions as $transaction) {
+            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
+        }
+
+        // $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
 
         // Memformat tanggal
         foreach ($ca_transactions as $transaction) {
@@ -126,7 +132,6 @@ class ReimburseController extends Controller
         }
 
         return view('hcis.reimbursements.cashadv.adminCashadv', [
-            'pendingCACount' => $pendingCACount,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
@@ -134,6 +139,25 @@ class ReimburseController extends Controller
             'startDate' => $startDate,
             'endDate' => $endDate,
         ]);
+    }
+    public function cashadvancedAdminUpdate(Request $request, $id){
+        $request->validate([
+            'ca_status' => 'required|string',
+        ]);
+
+        // Temukan transaksi berdasarkan ID
+        $ca_transaction = CATransaction::find($id);
+
+        if (!$ca_transaction) {
+            return redirect()->back()->with('error', 'Transaction not found.');
+        }
+
+        // Update field ca_status berdasarkan value yang dipilih di modal
+        $ca_transaction->ca_status = $request->input('ca_status');
+        $ca_transaction->save();
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->back()->with('success', 'Transaction status updated successfully.');
     }
     public function deklarasiCashadvanced()
     {
@@ -1161,12 +1185,17 @@ class ReimburseController extends Controller
         $model->total_ca = str_replace('.', '', $req->totalca);
         $model->total_real = str_replace('.', '', $req->totalca_deklarasi);
         $model->total_cost = $model->total_ca - $model->total_real;
+        //tambah 1 status disini
+        
 
         if ($req->input('action_ca_draft')) {
             $model->approval_sett = $req->input('action_ca_draft');
         }
         if ($req->input('action_ca_submit')) {
             $model->approval_sett = $req->input('action_ca_submit');
+            if($model->total_cost>0){
+                $model->ca_status = 'Refund';
+            }
         }
         if ($req->input('action_ca_submit')) {
             function findDepartmentHead($employee)
