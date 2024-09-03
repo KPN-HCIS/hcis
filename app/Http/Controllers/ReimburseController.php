@@ -120,6 +120,7 @@ class ReimburseController extends Controller
         $ca_transactions = $query->get();
 
         foreach ($ca_transactions as $transaction) {
+            $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
             $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
         }
 
