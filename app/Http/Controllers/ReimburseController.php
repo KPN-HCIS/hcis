@@ -205,6 +205,14 @@ class ReimburseController extends Controller
 
                 $transaction->approval_sett = 'Waiting for Declaration';
             }
+            if (
+                $transaction->end_date >= $today &&
+                $transaction->approval_status == 'Approved' &&
+                $transaction->approval_sett == 'Waiting for Declaration'
+            ) {
+
+                $transaction->approval_sett = 'On Progress';
+            }
             $transaction->save();
         }
 
@@ -997,110 +1005,93 @@ class ReimburseController extends Controller
         $model = CATransaction::find($id);
         $employee_data = Employee::where('id', $userId)->first();
 
-        // Ambil data dari permintaan
-        $model->start_date = $req->input('ext_start_date');
-        $model->end_date = $req->input('ext_end_date');
-        $model->total_days = $req->input('ext_totaldays');
-        $model->reason_extend = $req->input('ext_reason');
+        if ($req->input('action_ca_submit')) {
+            $model->approval_extend = $req->input('action_ca_submit');
+        }
+        if ($req->input('action_ca_submit')) {
+            function findDepartmentHead($employee)
+            {
+                $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
 
-        // if ($req->input('action_ca_submit')) {
-        //     $model->approval_status = $req->input('action_ca_submit');
-        // }
-        // if ($req->input('action_ca_submit')) {
-        //     function findDepartmentHead($employee)
-        //     {
-        //         $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+                if (!$manager) {
+                    return null;
+                }
 
-        //         if (!$manager) {
-        //             return null;
-        //         }
+                $designation = Designation::where('job_code', $manager->designation_code)->first();
 
-        //         $designation = Designation::where('job_code', $manager->designation_code)->first();
+                if ($designation->dept_head_flag == 'T') {
+                    return $manager;
+                } else {
+                    return findDepartmentHead($manager);
+                }
+                return null;
+            }
+            $deptHeadManager = findDepartmentHead($employee_data);
 
-        //         if ($designation->dept_head_flag == 'T') {
-        //             return $manager;
-        //         } else {
-        //             return findDepartmentHead($manager);
-        //         }
-        //         return null;
-        //     }
-        //     $deptHeadManager = findDepartmentHead($employee_data);
+            $managerL1 = $deptHeadManager->employee_id;
+            $managerL2 = $deptHeadManager->manager_l1_id;
 
-        //     $managerL1 = $deptHeadManager->employee_id;
-        //     $managerL2 = $deptHeadManager->manager_l1_id;
+            $model->extend_id = $managerL1;
 
-        //     $model->status_id = $managerL1;
+            $cek_director_id = Employee::select([
+                'dsg.department_level2',
+                'dsg2.director_flag',
+                DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
+                'dsg2.designation_name',
+                'dsg2.job_code',
+                'emp.fullname',
+                'emp.employee_id',
+            ])
+                ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
+                ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
+                ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
+                ->where('employees.designation_code', '=', $employee_data->designation_code)
+                ->where('dsg2.director_flag', '=', 'F')
+                ->get();
 
-        //     $cek_director_id = Employee::select([
-        //         'dsg.department_level2',
-        //         'dsg2.director_flag',
-        //         DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
-        //         'dsg2.designation_name',
-        //         'dsg2.job_code',
-        //         'emp.fullname',
-        //         'emp.employee_id',
-        //     ])
-        //         ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
-        //         ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
-        //         ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
-        //         ->where('employees.designation_code', '=', $employee_data->designation_code)
-        //         ->where('dsg2.director_flag', '=', 'F')
-        //         ->get();
+            $director_id = "";
 
-        //     $director_id = "";
+            if ($cek_director_id->isNotEmpty()) {
+                $director_id = $cek_director_id->first()->employee_id;
+            }
+            $data_matrix_approvals = MatrixApproval::where('modul', 'extendca')
+                ->where('group_company', 'like', '%' . $employee_data->group_company . '%')
+                ->where('contribution_level_code', 'like', '%' . $req->companyFilter . '%')
+                ->get();
+            foreach ($data_matrix_approvals as $data_matrix_approval) {
 
-        //     if ($cek_director_id->isNotEmpty()) {
-        //         $director_id = $cek_director_id->first()->employee_id;
-        //     }
-        //     //cek matrix approval
-        //     $total_ca = str_replace('.', '', $req->totalca);
-        //     $data_matrix_approvals = MatrixApproval::where(function ($query) use ($req) {
-        //         if ($req->ca_type === 'dns') {
-        //             $query->where('modul', 'dns');
-        //         } else {
-        //             $query->where('modul', 'like', '%' . $req->ca_type . '%');
-        //         }
-        //     })
-        //         ->where('group_company', 'like', '%' . $employee_data->group_company . '%')
-        //         ->where('contribution_level_code', 'like', '%' . $req->companyFilter . '%')
-        //         ->whereRaw(
-        //             '
-        //     ? BETWEEN
-        //     CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND
-        //     CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
-        //             [$total_ca]
-        //         )
-        //         ->get();
+                if ($data_matrix_approval->employee_id == "cek_L1") {
+                    $employee_id = $managerL1;
+                } else if ($data_matrix_approval->employee_id == "cek_L2") {
+                    $employee_id = $managerL2;
+                } else if ($data_matrix_approval->employee_id == "cek_director") {
+                    $employee_id = $director_id;
+                } else {
+                    $employee_id = $data_matrix_approval->employee_id;
+                }
+                if ($employee_id !=  null) {
+                    $model_approval = new ca_extend;
+                    $model_approval->ca_id = $req->no_id;
+                    $model_approval->role_name = $data_matrix_approval->desc;
+                    $model_approval->employee_id = $employee_id;
+                    $model_approval->layer = $data_matrix_approval->layer;
+                    $model_approval->approval_status = 'Pending';
+                    $model_approval->start_date = $req->input('start_date');
+                    $model_approval->end_date = $req->input('end_date');
+                    $model_approval->ext_end_date = $req->input('ext_end_date');
+                    $model_approval->total_days = $req->input('totaldays');
+                    $model_approval->ext_total_days = $req->input('ext_totaldays');
+                    $model_approval->reason_extend = $req->input('ext_reason');
 
-        //     // dd($data_matrix_approvals);
-        //     foreach ($data_matrix_approvals as $data_matrix_approval) {
+                    // Simpan data ke database
+                    $model_approval->save();
+                }
+            }
 
-        //         if ($data_matrix_approval->employee_id == "cek_L1") {
-        //             $employee_id = $managerL1;
-        //         } else if ($data_matrix_approval->employee_id == "cek_L2") {
-        //             $employee_id = $managerL2;
-        //         } else if ($data_matrix_approval->employee_id == "cek_director") {
-        //             $employee_id = $director_id;
-        //         } else {
-        //             $employee_id = $data_matrix_approval->employee_id;
-        //         }
-        //         if ($employee_id !=  null) {
-        //             $model_approval = new ca_extend;
-        //             $model_approval->ca_id = $req->no_id;
-        //             $model_approval->role_name = $data_matrix_approval->desc;
-        //             $model_approval->employee_id = $employee_id;
-        //             $model_approval->layer = $data_matrix_approval->layer;
-        //             $model_approval->approval_status = 'Pending';
+            $model->save();
 
-        //             // Simpan data ke database
-        //             $model_approval->save();
-        //         }
-        //     }
-        // }
-
-        $model->save();
-
-        return redirect()->intended(route('cashadvancedDeklarasi', absolute: false));
+            return redirect()->intended(route('cashadvancedDeklarasi', absolute: false));
+        }
     }
     function cashadvancedDelete($id)
     {

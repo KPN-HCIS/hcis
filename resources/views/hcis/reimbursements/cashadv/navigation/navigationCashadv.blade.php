@@ -96,14 +96,14 @@
                         </div>
                         <div class="col-md-12 mb-2">
                             <label class="form-label" for="reason">Reason</label>
-                            <textarea name="ext_reason" id="ext_reason" class="form-control"></textarea>
+                            <textarea name="ext_reason" id="ext_reason" class="form-control" required></textarea>
                         </div>
                         <input type="hidden" name="no_id" id="no_id">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="extendButton">Extending</button>
+                    <button type="submit" name="action_ca_submit" value="Pending" class="btn btn-primary" id="extendButton">Extending</button>
                 </div>
             </form>
         </div>

@@ -146,6 +146,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/approval/cashadvancedDeklarasi/form/{id}', [ApprovalReimburseController::class, 'cashadvancedFormDeklarasi'])->name('approval.cashadvancedFormDeklarasi');
     Route::post('/approval/cashadvancedDeklarasi/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasi'])->name('approval.cashadvancedDeclare');
 
+    // Approval Extend
+    Route::get('/approval/cashadvancedExtend', [ApprovalReimburseController::class, 'cashadvancedExtend'])->name('approval.cashadvancedExtend');
+    Route::post('/approval/cashadvancedExtended', [ApprovalReimburseController::class, 'cashadvancedActionExtended'])->name('approval.cashadvancedExtended');
+
     // My Hotel
     Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');
     Route::get('/hotel/form', [ReimburseController::class, 'hotelCreate'])->name('hotel.form');
