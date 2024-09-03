@@ -47,7 +47,7 @@ class ApprovalReimburseController extends Controller
             }
         }
 
-        return view('hcis.reimbursements.approval.approvalCashadv', [
+        return view('hcis.reimbursements.approval.approval', [
             'pendingCACount' => $pendingCACount,
             'pendingHTLCount' => $pendingHTLCount,
             'link' => $link,
@@ -336,17 +336,17 @@ class ApprovalReimburseController extends Controller
 
         $ca_transactions = CATransaction::with('employee')->where('extend_id', $employeeId)->where('approval_extend', 'Pending')->get();
 
-        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('sett_id'))
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('extend_id'))
             ->pluck('fullname', 'employee_id');
 
         $extendData = ca_extend::whereIn('ca_id', $ca_transactions->pluck('id'))
-            ->get(['ca_id', 'end_date', 'total_days', 'reason_extend']);
+            ->get(['ca_id', 'ext_end_date', 'ext_total_days', 'reason_extend']);
 
         // Indeks koleksi berdasarkan ca_id
         $extendTime = $extendData->keyBy('ca_id')->map(function ($item) {
             return [
-                'end_date' => $item->end_date,
-                'total_days' => $item->total_days,
+                'ext_end_date' => $item->ext_end_date,
+                'ext_total_days' => $item->ext_total_days,
                 'reason_extend' => $item->reason_extend,
             ];
         });

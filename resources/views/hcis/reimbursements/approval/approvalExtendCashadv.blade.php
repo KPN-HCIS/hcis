@@ -104,9 +104,8 @@
                                         <th>Company</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
-                                        <th>Total CA</th>
-                                        <th>Total Settlement</th>
-                                        <th>Balance</th>
+                                        <th>Extend End Date</th>
+                                        <th>Reason</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -127,9 +126,8 @@
                                             <td>{{ $transaction->contribution_level_code }}</td>
                                             <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-m-Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-m-Y') }}</td>
-                                            <td>Rp. {{ number_format($transaction->total_ca) }}</td>
-                                            <td>Rp. {{ number_format($transaction->total_real) }}</td>
-                                            <td>Rp. {{ number_format($transaction->total_cost) }}</td>
+                                            <td>{{ $extendTime[$transaction->id]['ext_end_date'] }}</td>
+                                            <td>{{ $extendTime[$transaction->id]['reason_extend'] }}</td>
                                             <td>
                                                 <p class="badge rounded-pill text-bg-{{ $transaction->approval_extend == 'Approved' ? 'success' : ($transaction->approval_extend == 'Declaration' ? 'info' : ($transaction->approval_extend == 'Pending' ? 'warning' : ($transaction->approval_extend == 'Rejected' ? 'danger' : ($transaction->approval_extend == 'Draft' ? 'secondary' : 'success')))) }}"
                                                     style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting Approve by: {{ isset($fullnames[$transaction->extend_id]) ? $fullnames[$transaction->extend_id] : 'Unknown Employee' }}">
@@ -143,8 +141,8 @@
                                                         data-start-date="{{ $transaction->start_date }}"
                                                         data-end-date="{{ $transaction->end_date }}"
                                                         data-total-days="{{ $transaction->total_days }}"
-                                                        data-end-date-ext="{{ $extendTime[$transaction->id]['end_date'] }}"
-                                                        data-total-days-ext="{{ $extendTime[$transaction->id]['total_days'] }}"
+                                                        data-end-date-ext="{{ $extendTime[$transaction->id]['ext_end_date'] }}"
+                                                        data-total-days-ext="{{ $extendTime[$transaction->id]['ext_total_days'] }}"
                                                         data-reason-ext="{{ $extendTime[$transaction->id]['reason_extend'] }}"
                                                         >
                                                     <i class="ri-calendar-line"></i>

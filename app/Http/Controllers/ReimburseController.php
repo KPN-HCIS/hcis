@@ -114,7 +114,7 @@ class ReimburseController extends Controller
     {
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
-        $link = 'Request for Cash Advanced';
+        $link = 'Cash Advanced';
         $today = Carbon::today();
 
         $employee_data = Employee::where('id', $userId)->first();
@@ -334,7 +334,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::orderBy('no_sppd')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Verified')->get();
 
         function findDepartmentHead($employee)
         {
@@ -568,7 +568,7 @@ class ReimburseController extends Controller
                         'relation_type' => array_filter([
                             'Food' => in_array('food', $req->food_e_relation ?? [$key]),
                             'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
+                            'Accomsmodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
                             'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
                             'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
                         ], fn($checked) => $checked),

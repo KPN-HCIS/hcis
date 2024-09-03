@@ -1546,8 +1546,11 @@
                 });
             }
 
+            let relationCounter = 0; // Counter untuk membuat ID unik
+
             // Function to add new ERelation form
             function addNewERelationForm() {
+                relationCounter++; // Increment counter setiap kali form baru ditambahkan
                 const newFormERelation = document.createElement('div');
                 newFormERelation.classList.add('mb-2');
 
@@ -1555,41 +1558,41 @@
                     <div class="mb-2">
                         <label class="form-label">Relation Type</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="transport_e_relation[]" value="transport">
-                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
+                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation_${relationCounter}" value="accommodation">
+                            <label class="form-check-label" for="accommodation_e_relation_${relationCounter}">Accommodation</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
-                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
+                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="transport_e_relation_${relationCounter}" value="transport">
+                            <label class="form-check-label" for="transport_e_relation_${relationCounter}">Transport</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation[]" value="gift">
-                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
+                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation_${relationCounter}" value="gift">
+                            <label class="form-check-label" for="gift_e_relation_${relationCounter}">Gift</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
-                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                            <input class="form-check-input" type="checkbox" name="fund_e_relation[]" id="fund_e_relation_${relationCounter}" value="fund">
+                            <label class="form-check-label" for="fund_e_relation_${relationCounter}">Fund</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="food_e_relation[]" name="food_e_relation[]" value="food">
-                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
+                            <input class="form-check-input" type="checkbox" name="food_e_relation[]" id="food_e_relation_${relationCounter}" value="food">
+                            <label class="form-check-label" for="food_e_relation_${relationCounter}">Food/Beverages/Souvenir</label>
                         </div>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Name</label>
-                        <input type="text" name="rname_e_relation[]" class="form-control">
+                        <input type="text" name="rname_e_relation[]" class="form-control" id="rname_e_relation_${relationCounter}">
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Position</label>
-                        <input type="text" name="rposition_e_relation[]" class="form-control">
+                        <input type="text" name="rposition_e_relation[]" class="form-control" id="rposition_e_relation_${relationCounter}">
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Company</label>
-                        <input type="text" name="rcompany_e_relation[]" class="form-control">
+                        <input type="text" name="rcompany_e_relation[]" class="form-control" id="rcompany_e_relation_${relationCounter}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Purpose</label>
-                        <input type="text" name="rpurpose_e_relation[]" class="form-control">
+                        <input type="text" name="rpurpose_e_relation[]" class="form-control" id="rpurpose_e_relation_${relationCounter}">
                     </div>
                     <button type="button" class="btn btn-danger remove-form-e-relation">Remove</button>
                     <hr class="border border-primary border-1 opacity-50">
