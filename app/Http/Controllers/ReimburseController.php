@@ -780,29 +780,46 @@ class ReimburseController extends Controller
         $userId = Auth::user();
         $parentLink = 'Reimbursement';
         $link = 'Ticket';
-        // Subquery to get the latest ticket id for each no_tkt
+
         $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
             ->where('user_id', $userId->id)
             ->groupBy('no_tkt')
             ->pluck('id');
 
-        // Retrieve the latest tickets using the ids from the subquery
         $transactions = Tiket::whereIn('id', $latestTicketIds)
             ->with('businessTrip')
             ->orderBy('created_at', 'desc')
-            ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt')
+            ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id')
             ->get();
 
         $tickets = Tiket::where('user_id', $userId->id)
             ->with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
+        $ticket = Tiket::where('user_id', $userId->id)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('no_tkt');
 
-        // Count the number of tickets with the same no_tkt
+        // Fetch employee data
+        $employeeIds = $tickets->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+
+        // Fetch manager IDs from the employees data
+        $managerL1Ids = $employees->pluck('manager_l1_id')->unique();
+        $managerL2Ids = $employees->pluck('manager_l2_id')->unique();
+        // dd($managerL1Ids, $managerL2Ids);
+
+        // Fetch manager names
+        $managerL1Names = Employee::whereIn('employee_id', $managerL1Ids)->pluck('fullname');
+        $managerL2Names = Employee::whereIn('employee_id', $managerL2Ids)->pluck('fullname');
+        // dd($managerL1Names, $managerL2Names);
+
         $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
             return [$key => ['total' => $group->count()]];
         });
-        // dd($transactions);
+        // dd($tickets, $transaction->no_tkt);
 
         return view('hcis.reimbursements.ticket.ticket', [
             'link' => $link,
@@ -810,9 +827,15 @@ class ReimburseController extends Controller
             'userId' => $userId,
             'transactions' => $transactions,
             'ticketCounts' => $ticketCounts,
+            'tickets' => $tickets,
+            'ticket' => $ticket,
+            'managerL1Names' => $managerL1Names,
+            'managerL2Names' => $managerL2Names,
         ]);
     }
-    function ticketCreate()
+
+
+    public function ticketCreate()
     {
 
         $userId = Auth::id();
@@ -956,7 +979,7 @@ class ReimburseController extends Controller
 
         // Update BusinessTrip record
         $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
-        if ($bt) {
+        if ($bt && $tiket->approval_status == 'Pending L1') {
             $bt->tiket = 'Ya';
             $bt->save();
         }
@@ -1034,40 +1057,186 @@ class ReimburseController extends Controller
         ]);
     }
 
-
-    public function ticketUpdate(Request $req, $key)
+    public function ticketUpdate(Request $req)
     {
-        $userId = Auth::id();
-        $model = Tiket::findByRouteKey($key);
-
-        if (!$model) {
-            Alert::error('Error', 'Ticket not found');
-            return redirect()->back();
+        function getRomanMonth_tkt($month)
+        {
+            $romanMonths = [
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
+            ];
+            return $romanMonths[$month];
         }
 
-        $model->update([
-            'jk_tkt' => $req->jk_tkt,
-            'np_tkt' => $req->np_tkt,
-            'noktp_tkt' => $req->noktp_tkt,
-            'tlp_tkt' => $req->tlp_tkt,
-            'jenis_tkt' => $req->jenis_tkt,
-            'dari_tkt' => $req->dari_tkt,
-            'ke_tkt' => $req->ke_tkt,
-            'tgl_brkt_tkt' => $req->tgl_brkt_tkt,
-            'jam_brkt_tkt' => $req->jam_brkt_tkt,
-            'type_tkt' => $req->type_tkt,
-            'tgl_plg_tkt' => $req->tgl_plg_tkt,
-            'jam_plg_tkt' => $req->jam_plg_tkt,
-            'updated_by' => $userId
-        ]);
+        function generateTicketNumber($type)
+        {
+            $userId = Auth::id();
+            $currentYear = date('Y');
+            $currentMonth = date('n');
+            $romanMonth = getRomanMonth_tkt($currentMonth);
 
-        Alert::success('Success', 'Ticket updated successfully');
+            // Determine the prefix based on the type
+            $prefix = '';
+            if ($type === 'Dinas') {
+                $prefix = 'TKTD-HRD';
+            } elseif ($type === 'Cuti') {
+                $prefix = 'TKTC-HRD';
+            } else {
+                throw new Exception('Invalid ticket type');
+            }
+
+            // Get the last transaction of the current year and month for the specific type
+            $lastTransaction = Tiket::whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->where('no_tkt', 'like', "%/$prefix/$romanMonth/$currentYear")
+                ->orderBy('no_tkt', 'desc')
+                ->first();
+
+            // Determine the new ticket number
+            if ($lastTransaction && preg_match('/(\d{3})\/' . $prefix . '\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
+                $lastNumber = intval($matches[1]);
+            } else {
+                $lastNumber = 0;
+            }
+
+            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $newNoTkt = "$newNumber/$prefix/$romanMonth/$currentYear";
+
+            return $newNoTkt;
+        }
+
+        // Determine the ticket type from the request
+        $ticketType = $req->jns_dinas_tkt == 'Dinas' ? 'Dinas' : 'Cuti';
+
+        // Fetch existing tickets based on the 'np_tkt' from the request
+        $existingTickets = Tiket::whereIn('np_tkt', $req->np_tkt)->get()->keyBy('np_tkt');
+
+        $processedTicketIds = [];
+        $newNoTkt = null;
+
+        for ($i = 0; $i < count($req->jk_tkt); $i++) {
+            if (empty($req->np_tkt[$i])) {
+                continue;
+            }
+
+            // Determine if the current ticket is new or existing
+            $isNewTicket = !isset($existingTickets[$req->np_tkt[$i]]);
+
+            // Prepare ticket data
+            $ticketData = [
+                'no_sppd' => $req->bisnis_numb,
+                'jk_tkt' => $req->jk_tkt[$i],
+                'np_tkt' => $req->np_tkt[$i],
+                'noktp_tkt' => $req->noktp_tkt[$i],
+                'tlp_tkt' => $req->tlp_tkt[$i],
+                'jenis_tkt' => $req->jenis_tkt[$i] ?? null,
+                'ket_tkt' => $req->ket_tkt[$i],
+                'dari_tkt' => $req->dari_tkt[$i],
+                'ke_tkt' => $req->ke_tkt[$i],
+                'tgl_brkt_tkt' => $req->tgl_brkt_tkt[$i],
+                'jam_brkt_tkt' => $req->jam_brkt_tkt[$i],
+                'type_tkt' => $req->type_tkt[$i],
+                'tgl_plg_tkt' => $req->tgl_plg_tkt[$i],
+                'jam_plg_tkt' => $req->jam_plg_tkt[$i],
+                'user_id' => Auth::id(),
+                'unit' => $req->unit,
+                'jns_dinas_tkt' => $req->jns_dinas_tkt,
+                'approval_status' => $req->status,
+            ];
+
+            if ($isNewTicket) {
+                if (is_null($newNoTkt)) {
+                    // Generate a new ticket number if it's the first new ticket
+                    $newNoTkt = generateTicketNumber($ticketType);
+                }
+
+                // Create a new ticket entry
+                Tiket::create(array_merge($ticketData, [
+                    'id' => (string) Str::uuid(),
+                    'no_tkt' => $newNoTkt,
+                ]));
+            } else {
+                // Update existing ticket
+                $existingTicket = $existingTickets[$req->np_tkt[$i]];
+                // Keep the existing no_tkt
+                $ticketData['no_tkt'] = $existingTicket->no_tkt;
+                $existingTicket->update($ticketData);
+            }
+
+            $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
+            if ($bt && $ticketData['approval_status'] == 'Pending L1') {
+                $bt->tiket = 'Ya';
+                $bt->save();
+            }
+
+            $processedTicketIds[] = $req->np_tkt[$i];
+        }
+
+        // Remove tickets that are no longer in the request
+        Tiket::whereIn('np_tkt', $existingTickets->keys())
+            ->whereNotIn('np_tkt', $processedTicketIds)
+            ->delete();
+
+        // Show alert based on update results
+        if (count($processedTicketIds) > 0) {
+            Alert::success('Success', "Tickets updated successfully");
+        } else {
+            Alert::warning('Warning', "No tickets were updated.");
+        }
+
         return redirect()->route('ticket');
     }
-    function ticketDelete($key)
+
+    public function ticketDelete($key)
     {
         $model = Tiket::findByRouteKey($key);
         $model->delete();
         return redirect()->intended(route('ticket', absolute: false));
     }
+    public function ticketExport($id)
+    {
+        // Fetch all tickets related to the provided ID (assuming 'no_sppd' is the common field)
+        $ticket = Tiket::findOrFail($id);
+        $tickets = Tiket::where('no_tkt', $ticket->no_tkt)->get();
+
+        // Prepare the data to be passed to the PDF view
+        $data = [
+            'ticket' => $ticket,
+            'passengers' => $tickets->map(function ($ticket) {
+                return (object) [
+                    'np_tkt' => $ticket->np_tkt,
+                    'tlp_tkt' => $ticket->tlp_tkt,
+                    'jk_tkt' => $ticket->jk_tkt,
+                    'dari_tkt' => $ticket->dari_tkt,
+                    'ke_tkt' => $ticket->ke_tkt,
+                    'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                    'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                    'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                    'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                    'type_tkt' => $ticket->type_tkt,
+                    'jenis_tkt' => $ticket->jenis_tkt,
+                    'company_name' => $ticket->employee->company_name ?? 'N/A',
+                    'cost_center' => $ticket->cost_center ?? 'N/A'
+                ];
+            })
+        ];
+
+        // Load the view and pass the data
+        $pdf = PDF::loadView('hcis.reimbursements.businessTrip.tiket_pdf', $data);
+
+        // Stream the generated PDF to the browser, opening in a new tab
+        return $pdf->stream('Ticket.pdf');
+    }
+
+
 }

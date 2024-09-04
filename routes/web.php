@@ -132,6 +132,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ticket/edit/{id}', [ReimburseController::class, 'ticketEdit'])->name('ticket.edit');
     Route::put('/ticket/update/{id}', [ReimburseController::class, 'ticketUpdate'])->name('ticket.update');
     Route::post('/ticket/delete/{id}', [ReimburseController::class, 'ticketDelete'])->name('ticket.delete');
+    Route::get('/ticket/pdf/{id}', [ReimburseController::class, 'ticketExport'])->name('ticket.export');
 
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');

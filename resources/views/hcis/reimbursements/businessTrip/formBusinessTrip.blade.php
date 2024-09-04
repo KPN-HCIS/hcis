@@ -158,17 +158,17 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="enter-headingOne">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                            class="accordion-button collapsed fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#enter-collapseOne"
-                                                                                            aria-expanded="true"
+                                                                                            aria-expanded="false"
                                                                                             aria-controls="enter-collapseOne">
                                                                                             Perdiem Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="enter-collapseOne"
-                                                                                        class="accordion-collapse show"
+                                                                                        class="accordion-collapse collapse"
                                                                                         aria-labelledby="enter-headingOne">
                                                                                         <div class="accordion-body">
                                                                                             <div
@@ -252,7 +252,7 @@
                                                                                                         for="name">Company
                                                                                                         Code</label>
                                                                                                     <select
-                                                                                                        class="form-control select2"
+                                                                                                        class="form-control"
                                                                                                         id="companyFilter"
                                                                                                         name="company_bt_perdiem[]">
                                                                                                         <option
@@ -339,17 +339,17 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingTransport">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                            class="accordion-button collapsed fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapseTransport"
-                                                                                            aria-expanded="true"
+                                                                                            aria-expanded="false"
                                                                                             aria-controls="collapseTransport">
                                                                                             Transport Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseTransport"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        class="accordion-collapse collapse"
                                                                                         aria-labelledby="headingTransport">
                                                                                         <div class="accordion-body">
                                                                                             <div
@@ -459,17 +459,17 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingPenginapan">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                            class="accordion-button collapsed fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapsePenginapan"
-                                                                                            aria-expanded="true"
+                                                                                            aria-expanded="false"
                                                                                             aria-controls="collapsePenginapan">
                                                                                             Accommodation Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapsePenginapan"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        class="accordion-collapse collapse"
                                                                                         aria-labelledby="headingPenginapan">
                                                                                         <div class="accordion-body">
                                                                                             <div
@@ -615,17 +615,17 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingLainnya">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                            class="accordion-button collapsed fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapseLainnya"
-                                                                                            aria-expanded="true"
+                                                                                            aria-expanded="false"
                                                                                             aria-controls="collapseLainnya">
                                                                                             Other Plans
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseLainnya"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        class="accordion-collapse collapse"
                                                                                         aria-labelledby="headingLainnya">
                                                                                         <div class="accordion-body">
                                                                                             <div

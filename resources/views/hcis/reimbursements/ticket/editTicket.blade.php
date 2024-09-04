@@ -30,7 +30,9 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="btEditForm" method="post" action="{{ route('ticket.submit') }}">@csrf
+                        <form id="btEditForm" method="post" action="{{ route('ticket.update', ['id' => $ticket->id]) }}">
+                            @csrf
+                            @method('PUT')
                             <div class="row my-2">
                                 <div class="col-md-5">
                                     <div class="mb-2">
@@ -76,15 +78,7 @@
                                 <div class="col-md-4">
                                     <div class="mb-2">
                                         <label class="form-label" for="jns_dinas_tkt">Service Type</label>
-                                        <select class="form-select" name="jns_dinas_tkt" id="jns_dinas_tkt">
-                                            <option value="" disabled selected>Select Service Type</option>
-                                            <option value="Dinas"
-                                                {{ old('jns_dinas_tkt', $ticket->jns_dinas_tkt) == 'Dinas' ? 'selected' : '' }}>
-                                                Dinas</option>
-                                            <option value="Cuti"
-                                                {{ old('jns_dinas_tkt', $ticket->jns_dinas_tkt) == 'Cuti' ? 'selected' : '' }}>
-                                                Cuti</option>
-                                        </select>
+                                        <input type="text" class="form-control bg-light" name="jns_dinas_tkt" id="jns_dinas_tkt" value="{{ $ticket->jns_dinas_tkt }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -266,25 +260,26 @@
                                                 </div>
 
                                                 @if ($i < 5)
-                                                    <div class="mt-3">
-                                                        <label class="form-label">Add more ticket</label>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio"
-                                                                id="more_tkt_no_{{ $i }}"
-                                                                name="more_tkt_{{ $i }}" value="Tidak"
-                                                                checked>
-                                                            <label class="form-check-label"
-                                                                for="more_tkt_no_{{ $i }}">Tidak</label>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio"
-                                                                id="more_tkt_yes_{{ $i }}"
-                                                                name="more_tkt_{{ $i }}" value="Ya"
-                                                                onchange="toggleNextForm({{ $i }})">
-                                                            <label class="form-check-label"
-                                                                for="more_tkt_yes_{{ $i }}">Ya</label>
-                                                        </div>
+                                                <div class="mt-3">
+                                                    <label class="form-label">Add more ticket</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio"
+                                                            id="more_tkt_no_{{ $i }}"
+                                                            name="more_tkt_{{ $i }}" value="Tidak"
+                                                            {{ (isset($ticketData[$i - 1]['more_tkt']) && $ticketData[$i - 1]['more_tkt'] == 'Tidak') ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="more_tkt_no_{{ $i }}">Tidak</label>
                                                     </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio"
+                                                            id="more_tkt_yes_{{ $i }}"
+                                                            name="more_tkt_{{ $i }}" value="Ya"
+                                                            {{ (isset($ticketData[$i - 1]['more_tkt']) && $ticketData[$i - 1]['more_tkt'] == 'Ya') ? 'checked' : '' }}
+                                                            onchange="toggleNextForm({{ $i }})">
+                                                        <label class="form-check-label"
+                                                            for="more_tkt_yes_{{ $i }}">Ya</label>
+                                                    </div>
+                                                </div>
                                                 @endif
                                             </div>
                                         </div>

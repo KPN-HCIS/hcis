@@ -76,7 +76,7 @@
         <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
     </div>
     <h5 class="center">TICKET FORM</h5>
-    <h5 class="center">No. {{ $ticket->no_sppd }}</h5>
+    <h5 class="center">No. {{ $ticket->no_sppd ?? 'Non Business Trip'}}</h5>
 
     <table>
         <p>Please order tickets as follows:</p>
@@ -181,17 +181,17 @@
         <tr>
             <td class="label">Manager Name 1</td>
             <td class="colon">:</td>
-            <td class="value"> {{ $passenger->businessTrip->manager1->fullname ?? '-' }}</td>
+            <td class="value"> {{ $ticket->manager1_fullname ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Date</td>
             <td class="colon">:</td>
-            <td class="value"> {{ $sppd->latestApprovalL1->approved_at ?? '-' }}</td>
+            <td class="value"> {{ $ticket->latestApprovalL1->approved_at ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Manager Name 2</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->manager2->fullname ?? '-' }}</td>
+            <td class="value">{{ $ticket->manager2_fullname ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Date</td>

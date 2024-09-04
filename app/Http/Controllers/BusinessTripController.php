@@ -1073,7 +1073,9 @@ class BusinessTripController extends Controller
                                         'type_tkt' => $ticket->type_tkt,
                                         'jenis_tkt' => $ticket->jenis_tkt,
                                         'company_name' => $ticket->employee->company_name,
-                                        'cost_center' => $ticket->cost_center
+                                        'cost_center' => $ticket->cost_center,
+                                        'manager1_fullname' => $ticket->manager1_fullname, // Accessor attribute
+                                        'manager2_fullname' => $ticket->manager2_fullname,
                                     ];
                                 })
                             ];
@@ -1105,12 +1107,11 @@ class BusinessTripController extends Controller
                                 continue 2;
                             }
                             $pdfName = 'Deklarasi.pdf';
-                            $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
+                            $viewPath = 'hcis.reimbursements.cashadv.printDeklarasiCashadv';
                             $employee_data = Employee::where('id', $user->id)->first();
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
-                            $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-                            $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
+                            $approval = ca_sett_approval::with('employee')->where('ca_id', $ca->id)->orderBy('layer', 'asc')->get();
 
                             $data = [
                                 'link' => 'Cash Advanced',
@@ -1119,9 +1120,8 @@ class BusinessTripController extends Controller
                                 'companies' => $companies,
                                 'locations' => $locations,
                                 'employee_data' => $employee_data,
-                                'perdiem' => $perdiem,
-                                'no_sppds' => $no_sppds,
                                 'transactions' => $ca,
+                                'approval' => $approval,
                             ];
                             break;
                         default:
@@ -1253,7 +1253,9 @@ class BusinessTripController extends Controller
                                         'type_tkt' => $ticket->type_tkt,
                                         'jenis_tkt' => $ticket->jenis_tkt,
                                         'company_name' => $ticket->employee->company_name,
-                                        'cost_center' => $ticket->cost_center
+                                        'cost_center' => $ticket->cost_center,
+                                        'manager1_fullname' => $ticket->manager1_fullname, // Accessor attribute
+                                        'manager2_fullname' => $ticket->manager2_fullname,
                                     ];
                                 })
                             ];
@@ -1267,7 +1269,7 @@ class BusinessTripController extends Controller
                             $viewPath = 'hcis.reimbursements.businessTrip.hotel_pdf';
                             $data = [
                                 'hotel' => $hotels->first(), // Use the first hotel for general details
-                                'hotels' => $hotels // Pass all hotels for detailed view
+                                'hotels' => $hotels
                             ];
                             break;
 
@@ -1280,31 +1282,29 @@ class BusinessTripController extends Controller
                             $viewPath = 'hcis.reimbursements.businessTrip.taksi_pdf';
                             $data = ['taksi' => $taksi];
                             break;
-                            case 'deklarasi':
-                                $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
-                                if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2'])) {
-                                    continue 2;
-                                }
-                                $pdfName = 'Deklarasi.pdf';
-                                $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
-                                $employee_data = Employee::where('id', $user->id)->first();
-                                $companies = Company::orderBy('contribution_level')->get();
-                                $locations = Location::orderBy('area')->get();
-                                $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-                                $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
+                        case 'deklarasi':
+                            $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
+                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2'])) {
+                                continue 2;
+                            }
+                            $pdfName = 'Deklarasi.pdf';
+                            $viewPath = 'hcis.reimbursements.cashadv.printDeklarasiCashadv';
+                            $employee_data = Employee::where('id', $user->id)->first();
+                            $companies = Company::orderBy('contribution_level')->get();
+                            $locations = Location::orderBy('area')->get();
+                            $approval = ca_sett_approval::with('employee')->where('ca_id', $ca->id)->orderBy('layer', 'asc')->get();
 
-                                $data = [
-                                    'link' => 'Cash Advanced',
-                                    'parentLink' => 'Reimbursement',
-                                    'userId' => $user->id,
-                                    'companies' => $companies,
-                                    'locations' => $locations,
-                                    'employee_data' => $employee_data,
-                                    'perdiem' => $perdiem,
-                                    'no_sppds' => $no_sppds,
-                                    'transactions' => $ca,
-                                ];
-                                break;
+                            $data = [
+                                'link' => 'Cash Advanced',
+                                'parentLink' => 'Reimbursement',
+                                'userId' => $user->id,
+                                'companies' => $companies,
+                                'locations' => $locations,
+                                'employee_data' => $employee_data,
+                                'transactions' => $ca,
+                                'approval' => $approval,
+                            ];
+                            break;
                         default:
                             continue 2;
                     }

@@ -76,8 +76,35 @@
                                             <td>{{ $transaction->no_tkt }}</td>
                                             <td>{{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }}</td>
                                             <td>{{ $transaction->jns_dinas_tkt }}</td>
-                                            <td>{{ $transaction->dari_tkt. "/" . $transaction->ke_tkt }}</td>
-                                            <td>Details</td>
+                                            <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
+                                            <td class="text-info">
+                                                <a class="text-info btn-detail" data-toggle="modal"
+                                                    data-target="#detailModal" style="cursor: pointer"
+                                                    data-tiket="{{ json_encode(
+                                                        $ticket[$transaction->no_tkt]->map(function ($ticket) {
+                                                            return [
+                                                                // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
+                                                                'No. SPPD' => $ticket->no_sppd,
+                                                                'Passengers Name' => $ticket->np_tkt,
+                                                                'Unit' => $ticket->unit,
+                                                                'Gender' => $ticket->jk_tkt,
+                                                                'NIK' => $ticket->noktp_tkt,
+                                                                'Phone No.' => $ticket->tlp_tkt,
+                                                                'From' => $ticket->dari_tkt,
+                                                                'To' => $ticket->ke_tkt,
+                                                                // 'Ticket Type' => $ticket->type_tkt,
+                                                                'Information' => $ticket->ket_tkt ?? 'No Data',
+                                                                'Departure Date' => date('d-M-Y', strtotime($ticket->tgl_brkt_tkt)),
+                                                                'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
+                                                                'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-M-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
+                                                                'Return Time' => !empty($ticket->jam_plg_tkt) ? date('H:i', strtotime($ticket->jam_plg_tkt)) : 'No Data',
+                                                            ];
+                                                        }),
+                                                    ) }}">
+                                                    <u>Details</u>
+                                                </a>
+                                            </td>
+
                                             <td style="align-content: center">
                                                 <span
                                                     class="badge rounded-pill bg-{{ $transaction->approval_status == 'Approved' ||
@@ -102,27 +129,37 @@
                                                                         ? 'info'
                                                                         : 'secondary')))) }}"
                                                     style="font-size: 12px; padding: 0.5rem 1rem;"
-                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Names[$transaction->manager_l1_id] ?? 'Unknown' }}"
-                                                @elseif ($transaction->approval_status == 'Pending L2')
-                                                    title="L2 Manager: {{ $managerL2Names[$transaction->manager_l2_id] ?? 'Unknown' }}" @elseif($transaction->approval_status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names[$transaction->manager_l1_id] ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names[$transaction->manager_l2_id] ?? 'Unknown' }}" @endif>
+                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
+                                                    @elseif ($transaction->approval_status == 'Pending L2')
+                                                    title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}"
+                                                    @elseif($transaction->approval_status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
+                                                    @elseif($transaction->approval_status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}" @endif>
                                                     {{ $transaction->approval_status == 'Approved' ? 'Request Approved' : $transaction->approval_status }}
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <a href="{{ route('ticket.edit', encrypt($transaction->id)) }}"
-                                                    class="btn btn-sm rounded-pill btn-outline-warning" title="Edit"><i
-                                                        class="ri-edit-box-line"></i></a>
-                                                <form action="{{ route('ticket.delete', encrypt($transaction->id)) }}"
-                                                    method="POST" style="display:inline;">
-                                                    @csrf
-                                                    <button onclick="return confirm('Apakah ingin Menghapus?')"
-                                                        class="btn btn-sm rounded-pill btn-outline-danger" title="Delete">
-                                                        <i class="ri-delete-bin-line"></i>
-                                                    </button>
-                                                </form>
+                                                @if ($transaction->approval_status == 'Draft')
+                                                    <a href="{{ route('ticket.edit', encrypt($transaction->id)) }}"
+                                                        class="btn btn-sm rounded-pill btn-outline-warning" title="Edit">
+                                                        <i class="ri-edit-box-line"></i>
+                                                    </a>
+                                                    <form action="{{ route('ticket.delete', encrypt($transaction->id)) }}"
+                                                        method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button onclick="return confirm('Apakah ingin Menghapus?')"
+                                                            class="btn btn-sm rounded-pill btn-outline-danger"
+                                                            title="Delete">
+                                                            <i class="ri-delete-bin-line"></i>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <a href="{{ route('ticket.export', ['id' => $transaction->id]) }}"
+                                                        class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
+                                                        <i class="bi bi-download"></i>
+                                                    </a>
                                             </td>
-                                        </tr>
+                                    @endif
+                                    </tr>
                                     @endforeach
                                 </tbody>
                                 @if (session('message'))
@@ -137,10 +174,120 @@
             </div>
         </div>
     </div>
-@endsection
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                        style="border: 0px; border-radius:4px;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="detailTypeHeader" class="mb-3"></h6>
+                    <div id="detailContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary rounded-pill" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-@push('scripts')
+
+    {{-- @push('scripts') --}}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
     <script>
+        $(document).ready(function() {
+            $('.btn-detail').click(function() {
+                var tiket = $(this).data('tiket');
+
+                function createTableHtml(data, title) {
+                    var tableHtml = '<h5>' + title + '</h5>';
+                    tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+                    var isArray = Array.isArray(data) && data.length > 0;
+
+                    // Assuming all objects in the data array have the same keys, use the first object to create headers
+                    if (isArray) {
+                        for (var key in data[0]) {
+                            if (data[0].hasOwnProperty(key)) {
+                                tableHtml += '<th>' + key + '</th>';
+                            }
+                        }
+                    } else if (typeof data === 'object') {
+                        // If data is a single object, create headers from its keys
+                        for (var key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                tableHtml += '<th>' + key + '</th>';
+                            }
+                        }
+                    }
+
+                    tableHtml += '</tr></thead><tbody>';
+
+                    // Loop through each item in the array and create a row for each
+                    if (isArray) {
+                        data.forEach(function(row) {
+                            tableHtml += '<tr>';
+                            for (var key in row) {
+                                if (row.hasOwnProperty(key)) {
+                                    tableHtml += '<td>' + row[key] + '</td>';
+                                }
+                            }
+                            tableHtml += '</tr>';
+                        });
+                    } else if (typeof data === 'object') {
+                        // If data is a single object, create a single row
+                        tableHtml += '<tr>';
+                        for (var key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                tableHtml += '<td>' + data[key] + '</td>';
+                            }
+                        }
+                        tableHtml += '</tr>';
+                    }
+
+                    tableHtml += '</tbody></table>';
+                    return tableHtml;
+                }
+
+                // $('#detailTypeHeader').text('Detail Information');
+                $('#detailContent').empty();
+
+                try {
+                    var content = '';
+
+                    if (tiket && tiket !== 'undefined') {
+                        var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
+                        content += createTableHtml(tiketData, 'Ticket Detail');
+                    }
+
+                    if (content !== '') {
+                        $('#detailContent').html(content);
+                    } else {
+                        $('#detailContent').html('<p>No detail information available.</p>');
+                    }
+
+                    $('#detailModal').modal('show');
+                } catch (e) {
+                    $('#detailContent').html('<p>Error loading data</p>');
+                }
+            });
+
+            $('#detailModal').on('hidden.bs.modal', function() {
+                $('body').removeClass('modal-open').css({
+                    overflow: '',
+                    padding: ''
+                });
+                $('.modal-backdrop').remove();
+            });
+        });
+
         $(document).ready(function() {
             var table = $('#yourTableId').DataTable({
                 "pageLength": 10 // Set default page length
@@ -160,4 +307,5 @@
             alert(successMessage);
         }
     </script>
-@endpush
+    {{-- @endpush --}}
+@endsection

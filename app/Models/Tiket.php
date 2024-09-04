@@ -11,23 +11,52 @@ use Illuminate\Support\Facades\Log;
 class Tiket extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class, 'user_id', 'id');
-    }
     public function businessTrip()
     {
         return $this->belongsTo(BusinessTrip::class, 'user_id', 'user_id');
     }
-    public function manager1()
+    public function employee()
     {
-        return $this->belongsTo(Employee::class, 'manager_l1_id', 'employee_id');
+        return $this->belongsTo(Employee::class, 'user_id', 'id');
+    }
+    public function getManager1FullnameAttribute()
+    {
+        // Get the associated BusinessTrip record
+        $businessTrip = $this->businessTrip;
+        if ($businessTrip && $businessTrip->manager1) {
+            return $businessTrip->manager1->fullname;
+        }
+        return '-';
     }
 
-    public function manager2()
+    // Relationship to Employee through BusinessTrip for Manager 2
+    public function getManager2FullnameAttribute()
     {
-        return $this->belongsTo(Employee::class, 'manager_l2_id', 'employee_id');
+        // Get the associated BusinessTrip record
+        $businessTrip = $this->businessTrip;
+        if ($businessTrip && $businessTrip->manager2) {
+            return $businessTrip->manager2->fullname;
+        }
+        return '-';
     }
+    public function latestApprovalL1()
+    {
+        return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+            ->where('layer', 1)
+            ->where('approval_status', 'Pending L2')
+            ->latest('approved_at');
+    }
+    public function latestApprovalL2()
+    {
+        return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+            ->where('layer', 2)
+            ->where('approval_status', 'Approved')
+            ->latest('approved_at');
+    }
+
+
+
+
     protected $keyType = 'string';
     public $incrementing = false;
 

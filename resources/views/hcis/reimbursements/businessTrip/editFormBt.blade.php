@@ -131,7 +131,89 @@
                                         Luar Kota</option>
                                 </select>
                             </div>
+                            @php
+                                // Provide default empty arrays if caDetail or sections are not set
+                                $detailPerdiem =
+                                    $caDetail[
+                                        'detail_perdiem'
+                                    ] ?? [];
+                                $detailTransport =
+                                    $caDetail[
+                                        'detail_transport'
+                                    ] ?? [];
+                                $detailPenginapan =
+                                    $caDetail[
+                                        'detail_penginapan'
+                                    ] ?? [];
+                                $detailLainnya =
+                                    $caDetail[
+                                        'detail_lainnya'
+                                    ] ?? [];
 
+                                // Calculate totals with default values
+                                $totalPerdiem = array_reduce(
+                                    $detailPerdiem,
+                                    function (
+                                        $carry,
+                                        $item,
+                                    ) {
+                                        return $carry +
+                                            (int) ($item[
+                                                'nominal'
+                                            ] ?? 0);
+                                    },
+                                    0,
+                                );
+
+                                $totalTransport = array_reduce(
+                                    $detailTransport,
+                                    function (
+                                        $carry,
+                                        $item,
+                                    ) {
+                                        return $carry +
+                                            (int) ($item[
+                                                'nominal'
+                                            ] ?? 0);
+                                    },
+                                    0,
+                                );
+
+                                $totalPenginapan = array_reduce(
+                                    $detailPenginapan,
+                                    function (
+                                        $carry,
+                                        $item,
+                                    ) {
+                                        return $carry +
+                                            (int) ($item[
+                                                'nominal'
+                                            ] ?? 0);
+                                    },
+                                    0,
+                                );
+
+                                $totalLainnya = array_reduce(
+                                    $detailLainnya,
+                                    function (
+                                        $carry,
+                                        $item,
+                                    ) {
+                                        return $carry +
+                                            (int) ($item[
+                                                'nominal'
+                                            ] ?? 0);
+                                    },
+                                    0,
+                                );
+
+                                // Total Cash Advanced
+                                $totalCashAdvanced =
+                                    $totalPerdiem +
+                                    $totalTransport +
+                                    $totalPenginapan +
+                                    $totalLainnya;
+                            @endphp
                             <div id="additional-fields" class="row mb-3" style="display: none;">
                                 <div class="col-md-12">
                                     <label for="ca" class="form-label">Cash Advanced</label>
@@ -139,7 +221,6 @@
                                         <option value="Tidak" {{ $n->ca == 'Tidak' ? 'selected' : '' }}>Tidak</option>
                                         <option value="Ya" {{ $n->ca == 'Ya' ? 'selected' : '' }}>Ya</option>
                                     </select>
-
                                     <div class="row mt-2" id="ca_div" style="display: none;">
                                         <div class="col-md-12">
                                             <div class="table-responsive-sm">
@@ -151,14 +232,7 @@
                                                             <div class="table-responsive-sm">
                                                                 <div class="d-flex flex-column gap-2">
                                                                     <div class="card">
-                                                                        {{-- <div class="card-body text-center">
-                                                                            <button type="button" style="width: 60%"
-                                                                                id="toggle-bt-perdiem"
-                                                                                class="btn btn-primary mt-3"
-                                                                                data-state="false"><i
-                                                                                    class="bi bi-plus-circle"></i>
-                                                                                Perdiem</button>
-                                                                        </div> --}}
+
                                                                         <div id="perdiem-card" class="card-body"
                                                                             style="display:">
                                                                             <div class="accordion" id="accordionPerdiem">
@@ -166,104 +240,35 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="enter-headingOne">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                        @if (count($detailPerdiem) > 0)
+                                                                                            class="accordion-button @if($detailPerdiem[0]['start_date'] === NULL) collapsed @endif fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#enter-collapseOne"
-                                                                                            aria-expanded="true"
-                                                                                            aria-controls="enter-collapseOne">
+                                                                                            aria-expanded="@if($detailPerdiem[0]['start_date'] === NULL) true @else false @endif"
+                                                                                            aria-controls="enter-collapseOne"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#enter-collapseOne"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="enter-collapseOne"
+                                                                                        @endif
+                                                                                            >
                                                                                             Perdiem Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="enter-collapseOne"
-                                                                                        class="accordion-collapse show"
+                                                                                        @if (count($detailPerdiem) > 0)
+                                                                                            class="accordion-collapse @if($detailPerdiem[0]['start_date'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
                                                                                         aria-labelledby="enter-headingOne">
                                                                                         <div class="accordion-body">
                                                                                             <div
                                                                                                 id="form-container-bt-perdiem">
-                                                                                                @php
-                                                                                                    // Provide default empty arrays if caDetail or sections are not set
-                                                                                                    $detailPerdiem =
-                                                                                                        $caDetail[
-                                                                                                            'detail_perdiem'
-                                                                                                        ] ?? [];
-                                                                                                    $detailTransport =
-                                                                                                        $caDetail[
-                                                                                                            'detail_transport'
-                                                                                                        ] ?? [];
-                                                                                                    $detailPenginapan =
-                                                                                                        $caDetail[
-                                                                                                            'detail_penginapan'
-                                                                                                        ] ?? [];
-                                                                                                    $detailLainnya =
-                                                                                                        $caDetail[
-                                                                                                            'detail_lainnya'
-                                                                                                        ] ?? [];
-
-                                                                                                    // Calculate totals with default values
-                                                                                                    $totalPerdiem = array_reduce(
-                                                                                                        $detailPerdiem,
-                                                                                                        function (
-                                                                                                            $carry,
-                                                                                                            $item,
-                                                                                                        ) {
-                                                                                                            return $carry +
-                                                                                                                (int) ($item[
-                                                                                                                    'nominal'
-                                                                                                                ] ?? 0);
-                                                                                                        },
-                                                                                                        0,
-                                                                                                    );
-
-                                                                                                    $totalTransport = array_reduce(
-                                                                                                        $detailTransport,
-                                                                                                        function (
-                                                                                                            $carry,
-                                                                                                            $item,
-                                                                                                        ) {
-                                                                                                            return $carry +
-                                                                                                                (int) ($item[
-                                                                                                                    'nominal'
-                                                                                                                ] ?? 0);
-                                                                                                        },
-                                                                                                        0,
-                                                                                                    );
-
-                                                                                                    $totalPenginapan = array_reduce(
-                                                                                                        $detailPenginapan,
-                                                                                                        function (
-                                                                                                            $carry,
-                                                                                                            $item,
-                                                                                                        ) {
-                                                                                                            return $carry +
-                                                                                                                (int) ($item[
-                                                                                                                    'nominal'
-                                                                                                                ] ?? 0);
-                                                                                                        },
-                                                                                                        0,
-                                                                                                    );
-
-                                                                                                    $totalLainnya = array_reduce(
-                                                                                                        $detailLainnya,
-                                                                                                        function (
-                                                                                                            $carry,
-                                                                                                            $item,
-                                                                                                        ) {
-                                                                                                            return $carry +
-                                                                                                                (int) ($item[
-                                                                                                                    'nominal'
-                                                                                                                ] ?? 0);
-                                                                                                        },
-                                                                                                        0,
-                                                                                                    );
-
-                                                                                                    // Total Cash Advanced
-                                                                                                    $totalCashAdvanced =
-                                                                                                        $totalPerdiem +
-                                                                                                        $totalTransport +
-                                                                                                        $totalPenginapan +
-                                                                                                        $totalLainnya;
-                                                                                                @endphp
                                                                                                 @if (!empty($detailPerdiem))
                                                                                                     @foreach ($detailPerdiem as $index => $perdiem)
                                                                                                         <div
@@ -443,7 +448,7 @@
                                                                                                             for="name">Location
                                                                                                             Agency</label>
                                                                                                         <select
-                                                                                                            class="form-control location-select"
+                                                                                                            class="form-control select2 location-select"
                                                                                                             name="location_bt_perdiem[]">
                                                                                                             <option
                                                                                                                 value="">
@@ -512,30 +517,29 @@
                                                                                                     <hr
                                                                                                         class="border border-primary border-1 opacity-50">
                                                                                                 @endif
-
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Total
-                                                                                                        Perdiem</label>
-                                                                                                    <div
-                                                                                                        class="input-group">
-                                                                                                        <div
-                                                                                                            class="input-group-append">
-                                                                                                            <span
-                                                                                                                class="input-group-text">Rp</span>
-                                                                                                        </div>
-                                                                                                        <input
-                                                                                                            class="form-control bg-light"
-                                                                                                            name="total_bt_perdiem[]"
-                                                                                                            id="total_bt_perdiem[]"
-                                                                                                            type="text"
-                                                                                                            min="0"
-                                                                                                            value="{{ $totalPerdiem ?? 0 }}"
-                                                                                                            readonly>
-                                                                                                    </div>
-                                                                                                </div>
                                                                                             </div>
 
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Total
+                                                                                                    Perdiem</label>
+                                                                                                <div
+                                                                                                    class="input-group">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_perdiem[]"
+                                                                                                        id="total_bt_perdiem[]"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="{{ $totalPerdiem ?? 0 }}"
+                                                                                                        readonly>
+                                                                                                </div>
+                                                                                            </div>
                                                                                             <button type="button"
                                                                                                 id="add-more-bt-perdiem"
                                                                                                 class="btn btn-primary mt-3">Add
@@ -546,15 +550,6 @@
                                                                             </div>
                                                                         </div>
 
-                                                                        <!-- Button and Card for Transport -->
-                                                                        {{-- <div class="card-body text-center">
-                                                                            <button type="button" style="width: 60%"
-                                                                                id="toggle-bt-transport"
-                                                                                class="btn btn-primary mt-3"
-                                                                                data-state="false"><i
-                                                                                    class="bi bi-plus-circle"></i>
-                                                                                Transport</button>
-                                                                        </div> --}}
                                                                         <div id="transport-card" class="card-body"
                                                                             style="display:">
                                                                             <div class="accordion"
@@ -563,17 +558,31 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingTransport">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                        @if (count($detailTransport) > 0)
+                                                                                            class="accordion-button @if($detailTransport[0]['tanggal'] === NULL) collapsed @endif fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapseTransport"
-                                                                                            aria-expanded="true"
-                                                                                            aria-controls="collapseTransport">
+                                                                                            aria-expanded="@if($detailTransport[0]['tanggal'] === NULL) false @else true @endif"
+                                                                                            aria-controls="collapseTransport"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseTransport"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapseTransport"
+                                                                                        @endif
+                                                                                            >
                                                                                             Transport Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseTransport"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        @if (count($detailTransport) > 0)
+                                                                                            class="accordion-collapse @if($detailTransport[0]['tanggal'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
                                                                                         aria-labelledby="headingTransport">
                                                                                         <div class="accordion-body">
                                                                                             <div
@@ -729,27 +738,27 @@
                                                                                                     <hr
                                                                                                         class="border border-primary border-1 opacity-50">
                                                                                                 @endif
+                                                                                            </div>
 
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Total
-                                                                                                        Transport</label>
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Total
+                                                                                                    Transport</label>
+                                                                                                <div
+                                                                                                    class="input-group">
                                                                                                     <div
-                                                                                                        class="input-group">
-                                                                                                        <div
-                                                                                                            class="input-group-append">
-                                                                                                            <span
-                                                                                                                class="input-group-text">Rp</span>
-                                                                                                        </div>
-                                                                                                        <input
-                                                                                                            class="form-control bg-light"
-                                                                                                            name="total_bt_transport[]"
-                                                                                                            id="total_bt_transport[]"
-                                                                                                            type="text"
-                                                                                                            min="0"
-                                                                                                            value="{{ $totalTransport ?? 0 }}"
-                                                                                                            readonly>
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
                                                                                                     </div>
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_transport[]"
+                                                                                                        id="total_bt_transport[]"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="{{ $totalTransport ?? 0 }}"
+                                                                                                        readonly>
                                                                                                 </div>
                                                                                             </div>
                                                                                             <button type="button"
@@ -762,15 +771,6 @@
                                                                             </div>
                                                                         </div>
 
-                                                                        <!-- Button and Card for Penginapan -->
-                                                                        {{-- <div class="card-body text-center">
-                                                                            <button type="button" style="width: 60%"
-                                                                                id="toggle-bt-penginapan"
-                                                                                class="btn btn-primary mt-3"
-                                                                                data-state="false"><i
-                                                                                    class="bi bi-plus-circle"></i>
-                                                                                Accommodation</button>
-                                                                        </div> --}}
                                                                         <div id="penginapan-card" class="card-body"
                                                                             style="display:">
                                                                             <div class="accordion"
@@ -779,17 +779,31 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingPenginapan">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                        @if (count($detailPenginapan) > 0)
+                                                                                            class="accordion-button @if($detailPenginapan[0]['start_date'] === NULL) collapsed @endif fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapsePenginapan"
-                                                                                            aria-expanded="true"
-                                                                                            aria-controls="collapsePenginapan">
+                                                                                            aria-expanded="@if($detailPenginapan[0]['start_date'] === NULL) false @else true  @endif"
+                                                                                            aria-controls="collapsePenginapan"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapsePenginapan"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapsePenginapan"
+                                                                                        @endif
+                                                                                        >
                                                                                             Accommodation Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapsePenginapan"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        @if (count($detailPenginapan) > 0)
+                                                                                            class="accordion-collapse @if($detailPenginapan[0]['start_date'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
                                                                                         aria-labelledby="headingPenginapan">
                                                                                         <div class="accordion-body">
                                                                                             <div
@@ -1033,51 +1047,39 @@
                                                                                                         <hr
                                                                                                             class="border border-primary border-1 opacity-50">
                                                                                                     @endif
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Accommodation Total</label>
-                                                                                                        <div
-                                                                                                            class="input-group">
-                                                                                                            <div
-                                                                                                                class="input-group-append">
-                                                                                                                <span
-                                                                                                                    class="input-group-text">Rp</span>
-                                                                                                            </div>
-                                                                                                            <input
-                                                                                                                class="form-control bg-light"
-                                                                                                                name="total_bt_penginapan[]"
-                                                                                                                id="total_bt_penginapan"
-                                                                                                                type="text"
-                                                                                                                min="0"
-                                                                                                                value="{{ $totalPenginapanCost }}"
-                                                                                                                readonly>
-                                                                                                        </div>
-                                                                                                    </div>
                                                                                                 </div>
-
-
-                                                                                                <button type="button"
-                                                                                                    id="add-more-bt-penginapan"
-                                                                                                    class="btn btn-primary mt-3">Add
-                                                                                                    More</button>
                                                                                             </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Accommodation Total</label>
+                                                                                                <div
+                                                                                                    class="input-group">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_penginapan[]"
+                                                                                                        id="total_bt_penginapan"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="{{ $totalPenginapanCost }}"
+                                                                                                        readonly>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-penginapan"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
 
-
-                                                                        <!-- Button and Card for Lainnya -->
-                                                                        {{-- <div class="card-body text-center">
-                                                                            <button type="button" style="width: 60%"
-                                                                                id="toggle-bt-lainnya"
-                                                                                class="btn btn-primary mt-3"
-                                                                                data-state="false"><i
-                                                                                    class="bi bi-plus-circle"></i>
-                                                                                Others</button>
-                                                                        </div> --}}
                                                                         <div id="lainnya-card" class="card-body"
                                                                             style="display:">
                                                                             <div class="accordion" id="accordionLainnya">
@@ -1085,17 +1087,31 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingLainnya">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                        @if (count($detailLainnya) > 0)
+                                                                                            class="accordion-button @if($detailLainnya[0]['tanggal'] === NULL) collapsed @endif fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapseLainnya"
-                                                                                            aria-expanded="true"
-                                                                                            aria-controls="collapseLainnya">
+                                                                                            aria-expanded="@if($detailLainnya[0]['tanggal'] === NULL) false @else true @endif"
+                                                                                            aria-controls="collapseLainnya"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseLainnya"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapseLainnya"
+                                                                                        @endif
+                                                                                        >
                                                                                             Others Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseLainnya"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        @if (count($detailLainnya) > 0)
+                                                                                            class="accordion-collapse @if($detailLainnya[0]['tanggal'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
                                                                                         aria-labelledby="headingLainnya">
                                                                                         <div class="accordion-body">
                                                                                             <div
@@ -1211,48 +1227,46 @@
                                                                                                                 class="border border-primary border-1 opacity-50">
                                                                                                         </div>
                                                                                                     @endif
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Total
-                                                                                                            Lainnya</label>
-                                                                                                        <div
-                                                                                                            class="input-group">
-                                                                                                            <div
-                                                                                                                class="input-group-append">
-                                                                                                                <span
-                                                                                                                    class="input-group-text">Rp</span>
-                                                                                                            </div>
-                                                                                                              @php
-                                                                                                               $index = $index ?? 0;
-                                                                                                                $totalLainnya =
-                                                                                                                    $totalLainnya ??
-                                                                                                                    0; // Default to 0 if $totalLainnya is not set
-                                                                                                                $formattedTotalLainnya = number_format(
-                                                                                                                    $totalLainnya,
-                                                                                                                    0,
-                                                                                                                    ',',
-                                                                                                                    '.',
-                                                                                                                );
-                                                                                                            @endphp
-                                                                                                            <input
-                                                                                                                class="form-control bg-light"
-                                                                                                                name="total_bt_lainnya[]"
-                                                                                                                id="total_bt_lainnya"
-                                                                                                                type="text"
-                                                                                                                min="0"
-                                                                                                                 value="{{ old('total_bt_lainnya.' . $index, $formattedTotalLainnya) }}"
-                                                                                                                readonly>
-                                                                                                        </div>
-                                                                                                    </div>
-
-                                                                                                    <button type="button"
-                                                                                                        id="add-more-bt-lainnya"
-                                                                                                        class="btn btn-primary mt-3">Add
-                                                                                                        More</button>
                                                                                                 </div>
-
                                                                                             </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Total
+                                                                                                    Lainnya</label>
+                                                                                                <div
+                                                                                                    class="input-group">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
+                                                                                                      @php
+                                                                                                       $index = $index ?? 0;
+                                                                                                        $totalLainnya =
+                                                                                                            $totalLainnya ??
+                                                                                                            0; // Default to 0 if $totalLainnya is not set
+                                                                                                        $formattedTotalLainnya = number_format(
+                                                                                                            $totalLainnya,
+                                                                                                            0,
+                                                                                                            ',',
+                                                                                                            '.',
+                                                                                                        );
+                                                                                                    @endphp
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_lainnya[]"
+                                                                                                        id="total_bt_lainnya"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                         value="{{ old('total_bt_lainnya.' . $index, $formattedTotalLainnya) }}"
+                                                                                                        readonly>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-lainnya"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>

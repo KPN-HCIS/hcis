@@ -20,6 +20,26 @@ class Taksi extends Model
     {
         return $this->belongsTo(BusinessTrip::class, 'user_id', 'user_id');
     }
+    public function getManager1FullnameAttribute()
+    {
+        // Get the associated BusinessTrip record
+        $businessTrip = $this->businessTrip;
+        if ($businessTrip && $businessTrip->manager1) {
+            return $businessTrip->manager1->fullname;
+        }
+        return '-';
+    }
+
+    // Relationship to Employee through BusinessTrip for Manager 2
+    public function getManager2FullnameAttribute()
+    {
+        // Get the associated BusinessTrip record
+        $businessTrip = $this->businessTrip;
+        if ($businessTrip && $businessTrip->manager2) {
+            return $businessTrip->manager2->fullname;
+        }
+        return '-';
+    }
     protected $fillable = [
         'id',
         'no_vt',
