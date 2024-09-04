@@ -44,7 +44,12 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
-        $ca_transactions = CATransaction::with(['employee', 'statusReqEmployee'])->where('user_id', $userId)->where('approval_status', '!=', 'Done')->get();
+        $today = Carbon::today();
+        $ca_transactions = CATransaction::with(['employee', 'statusReqEmployee'])
+        ->where('user_id', $userId)
+        ->where('ca_status', '!=', 'Done')
+        ->where('approval_sett', '=', '')
+        ->get();
         // dd($ca_transactions);
         //tambah where status<>done
         $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
@@ -173,6 +178,7 @@ class ReimburseController extends Controller
                 $query->where('approval_status', 'Approved');
             })
             ->where('end_date', '<=', $today)
+            ->where('ca_status', '!=', 'Done')
             ->get();
         // dd($ca_transactions);
         foreach ($ca_transactions as $transaction) {
@@ -226,7 +232,7 @@ class ReimburseController extends Controller
         $ca_transactions = CATransaction::with('employee')
             ->where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_status', 'Done');
+                $query->where('ca_status', 'Done');
             })
             ->where('end_date', '<=', $today)
             ->get();
@@ -933,7 +939,8 @@ class ReimburseController extends Controller
     {
         $model = ca_transaction::find($id);
         $model->delete();
-        return redirect()->intended(route('cashadvanced.admin', absolute: false));
+        // return redirect()->intended(route('cashadvanced.admin', absolute: false));
+        return redirect()->back()->with('success', 'Transaction successfully deleted.');
     }
     function cashadvancedDownload($key)
     {
@@ -1196,6 +1203,8 @@ class ReimburseController extends Controller
             $model->approval_sett = $req->input('action_ca_submit');
             if($model->total_cost>0){
                 $model->ca_status = 'Refund';
+            }else{
+                $model->ca_status = 'On Progress';
             }
         }
         if ($req->input('action_ca_submit')) {

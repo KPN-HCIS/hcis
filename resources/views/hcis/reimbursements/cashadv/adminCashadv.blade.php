@@ -127,14 +127,10 @@
                                             </td>
                                             <td class="text-center">
                                                 <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                                {{-- menambahkan tombol untuk merubah status menjadi Done yang sebelumnya 
-                                                On Progress : perusahaan akan mengirimkan kekurangan CA ke karyawan
-                                                Refund : karyawan akan mengirimkan kelebihan CA ke perusahaan
-                                                Done : transaksi tersebut sudah diverifikasi dan dianggap selesai --}}
                                                 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"  data-bs-target="#exampleModal" data-id="{{ $ca_transaction->id }}" data-status="{{ $ca_transaction->ca_status }}" title="Status Update"><i class="ri-file-edit-line"></i></button>
                                                 <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
                                                     @csrf
-                                                    <button onclick="return confirm('Apakah anda yakin ingin menghapus transaksi ini?')" class="btn btn-outline-danger" title="Delete">
+                                                    <button onclick="return confirm('Are you sure you want to delete this transaction?')" class="btn btn-outline-danger" title="Delete">
                                                         <i class="ri-delete-bin-line"></i>
                                                     </button>
                                                 </form>
