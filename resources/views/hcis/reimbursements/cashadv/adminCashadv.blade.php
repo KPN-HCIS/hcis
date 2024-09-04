@@ -87,6 +87,7 @@
                                         <th>Settlement</th>
                                         <th>Status CA</th>
                                         <th>Actions</th>
+                                        <th>Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -125,9 +126,14 @@
                                                     {{ $ca_transaction->ca_status }}
                                                 </p>
                                             </td>
+                                            <td class="text-left">
+                                                <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-secondary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                @if($ca_transaction->approval_sett=='Approved')
+                                                <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"  data-bs-target="#exampleModal" data-id="{{ $ca_transaction->id }}" data-status="{{ $ca_transaction->ca_status }}" title="Status Update"><i class="ri-file-edit-line"></i></button>
+                                                @endif
+                                                
+                                            </td>
                                             <td class="text-center">
-                                                <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"  data-bs-target="#exampleModal" data-id="{{ $ca_transaction->id }}" data-status="{{ $ca_transaction->ca_status }}" title="Status Update"><i class="ri-file-edit-line"></i></button>
                                                 <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
                                                     @csrf
                                                     <button onclick="return confirm('Are you sure you want to delete this transaction?')" class="btn btn-outline-danger" title="Delete">

@@ -93,10 +93,20 @@
             </div>
 
             <!-- Add Data Button -->
-            <div class="col-md-6 mt-4 ms-mb-3 text-end" style="padding-bottom: 10px;">
-                <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" >
+            <div class="col-md-6 mt-4 text-end">
+                @if ($pendingCACount >= 2)
+                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" style="font-size: 18px"
+                        onclick="alert('Tidak dapat menambahkan data, anda masih memiliki 2 CA Pending.'); return false; ">
+                        <i class="bi bi-plus-circle"></i> Add Data
+                    </a>
+                @else
+                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" style="font-size: 18px">
+                        <i class="bi bi-plus-circle"></i> Add Data
+                    </a>
+                @endif
+                {{-- <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
                     <i class="bi bi-plus-circle"></i> Add Data
-                </a>
+                </a> --}}
             </div>
         </div>
         
@@ -157,7 +167,6 @@
                                                     <span class="text-success">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
                                                 @endif
                                             </td>
-
                                             <td>
                                                 <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_status." - ".$ca_transaction->settName}}">
                                                     {{ $ca_transaction->approval_status }}

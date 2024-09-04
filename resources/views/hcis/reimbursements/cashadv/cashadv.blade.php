@@ -82,10 +82,10 @@
                                 <i class="bi bi-arrow-left"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item">
                             {{ $parentLink }}
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item">
                             {{ $link }}
                         </li>
                     </ol>
@@ -94,9 +94,19 @@
 
             <!-- Add Data Button -->
             <div class="col-md-6 mt-4 text-end">
-                <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
+                @if ($pendingCACount >= 2)
+                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" 
+                        onclick="alert('Tidak dapat menambahkan data, anda masih memiliki 2 CA Pending.'); return false; ">
+                        <i class="bi bi-plus-circle"></i> Add Data
+                    </a>
+                @else
+                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" >
+                        <i class="bi bi-plus-circle"></i> Add Data
+                    </a>
+                @endif
+                {{-- <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
                     <i class="bi bi-plus-circle"></i> Add Data
-                </a>
+                </a> --}}
             </div>
         </div>
         <!-- Content Row -->
@@ -149,10 +159,16 @@
                                             <td>{{ \Carbon\Carbon::parse($ca_transaction->end_date)->format('d-M-y') }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
-                                            <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: none">
-                                                    {{ $ca_transaction->approval_status }}  {{ $ca_transaction->approval_sett }}
+                                                @if ($ca_transaction->total_cost < 0)
+                                                    <span class="text-danger">Rp. -{{ number_format(abs($ca_transaction->total_cost)) }}</span>
+                                                @else
+                                                    <span class="text-success">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}" style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_status." - ".$ca_transaction->settName}}">
+                                                    {{ $ca_transaction->approval_status }}
                                                 </p>
                                             </td>
                                             <td class="text-center">
@@ -168,7 +184,7 @@
                                                     {{-- <a href="{{ route('cashadvanced.show', $ca_transaction->id) }}" class="btn btn-outline-info" title="Edit"><i class="bi bi-card-checklist"></i></a> --}}
                                                     <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
                                                         @csrf
-                                                        <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-outline-danger" title="Delete">
+                                                        <button onclick="return confirm('Do you want to delete this transaction?')" class="btn btn-outline-danger" title="Delete">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </form>

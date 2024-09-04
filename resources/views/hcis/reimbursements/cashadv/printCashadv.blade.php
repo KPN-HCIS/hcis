@@ -95,6 +95,12 @@
         .table-approve .total-row {
             text-align: left;
         }
+        .approved {
+            color: green;
+        }
+        .pending {
+            color: yellow;
+        }
     </style>
 </head>
 
@@ -188,6 +194,11 @@
             <td class="label">Keperluan</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->ca_needs }}</td>
+        </tr>
+        <tr>
+            <td class="label">Status Pengajuan</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $transactions->approval_status }}</td>
         </tr>
     </table>
 
@@ -385,6 +396,7 @@
             </tr>
         </table>
     @elseif ( $transactions->type_ca == 'entr' )
+        @if (count($detailCA['detail_e']) > 0 && !empty($detailCA['detail_e'][0]['type']))
         <table class="table-approve">
             <tr>
                 <td colspan="3"><b>Detail Entertain :</b></td>
@@ -418,7 +430,9 @@
                 </td>
             </tr>
         </table>
+        @endif
 
+        @if (count($detailCA['relation_e']) > 0 && !empty($detailCA['relation_e'][0]['nama']))
         <table class="table-approve">
             <tr>
                 <td colspan="5"><b>Relation Entertain:</b></td>
@@ -465,6 +479,7 @@
                 <td>{{ count($detailCA['relation_e']) }}</td>
             </tr>
         </table>
+        @endif
     @endif
 
     <table>

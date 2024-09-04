@@ -56,22 +56,6 @@
 @section('content')
     <!-- Begin Page Content -->
     <div class="container-fluid">
-        {{-- <style>
-            thead th.sticky {
-                position: sticky;
-                left: 0;
-                background-color: white; /* Pastikan background tidak transparan */
-                z-index: 1; /* Agar tetap di atas elemen lain */
-            }
-
-            tbody td.sticky {
-                position: sticky;
-                left: 0;
-                background-color: white;
-                z-index: 1;
-            }
-        </style> --}}
-        <!-- Page Heading -->
         <div class="row">
             <!-- Breadcrumb Navigation -->
             <div class="col-md-6 mt-3 ms-mb-3">
@@ -82,10 +66,10 @@
                                 <i class="bi bi-arrow-left"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item">
+                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
                             {{ $parentLink }}
                         </li>
-                        <li class="breadcrumb-item active">
+                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
                             {{ $link }}
                         </li>
                     </ol>
@@ -107,93 +91,62 @@
                                 <input type="text" name="customsearch" id="customsearch" class="form-control w-  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search" >
                             </div>
                         </div>
-                        @include('hcis.reimbursements.cashadv.navigation.navigationCashadv')
+                        @include('hcis.reimbursements.approval.navigation.navigationApproval')
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
+                            <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th>No</th>
                                         <th class="sticky-col-header" style="background-color: white">Cash Advance No</th>
                                         <th>Type</th>
+                                        <th>Requestor</th>
                                         <th>Company</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
-                                        <th>Total CA</th>
-                                        <th>Total Settlement</th>
-                                        <th>Balance</th>
+                                        <th>Extend End Date</th>
+                                        <th>Reason</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($ca_transactions as $ca_transaction)
+                                    @foreach($ca_transactions as $transaction)
                                         <tr>
-                                            <td class="text-center" >{{ $loop->index + 1 }}</td>
-                                            <td style="background-color: white;" class="sticky-col">{{ $ca_transaction->no_ca }}</td>
-                                            @if ($ca_transaction->type_ca == 'dns')
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td style="background-color: white;" class="sticky-col">{{ $transaction->no_ca }}</td>
+                                            @if($transaction->type_ca == 'dns')
                                                 <td>Business Trip</td>
-                                            @elseif($ca_transaction->type_ca == 'ndns')
+                                            @elseif($transaction->type_ca == 'ndns')
                                                 <td>Non Business Trip</td>
-                                            @elseif($ca_transaction->type_ca == 'entr')
+                                            @elseif($transaction->type_ca == 'entr')
                                                 <td>Entertainment</td>
                                             @endif
-                                            <td>{{ $ca_transaction->contribution_level_code }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($ca_transaction->start_date)->format('d-M-y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($ca_transaction->end_date)->format('d-M-y') }}</td>
-                                            <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
-                                            <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
+                                            <td>{{ $transaction->employee->fullname }}</td>
+                                            <td>{{ $transaction->contribution_level_code }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-m-Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-m-Y') }}</td>
+                                            <td>{{ $extendTime[$transaction->id]['ext_end_date'] }}</td>
+                                            <td>{{ $extendTime[$transaction->id]['reason_extend'] }}</td>
                                             <td>
-                                                @if ($ca_transaction->total_cost < 0)
-                                                    <span class="text-danger">Rp. -{{ number_format(abs($ca_transaction->total_cost)) }}</span>
-                                                @else
-                                                    <span class="text-success">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : ($ca_transaction->approval_sett == 'On Progress' ? 'warning' : 'default'))))) }}" style="pointer-events: auto; cursor: default;" title="{{
-                                                    
-                                                    $ca_transaction->approval_sett." - ".$ca_transaction->settName}}">
-                                                    {{ $ca_transaction->approval_sett }}
+                                                <p class="badge rounded-pill text-bg-{{ $transaction->approval_extend == 'Approved' ? 'success' : ($transaction->approval_extend == 'Declaration' ? 'info' : ($transaction->approval_extend == 'Pending' ? 'warning' : ($transaction->approval_extend == 'Rejected' ? 'danger' : ($transaction->approval_extend == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting Approve by: {{ isset($fullnames[$transaction->extend_id]) ? $fullnames[$transaction->extend_id] : 'Unknown Employee' }}">
+                                                    {{ $transaction->approval_extend }}
                                                 </p>
                                             </td>
                                             <td class="text-center">
-                                                @if ($ca_transaction->approval_sett == 'Approved')
-                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                                @elseif ($ca_transaction->approval_sett == 'Waiting for Declaration')
-                                                    @if ($ca_transaction->approval_extend == 'Pending')
-                                                    @else
-                                                        <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
-                                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend"
-                                                                data-no-id="{{ $ca_transaction->id }}"
-                                                                data-no-ca="{{ $ca_transaction->no_ca }}"
-                                                                data-start-date="{{ $ca_transaction->start_date }}"
-                                                                data-end-date="{{ $ca_transaction->end_date }}"
-                                                                data-total-days="{{ $ca_transaction->total_days }}">
-                                                            <i class="ri-calendar-line"></i>
-                                                        </button>
-                                                    @endif
-                                                @elseif ($ca_transaction->approval_sett == 'Pending')
-                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                                @elseif ($ca_transaction->approval_sett == 'Reject')
-                                                @elseif ($ca_transaction->approval_sett == 'Draft')
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
-                                                @elseif ($ca_transaction->approval_sett == 'On Progress')
-                                                    @if ($ca_transaction->approval_extend == 'Pending')
-                                                    @else
-                                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend"
-                                                                data-no-id="{{ $ca_transaction->id }}"
-                                                                data-no-ca="{{ $ca_transaction->no_ca }}"
-                                                                data-start-date="{{ $ca_transaction->start_date }}"
-                                                                data-end-date="{{ $ca_transaction->end_date }}"
-                                                                data-total-days="{{ $ca_transaction->total_days }}">
-                                                            <i class="ri-calendar-line"></i>
-                                                        </button>
-                                                        {{-- <a href="#" class="btn btn-outline-primary" title="Extend" ><i class="ri-calendar-line"></i></a> --}}
-                                                    @endif
-                                                @else
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
-                                                @endif
+                                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend"
+                                                        data-no-id="{{ $transaction->id }}"
+                                                        data-no-ca="{{ $transaction->no_ca }}"
+                                                        data-start-date="{{ $transaction->start_date }}"
+                                                        data-end-date="{{ $transaction->end_date }}"
+                                                        data-total-days="{{ $transaction->total_days }}"
+                                                        data-end-date-ext="{{ $extendTime[$transaction->id]['ext_end_date'] }}"
+                                                        data-total-days-ext="{{ $extendTime[$transaction->id]['ext_total_days'] }}"
+                                                        data-reason-ext="{{ $extendTime[$transaction->id]['reason_extend'] }}"
+                                                        >
+                                                    <i class="ri-calendar-line"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -217,6 +170,7 @@
             const extStartDateInput = document.getElementById('ext_start_date');
             const extEndDateInput = document.getElementById('ext_end_date');
             const extTotalDaysInput = document.getElementById('ext_totaldays');
+            const extReason = document.getElementById('ext_reason');
 
             const extNoCa = document.getElementById('ext_no_ca');
 
@@ -271,13 +225,17 @@
                 button.addEventListener('click', function() {
                     const startDate = this.getAttribute('data-start-date');
                     const endDate = this.getAttribute('data-end-date');
+                    const endDateExt = this.getAttribute('data-end-date-ext');
+                    const totalDaysExt = this.getAttribute('data-total-days-ext');
+                    const reasonExt = this.getAttribute('data-reason-ext');
                     const caNumber = this.getAttribute('data-no-ca');
                     const idNumber = this.getAttribute('data-no-id');
 
                     startDateInput.value = startDate;
                     endDateInput.value = endDate;
                     extStartDateInput.value = startDate; // Mengisi ext_start_date dengan start_date
-                    extEndDateInput.value = endDate; // Mengisi ext_end_date dengan end_date
+                    extEndDateInput.value = endDateExt; // Mengisi ext_end_date dengan end_date
+                    extReason.value = reasonExt;
 
                     document.getElementById('ext_no_ca').textContent = caNumber;
                     document.getElementById('no_id').value = idNumber; // Mengisi input no_id

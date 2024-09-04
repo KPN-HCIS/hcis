@@ -1,6 +1,56 @@
 @extends('layouts_.vertical', ['page_title' => 'Cash Advanced'])
 
 @section('css')
+<style>
+    .table {
+        border-collapse: separate;
+        width: 100%;
+        position: relative;
+        overflow: auto;
+    }
+
+    .table thead th {
+        position: -webkit-sticky !important;
+        /* For Safari */
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 2 !important;
+        background-color: #fff !important;
+        border-bottom: 2px solid #ddd !important;
+        padding-right: 6px;
+        box-shadow: inset 2px 0 0 #fff;
+    }
+
+    .table tbody td {
+        background-color: #fff !important;
+        padding-right: 10px;
+        position: relative;
+    }
+
+    .table th.sticky-col-header {
+        position: -webkit-sticky !important;
+        /* For Safari */
+        position: sticky !important;
+        left: 0 !important;
+        z-index: 3 !important;
+        background-color: #fff !important;
+        border-right: 2px solid #ddd !important;
+        padding-right: 10px;
+        box-shadow: inset 2px 0 0 #fff;
+    }
+
+    .table td.sticky-col {
+        position: -webkit-sticky !important;
+        /* For Safari */
+        position: sticky !important;
+        left: 0 !important;
+        z-index: 1 !important;
+        background-color: #fff !important;
+        border-right: 2px solid #ddd !important;
+        padding-right: 10px;
+        box-shadow: inset 6px 0 0 #fff;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -17,10 +67,10 @@
                                 <i class="bi bi-arrow-left"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item">
                             {{ $parentLink }}
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item">
                             {{ $link }}
                         </li>
                     </ol>
@@ -44,12 +94,12 @@
                     </div>
                     @include('hcis.reimbursements.approval.navigation.navigationApproval')
                     <div class="table-responsive">
-                        <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
+                        <table class="table table-sm dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
                             <thead class="thead-light">
                                 <tr class="text-center">
                                     <th>No</th>
+                                    <th class="sticky-col-header" style="background-color: white">Cash Advance No</th>
                                     <th>Type</th>
-                                    <th>No CA</th>
                                     <th>Requestor</th>
                                     <th>Company</th>
                                     <th>Start Date</th>
@@ -65,6 +115,7 @@
                                 @foreach($ca_transactions as $transaction)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
+                                        <td style="background-color: white;" class="sticky-col">{{ $transaction->no_ca }}</td>
                                         @if($transaction->type_ca == 'dns')
                                             <td>Business Trip</td>
                                         @elseif($transaction->type_ca == 'ndns')
@@ -72,16 +123,22 @@
                                         @elseif($transaction->type_ca == 'entr')
                                             <td>Entertainment</td>
                                         @endif
-                                        <td>{{ $transaction->no_ca }}</td>
                                         <td>{{ $transaction->employee->fullname }}</td>
                                         <td>{{ $transaction->contribution_level_code }}</td>
                                         <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-M-y') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-M-y') }}</td>
                                         <td>Rp. {{ number_format($transaction->total_ca) }}</td>
                                         <td>Rp. {{ number_format($transaction->total_real) }}</td>
-                                        <td>Rp. {{ number_format($transaction->total_cost) }}</td>
                                         <td>
-                                            <p class="badge text-bg-{{ $transaction->approval_sett == 'Approved' ? 'success' : ($transaction->approval_sett == 'Rejected' ? 'danger' : 'warning') }}">
+                                            @if ($transaction->total_cost < 0)
+                                                <span class="text-danger">Rp. -{{ number_format(abs($transaction->total_cost)) }}</span>
+                                            @else
+                                                <span class="text-success">Rp. {{ number_format($transaction->total_cost) }}</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <p class="badge text-bg-{{ $transaction->approval_sett == 'Approved' ? 'success' : ($transaction->approval_sett == 'Declaration' ? 'info' : ($transaction->approval_sett == 'Pending' ? 'warning' : ($transaction->approval_sett == 'Rejected' ? 'danger' : ($transaction->approval_sett == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                 title="Waiting Approve by: {{ isset($fullnames[$transaction->sett_id]) ? $fullnames[$transaction->sett_id] : 'Unknown Employee' }}">
                                                 {{ $transaction->approval_sett }}
                                             </p>
                                         </td>
