@@ -789,7 +789,7 @@ class ReimburseController extends Controller
         $transactions = Tiket::whereIn('id', $latestTicketIds)
             ->with('businessTrip')
             ->orderBy('created_at', 'desc')
-            ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id')
+            ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
 
         $tickets = Tiket::where('user_id', $userId->id)

@@ -51,8 +51,9 @@
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th>No</th>
+                                        <th>No. SPPD</th>
                                         <th>No. Ticket</th>
-                                        <th>Total Tickets</th>
+                                        <th style="width: 10px; overflow: hidden;">Total Tickets</th>
                                         <th>Purposes</th>
                                         {{-- <th>Ticket Type</th> --}}
                                         {{-- <th>Requestor</th> --}}
@@ -73,9 +74,11 @@
                                     @foreach ($transactions as $transaction)
                                         <tr>
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
+                                            <td>{{ $transaction->no_sppd }}</td>
                                             <td>{{ $transaction->no_tkt }}</td>
-                                            <td>{{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }}</td>
+                                            <td style="text-align: left">{{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
                                             <td>{{ $transaction->jns_dinas_tkt }}</td>
+                                            {{-- <td>{{ $transaction->np_tkt }}</td> --}}
                                             <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
                                             <td class="text-info">
                                                 <a class="text-info btn-detail" data-toggle="modal"
@@ -85,6 +88,7 @@
                                                             return [
                                                                 // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
                                                                 'No. SPPD' => $ticket->no_sppd,
+                                                                'No. Ticket' => $ticket->no_tkt,
                                                                 'Passengers Name' => $ticket->np_tkt,
                                                                 'Unit' => $ticket->unit,
                                                                 'Gender' => $ticket->jk_tkt,
