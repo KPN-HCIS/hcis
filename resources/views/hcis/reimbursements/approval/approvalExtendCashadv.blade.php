@@ -61,15 +61,15 @@
             <div class="col-md-6 mt-3 ms-mb-3">
                 <div class="page-title-box d-flex align-items-center">
                     <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
-                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
+                        <li class="breadcrumb-item" style="font-size: 25px; display: flex; align-items: center;">
                             <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
                                 <i class="bi bi-arrow-left"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item" >
                             {{ $parentLink }}
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px; display: flex; align-items: center; margin-left: 10px;">
+                        <li class="breadcrumb-item" >
                             {{ $link }}
                         </li>
                     </ol>
@@ -93,7 +93,7 @@
                         </div>
                         @include('hcis.reimbursements.approval.navigation.navigationApproval')
                         <div class="table-responsive">
-                            <table class="table table-hover dt-responsive nowrap" id="scheduleTable" width="100%"
+                            <table class="table table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
@@ -129,8 +129,8 @@
                                             <td>{{ $extendTime[$transaction->id]['ext_end_date'] }}</td>
                                             <td>{{ $extendTime[$transaction->id]['reason_extend'] }}</td>
                                             <td>
-                                                <p class="badge rounded-pill text-bg-{{ $transaction->approval_extend == 'Approved' ? 'success' : ($transaction->approval_extend == 'Declaration' ? 'info' : ($transaction->approval_extend == 'Pending' ? 'warning' : ($transaction->approval_extend == 'Rejected' ? 'danger' : ($transaction->approval_extend == 'Draft' ? 'secondary' : 'success')))) }}"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem;" title="Waiting Approve by: {{ isset($fullnames[$transaction->extend_id]) ? $fullnames[$transaction->extend_id] : 'Unknown Employee' }}">
+                                                <p class="badge text-bg-{{ $transaction->approval_extend == 'Approved' ? 'success' : ($transaction->approval_extend == 'Declaration' ? 'info' : ($transaction->approval_extend == 'Pending' ? 'warning' : ($transaction->approval_extend == 'Rejected' ? 'danger' : ($transaction->approval_extend == 'Draft' ? 'secondary' : 'success')))) }}"
+                                                     title="Waiting Approve by: {{ isset($fullnames[$transaction->extend_id]) ? $fullnames[$transaction->extend_id] : 'Unknown Employee' }}">
                                                     {{ $transaction->approval_extend }}
                                                 </p>
                                             </td>

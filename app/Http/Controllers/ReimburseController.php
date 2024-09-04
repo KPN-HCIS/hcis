@@ -241,7 +241,7 @@ class ReimburseController extends Controller
         $link = 'Cash Advanced';
         $today = Carbon::today();
 
-        $ca_transactions = CATransaction::with(['employee', 'statusSettEmployee'])
+        $ca_transactions = CATransaction::with(['employee', 'statusSettEmployee', 'statusExtendEmployee'])
             ->where('user_id', $userId)
             ->where(function ($query) {
                 $query->where('approval_status', 'Approved');
@@ -252,6 +252,7 @@ class ReimburseController extends Controller
         // dd($ca_transactions);
         foreach ($ca_transactions as $transaction) {
             $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
+            $transaction->extName = $transaction->statusExtendEmployee ? $transaction->statusExtendEmployee->fullname : '';
         }
         // $settName = $ca_transactions->statusSettEmployee ? $ca_transactions->statusSettEmployee->fullname : '';
 

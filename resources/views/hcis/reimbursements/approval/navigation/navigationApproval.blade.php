@@ -21,7 +21,7 @@
             </a>
         </div>
     </div>
-    <div class="col-6 col-sm-auto" style="display:none">
+    <div class="col-6 col-sm-auto">
         <div class="mb-2">
             <a href="{{ route('approval.cashadvancedExtend') }}"
                 class="btn {{ request()->routeIs('approval.cashadvancedExtend') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill shadow w-100 position-relative">

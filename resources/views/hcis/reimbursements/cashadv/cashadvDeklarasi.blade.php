@@ -151,11 +151,17 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : ($ca_transaction->approval_sett == 'On Progress' ? 'warning' : 'default'))))) }}" style="pointer-events: auto; cursor: default;" title="{{
-                                                    
-                                                    $ca_transaction->approval_sett." - ".$ca_transaction->settName}}">
-                                                    {{ $ca_transaction->approval_sett }}
-                                                </p>
+                                                @if($ca_transaction->approval_extend == 'Pending')
+                                                    <p class="badge text-bg-warning style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_extend." - ".$ca_transaction->extName}}">
+                                                        {{ "Extend : ".$ca_transaction->approval_extend }}
+                                                    </p>
+                                                @else
+                                                    <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : ($ca_transaction->approval_sett == 'On Progress' ? 'warning' : 'default'))))) }}" style="pointer-events: auto; cursor: default;" title="{{
+                                                        
+                                                        $ca_transaction->approval_sett." - ".$ca_transaction->settName}}">
+                                                        {{ $ca_transaction->approval_sett }}
+                                                    </p>
+                                                @endif
                                             </td>
                                             <td class="text-center">
                                                 @if ($ca_transaction->approval_sett == 'Approved')
@@ -175,13 +181,13 @@
                                                     @endif
                                                 @elseif ($ca_transaction->approval_sett == 'Pending')
                                                     <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                                @elseif ($ca_transaction->approval_sett == 'Reject')
+                                                {{-- @elseif ($ca_transaction->approval_sett == 'Reject') --}}
                                                 @elseif ($ca_transaction->approval_sett == 'Draft')
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
-                                                @elseif ($ca_transaction->approval_sett == 'On Progress')
+                                                @elseif ($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Rejected')
                                                     @if ($ca_transaction->approval_extend == 'Pending')
                                                     @else
-                                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend"
+                                                        <button type="button" class="btn btn-outline-primary" title="Extend CA" data-bs-toggle="modal" data-bs-target="#modalExtend"
                                                                 data-no-id="{{ $ca_transaction->id }}"
                                                                 data-no-ca="{{ $ca_transaction->no_ca }}"
                                                                 data-start-date="{{ $ca_transaction->start_date }}"
@@ -189,9 +195,10 @@
                                                                 data-total-days="{{ $ca_transaction->total_days }}">
                                                             <i class="ri-calendar-line"></i>
                                                         </button>
+                                                        <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                         {{-- <a href="#" class="btn btn-outline-primary" title="Extend" ><i class="ri-calendar-line"></i></a> --}}
                                                     @endif
-                                                @else
+                                                @elseif ($ca_transaction->approval_sett != 'Pending')
                                                     <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                 @endif
                                             </td>
