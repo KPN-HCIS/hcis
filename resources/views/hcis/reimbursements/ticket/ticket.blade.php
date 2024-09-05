@@ -151,7 +151,7 @@
                                                     <form action="{{ route('ticket.delete', encrypt($transaction->id)) }}"
                                                         method="POST" style="display:inline;">
                                                         @csrf
-                                                        <button onclick="return confirm('Apakah ingin Menghapus?')"
+                                                        <button onclick="return confirm('Do you want to delete this data?')"
                                                             class="btn btn-sm rounded-pill btn-outline-danger"
                                                             title="Delete">
                                                             <i class="ri-delete-bin-line"></i>

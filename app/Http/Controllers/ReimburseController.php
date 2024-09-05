@@ -638,7 +638,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Approved')->orderBy('no_sppd', 'asc')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Verified')->orderBy('no_sppd', 'asc')->get();
         // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
 
@@ -711,7 +711,7 @@ class ReimburseController extends Controller
 
         $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
 
-        if ($bt) {
+        if ($bt && $model->approval_status == 'Pending L1') {
             // Update the 'hotel' field to 'Ya'
             $bt->hotel = 'Ya';
             $bt->save();

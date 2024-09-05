@@ -32,23 +32,19 @@
                     <div class="container-fluid">
                         <form id="scheduleForm" method="post" action="{{ route('hotel.update', encrypt($transactions->id)) }}">@csrf
                             <div class="row my-2">
-                                <div class="col-md-12">
+                                <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
                                         <input type="text" name="name" id="name" value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-12">
+                                <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Unit</label>
                                         <input type="text" name="unit" id="unit" value="{{ $employee_data->unit }}" class="form-control bg-light" readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-12">
+                                <div class="col-md-2">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Grade</label>
                                         <input type="text" name="grade" id="grade" value="{{ $employee_data->job_level }}" class="form-control bg-light" readonly>

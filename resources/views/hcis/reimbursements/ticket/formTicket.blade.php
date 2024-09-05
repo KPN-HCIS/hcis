@@ -151,7 +151,7 @@
                                                             for="dari_tkt_<?php echo $i; ?>">Departure City</label>
                                                         <input type="text" name="dari_tkt[]"
                                                             id="dari_tkt_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="Kota Keberangkatan">
+                                                            placeholder="Your Departure City">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
@@ -160,7 +160,7 @@
                                                             for="ke_tkt_<?php echo $i; ?>">Arrival City</label>
                                                         <input type="text" name="ke_tkt[]"
                                                             id="ke_tkt_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="Kota Kedatangan">
+                                                            placeholder="Your Arrival City">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-8">

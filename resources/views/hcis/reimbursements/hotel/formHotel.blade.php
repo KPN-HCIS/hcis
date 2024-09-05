@@ -32,25 +32,21 @@
                     <div class="container-fluid">
                         <form id="scheduleForm" method="post" action="{{ route('hotel.submit') }}">@csrf
                             <div class="row my-2">
-                                <div class="col-md-12">
+                                <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
                                         <input type="text" name="name" id="name"
                                             value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-12">
+                                <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Unit</label>
                                         <input type="text" name="unit" id="unit"
                                             value="{{ $employee_data->unit }}" class="form-control bg-light" readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-12">
+                                <div class="col-md-2">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Grade</label>
                                         <input type="text" name="grade" id="grade"
@@ -70,78 +66,117 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row my-2">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="start">Hotel Name</label>
-                                        <input type="text" name="nama_htl" id="nama_htl" class="form-control" placeholder="ex: Westin">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="start">Location</label>
-                                        <input type="text" name="lokasi_htl" id="lokasi_htl" class="form-control" placeholder="ex: Jakarta">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="start">Rooms</label>
-                                        <input type="number" name="jmlkmr_htl" id="jmlkmr_htl" class="form-control" placeholder="ex: 1">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="name">Bed Type</label>
-                                        <select class="form-control" name="bed_htl" required>
-                                            <option value="" selected disabled>--- Select Bed Type ---</option>
-                                            <option value="Single Bed">Single Bed</option>
-                                            <option value="Twin Bed">Twin Bed</option>
-                                            <option value="King Bed">King Bed</option>
-                                            <option value="Super King Bed">Super King Bed</option>
-                                            <option value="Extra Bed">Extra Bed</option>
-                                            <option value="Baby Cot">Baby Cot</option>
-                                            <option value="Sofa Bed">Sofa Bed</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="start">Start Date</label>
-                                        <input type="date" name="tgl_masuk_htl" id="tgl_masuk_htl"
-                                            class="form-control" placeholder="mm/dd/yyyy" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="end">End Date</label>
-                                        <input type="date" name="tgl_keluar_htl" id="tgl_keluar_htl"
-                                            class="form-control" placeholder="mm/dd/yyyy" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="start">Total Days</label>
-                                        <div class="input-group">
-                                            <input class="form-control bg-light" id="totaldays" name="totaldays"
-                                                type="text" min="0" value="0" readonly>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">days</span>
+
+                            <!-- Dynamic Hotel Forms Start -->
+                            <div class="d-flex flex-column gap-2" id="hotel_forms_container">
+                                <?php for ($i = 1; $i <= 5; $i++) : ?>
+                                <div class="hotel-form" id="hotel-form-<?php echo $i; ?>"
+                                    style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
+                                    <div class="text-bg-primary p-2 mb-1" style="text-align:center; border-radius:4px;">
+                                        Hotel Data <?php echo $i; ?></div>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row my-2">
+                                                <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <label class="form-label" for="nama_htl_<?php echo $i; ?>">Hotel
+                                                            Name</label>
+                                                        <input type="text" name="nama_htl[]"
+                                                            id="nama_htl_<?php echo $i; ?>" class="form-control"
+                                                            placeholder="ex: Westin">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <label class="form-label"
+                                                            for="lokasi_htl_<?php echo $i; ?>">Location</label>
+                                                        <input type="text" name="lokasi_htl[]"
+                                                            id="lokasi_htl_<?php echo $i; ?>" class="form-control"
+                                                            placeholder="ex: Jakarta">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <label class="form-label"
+                                                            for="jmlkmr_htl_<?php echo $i; ?>">Rooms</label>
+                                                        <input type="number" name="jmlkmr_htl[]"
+                                                            id="jmlkmr_htl_<?php echo $i; ?>" class="form-control"
+                                                            placeholder="ex: 1">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <label class="form-label" for="bed_htl_<?php echo $i; ?>">Bed
+                                                            Type</label>
+                                                        <select class="form-control" name="bed_htl[]" required>
+                                                            <option value="" selected disabled>--- Select Bed Type
+                                                                ---</option>
+                                                            <option value="Single Bed">Single Bed</option>
+                                                            <option value="Twin Bed">Twin Bed</option>
+                                                            <option value="King Bed">King Bed</option>
+                                                            <option value="Super King Bed">Super King Bed</option>
+                                                            <option value="Extra Bed">Extra Bed</option>
+                                                            <option value="Baby Cot">Baby Cot</option>
+                                                            <option value="Sofa Bed">Sofa Bed</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
+                                            <div class="row my-2">
+                                                <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <label class="form-label"
+                                                            for="tgl_masuk_htl_<?php echo $i; ?>">Start Date</label>
+                                                        <input type="date" name="tgl_masuk_htl[]"
+                                                            id="tgl_masuk_htl_<?php echo $i; ?>" class="form-control"
+                                                            placeholder="mm/dd/yyyy" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-2">
+                                                        <label class="form-label"
+                                                            for="tgl_keluar_htl_<?php echo $i; ?>">End Date</label>
+                                                        <input type="date" name="tgl_keluar_htl[]"
+                                                            id="tgl_keluar_htl_<?php echo $i; ?>" class="form-control"
+                                                            placeholder="mm/dd/yyyy" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <?php if ($i < 5) : ?>
+                                            <div class="mt-3">
+                                                <label class="form-label">Add more hotel data</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio"
+                                                        id="more_htl_no_<?php echo $i; ?>"
+                                                        name="more_htl_<?php echo $i; ?>" value="Tidak" checked>
+                                                    <label class="form-check-label"
+                                                        for="more_htl_no_<?php echo $i; ?>">Tidak</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio"
+                                                        id="more_htl_yes_<?php echo $i; ?>"
+                                                        name="more_htl_<?php echo $i; ?>" value="Ya"
+                                                        onchange="toggleNextForm(<?php echo $i; ?>)">
+                                                    <label class="form-check-label"
+                                                        for="more_htl_yes_<?php echo $i; ?>">Ya</label>
+                                                </div>
+                                            </div>
+                                            <?php endif; ?>
                                         </div>
-                                        <input class="form-control" id="perdiem" name="perdiem" type="hidden"
-                                            value="{{ $perdiem->amount }}" readonly>
                                     </div>
                                 </div>
+                                <?php endfor; ?>
                             </div>
+                            <!-- Dynamic Hotel Forms End -->
 
                             <br>
                             <div class="row">
+                                <input type="hidden" name="status" value="Pending L1" id="status">
                                 <div class="col-md d-md-flex justify-content-end text-center">
                                     <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                                    <a href="{{ route('hotel') }}" type="button"
-                                        class="btn btn-outline-danger rounded-pill shadow px-4 me-2">Cancel</a>
+                                    <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                        name="action_ca_draft" id="save-draft">Save as Draft</button>
                                     <button type="submit"
                                         class="btn btn-primary rounded-pill shadow px-4">Submit</button>
                                 </div>
@@ -152,10 +187,135 @@
             </div>
         </div>
     </div>
-@endsection
-<!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
-@push('scripts')
+
+
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Hotel form handling
+            for (let i = 1; i <= 4; i++) {
+                const yesRadio = document.getElementById(`more_htl_yes_${i}`);
+                const noRadio = document.getElementById(`more_htl_no_${i}`);
+                const nextForm = document.getElementById(`hotel-form-${i + 1}`);
+
+                yesRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'block';
+                    }
+                });
+
+                noRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'none';
+                        // Hide all subsequent forms
+                        for (let j = i + 1; j <= 5; j++) {
+                            const form = document.getElementById(`hotel-form-${j}`);
+                            if (form) {
+                                form.style.display = 'none';
+                                // Reset the form when it is hidden
+                                resetHotelFields(form);
+                            }
+                        }
+                        // Reset radio buttons for subsequent forms
+                        for (let j = i + 1; j <= 4; j++) {
+                            const noRadioButton = document.getElementById(`more_htl_no_${j}`);
+                            if (noRadioButton) {
+                                noRadioButton.checked = true;
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Function to reset hotel fields
+            function resetHotelFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
+                });
+            }
+
+            // Calculate total days for each hotel form
+            function calculateTotalDays(index) {
+                const checkIn = document.querySelector(`#hotel-form-${index} input[name="tgl_masuk_htl[]"]`);
+                const checkOut = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
+                const totalDays = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
+
+                if (checkIn && checkOut && totalDays) {
+                    const start = new Date(checkIn.value);
+                    const end = new Date(checkOut.value);
+
+                    if (checkIn.value && checkOut.value) {
+                        // Calculate difference in milliseconds and convert to days, excluding the same day
+                        const difference = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                        if (difference < 0) {
+                            alert("Check out date cannot be earlier than check in date.");
+                            checkOut.value = ''; // Clear the check-out date if invalid
+                            totalDays.value = ''; // Clear the total days if check-out date is reset
+                        } else {
+                            totalDays.value = difference >= 0 ? difference : 0;
+                        }
+                    } else {
+                        totalDays.value = ''; // Clear total days if dates are not set
+                    }
+                } else {
+                    console.error("Elements not found. Check selectors.");
+                }
+            }
+
+            // Add event listeners for date inputs
+            for (let i = 1; i <= 5; i++) {
+                const checkIn = document.querySelector(`#hotel-form-${i} input[name="tgl_masuk_htl[]"]`);
+                const checkOut = document.querySelector(`#hotel-form-${i} input[name="tgl_keluar_htl[]"]`);
+
+                if (checkIn && checkOut) {
+                    checkIn.addEventListener('change', () => calculateTotalDays(i));
+                    checkOut.addEventListener('change', () => calculateTotalDays(i));
+                }
+            }
+
+            // Handle date validation for the return date
+            document.getElementById('kembali').addEventListener('change', function() {
+                var mulaiDate = document.getElementById('mulai').value;
+                var kembaliDate = this.value;
+
+                if (kembaliDate < mulaiDate) {
+                    alert('Return date cannot be earlier than Start date.');
+                    this.value = ''; // Reset the kembali field
+                }
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('save-draft').addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Remove the existing status input
+                const existingStatus = document.getElementById('status');
+                if (existingStatus) {
+                    existingStatus.remove();
+                }
+
+                // Create a new hidden input for "Draft"
+                const draftInput = document.createElement('input');
+                draftInput.type = 'hidden';
+                draftInput.name = 'status';
+                draftInput.value = 'Draft';
+                draftInput.id = 'status';
+
+                // Append the draft input to the form
+                this.closest('form').appendChild(draftInput);
+
+                // Submit the form
+                this.closest('form').submit();
+            });
+        });
+
         document.getElementById('tgl_keluar_htl').addEventListener('change', function() {
             var startDate = document.getElementById('tgl_masuk_htl').value;
             var endDate = this.value;
@@ -308,16 +468,7 @@
             });
         });
     </script>
-
-    <script>
-        $(document).ready(function() {
-            $('.select2').select2({
-                theme: "bootstrap-5",
-
-            });
-        });
-    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
-@endpush
+@endsection
