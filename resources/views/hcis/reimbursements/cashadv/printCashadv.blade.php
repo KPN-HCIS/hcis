@@ -261,7 +261,7 @@
                 <td>{{ $perdiem['location'] == 'Others' ? $perdiem['other_location'] : $perdiem['location'] }}</td>
                 <td>{{ $perdiem['company_code'] }}</td>
                 <td>{{ $perdiem['total_days'] }} Hari</td>
-                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
@@ -269,14 +269,14 @@
                 <td>
                     {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
                 </td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
         </table>
         @endif
 
-        @if (count($detailCA['detail_transport']) > 0 && !empty($detailCA['detail_transport'][0]['company_code']))
+        @if (count($detailCA['detail_transport']) > 0 && !empty($detailCA['detail_transport'][0]['tanggal']))
         <table class="table-approve">
             <tr>
                 <th colspan="4"><b>Rencana Transport :</b></th>
@@ -294,13 +294,13 @@
                 <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
                 <td>{{ $transport['keterangan'] }}</td>
                 <td>{{ $transport['company_code'] }}</td>
-                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endif
             @endforeach
             <tr class="total-row">
                 <td colspan="3" class="head-row">Total</td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
@@ -328,7 +328,7 @@
                     <td>{{ $perdiem['hotel_name'] }}</td>
                     <td>{{ $perdiem['company_code'] }}</td>
                     <td>{{ $perdiem['total_days'] }} Hari</td>
-                    <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                    <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
                 </tr>
             @endforeach
             <tr class="total-row">
@@ -336,7 +336,7 @@
                 <td>
                     {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Hari
                 </td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
@@ -358,12 +358,12 @@
             <tr style="text-align: center">
                 <td>{{ \Carbon\Carbon::parse($perdiem['tanggal'])->format('d-M-y') }}</td>
                 <td>{{ $perdiem['keterangan'] }}</td>
-                <td>Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="2" class="head-row">Total</td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
@@ -385,12 +385,12 @@
             <tr style="text-align: center">
                 <td>{{ \Carbon\Carbon::parse($item['tanggal_nbt'])->format('d-M-y') }}</td>
                 <td>{{ $item['keterangan_nbt'] }}</td>
-                <td>Rp. {{ number_format($item['nominal_nbt'], 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($item['nominal_nbt'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="2" class="head-row">Total</td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}
                 </td>
             </tr>
@@ -420,19 +420,19 @@
                 @endphp
                 <td>{{ $typeMap[$detail['type']] ?? $detail['type'] }}</td>
                 <td>{{ $detail['fee_detail'] }}</td>
-                <td>Rp. {{ number_format($detail['nominal'], 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($detail['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="2" class="head-row">Total</td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
         </table>
         @endif
 
-        @if (count($detailCA['relation_e']) > 0 && !empty($detailCA['relation_e'][0]['nama']))
+        @if (count($detailCA['relation_e']) > 0 && !empty($detailCA['relation_e'][0]['name']))
         <table class="table-approve">
             <tr>
                 <td colspan="5"><b>Relation Entertain:</b></td>
@@ -532,7 +532,7 @@
                     <tr>
                         @foreach ($approval as $role)
                             <td>
-                                Tanggal: {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') : 'Data tidak tersedia' }}
+                                {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') : 'Data tidak tersedia' }}
                             </td>
                         @endforeach
                     </tr>

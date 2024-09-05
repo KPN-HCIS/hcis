@@ -211,11 +211,13 @@
                                                                                             <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
                                                                                         </select>
                                                                                         <br>
-                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control bg-light other-location" placeholder="Other Location" value="" style="display: none;" readonly>
+                                                                                        @if ($perdiem['location'] == 'Others')
+                                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control bg-light other-location" placeholder="Other Location" value="{{$perdiem['other_location']}}" readonly>
+                                                                                        @endif
                                                                                     </div>
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label" for="name">Company Code</label>
-                                                                                        <select class="form-control bg-light select2" id="companyFilter" name="company_bt_perdiem[]" disabled>
+                                                                                        <select class="form-control bg-light" id="companyFilter" name="company_bt_perdiem[]" disabled>
                                                                                             <option value="">Select Company...</option>
                                                                                             @foreach($companies as $company)
                                                                                                 <option value="{{ $company->contribution_level_code }}"
@@ -502,10 +504,7 @@
                                             <div class="d-flex flex-row gap-2">
                                                 <div class="col-md-12">
                                                     <div class="card">
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
-                                                        </div>
-                                                        <div id="entertain-card" class="card-body" style="display: none;">
+                                                        <div id="entertain-card" class="card-body">
                                                             <div class="accordion" id="accordionEntertain">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingEntertain">
@@ -557,10 +556,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
-                                                        </div>
-                                                        <div id="relation-card" class="card-body" style="display: none;">
+                                                        <div id="relation-card" class="card-body">
                                                             <div class="accordion" id="accordionRelation">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingRelation">
@@ -850,65 +846,6 @@
             });
         });
 
-        $(document).ready(function() {
-            function toggleCard(buttonId, cardId) {
-                var $button = $(buttonId);
-                var $card = $(cardId);
-                var isVisible = $card.is(':visible');
-
-                $card.slideToggle('fast', function() {
-                    if (isVisible) {
-                        $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        $card.find('select').prop('selectedIndex', 0);
-                        $card.find('input[readonly]').val(0);
-                        $card.find('input[type="number"]').val(0);
-
-                        $button.html('<i class="bi bi-plus-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'false');
-                    } else {
-                        $button.html('<i class="bi bi-dash-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'true');
-                    }
-                });
-            }
-
-            $('#toggle-bt-perdiem').click(function() {
-                toggleCard('#toggle-bt-perdiem', '#perdiem-card');
-            });
-
-            $('#toggle-bt-transport').click(function() {
-                toggleCard('#toggle-bt-transport', '#transport-card');
-            });
-
-            $('#toggle-bt-penginapan').click(function() {
-                toggleCard('#toggle-bt-penginapan', '#penginapan-card');
-            });
-
-            $('#toggle-bt-lainnya').click(function() {
-                toggleCard('#toggle-bt-lainnya', '#lainnya-card');
-            });
-
-            $('#toggle-e-detail').click(function() {
-                toggleCard('#toggle-e-detail', '#entertain-card');
-            });
-
-            $('#toggle-e-relation').click(function() {
-                toggleCard('#toggle-e-relation', '#relation-card');
-            });
-
-            // Logika untuk membuka kartu berdasarkan nilai ca_type
-            var caType = $('input[name="ca_type"]').val();
-
-            if (caType === 'dns') {
-                $('#toggle-bt-perdiem').click();
-                $('#toggle-bt-transport').click();
-                $('#toggle-bt-penginapan').click();
-                $('#toggle-bt-lainnya').click();
-            } else if (caType === 'entr') {
-                $('#toggle-e-detail').click();
-                $('#toggle-e-relation').click();
-            }
-        });
         document.addEventListener('DOMContentLoaded', function() {
             const formContainerBTPerdiem = document.getElementById('form-container-bt-perdiem');
             const formContainerBTTransport = document.getElementById('form-container-bt-transport');
@@ -1059,7 +996,7 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label" for="name">Location Agency</label>
-                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
+                        <select class="form-control location-select" name="location_bt_perdiem[]">
                             <option value="">Select location...</option>
                             @foreach($locations as $location)
                                 <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>

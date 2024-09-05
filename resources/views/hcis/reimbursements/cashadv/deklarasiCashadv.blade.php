@@ -172,21 +172,47 @@
                                                 <div class="col-md-6">
                                                     <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Cash Advanced Request</div>
                                                     <div class="card">
-                                                        <div class="card-body p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                        </div>
-                                                        <div id="perdiem-card-deklarasi" class="card-body p-0" style="display: none;">
+                                                        <div id="perdiem-card-deklarasi" class="card-body p-0">
                                                             <div class="accordion mb-3" id="accordionPerdiem">
                                                                 <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="enter-headingOne">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                            Rencana Perdiem
+                                                                    <h2 class="accordion-header" id="enter-headingOneDec">
+                                                                        <button class="accordion-button @if($detailCA['detail_perdiem'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOneDec" aria-expanded="@if($detailCA['detail_perdiem'][0]['start_date'] !== null) true @else false @endif" aria-controls="enter-collapseOneDec">
+                                                                            Perdiem Plan
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse  show" aria-labelledby="enter-headingOne">
+                                                                    <div id="enter-collapseOneDec" class="accordion-collapse @if($detailCA['detail_perdiem'][0]['start_date'] !== null) show @endif" aria-labelledby="enter-headingOne">
                                                                         <div class="accordion-body mb-3">
                                                                             <div id="form-container-bt-perdiem-deklarasi">
                                                                                 @foreach ($detailCA['detail_perdiem'] as $perdiem)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="name">Company Code</label>
+                                                                                        <select class="form-control bg-light" id="companyFilter" name="company_bt_perdiem_deklarasi[]" disabled>
+                                                                                            <option value="">Select Company...</option>
+                                                                                            @foreach($companies as $company)
+                                                                                                <option value="{{ $company->contribution_level_code }}"
+                                                                                                    @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
+                                                                                                    {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                                                                                </option>
+                                                                                            @endforeach
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="name">Location Agency</label>
+                                                                                        <select class="form-control location-select" name="location_bt_perdiem_deklarasi[]" disabled>
+                                                                                            <option value="">Select location...</option>
+                                                                                            @foreach($locations as $location)
+                                                                                                <option value="{{ $location->area }}"
+                                                                                                    @if($location->area == $perdiem['location']) selected @endif>
+                                                                                                    {{ $location->area." (".$location->company_name.")" }}
+                                                                                                </option>
+                                                                                            @endforeach
+                                                                                            <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
+                                                                                        </select>
+                                                                                        <br>
+                                                                                        @if ($perdiem['location'] == 'Others')
+                                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control bg-light other-location" placeholder="Other Location" value="{{$perdiem['other_location']}}" readonly>
+                                                                                        @endif
+                                                                                    </div>
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label">Start Perdiem</label>
                                                                                         <input type="date" name="start_bt_perdiem_deklarasi[]" class="form-control bg-light start-perdiem" value="{{$perdiem['start_date']}}" placeholder="mm/dd/yyyy" readonly>
@@ -205,33 +231,6 @@
                                                                                         </div>
                                                                                     </div>
                                                                                     <!-- HTML -->
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="name">Location Agency</label>
-                                                                                        <select class="form-control select2 location-select" name="location_bt_perdiem_deklarasi[]" disabled>
-                                                                                            <option value="">Select location...</option>
-                                                                                            @foreach($locations as $location)
-                                                                                                <option value="{{ $location->area }}"
-                                                                                                    @if($location->area == $perdiem['location']) selected @endif>
-                                                                                                    {{ $location->area." (".$location->company_name.")" }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                            <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
-                                                                                        </select>
-                                                                                        <br>
-                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control bg-light other-location" placeholder="Other Location" value="" style="display: none;" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="name">Company Code</label>
-                                                                                        <select class="form-control bg-light" id="companyFilter" name="company_bt_perdiem_deklarasi[]" disabled>
-                                                                                            <option value="">Select Company...</option>
-                                                                                            @foreach($companies as $company)
-                                                                                                <option value="{{ $company->contribution_level_code }}"
-                                                                                                    @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
-                                                                                                    {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                        </select>
-                                                                                    </div>
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label">Amount</label>
                                                                                     </div>
@@ -260,16 +259,12 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Transport -->
-                                                        <div class="card-body p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-transport-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Transport</button>
-                                                        </div>
-                                                        <div id="transport-card-deklarasi" class="card-body p-0" style="display: none;">
+                                                        <div id="transport-card-deklarasi" class="card-body p-0">
                                                             <div class="accordion mb-3" id="accordionTransport">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingTransport">
                                                                         <button class="accordion-button @if($detailCA['detail_transport'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="@if($detailCA['detail_transport'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseTransport">
-                                                                            Rencana Transport
+                                                                            Transport Plan
                                                                         </button>
                                                                     </h2>
                                                                     <div id="collapseTransport" class="accordion-collapse collapse @if($detailCA['detail_transport'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingTransport" data-bs-parent="#accordionTransport">
@@ -277,7 +272,7 @@
                                                                             <div id="form-container-bt-transport-deklarasi">
                                                                                 @foreach ($detailCA['detail_transport'] as $transport)
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label">Tanggal Transport</label>
+                                                                                    <label class="form-label">Transport Date</label>
                                                                                     <input type="date" name="tanggal_bt_transport_deklarasi[]" class="form-control bg-light" value="{{$transport['tanggal']}}" readonly>
                                                                                 </div>
                                                                                 <div class="mb-2">
@@ -293,7 +288,7 @@
                                                                                     </select>
                                                                                 </div>
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label">Keterangan</label>
+                                                                                    <label class="form-label">Information</label>
                                                                                     <textarea name="keterangan_bt_transport_deklarasi[]" class="form-control bg-light" readonly>{{$transport['keterangan']}}</textarea>
                                                                                 </div>
                                                                                 <div class="mb-2">
@@ -324,28 +319,24 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Penginapan -->
-                                                        <div class="card-body p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                        </div>
-                                                        <div id="penginapan-card-deklarasi" class="card-body p-0" style="display: none;">
+                                                        <div id="penginapan-card-deklarasi" class="card-body p-0">
                                                             <div class="accordion" id="accordionPenginapan">
                                                                 <div class="accordion-item mb-3">
-                                                                    <h2 class="accordion-header" id="headingPenginapan">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                            Rencana Penginapan
+                                                                    <h2 class="accordion-header" id="headingPenginapanDec">
+                                                                        <button class="accordion-button @if($detailCA['detail_penginapan'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapanDec" aria-expanded="@if($detailCA['detail_penginapan'][0]['start_date'] !== null) true @else false @endif" aria-controls="collapsePenginapanDec">
+                                                                            Acommodation Plan
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                    <div id="collapsePenginapanDec" class="accordion-collapse collapse @if($detailCA['detail_penginapan'][0]['start_date'] !== null) show @endif" aria-labelledby="headingPenginapanDec">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-penginapan-deklarasi">
                                                                                 @foreach($detailCA['detail_penginapan'] as $penginapan)
                                                                                     <div class="mb-2">
-                                                                                        <label class="form-label">Start Penginapan</label>
+                                                                                        <label class="form-label">Acommodation Start Date</label>
                                                                                         <input type="date" name="start_bt_penginapan_deklarasi[]" class="form-control bg-light start-penginapan" value="{{$penginapan['start_date']}}" placeholder="mm/dd/yyyy" readonly>
                                                                                     </div>
                                                                                     <div class="mb-2">
-                                                                                        <label class="form-label">End Penginapan</label>
+                                                                                        <label class="form-label">Acommodation End Date</label>
                                                                                         <input type="date" name="end_bt_penginapan_deklarasi[]" class="form-control bg-light end-penginapan" value="{{$penginapan['end_date']}}" placeholder="mm/dd/yyyy" readonly>
                                                                                     </div>
                                                                                     <div class="mb-2">
@@ -386,7 +377,7 @@
                                                                                 @endforeach
                                                                             </div>
                                                                             <div class="mb-2">
-                                                                                <label class="form-label">Total Penginapan</label>
+                                                                                <label class="form-label">Total Acommodation</label>
                                                                                 <div class="input-group">
                                                                                     <div class="input-group-append">
                                                                                         <span class="input-group-text">Rp</span>
@@ -401,28 +392,24 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Lainnya -->
-                                                        <div class="card-body p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya-deklarasi" class="btn btn-primary mb-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                        </div>
-                                                        <div id="lainnya-card-deklarasi" class="card-body p-0" style="display: none;">
+                                                        <div id="lainnya-card-deklarasi" class="card-body p-0" >
                                                             <div class="accordion" id="accordionLainnya">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingLainnya">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                            Rencana Lainnya
+                                                                        <button class="accordion-button @if($detailCA['detail_lainnya'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="@if($detailCA['detail_lainnya'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseLainnya">
+                                                                            Others Plan
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                    <div id="collapseLainnya" class="accordion-collapse collapse @if($detailCA['detail_lainnya'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingLainnya">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-lainnya-deklarasi">
                                                                                 @foreach ($detailCA['detail_lainnya'] as $perdiem)
                                                                                     <div class="mb-2">
-                                                                                        <label class="form-label">Tanggal</label>
+                                                                                        <label class="form-label">Date</label>
                                                                                         <input type="date" name="tanggal_bt_lainnya_deklarasi[]" class="form-control bg-light" value="{{$perdiem['tanggal']}}" placeholder="mm/dd/yyyy" readonly>
                                                                                     </div>
                                                                                     <div class="mb-2">
-                                                                                        <label class="form-label">Keterangan</label>
+                                                                                        <label class="form-label">Information</label>
                                                                                         <textarea name="keterangan_bt_lainnya_deklarasi[]" class="form-control bg-light" readonly>{{ $perdiem['keterangan'] }}</textarea>
                                                                                     </div>
                                                                                     <div class="mb-2">
@@ -438,7 +425,7 @@
                                                                                 @endforeach
                                                                             </div>
                                                                             <div class="mb-2">
-                                                                                <label class="form-label">Total Lainnya</label>
+                                                                                <label class="form-label">Total Others</label>
                                                                                 <div class="input-group">
                                                                                     <div class="input-group-append">
                                                                                         <span class="input-group-text">Rp</span>
@@ -457,21 +444,45 @@
                                                 <div class="col-md-6">
                                                     <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Cash Advanced Deklarasi</div>
                                                     <div class="card ">
-                                                        <div class="card-body  p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mb-3 mb-2" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                        </div>
-                                                        <div id="perdiem-card" class="card-body mb-3 p-0" style="display: none;">
+                                                        <div id="perdiem-card" class="card-body mb-3 p-0">
                                                             <div class="accordion" id="accordionPerdiem">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="enter-headingOne">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="false" aria-controls="enter-collapseOne">
-                                                                            Deklarasi Rencana Perdiem
+                                                                        <button class="accordion-button @if($declareCA['detail_perdiem'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="@if($declareCA['detail_perdiem'][0]['start_date'] !== null) true @else false @endif" aria-controls="enter-collapseOne">
+                                                                            Perdiem Plan Declaration
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse mb-3" aria-labelledby="enter-headingOne">
+                                                                    <div id="enter-collapseOne" class="accordion-collapse @if($declareCA['detail_perdiem'][0]['start_date'] !== null) show @endif" aria-labelledby="enter-headingOne">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-perdiem">
                                                                                 @foreach ($declareCA['detail_perdiem'] as $perdiem)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="name">Company Code</label>
+                                                                                        <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
+                                                                                            <option value="">Select Company...</option>
+                                                                                            @foreach($companies as $company)
+                                                                                                <option value="{{ $company->contribution_level_code }}"
+                                                                                                    @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
+                                                                                                    {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                                                                                </option>
+                                                                                            @endforeach
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="name">Location Agency</label>
+                                                                                        <select class="form-control location-select" name="location_bt_perdiem[]">
+                                                                                            <option value="">Select location...</option>
+                                                                                            @foreach($locations as $location)
+                                                                                                <option value="{{ $location->area }}"
+                                                                                                    @if($location->area == $perdiem['location']) selected @endif>
+                                                                                                    {{ $location->area." (".$location->company_name.")" }}
+                                                                                                </option>
+                                                                                            @endforeach
+                                                                                            <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
+                                                                                        </select>
+                                                                                        <br>
+                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="{{ $perdiem['other_location'] }}" @if('Others' != $perdiem['location']) style="display: none;" @endif >
+                                                                                    </div>
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label">Start Perdiem</label>
                                                                                         <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" value="{{$perdiem['start_date']}}" placeholder="mm/dd/yyyy">
@@ -490,33 +501,6 @@
                                                                                         </div>
                                                                                     </div>
                                                                                     <!-- HTML -->
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="name">Location Agency</label>
-                                                                                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                                                                                            <option value="">Select location...</option>
-                                                                                            @foreach($locations as $location)
-                                                                                                <option value="{{ $location->area }}"
-                                                                                                    @if($location->area == $perdiem['location']) selected @endif>
-                                                                                                    {{ $location->area." (".$location->company_name.")" }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                            <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
-                                                                                        </select>
-                                                                                        <br>
-                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="name">Company Code</label>
-                                                                                        <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
-                                                                                            <option value="">Select Company...</option>
-                                                                                            @foreach($companies as $company)
-                                                                                                <option value="{{ $company->contribution_level_code }}"
-                                                                                                    @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
-                                                                                                    {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                        </select>
-                                                                                    </div>
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label">Amount</label>
                                                                                     </div>
@@ -545,19 +529,15 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Transport -->
-                                                        <div class="card-body p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mb-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
-                                                        </div>
-                                                        <div id="transport-card" class="card-body mb-3 p-0" style="display: none;">
+                                                        <div id="transport-card" class="card-body mb-3 p-0">
                                                             <div class="accordion" id="accordionTransport">
                                                                 <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingTransport">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
-                                                                            Deklarasi Rencana Transport
+                                                                    <h2 class="accordion-header" id="headingTransportDec">
+                                                                        <button class="accordion-button @if($declareCA['detail_transport'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="@if($declareCA['detail_transport'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseTransport">
+                                                                            Transport Plan Declaration
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseTransport" class="accordion-collapse mb-3 collapse show" aria-labelledby="headingTransport">
+                                                                    <div id="collapseTransport" class="accordion-collapse collapse @if($declareCA['detail_transport'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingTransport" data-bs-parent="#accordionTransport">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-transport">
                                                                                 @foreach ($declareCA['detail_transport'] as $transport)
@@ -609,19 +589,15 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Penginapan -->
-                                                        <div class="card-body p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mb-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                        </div>
-                                                        <div id="penginapan-card" class="card-body mb-3 p-0" style="display: none;">
+                                                        <div id="penginapan-card" class="card-body mb-3 p-0">
                                                             <div class="accordion" id="accordionPenginapan">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingPenginapan">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                            Deklarasi Rencana Penginapan
+                                                                        <button class="accordion-button @if($declareCA['detail_penginapan'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="@if($declareCA['detail_penginapan'][0]['start_date'] !== null) true @else false @endif" aria-controls="collapsePenginapan">
+                                                                            Accomodation Plan Declaration
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                    <div id="collapsePenginapan" class="accordion-collapse collapse @if($declareCA['detail_penginapan'][0]['start_date'] !== null) show @endif" aria-labelledby="headingPenginapan">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-penginapan">
                                                                                 @foreach($declareCA['detail_penginapan'] as $penginapan)
@@ -686,19 +662,15 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Lainnya -->
-                                                        <div class="card-body p-0 text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mb-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                        </div>
-                                                        <div id="lainnya-card" class="card-body p-0" style="display: none;">
+                                                        <div id="lainnya-card" class="card-body p-0">
                                                             <div class="accordion" id="accordionLainnya">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingLainnya">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                            Deklarasi Rencana Lainnya
+                                                                        <button class="accordion-button @if($declareCA['detail_lainnya'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="@if($declareCA['detail_lainnya'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseLainnya">
+                                                                            Others Plan Declaration
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                    <div id="collapseLainnya" class="accordion-collapse collapse @if($declareCA['detail_lainnya'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingLainnya">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-lainnya">
                                                                                 @foreach ($declareCA['detail_lainnya'] as $perdiem)
@@ -832,7 +804,7 @@
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingEntertain">
                                                                         <button class="accordion-button @if($detailCA['detail_e'][0]['type'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="@if($detailCA['detail_e'][0]['type'] !== null) true @else false @endif" aria-controls="collapseEntertain">
-                                                                            Rencana Entertain
+                                                                            Entertain Plan
                                                                         </button>
                                                                     </h2>
                                                                     <div id="collapseEntertain" class="accordion-collapse collapse @if($detailCA['detail_e'][0]['type'] !== null) show @endif" aria-labelledby="headingEntertain">
@@ -884,7 +856,7 @@
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingRelationDec">
                                                                         <button class="accordion-button @if($detailCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelationDec" aria-expanded="@if($detailCA['relation_e'][0]['name'] !== null) true @else false @endif" aria-controls="collapseRelationDec">
-                                                                            Rencana Relation
+                                                                            Relation Plan
                                                                         </button>
                                                                     </h2>
                                                                     <div id="collapseRelationDec" class="accordion-collapse collapse @if($detailCA['relation_e'][0]['name'] !== null) show @endif" aria-labelledby="headingRelationDec">
@@ -949,7 +921,7 @@
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingEntertain">
                                                                         <button class="accordion-button @if($declareCA['detail_e'][0]['type'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="@if($declareCA['detail_e'][0]['type'] !== null) true @else false @endif" aria-controls="collapseEntertain">
-                                                                            Deklarasi Rencana Entertain
+                                                                            Declaration Detail Entertain
                                                                         </button>
                                                                     </h2>
                                                                     <div id="collapseEntertain" class="accordion-collapse collapse @if($declareCA['detail_e'][0]['type'] !== null) show @endif" aria-labelledby="headingEntertain">
@@ -1001,7 +973,7 @@
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingRelation">
                                                                         <button class="accordion-button @if($declareCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="@if($declareCA['relation_e'][0]['name'] !== null) true @else false @endif" aria-controls="collapseRelation">
-                                                                            Rencana Relation
+                                                                            Relation Plan
                                                                         </button>
                                                                     </h2>
                                                                     <div id="collapseRelation" class="accordion-collapse collapse @if($declareCA['relation_e'][0]['name'] !== null) show @endif" aria-labelledby="headingRelation">
@@ -1628,7 +1600,7 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label" for="name">Location Agency</label>
-                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
+                        <select class="form-control location-select" name="location_bt_perdiem[]">
                             <option value="">Select location...</option>
                             @foreach($locations as $location)
                                 <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>

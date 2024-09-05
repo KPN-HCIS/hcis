@@ -47,11 +47,11 @@ class ReimburseController extends Controller
         $link = 'Cash Advanced';
         $today = Carbon::today();
         $ca_transactions = CATransaction::with(['employee', 'statusReqEmployee'])
-        ->where('user_id', $userId)
-        ->where('ca_status', '!=', 'Done')
-        ->where('approval_sett', '=', '')
-        ->where('approval_status', '!=', 'Rejected')
-        ->get();
+            ->where('user_id', $userId)
+            ->where('ca_status', '!=', 'Done')
+            ->where('approval_status', '!=', 'Rejected')
+            ->where('approval_sett', '=', '')
+            ->get();
         // dd($ca_transactions);
         //tambah where status<>done
         $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
@@ -145,13 +145,13 @@ class ReimburseController extends Controller
             ->count();
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
-        ->where(function ($query) {
-            $query->where('approval_sett', 'Waiting for Declaration')
-                ->orWhere('approval_sett', 'Declaration')
-                ->orWhere('approval_sett', 'Draft');
-        })
-        ->where('end_date', '<=', $today)
-        ->count();
+            ->where(function ($query) {
+                $query->where('approval_sett', 'Waiting for Declaration')
+                    ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Draft');
+            })
+            ->where('end_date', '<=', $today)
+            ->count();
 
         foreach ($ca_transactions as $transaction) {
             if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved' && $transaction->approval_sett == 'On Progress') {
@@ -171,7 +171,7 @@ class ReimburseController extends Controller
         ]);
     }
     public function cashadvancedAdmin(Request $request)
-    {       
+    {
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Report CA';
@@ -185,7 +185,7 @@ class ReimburseController extends Controller
         if ($request->has(['start_date', 'end_date'])) {
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
-            
+
             // Tambahkan kondisi whereBetween pada query
             $query->whereBetween('start_date', [$startDate, $endDate]);
         }
@@ -215,7 +215,8 @@ class ReimburseController extends Controller
             'endDate' => $endDate,
         ]);
     }
-    public function cashadvancedAdminUpdate(Request $request, $id){
+    public function cashadvancedAdminUpdate(Request $request, $id)
+    {
         $request->validate([
             'ca_status' => 'required|string',
         ]);
@@ -293,22 +294,22 @@ class ReimburseController extends Controller
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
             // 'settName' => $settName,
-            
+
         ]);
     }
     public function filterCaTransactions(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        
+
         // Lakukan query untuk memfilter transaksi berdasarkan tanggal
         $ca_transactions = CATransaction::with('employee')->whereBetween('start_date', [$startDate, $endDate])
-                                        ->get();
+            ->get();
         foreach ($ca_transactions as $transaction) {
             $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
             $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
         }
-        
+
         // dd($ca_transactions);
         // Kembalikan tampilan tabel yang telah difilter
         return view('hcis.reimbursements.cashadv.CaTransactionsTable', compact('ca_transactions'))->render();
@@ -530,7 +531,7 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-           // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
+                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -854,7 +855,7 @@ class ReimburseController extends Controller
                         'end_date' => $endDate,
                         'total_days' => $totalDays,
                         'location' => $location,
-                        // 'other_location' => $other_location,
+                        'other_location' => $other_location,
                         'company_code' => $companyCode,
                         'nominal' => $nominal,
                     ];
@@ -995,7 +996,7 @@ class ReimburseController extends Controller
 
         $model->created_by = $userId;
 
-        if($req->input('action_ca_submit')){
+        if ($req->input('action_ca_submit')) {
             function findDepartmentHead($employee)
             {
                 $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
@@ -1087,6 +1088,7 @@ class ReimburseController extends Controller
             }
         }
         $model->save();
+        // dd($model);
 
         Alert::success('Success Update');
         return redirect()->intended(route('cashadvanced', absolute: false));
@@ -1206,7 +1208,11 @@ class ReimburseController extends Controller
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $transactions = CATransaction::find($key);
-        $approval = ca_approval::with('employee')->where('ca_id', $key)->orderBy('layer', 'asc')->get();
+        $approval = ca_approval::with('employee')
+            ->where('ca_id', $key)
+            ->where('approval_status', '!=', 'Rejected')
+            ->orderBy('layer', 'asc')
+            ->get();
 
         $pdf = PDF::loadView('hcis.reimbursements.cashadv.printCashadv', [
             'link' => $link,
@@ -1231,11 +1237,18 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
 
-        $employee_data = Employee::where('id', $userId)->first();
-        $companies = Company::orderBy('contribution_level')->get();
-        $locations = Location::orderBy('area')->get();
+        $employee_data = Employee::where('id', $userId)
+            ->first();
+        $companies = Company::orderBy('contribution_level')
+            ->get();
+        $locations = Location::orderBy('area')
+            ->get();
         $transactions = CATransaction::find($key);
-        $approval = ca_sett_approval::with('employee')->where('ca_id', $key)->orderBy('layer', 'asc')->get();
+        $approval = ca_sett_approval::with('employee')
+            ->where('ca_id', $key)
+            ->where('approval_status', '!=', 'Rejected')
+            ->orderBy('layer', 'asc')
+            ->get();
 
         $pdf = PDF::loadView('hcis.reimbursements.cashadv.printDeklarasiCashadv', [
             'link' => $link,
@@ -1444,16 +1457,16 @@ class ReimburseController extends Controller
         $model->total_real = str_replace('.', '', $req->totalca_deklarasi);
         $model->total_cost = $model->total_ca - $model->total_real;
         //tambah 1 status disini
-        
+
 
         if ($req->input('action_ca_draft')) {
             $model->approval_sett = $req->input('action_ca_draft');
         }
         if ($req->input('action_ca_submit')) {
             $model->approval_sett = $req->input('action_ca_submit');
-            if($model->total_cost>0){
+            if ($model->total_cost > 0) {
                 $model->ca_status = 'Refund';
-            }else{
+            } else {
                 $model->ca_status = 'On Progress';
             }
         }

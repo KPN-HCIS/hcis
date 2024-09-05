@@ -95,8 +95,8 @@
             <!-- Add Data Button -->
             <div class="col-md-6 mt-4 text-end">
                 @if ($pendingCACount >= 2)
-                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" 
-                        onclick="alert('Tidak dapat menambahkan data, anda masih memiliki 2 CA Pending.'); return false; ">
+                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill"
+                        onclick="alert('Cannot Add Data, you still have 2 Pending CA.'); return false; ">
                         <i class="bi bi-plus-circle"></i> Add Data
                     </a>
                 @else
