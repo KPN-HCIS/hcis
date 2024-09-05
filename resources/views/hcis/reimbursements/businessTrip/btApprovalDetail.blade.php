@@ -147,14 +147,89 @@
                                                             <div class="table-responsive-sm">
                                                                 <div class="d-flex flex-column gap-2">
                                                                     <div class="card">
-                                                                        {{-- <div class="card-body text-center">
-                                                                            <button type="button" style="width: 60%"
-                                                                                disabled id="toggle-bt-perdiem"
-                                                                                class="btn btn-primary mt-3"
-                                                                                data-state="false"><i
-                                                                                    class="bi bi-plus-circle"></i>
-                                                                                Perdiem</button>
-                                                                        </div> --}}
+                                                                        @php
+                                                                            // Provide default empty arrays if caDetail or sections are not set
+                                                                            $detailPerdiem =
+                                                                                $caDetail[
+                                                                                    'detail_perdiem'
+                                                                                ] ?? [];
+                                                                            $detailTransport =
+                                                                                $caDetail[
+                                                                                    'detail_transport'
+                                                                                ] ?? [];
+                                                                            $detailPenginapan =
+                                                                                $caDetail[
+                                                                                    'detail_penginapan'
+                                                                                ] ?? [];
+                                                                            $detailLainnya =
+                                                                                $caDetail[
+                                                                                    'detail_lainnya'
+                                                                                ] ?? [];
+
+                                                                            // Calculate totals with default values
+                                                                            $totalPerdiem = array_reduce(
+                                                                                $detailPerdiem,
+                                                                                function (
+                                                                                    $carry,
+                                                                                    $item,
+                                                                                ) {
+                                                                                    return $carry +
+                                                                                        (int) ($item[
+                                                                                            'nominal'
+                                                                                        ] ?? 0);
+                                                                                },
+                                                                                0,
+                                                                            );
+
+                                                                            $totalTransport = array_reduce(
+                                                                                $detailTransport,
+                                                                                function (
+                                                                                    $carry,
+                                                                                    $item,
+                                                                                ) {
+                                                                                    return $carry +
+                                                                                        (int) ($item[
+                                                                                            'nominal'
+                                                                                        ] ?? 0);
+                                                                                },
+                                                                                0,
+                                                                            );
+
+                                                                            $totalPenginapan = array_reduce(
+                                                                                $detailPenginapan,
+                                                                                function (
+                                                                                    $carry,
+                                                                                    $item,
+                                                                                ) {
+                                                                                    return $carry +
+                                                                                        (int) ($item[
+                                                                                            'nominal'
+                                                                                        ] ?? 0);
+                                                                                },
+                                                                                0,
+                                                                            );
+
+                                                                            $totalLainnya = array_reduce(
+                                                                                $detailLainnya,
+                                                                                function (
+                                                                                    $carry,
+                                                                                    $item,
+                                                                                ) {
+                                                                                    return $carry +
+                                                                                        (int) ($item[
+                                                                                            'nominal'
+                                                                                        ] ?? 0);
+                                                                                },
+                                                                                0,
+                                                                            );
+
+                                                                            // Total Cash Advanced
+                                                                            $totalCashAdvanced =
+                                                                                $totalPerdiem +
+                                                                                $totalTransport +
+                                                                                $totalPenginapan +
+                                                                                $totalLainnya;
+                                                                        @endphp
                                                                         <div id="perdiem-card" class="card-body"
                                                                             style="display:">
                                                                             <div class="accordion" id="accordionPerdiem">
@@ -162,104 +237,35 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="enter-headingOne">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                        @if (count($detailPerdiem) > 0)
+                                                                                            class="accordion-button @if($detailPerdiem[0]['start_date'] === NULL) collapsed @endif fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#enter-collapseOne"
-                                                                                            aria-expanded="true"
-                                                                                            aria-controls="enter-collapseOne">
+                                                                                            aria-expanded="@if($detailPerdiem[0]['start_date'] === NULL) true @else false @endif"
+                                                                                            aria-controls="enter-collapseOne"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#enter-collapseOne"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="enter-collapseOne"
+                                                                                        @endif
+                                                                                            >
                                                                                             Perdiem Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="enter-collapseOne"
-                                                                                        class="accordion-collapse show"
+                                                                                        @if (count($detailPerdiem) > 0)
+                                                                                            class="accordion-collapse @if($detailPerdiem[0]['start_date'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
                                                                                         aria-labelledby="enter-headingOne">
                                                                                         <div class="accordion-body">
                                                                                             <div
                                                                                                 id="form-container-bt-perdiem">
-                                                                                                @php
-                                                                                                    // Provide default empty arrays if caDetail or sections are not set
-                                                                                                    $detailPerdiem =
-                                                                                                        $caDetail[
-                                                                                                            'detail_perdiem'
-                                                                                                        ] ?? [];
-                                                                                                    $detailTransport =
-                                                                                                        $caDetail[
-                                                                                                            'detail_transport'
-                                                                                                        ] ?? [];
-                                                                                                    $detailPenginapan =
-                                                                                                        $caDetail[
-                                                                                                            'detail_penginapan'
-                                                                                                        ] ?? [];
-                                                                                                    $detailLainnya =
-                                                                                                        $caDetail[
-                                                                                                            'detail_lainnya'
-                                                                                                        ] ?? [];
-
-                                                                                                    // Calculate totals with default values
-                                                                                                    $totalPerdiem = array_reduce(
-                                                                                                        $detailPerdiem,
-                                                                                                        function (
-                                                                                                            $carry,
-                                                                                                            $item,
-                                                                                                        ) {
-                                                                                                            return $carry +
-                                                                                                                (int) ($item[
-                                                                                                                    'nominal'
-                                                                                                                ] ?? 0);
-                                                                                                        },
-                                                                                                        0,
-                                                                                                    );
-
-                                                                                                    $totalTransport = array_reduce(
-                                                                                                        $detailTransport,
-                                                                                                        function (
-                                                                                                            $carry,
-                                                                                                            $item,
-                                                                                                        ) {
-                                                                                                            return $carry +
-                                                                                                                (int) ($item[
-                                                                                                                    'nominal'
-                                                                                                                ] ?? 0);
-                                                                                                        },
-                                                                                                        0,
-                                                                                                    );
-
-                                                                                                    $totalPenginapan = array_reduce(
-                                                                                                        $detailPenginapan,
-                                                                                                        function (
-                                                                                                            $carry,
-                                                                                                            $item,
-                                                                                                        ) {
-                                                                                                            return $carry +
-                                                                                                                (int) ($item[
-                                                                                                                    'nominal'
-                                                                                                                ] ?? 0);
-                                                                                                        },
-                                                                                                        0,
-                                                                                                    );
-
-                                                                                                    $totalLainnya = array_reduce(
-                                                                                                        $detailLainnya,
-                                                                                                        function (
-                                                                                                            $carry,
-                                                                                                            $item,
-                                                                                                        ) {
-                                                                                                            return $carry +
-                                                                                                                (int) ($item[
-                                                                                                                    'nominal'
-                                                                                                                ] ?? 0);
-                                                                                                        },
-                                                                                                        0,
-                                                                                                    );
-
-                                                                                                    // Total Cash Advanced
-                                                                                                    $totalCashAdvanced =
-                                                                                                        $totalPerdiem +
-                                                                                                        $totalTransport +
-                                                                                                        $totalPenginapan +
-                                                                                                        $totalLainnya;
-                                                                                                @endphp
                                                                                                 @if (!empty($detailPerdiem))
                                                                                                     @foreach ($detailPerdiem as $index => $perdiem)
                                                                                                         <div
@@ -595,18 +601,31 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingTransport">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                        @if (count($detailTransport) > 0)
+                                                                                            class="accordion-button @if($detailTransport[0]['tanggal'] === NULL) collapsed @endif fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapseTransport"
-                                                                                            aria-expanded="true"
+                                                                                            aria-expanded="@if($detailTransport[0]['tanggal'] === NULL) false @else true @endif"
                                                                                             aria-controls="collapseTransport"
-                                                                                            disabled>
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseTransport"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapseTransport"
+                                                                                        @endif
+                                                                                            >
                                                                                             Transport Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseTransport"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        @if (count($detailTransport) > 0)
+                                                                                            class="accordion-collapse @if($detailTransport[0]['tanggal'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
                                                                                         aria-labelledby="headingTransport">
                                                                                         <div class="accordion-body">
                                                                                             <div
@@ -842,17 +861,31 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingPenginapan">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                        @if (count($detailPenginapan) > 0)
+                                                                                            class="accordion-button @if($detailPenginapan[0]['start_date'] === NULL) collapsed @endif fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapsePenginapan"
-                                                                                            aria-expanded="true"
-                                                                                            aria-controls="collapsePenginapan">
+                                                                                            aria-expanded="@if($detailPenginapan[0]['start_date'] === NULL) false @else true  @endif"
+                                                                                            aria-controls="collapsePenginapan"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapsePenginapan"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapsePenginapan"
+                                                                                        @endif
+                                                                                        >
                                                                                             Accommodation Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapsePenginapan"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        @if (count($detailPenginapan) > 0)
+                                                                                            class="accordion-collapse @if($detailPenginapan[0]['start_date'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
                                                                                         aria-labelledby="headingPenginapan">
                                                                                         <div class="accordion-body">
                                                                                             <div
@@ -1178,17 +1211,31 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingLainnya">
                                                                                         <button
-                                                                                            class="accordion-button fw-medium"
+                                                                                        @if (count($detailLainnya) > 0)
+                                                                                            class="accordion-button @if($detailLainnya[0]['tanggal'] === NULL) collapsed @endif fw-medium"
                                                                                             type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapseLainnya"
-                                                                                            aria-expanded="true"
-                                                                                            aria-controls="collapseLainnya">
-                                                                                            Other Plans
+                                                                                            aria-expanded="@if($detailLainnya[0]['tanggal'] === NULL) false @else true @endif"
+                                                                                            aria-controls="collapseLainnya"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseLainnya"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapseLainnya"
+                                                                                        @endif
+                                                                                        >
+                                                                                            Others Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseLainnya"
-                                                                                        class="accordion-collapse collapse show"
+                                                                                        @if (count($detailLainnya) > 0)
+                                                                                            class="accordion-collapse @if($detailLainnya[0]['tanggal'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
                                                                                         aria-labelledby="headingLainnya">
                                                                                         <div class="accordion-body">
                                                                                             <div

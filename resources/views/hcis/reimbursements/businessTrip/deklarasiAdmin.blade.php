@@ -511,8 +511,8 @@
                                                                                             @foreach ($detailTransport as $index => $transport)
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Tanggal
-                                                                                                        Transport</label>
+                                                                                                        class="form-label">
+                                                                                                        Transport Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
@@ -592,8 +592,8 @@
                                                                                             <!-- Default empty fields if no data is available -->
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Tanggal
-                                                                                                    Transport</label>
+                                                                                                    class="form-label">
+                                                                                                    Transport Date</label>
                                                                                                 <input type="date"
                                                                                                     name="tanggal_bt_transport[]"
                                                                                                     class="form-control"
@@ -751,7 +751,7 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">Start
-                                                                                                            Penginapan</label>
+                                                                                                            Accommodation</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="start_bt_penginapan[]"
@@ -763,7 +763,7 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">End
-                                                                                                            Penginapan</label>
+                                                                                                            Accommodation</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="end_bt_penginapan[]"
@@ -872,7 +872,7 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">Start
-                                                                                                        Penginapan</label>
+                                                                                                        Accommodation</label>
                                                                                                     <input type="date"
                                                                                                         name="start_bt_penginapan[]"
                                                                                                         class="form-control start-penginapan"
@@ -882,7 +882,7 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">End
-                                                                                                        Penginapan</label>
+                                                                                                        Accommodation</label>
                                                                                                     <input type="date"
                                                                                                         name="end_bt_penginapan[]"
                                                                                                         class="form-control end-penginapan"
@@ -1072,7 +1072,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Tanggal</label>
+                                                                                                                class="form-label">Date</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="tanggal_bt_lainnya[]"
@@ -1129,7 +1129,7 @@
                                                                                                 <div class="lainnya-item">
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Tanggal</label>
+                                                                                                            class="form-label">Date</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="tanggal_bt_lainnya[]"
@@ -1169,7 +1169,7 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
-                                                                                                    Lainnya</label>
+                                                                                                    Others</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -1411,7 +1411,7 @@
                                                                                                         for="name">Location
                                                                                                         Agency</label>
                                                                                                     <select
-                                                                                                        class="form-control select2 location-select"
+                                                                                                        class="form-control location-select"
                                                                                                         name="location_bt_perdiem[]">
                                                                                                         <option
                                                                                                             value="">
@@ -1445,7 +1445,7 @@
                                                                                                         for="name">Company
                                                                                                         Code</label>
                                                                                                     <select
-                                                                                                        class="form-control select2"
+                                                                                                        class="form-control"
                                                                                                         id="companyFilter_{{ $index }}"
                                                                                                         name="company_bt_perdiem[]">
                                                                                                         <option
@@ -1546,7 +1546,7 @@
                                                                                                     for="name">Location
                                                                                                     Agency</label>
                                                                                                 <select
-                                                                                                    class="form-control select2 location-select"
+                                                                                                    class="form-control location-select"
                                                                                                     name="location_bt_perdiem[]">
                                                                                                     <option value="">
                                                                                                         Select
@@ -1574,7 +1574,7 @@
                                                                                                     for="name">Company
                                                                                                     Code</label>
                                                                                                 <select
-                                                                                                    class="form-control select2"
+                                                                                                    class="form-control"
                                                                                                     id="companyFilter_0"
                                                                                                     name="company_bt_perdiem[]">
                                                                                                     <option value="">
@@ -1705,8 +1705,8 @@
                                                                                             @foreach ($detailTransport2 as $index => $transport2)
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Tanggal
-                                                                                                        Transport</label>
+                                                                                                        class="form-label">
+                                                                                                        Transport Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
@@ -1768,8 +1768,8 @@
                                                                                             <!-- Default empty fields if no data is available -->
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Tanggal
-                                                                                                    Transport</label>
+                                                                                                    class="form-label">
+                                                                                                    Transport Date</label>
                                                                                                 <input type="date"
                                                                                                     name="tanggal_bt_transport[]"
                                                                                                     class="form-control"
@@ -3620,7 +3620,7 @@
 
                 newFormBTTransport.innerHTML = `
                 <div class="mb-2">
-                    <label class="form-label">Tanggal Transport</label>
+                    <label class="form-label">Transport Date</label>
                     <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
                 </div>
                 <div class="mb-2">

@@ -53,6 +53,89 @@
                             <!-- 1st Form -->
                             <div class="row mt-2" id="ca_div">
                                 <div class="col-md-6">
+                                    @php
+                                        // Provide default empty arrays if caDetail or sections are not set
+                                        $detailPerdiem =
+                                            $caDetail[
+                                                'detail_perdiem'
+                                            ] ?? [];
+                                        $detailTransport =
+                                            $caDetail[
+                                                'detail_transport'
+                                            ] ?? [];
+                                        $detailPenginapan =
+                                            $caDetail[
+                                                'detail_penginapan'
+                                            ] ?? [];
+                                        $detailLainnya =
+                                            $caDetail[
+                                                'detail_lainnya'
+                                            ] ?? [];
+
+                                        // Calculate totals with default values
+                                        $totalPerdiem = array_reduce(
+                                            $detailPerdiem,
+                                            function (
+                                                $carry,
+                                                $item,
+                                            ) {
+                                                return $carry +
+                                                    (int) ($item[
+                                                        'nominal'
+                                                    ] ?? 0);
+                                            },
+                                            0,
+                                        );
+
+                                        $totalTransport = array_reduce(
+                                            $detailTransport,
+                                            function (
+                                                $carry,
+                                                $item,
+                                            ) {
+                                                return $carry +
+                                                    (int) ($item[
+                                                        'nominal'
+                                                    ] ?? 0);
+                                            },
+                                            0,
+                                        );
+
+                                        $totalPenginapan = array_reduce(
+                                            $detailPenginapan,
+                                            function (
+                                                $carry,
+                                                $item,
+                                            ) {
+                                                return $carry +
+                                                    (int) ($item[
+                                                        'nominal'
+                                                    ] ?? 0);
+                                            },
+                                            0,
+                                        );
+
+                                        $totalLainnya = array_reduce(
+                                            $detailLainnya,
+                                            function (
+                                                $carry,
+                                                $item,
+                                            ) {
+                                                return $carry +
+                                                    (int) ($item[
+                                                        'nominal'
+                                                    ] ?? 0);
+                                            },
+                                            0,
+                                        );
+
+                                        // Total Cash Advanced
+                                        $totalCashAdvanced =
+                                            $totalPerdiem +
+                                            $totalTransport +
+                                            $totalPenginapan +
+                                            $totalLainnya;
+                                    @endphp
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
                                             <div class="text-bg-primary p-2" style="text-align:center; border-radius:4px;">
@@ -70,108 +153,38 @@
                                                                         Perdiem</button>
                                                                 </div> --}}
                                                                 <div id="perdiem-card-deklarasi" class="card-body"
-                                                                    style="display:;">
-                                                                    <div class="accordion" id="accordionPerdiem">
+                                                                    style="display: ">
+                                                                    <div class="accordion" id="accordionPerdiemDec">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
                                                                                 id="enter-headingOne">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button" data-bs-toggle="collapse"
-                                                                                    data-bs-target="#enter-collapseOne"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="enter-collapseOne">
+                                                                                <button
+                                                                                    @if (count($detailPerdiem) > 0) class="accordion-button @if ($detailPerdiem[0]['start_date'] === null) collapsed @endif
+                                                                                    fw-medium" type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#enter-collapseOneDec"
+                                                                                    aria-expanded="@if ($detailPerdiem[0]['start_date'] === null) true @else false @endif"
+                                                                                    aria-controls="enter-collapseOneDec"
+                                                                                @else
+                                                                                    class="accordion-button collapsed fw-medium"
+                                                                                    type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#enter-collapseOneDec"
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="enter-collapseOneDec"
+                                                                                    @endif
+                                                                                    >
                                                                                     Perdiem Plan
                                                                                 </button>
                                                                             </h2>
-                                                                            <div id="enter-collapseOne"
-                                                                                class="accordion-collapse show"
+                                                                            <div id="enter-collapseOneDec"
+                                                                                @if (count($detailPerdiem) > 0) class="accordion-collapse @if ($detailPerdiem[0]['start_date'] === null) collapse @else show @endif"
+                                                                                @else class="accordion-collapse collapse"
+                                                                                @endif
                                                                                 aria-labelledby="enter-headingOne">
                                                                                 <div class="accordion-body">
                                                                                     <div
                                                                                         id="form-container-bt-perdiem-deklarasi">
-                                                                                        @php
-                                                                                            // Provide default empty arrays if caDetail or sections are not set
-                                                                                            $detailPerdiem =
-                                                                                                $caDetail[
-                                                                                                    'detail_perdiem'
-                                                                                                ] ?? [];
-                                                                                            $detailTransport =
-                                                                                                $caDetail[
-                                                                                                    'detail_transport'
-                                                                                                ] ?? [];
-                                                                                            $detailPenginapan =
-                                                                                                $caDetail[
-                                                                                                    'detail_penginapan'
-                                                                                                ] ?? [];
-                                                                                            $detailLainnya =
-                                                                                                $caDetail[
-                                                                                                    'detail_lainnya'
-                                                                                                ] ?? [];
-
-                                                                                            // Calculate totals with default values
-                                                                                            $totalPerdiem = array_reduce(
-                                                                                                $detailPerdiem,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalTransport = array_reduce(
-                                                                                                $detailTransport,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalPenginapan = array_reduce(
-                                                                                                $detailPenginapan,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalLainnya = array_reduce(
-                                                                                                $detailLainnya,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            // Total Cash Advanced
-                                                                                            $totalCashAdvanced =
-                                                                                                $totalPerdiem +
-                                                                                                $totalTransport +
-                                                                                                $totalPenginapan +
-                                                                                                $totalLainnya;
-                                                                                        @endphp
                                                                                         @if (!empty($detailPerdiem))
                                                                                             @foreach ($detailPerdiem as $index => $perdiem)
                                                                                                 <div class="mb-2">
@@ -476,23 +489,35 @@
                                                                         Transport</button>
                                                                 </div> --}}
                                                                 <div id="transport-card-deklarasi" class="card-body"
-                                                                    style="display:;">
-                                                                    <div class="accordion" id="accordionTransport">
+                                                                    style="display: ">
+                                                                    <div class="accordion" id="accordionTransportDec">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
-                                                                                id="headingTransport">
-                                                                                <button class="accordion-button fw-medium"
+                                                                                id="headingTransportDec">
+                                                                                <button
+                                                                                    @if (count($detailTransport) > 0) class="accordion-button @if ($detailTransport[0]['tanggal'] === null) collapsed @endif
+                                                                                    fw-medium" type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#collapseTransportDec"
+                                                                                    aria-expanded="@if ($detailTransport[0]['tanggal'] === null) false @else true @endif"
+                                                                                    aria-controls="collapseTransportDec"
+                                                                                @else
+                                                                                    class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapseTransport"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapseTransport">
-                                                                                    Rencana Transport
+                                                                                    data-bs-target="#collapseTransportDec"
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="collapseTransportDec"
+                                                                                    @endif
+                                                                                    >
+                                                                                    Transport Plan
                                                                                 </button>
                                                                             </h2>
-                                                                            <div id="collapseTransport"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingTransport">
+                                                                            <div id="collapseTransportDec"
+                                                                                @if (count($detailTransport) > 0) class="accordion-collapse @if ($detailTransport[0]['tanggal'] === null) collapse @else show @endif"
+                                                                            @else class="accordion-collapse collapse"
+                                                                                @endif
+                                                                                aria-labelledby="headingTransportDec">
                                                                                 <div class="accordion-body">
                                                                                     <div
                                                                                         id="form-container-bt-transport-deklarasi">
@@ -522,8 +547,8 @@
                                                                                             @foreach ($detailTransport as $index => $transport)
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Tanggal
-                                                                                                        Transport</label>
+                                                                                                        class="form-label">
+                                                                                                        Transport Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
@@ -557,7 +582,7 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Keterangan</label>
+                                                                                                        class="form-label">Information</label>
                                                                                                     <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
                                                                                                         disabled>{{ old('keterangan_bt_transport.' . $index, $transport['keterangan'] ?? '') }}</textarea>
                                                                                                 </div>
@@ -603,8 +628,8 @@
                                                                                             <!-- Default empty fields if no data is available -->
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Tanggal
-                                                                                                    Transport</label>
+                                                                                                    class="form-label">
+                                                                                                    Transport Date</label>
                                                                                                 <input type="date"
                                                                                                     name="tanggal_bt_transport[]"
                                                                                                     class="form-control"
@@ -634,7 +659,7 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Keterangan</label>
+                                                                                                    class="form-label">Information</label>
                                                                                                 <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
                                                                                                     disabled></textarea>
                                                                                             </div>
@@ -707,23 +732,35 @@
                                                                         Accommodation</button>
                                                                 </div> --}}
                                                                 <div id="penginapan-card-deklarasi" class="card-body"
-                                                                    style="display:">
-                                                                    <div class="accordion" id="accordionPenginapan">
+                                                                    style="display: ">
+                                                                    <div class="accordion" id="accordionPenginapanDec">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
-                                                                                id="headingPenginapan">
-                                                                                <button class="accordion-button fw-medium"
+                                                                                id="headingPenginapanDec">
+                                                                                <button
+                                                                                    @if (count($detailPenginapan) > 0) class="accordion-button @if ($detailPenginapan[0]['start_date'] === null) collapsed @endif
+                                                                                    fw-medium" type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#collapsePenginapanDec"
+                                                                                    aria-expanded="@if ($detailPenginapan[0]['start_date'] === null) false @else true @endif"
+                                                                                    aria-controls="collapsePenginapanDec"
+                                                                                @else
+                                                                                    class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapsePenginapan"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapsePenginapan">
-                                                                                    Rencana Penginapan
+                                                                                    data-bs-target="#collapsePenginapanDec"
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="collapsePenginapanDec"
+                                                                                    @endif
+                                                                                    >
+                                                                                    Accommodation Plan
                                                                                 </button>
                                                                             </h2>
-                                                                            <div id="collapsePenginapan"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingPenginapan">
+                                                                            <div id="collapsePenginapanDec"
+                                                                                @if (count($detailPenginapan) > 0) class="accordion-collapse @if ($detailPenginapan[0]['start_date'] === null) collapse @else show @endif"
+                                                                            @else class="accordion-collapse collapse"
+                                                                                @endif
+                                                                                aria-labelledby="headingPenginapanDec">
                                                                                 <div class="accordion-body">
                                                                                     <div
                                                                                         id="form-container-bt-penginapan-deklarasi">
@@ -758,7 +795,7 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">Start
-                                                                                                            Penginapan</label>
+                                                                                                            Accommodation</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="start_bt_penginapan[]"
@@ -770,7 +807,7 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">End
-                                                                                                            Penginapan</label>
+                                                                                                            Accommodation</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="end_bt_penginapan[]"
@@ -879,7 +916,7 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">Start
-                                                                                                        Penginapan</label>
+                                                                                                        Accommodation</label>
                                                                                                     <input type="date"
                                                                                                         name="start_bt_penginapan[]"
                                                                                                         class="form-control start-penginapan"
@@ -889,7 +926,7 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">End
-                                                                                                        Penginapan</label>
+                                                                                                        Accommodation</label>
                                                                                                     <input type="date"
                                                                                                         name="end_bt_penginapan[]"
                                                                                                         class="form-control end-penginapan"
@@ -978,7 +1015,7 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
-                                                                                                    Penginapan</label>
+                                                                                                    Accommodation</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -1024,23 +1061,35 @@
                                                                         Others</button>
                                                                 </div> --}}
                                                                 <div id="lainnya-card-deklarasi" class="card-body"
-                                                                    style="display:">
-                                                                    <div class="accordion" id="accordionLainnya">
+                                                                    style="display: ">
+                                                                    <div class="accordion" id="accordionLainnyaDec">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
-                                                                                id="headingLainnya">
-                                                                                <button class="accordion-button fw-medium"
+                                                                                id="headingLainnyaDec">
+                                                                                <button
+                                                                                    @if (count($detailLainnya) > 0) class="accordion-button @if ($detailLainnya[0]['tanggal'] === null) collapsed @endif
+                                                                                    fw-medium" type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#collapseLainnyaDec"
+                                                                                    aria-expanded="@if ($detailLainnya[0]['tanggal'] === null) false @else true @endif"
+                                                                                    aria-controls="collapseLainnyaDec"
+                                                                                @else
+                                                                                    class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapseLainnya"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapseLainnya">
-                                                                                    Rencana Lainnya
+                                                                                    data-bs-target="#collapseLainnyaDec"
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="collapseLainnyaDec"
+                                                                                    @endif
+                                                                                    >
+                                                                                    Others Plan
                                                                                 </button>
                                                                             </h2>
-                                                                            <div id="collapseLainnya"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingLainnya">
+                                                                            <div id="collapseLainnyaDec"
+                                                                                @if (count($detailLainnya) > 0) class="accordion-collapse @if ($detailLainnya[0]['tanggal'] === null) collapse @else show @endif"
+                                                                            @else class="accordion-collapse collapse"
+                                                                                @endif
+                                                                                aria-labelledby="headingLainnyaDec">
                                                                                 <div class="accordion-body">
                                                                                     <div
                                                                                         id="form-container-bt-lainnya-deklarasi">
@@ -1076,7 +1125,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Tanggal</label>
+                                                                                                                class="form-label">Date</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="tanggal_bt_lainnya[]"
@@ -1088,7 +1137,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Keterangan</label>
+                                                                                                                class="form-label">Information</label>
                                                                                                             <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled>{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem['keterangan'] ?? '') }}</textarea>
                                                                                                         </div>
                                                                                                         <div
@@ -1133,7 +1182,7 @@
                                                                                                 <div class="lainnya-item">
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Tanggal</label>
+                                                                                                            class="form-label">Date</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="tanggal_bt_lainnya[]"
@@ -1143,7 +1192,7 @@
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Keterangan</label>
+                                                                                                            class="form-label">Information</label>
                                                                                                         <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled></textarea>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
@@ -1173,7 +1222,7 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
-                                                                                                    Lainnya</label>
+                                                                                                    Others</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -1289,6 +1338,79 @@
                                 </div>
                                 {{-- 2ND FORM --}}
                                 <div class="col-md-6">
+                                    @php
+                                        $detailPerdiem2 =
+                                            $declareCa[
+                                                'detail_perdiem'
+                                            ] ?? [];
+                                        $detailTransport2 =
+                                            $declareCa[
+                                                'detail_transport'
+                                            ] ?? [];
+                                        $detailPenginapan2 =
+                                            $declareCa[
+                                                'detail_penginapan'
+                                            ] ?? [];
+                                        $detailLainnya2 =
+                                            $declareCa[
+                                                'detail_lainnya'
+                                            ] ?? [];
+                                        $totalPerdiem2 = array_reduce(
+                                            $detailPerdiem2,
+                                            function (
+                                                $carry,
+                                                $item,
+                                            ) {
+                                                return $carry +
+                                                    (int) ($item[
+                                                        'nominal'
+                                                    ] ?? 0);
+                                            },
+                                            0,
+                                        );
+
+                                        $totalTransport2 = array_reduce(
+                                            $detailTransport2,
+                                            function (
+                                                $carry,
+                                                $item,
+                                            ) {
+                                                return $carry +
+                                                    (int) ($item[
+                                                        'nominal'
+                                                    ] ?? 0);
+                                            },
+                                            0,
+                                        );
+
+                                        $totalPenginapan2 = array_reduce(
+                                            $detailPenginapan2,
+                                            function (
+                                                $carry,
+                                                $item,
+                                            ) {
+                                                return $carry +
+                                                    (int) ($item[
+                                                        'nominal'
+                                                    ] ?? 0);
+                                            },
+                                            0,
+                                        );
+
+                                        $totalLainnya2 = array_reduce(
+                                            $detailLainnya2,
+                                            function (
+                                                $carry,
+                                                $item,
+                                            ) {
+                                                return $carry +
+                                                    (int) ($item[
+                                                        'nominal'
+                                                    ] ?? 0);
+                                            },
+                                            0,
+                                        );
+                                    @endphp
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
                                             <div class="text-bg-primary p-2"
@@ -1307,98 +1429,36 @@
                                                                         Perdiem</button>
                                                                 </div> --}}
                                                                 <div id="perdiem-card" class="card-body"
-                                                                    style="display:;">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionPerdiem">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
                                                                                 id="enter-headingOne">
-                                                                                <button class="accordion-button fw-medium"
+                                                                                <button
+                                                                                    @if (count($detailPerdiem2) > 0) class="accordion-button @if ($detailPerdiem2[0]['start_date'] === null) collapsed @endif
+                                                                                    fw-medium" type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#enter-collapseOne"
+                                                                                    aria-expanded="@if ($detailPerdiem2[0]['start_date'] === null) true @else false @endif"
+                                                                                aria-controls="enter-collapseOne" @else
+                                                                                    class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
                                                                                     data-bs-target="#enter-collapseOne"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="enter-collapseOne">
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="enter-collapseOne"
+                                                                                    @endif
+                                                                                    >
                                                                                     Perdiem Plan
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="enter-collapseOne"
-                                                                                class="accordion-collapse show"
+                                                                                @if (count($detailPerdiem2) > 0) class="accordion-collapse @if ($detailPerdiem2[0]['start_date'] === null) collapse @else show @endif"
+                                                                            @else class="accordion-collapse collapse"
+                                                                                @endif
                                                                                 aria-labelledby="enter-headingOne">
                                                                                 <div class="accordion-body">
                                                                                     <div id="form-container-bt-perdiem">
-                                                                                        @php
-                                                                                            $detailPerdiem2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_perdiem'
-                                                                                                ] ?? [];
-                                                                                            $detailTransport2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_transport'
-                                                                                                ] ?? [];
-                                                                                            $detailPenginapan2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_penginapan'
-                                                                                                ] ?? [];
-                                                                                            $detailLainnya2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_lainnya'
-                                                                                                ] ?? [];
-                                                                                            $totalPerdiem2 = array_reduce(
-                                                                                                $detailPerdiem2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalTransport2 = array_reduce(
-                                                                                                $detailTransport2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalPenginapan2 = array_reduce(
-                                                                                                $detailPenginapan2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalLainnya2 = array_reduce(
-                                                                                                $detailLainnya2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-                                                                                        @endphp
                                                                                         @if (!empty($detailPerdiem2))
                                                                                             @foreach ($detailPerdiem2 as $index => $perdiem2)
                                                                                                 <div class="mb-2">
@@ -1694,17 +1754,28 @@
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
                                                                                 id="headingTransport">
-                                                                                <button class="accordion-button fw-medium"
+                                                                                <button
+                                                                                    @if (count($detailTransport2) > 0) class="accordion-button @if ($detailTransport2[0]['tanggal'] === null) collapsed @endif
+                                                                                    fw-medium" type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#collapseTransport"
+                                                                                    aria-expanded="@if ($detailTransport2[0]['tanggal'] === null) false @else true @endif"
+                                                                                aria-controls="collapseTransport" @else
+                                                                                    class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
                                                                                     data-bs-target="#collapseTransport"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapseTransport">
-                                                                                    Rencana Transport
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="collapseTransport"
+                                                                                    @endif
+                                                                                    >
+                                                                                    Transport Plan
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapseTransport"
-                                                                                class="accordion-collapse collapse show"
+                                                                                @if (count($detailTransport2) > 0) class="accordion-collapse @if ($detailTransport2[0]['tanggal'] === null) collapse @else show @endif"
+                                                                            @else class="accordion-collapse collapse"
+                                                                                @endif
                                                                                 aria-labelledby="headingTransport">
                                                                                 <div class="accordion-body">
                                                                                     <div id="form-container-bt-transport">
@@ -1734,8 +1805,8 @@
                                                                                             @foreach ($detailTransport2 as $index => $transport2)
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Tanggal
-                                                                                                        Transport</label>
+                                                                                                        class="form-label">
+                                                                                                        Transport Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
@@ -1767,7 +1838,7 @@
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
-                                                                                                        class="form-label">Keterangan</label>
+                                                                                                        class="form-label">Information</label>
                                                                                                     <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..." disabled>{{ old('keterangan_bt_transport.' . $index, $transport2['keterangan'] ?? '') }}</textarea>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
@@ -1797,8 +1868,8 @@
                                                                                             <!-- Default empty fields if no data is available -->
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Tanggal
-                                                                                                    Transport</label>
+                                                                                                    class="form-label">
+                                                                                                    Transport Date</label>
                                                                                                 <input type="date"
                                                                                                     name="tanggal_bt_transport[]"
                                                                                                     class="form-control"
@@ -1826,7 +1897,7 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Keterangan</label>
+                                                                                                    class="form-label">Information</label>
                                                                                                 <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..." disabled></textarea>
                                                                                             </div>
                                                                                             <div class="mb-2">
@@ -1904,17 +1975,29 @@
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
                                                                                 id="headingPenginapan">
-                                                                                <button class="accordion-button fw-medium"
+                                                                                <button
+                                                                                    @if (count($detailPenginapan2) > 0) class="accordion-button @if ($detailPenginapan2[0]['start_date'] === null) collapsed @endif
+                                                                                    fw-medium" type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#collapsePenginapan"
+                                                                                    aria-expanded="@if ($detailPenginapan2[0]['start_date'] === null) false @else true @endif"
+                                                                                    aria-controls="collapsePenginapan"
+                                                                                @else
+                                                                                    class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
                                                                                     data-bs-target="#collapsePenginapan"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapsePenginapan">
-                                                                                    Rencana Penginapan
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="collapsePenginapan"
+                                                                                    @endif
+                                                                                    >
+                                                                                    Accommodation Plan
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapsePenginapan"
-                                                                                class="accordion-collapse collapse show"
+                                                                                @if (count($detailPenginapan2) > 0) class="accordion-collapse @if ($detailPenginapan2[0]['start_date'] === null) collapse @else show @endif"
+                                                                            @else class="accordion-collapse collapse"
+                                                                                @endif
                                                                                 aria-labelledby="headingPenginapan">
                                                                                 <div class="accordion-body">
                                                                                     <div id="form-container-bt-penginapan">
@@ -1949,7 +2032,7 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">Start
-                                                                                                            Penginapan</label>
+                                                                                                            Accommodation</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="start_bt_penginapan[]"
@@ -1960,7 +2043,7 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">End
-                                                                                                            Penginapan</label>
+                                                                                                            Accommodation</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="end_bt_penginapan[]"
@@ -2053,7 +2136,7 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">Start
-                                                                                                        Penginapan</label>
+                                                                                                        Accommodation</label>
                                                                                                     <input type="date"
                                                                                                         name="start_bt_penginapan[]"
                                                                                                         class="form-control start-penginapan"
@@ -2062,7 +2145,7 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">End
-                                                                                                        Penginapan</label>
+                                                                                                        Accommodation</label>
                                                                                                     <input type="date"
                                                                                                         name="end_bt_penginapan[]"
                                                                                                         class="form-control end-penginapan"
@@ -2147,7 +2230,7 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
-                                                                                                    Penginapan</label>
+                                                                                                    Accommodation</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -2197,22 +2280,33 @@
                                                                         Others</button>
                                                                 </div> --}}
                                                                 <div id="lainnya-card" class="card-body"
-                                                                    style="display:">
+                                                                    style="display: ">
                                                                     <div class="accordion" id="accordionLainnya">
                                                                         <div class="accordion-item">
                                                                             <h2 class="accordion-header"
                                                                                 id="headingLainnya">
-                                                                                <button class="accordion-button fw-medium"
+                                                                                <button
+                                                                                    @if (count($detailLainnya2) > 0) class="accordion-button @if ($detailLainnya2[0]['tanggal'] === null) collapsed @endif
+                                                                                    fw-medium" type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#collapseLainnya"
+                                                                                    aria-expanded="@if ($detailLainnya2[0]['tanggal'] === null) false @else true @endif"
+                                                                                aria-controls="collapseLainnya" @else
+                                                                                    class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
                                                                                     data-bs-target="#collapseLainnya"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapseLainnya">
-                                                                                    Rencana Lainnya
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="collapseLainnya"
+                                                                                    @endif
+                                                                                    >
+                                                                                    Others Plan
                                                                                 </button>
                                                                             </h2>
                                                                             <div id="collapseLainnya"
-                                                                                class="accordion-collapse collapse show"
+                                                                                @if (count($detailLainnya2) > 0) class="accordion-collapse @if ($detailLainnya2[0]['tanggal'] === null) collapse @else show @endif"
+                                                                            @else class="accordion-collapse collapse"
+                                                                                @endif
                                                                                 aria-labelledby="headingLainnya">
                                                                                 <div class="accordion-body">
                                                                                     <div id="form-container-bt-lainnya">
@@ -2248,7 +2342,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Tanggal</label>
+                                                                                                                class="form-label">Date</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="tanggal_bt_lainnya[]"
@@ -2259,7 +2353,7 @@
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Keterangan</label>
+                                                                                                                class="form-label">Information</label>
                                                                                                             <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled>{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem2['keterangan'] ?? '') }}</textarea>
                                                                                                         </div>
                                                                                                         <div
@@ -2289,7 +2383,7 @@
                                                                                                 <div class="lainnya-item">
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Tanggal</label>
+                                                                                                            class="form-label">Date</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="tanggal_bt_lainnya[]"
@@ -2298,7 +2392,7 @@
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
-                                                                                                            class="form-label">Keterangan</label>
+                                                                                                            class="form-label">Information</label>
                                                                                                         <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled></textarea>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
@@ -2334,7 +2428,7 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
-                                                                                                    Lainnya</label>
+                                                                                                    Others</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -3648,7 +3742,7 @@
 
                     newFormBTTransport.innerHTML = `
                 <div class="mb-2">
-                    <label class="form-label">Tanggal Transport</label>
+                    <label class="form-label">Transport Date</label>
                     <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
                 </div>
                 <div class="mb-2">
@@ -3661,8 +3755,8 @@
                     </select>
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">Keterangan</label>
-                    <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                    <label class="form-label">Information</label>
+                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here ..."></textarea>
                 </div>
                 <div class="mb-2">
                     <label class="form-label">Amount</label>
@@ -3699,11 +3793,11 @@
 
                     newFormBTPenginapan.innerHTML = `
                 <div class="mb-2">
-                    <label class="form-label">Start Penginapan</label>
+                    <label class="form-label">Start Accommodation</label>
                     <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">End Penginapan</label>
+                    <label class="form-label">End Accommodation</label>
                     <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                 </div>
                 <div class="mb-2">
@@ -3774,11 +3868,11 @@
 
                     newFormBTLainnya.innerHTML = `
                 <div class="mb-2">
-                    <label class="form-label">Tanggal</label>
+                    <label class="form-label">Date</label>
                     <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">Keterangan</label>
+                    <label class="form-label">Information</label>
                     <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
                 </div>
                 <div class="mb-2">
@@ -3952,11 +4046,11 @@
 
                     newForm.innerHTML = `
                 <div class="mb-2">
-                    <label class="form-label">Tanggal</label>
+                    <label class="form-label">Date</label>
                     <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">Keterangan</label>
+                    <label class="form-label">Information</label>
                     <textarea name="keterangan_nbt[]" class="form-control"></textarea>
                 </div>
                 <div class="input-group mb-3">
