@@ -34,11 +34,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            {{-- <div class="col">
                 <div class="mb-2 text-end">
                     <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow">Add Ticket</a>
                 </div>
-            </div>
+            </div> --}}
         </div>
         <!-- Content Row -->
         <div class="row">
@@ -133,12 +133,7 @@
                                                                     : (in_array($transaction->approval_status, ['Doc Accepted'])
                                                                         ? 'info'
                                                                         : 'secondary')))) }}"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem;"
-                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
-                                                    @elseif ($transaction->approval_status == 'Pending L2')
-                                                    title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}" @endif>
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;">
                                                     {{ $transaction->approval_status == 'Approved' ? 'Request Approved' : $transaction->approval_status }}
                                                 </span>
                                             </td>

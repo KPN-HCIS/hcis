@@ -25,7 +25,7 @@
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-8">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Ticket</h4>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Ticket</h4>
                     <a href="{{ route('ticket') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
@@ -78,7 +78,8 @@
                                 <div class="col-md-4">
                                     <div class="mb-2">
                                         <label class="form-label" for="jns_dinas_tkt">Service Type</label>
-                                        <input type="text" class="form-control bg-light" name="jns_dinas_tkt" id="jns_dinas_tkt" value="{{ $ticket->jns_dinas_tkt }}" readonly>
+                                        <input type="text" class="form-control bg-light" name="jns_dinas_tkt"
+                                            id="jns_dinas_tkt" value="{{ $ticket->jns_dinas_tkt }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -260,26 +261,26 @@
                                                 </div>
 
                                                 @if ($i < 5)
-                                                <div class="mt-3">
-                                                    <label class="form-label">Add more ticket</label>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio"
-                                                            id="more_tkt_no_{{ $i }}"
-                                                            name="more_tkt_{{ $i }}" value="Tidak"
-                                                            {{ (isset($ticketData[$i - 1]['more_tkt']) && $ticketData[$i - 1]['more_tkt'] == 'Tidak') ? 'checked' : '' }}>
-                                                        <label class="form-check-label"
-                                                            for="more_tkt_no_{{ $i }}">Tidak</label>
+                                                    <div class="mt-3">
+                                                        <label class="form-label">Add more ticket</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                id="more_tkt_no_{{ $i }}"
+                                                                name="more_tkt_{{ $i }}" value="Tidak"
+                                                                {{ ($ticketData[$i - 1]['more_tkt'] ?? 'Tidak') == 'Tidak' ? 'checked' : '' }}>
+                                                            <label class="form-check-label"
+                                                                for="more_tkt_no_{{ $i }}">Tidak</label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                id="more_tkt_yes_{{ $i }}"
+                                                                name="more_tkt_{{ $i }}" value="Ya"
+                                                                {{ ($ticketData[$i - 1]['more_tkt'] ?? 'Tidak') == 'Ya' ? 'checked' : '' }}
+                                                                onchange="toggleNextForm({{ $i }})">
+                                                            <label class="form-check-label"
+                                                                for="more_tkt_yes_{{ $i }}">Ya</label>
+                                                        </div>
                                                     </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio"
-                                                            id="more_tkt_yes_{{ $i }}"
-                                                            name="more_tkt_{{ $i }}" value="Ya"
-                                                            {{ (isset($ticketData[$i - 1]['more_tkt']) && $ticketData[$i - 1]['more_tkt'] == 'Ya') ? 'checked' : '' }}
-                                                            onchange="toggleNextForm({{ $i }})">
-                                                        <label class="form-check-label"
-                                                            for="more_tkt_yes_{{ $i }}">Ya</label>
-                                                    </div>
-                                                </div>
                                                 @endif
                                             </div>
                                         </div>

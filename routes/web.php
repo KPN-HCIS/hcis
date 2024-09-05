@@ -134,6 +134,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/ticket/delete/{id}', [ReimburseController::class, 'ticketDelete'])->name('ticket.delete');
     Route::get('/ticket/pdf/{id}', [ReimburseController::class, 'ticketExport'])->name('ticket.export');
 
+    // My Ticket Approval
+    Route::get('/ticket/approval', [ReimburseController::class, 'ticketApproval'])->name('ticket.approval');
+
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');
     Route::get('/goals/detail/{id}', [MyGoalController::class, 'show'])->name('goals.detail');
