@@ -19,6 +19,10 @@ class Tiket extends Model
     {
         return $this->belongsTo(Employee::class, 'user_id', 'id');
     }
+    public function ticketApproval()
+    {
+        return $this->belongsTo(TiketApproval::class, 'id', 'tkt_id');
+    }
     public function getManager1FullnameAttribute()
     {
         // Get the associated BusinessTrip record
@@ -41,18 +45,41 @@ class Tiket extends Model
     }
     public function latestApprovalL1()
     {
-        return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+        return $this->hasOne(TiketApproval::class, 'tkt_id', 'id')
             ->where('layer', 1)
             ->where('approval_status', 'Pending L2')
             ->latest('approved_at');
     }
     public function latestApprovalL2()
     {
-        return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+        return $this->hasOne(TiketApproval::class, 'tkt_id', 'id')
             ->where('layer', 2)
             ->where('approval_status', 'Approved')
             ->latest('approved_at');
     }
+
+//     public function approvals()
+//     {
+//         return $this->hasMany(BTApproval::class, 'bt_id', 'id');
+//     }
+//     // BusinessTrip.php
+//     public function ApprovalL1()
+//     {
+//         return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+//             ->where('layer', 1)
+//             ->where('approval_status', 'Pending L2')
+//             ->latest('approved_at')
+//             ->with('manager1');
+//     }
+
+//    public function ApprovalL2()
+//     {
+//         return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+//             ->where('layer', 2)
+//             ->where('approval_status', 'Approved')
+//             ->latest('approved_at')
+//             ->with('manager2');
+//     }
 
 
 

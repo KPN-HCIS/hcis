@@ -76,7 +76,8 @@
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
                                             <td>{{ $transaction->no_sppd }}</td>
                                             <td>{{ $transaction->no_tkt }}</td>
-                                            <td style="text-align: left">{{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
+                                            <td style="text-align: left">
+                                                {{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
                                             <td>{{ $transaction->jns_dinas_tkt }}</td>
                                             {{-- <td>{{ $transaction->np_tkt }}</td> --}}
                                             <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
@@ -138,28 +139,13 @@
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                @if ($transaction->approval_status == 'Draft')
-                                                    <a href="{{ route('ticket.edit', encrypt($transaction->id)) }}"
-                                                        class="btn btn-sm rounded-pill btn-outline-warning" title="Edit">
-                                                        <i class="ri-edit-box-line"></i>
-                                                    </a>
-                                                    <form action="{{ route('ticket.delete', encrypt($transaction->id)) }}"
-                                                        method="POST" style="display:inline;">
-                                                        @csrf
-                                                        <button onclick="return confirm('Apakah ingin Menghapus?')"
-                                                            class="btn btn-sm rounded-pill btn-outline-danger"
-                                                            title="Delete">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <a href="{{ route('ticket.export', ['id' => $transaction->id]) }}"
-                                                        class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
-                                                        <i class="bi bi-download"></i>
-                                                    </a>
+                                                <a class="btn btn-primary rounded-pill"
+                                                    href="{{ route('ticket.approval.detail', encrypt($transaction->id)) }}"
+                                                    style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                    Act
+                                                </a>
                                             </td>
-                                    @endif
-                                    </tr>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                                 @if (session('message'))

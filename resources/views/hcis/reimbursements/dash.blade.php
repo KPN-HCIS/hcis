@@ -135,6 +135,16 @@ h4 {
                     </div> <!-- end card-->
                 </a>
             </div>
+            <div class="col-md-3">
+                <a href="{{ route('ticket.approval') }}">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="/images/menu/ticket.png" alt="logo" style="width: 100px; height: 100px;">
+                            <h4 class="my-3">Tiket Approval</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div>
 
             <div class="col-md-3">
                 <a href="{{ route('hotel') }}">

@@ -22,6 +22,7 @@ use App\Models\CATransaction;
 use App\Models\ca_approval;
 use App\Models\htl_transaction;
 use App\Models\Tiket;
+use App\Models\TiketApproval;
 use App\Models\tkt_transaction;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
@@ -1209,7 +1210,7 @@ class ReimburseController extends Controller
         ];
 
         // Load the view and pass the data
-        $pdf = PDF::loadView('hcis.reimbursements.businessTrip.tiket_pdf', $data);
+        $pdf = PDF::loadView('hcis.reimbursements.ticket.tiket_pdf', $data);
 
         // Stream the generated PDF to the browser, opening in a new tab
         return $pdf->stream('Ticket.pdf');
@@ -1222,7 +1223,7 @@ class ReimburseController extends Controller
         $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
 
         $parentLink = 'Reimbursement';
-        $link = 'Ticket';
+        $link = 'Ticket Approval';
 
         // Get unique ticket numbers with conditions
         $ticketNumbers = Tiket::where('tkt_only', 'Y')
@@ -1286,6 +1287,160 @@ class ReimburseController extends Controller
             'managerL1Names' => $managerL1Names,
             'managerL2Names' => $managerL2Names,
         ]);
+    }
+
+    public function ticketApprovalDetail($key)
+    {
+        // Define links for navigation
+        $parentLink = 'Reimbursement';
+        $link = 'Ticket';
+
+        $ticket = Tiket::findByRouteKey($key);
+
+        // Check if the ticket exists, if not redirect with an error message
+        if (!$ticket) {
+            return redirect()->route('ticket')->with('error', 'Ticket not found');
+        }
+
+        // Fetch all tickets associated with the same no_sppd for reference
+        $tickets = Tiket::where('no_tkt', $ticket->no_tkt)->get();
+        $userId = Tiket::where('no_tkt', $ticket->no_tkt)->pluck('user_id')->first();
+        // dd($userId);
+
+        // Fetch additional data needed for the form
+        $employee_data = Employee::where('id', $userId)->first();
+        // dd($employee_data);
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where('status', '!=', 'Verified')
+            ->orderBy('no_sppd', 'asc')
+            ->get();
+        $transactions = $tickets;
+
+        $ticketData = [];
+        $ticketCount = $tickets->count();
+        foreach ($tickets as $index => $ticket) {
+            $ticketData[] = [
+                'id' => $ticket->id,
+                'noktp_tkt' => $ticket->noktp_tkt,
+                'tlp_tkt' => $ticket->tlp_tkt,
+                'jk_tkt' => $ticket->jk_tkt,
+                'np_tkt' => $ticket->np_tkt,
+                'dari_tkt' => $ticket->dari_tkt,
+                'ke_tkt' => $ticket->ke_tkt,
+                'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                'jenis_tkt' => $ticket->jenis_tkt,
+                'type_tkt' => $ticket->type_tkt,
+                'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'ket_tkt' => $ticket->ket_tkt,
+                'more_tkt' => ($index < $ticketCount - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Return the view with the necessary data
+        return view('hcis.reimbursements.ticket.ticketApprovalDetail', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+            'ticket' => $ticket,
+            'ticketData' => $ticketData,
+            'ticketOwnerEmployee' => $ticketOwnerEmployee,
+            'ticketCount' => $ticketCount,
+        ]);
+    }
+
+    public function updateStatusTicket($id, Request $request)
+    {
+        $user = Auth::user();
+        $employeeId = $user->employee_id;
+
+        // Find the ticket by ID
+        $ticket = Tiket::findOrFail($id);
+
+        // Get the no_tkt value from the ticket
+        $noTkt = $ticket->no_tkt;
+
+        // Check the provided status_approval input
+        $statusApproval = $request->input('status_approval');
+
+        // Handle rejection scenario
+        if ($statusApproval == 'Rejected') {
+            // Update all tickets with the same no_tkt
+            Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Rejected']);
+
+            // Log the rejection into the tkt_approvals table for all tickets with the same no_tkt
+            $tickets = Tiket::where('no_tkt', $noTkt)->get();
+            foreach ($tickets as $ticket) {
+                $rejection = new TiketApproval();
+                $rejection->id = (string) Str::uuid();
+                $rejection->tkt_id = $ticket->id;
+                $rejection->employee_id = $employeeId;
+                $rejection->layer = $ticket->approval_status == 'Pending L2' ? 1 : 2; // L1 or L2 based on current approval
+                $rejection->approval_status = 'Rejected';
+                $rejection->approved_at = now();
+                $rejection->save();
+            }
+
+            // Return a rejection message
+            $message = 'The request has been successfully Rejected.';
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message
+                ]);
+            }
+
+            return redirect()->back()->with('success', $message);
+        }
+
+        // If not rejected, proceed with normal approval process
+        if ($ticket->approval_status == 'Pending L1') {
+            Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
+        } elseif ($ticket->approval_status == 'Pending L2') {
+            Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
+        } else {
+            return redirect()->back()->with('error', 'Invalid status update.');
+        }
+
+        // Log the approval into the tkt_approvals table for all tickets with the same no_tkt
+        $tickets = Tiket::where('no_tkt', $noTkt)->get();
+        foreach ($tickets as $ticket) {
+            $approval = new TiketApproval();
+            $approval->id = (string) Str::uuid();
+            $approval->tkt_id = $ticket->id;
+            $approval->employee_id = $employeeId;
+            $approval->layer = $ticket->approval_status == 'Pending L2' ? 1 : 2;
+            $approval->approval_status = $ticket->approval_status;
+            $approval->approved_at = now();
+            $approval->save();
+        }
+
+        // Set success message based on new status
+        $message = ($ticket->approval_status == 'Approved')
+            ? 'The request has been successfully Approved.'
+            : 'The request has been successfully moved to Pending L2.';
+
+        // Return success message
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+        }
+
+        return redirect()->back()->with('success', $message);
     }
 
 }

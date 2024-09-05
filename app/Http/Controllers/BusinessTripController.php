@@ -381,6 +381,7 @@ class BusinessTripController extends Controller
                         'jam_plg_tkt' => $request->jam_plg_tkt[$key] ?? null,
                         'ket_tkt' => $request->ket_tkt[$key] ?? null,
                         'approval_status' => $request->status,
+                        'jns_dinas_tkt' => 'Dinas',
                     ];
 
                     // Fetch employee data to get jk_tkt
@@ -1497,6 +1498,7 @@ class BusinessTripController extends Controller
                 'type_tkt' => $request->type_tkt,
                 'ket_tkt' => $request->ket_tkt,
                 'approval_status' => $request->status,
+                'jns_dinas_tkt' => "Dinas",
             ];
 
             foreach ($ticketData['noktp_tkt'] as $key => $value) {
@@ -1528,6 +1530,8 @@ class BusinessTripController extends Controller
                     $tiket->type_tkt = $ticketData['type_tkt'][$key] ?? null;
                     $tiket->ket_tkt = $ticketData['ket_tkt'][$key] ?? null;
                     $tiket->approval_status = $request->status;
+                    $tiket->jns_dinas_tkt = 'Dinas';
+
                     $tiket->save();
                 }
             }
@@ -2642,8 +2646,10 @@ class BusinessTripController extends Controller
         // Assuming you want to generate no_sppd similarly to no_ca
         $lastTransaction = Tiket::whereYear('created_at', $currentYear)
             ->whereMonth('created_at', $currentMonth)
+            ->where('no_tkt', 'like', '%TKTD-HRD%')  // Filter for 'TKTD-HRD'
             ->orderBy('no_tkt', 'desc')
             ->first();
+        // dd($lastTransaction);
 
         if ($lastTransaction && preg_match('/(\d{3})\/TKTD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
             $lastNumber = intval($matches[1]);

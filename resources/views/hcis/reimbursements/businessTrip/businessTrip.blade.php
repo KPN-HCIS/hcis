@@ -212,6 +212,7 @@
                                                                     return [
                                                                         // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
                                                                         'No. SPPD' => $ticket->no_sppd,
+                                                                        'No. Ticket' => $ticket->no_tkt,
                                                                         'Passengers Name' => $ticket->np_tkt,
                                                                         'Unit' => $ticket->unit,
                                                                         'Gender' => $ticket->jk_tkt,
