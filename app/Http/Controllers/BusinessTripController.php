@@ -17,6 +17,7 @@ use App\Models\Taksi;
 use App\Models\Tiket;
 use App\Models\ca_sett_approval;
 use App\Models\ListPerdiem;
+use App\Models\TiketApproval;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Support\Facades\DB;
@@ -2213,6 +2214,27 @@ class BusinessTripController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Unauthorized action.');
             }
+            if ($businessTrip->tiket == 'Ya') {
+                $tiket = Tiket::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($tiket && $tiket->tkt_only != 'Y') {
+                    $tiket->update([
+                        'approval_status' => $statusValue,
+                    ]);
+
+                    // Record the rejection in TiketApproval
+                    $approval_tkt = new TiketApproval();
+                    $approval_tkt->id = (string) Str::uuid(); // Generate a UUID for the approval record
+                    $approval_tkt->tkt_id = $tiket->id;
+                    $approval_tkt->employee_id = $employeeId; // Assuming the logged-in user's employee ID is needed
+                    $approval_tkt->role_id = $user->role_id; // Assuming role_id is in the user data
+                    $approval_tkt->role_name = $user->role_name; // Assuming role_name is in the user data
+                    $approval_tkt->layer = $layer; // Set layer to 2 for rejected cases
+                    $approval_tkt->approval_status = $statusValue;
+                    $approval_tkt->approved_at = now();
+                    $approval_tkt->save();
+                }
+            }
+
         } elseif ($employeeId == $businessTrip->manager_l1_id) {
             $statusValue = 'Pending L2';
             $layer = 1;
@@ -2238,10 +2260,19 @@ class BusinessTripController extends Controller
             if ($businessTrip->tiket == 'Ya') {
                 $tiket = Tiket::where('no_sppd', $businessTrip->no_sppd)->first();
                 if ($tiket->tkt_only != 'Y') {
-                    // Update the existing hotel record with the new approval status
                     $tiket->update([
                         'approval_status' => $statusValue,
                     ]);
+                    $approval_tkt = new TiketApproval();
+                    $approval_tkt->id = (string) Str::uuid(); // Generate a UUID for the approval record
+                    $approval_tkt->tkt_id = $tiket->id;
+                    $approval_tkt->employee_id = Auth::user()->employee_id; // Assuming the logged-in user's employee ID is needed
+                    $approval_tkt->role_id = Auth::user()->role_id; // Assuming role_id is in the user data
+                    $approval_tkt->role_name = Auth::user()->role_name; // Assuming role_name is in the user data
+                    $approval_tkt->layer = $tiket->approval_status == 'Pending L2' ? 1 : 2; // Determine layer based on status
+                    $approval_tkt->approval_status = $statusValue;
+                    $approval_tkt->approved_at = now();
+                    $approval_tkt->save();
                 }
             }
 
@@ -2298,6 +2329,16 @@ class BusinessTripController extends Controller
                     $tiket->update([
                         'approval_status' => $statusValue,
                     ]);
+                    $approval_tkt = new TiketApproval();
+                    $approval_tkt->id = (string) Str::uuid(); // Generate a UUID for the approval record
+                    $approval_tkt->tkt_id = $tiket->id;
+                    $approval_tkt->employee_id = Auth::user()->employee_id; // Assuming the logged-in user's employee ID is needed
+                    $approval_tkt->role_id = Auth::user()->role_id; // Assuming role_id is in the user data
+                    $approval_tkt->role_name = Auth::user()->role_name; // Assuming role_name is in the user data
+                    $approval_tkt->layer = $tiket->approval_status == 'Pending L2' ? 1 : 2; // Determine layer based on status
+                    $approval_tkt->approval_status = $statusValue;
+                    $approval_tkt->approved_at = now();
+                    $approval_tkt->save();
                 }
             }
             // Handle CA approval for L2

@@ -58,31 +58,6 @@ class Tiket extends Model
             ->latest('approved_at');
     }
 
-//     public function approvals()
-//     {
-//         return $this->hasMany(BTApproval::class, 'bt_id', 'id');
-//     }
-//     // BusinessTrip.php
-//     public function ApprovalL1()
-//     {
-//         return $this->hasOne(BTApproval::class, 'bt_id', 'id')
-//             ->where('layer', 1)
-//             ->where('approval_status', 'Pending L2')
-//             ->latest('approved_at')
-//             ->with('manager1');
-//     }
-
-//    public function ApprovalL2()
-//     {
-//         return $this->hasOne(BTApproval::class, 'bt_id', 'id')
-//             ->where('layer', 2)
-//             ->where('approval_status', 'Approved')
-//             ->latest('approved_at')
-//             ->with('manager2');
-//     }
-
-
-
 
     protected $keyType = 'string';
     public $incrementing = false;

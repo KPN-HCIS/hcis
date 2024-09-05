@@ -196,7 +196,7 @@
         <tr>
             <td class="label">Date</td>
             <td class="colon">:</td>
-            <td class="value"> {{ $sppd->latestApprovalL2->approved_at ?? '-' }}</td>
+            <td class="value"> {{ $ticket->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
     </table>
 
