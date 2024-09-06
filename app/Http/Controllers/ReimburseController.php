@@ -28,7 +28,7 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Crypt;
 
 class ReimburseController extends Controller
 {
@@ -609,20 +609,65 @@ class ReimburseController extends Controller
 
     public function hotel()
     {
-        $userId = Auth::id();
+        $userId = Auth::user();
         $parentLink = 'Reimbursement';
         $link = 'Hotel';
-        $transactions = Hotel::with('employee')->get();
 
-        // foreach ($transactions as $transaction) {
-        //     dd($transaction); // This will dump the first transaction and stop execution
-        // }
+        // Fetch latest hotel entries grouped by 'no_htl'
+        $latestHotelIds = Hotel::selectRaw('MAX(id) as id')
+            ->where('user_id', $userId->id)
+            ->groupBy('no_htl')
+            ->pluck('id');
+
+        // Fetch the hotel transactions using the latest ids
+        $transactions = Hotel::whereIn('id', $latestHotelIds)
+            ->with('employee')
+            ->orderBy('created_at', 'desc')
+            ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
+            ->get();
+
+        // Fetch all hotel transactions of the user
+        $hotels = Hotel::where('user_id', $userId->id)
+            ->with('employee')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $hotel = Hotel::where('user_id', $userId->id)
+            ->with('employee')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('no_htl');
+        // Group transactions by hotel number
+        $hotelGroups = $hotels->groupBy('no_htl');
+
+        // Fetch employee data
+        $employeeIds = $hotels->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+
+        // Fetch manager IDs from the employees data
+        $managerL1Ids = $employees->pluck('manager_l1_id')->unique();
+        $managerL2Ids = $employees->pluck('manager_l2_id')->unique();
+
+        // Fetch manager names
+        $managerL1Names = Employee::whereIn('employee_id', $managerL1Ids)->pluck('fullname');
+        $managerL2Names = Employee::whereIn('employee_id', $managerL2Ids)->pluck('fullname');
+
+        // Count grouped hotel entries
+        $hotelCounts = $hotels->groupBy('no_htl')->mapWithKeys(function ($group, $key) {
+            return [$key => ['total' => $group->count()]];
+        });
 
         return view('hcis.reimbursements.hotel.hotel', [
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
             'transactions' => $transactions,
+            'hotelCounts' => $hotelCounts,
+            'hotels' => $hotels,
+            'hotel' => $hotel,
+            'hotelGroups' => $hotelGroups,
+            'managerL1Names' => $managerL1Names,
+            'managerL2Names' => $managerL2Names,
         ]);
     }
 
@@ -638,7 +683,13 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Verified')->orderBy('no_sppd', 'asc')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Verified')
+                    ->where('status', '!=', 'Draft');
+            })
+            ->orderBy('no_sppd', 'asc')
+            ->get();
         // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
 
@@ -673,12 +724,13 @@ class ReimburseController extends Controller
             ];
             return $romanMonths[$month];
         }
+
         $userId = Auth::id();
         $currentYear = date('Y');
         $currentMonth = date('n');
         $romanMonth = getRomanMonth_htl($currentMonth);
 
-        // Ambil nomor urut terakhir dari tahun berjalan menggunakan Eloquent
+        // Get the last transaction of the current year and month
         $lastTransaction = htl_transaction::whereYear('created_at', $currentYear)
             ->whereMonth('created_at', $currentMonth)
             ->orderBy('no_htl', 'desc')
@@ -693,49 +745,106 @@ class ReimburseController extends Controller
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         $newNoHtl = "$newNumber/HTLD-HRD/$romanMonth/$currentYear";
 
-        $model = new htl_transaction;
+        // Prepare the hotel data arrays
+        $hotelData = [
+            'nama_htl' => $req->nama_htl,
+            'lokasi_htl' => $req->lokasi_htl,
+            'jmlkmr_htl' => $req->jmlkmr_htl,
+            'bed_htl' => $req->bed_htl,
+            'tgl_masuk_htl' => $req->tgl_masuk_htl,
+            'tgl_keluar_htl' => $req->tgl_keluar_htl,
+            'total_hari' => $req->total_hari,
+            'approval_status' => $req->status,
+        ];
 
-        $model->id = Str::uuid();
-        $model->no_htl = $newNoHtl;
-        $model->no_sppd = $req->bisnis_numb;
-        $model->user_id = $userId;
-        $model->unit = $req->unit;
-        $model->nama_htl = $req->nama_htl;
-        $model->lokasi_htl = $req->lokasi_htl;
-        $model->jmlkmr_htl = $req->jmlkmr_htl;
-        $model->bed_htl = $req->bed_htl;
-        $model->tgl_masuk_htl = $req->tgl_masuk_htl;
-        $model->tgl_keluar_htl = $req->tgl_keluar_htl;
-        $model->total_hari = $req->totaldays;
-        $model->created_by = $userId;
+        foreach ($hotelData['nama_htl'] as $key => $value) {
+            // Only process if required fields are filled
+            if (!empty($hotelData['nama_htl'][$key]) && !empty($hotelData['lokasi_htl'][$key]) && !empty($hotelData['tgl_masuk_htl'][$key])) {
+                $model = new Hotel();
+                $model->id = (string) Str::uuid();
+                $model->no_htl = $newNoHtl; // Use the pre-generated hotel number
+                $model->no_sppd = $req->bisnis_numb;
+                $model->user_id = $userId;
+                $model->unit = $req->unit;
+                $model->nama_htl = $hotelData['nama_htl'][$key];
+                $model->lokasi_htl = $hotelData['lokasi_htl'][$key];
+                $model->jmlkmr_htl = $hotelData['jmlkmr_htl'][$key] ?? null;
+                $model->bed_htl = $hotelData['bed_htl'][$key] ?? null;
+                $model->tgl_masuk_htl = $hotelData['tgl_masuk_htl'][$key] ?? null;
+                $model->tgl_keluar_htl = $hotelData['tgl_keluar_htl'][$key] ?? null;
+                $model->total_hari = $hotelData['total_hari'][$key] ?? null;
+                $model->created_by = $userId;
+                $model->approval_status = $req->status;
+                $model->hotel_only = 'Y';
+                $model->created_by = $userId;
+                // dd($model);
+                $model->save();
+            }
+        }
 
+        // Update BusinessTrip record if applicable
         $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
-
         if ($bt && $model->approval_status == 'Pending L1') {
             // Update the 'hotel' field to 'Ya'
             $bt->hotel = 'Ya';
             $bt->save();
         }
 
-        $model->save();
-
         Alert::success('Success');
         session()->flash('message', 'Berhasil di Tambahkan');
         return redirect()->intended(route('hotel', absolute: false));
     }
-    function hotelEdit($key)
+
+    public function hotelEdit($key)
     {
         $userId = Auth::id();
+
+        // Define links for navigation
         $parentLink = 'Reimbursement';
         $link = 'Hotel';
 
+        // Fetch the specific hotel transaction by key
+        $hotel = Hotel::findByRouteKey($key);
+
+        // Check if the hotel transaction exists, if not redirect with an error message
+        if (!$hotel) {
+            return redirect()->route('hotel')->with('error', 'Hotel transaction not found');
+        }
+
+        // Fetch all hotel transactions associated with the same no_sppd for reference
+        $hotels = Hotel::where('no_htl', $hotel->no_htl)->get();
+
+        // Fetch additional data needed for the form
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
-        $transactions = htl_transaction::findByRouteKey($key);
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Verified')
+                    ->where('status', '!=', 'Draft');
+            })
+            ->orderBy('no_sppd', 'asc')
+            ->get();
 
+        // Prepare data for multiple forms
+        $hotelData = [];
+        $hotelCount = $hotels->count();
+        foreach ($hotels as $index => $hotel) {
+            $hotelData[] = [
+                'id' => $hotel->id, // Include ID for updating
+                'nama_htl' => $hotel->nama_htl,
+                'lokasi_htl' => $hotel->lokasi_htl,
+                'jmlkmr_htl' => $hotel->jmlkmr_htl,
+                'bed_htl' => $hotel->bed_htl,
+                'tgl_masuk_htl' => $hotel->tgl_masuk_htl,
+                'tgl_keluar_htl' => $hotel->tgl_keluar_htl,
+                'total_hari' => $hotel->total_hari,
+                'more_htl' => ($index < $hotelCount - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Return the view with the necessary data
         return view('hcis.reimbursements.hotel.editHotel', [
             'link' => $link,
             'parentLink' => $parentLink,
@@ -745,37 +854,114 @@ class ReimburseController extends Controller
             'employee_data' => $employee_data,
             'perdiem' => $perdiem,
             'no_sppds' => $no_sppds,
-            'transactions' => $transactions,
+            'transactions' => $hotels,
+            'hotel' => $hotel,
+            'hotelData' => $hotelData,
         ]);
     }
+
+
     public function hotelUpdate(Request $req, $key)
     {
-        $model = htl_transaction::findByRouteKey($key);
-
-        if ($model) {
-            $model->unit = $req->unit;
-            $model->nama_htl = $req->nama_htl;
-            $model->lokasi_htl = $req->lokasi_htl;
-            $model->jmlkmr_htl = $req->jmlkmr_htl;
-            $model->bed_htl = $req->bed_htl;
-            $model->tgl_masuk_htl = $req->tgl_masuk_htl;
-            $model->tgl_keluar_htl = $req->tgl_keluar_htl;
-            $model->total_hari = $req->totaldays;
-            $model->save();
-
-            Alert::success('Success');
-            session()->flash('message', 'Edit Berhasil');
-            return redirect()->route('hotel');
-        } else {
-            return redirect()->back()->withErrors(['message' => 'Transaction not found']);
+        // Function to generate hotel number
+        function generateHotelNumber()
+        {
+            // ... (keep the existing implementation)
         }
+
+        $hotelIds = $req->input('hotel_ids', []);
+        $existingHotels = Hotel::whereIn('id', $hotelIds)->get()->keyBy('id');
+
+        $processedHotelIds = [];
+        $newNoHtl = null;
+        $updateBusinessTrip = false;
+
+        // Loop through hotel data
+        foreach ($req->nama_htl as $index => $value) {
+            if (!empty($value)) {
+                $hotelId = $req->hotel_ids[$index] ?? null;
+
+                $hotelData = [
+                    'unit' => $req->unit,
+                    'no_sppd' => $req->bisnis_numb,
+                    'nama_htl' => $req->nama_htl[$index] ?? null,
+                    'lokasi_htl' => $req->lokasi_htl[$index] ?? null,
+                    'jmlkmr_htl' => $req->jmlkmr_htl[$index] ?? null,
+                    'bed_htl' => $req->bed_htl[$index] ?? null,
+                    'tgl_masuk_htl' => $req->tgl_masuk_htl[$index] ?? null,
+                    'tgl_keluar_htl' => $req->tgl_keluar_htl[$index] ?? null,
+                    'total_hari' => $req->totaldays[$index] ?? null,
+                    'approval_status' => $req->status,
+                    'jns_dinas_htl' => $req->jns_dinas_htl,
+                ];
+
+                if ($hotelId && isset($existingHotels[$hotelId])) {
+                    $existingHotel = $existingHotels[$hotelId];
+                    $hotelData['user_id'] = $existingHotel->user_id;
+
+                    // Check if status is changing to "Pending L1"
+                    if ($existingHotel->approval_status != 'Pending L1' && $hotelData['approval_status'] == 'Pending L1') {
+                        $updateBusinessTrip = true;
+                    }
+
+                    $existingHotel->update($hotelData);
+                    $processedHotelIds[] = $hotelId;
+                } else {
+                    if (is_null($newNoHtl)) {
+                        $newNoHtl = $existingHotels->isNotEmpty()
+                            ? $existingHotels->first()->no_htl
+                            : generateHotelNumber();
+                    }
+
+                    $newHotel = Hotel::create(array_merge($hotelData, [
+                        'id' => (string) Str::uuid(),
+                        'no_htl' => $newNoHtl,
+                        'user_id' => Auth::id(),
+                        'created_by' => Auth::id(),
+                        'hotel_only' => 'Y',
+                    ]));
+                    $processedHotelIds[] = $newHotel->id;
+
+                    // If a new hotel is created with "Pending L1" status
+                    if ($hotelData['approval_status'] == 'Pending L1') {
+                        $updateBusinessTrip = true;
+                    }
+                }
+            }
+        }
+
+        // Update BusinessTrip if status changed to "Pending L1" for any hotel
+        if ($updateBusinessTrip) {
+            $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
+            if ($bt) {
+                $bt->hotel = 'Ya';
+                $bt->save();
+            }
+        }
+
+        // Delete hotels that were not processed (i.e., removed from the form)
+        Hotel::whereIn('id', $hotelIds)
+            ->whereNotIn('id', $processedHotelIds)
+            ->delete();
+
+        if (count($processedHotelIds) > 0) {
+            Alert::success('Success', "Hotels updated successfully");
+        } else {
+            Alert::warning('Warning', "No hotels were updated.");
+        }
+
+        return redirect()->route('hotel');
     }
+
+
     function hotelDelete($key)
     {
-        $model = htl_transaction::findByRouteKey($key);
+        $model = Hotel::findByRouteKey($key);
         $model->delete();
         return redirect()->intended(route('hotel', absolute: false));
     }
+
+
     public function ticket()
     {
         $userId = Auth::user();
@@ -847,7 +1033,13 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Verified')->orderBy('no_sppd', 'asc')->get();
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Verified')
+                    ->where('status', '!=', 'Draft');
+            })
+            ->orderBy('no_sppd', 'asc')
+            ->get();
         // $no_sppds = ca_transaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
 
 
@@ -1015,7 +1207,10 @@ class ReimburseController extends Controller
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = BusinessTrip::where('user_id', $userId)
-            ->where('status', '!=', 'Verified')
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Verified')
+                    ->where('status', '!=', 'Draft');
+            })
             ->orderBy('no_sppd', 'asc')
             ->get();
         $transactions = $tickets;
@@ -1315,7 +1510,10 @@ class ReimburseController extends Controller
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
         $no_sppds = BusinessTrip::where('user_id', $userId)
-            ->where('status', '!=', 'Verified')
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Verified')
+                    ->where('status', '!=', 'Draft');
+            })
             ->orderBy('no_sppd', 'asc')
             ->get();
         $transactions = $tickets;

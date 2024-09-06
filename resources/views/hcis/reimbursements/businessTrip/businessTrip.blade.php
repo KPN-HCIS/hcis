@@ -210,7 +210,6 @@
                                                             data-tiket="{{ json_encode(
                                                                 $tickets[$n->no_sppd]->map(function ($ticket) {
                                                                     return [
-                                                                        // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
                                                                         'No. SPPD' => $ticket->no_sppd,
                                                                         'No. Ticket' => $ticket->no_tkt,
                                                                         'Passengers Name' => $ticket->np_tkt,
@@ -218,10 +217,12 @@
                                                                         'Gender' => $ticket->jk_tkt,
                                                                         'NIK' => $ticket->noktp_tkt,
                                                                         'Phone No.' => $ticket->tlp_tkt,
+                                                                        'Transport Type.' => $ticket->jenis_tkt,
                                                                         'From' => $ticket->dari_tkt,
                                                                         'To' => $ticket->ke_tkt,
-                                                                        // 'Ticket Type' => $ticket->type_tkt,
                                                                         'Information' => $ticket->ket_tkt ?? 'No Data',
+                                                                        'Purposes' => $ticket->jns_dinas_tkt,
+                                                                        'Ticket Type' => $ticket->type_tkt,
                                                                         'Departure Date' => date('d-M-Y', strtotime($ticket->tgl_brkt_tkt)),
                                                                         'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
                                                                         'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-M-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
@@ -278,7 +279,7 @@
                                                 </td>
                                                 <td style="align-content: center">
                                                     <span
-                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved' || $n->status =='Verified'
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved' || $n->status == 'Declaration Approved' || $n->status == 'Verified'
                                                             ? 'success'
                                                             : ($n->status == 'Rejected' || $n->status == 'Return/Refund' || $n->status == 'Declaration Rejected'
                                                                 ? 'danger'
@@ -323,7 +324,7 @@
                                                             </button>
                                                         </form>
                                                     @else
-                                                        <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi','deklarasi']) }}"
+                                                        <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi', 'deklarasi']) }}"
                                                             class="btn btn-outline-info rounded-pill">
                                                             <i class="bi bi-download"></i>
                                                         </a>

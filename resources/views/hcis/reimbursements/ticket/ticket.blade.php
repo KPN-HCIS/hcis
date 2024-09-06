@@ -98,6 +98,7 @@
                                                                 'From' => $ticket->dari_tkt,
                                                                 'To' => $ticket->ke_tkt,
                                                                 'Information' => $ticket->ket_tkt ?? 'No Data',
+                                                                'Purposes' => $ticket->jns_dinas_tkt,
                                                                 'Ticket Type' => $ticket->type_tkt,
                                                                 'Departure Date' => date('d-M-Y', strtotime($ticket->tgl_brkt_tkt)),
                                                                 'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',

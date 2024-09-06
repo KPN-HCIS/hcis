@@ -30,7 +30,7 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('hotel.submit') }}">@csrf
+                        <form id="btEditForm" method="post" action="{{ route('hotel.submit') }}">@csrf
                             <div class="row my-2">
                                 <div class="col-md-5">
                                     <div class="mb-2">
@@ -108,7 +108,7 @@
                                                     <div class="mb-2">
                                                         <label class="form-label" for="bed_htl_<?php echo $i; ?>">Bed
                                                             Type</label>
-                                                        <select class="form-control" name="bed_htl[]" required>
+                                                        <select class="form-control" name="bed_htl[]">
                                                             <option value="" selected disabled>--- Select Bed Type
                                                                 ---</option>
                                                             <option value="Single Bed">Single Bed</option>
@@ -123,22 +123,38 @@
                                                 </div>
                                             </div>
                                             <div class="row my-2">
-                                                <div class="col-md-6">
+                                                <div class="col-md-5">
                                                     <div class="mb-2">
                                                         <label class="form-label"
                                                             for="tgl_masuk_htl_<?php echo $i; ?>">Start Date</label>
                                                         <input type="date" name="tgl_masuk_htl[]"
                                                             id="tgl_masuk_htl_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="mm/dd/yyyy" required>
+                                                            placeholder="mm/dd/yyyy"
+                                                            onchange="calculateDays(<?php echo $i; ?>)">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-5">
                                                     <div class="mb-2">
                                                         <label class="form-label"
                                                             for="tgl_keluar_htl_<?php echo $i; ?>">End Date</label>
                                                         <input type="date" name="tgl_keluar_htl[]"
                                                             id="tgl_keluar_htl_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="mm/dd/yyyy" required>
+                                                            placeholder="mm/dd/yyyy"
+                                                            onchange="calculateDays(<?php echo $i; ?>)">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-2">
+                                                        <label class="form-label"
+                                                            for="total_hari_<?php echo $i; ?>">Total Days</label>
+                                                        <div class="input-group">
+                                                            <input class="form-control bg-light"
+                                                                id="total_hari_<?php echo $i; ?>" name="total_hari[]"
+                                                                type="text" min="0" value="0" readonly>
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text">days</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -190,6 +206,32 @@
 
 
     <script>
+        function calculateDays(index) {
+            // Get the start and end date input fields
+            const startDateInput = document.getElementById('tgl_masuk_htl_' + index);
+            const endDateInput = document.getElementById('tgl_keluar_htl_' + index);
+            const totalDaysInput = document.getElementById('total_hari_' + index);
+
+            // Get the values of the start and end dates
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+
+            // Ensure the end date is not earlier than the start date
+            if (endDate < startDate) {
+                alert("End date cannot be earlier than start date.");
+                endDateInput.value = ''; // Reset the end date
+                totalDaysInput.value = '0'; // Reset the total days
+                return;
+            }
+
+            // Calculate the difference in days
+            const timeDiff = endDate.getTime() - startDate.getTime();
+            const totalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Convert milliseconds to days
+
+            // Update the total days field
+            totalDaysInput.value = totalDays > 0 ? totalDays : 0;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
 
             // Hotel form handling
@@ -363,110 +405,6 @@
             input.value = input.value.replace(/[^0-9]/g, '');
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const startDateInput = document.getElementById('tgl_masuk_htl');
-            const endDateInput = document.getElementById('tgl_keluar_htl');
-            const totalDaysInput = document.getElementById('totaldays');
-            const perdiemInput = document.getElementById('perdiem');
-            const allowanceInput = document.getElementById('allowance');
-            const othersLocationInput = document.getElementById('others_location');
-            const transportInput = document.getElementById('transport');
-            const accommodationInput = document.getElementById('accommodation');
-            const otherInput = document.getElementById('other');
-            const totalcaInput = document.getElementById('totalca');
-            const nominal_1Input = document.getElementById('nominal_1');
-            const nominal_2Input = document.getElementById('nominal_2');
-            const nominal_3Input = document.getElementById('nominal_3');
-            const nominal_4Input = document.getElementById('nominal_4');
-            const nominal_5Input = document.getElementById('nominal_5');
-            const caTypeInput = document.getElementById('ca_type');
-
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
-
-            function calculateTotalDays() {
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-                if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
-                    const timeDiff = endDate - startDate;
-                    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
-                    totalDaysInput.value = totalDays;
-
-                    const perdiem = parseFloat(perdiemInput.value) || 0;
-                    let allowance = totalDays * perdiem;
-
-                    if (othersLocationInput.value.trim() !== '') {
-                        allowance *= 1; // allowance * 50%
-                    } else {
-                        allowance *= 0.5;
-                    }
-
-                    allowanceInput.value = formatNumber(Math.floor(allowance));
-                } else {
-                    totalDaysInput.value = 0;
-                    allowanceInput.value = 0;
-                }
-                calculateTotalCA();
-            }
-
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    // input.value = formatNumber(value);
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-
-                calculateTotalCA();
-            }
-
-            function calculateTotalCA() {
-                const allowance = parseNumber(allowanceInput.value);
-                const transport = parseNumber(transportInput.value);
-                const accommodation = parseNumber(accommodationInput.value);
-                const other = parseNumber(otherInput.value);
-                const nominal_1 = parseNumber(nominal_1Input.value);
-                const nominal_2 = parseNumber(nominal_2Input.value);
-                const nominal_3 = parseNumber(nominal_3Input.value);
-                const nominal_4 = parseNumber(nominal_4Input.value);
-                const nominal_5 = parseNumber(nominal_5Input.value);
-
-                // Perbaiki penulisan caTypeInput.value
-                const ca_type = caTypeInput.value;
-
-                let totalca = 0;
-                if (ca_type === 'dns') {
-                    totalca = allowance + transport + accommodation + other;
-                } else if (ca_type === 'ndns') {
-                    totalca = transport + accommodation + other;
-                    allowanceInput.value = 0;
-                } else if (ca_type === 'entr') {
-                    totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
-                    allowanceInput.value = 0;
-                }
-
-                // totalcaInput.value = formatNumber(totalca.toFixed(2));
-                totalcaInput.value = formatNumber(Math.floor(totalca));
-            }
-
-            startDateInput.addEventListener('change', calculateTotalDays);
-            endDateInput.addEventListener('change', calculateTotalDays);
-            othersLocationInput.addEventListener('input', calculateTotalDays);
-            caTypeInput.addEventListener('change', calculateTotalDays);
-            [transportInput, accommodationInput, otherInput, allowanceInput, nominal_1, nominal_2, nominal_3,
-                nominal_4, nominal_5
-            ].forEach(input => {
-                input.addEventListener('input', () => formatInput(input));
-            });
-        });
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

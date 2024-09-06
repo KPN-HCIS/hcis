@@ -35,6 +35,7 @@ class Hotel extends Model
         'approval_status',
         'approval_sett',
         'approval_extend',
+        'hotel_only',
     ];
     protected $table = 'htl_transactions';
 

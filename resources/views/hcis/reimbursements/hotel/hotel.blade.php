@@ -51,13 +51,13 @@
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th>No</th>
+                                        <th>No SPPD</th>
                                         <th style="text-align: left">No Hotel</th>
-                                        {{-- <th>No SPPD</th> --}}
                                         {{-- <th>Requestor</th> --}}
                                         <th>Hotel Name</th>
                                         <th>Location</th>
-                                        <th style="text-align: left">Rooms</th>
-                                        <th>Bed Type</th>
+                                        <th style="text-align: left">Total Hotel</th>
+                                        <th>Details</th>
                                         <th>Status</th>
                                         {{-- <th>Start Date</th>
                                   <th>End Date</th> --}}
@@ -68,12 +68,34 @@
                                     @foreach ($transactions as $transaction)
                                         <tr>
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
+                                            <td style="text-align: left">{{ $transaction->no_sppd }}</td>
                                             <td style="text-align: left">{{ $transaction->no_htl }}</td>
                                             {{-- <td>{{ $transaction->employee->fullname }}</td> --}}
                                             <td>{{ $transaction->nama_htl }}</td>
                                             <td>{{ $transaction->lokasi_htl }}</td>
-                                            <td style="text-align: left">{{ $transaction->jmlkmr_htl }}</td>
-                                            <td>{{ $transaction->bed_htl }}</td>
+                                            <td style="text-align: left">
+                                                {{ $hotelCounts[$transaction->no_htl]['total'] ?? 1 }} Hotels</td>
+                                            <td style="text-align: left">
+                                                <a class="text-info btn-detail" data-toggle="modal"
+                                                    data-target="#detailModal" style="cursor: pointer"
+                                                    data-hotel="{{ json_encode(
+                                                        $hotel[$transaction->no_htl]->map(function ($hotel) {
+                                                            return [
+                                                                'No. Hotel' => $hotel->no_htl,
+                                                                'No. SPPD' => $hotel->no_sppd,
+                                                                'Unit' => $hotel->unit,
+                                                                'Hotel Name' => $hotel->nama_htl,
+                                                                'Location' => $hotel->lokasi_htl,
+                                                                'Room' => $hotel->jmlkmr_htl,
+                                                                'Bed' => $hotel->bed_htl,
+                                                                'Check In' => date('d-M-Y', strtotime($hotel->tgl_masuk_htl)),
+                                                                'Check Out' => date('d-M-Y', strtotime($hotel->tgl_keluar_htl)),
+                                                                'Total Days' => $hotel->total_hari,
+                                                            ];
+                                                        }),
+                                                    ) }}">
+                                                    <u>Details</u></a>
+                                            </td>
                                             <td style="align-content: center">
                                                 <span
                                                     class="badge rounded-pill bg-{{ $transaction->approval_status == 'Approved' ||
@@ -144,10 +166,118 @@
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                        style="border: 0px; border-radius:4px;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="detailTypeHeader" class="mb-3"></h6>
+                    <div id="detailContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary rounded-pill" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
     <script>
+        $(document).ready(function() {
+            $('.btn-detail').click(function() {
+                var hotel = $(this).data('hotel');
+
+                function createTableHtml(data, title) {
+                    var tableHtml = '<h5>' + title + '</h5>';
+                    tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+                    var isArray = Array.isArray(data) && data.length > 0;
+
+                    // Assuming all objects in the data array have the same keys, use the first object to create headers
+                    if (isArray) {
+                        for (var key in data[0]) {
+                            if (data[0].hasOwnProperty(key)) {
+                                tableHtml += '<th>' + key + '</th>';
+                            }
+                        }
+                    } else if (typeof data === 'object') {
+                        // If data is a single object, create headers from its keys
+                        for (var key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                tableHtml += '<th>' + key + '</th>';
+                            }
+                        }
+                    }
+
+                    tableHtml += '</tr></thead><tbody>';
+
+                    // Loop through each item in the array and create a row for each
+                    if (isArray) {
+                        data.forEach(function(row) {
+                            tableHtml += '<tr>';
+                            for (var key in row) {
+                                if (row.hasOwnProperty(key)) {
+                                    tableHtml += '<td>' + row[key] + '</td>';
+                                }
+                            }
+                            tableHtml += '</tr>';
+                        });
+                    } else if (typeof data === 'object') {
+                        // If data is a single object, create a single row
+                        tableHtml += '<tr>';
+                        for (var key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                tableHtml += '<td>' + data[key] + '</td>';
+                            }
+                        }
+                        tableHtml += '</tr>';
+                    }
+
+                    tableHtml += '</tbody></table>';
+                    return tableHtml;
+                }
+
+                // $('#detailTypeHeader').text('Detail Information');
+                $('#detailContent').empty();
+
+                try {
+                    var content = '';
+
+                    if (hotel && hotel !== 'undefined') {
+                        var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
+                        content += createTableHtml(hotelData, 'Hotel Detail');
+                    }
+
+                    if (content !== '') {
+                        $('#detailContent').html(content);
+                    } else {
+                        $('#detailContent').html('<p>No detail information available.</p>');
+                    }
+
+                    $('#detailModal').modal('show');
+                } catch (e) {
+                    $('#detailContent').html('<p>Error loading data</p>');
+                }
+            });
+
+            $('#detailModal').on('hidden.bs.modal', function() {
+                $('body').removeClass('modal-open').css({
+                    overflow: '',
+                    padding: ''
+                });
+                $('.modal-backdrop').remove();
+            });
+        });
         // Periksa apakah ada pesan sukses
         var successMessage = "{{ session('success') }}";
 
@@ -156,4 +286,4 @@
             alert(successMessage);
         }
     </script>
-@endpush
+@endsection

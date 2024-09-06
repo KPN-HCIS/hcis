@@ -122,7 +122,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/hotel/form', [ReimburseController::class, 'hotelCreate'])->name('hotel.form');
     Route::post('/hotel/submit', [ReimburseController::class, 'hotelSubmit'])->name('hotel.submit');
     Route::get('/hotel/edit/{id}', [ReimburseController::class, 'hotelEdit'])->name('hotel.edit');
-    Route::post('/hotel/update/{id}', [ReimburseController::class, 'hotelUpdate'])->name('hotel.update');
+    Route::put('/hotel/update/{id}', [ReimburseController::class, 'hotelUpdate'])->name('hotel.update');
     Route::post('/hotel/delete/{id}', [ReimburseController::class, 'hotelDelete'])->name('hotel.delete');
 
     // My Ticket
