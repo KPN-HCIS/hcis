@@ -614,7 +614,17 @@
 
     <table>
         <tr>
-            <td class="label"><b>Total Cash Advanced</b></td>
+            <td class="label"><b>Total Plan Cash Advanced</b></td>
+            <td class="colon">:</td>
+            <td class="value">Rp. {{ number_format($transactions->total_ca), 0, ',', '.' }}</td>
+        </tr>
+        <tr>
+            <td class="label"><b>Total Real Cash Advanced</b></td>
+            <td class="colon">:</td>
+            <td class="value">Rp. {{ number_format($transactions->total_real), 0, ',', '.' }}</td>
+        </tr>
+        <tr>
+            <td class="label"><b>Difference</b></td>
             <td class="colon">:</td>
             <td class="value">Rp. {{ number_format($transactions->total_cost), 0, ',', '.' }}</td>
         </tr>

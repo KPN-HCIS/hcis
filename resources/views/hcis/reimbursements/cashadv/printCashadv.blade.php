@@ -116,7 +116,7 @@
             <td colspan="3"><b>Data Karyawan:</b></td>
         </tr>
         <tr>
-            <td class="label">Nama</td>
+            <td class="label">Name</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->employee->fullname }}</td>
         </tr>
@@ -131,17 +131,17 @@
             <td class="value">{{ $transactions->employee->email }}</td>
         </tr>
         <tr>
-            <td class="label">Detail Rekening</td>
+            <td class="label">Account Details</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->employee->bank_details }}</td>
         </tr>
         <tr>
-            <td class="label">Divisi/Dept</td>
+            <td class="label">Division/Dept</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->employee->unit }}</td>
         </tr>
         <tr>
-            <td class="label">PT/Lokasi</td>
+            <td class="label">PT/Location</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->employee->company_name }}</td>
         </tr>
@@ -149,7 +149,7 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Detail Pengajuan CA:</b></td>
+            <td colspan="3"><b>CA Submission Details:</b></td>
         </tr>
         <tr>
             <td class="label">Costing Company</td>
@@ -159,44 +159,44 @@
             </td>
         </tr>
         <tr>
-            <td class="label">Lokasi</td>
+            <td class="label">Location</td>
             <td class="colon">:</td>
             <td class="value">
                 {{ $transactions->destination == 'Others' ? $transactions->others_location : $transactions->destination }}
             </td>
         </tr>
         <tr>
-            <td class="label">Mulai</td>
+            <td class="label">Start Date</td>
             <td class="colon">:</td>
             <td class="value">{{ \Carbon\Carbon::parse($transactions->start_date)->format('d-M-y') }}</td>
         </tr>
         <tr>
-            <td class="label">Berakhir</td>
+            <td class="label">End Date</td>
             <td class="colon">:</td>
             <td class="value">{{ \Carbon\Carbon::parse($transactions->end_date)->format('d-M-y') }}</td>
         </tr>
         <tr>
-            <td class="label">Total Hari</td>
+            <td class="label">Total Days</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->total_days }} Hari</td>
         </tr>
         <tr>
-            <td class="label">Tanggal CA dibutuhkan</td>
+            <td class="label">Date CA Required</td>
             <td class="colon">:</td>
             <td class="value">{{ \Carbon\Carbon::parse($transactions->date_required)->format('d-M-y') }}</td>
         </tr>
         <tr>
-            <td class="label">Estimasi Deklarasi</td>
+            <td class="label">Estimated Declaration</td>
             <td class="colon">:</td>
             <td class="value">{{ \Carbon\Carbon::parse($transactions->declare_estimate)->format('d-M-y') }}</td>
         </tr>
         <tr>
-            <td class="label">Keperluan</td>
+            <td class="label">Purpose</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->ca_needs }}</td>
         </tr>
         <tr>
-            <td class="label">Status Pengajuan</td>
+            <td class="label">Status</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->approval_status }}</td>
         </tr>
@@ -205,7 +205,7 @@
     @if ($approval && count($approval) > 0)
         <table>
             <tr>
-                <td colspan="3"><b>Disetujui Oleh:</b></td>
+                <td colspan="3"><b>Approved By:</b></td>
             </tr>
             @foreach ($approval as $role)
                 <tr>
@@ -225,12 +225,7 @@
     @else
         <table>
             <tr>
-                <td colspan="3"><b>Disetujui Oleh:</b></td>
-            </tr>
-            <tr>
-                <td class="label">Div Head</td>
-                <td class="colon">:</td>
-                <td class="value"></td>
+                <td colspan="3"><b>Not Approved:</b></td>
             </tr>
         </table>
     @endif
@@ -243,14 +238,14 @@
         @if (count($detailCA['detail_perdiem']) > 0 && !empty($detailCA['detail_perdiem'][0]['company_code']))
         <table class="table-approve">
             <tr>
-                <th colspan="6"><b>Rencana Perjalanan :</b></th>
+                <th colspan="6"><b>Perdiem Plan :</b></th>
             </tr>
             <tr class="head-row">
-                <td>Mulai</td>
-                <td>Selesai</td>
-                <td>Lokasi dinas</td>
+                <td>Start Date</td>
+                <td>End Date</td>
+                <td>Office Location</td>
                 <td>Company Code</td>
-                <td>Jumlah Hari</td>
+                <td>Total Days</td>
                 <td>Amount</td>
             </tr>
 
@@ -279,11 +274,11 @@
         @if (count($detailCA['detail_transport']) > 0 && !empty($detailCA['detail_transport'][0]['tanggal']))
         <table class="table-approve">
             <tr>
-                <th colspan="4"><b>Rencana Transport :</b></th>
+                <th colspan="4"><b>Transport Plan :</b></th>
             </tr>
             <tr class="head-row">
-                <td>Tanggal</td>
-                <td>Keterangan</td>
+                <td>Date</td>
+                <td>Information</td>
                 <td>Company Code</td>
                 <td>Amount</td>
             </tr>
@@ -294,7 +289,7 @@
                 <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
                 <td>{{ $transport['keterangan'] }}</td>
                 <td>{{ $transport['company_code'] }}</td>
-                <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($transport['nominal'], 0, ',', '.') }}</td>
             </tr>
             @endif
             @endforeach
@@ -310,14 +305,14 @@
         @if (count($detailCA['detail_penginapan']) > 0 && !empty($detailCA['detail_penginapan'][0]['company_code']))
         <table class="table-approve">
             <tr>
-                <th colspan="6"><b>Rencana Penginapan :</b></th>
+                <th colspan="6"><b>Accomodation Plan :</b></th>
             </tr>
             <tr class="head-row">
-                <td>Mulai</td>
-                <td>Selesai</td>
-                <td>Nama Hotel</td>
+                <td>Start Date</td>
+                <td>End Date</td>
+                <td>Hotel Name</td>
                 <td>Company Code</td>
-                <td>Jumlah Hari</td>
+                <td>Total Days</td>
                 <td>Amount</td>
             </tr>
 
@@ -346,11 +341,11 @@
         @if (count($detailCA['detail_lainnya']) > 0 && !empty($detailCA['detail_lainnya'][0]['keterangan']))
         <table class="table-approve">
             <tr>
-                <th colspan="3"><b>Rencana Lainnya :</b></th>
+                <th colspan="3"><b>Others Plan :</b></th>
             </tr>
             <tr class="head-row">
-                <td>Tgl</td>
-                <td>Keterangan</td>
+                <td>Date</td>
+                <td>Information</td>
                 <td>Amount</td>
             </tr>
 
@@ -373,12 +368,12 @@
     @elseif ( $transactions->type_ca == 'ndns' )
         <table class="table-approve">
             <tr>
-                <th colspan="3"><b>Detail Entertain :</b></th>
+                <th colspan="3"><b>Detail Non Bussiness Trip :</b></th>
             </tr>
             <tr class="head-row">
-                <td>Tanggal</td>
-                <td>Keterangan</td>
-                <td>Nominal</td>
+                <td>Date</td>
+                <td>Information</td>
+                <td>Amount</td>
             </tr>
 
             @foreach($detailCA as $item)
@@ -403,8 +398,8 @@
             </tr>
             <tr class="head-row">
                 <th>Type</th>
-                <th>Keterangan</th>
-                <th>Nominal</th>
+                <th>Information</th>
+                <th>Amount</th>
             </tr>
 
             @foreach($detailCA['detail_e'] as $detail)
@@ -438,11 +433,11 @@
                 <td colspan="5"><b>Relation Entertain:</b></td>
             </tr>
             <tr class="head-row">
-                <th>Nama</th>
-                <th>Posisi</th>
-                <th>Perusahaan</th>
-                <th>Tujuan</th>
-                <th>Tipe Relasi</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Company</th>
+                <th>Purpose</th>
+                <th>Relation Type</th>
             </tr>
 
             @foreach($detailCA['relation_e'] as $relation)
@@ -486,7 +481,7 @@
         <tr>
             <td class="label"><b>Total Cash Advanced</b></td>
             <td class="colon">:</td>
-            <td class="value">Rp. {{ number_format($transactions->total_cost), 0, ',', '.' }}</td>
+            <td class="value">Rp. {{ number_format($transactions->total_ca), 0, ',', '.' }}</td>
         </tr>
     </table>
 
