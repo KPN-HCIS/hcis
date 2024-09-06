@@ -23,6 +23,7 @@ use App\Models\ca_approval;
 use App\Models\htl_transaction;
 use App\Models\Tiket;
 use App\Models\TiketApproval;
+use App\Models\HotelApproval;
 use App\Models\tkt_transaction;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
@@ -621,22 +622,37 @@ class ReimburseController extends Controller
 
         // Fetch the hotel transactions using the latest ids
         $transactions = Hotel::whereIn('id', $latestHotelIds)
-            ->with('employee')
+            ->with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
             ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
             ->get();
 
         // Fetch all hotel transactions of the user
         $hotels = Hotel::where('user_id', $userId->id)
-            ->with('employee')
+            ->with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
             ->get();
 
         $hotel = Hotel::where('user_id', $userId->id)
-            ->with('employee')
+            ->with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('no_htl');
+
+        $hotelIds = $hotels->pluck('id');
+
+        // Fetch hotel approval details using the hotel IDs
+        $hotelApprovals = HotelApproval::whereIn('htl_id', $hotelIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
+        Log::info('Hotel Approvals:', $hotelApprovals->toArray());
+
+        $hotelApprovals = $hotelApprovals->keyBy('htl_id');
+        // dd($hotelApprovals);
+
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
 
@@ -668,9 +684,9 @@ class ReimburseController extends Controller
             'hotelGroups' => $hotelGroups,
             'managerL1Names' => $managerL1Names,
             'managerL2Names' => $managerL2Names,
+            'hotelApprovals' => $hotelApprovals,
         ]);
     }
-
 
     function hotelCreate()
     {
@@ -731,7 +747,7 @@ class ReimburseController extends Controller
         $romanMonth = getRomanMonth_htl($currentMonth);
 
         // Get the last transaction of the current year and month
-        $lastTransaction = htl_transaction::whereYear('created_at', $currentYear)
+        $lastTransaction = Hotel::whereYear('created_at', $currentYear)
             ->whereMonth('created_at', $currentMonth)
             ->orderBy('no_htl', 'desc')
             ->first();
@@ -866,7 +882,41 @@ class ReimburseController extends Controller
         // Function to generate hotel number
         function generateHotelNumber()
         {
-            // ... (keep the existing implementation)
+            function getRomanMonth_htl($month)
+            {
+                $romanMonths = [
+                    1 => 'I',
+                    2 => 'II',
+                    3 => 'III',
+                    4 => 'IV',
+                    5 => 'V',
+                    6 => 'VI',
+                    7 => 'VII',
+                    8 => 'VIII',
+                    9 => 'IX',
+                    10 => 'X',
+                    11 => 'XI',
+                    12 => 'XII'
+                ];
+                return $romanMonths[$month];
+            }
+
+            $currentYear = date('Y');
+            $currentMonth = date('n');
+            $romanMonth = getRomanMonth_htl($currentMonth);
+
+            // Get the last hotel transaction
+            $lastTransaction = Hotel::whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->orderBy('no_htl', 'desc')
+                ->first();
+
+            $lastNumber = $lastTransaction && preg_match('/(\d{3})\/HTLD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_htl, $matches)
+                ? intval($matches[1])
+                : 0;
+
+            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            return "$newNumber/HTLD-HRD/$romanMonth/$currentYear";
         }
 
         $hotelIds = $req->input('hotel_ids', []);
@@ -960,6 +1010,251 @@ class ReimburseController extends Controller
         $model->delete();
         return redirect()->intended(route('hotel', absolute: false));
     }
+
+    public function hotelExport($id)
+    {
+        // Find the hotel by ID
+        $hotel = Hotel::findOrFail($id);
+
+        // Retrieve all hotels with the same `no_htl`
+        $hotels = Hotel::where('no_htl', $hotel->no_htl)->get();
+
+        // Prepare the data to be passed to the PDF view
+        $data = [
+            'hotel' => $hotel,
+            'hotels' => $hotels
+        ];
+
+        // Load the view and pass the data
+        $pdf = PDF::loadView('hcis.reimbursements.hotel.hotel_pdf', $data);
+
+        // Stream the generated PDF to the browser, opening in a new tab
+        return $pdf->stream('Hotel.pdf');
+    }
+
+
+
+    public function hotelApproval()
+    {
+        $user = Auth::user();
+        $userId = $user->id;
+        $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
+
+        $parentLink = 'Reimbursement';
+        $link = 'Hotel Approval';
+
+        // Get unique ticket numbers with conditions
+        $hotelNumbers = Hotel::where('hotel_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_htl')->unique();
+        // dd($ticketNumbers);
+
+        // Fetch all tickets using the latestTicketIds
+        $transactions = Hotel::whereIn('no_htl', $hotelNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        // dd($transactions);
+
+        // Filter tickets based on manager and approval status
+        $hotels = $transactions->filter(function ($hotel) use ($employee) {
+            // Get the employee who owns the ticket
+            $ticketOwnerEmployee = Employee::where('id', $hotel->user_id)->first();
+
+            if ($hotel->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) {
+                return true;
+            } elseif ($hotel->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id) {
+                return true;
+            }
+            return false;
+        });
+
+        // Group tickets by `no_tkt` and get the first entry for each group
+        $hotelGroups = $hotels->groupBy('no_htl')->map(function ($group) {
+            return $group->first();
+        });
+
+        // dd($tickets);
+
+        // Group tickets by `no_tkt`
+        $hotel = $hotels->groupBy('no_htl');
+
+        // Fetch employee data for ticket owners
+        $employeeIds = $hotels->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+
+        // Fetch manager names for display (optional, depending on your view)
+        $managerL1Ids = $employees->pluck('manager_l1_id')->unique();
+        $managerL2Ids = $employees->pluck('manager_l2_id')->unique();
+        $managerL1Names = Employee::whereIn('id', $managerL1Ids)->pluck('fullname', 'id');
+        $managerL2Names = Employee::whereIn('id', $managerL2Ids)->pluck('fullname', 'id');
+
+        // Count tickets per `no_tkt`
+        $hotelCounts = $hotels->groupBy('no_htl')->mapWithKeys(function ($group, $key) {
+            return [$key => ['total' => $group->count()]];
+        });
+
+        return view('hcis.reimbursements.hotel.hotelApproval', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'transactions' => $hotelGroups,
+            'hotelCounts' => $hotelCounts,
+            'hotels' => $hotels,
+            'hotel' => $hotel,
+            'managerL1Names' => $managerL1Names,
+            'managerL2Names' => $managerL2Names,
+        ]);
+    }
+
+    public function hotelApprovalDetail($key)
+    {
+        // Define links for navigation
+        $parentLink = 'Reimbursement';
+        $link = 'Hotel Approval';
+
+        $hotel = Hotel::findByRouteKey($key);
+
+        // Check if the ticket exists, if not redirect with an error message
+        if (!$hotel) {
+            return redirect()->route('ticket')->with('error', 'Ticket not found');
+        }
+
+        // Fetch all tickets associated with the same no_sppd for reference
+        $hotels = Hotel::where('no_htl', $hotel->no_htl)->get();
+        $userId = Hotel::where('no_htl', $hotel->no_htl)->pluck('user_id')->first();
+        // dd($userId);
+
+        // Fetch additional data needed for the form
+        $employee_data = Employee::where('id', $userId)->first();
+        // dd($employee_data);
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+
+        $hotelOwnerEmployee = Employee::where('id', $hotel->user_id)->first();
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Verified')
+                    ->where('status', '!=', 'Draft');
+            })
+            ->orderBy('no_sppd', 'asc')
+            ->get();
+        $transactions = $hotels;
+
+        $hotelData = [];
+        $hotelCount = $hotels->count();
+        foreach ($hotels as $index => $hotel) {
+            $hotelData[] = [
+                'id' => $hotel->id, // Include ID for updating
+                'nama_htl' => $hotel->nama_htl,
+                'lokasi_htl' => $hotel->lokasi_htl,
+                'jmlkmr_htl' => $hotel->jmlkmr_htl,
+                'bed_htl' => $hotel->bed_htl,
+                'tgl_masuk_htl' => $hotel->tgl_masuk_htl,
+                'tgl_keluar_htl' => $hotel->tgl_keluar_htl,
+                'total_hari' => $hotel->total_hari,
+                'more_htl' => ($index < $hotelCount - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Return the view with the necessary data
+        return view('hcis.reimbursements.hotel.hotelApprovalDetail', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+            'hotel' => $hotel,
+            'hotelData' => $hotelData,
+            'hotelOwnerEmployee' => $hotelOwnerEmployee,
+            'hotelCount' => $hotelCount,
+        ]);
+    }
+
+    public function updateStatusHotel($id, Request $request)
+    {
+        $user = Auth::user();
+        $employeeId = $user->employee_id;
+
+        // Find the hotel by ID
+        $hotel = Hotel::findOrFail($id);
+        $noHtl = $hotel->no_htl;
+
+        // Check the provided status_approval input
+        $statusApproval = $request->input('status_approval');
+
+        // Determine the user's approval layer
+        $userLayer = $user->approval_layer ?? 1;
+
+        // Handle rejection scenario
+        if ($statusApproval == 'Rejected') {
+            $newStatus = 'Rejected';
+            $layer = $hotel->approval_status == 'Pending L2' ? 2 : 1;
+            $rejectInfo = $request->input('reject_info');
+        } else {
+            // Approval flow
+            if ($hotel->approval_status == 'Pending L1' && $userLayer == 1) {
+                $newStatus = 'Pending L2';
+                $layer = 1;
+            } elseif (
+                ($hotel->approval_status == 'Pending L2' && $userLayer == 2) ||
+                ($hotel->approval_status == 'Pending L1' && $userLayer == 2)
+            ) {
+                $newStatus = 'Approved';
+                $layer = 2;
+            } else {
+                $errorMessage = 'Invalid status update or insufficient permissions.';
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $errorMessage
+                    ]);
+                }
+                return redirect()->back()->with('error', $errorMessage);
+            }
+        }
+
+        // Update approval status for all related hotels
+        Hotel::where('no_htl', $noHtl)->update(['approval_status' => $newStatus]);
+
+        // Log the approval/rejection into the hotel_approvals table
+        $hotels = Hotel::where('no_htl', $noHtl)->get();
+        foreach ($hotels as $hotel) {
+            $approval = new HotelApproval();
+            $approval->id = (string) Str::uuid();
+            $approval->htl_id = $hotel->id;
+            $approval->employee_id = $employeeId;
+            $approval->layer = $layer;
+            $approval->approval_status = $newStatus;
+            $approval->approved_at = now();
+
+            // Store the rejection reason if status is 'Rejected'
+            if ($statusApproval == 'Rejected') {
+                $approval->reject_info = $rejectInfo;
+            }
+
+            $approval->save();
+        }
+
+        $message = $statusApproval == 'Rejected'
+            ? 'The request has been successfully Rejected.'
+            : 'The request has been successfully ' . ($newStatus == 'Pending L2' ? 'sent for final approval.' : 'Approved.');
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+        }
+
+        return redirect('/hotel/approval')->with('success', $message);
+    }
+
 
 
     public function ticket()
@@ -1133,7 +1428,6 @@ class ReimburseController extends Controller
             'type_tkt' => $req->type_tkt,
             'ket_tkt' => $req->ket_tkt,
             'approval_status' => $req->status,
-            'ket_tkt' => $req->ket_tkt,
         ];
 
         foreach ($ticketData['noktp_tkt'] as $key => $value) {

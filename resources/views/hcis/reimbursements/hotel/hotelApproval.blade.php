@@ -34,11 +34,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="mb-2 text-end">
-                    <a href="{{ route('hotel.form') }}" class="btn btn-primary rounded-pill shadow">Add Hotel</a>
-                </div>
-            </div>
         </div>
         <!-- Content Row -->
         <div class="row">
@@ -53,7 +48,7 @@
                                         <th>No</th>
                                         <th>No SPPD</th>
                                         <th style="text-align: left">No Hotel</th>
-                                        {{-- <th>Requestor</th> --}}
+                                        <th>Requestor</th>
                                         <th>Hotel Name</th>
                                         <th>Location</th>
                                         <th style="text-align: left">Total Hotel</th>
@@ -70,7 +65,7 @@
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
                                             <td style="text-align: left">{{ $transaction->no_sppd }}</td>
                                             <td style="text-align: left">{{ $transaction->no_htl }}</td>
-                                            {{-- <td>{{ $transaction->employee->fullname }}</td> --}}
+                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td>{{ $transaction->nama_htl }}</td>
                                             <td>{{ $transaction->lokasi_htl }}</td>
                                             <td style="text-align: left">
@@ -119,44 +114,20 @@
                                                                     : (in_array($transaction->approval_status, ['Doc Accepted'])
                                                                         ? 'info'
                                                                         : 'secondary')))) }}"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem;"
-                                                    @if (
-                                                        ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') &&
-                                                            isset($hotelApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
-                                                    title="Click to see rejection reason" @endif
-                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
-                                                    @elseif ($transaction->approval_status == 'Pending L2')
-                                                    title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}" @endif>
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;">
                                                     {{ $transaction->approval_status == 'Approved' ? 'Request Approved' : $transaction->approval_status }}
                                                 </span>
-
                                             </td>
                                             {{-- <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
                                 <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }} --}}
                                             <td class="text-center">
-                                                @if ($transaction->approval_status == 'Draft')
-                                                    <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}"
-                                                        class="btn btn-sm rounded-pill btn-outline-warning"
-                                                        title="Edit"><i class="ri-edit-box-line"></i></a>
-                                                    <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}"
-                                                        method="POST" style="display:inline;">
-                                                        @csrf
-                                                        <button onclick="return confirm('Do you want to delete this data?')"
-                                                            class="btn btn-sm rounded-pill btn-outline-danger"
-                                                            title="Delete">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <a href="{{ route('hotel.export', ['id' => $transaction->id]) }}"
-                                                        class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
-                                                        <i class="bi bi-download"></i>
-                                                    </a>
+                                                <a class="btn btn-primary rounded-pill"
+                                                    href="{{ route('hotel.approval.detail', encrypt($transaction->id)) }}"
+                                                    style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                    Act
+                                                </a>
                                             </td>
-                                    @endif
-                                    </tr>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                                 @if (session('message'))
@@ -167,27 +138,6 @@
                             </table>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rejection Reason Modal -->
-    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="rejectReasonModalLabel">Rejection Information</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Rejected by:</strong> <span id="rejectedBy"></span></p>
-                    <p><strong>Rejection reason:</strong> <span id="rejectionReason"></span></p>
-                    <p><strong>Rejection date:</strong> <span id="rejectionDate"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -210,8 +160,7 @@
                     <div id="detailContent"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary rounded-pill"
-                        data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-primary rounded-pill" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -221,43 +170,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {
-                keyboard: true,
-                backdrop: 'static'
-            });
-
-            const closeButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
-            closeButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    rejectModal.hide();
-                });
-            });
-
-            window.showRejectInfo = function(transactionId) {
-                var hotelApprovals = {!! json_encode($hotelApprovals) !!};
-                console.log('All hotel approvals:', hotelApprovals);
-                console.log('Transaction ID:', transactionId);
-                var approval = hotelApprovals[transactionId];
-                console.log('Approval for this transaction:', approval);
-
-                if (approval) {
-                    document.getElementById('rejectedBy').textContent = approval.rejected_by || 'N/A';
-                    document.getElementById('rejectionReason').textContent = approval.reject_info || 'N/A';
-                    document.getElementById('rejectionDate').textContent = approval.rejected_at || 'N/A';
-
-                    rejectModal.show();
-                } else {
-                    console.error('Approval information not found for transaction ID:', transactionId);
-                }
-            };
-
-            // Add event listener for modal hidden event
-            document.getElementById('rejectReasonModal').addEventListener('hidden.bs.modal', function() {
-                console.log('Modal closed');
-            });
-        });
-
         $(document).ready(function() {
             var table = $('#yourTableId').DataTable({
                 "pageLength": 10 // Set default page length

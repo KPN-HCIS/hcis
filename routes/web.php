@@ -124,6 +124,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/hotel/edit/{id}', [ReimburseController::class, 'hotelEdit'])->name('hotel.edit');
     Route::put('/hotel/update/{id}', [ReimburseController::class, 'hotelUpdate'])->name('hotel.update');
     Route::post('/hotel/delete/{id}', [ReimburseController::class, 'hotelDelete'])->name('hotel.delete');
+    Route::get('/hotel/pdf/{id}', [ReimburseController::class, 'hotelExport'])->name('hotel.export');
+
+    // My Hotel Approval
+    Route::get('/hotel/approval', [ReimburseController::class, 'hotelApproval'])->name('hotel.approval');
+    Route::get('/hotel/approval/detail/{id}', [ReimburseController::class, 'hotelApprovalDetail'])->name('hotel.approval.detail');
+    Route::put('/hotel/status/change/{id}', [ReimburseController::class, 'updatestatusHotel'])->name('change.status.hotel');
 
     // My Ticket
     Route::get('/ticket', [ReimburseController::class, 'ticket'])->name('ticket');

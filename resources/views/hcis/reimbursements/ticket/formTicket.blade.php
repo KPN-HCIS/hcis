@@ -168,7 +168,8 @@
                                                         <label class="form-label"
                                                             for="tgl_brkt_tkt_<?php echo $i; ?>">Departure Date</label>
                                                         <input type="date" name="tgl_brkt_tkt[]"
-                                                            id="tgl_brkt_tkt_<?php echo $i; ?>" class="form-control">
+                                                            id="tgl_brkt_tkt_<?php echo $i; ?>" class="form-control"
+                                                            onchange="validateDateTime(<?php echo $i; ?>)">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
@@ -176,7 +177,8 @@
                                                         <label class="form-label"
                                                             for="jam_brkt_tkt_<?php echo $i; ?>">Departure Time</label>
                                                         <input type="time" name="jam_brkt_tkt[]"
-                                                            id="jam_brkt_tkt_<?php echo $i; ?>" class="form-control">
+                                                            id="jam_brkt_tkt_<?php echo $i; ?>" class="form-control"
+                                                            onchange="validateDateTime(<?php echo $i; ?>)">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
@@ -200,7 +202,8 @@
                                                                     Date</label>
                                                                 <input type="date" name="tgl_plg_tkt[]"
                                                                     id="tgl_plg_tkt_<?php echo $i; ?>"
-                                                                    class="form-control">
+                                                                    class="form-control"
+                                                                    onchange="validateDateTime(<?php echo $i; ?>)">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
@@ -210,7 +213,8 @@
                                                                     Time</label>
                                                                 <input type="time" name="jam_plg_tkt[]"
                                                                     id="jam_plg_tkt_<?php echo $i; ?>"
-                                                                    class="form-control">
+                                                                    class="form-control"
+                                                                    onchange="validateDateTime(<?php echo $i; ?>)">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -266,6 +270,38 @@
 @push('scripts')
     <script>
         // TICKET JS
+        function validateDateTime(index) {
+            const departureDate = document.getElementById('tgl_brkt_tkt_' + index).value;
+            const departureTime = document.getElementById('jam_brkt_tkt_' + index).value;
+            const returnDate = document.getElementById('tgl_plg_tkt_' + index).value;
+            const returnTime = document.getElementById('jam_plg_tkt_' + index).value;
+
+            // Check if departure date is set
+            if (departureDate && returnDate) {
+                // Allow same date but validate time later
+                if (returnDate < departureDate) {
+                    alert("Return date cannot be earlier than the departure date.");
+                    document.getElementById('tgl_plg_tkt_' + index).value = ''; // Reset return date
+                    document.getElementById('jam_plg_tkt_' + index).value = ''; // Reset return time
+                    return;
+                }
+            }
+
+            // Time validation if both times are set and the dates are the same
+            if (departureDate === returnDate && departureTime && returnTime) {
+                const departureDateTime = new Date(departureDate + 'T' + departureTime);
+                const returnDateTime = new Date(returnDate + 'T' + returnTime);
+
+                // Validate time if dates are the same
+                if (returnDateTime <= departureDateTime) {
+                    alert("Return time must be later than the departure time on the same day.");
+                    document.getElementById('jam_plg_tkt_' + index).value = ''; // Reset return time
+                    return;
+                }
+            }
+        }
+
+
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('save-draft').addEventListener('click', function(event) {
                 event.preventDefault();

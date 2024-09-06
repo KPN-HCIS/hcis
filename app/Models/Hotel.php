@@ -36,6 +36,7 @@ class Hotel extends Model
         'approval_sett',
         'approval_extend',
         'hotel_only',
+        'reject_info',
     ];
     protected $table = 'htl_transactions';
 
@@ -93,5 +94,23 @@ class Hotel extends Model
             return $businessTrip->manager2->fullname;
         }
         return '-';
+    }
+    public function latestApprovalL1()
+    {
+        return $this->hasOne(HotelApproval::class, 'htl_id', 'id')
+            ->where('layer', 1)
+            ->where('approval_status', 'Pending L2')
+            ->latest('approved_at');
+    }
+    public function latestApprovalL2()
+    {
+        return $this->hasOne(HotelApproval::class, 'htl_id', 'id')
+            ->where('layer', 2)
+            ->where('approval_status', 'Approved')
+            ->latest('approved_at');
+    }
+    public function hotelApproval()
+    {
+        return $this->hasOne(HotelApproval::class, 'htl_id', 'id');
     }
 }
