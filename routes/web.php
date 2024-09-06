@@ -113,10 +113,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
 
     // My Cash Advanced
-    Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+    
     Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
     Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
-    Route::post('/cashadvanced/adupdate/{id}', [ReimburseController::class, 'cashadvancedAdminUpdate'])->name('cashadvanced.adupdate');
+    
+    Route::middleware(['permission:reportca_hcis'])->group(function () {
+        Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+        Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+        Route::post('/cashadvanced/adupdate/{id}', [ReimburseController::class, 'cashadvancedAdminUpdate'])->name('cashadvanced.adupdate');
+    });
 
     // Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
     // Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
@@ -138,7 +143,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/extend', [ReimburseController::class, 'cashadvancedExtend'])->name('cashadvanced.extend');
 
     // My Cash Advanced
-    Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
     Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
     Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
     Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
@@ -304,6 +308,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/guides-delete/{id}', [GuideController::class, 'destroy'])->name('delete.guide');
 
     // ============================ Administrator ===================================
+    
 
     Route::middleware(['permission:viewschedule'])->group(function () {
         // Schedule
@@ -348,7 +353,7 @@ Route::middleware('auth')->group(function () {
         // Sendback
         Route::post('/admin/sendback/goal', [AdminSendbackController::class, 'store'])->name('admin.sendback.goal');
     });
-
+    
     Route::middleware(['permission:viewreport'])->group(function () {
 
         Route::get('/reports-admin', [AdminReportController::class, 'index'])->name('admin.reports');
