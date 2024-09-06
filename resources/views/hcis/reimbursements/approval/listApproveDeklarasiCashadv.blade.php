@@ -173,12 +173,12 @@
                                                         <div id="perdiem-card-deklarasi" class="card-body">
                                                             <div class="accordion" id="accordionPerdiem">
                                                                 <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="enter-headingOne">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                            Rencana Perdiem
+                                                                    <h2 class="accordion-header" id="enter-headingOneDec">
+                                                                        <button class="accordion-button @if($detailCA['detail_perdiem'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOneDec" aria-expanded="@if($detailCA['detail_perdiem'][0]['start_date'] !== null) true @else false @endif" aria-controls="enter-collapseOneDec">
+                                                                            Perdiem Plan
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                    <div id="enter-collapseOneDec" class="accordion-collapse @if($detailCA['detail_perdiem'][0]['start_date'] !== null) show @endif" aria-labelledby="enter-headingOneDec">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-perdiem-deklarasi">
                                                                                 @foreach ($detailCA['detail_perdiem'] as $perdiem)
@@ -202,7 +202,7 @@
                                                                                     <!-- HTML -->
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label" for="name">Location Agency</label>
-                                                                                        <select class="form-control select2 location-select" name="location_bt_perdiem_deklarasi[]" disabled>
+                                                                                        <select class="form-control location-select" name="location_bt_perdiem_deklarasi[]" disabled>
                                                                                             <option value="">Select location...</option>
                                                                                             @foreach($locations as $location)
                                                                                                 <option value="{{ $location->area }}"
@@ -213,7 +213,7 @@
                                                                                             <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
                                                                                         </select>
                                                                                         <br>
-                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control bg-light other-location" placeholder="Other Location" value="" style="display: none;" readonly>
+                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location bg-light" placeholder="Other Location" value="{{ $perdiem['other_location'] }}" @if('Others' != $perdiem['location']) style="display: none;" @endif readonly>
                                                                                     </div>
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label" for="name">Company Code</label>
@@ -255,24 +255,20 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Transport -->
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-transport-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Transport</button>
-                                                        </div>
-                                                        <div id="transport-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="transport-card-deklarasi" class="card-body">
                                                             <div class="accordion" id="accordionTransport">
                                                                 <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingTransport">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
-                                                                            Rencana Transport
+                                                                    <h2 class="accordion-header" id="headingTransportDec">
+                                                                        <button class="accordion-button @if($detailCA['detail_transport'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransportDec " aria-expanded="@if($detailCA['detail_transport'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseTransportDec  ">
+                                                                            Transport Plan
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                    <div id="collapseTransportDec   " class="accordion-collapse collapse @if($detailCA['detail_transport'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingTransportDec" data-bs-parent="#accordionTransport">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-transport-deklarasi">
                                                                                 @foreach ($detailCA['detail_transport'] as $transport)
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label">Tanggal Transport</label>
+                                                                                    <label class="form-label">Transport Plan</label>
                                                                                     <input type="date" name="tanggal_bt_transport_deklarasi[]" class="form-control bg-light" value="{{$transport['tanggal']}}" readonly>
                                                                                 </div>
                                                                                 <div class="mb-2">
@@ -288,7 +284,7 @@
                                                                                     </select>
                                                                                 </div>
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label">Keterangan</label>
+                                                                                    <label class="form-label">Information</label>
                                                                                     <textarea name="keterangan_bt_transport_deklarasi[]" class="form-control bg-light" readonly>{{$transport['keterangan']}}</textarea>
                                                                                 </div>
                                                                                 <div class="mb-2">
@@ -319,19 +315,15 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Penginapan -->
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                        </div>
-                                                        <div id="penginapan-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="penginapan-card-deklarasi" class="card-body">
                                                             <div class="accordion" id="accordionPenginapan">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingPenginapan">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                            Rencana Penginapan
+                                                                        <button class="accordion-button @if($detailCA['detail_penginapan'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapanDec" aria-expanded="@if($detailCA['detail_penginapan'][0]['start_date'] !== null) true @else false @endif" aria-controls="collapsePenginapanDec">
+                                                                            Acommodation Plan
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                    <div id="collapsePenginapanDec" class="accordion-collapse collapse @if($detailCA['detail_penginapan'][0]['start_date'] !== null) show @endif" aria-labelledby="headingPenginapanDec">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-penginapan-deklarasi">
                                                                                 @foreach($detailCA['detail_penginapan'] as $penginapan)
@@ -358,7 +350,7 @@
                                                                                     </div>
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label" for="name">Company Code</label>
-                                                                                        <select class="form-control select2" id="companyFilter" name="company_bt_penginapan_deklarasi[]" disabled>
+                                                                                        <select class="form-control" id="companyFilter" name="company_bt_penginapan_deklarasi[]" disabled>
                                                                                             <option value="">Select Company...</option>
                                                                                             @foreach($companies as $company)
                                                                                                 <option value="{{ $company->contribution_level_code }}"
@@ -396,28 +388,24 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Lainnya -->
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya-deklarasi" class="btn btn-primary mt-3" data-state="false" disab><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                        </div>
-                                                        <div id="lainnya-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="lainnya-card-deklarasi" class="card-body">
                                                             <div class="accordion" id="accordionLainnya">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingLainnya">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                            Rencana Lainnya
+                                                                        <button class="accordion-button @if($detailCA['detail_lainnya'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="@if($detailCA['detail_lainnya'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseLainnya">
+                                                                            Others Plan
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                    <div id="collapseLainnya" class="accordion-collapse collapse @if($detailCA['detail_lainnya'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingLainnya">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-lainnya-deklarasi">
                                                                                 @foreach ($detailCA['detail_lainnya'] as $perdiem)
                                                                                     <div class="mb-2">
-                                                                                        <label class="form-label">Tanggal</label>
+                                                                                        <label class="form-label">Date</label>
                                                                                         <input type="date" name="tanggal_bt_lainnya_deklarasi[]" class="form-control bg-light" value="{{$perdiem['tanggal']}}" placeholder="mm/dd/yyyy" readonly>
                                                                                     </div>
                                                                                     <div class="mb-2">
-                                                                                        <label class="form-label">Keterangan</label>
+                                                                                        <label class="form-label">Information</label>
                                                                                         <textarea name="keterangan_bt_lainnya_deklarasi[]" class="form-control bg-light" readonly>{{ $perdiem['keterangan'] }}</textarea>
                                                                                     </div>
                                                                                     <div class="mb-2">
@@ -433,7 +421,7 @@
                                                                                 @endforeach
                                                                             </div>
                                                                             <div class="mb-2">
-                                                                                <label class="form-label">Total Lainnya</label>
+                                                                                <label class="form-label">Total Others</label>
                                                                                 <div class="input-group">
                                                                                     <div class="input-group-append">
                                                                                         <span class="input-group-text">Rp</span>
@@ -451,18 +439,15 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="card">
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                        </div>
-                                                        <div id="perdiem-card" class="card-body" style="display: none;">
+                                                        <div id="perdiem-card" class="card-body">
                                                             <div class="accordion" id="accordionPerdiem">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="enter-headingOne">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                            Deklarasi Rencana Perdiem
+                                                                        <button class="accordion-button @if($declareCA['detail_perdiem'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="@if($declareCA['detail_perdiem'][0]['start_date'] !== null) true @else false @endif" aria-controls="enter-collapseOne">
+                                                                            Perdiem Plan Declaration
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                                    <div id="enter-collapseOne" class="accordion-collapse @if($declareCA['detail_perdiem'][0]['start_date'] !== null) show @endif" aria-labelledby="enter-headingOne">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-perdiem">
                                                                                 @foreach ($declareCA['detail_perdiem'] as $perdiem)
@@ -497,11 +482,11 @@
                                                                                             <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
                                                                                         </select>
                                                                                         <br>
-                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control bg-light other-location" placeholder="Other Location" value="" style="display: none;" readonly>
+                                                                                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location bg-light" placeholder="Other Location" value="{{ $perdiem['other_location'] }}" @if('Others' != $perdiem['location']) style="display: none;" @endif readonly>
                                                                                     </div>
                                                                                     <div class="mb-2">
                                                                                         <label class="form-label" for="name">Company Code</label>
-                                                                                        <select class="form-control bg-light select2" id="companyFilter" name="company_bt_perdiem[]" disabled>
+                                                                                        <select class="form-control bg-light" id="companyFilter" name="company_bt_perdiem[]" disabled>
                                                                                             <option value="">Select Company...</option>
                                                                                             @foreach($companies as $company)
                                                                                                 <option value="{{ $company->contribution_level_code }}"
@@ -539,24 +524,20 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Transport -->
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Transport</button>
-                                                        </div>
-                                                        <div id="transport-card" class="card-body" style="display: none;">
+                                                        <div id="transport-card" class="card-body">
                                                             <div class="accordion" id="accordionTransport">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingTransport">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
-                                                                            Deklarasi Rencana Transport
+                                                                        <button class="accordion-button @if($declareCA['detail_transport'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="@if($declareCA['detail_transport'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseTransport">
+                                                                            Transport Plan Declaration
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                                    <div id="collapseTransport" class="accordion-collapse collapse @if($declareCA['detail_transport'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingTransport" data-bs-parent="#accordionTransport">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-transport">
                                                                                 @foreach ($declareCA['detail_transport'] as $transport)
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label">Tanggal Transport</label>
+                                                                                    <label class="form-label">Transport Date</label>
                                                                                     <input type="date" name="tanggal_bt_transport[]" class="form-control bg-light" value="{{$transport['tanggal']}}" readonly>
                                                                                 </div>
                                                                                 <div class="mb-2">
@@ -572,7 +553,7 @@
                                                                                     </select>
                                                                                 </div>
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label">Keterangan</label>
+                                                                                    <label class="form-label">Information</label>
                                                                                     <textarea name="keterangan_bt_transport[]" class="form-control bg-light" readonly>{{$transport['keterangan']}}</textarea>
                                                                                 </div>
                                                                                 <div class="mb-2">
@@ -603,19 +584,15 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Penginapan -->
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                        </div>
-                                                        <div id="penginapan-card" class="card-body" style="display: none;">
+                                                        <div id="penginapan-card" class="card-body">
                                                             <div class="accordion" id="accordionPenginapan">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingPenginapan">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                            Rencana Penginapan
+                                                                        <button class="accordion-button @if($declareCA['detail_penginapan'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="@if($declareCA['detail_penginapan'][0]['start_date'] !== null) true @else false @endif" aria-controls="collapsePenginapan">
+                                                                            Accomodation Plan Declaration
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                                    <div id="collapsePenginapan" class="accordion-collapse collapse @if($declareCA['detail_penginapan'][0]['start_date'] !== null) show @endif" aria-labelledby="headingPenginapan">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-penginapan">
                                                                                 @foreach($declareCA['detail_penginapan'] as $penginapan)
@@ -680,16 +657,12 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Button and Card for Lainnya -->
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                        </div>
-                                                        <div id="lainnya-card" class="card-body" style="display: none;">
+                                                        <div id="lainnya-card" class="card-body">
                                                             <div class="accordion" id="accordionLainnya">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingLainnya">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                            Deklarasi Rencana Lainnya
+                                                                        <button class="accordion-button @if($detailCA['detail_lainnya'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="@if($detailCA['detail_lainnya'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseLainnya">
+                                                                            Others Plan Declaration
                                                                         </button>
                                                                     </h2>
                                                                     <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
@@ -872,10 +845,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="card-body text-center">
-                                                            <button type="button" style="width: 60%" id="toggle-e-relation-deklarasi" class="btn btn-primary mt-3" data-state="false" disabled><i class="bi bi-plus-circle"></i> Relation</button>
-                                                        </div>
-                                                        <div id="relation-card-deklarasi" class="card-body" style="display: none;">
+                                                        <div id="relation-card-deklarasi" class="card-body">
                                                             <div class="accordion" id="accordionRelation">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingRelation">
@@ -939,10 +909,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="card">
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
-                                                        </div>
-                                                        <div id="entertain-card" class="card-body" style="display: none;">
+                                                        <div id="entertain-card" class="card-body">
                                                             <div class="accordion" id="accordionEntertain">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingEntertain">
@@ -994,10 +961,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="card-body text-center" style="display: none">
-                                                            <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
-                                                        </div>
-                                                        <div id="relation-card" class="card-body" style="display: none;">
+                                                        <div id="relation-card" class="card-body">
                                                             <div class="accordion" id="accordionRelation">
                                                                 <div class="accordion-item">
                                                                     <h2 class="accordion-header" id="headingRelation">
@@ -1331,95 +1295,95 @@
             });
         });
 
-        $(document).ready(function() {
-            function toggleCard(buttonId, cardId) {
-                var $button = $(buttonId);
-                var $card = $(cardId);
-                var isVisible = $card.is(':visible');
+        // $(document).ready(function() {
+        //     function toggleCard(buttonId, cardId) {
+        //         var $button = $(buttonId);
+        //         var $card = $(cardId);
+        //         var isVisible = $card.is(':visible');
 
-                $card.slideToggle('fast', function() {
-                    if (isVisible) {
-                        $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        $card.find('select').prop('selectedIndex', 0);
-                        $card.find('input[readonly]').val(0);
-                        $card.find('input[type="number"]').val(0);
+        //         $card.slideToggle('fast', function() {
+        //             if (isVisible) {
+        //                 $card.find('input[type="text"], input[type="date"], textarea').val('');
+        //                 $card.find('select').prop('selectedIndex', 0);
+        //                 $card.find('input[readonly]').val(0);
+        //                 $card.find('input[type="number"]').val(0);
 
-                        $button.html('<i class="bi bi-plus-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'false');
-                    } else {
-                        $button.html('<i class="bi bi-dash-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'true');
-                    }
-                });
-            }
+        //                 $button.html('<i class="bi bi-plus-circle"></i> ' + $button.text().split(' ')[1]);
+        //                 $button.data('state', 'false');
+        //             } else {
+        //                 $button.html('<i class="bi bi-dash-circle"></i> ' + $button.text().split(' ')[1]);
+        //                 $button.data('state', 'true');
+        //             }
+        //         });
+        //     }
 
-            $('#toggle-bt-perdiem').click(function() {
-                toggleCard('#toggle-bt-perdiem', '#perdiem-card');
-            });
+        //     $('#toggle-bt-perdiem').click(function() {
+        //         toggleCard('#toggle-bt-perdiem', '#perdiem-card');
+        //     });
 
-            $('#toggle-bt-perdiem-deklarasi').click(function() {
-                toggleCard('#toggle-bt-perdiem-deklarasi', '#perdiem-card-deklarasi');
-            });
+        //     $('#toggle-bt-perdiem-deklarasi').click(function() {
+        //         toggleCard('#toggle-bt-perdiem-deklarasi', '#perdiem-card-deklarasi');
+        //     });
 
-            $('#toggle-bt-transport').click(function() {
-                toggleCard('#toggle-bt-transport', '#transport-card');
-            });
+        //     $('#toggle-bt-transport').click(function() {
+        //         toggleCard('#toggle-bt-transport', '#transport-card');
+        //     });
 
-            $('#toggle-bt-transport-deklarasi').click(function() {
-                toggleCard('#toggle-bt-transport-deklarasi', '#transport-card-deklarasi');
-            });
+        //     $('#toggle-bt-transport-deklarasi').click(function() {
+        //         toggleCard('#toggle-bt-transport-deklarasi', '#transport-card-deklarasi');
+        //     });
 
-            $('#toggle-bt-penginapan').click(function() {
-                toggleCard('#toggle-bt-penginapan', '#penginapan-card');
-            });
+        //     $('#toggle-bt-penginapan').click(function() {
+        //         toggleCard('#toggle-bt-penginapan', '#penginapan-card');
+        //     });
 
-            $('#toggle-bt-penginapan-deklarasi').click(function() {
-                toggleCard('#toggle-bt-penginapan-deklarasi', '#penginapan-card-deklarasi');
-            });
+        //     $('#toggle-bt-penginapan-deklarasi').click(function() {
+        //         toggleCard('#toggle-bt-penginapan-deklarasi', '#penginapan-card-deklarasi');
+        //     });
 
-            $('#toggle-bt-lainnya').click(function() {
-                toggleCard('#toggle-bt-lainnya', '#lainnya-card');
-            });
+        //     $('#toggle-bt-lainnya').click(function() {
+        //         toggleCard('#toggle-bt-lainnya', '#lainnya-card');
+        //     });
 
-            $('#toggle-bt-lainnya-deklarasi').click(function() {
-                toggleCard('#toggle-bt-lainnya-deklarasi', '#lainnya-card-deklarasi');
-            });
+        //     $('#toggle-bt-lainnya-deklarasi').click(function() {
+        //         toggleCard('#toggle-bt-lainnya-deklarasi', '#lainnya-card-deklarasi');
+        //     });
 
-            $('#toggle-e-detail').click(function() {
-                toggleCard('#toggle-e-detail', '#entertain-card');
-            });
+        //     $('#toggle-e-detail').click(function() {
+        //         toggleCard('#toggle-e-detail', '#entertain-card');
+        //     });
 
-            $('#toggle-e-detail').click(function() {
-                toggleCard('#toggle-e-detail', '#entertain-card-deklarasi');
-            });
+        //     $('#toggle-e-detail').click(function() {
+        //         toggleCard('#toggle-e-detail', '#entertain-card-deklarasi');
+        //     });
 
-            $('#toggle-e-relation').click(function() {
-                toggleCard('#toggle-e-relation', '#relation-card');
-            });
+        //     $('#toggle-e-relation').click(function() {
+        //         toggleCard('#toggle-e-relation', '#relation-card');
+        //     });
 
-            $('#toggle-e-relation').click(function() {
-                toggleCard('#toggle-e-relation', '#relation-card-deklarasi');
-            });
+        //     $('#toggle-e-relation').click(function() {
+        //         toggleCard('#toggle-e-relation', '#relation-card-deklarasi');
+        //     });
 
-            // Logika untuk membuka kartu berdasarkan nilai ca_type
-            var caType = $('input[name="ca_type"]').val();
+        //     // Logika untuk membuka kartu berdasarkan nilai ca_type
+        //     var caType = $('input[name="ca_type"]').val();
 
-            if (caType === 'dns') {
-                $('#toggle-bt-perdiem').click();
-                $('#toggle-bt-transport').click();
-                $('#toggle-bt-penginapan').click();
-                $('#toggle-bt-lainnya').click();
-                $('#toggle-bt-perdiem-deklarasi').click();
-                $('#toggle-bt-transport-deklarasi').click();
-                $('#toggle-bt-penginapan-deklarasi').click();
-                $('#toggle-bt-lainnya-deklarasi').click();
-            } else if (caType === 'entr') {
-                $('#toggle-e-detail').click();
-                $('#toggle-e-relation').click();
-                $('#toggle-e-detail-deklarasi').click();
-                $('#toggle-e-relation-deklarasi').click();
-            }
-        });
+        //     if (caType === 'dns') {
+        //         $('#toggle-bt-perdiem').click();
+        //         $('#toggle-bt-transport').click();
+        //         $('#toggle-bt-penginapan').click();
+        //         $('#toggle-bt-lainnya').click();
+        //         $('#toggle-bt-perdiem-deklarasi').click();
+        //         $('#toggle-bt-transport-deklarasi').click();
+        //         $('#toggle-bt-penginapan-deklarasi').click();
+        //         $('#toggle-bt-lainnya-deklarasi').click();
+        //     } else if (caType === 'entr') {
+        //         $('#toggle-e-detail').click();
+        //         $('#toggle-e-relation').click();
+        //         $('#toggle-e-detail-deklarasi').click();
+        //         $('#toggle-e-relation-deklarasi').click();
+        //     }
+        // });
 
         document.addEventListener('DOMContentLoaded', function() {
             const formContainerBTPerdiem = document.getElementById('form-container-bt-perdiem');
@@ -1447,12 +1411,31 @@
                 });
             });
 
+            document.querySelectorAll('.location-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const startDateInput = this.closest('.accordion-body').querySelector('.start-perdiem');
+                    const endDateInput = this.closest('.accordion-body').querySelector('.end-perdiem');
+
+                    // Kosongkan nilai Start Perdiem dan End Perdiem ketika Location Agency berubah
+                    startDateInput.value = '';
+                    endDateInput.value = '';
+                });
+            });
+
             function formatNumber(num) {
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
+
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function parseNumberPerdiem(value) {
+                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
             }
 
             function formatInput(input) {
@@ -1464,31 +1447,22 @@
                     input.value = formatNumber(0);
                 }
                 calculateTotalNominalBTPerdiem();
-                calculateTotalNominalBTPerdiemDeklarasi();
                 calculateTotalNominalBTTransport();
-                calculateTotalNominalBTTransportDeklarasi();
                 calculateTotalNominalBTPenginapan();
-                calculateTotalNominalBTPenginapanDeklarasi();
                 calculateTotalNominalBTLainnya();
-                calculateTotalNominalBTLainnyaDeklarasi();
                 calculateTotalNominalBTTotal();
             }
 
             function calculateTotalNominalBTPerdiem() {
                 let total = 0;
                 document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-                    total += parseNumber(input.value);
+                    total += parseNumberPerdiem(input.value);
                 });
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+
+                calculateTotalNominalBTTotal();
             }
 
-            function calculateTotalNominalBTPerdiemDeklarasi() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_bt_perdiem_deklarasi[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_bt_perdiem_deklarasi[]"]').value = formatNumber(total);
-            }
 
             function calculateTotalNominalBTTransport() {
                 let total = 0;
@@ -1496,14 +1470,6 @@
                     total += parseNumber(input.value);
                 });
                 document.querySelector('input[name="total_bt_transport[]"]').value = formatNumber(total);
-            }
-
-            function calculateTotalNominalBTTransportDeklarasi() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_bt_transport_deklarasi[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_bt_transport_deklarasi[]"]').value = formatNumber(total);
             }
 
             function calculateTotalNominalBTPenginapan() {
@@ -1514,28 +1480,12 @@
                 document.querySelector('input[name="total_bt_penginapan[]"]').value = formatNumber(total);
             }
 
-            function calculateTotalNominalBTPenginapanDeklarasi() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_bt_penginapan_deklarasi[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_bt_penginapan_deklarasi[]"]').value = formatNumber(total);
-            }
-
             function calculateTotalNominalBTLainnya() {
                 let total = 0;
                 document.querySelectorAll('input[name="nominal_bt_lainnya[]"]').forEach(input => {
                     total += parseNumber(input.value);
                 });
                 document.querySelector('input[name="total_bt_lainnya[]"]').value = formatNumber(total);
-            }
-
-            function calculateTotalNominalBTLainnyaDeklarasi() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_bt_lainnya_deklarasi[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_bt_lainnya_deklarasi[]"]').value = formatNumber(total);
             }
 
             function calculateTotalNominalBTTotal() {
@@ -1552,20 +1502,44 @@
                 document.querySelectorAll('input[name="total_bt_lainnya[]"]').forEach(input => {
                     total += parseNumber(input.value);
                 });
-                document.querySelector('input[name="totalca_deklarasi"]').value = formatNumber(total);
+                document.querySelector('input[name="totalca"]').value = formatNumber(total);
             }
 
             function calculateTotalDaysPerdiem(input) {
                 const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_perdiem[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_perdiem[]"]').value);
+                const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
+                const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
+                const totalDaysInput = formGroup.querySelector('input[name="total_days_bt_perdiem[]"]');
+                const perdiemInput = document.getElementById('perdiem');
+                const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+                const locationSelect = formGroup.querySelector('select[name="location_bt_perdiem[]"]');
+                const otherLocationInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
+
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
 
                 if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
                     const diffTime = Math.abs(endDate - startDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = diffDays;
+                    const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    // Memeriksa lokasi untuk menentukan persentase allowance
+                    if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
+                        allowance *= 0.5; // allowance * 50%
+                        console.log("ini Others:", allowance); // Debugging
+                    } else {
+                        allowance *= 1; // allowance * 100%
+                        console.log("Ini Not Others:", allowance); // Debugging
+                    }
+
+                    allowanceInput.value = formatNumberPerdiem(allowance);
+                    calculateTotalNominalBTPerdiem();
                 } else {
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = 0;
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
                 }
             }
 
@@ -1589,6 +1563,18 @@
 
                 newFormBTPerdiem.innerHTML = `
                     <div class="mb-2">
+                        <label class="form-label" for="name">Location Agency</label>
+                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
+                            <option value="">Select location...</option>
+                            @foreach($locations as $location)
+                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                            @endforeach
+                            <option value="Others">Others</option>
+                        </select>
+                        <br>
+                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
+                    </div>
+                    <div class="mb-2">
                         <label class="form-label">Start Perdiem</label>
                         <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy" >
                     </div>
@@ -1606,20 +1592,8 @@
                         </div>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label" for="name">Location Agency</label>
-                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                            <option value="">Select location...</option>
-                            @foreach($locations as $location)
-                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
-                            @endforeach
-                            <option value="Others">Others</option>
-                        </select>
-                        <br>
-                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                    </div>
-                    <div class="mb-2">
                         <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" name="company_bt_perdiem[]" >
+                        <select class="form-control" name="company_bt_perdiem[]" >
                             <option value="">Select Company...</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -1633,7 +1607,7 @@
                         <div class="input-group-append">
                             <span class="input-group-text">Rp</span>
                         </div>
-                        <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
+                        <input class="form-control bg-light" name="nominal_bt_perdiem[]" type="text" min="0" value="0" readonly>
                     </div>
                     <button type="button" class="btn btn-danger remove-form">Remove</button>
                     <hr class="border border-primary border-1 opacity-50">
@@ -1690,12 +1664,12 @@
 
                 newFormBTTransport.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal Transport</label>
+                        <label class="form-label">Transport Date</label>
                         <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
                     </div>
                     <div class="mb-2">
                         <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" name="company_bt_transport[]" >
+                        <select class="form-control" name="company_bt_transport[]" >
                             <option value="">Select Company...</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -1703,7 +1677,7 @@
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                     </div>
                     <div class="mb-2">
@@ -1740,11 +1714,11 @@
 
                 newFormBTPenginapan.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Start Penginapan</label>
+                        <label class="form-label">Accommodation Start Plan</label>
                         <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">End Penginapan</label>
+                        <label class="form-label">Accommodation End Plan</label>
                         <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
@@ -1762,7 +1736,7 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
+                        <select class="form-control" id="companyFilter" name="company_bt_penginapan[]">
                             <option value="">Select Company...</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -1812,15 +1786,12 @@
 
                 newFormBTLainnya.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
+                        <label class="form-label">Date</label>
                         <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Accommodation</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">
@@ -1892,13 +1863,9 @@
 
             // Initial calculation for the total nominal
             calculateTotalNominalBTPerdiem();
-            calculateTotalNominalBTPerdiemDeklarasi();
             calculateTotalNominalBTTransport();
-            calculateTotalNominalBTTransportDeklarasi();
             calculateTotalNominalBTPenginapan();
-            calculateTotalNominalBTPenginapanDeklarasi();
             calculateTotalNominalBTLainnya();
-            calculateTotalNominalBTLainnyaDeklarasi();
             calculateTotalNominalBTTotal();
 
             document.getElementById('start_date').addEventListener('change', handleDateChange);

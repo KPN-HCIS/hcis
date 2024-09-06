@@ -24,9 +24,9 @@
         </div>
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
-                <div class="card-header d-flex bg-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Data</h4>
-                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
+                <div class="card-header d-flex bg-primary justify-content-between">
+                    <h4 class="modal-title text-white" id="viewFormEmployeeLabel">Add Data</h4>
+                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
@@ -164,12 +164,33 @@
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingPerdiem">
                                                                 <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePerdiem" aria-expanded="false" aria-controls="collapsePerdiem">
-                                                                    Rencana Perdiem
+                                                                    Perdiem Plan
                                                                 </button>
                                                             </h2>
                                                             <div id="collapsePerdiem" class="accordion-collapse collapse" aria-labelledby="headingPerdiem">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-perdiem">
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="name">Company Code</label>
+                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
+                                                                                <option value="">Select Company...</option>
+                                                                                @foreach($companies as $company)
+                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="name">Location Agency</label>
+                                                                            <select class="form-control location-select" name="location_bt_perdiem[]">
+                                                                                <option value="">Select location...</option>
+                                                                                @foreach($locations as $location)
+                                                                                    <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                                                                                @endforeach
+                                                                                <option value="Others">Others</option>
+                                                                            </select>
+                                                                            <br>
+                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
+                                                                        </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Start Perdiem</label>
                                                                             <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy">
@@ -188,27 +209,6 @@
                                                                             </div>
                                                                         </div>
                                                                         <!-- HTML -->
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Location Agency</label>
-                                                                            <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                                                                                <option value="">Select location...</option>
-                                                                                @foreach($locations as $location)
-                                                                                    <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
-                                                                                @endforeach
-                                                                                <option value="Others">Others</option>
-                                                                            </select>
-                                                                            <br>
-                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
-                                                                                <option value="">Select Company...</option>
-                                                                                @foreach($companies as $company)
-                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Amount</label>
                                                                         </div>
@@ -241,14 +241,14 @@
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingTransport">
                                                                 <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="false" aria-controls="collapseTransport">
-                                                                    Rencana Transport
+                                                                    Transport Plan
                                                                 </button>
                                                             </h2>
                                                             <div id="collapseTransport" class="accordion-collapse collapse" aria-labelledby="headingTransport">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-transport">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Tanggal Transport</label>
+                                                                            <label class="form-label">Transport Date</label>
                                                                             <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
@@ -261,7 +261,7 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
+                                                                            <label class="form-label">Information</label>
                                                                             <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
@@ -296,18 +296,18 @@
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingPenginapan">
                                                                 <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="false" aria-controls="collapsePenginapan">
-                                                                    Rencana Penginapan
+                                                                    Accommodation Plan
                                                                 </button>
                                                             </h2>
                                                             <div id="collapsePenginapan" class="accordion-collapse collapse" aria-labelledby="headingPenginapan">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-penginapan">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Start Penginapan</label>
+                                                                            <label class="form-label">Accommodation Start Plan</label>
                                                                             <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">End Penginapan</label>
+                                                                            <label class="form-label">Accommodation End Plan</label>
                                                                             <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
@@ -344,7 +344,7 @@
                                                                         <hr class="border border-primary border-1 opacity-50">
                                                                     </div>
                                                                     <div class="mb-2">
-                                                                        <label class="form-label">Total Penginapan</label>
+                                                                        <label class="form-label">Accommodation Total</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
@@ -364,19 +364,22 @@
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingLainnya">
                                                                 <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="false" aria-controls="collapseLainnya">
-                                                                    Rencana Lainnya
+                                                                    Other Plan
                                                                 </button>
                                                             </h2>
                                                             <div id="collapseLainnya" class="accordion-collapse collapse" aria-labelledby="headingLainnya">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-lainnya">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Tanggal</label>
+                                                                            <label class="form-label">Date</label>
                                                                             <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
+                                                                            <label class="form-label">Information</label>
                                                                             <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                                                                        </div>
+                                                                        <div class="mb-1">
+                                                                            <label class="form-label">Amount</label>
                                                                         </div>
                                                                         <div class="input-group mb-3">
                                                                             <div class="input-group-append">
@@ -387,7 +390,7 @@
                                                                         <hr class="border border-primary border-1 opacity-50">
                                                                     </div>
                                                                     <div class="mb-2">
-                                                                        <label class="form-label">Total Lainnya</label>
+                                                                        <label class="form-label">Total Others</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
@@ -425,11 +428,11 @@
                                                                 <div class="accordion-body">
                                                                     <div id="form-container">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Tanggal</label>
+                                                                            <label class="form-label">Date</label>
                                                                             <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
+                                                                            <label class="form-label">Information</label>
                                                                             <textarea name="keterangan_nbt[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
@@ -486,6 +489,9 @@
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Entertainment Fee Detail</label>
                                                                                 <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control"></textarea>
+                                                                            </div>
+                                                                            <div class="mb-1">
+                                                                                <label class="form-label">Amount</label>
                                                                             </div>
                                                                             <div class="input-group">
                                                                                 <div class="input-group-append">
@@ -817,6 +823,17 @@
                 });
             });
 
+            document.querySelectorAll('.location-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const startDateInput = this.closest('.accordion-body').querySelector('.start-perdiem');
+                    const endDateInput = this.closest('.accordion-body').querySelector('.end-perdiem');
+
+                    // Kosongkan nilai Start Perdiem dan End Perdiem ketika Location Agency berubah
+                    startDateInput.value = '';
+                    endDateInput.value = '';
+                });
+            });
+
             function formatNumber(num) {
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
@@ -853,7 +870,6 @@
                 document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
                     total += parseNumberPerdiem(input.value);
                 });
-                console.log("Total Perdiem:", total); // Debugging
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
 
                 calculateTotalNominalBTTotal();
@@ -924,9 +940,11 @@
 
                     // Memeriksa lokasi untuk menentukan persentase allowance
                     if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
-                        allowance *= 1; // allowance * 100%
-                    } else {
                         allowance *= 0.5; // allowance * 50%
+                        console.log("ini Others:", allowance); // Debugging
+                    } else {
+                        allowance *= 1; // allowance * 100%
+                        console.log("Ini Not Others:", allowance); // Debugging
                     }
 
                     allowanceInput.value = formatNumberPerdiem(allowance);
@@ -957,6 +975,27 @@
 
                 newFormBTPerdiem.innerHTML = `
                     <div class="mb-2">
+                        <label class="form-label" for="name">Company Code</label>
+                        <select class="form-control select2" name="company_bt_perdiem[]" >
+                            <option value="">Select Company...</option>
+                            @foreach($companies as $company)
+                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="name">Location Agency</label>
+                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
+                            <option value="">Select location...</option>
+                            @foreach($locations as $location)
+                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                            @endforeach
+                            <option value="Others">Others</option>
+                        </select>
+                        <br>
+                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
+                    </div>
+                    <div class="mb-2">
                         <label class="form-label">Start Perdiem</label>
                         <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy" >
                     </div>
@@ -974,34 +1013,13 @@
                         </div>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label" for="name">Location Agency</label>
-                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                            <option value="">Select location...</option>
-                            @foreach($locations as $location)
-                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
-                            @endforeach
-                            <option value="Others">Others</option>
-                        </select>
-                        <br>
-                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" name="company_bt_perdiem[]" >
-                            <option value="">Select Company...</option>
-                            @foreach($companies as $company)
-                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-2">
                         <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">
                             <span class="input-group-text">Rp</span>
                         </div>
-                        <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
+                        <input class="form-control bg-light" name="nominal_bt_perdiem[]" type="text" min="0" value="0" readonly>
                     </div>
                     <button type="button" class="btn btn-danger remove-form">Remove</button>
                     <hr class="border border-primary border-1 opacity-50">
@@ -1058,7 +1076,7 @@
 
                 newFormBTTransport.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal Transport</label>
+                        <label class="form-label">Transport Date</label>
                         <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
                     </div>
                     <div class="mb-2">
@@ -1071,7 +1089,7 @@
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                     </div>
                     <div class="mb-2">
@@ -1108,11 +1126,11 @@
 
                 newFormBTPenginapan.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Start Penginapan</label>
+                        <label class="form-label">Accommodation Start Plan</label>
                         <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">End Penginapan</label>
+                        <label class="form-label">Accommodation End Plan</label>
                         <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
@@ -1180,11 +1198,11 @@
 
                 newFormBTLainnya.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
+                        <label class="form-label">Date</label>
                         <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
                     </div>
                     <div class="input-group mb-3">
@@ -1311,10 +1329,6 @@
                 });
             });
         });
-
-
-
-        //
 
         document.addEventListener('DOMContentLoaded', function() {
             const formContainer = document.getElementById('form-container');
