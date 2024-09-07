@@ -141,7 +141,7 @@
         <tr>
             <td class="label">Date</td>
             <td class="colon">:</td>
-            <td class="value">{{ $taksi->businessTrip->atasan_2 }}</td>
+            <td class="value">{{ $taksi->latestApprovalL1->approved_at }}</td>
         </tr>
     </table>
 
@@ -149,7 +149,7 @@
         <tr>
             <td class="label">Manager Name 2</td>
             <td class="colon">:</td>
-            <td class="value">{{ $taksi->manager2_fullname ?? '-' }}</td>
+            <td class="value">{{ $taksi->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Date</td>

@@ -40,6 +40,20 @@ class Taksi extends Model
         }
         return '-';
     }
+    public function latestApprovalL1()
+    {
+        return $this->hasOne(TaksiApproval::class, 'vt_id', 'id')
+            ->where('layer', 1)
+            ->where('approval_status', 'Pending L2')
+            ->latest('approved_at');
+    }
+    public function latestApprovalL2()
+    {
+        return $this->hasOne(TaksiApproval::class, 'vt_id', 'id')
+            ->where('layer', 2)
+            ->where('approval_status', 'Approved')
+            ->latest('approved_at');
+    }
     protected $fillable = [
         'id',
         'no_vt',

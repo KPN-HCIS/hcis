@@ -179,7 +179,7 @@
         <tr>
             <td class="label">Date</td>
             <td class="colon">:</td>
-            <td class="value"> {{ $sppd->latestApprovalL1->approved_at ?? '-' }}</td>
+            <td class="value"> {{ $hotel->latestApprovalL1->approved_at ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Manager Name 2</td>
@@ -189,7 +189,7 @@
         <tr>
             <td class="label">Date</td>
             <td class="colon">:</td>
-            <td class="value"> {{ $sppd->latestApprovalL2->approved_at ?? '-' }}</td>
+            <td class="value"> {{ $hotel->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
     </table>
 </body>
