@@ -74,7 +74,7 @@ h4 {
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            {{-- <div class="col">
+            <div class="col">
                 <a href="{{ route('medical') }}">
                     <div class="card" style="height: 215px">
                         <div class="card-body">
@@ -125,7 +125,7 @@ h4 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> --}}
+            </div>
 
             <div class="col-md-3">
                 <a href="{{ route('approval.cashadvanced') }}">
@@ -137,7 +137,7 @@ h4 {
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            
+
         </div> <!-- end row -->
         <hr><br>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 row-cols-xxl-6 text-center">

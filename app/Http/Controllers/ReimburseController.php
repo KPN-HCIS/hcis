@@ -326,12 +326,15 @@ class ReimburseController extends Controller
             ->where('end_date', '<=', $today)
             ->where('ca_status', '!=', 'Done')
             ->get();
+
+        $reason = ca_sett_approval::whereIn('ca_id', $ca_transactions->pluck('id'))
+            ->pluck('reject_reason', 'ca_id');
+
         // dd($ca_transactions);
         foreach ($ca_transactions as $transaction) {
             $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
             $transaction->extName = $transaction->statusExtendEmployee ? $transaction->statusExtendEmployee->fullname : '';
         }
-        // $settName = $ca_transactions->statusSettEmployee ? $ca_transactions->statusSettEmployee->fullname : '';
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
@@ -343,32 +346,13 @@ class ReimburseController extends Controller
             ->where('end_date', '<=', $today)
             ->count();
 
-        // foreach ($ca_transactions as $transaction) {
-        //     if (
-        //         $transaction->end_date <= $today &&
-        //         $transaction->approval_status == 'Approved' &&
-        //         $transaction->approval_sett == 'On Progress'
-        //     ) {
-
-        //         $transaction->approval_sett = 'Waiting for Declaration';
-        //     }
-        //     if (
-        //         $transaction->end_date >= $today &&
-        //         $transaction->approval_status == 'Approved' &&
-        //         $transaction->approval_sett == 'Waiting for Declaration'
-        //     ) {
-
-        //         $transaction->approval_sett = 'On Progress';
-        //     }
-        //     $transaction->save();
-        // }
-
         return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
             'deklarasiCACount' => $deklarasiCACount,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
+            'reason' => $reason,
             // 'settName' => $settName,
 
         ]);
@@ -455,6 +439,9 @@ class ReimburseController extends Controller
         $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
             ->pluck('fullname', 'employee_id');
 
+        $reason = ca_approval::whereIn('ca_id', $ca_transactions->pluck('id'))
+            ->pluck('reject_reason', 'ca_id');
+
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
                 $query->where('approval_sett', 'Waiting for Declaration')
@@ -485,6 +472,7 @@ class ReimburseController extends Controller
             'ca_transactions' => $ca_transactions,
             'employee_data' => $employee_data,
             'fullnames' => $fullnames,
+            'reason' => $reason,
         ]);
     }
     function cashadvancedCreate()
@@ -1286,7 +1274,7 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
         $approval = ca_approval::with('employee')
             ->where('ca_id', $key)
-            ->where('approval_status', '!=', 'Rejected')
+            ->where('approval_status', 'Approved')
             ->orderBy('layer', 'asc')
             ->get();
 
@@ -1322,7 +1310,7 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
         $approval = ca_sett_approval::with('employee')
             ->where('ca_id', $key)
-            ->where('approval_status', '!=', 'Rejected')
+            ->where('approval_status', 'Approved')
             ->orderBy('layer', 'asc')
             ->get();
 

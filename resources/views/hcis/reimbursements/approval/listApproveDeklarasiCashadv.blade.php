@@ -391,12 +391,12 @@
                                                         <div id="lainnya-card-deklarasi" class="card-body">
                                                             <div class="accordion" id="accordionLainnya">
                                                                 <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingLainnya">
-                                                                        <button class="accordion-button @if($detailCA['detail_lainnya'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="@if($detailCA['detail_lainnya'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseLainnya">
+                                                                    <h2 class="accordion-header" id="headingLainnyaDec">
+                                                                        <button class="accordion-button @if($detailCA['detail_lainnya'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnyaDec" aria-expanded="@if($detailCA['detail_lainnya'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseLainnyaDec">
                                                                             Others Plan
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseLainnya" class="accordion-collapse collapse @if($detailCA['detail_lainnya'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingLainnya">
+                                                                    <div id="collapseLainnyaDec" class="accordion-collapse collapse @if($detailCA['detail_lainnya'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingLainnyaDec">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-lainnya-deklarasi">
                                                                                 @foreach ($detailCA['detail_lainnya'] as $perdiem)
@@ -665,7 +665,7 @@
                                                                             Others Plan Declaration
                                                                         </button>
                                                                     </h2>
-                                                                    <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                                    <div id="collapseLainnya" class="accordion-collapse collapse @if($detailCA['detail_lainnya'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingLainnya">
                                                                         <div class="accordion-body">
                                                                             <div id="form-container-bt-lainnya">
                                                                                 @foreach ($declareCA['detail_lainnya'] as $perdiem)
@@ -1107,7 +1107,14 @@
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('approval.cashadvancedDeklarasi') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                                <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                                <button type="button" class="btn btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalRejectDec"
+                                        data-no-id="{{ $transactions->id }}"
+                                        data-no-ca="{{ $transactions->no_ca }}"
+                                        data-start-date="{{ $transactions->start_date }}"
+                                        data-end-date="{{ $transactions->end_date }}"
+                                        data-total-days="{{ $transactions->total_days }}">
+                                        Reject
+                                </button>
                                 <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
                         </div>
                     </div>
@@ -1117,6 +1124,7 @@
         </div>
     </div>
     </div>
+    @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
@@ -2239,6 +2247,18 @@
             calculateTotalNominalEDetailDeklarasi();
             updateCheckboxVisibility();
             updateCheckboxVisibilityDeklarasi();
+        });
+
+        // Mengisi modal saat tombol edit ditekan
+        const editButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const caNumber = this.getAttribute('data-no-ca');
+                const idNumber = this.getAttribute('data-no-id');
+
+                document.getElementById('rejectDec_no_ca').textContent = caNumber;
+                document.getElementById('rejectDec_no_id').value = idNumber; // Mengisi input no_id
+            });
         });
 
     </script>
