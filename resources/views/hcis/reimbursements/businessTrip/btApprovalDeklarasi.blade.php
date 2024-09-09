@@ -2549,16 +2549,11 @@
                                     class="btn btn-outline-primary rounded-pill" style="margin-right: 20px;">View</a>
                             @endif
 
-                            <form method="POST" action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}"
-                                style="display: inline-block;" class="status-form">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="status_approval" value="Declaration Rejected">
-                                <button type="submit" class="btn btn-primary rounded-pill"
-                                    style="padding: 0.5rem 1rem; margin-right: 5px">
-                                    Decline
-                                </button>
-                            </form>
+                           <!-- Decline Form -->
+                           <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal"
+                           data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
+                           Decline
+                       </button>
 
                             <form method="POST" action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}"
                                 style="display: inline-block; margin-right: 5px;" class="status-form">
@@ -2567,7 +2562,7 @@
                                 <input type="hidden" name="status_approval"
                                     value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Declaration Approved' }}">
                                 <button type="submit" class="btn btn-success rounded-pill"
-                                    style="padding: 0.5rem 1rem;">
+                                    style="padding: 0.5rem 1rem;" onclick="confirmSubmission(event)">
                                     Approve
                                 </button>
                             </form>
@@ -2577,6 +2572,41 @@
             </div>
         </div>
 
+  <!-- Rejection Reason Modal -->
+  <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-light border-bottom-0">
+              <h5 class="modal-title" id="rejectReasonModalLabel" style="color: #333; font-weight: 600;">Rejection
+                  Reason</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+              <form id="rejectReasonForm" method="POST"
+                  action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}">
+                  @csrf
+                  @method('PUT')
+                  <input type="hidden" name="status_approval" value="Declaration Rejected">
+
+                  <div class="mb-3">
+                      <label for="reject_info" class="form-label" style="color: #555; font-weight: 500;">Please
+                          provide a reason for rejection:</label>
+                      <textarea class="form-control border-2" name="reject_info" id="reject_info" rows="4" required
+                          style="resize: vertical; min-height: 100px;"></textarea>
+                  </div>
+
+                  <div class="d-flex justify-content-end mt-4">
+                      <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                          data-bs-dismiss="modal" style="min-width: 100px;">Cancel</button>
+                      <button type="submit" class="btn btn-primary rounded-pill"
+                          style="min-width: 100px;">Submit</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
         <!-- Success Modal -->
         <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
             aria-hidden="true">
@@ -2598,6 +2628,33 @@
         </div>
 
         <script>
+            function confirmSubmission(event) {
+            event.preventDefault(); // Stop the form from submitting immediately
+
+            // Display a confirmation alert
+            const userConfirmed = confirm("Are you sure you want to approve this request?");
+
+            if (userConfirmed) {
+                // If the user confirms, submit the form
+                event.target.closest('form').submit();
+            } else {
+                // If the user cancels, do nothing
+                alert("Approval cancelled.");
+            }
+        }
+        document.getElementById('rejectReasonForm').addEventListener('submit', function(event) {
+            const reason = document.getElementById('reject_info').value.trim();
+            if (!reason) {
+                alert('Please provide a reason for rejection.');
+                event.preventDefault(); // Stop form submission if no reason is provided
+            }
+        });
+
+        // Add event listener to the decline button to open the modal
+        document.getElementById('declineButton').addEventListener('click', function() {
+            $('#rejectReasonModal').modal('show');
+        });
+
             document.addEventListener('DOMContentLoaded', function() {
                 const forms = document.querySelectorAll('.status-form');
                 forms.forEach(form => {

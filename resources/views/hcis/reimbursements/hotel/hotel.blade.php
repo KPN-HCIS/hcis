@@ -45,6 +45,20 @@
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
+                        @php
+                            $currentFilter = $filter;
+                        @endphp
+
+                        <form method="GET" action="{{ route('hotel') }}">
+                            <button type="submit" name="filter" value="request"
+                                class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                Request
+                            </button>
+                            <button type="submit" name="filter" value="rejected"
+                                class="btn {{ $filter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                Rejected
+                            </button>
+                        </form>
                         <div class="table-responsive">
                             <table class="table table-sm table-hover dt-responsive nowrap" id="scheduleTable" width="100%"
                                 cellspacing="0">
@@ -119,7 +133,7 @@
                                                                     : (in_array($transaction->approval_status, ['Doc Accepted'])
                                                                         ? 'info'
                                                                         : 'secondary')))) }}"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem; cursor: {{ ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') && isset($hotelApprovals[$transaction->id]) ? 'pointer' : 'default' }};"
                                                     @if (
                                                         ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') &&
                                                             isset($hotelApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
@@ -129,7 +143,7 @@
                                                     title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}"
                                                     @elseif($transaction->approval_status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
                                                     @elseif($transaction->approval_status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}" @endif>
-                                                    {{ $transaction->approval_status == 'Approved' ? 'Request Approved' : $transaction->approval_status }}
+                                                    {{ $transaction->approval_status == 'Approved' ? 'Approved' : $transaction->approval_status }}
                                                 </span>
 
                                             </td>
@@ -177,17 +191,40 @@
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="rejectReasonModalLabel">Rejection Information</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-white" id="rejectReasonModalLabel">Rejection Information</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Rejected by:</strong> <span id="rejectedBy"></span></p>
-                    <p><strong>Rejection reason:</strong> <span id="rejectionReason"></span></p>
-                    <p><strong>Rejection date:</strong> <span id="rejectionDate"></span></p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Rejected by</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="rejectedBy"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <strong>Rejection reason</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="rejectionReason"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <strong>Rejection date</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="rejectionDate"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-primary rounded-pill"
+                        data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -198,11 +235,9 @@
         aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                        style="border: 0px; border-radius:4px;">
-                        <span aria-hidden="true">&times;</span>
+                <div class="modal-header bg-primary">
+                    <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div class="modal-body">
@@ -234,17 +269,33 @@
                 });
             });
 
+            function formatDate(dateTimeString) {
+                // Create a new Date object from the dateTimeString
+                var date = new Date(dateTimeString);
+
+                // Extract day, month, year, hours, and minutes
+                var day = ('0' + date.getDate()).slice(-2); // Ensure two digits
+                var month = ('0' + (date.getMonth() + 1)).slice(-2); // Month is 0-based, so we add 1
+                var year = date.getFullYear();
+                var hours = ('0' + date.getHours()).slice(-2);
+                var minutes = ('0' + date.getMinutes()).slice(-2);
+
+                // Format the date as d/m/Y H:I
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            }
+
             window.showRejectInfo = function(transactionId) {
                 var hotelApprovals = {!! json_encode($hotelApprovals) !!};
-                console.log('All hotel approvals:', hotelApprovals);
-                console.log('Transaction ID:', transactionId);
-                var approval = hotelApprovals[transactionId];
-                console.log('Approval for this transaction:', approval);
+                var employeeName = {!! json_encode($employeeName) !!}; // Add this line
 
+                var approval = hotelApprovals[transactionId];
                 if (approval) {
-                    document.getElementById('rejectedBy').textContent = approval.rejected_by || 'N/A';
-                    document.getElementById('rejectionReason').textContent = approval.reject_info || 'N/A';
-                    document.getElementById('rejectionDate').textContent = approval.rejected_at || 'N/A';
+                    var rejectedBy = employeeName[approval.employee_id] || 'N/A'; // Retrieve fullname
+                    document.getElementById('rejectedBy').textContent = ': ' + rejectedBy;
+                    document.getElementById('rejectionReason').textContent = ': ' + (approval.reject_info ||
+                        'N/A');
+                    var rejectionDate = approval.approved_at ? formatDate(approval.approved_at) : 'N/A';
+                    document.getElementById('rejectionDate').textContent = ': ' + rejectionDate;
 
                     rejectModal.show();
                 } else {

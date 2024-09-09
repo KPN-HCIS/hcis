@@ -116,23 +116,23 @@
                                 </div>
                             </div>
                             @php
-                            $currentFilter = request('filter', 'all');
-                        @endphp
+                                $currentFilter = request('filter', 'all');
+                            @endphp
 
-                        <form method="GET" action="{{ route('businessTrip.approval') }}">
-                            <button type="submit" name="filter" value="all"
-                                class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                All
-                            </button>
-                            <button type="submit" name="filter" value="request"
-                                class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                Request
-                            </button>
-                            <button type="submit" name="filter" value="declaration"
-                                class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                Declaration
-                            </button>
-                        </form>
+                            <form method="GET" action="{{ route('businessTrip.approval') }}">
+                                <button type="submit" name="filter" value="all"
+                                    class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    All
+                                </button>
+                                <button type="submit" name="filter" value="request"
+                                    class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    Request
+                                </button>
+                                <button type="submit" name="filter" value="declaration"
+                                    class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    Declaration
+                                </button>
+                            </form>
 
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
@@ -283,6 +283,11 @@
                                             </tr>
                                         @endforeach
                                     </tbody>
+                                    @if (session('message'))
+                                        <script>
+                                            alert('{{ session('message') }}');
+                                        </script>
+                                    @endif
                                 </table>
                             </div>
                         </div>
@@ -314,11 +319,9 @@
                     aria-labelledby="detailModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                    style="border: 0px; border-radius:4px;">
-                                    <span aria-hidden="true">&times;</span>
+                            <div class="modal-header bg-primary">
+                                <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
+                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
                                 </button>
                             </div>
                             <div class="modal-body">

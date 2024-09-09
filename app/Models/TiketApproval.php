@@ -21,6 +21,7 @@ class TiketApproval extends Model
         'layer',
         'approval_status',
         'approved_at',
+        'reject_info,',
     ];
     protected $table = 'tkt_approvals';
 }

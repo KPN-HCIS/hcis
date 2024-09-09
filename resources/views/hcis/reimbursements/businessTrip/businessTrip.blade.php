@@ -290,7 +290,9 @@
                                                                         : (in_array($n->status, ['Doc Accepted'])
                                                                             ? 'info'
                                                                             : 'secondary')))) }}"
-                                                        style="font-size: 12px; padding: 0.5rem 1rem;"
+                                                        style="font-size: 12px; padding: 0.5rem 1rem; cursor: {{ ($n->status == 'Rejected' || $n->status == 'Declaration Rejected') && isset($btApprovals[$n->id]) ? 'pointer' : 'default' }};"
+                                                        @if (($n->status == 'Rejected' || $n->status == 'Declaration Rejected') && isset($btApprovals[$n->id])) onclick="showRejectInfo('{{ $n->id }}')"
+                                                         title="Click to see rejection reason" @endif
                                                         @if ($n->status == 'Pending L1') title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
                                                     @elseif ($n->status == 'Pending L2')
                                                         title="L2 Manager: {{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}" @elseif($n->status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
@@ -353,17 +355,58 @@
                         </div>
                     </div>
                 </div>
+                <!-- Rejection Reason Modal -->
+                <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary">
+                                <h5 class="modal-title text-white" id="rejectReasonModalLabel">Rejection Information</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <strong>Rejected by</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span id="rejectedBy"></span>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-4">
+                                        <strong>Rejection reason</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span id="rejectionReason"></span>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-4">
+                                        <strong>Rejection date</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span id="rejectionDate"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-primary rounded-pill"
+                                    data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Detail Modal -->
                 <div class="modal fade" id="detailModal" tabindex="-1" role="dialog"
                     aria-labelledby="detailModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                    style="border: 0px; border-radius:4px;">
-                                    <span aria-hidden="true">&times;</span>
+                            <div class="modal-header bg-primary">
+                                <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
+                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
                                 </button>
                             </div>
                             <div class="modal-body">
@@ -382,6 +425,58 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {
+                            keyboard: true,
+                            backdrop: 'static'
+                        });
+
+                        const closeButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+                        closeButtons.forEach(button => {
+                            button.addEventListener('click', () => {
+                                rejectModal.hide();
+                            });
+                        });
+
+                        function formatDate(dateTimeString) {
+                            // Create a new Date object from the dateTimeString
+                            var date = new Date(dateTimeString);
+
+                            // Extract day, month, year, hours, and minutes
+                            var day = ('0' + date.getDate()).slice(-2); // Ensure two digits
+                            var month = ('0' + (date.getMonth() + 1)).slice(-2); // Month is 0-based, so we add 1
+                            var year = date.getFullYear();
+                            var hours = ('0' + date.getHours()).slice(-2);
+                            var minutes = ('0' + date.getMinutes()).slice(-2);
+
+                            // Format the date as d/m/Y H:I
+                            return `${day}/${month}/${year} ${hours}:${minutes}`;
+                        }
+
+                        window.showRejectInfo = function(transactionId) {
+                            var btApprovals = {!! json_encode($btApprovals) !!};
+                            var employeeName = {!! json_encode($employeeName) !!}; // Add this line
+
+                            var approval = btApprovals[transactionId];
+                            if (approval) {
+                                var rejectedBy = employeeName[approval.employee_id] || 'N/A'; // Retrieve fullname
+                                document.getElementById('rejectedBy').textContent = ': ' + rejectedBy;
+                                document.getElementById('rejectionReason').textContent = ': ' + (approval.reject_info ||
+                                    'N/A');
+                                var rejectionDate = approval.approved_at ? formatDate(approval.approved_at) : 'N/A';
+                                document.getElementById('rejectionDate').textContent = ': ' + rejectionDate;
+                                rejectModal.show();
+                            } else {
+                                console.error('Approval information not found for transaction ID:', transactionId);
+                            }
+                        };
+
+                        // Add event listener for modal hidden event
+                        document.getElementById('rejectReasonModal').addEventListener('hidden.bs.modal', function() {
+                            console.log('Modal closed');
+                        });
+                    });
+
                     window.addEventListener('resize', function() {
                         document.body.style.display = 'none';
                         document.body.offsetHeight; // Force a reflow

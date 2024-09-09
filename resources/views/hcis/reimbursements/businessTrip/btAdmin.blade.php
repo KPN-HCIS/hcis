@@ -320,7 +320,7 @@
                                                     @php
                                                         $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                     @endphp
-                                                    @if ($n->status != 'Pending L1' && $n->status != 'Pending L2' && $n->status != 'Rejected' && $n->status != 'Approved')
+                                                    @if ($n->status != 'Pending L1' && $n->status != 'Pending L2' && $n->status != 'Rejected')
                                                         <form method="GET"
                                                             action="/businessTrip/deklarasi/admin/{{ $n->id }}"
                                                             style="display: inline-block;">
@@ -346,11 +346,9 @@
                     aria-labelledby="detailModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                    style="border: 0px; border-radius:4px;">
-                                    <span aria-hidden="true">&times;</span>
+                            <div class="modal-header bg-primary">
+                                <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
+                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
                                 </button>
                             </div>
                             <div class="modal-body">

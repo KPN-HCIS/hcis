@@ -19,6 +19,7 @@ class ca_approval extends Model
         'layer',
         'approval_status',
         'approved_at',
+        'reject_info',
     ];
 
     protected $keyType = 'string';

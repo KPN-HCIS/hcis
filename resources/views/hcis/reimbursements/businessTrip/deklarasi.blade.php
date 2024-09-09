@@ -47,6 +47,14 @@
                                     value="{{ $n->bb_perusahaan }}">
                                 </input>
                             </div>
+                            <div class="">
+                                <input type="hidden" class="form-control bg-light" id="divisi" name="divisi"
+                                    style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
+                            </div>
+                            <div class="">
+                                <input type="hidden" class="form-control bg-light" id="tujuan" name="tujuan"
+                                    style="cursor:not-allowed;" value="{{ $n->tujuan }}" readonly>
+                            </div>
                             <!-- 1st Form -->
                             <div class="row mt-2" id="ca_div">
                                 <div class="col-md-6">
@@ -267,13 +275,12 @@
                                                                                                         );
                                                                                                     @endphp
                                                                                                     <input
-                                                                                                        class="form-control"
+                                                                                                        class="form-control bg-light"
                                                                                                         name="nominal_bt_perdiem_deklarasi[]"
                                                                                                         id="nominal_bt_perdiem_{{ $index }}"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominalPerdiem) }}"
-                                                                                                        disabled>
+                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominalPerdiem) }}" readonly>
 
                                                                                                 </div>
                                                                                                 <hr
@@ -379,12 +386,11 @@
                                                                                                     <span
                                                                                                         class="input-group-text">Rp</span>
                                                                                                 </div>
-                                                                                                <input class="form-control"
+                                                                                                <input class="form-control bg-light"
                                                                                                     name="nominal_bt_perdiem[]"
                                                                                                     id="nominal_bt_perdiem_0"
                                                                                                     type="text"
-                                                                                                    min="0"
-                                                                                                    disabled>
+                                                                                                    min="0" readonly>
                                                                                             </div>
                                                                                             <hr
                                                                                                 class="border border-primary border-1 opacity-50">
@@ -1580,7 +1586,7 @@
                                                                                                 <input
                                                                                                     class="form-control bg-light"
                                                                                                     name="nominal_bt_perdiem[]"
-                                                                                                    id="nominal_bt_perdiem_0"
+                                                                                                    id="nominal_bt_perdiem"
                                                                                                     type="text"
                                                                                                     min="0"
                                                                                                     readonly>
@@ -1610,7 +1616,7 @@
                                                                                             <input
                                                                                                 class="form-control bg-light"
                                                                                                 name="total_bt_perdiem[]"
-                                                                                                id="total_bt_perdiem[]"
+                                                                                                id="total_bt_perdiem"
                                                                                                 type="text"
                                                                                                 min="0"
                                                                                                 value="{{ $formattedTotalPerdiem2 ?? 0 }}"
@@ -1639,7 +1645,7 @@
                                                                                     data-bs-toggle="collapse"
                                                                                     data-bs-target="#collapseTransport"
                                                                                     aria-expanded="@if ($detailTransport2[0]['tanggal'] === null) false @else true @endif"
-                                                                                aria-controls="collapseTransport" @else
+                                                                                    aria-controls="collapseTransport" @else
                                                                                     class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
@@ -2378,7 +2384,7 @@
                                                             );
                                                         @endphp
                                                         <div class="col-md-12 mb-2">
-                                                            <label class="form-label">Total Cash Advanced</label>
+                                                            <label class="form-label">Total Cash Advanced Declaration</label>
                                                             <div class="input-group">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">Rp</span>

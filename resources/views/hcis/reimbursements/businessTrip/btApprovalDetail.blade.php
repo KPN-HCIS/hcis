@@ -128,7 +128,7 @@
                                 </select>
                             </div>
 
-                            <div id="additional-fields" class="row mb-3" style="display: none;">
+                            <div id="additional-fields" class="row mb-3" style="display: {{ $n->jns_dinas == 'luar kota' ? 'block' : 'none' }};">
                                 <div class="col-md-12">
                                     <label for="ca" class="form-label">Cash Advanced</label>
                                     <select class="form-select" id="ca" name="ca" disabled>
@@ -136,7 +136,7 @@
                                         <option value="Ya" {{ $n->ca == 'Ya' ? 'selected' : '' }}>Ya</option>
                                     </select>
 
-                                    <div class="row mt-2" id="ca_div" style="display: none;">
+                                    <div class="row mt-2" id="ca_div" style="display: {{ $n->ca == 'Ya' ? 'block' : 'none' }};">
                                         <div class="col-md-12">
                                             <div class="table-responsive-sm">
                                                 <div class="d-flex flex-column gap-2">
@@ -150,75 +150,47 @@
                                                                         @php
                                                                             // Provide default empty arrays if caDetail or sections are not set
                                                                             $detailPerdiem =
-                                                                                $caDetail[
-                                                                                    'detail_perdiem'
-                                                                                ] ?? [];
+                                                                                $caDetail['detail_perdiem'] ?? [];
                                                                             $detailTransport =
-                                                                                $caDetail[
-                                                                                    'detail_transport'
-                                                                                ] ?? [];
+                                                                                $caDetail['detail_transport'] ?? [];
                                                                             $detailPenginapan =
-                                                                                $caDetail[
-                                                                                    'detail_penginapan'
-                                                                                ] ?? [];
+                                                                                $caDetail['detail_penginapan'] ?? [];
                                                                             $detailLainnya =
-                                                                                $caDetail[
-                                                                                    'detail_lainnya'
-                                                                                ] ?? [];
+                                                                                $caDetail['detail_lainnya'] ?? [];
 
                                                                             // Calculate totals with default values
                                                                             $totalPerdiem = array_reduce(
                                                                                 $detailPerdiem,
-                                                                                function (
-                                                                                    $carry,
-                                                                                    $item,
-                                                                                ) {
+                                                                                function ($carry, $item) {
                                                                                     return $carry +
-                                                                                        (int) ($item[
-                                                                                            'nominal'
-                                                                                        ] ?? 0);
+                                                                                        (int) ($item['nominal'] ?? 0);
                                                                                 },
                                                                                 0,
                                                                             );
 
                                                                             $totalTransport = array_reduce(
                                                                                 $detailTransport,
-                                                                                function (
-                                                                                    $carry,
-                                                                                    $item,
-                                                                                ) {
+                                                                                function ($carry, $item) {
                                                                                     return $carry +
-                                                                                        (int) ($item[
-                                                                                            'nominal'
-                                                                                        ] ?? 0);
+                                                                                        (int) ($item['nominal'] ?? 0);
                                                                                 },
                                                                                 0,
                                                                             );
 
                                                                             $totalPenginapan = array_reduce(
                                                                                 $detailPenginapan,
-                                                                                function (
-                                                                                    $carry,
-                                                                                    $item,
-                                                                                ) {
+                                                                                function ($carry, $item) {
                                                                                     return $carry +
-                                                                                        (int) ($item[
-                                                                                            'nominal'
-                                                                                        ] ?? 0);
+                                                                                        (int) ($item['nominal'] ?? 0);
                                                                                 },
                                                                                 0,
                                                                             );
 
                                                                             $totalLainnya = array_reduce(
                                                                                 $detailLainnya,
-                                                                                function (
-                                                                                    $carry,
-                                                                                    $item,
-                                                                                ) {
+                                                                                function ($carry, $item) {
                                                                                     return $carry +
-                                                                                        (int) ($item[
-                                                                                            'nominal'
-                                                                                        ] ?? 0);
+                                                                                        (int) ($item['nominal'] ?? 0);
                                                                                 },
                                                                                 0,
                                                                             );
@@ -237,12 +209,11 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="enter-headingOne">
                                                                                         <button
-                                                                                        @if (count($detailPerdiem) > 0)
-                                                                                            class="accordion-button @if($detailPerdiem[0]['start_date'] === NULL) collapsed @endif fw-medium"
-                                                                                            type="button"
+                                                                                            @if (count($detailPerdiem) > 0) class="accordion-button @if ($detailPerdiem[0]['start_date'] === null) collapsed @endif
+                                                                                            fw-medium" type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#enter-collapseOne"
-                                                                                            aria-expanded="@if($detailPerdiem[0]['start_date'] === NULL) true @else false @endif"
+                                                                                            aria-expanded="@if ($detailPerdiem[0]['start_date'] === null) true @else false @endif"
                                                                                             aria-controls="enter-collapseOne"
                                                                                         @else
                                                                                             class="accordion-button collapsed fw-medium"
@@ -251,16 +222,15 @@
                                                                                             data-bs-target="#enter-collapseOne"
                                                                                             aria-expanded="false"
                                                                                             aria-controls="enter-collapseOne"
-                                                                                        @endif
+                                                                                            @endif
                                                                                             >
                                                                                             Perdiem Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="enter-collapseOne"
-                                                                                        @if (count($detailPerdiem) > 0)
-                                                                                            class="accordion-collapse @if($detailPerdiem[0]['start_date'] === NULL) collapse @else show @endif"
-                                                                                        @else
-                                                                                            class="accordion-collapse collapse"
+                                                                                        @if (count($detailPerdiem) > 0) class="accordion-collapse @if ($detailPerdiem[0]['start_date'] === null) collapse @else show @endif"
+                                                                                    @else
+                                                                                        class="accordion-collapse collapse"
                                                                                         @endif
                                                                                         aria-labelledby="enter-headingOne">
                                                                                         <div class="accordion-body">
@@ -601,12 +571,11 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingTransport">
                                                                                         <button
-                                                                                        @if (count($detailTransport) > 0)
-                                                                                            class="accordion-button @if($detailTransport[0]['tanggal'] === NULL) collapsed @endif fw-medium"
-                                                                                            type="button"
+                                                                                            @if (count($detailTransport) > 0) class="accordion-button @if ($detailTransport[0]['tanggal'] === null) collapsed @endif
+                                                                                            fw-medium" type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapseTransport"
-                                                                                            aria-expanded="@if($detailTransport[0]['tanggal'] === NULL) false @else true @endif"
+                                                                                            aria-expanded="@if ($detailTransport[0]['tanggal'] === null) false @else true @endif"
                                                                                             aria-controls="collapseTransport"
                                                                                         @else
                                                                                             class="accordion-button collapsed fw-medium"
@@ -615,16 +584,15 @@
                                                                                             data-bs-target="#collapseTransport"
                                                                                             aria-expanded="false"
                                                                                             aria-controls="collapseTransport"
-                                                                                        @endif
+                                                                                            @endif
                                                                                             >
                                                                                             Transport Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseTransport"
-                                                                                        @if (count($detailTransport) > 0)
-                                                                                            class="accordion-collapse @if($detailTransport[0]['tanggal'] === NULL) collapse @else show @endif"
-                                                                                        @else
-                                                                                            class="accordion-collapse collapse"
+                                                                                        @if (count($detailTransport) > 0) class="accordion-collapse @if ($detailTransport[0]['tanggal'] === null) collapse @else show @endif"
+                                                                                    @else
+                                                                                        class="accordion-collapse collapse"
                                                                                         @endif
                                                                                         aria-labelledby="headingTransport">
                                                                                         <div class="accordion-body">
@@ -658,7 +626,8 @@
                                                                                                             class="mb-2">
                                                                                                             <label
                                                                                                                 class="form-label">
-                                                                                                                Transport Date</label>
+                                                                                                                Transport
+                                                                                                                Date</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="tanggal_bt_transport[]"
@@ -745,7 +714,8 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">
-                                                                                                            Transport Date</label>
+                                                                                                            Transport
+                                                                                                            Date</label>
                                                                                                         <input
                                                                                                             type="date"
                                                                                                             name="tanggal_bt_transport[]"
@@ -861,12 +831,11 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingPenginapan">
                                                                                         <button
-                                                                                        @if (count($detailPenginapan) > 0)
-                                                                                            class="accordion-button @if($detailPenginapan[0]['start_date'] === NULL) collapsed @endif fw-medium"
-                                                                                            type="button"
+                                                                                            @if (count($detailPenginapan) > 0) class="accordion-button @if ($detailPenginapan[0]['start_date'] === null) collapsed @endif
+                                                                                            fw-medium" type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapsePenginapan"
-                                                                                            aria-expanded="@if($detailPenginapan[0]['start_date'] === NULL) false @else true  @endif"
+                                                                                            aria-expanded="@if ($detailPenginapan[0]['start_date'] === null) false @else true @endif"
                                                                                             aria-controls="collapsePenginapan"
                                                                                         @else
                                                                                             class="accordion-button collapsed fw-medium"
@@ -875,16 +844,15 @@
                                                                                             data-bs-target="#collapsePenginapan"
                                                                                             aria-expanded="false"
                                                                                             aria-controls="collapsePenginapan"
-                                                                                        @endif
-                                                                                        >
+                                                                                            @endif
+                                                                                            >
                                                                                             Accommodation Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapsePenginapan"
-                                                                                        @if (count($detailPenginapan) > 0)
-                                                                                            class="accordion-collapse @if($detailPenginapan[0]['start_date'] === NULL) collapse @else show @endif"
-                                                                                        @else
-                                                                                            class="accordion-collapse collapse"
+                                                                                        @if (count($detailPenginapan) > 0) class="accordion-collapse @if ($detailPenginapan[0]['start_date'] === null) collapse @else show @endif"
+                                                                                    @else
+                                                                                        class="accordion-collapse collapse"
                                                                                         @endif
                                                                                         aria-labelledby="headingPenginapan">
                                                                                         <div class="accordion-body">
@@ -921,7 +889,8 @@
                                                                                                             <div
                                                                                                                 class="mb-2">
                                                                                                                 <label
-                                                                                                                    class="form-label">Accommodation Start</label>
+                                                                                                                    class="form-label">Accommodation
+                                                                                                                    Start</label>
                                                                                                                 <input
                                                                                                                     type="date"
                                                                                                                     name="start_bt_penginapan[]"
@@ -934,7 +903,8 @@
                                                                                                                 class="mb-2">
                                                                                                                 <label
                                                                                                                     class="form-label">
-                                                                                                                    Accommodation End</label>
+                                                                                                                    Accommodation
+                                                                                                                    End</label>
                                                                                                                 <input
                                                                                                                     type="date"
                                                                                                                     name="end_bt_penginapan[]"
@@ -1064,7 +1034,8 @@
                                                                                                             class="mb-2">
                                                                                                             <label
                                                                                                                 class="form-label">
-                                                                                                                Accommodation End</label>
+                                                                                                                Accommodation
+                                                                                                                End</label>
                                                                                                             <input
                                                                                                                 type="date"
                                                                                                                 name="end_bt_penginapan[]"
@@ -1211,12 +1182,11 @@
                                                                                     <h2 class="accordion-header"
                                                                                         id="headingLainnya">
                                                                                         <button
-                                                                                        @if (count($detailLainnya) > 0)
-                                                                                            class="accordion-button @if($detailLainnya[0]['tanggal'] === NULL) collapsed @endif fw-medium"
-                                                                                            type="button"
+                                                                                            @if (count($detailLainnya) > 0) class="accordion-button @if ($detailLainnya[0]['tanggal'] === null) collapsed @endif
+                                                                                            fw-medium" type="button"
                                                                                             data-bs-toggle="collapse"
                                                                                             data-bs-target="#collapseLainnya"
-                                                                                            aria-expanded="@if($detailLainnya[0]['tanggal'] === NULL) false @else true @endif"
+                                                                                            aria-expanded="@if ($detailLainnya[0]['tanggal'] === null) false @else true @endif"
                                                                                             aria-controls="collapseLainnya"
                                                                                         @else
                                                                                             class="accordion-button collapsed fw-medium"
@@ -1225,16 +1195,15 @@
                                                                                             data-bs-target="#collapseLainnya"
                                                                                             aria-expanded="false"
                                                                                             aria-controls="collapseLainnya"
-                                                                                        @endif
-                                                                                        >
+                                                                                            @endif
+                                                                                            >
                                                                                             Others Plan
                                                                                         </button>
                                                                                     </h2>
                                                                                     <div id="collapseLainnya"
-                                                                                        @if (count($detailLainnya) > 0)
-                                                                                            class="accordion-collapse @if($detailLainnya[0]['tanggal'] === NULL) collapse @else show @endif"
-                                                                                        @else
-                                                                                            class="accordion-collapse collapse"
+                                                                                        @if (count($detailLainnya) > 0) class="accordion-collapse @if ($detailLainnya[0]['tanggal'] === null) collapse @else show @endif"
+                                                                                    @else
+                                                                                        class="accordion-collapse collapse"
                                                                                         @endif
                                                                                         aria-labelledby="headingLainnya">
                                                                                         <div class="accordion-body">
@@ -1359,8 +1328,9 @@
                                                                                                                             class="input-group-text">Rp</span>
                                                                                                                     </div>
                                                                                                                     @php
-                                                                                                                    $index =
-                                                                                                                    $index ?? 0;
+                                                                                                                        $index =
+                                                                                                                            $index ??
+                                                                                                                            0;
                                                                                                                         $formattedTotalLainnya = number_format(
                                                                                                                             old(
                                                                                                                                 'total_bt_lainnya.' .
@@ -1401,9 +1371,9 @@
                                                                                                                     class="input-group-text">Rp</span>
                                                                                                             </div>
                                                                                                             @php
-                                                                                                              $index =
-                                                                                                                                $index ??
-                                                                                                                                0;
+                                                                                                                $index =
+                                                                                                                    $index ??
+                                                                                                                    0;
                                                                                                                 // Assuming $totalLainnya is available and holds the total value for 'lainnya'
                                                                                                                 $totalLainnya =
                                                                                                                     $totalLainnya ??
@@ -1910,16 +1880,10 @@
                             </div>
                         </form>
                         <div class="d-flex justify-content-end mt-3">
-                            <form method="POST" action="{{ route('confirm.status', ['id' => $n->id]) }}"
-                                style="display: inline-block;" class="status-form">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="status_approval" value="Rejected">
-                                <button type="submit" class="btn btn-primary rounded-pill"
-                                    style="padding: 0.5rem 1rem; margin-right: 5px">
-                                    Decline
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal"
+                                data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
+                                Decline
+                            </button>
 
                             <form method="POST" action="{{ route('confirm.status', ['id' => $n->id]) }}"
                                 style="display: inline-block; margin-right: 5px;" class="status-form">
@@ -1927,18 +1891,57 @@
                                 @method('PUT')
                                 <input type="hidden" name="status_approval"
                                     value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}">
-                                <button type="submit" class="btn btn-success rounded-pill"
-                                    style="padding: 0.5rem 1rem;">
+                                <button type="submit" class="btn btn-success rounded-pill" style="padding: 0.5rem 1rem;"
+                                    onclick="confirmSubmission(event)">
                                     Approve
                                 </button>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {{-- </div>
+    </div> --}}
+
+
+    <!-- Rejection Reason Modal -->
+    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-bottom-0">
+                    <h5 class="modal-title" id="rejectReasonModalLabel" style="color: #333; font-weight: 600;">Rejection
+                        Reason</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="rejectReasonForm" method="POST"
+                        action="{{ route('confirm.status', ['id' => $n->id]) }}">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="status_approval" value="Rejected">
+
+                        <div class="mb-3">
+                            <label for="reject_info" class="form-label" style="color: #555; font-weight: 500;">Please
+                                provide a reason for rejection:</label>
+                            <textarea class="form-control border-2" name="reject_info" id="reject_info" rows="4" required
+                                style="resize: vertical; min-height: 100px;"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                data-bs-dismiss="modal" style="min-width: 100px;">Cancel</button>
+                            <button type="submit" class="btn btn-primary rounded-pill"
+                                style="min-width: 100px;">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -1960,51 +1963,103 @@
 
     <!-- JavaScript Part -->
     <script>
+        function confirmSubmission(event) {
+            event.preventDefault(); // Stop the form from submitting immediately
+
+            // Display a confirmation alert
+            const userConfirmed = confirm("Are you sure you want to approve this request?");
+
+            if (userConfirmed) {
+                // If the user confirms, submit the form
+                event.target.closest('form').submit();
+            } else {
+                // If the user cancels, do nothing
+                alert("Approval cancelled.");
+            }
+        }
+        document.getElementById('rejectReasonForm').addEventListener('submit', function(event) {
+            const reason = document.getElementById('reject_info').value.trim();
+            if (!reason) {
+                alert('Please provide a reason for rejection.');
+                event.preventDefault(); // Stop form submission if no reason is provided
+            }
+        });
+
+        // Add event listener to the decline button to open the modal
+        document.getElementById('declineButton').addEventListener('click', function() {
+            $('#rejectReasonModal').modal('show');
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const forms = document.querySelectorAll('.status-form');
+
             forms.forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
+
                     const action = this.querySelector('input[name="status_approval"]').value;
                     const confirmMessage = action === 'Rejected' ?
                         'Are you sure you want to reject this?' :
-                        'Are you sure you want to confirm this?';
+                        'Are you sure you want to approve this?';
 
-                    if (confirm(confirmMessage)) {
-                        const formData = new FormData(this);
-                        fetch(this.action, {
-                                method: 'POST',
-                                body: formData,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Update the success modal content
-                                    document.getElementById('successModalBody').textContent =
-                                        data.message;
+                    if (action === 'Approved') {
+                        // Show the approval confirmation modal
+                        document.getElementById('confirmationMessage').textContent = confirmMessage;
+                        var approvalConfirmationModal = new bootstrap.Modal(document.getElementById(
+                            'approvalConfirmationModal'));
+                        approvalConfirmationModal.show();
 
-                                    // Show the success modal
-                                    var successModal = new bootstrap.Modal(document
-                                        .getElementById('successModal'));
-                                    successModal.show();
-
-                                    // Reload the page after modal is closed
-                                    document.getElementById('successModal').addEventListener(
-                                        'hidden.bs.modal',
-                                        function() {
+                        // Handle confirmation
+                        document.getElementById('confirmApproveButton').addEventListener('click',
+                            () => {
+                                const formData = new FormData(this);
+                                fetch(this.action, {
+                                        method: 'POST',
+                                        body: formData,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest'
+                                        }
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Redirect after successful approval
                                             window.location.href = '/businessTrip/approval';
-                                        });
-                                } else {
-                                    alert('An error occurred. Please try again.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('An error occurred. Please try again.');
+                                        } else {
+                                            alert('An error occurred. Please try again.');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('An error occurred. Please try again.');
+                                    });
                             });
+
+                    } else if (action === 'Rejected') {
+                        // Handle rejection directly
+                        if (confirm(confirmMessage)) {
+                            const formData = new FormData(this);
+                            fetch(this.action, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert('The request has been successfully Rejected.');
+                                        window.location.href = '/businessTrip/approval';
+                                    } else {
+                                        alert('An error occurred. Please try again.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('An error occurred. Please try again.');
+                                });
+                        }
                     }
                 });
             });

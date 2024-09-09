@@ -30,7 +30,8 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="btEditForm" method="POST" action="{{ route('change.status.ticket', ['id' => $ticket->id]) }}">
+                        <form id="btEditForm" method="POST"
+                            action="{{ route('change.status.ticket', ['id' => $ticket->id]) }}">
                             @csrf
                             @method('PUT')
                             <div class="row my-2">
@@ -276,16 +277,10 @@
                         </form>
                         <div class="d-flex justify-content-end">
                             <!-- Decline Form -->
-                            <form method="POST" action="{{ route('change.status.ticket', ['id' => $ticket->id]) }}"
-                                style="display: inline-block;" class="status-form">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="status_approval" value="Rejected">
-                                <button type="submit" class="btn btn-primary rounded-pill"
-                                    style="padding: 0.5rem 1rem; margin-right: 5px">
-                                    Decline
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal"
+                                data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
+                                Decline
+                            </button>
 
                             <!-- Approve Form -->
                             <form method="POST" action="{{ route('change.status.ticket', ['id' => $ticket->id]) }}"
@@ -294,13 +289,49 @@
                                 @method('PUT')
                                 <input type="hidden" name="status_approval"
                                     value="{{ Auth::user()->id == $ticketOwnerEmployee->manager_l1_id ? 'Pending L2' : 'Approved' }}">
-                                <button type="submit" class="btn btn-success rounded-pill"
-                                    style="padding: 0.5rem 1rem;">
+                                <button type="submit" class="btn btn-success rounded-pill" style="padding: 0.5rem 1rem;"
+                                    onclick="confirmSubmission(event)">
                                     Approve
                                 </button>
                             </form>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rejection Reason Modal -->
+    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-bottom-0">
+                    <h5 class="modal-title" id="rejectReasonModalLabel" style="color: #333; font-weight: 600;">Rejection
+                        Reason</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="rejectReasonForm" method="POST"
+                        action="{{ route('change.status.ticket', ['id' => $ticket->id]) }}">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="status_approval" value="Rejected">
+
+                        <div class="mb-3">
+                            <label for="reject_info" class="form-label" style="color: #555; font-weight: 500;">Please
+                                provide a reason for rejection:</label>
+                            <textarea class="form-control border-2" name="reject_info" id="reject_info" rows="4" required
+                                style="resize: vertical; min-height: 100px;"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                data-bs-dismiss="modal" style="min-width: 100px;">Cancel</button>
+                            <button type="submit" class="btn btn-primary rounded-pill"
+                                style="min-width: 100px;">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -327,51 +358,103 @@
 
     <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
     <script>
+        function confirmSubmission(event) {
+            event.preventDefault(); // Stop the form from submitting immediately
+
+            // Display a confirmation alert
+            const userConfirmed = confirm("Are you sure you want to approve this request?");
+
+            if (userConfirmed) {
+                // If the user confirms, submit the form
+                event.target.closest('form').submit();
+            } else {
+                // If the user cancels, do nothing
+                alert("Approval cancelled.");
+            }
+        }
+        document.getElementById('rejectReasonForm').addEventListener('submit', function(event) {
+            const reason = document.getElementById('reject_info').value.trim();
+            if (!reason) {
+                alert('Please provide a reason for rejection.');
+                event.preventDefault(); // Stop form submission if no reason is provided
+            }
+        });
+
+        // Add event listener to the decline button to open the modal
+        document.getElementById('declineButton').addEventListener('click', function() {
+            $('#rejectReasonModal').modal('show');
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const forms = document.querySelectorAll('.status-form');
+
             forms.forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
+
                     const action = this.querySelector('input[name="status_approval"]').value;
                     const confirmMessage = action === 'Rejected' ?
                         'Are you sure you want to reject this?' :
-                        'Are you sure you want to confirm this?';
+                        'Are you sure you want to approve this?';
 
-                    if (confirm(confirmMessage)) {
-                        const formData = new FormData(this);
-                        fetch(this.action, {
-                                method: 'POST',
-                                body: formData,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Update the success modal content
-                                    document.getElementById('successModalBody').textContent =
-                                        data.message;
+                    if (action === 'Approved') {
+                        // Show the approval confirmation modal
+                        document.getElementById('confirmationMessage').textContent = confirmMessage;
+                        var approvalConfirmationModal = new bootstrap.Modal(document.getElementById(
+                            'approvalConfirmationModal'));
+                        approvalConfirmationModal.show();
 
-                                    // Show the success modal
-                                    var successModal = new bootstrap.Modal(document
-                                        .getElementById('successModal'));
-                                    successModal.show();
-
-                                    // Reload the page after modal is closed
-                                    document.getElementById('successModal').addEventListener(
-                                        'hidden.bs.modal',
-                                        function() {
+                        // Handle confirmation
+                        document.getElementById('confirmApproveButton').addEventListener('click',
+                            () => {
+                                const formData = new FormData(this);
+                                fetch(this.action, {
+                                        method: 'POST',
+                                        body: formData,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest'
+                                        }
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Redirect after successful approval
                                             window.location.href = '/ticket/approval';
-                                        });
-                                } else {
-                                    alert('An error occurred. Please try again.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('An error occurred. Please try again.');
+                                        } else {
+                                            alert('An error occurred. Please try again.');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('An error occurred. Please try again.');
+                                    });
                             });
+
+                    } else if (action === 'Rejected') {
+                        // Handle rejection directly
+                        if (confirm(confirmMessage)) {
+                            const formData = new FormData(this);
+                            fetch(this.action, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert('The request has been successfully Rejected.');
+                                        window.location.href = '/ticket/approval';
+                                    } else {
+                                        alert('An error occurred. Please try again.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('An error occurred. Please try again.');
+                                });
+                        }
                     }
                 });
             });

@@ -608,11 +608,31 @@ class ReimburseController extends Controller
         return $pdf->stream('Cash Advanced ' . $key . '.pdf');
     }
 
-    public function hotel()
+    public function hotel(Request $request)
     {
         $userId = Auth::user();
         $parentLink = 'Reimbursement';
         $link = 'Hotel';
+
+        $query = Hotel::where('user_id', $userId->id)->orderBy('created_at', 'desc');
+
+        // Get the filter value, default to 'request' if not provided
+        $filter = $request->input('filter', 'request');
+
+        // Apply filter to the query
+        if ($filter === 'request') {
+            $statusFilter = ['Pending L1', 'Pending L2', 'Approved', 'Draft'];
+        } elseif ($filter === 'rejected') {
+            $statusFilter = ['Rejected'];
+        }
+
+        // Apply status filter to the query
+        $query->whereIn('approval_status', $statusFilter);
+
+        // Log::info('Filtered Query:', ['query' => $query->toSql(), 'bindings' => $query->getBindings()]);
+
+        // Get the filtered tickets
+        $hotelFilter = $query->get();
 
         // Fetch latest hotel entries grouped by 'no_htl'
         $latestHotelIds = Hotel::selectRaw('MAX(id) as id')
@@ -624,6 +644,7 @@ class ReimburseController extends Controller
         $transactions = Hotel::whereIn('id', $latestHotelIds)
             ->with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
+            ->whereIn('approval_status', $statusFilter)
             ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
             ->get();
 
@@ -659,6 +680,7 @@ class ReimburseController extends Controller
         // Fetch employee data
         $employeeIds = $hotels->pluck('user_id')->unique();
         $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
 
         // Fetch manager IDs from the employees data
         $managerL1Ids = $employees->pluck('manager_l1_id')->unique();
@@ -685,6 +707,8 @@ class ReimburseController extends Controller
             'managerL1Names' => $managerL1Names,
             'managerL2Names' => $managerL2Names,
             'hotelApprovals' => $hotelApprovals,
+            'employeeName' => $employeeName,
+            'filter' => $filter,
         ]);
     }
 
@@ -1188,63 +1212,75 @@ class ReimburseController extends Controller
         // Check the provided status_approval input
         $statusApproval = $request->input('status_approval');
 
-        // Determine the user's approval layer
-        $userLayer = $user->approval_layer ?? 1;
-
         // Handle rejection scenario
         if ($statusApproval == 'Rejected') {
-            $newStatus = 'Rejected';
-            $layer = $hotel->approval_status == 'Pending L2' ? 2 : 1;
             $rejectInfo = $request->input('reject_info');
-        } else {
-            // Approval flow
-            if ($hotel->approval_status == 'Pending L1' && $userLayer == 1) {
-                $newStatus = 'Pending L2';
-                $layer = 1;
-            } elseif (
-                ($hotel->approval_status == 'Pending L2' && $userLayer == 2) ||
-                ($hotel->approval_status == 'Pending L1' && $userLayer == 2)
-            ) {
-                $newStatus = 'Approved';
-                $layer = 2;
-            } else {
-                $errorMessage = 'Invalid status update or insufficient permissions.';
-                if ($request->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => $errorMessage
-                    ]);
-                }
-                return redirect()->back()->with('error', $errorMessage);
+
+            // Get the current approval status before updating it
+            $currentApprovalStatus = $hotel->approval_status;
+
+            // Update all hotels with the same no_htl to 'Rejected'
+            Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Rejected']);
+
+            // Log the rejection into the hotel_approvals table for all hotels with the same no_htl
+            $hotels = Hotel::where('no_htl', $noHtl)->get();
+            foreach ($hotels as $hotel) {
+                $rejection = new HotelApproval();
+                $rejection->id = (string) Str::uuid();
+                $rejection->htl_id = $hotel->id;
+                $rejection->employee_id = $employeeId;
+
+                // Determine the correct layer based on the hotel's approval status BEFORE rejection
+                $rejection->layer = $currentApprovalStatus == 'Pending L2' ? 2 : 1;
+
+                $rejection->approval_status = 'Rejected';
+                $rejection->approved_at = now();
+                $rejection->reject_info = $rejectInfo;
+                $rejection->save();
             }
+
+            // Return a rejection message
+            $message = 'The request has been successfully Rejected.';
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message
+                ]);
+            }
+
+            // Redirect to the hotel approval page instead of back to the same page
+            return redirect('/hotel/approval')->with('success', $message);
         }
 
-        // Update approval status for all related hotels
-        Hotel::where('no_htl', $noHtl)->update(['approval_status' => $newStatus]);
+        // Handle approval scenarios
+        if ($hotel->approval_status == 'Pending L1') {
+            Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Pending L2']);
+        } elseif ($hotel->approval_status == 'Pending L2') {
+            Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
+        } else {
+            return redirect()->back()->with('error', 'Invalid status update.');
+        }
 
-        // Log the approval/rejection into the hotel_approvals table
+        // Log the approval into the hotel_approvals table for all hotels with the same no_htl
         $hotels = Hotel::where('no_htl', $noHtl)->get();
         foreach ($hotels as $hotel) {
             $approval = new HotelApproval();
             $approval->id = (string) Str::uuid();
             $approval->htl_id = $hotel->id;
             $approval->employee_id = $employeeId;
-            $approval->layer = $layer;
-            $approval->approval_status = $newStatus;
+            $approval->layer = $hotel->approval_status == 'Pending L2' ? 1 : 2;
+            $approval->approval_status = $hotel->approval_status;
             $approval->approved_at = now();
-
-            // Store the rejection reason if status is 'Rejected'
-            if ($statusApproval == 'Rejected') {
-                $approval->reject_info = $rejectInfo;
-            }
-
             $approval->save();
         }
 
-        $message = $statusApproval == 'Rejected'
-            ? 'The request has been successfully Rejected.'
-            : 'The request has been successfully ' . ($newStatus == 'Pending L2' ? 'sent for final approval.' : 'Approved.');
+        // Set success message based on new status
+        $message = ($hotel->approval_status == 'Approved')
+            ? 'The request has been successfully Approved.'
+            : 'The request has been successfully moved to Pending L2.';
 
+        // Return success message
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
@@ -1252,57 +1288,99 @@ class ReimburseController extends Controller
             ]);
         }
 
+        // Redirect to the hotel approval page
         return redirect('/hotel/approval')->with('success', $message);
     }
 
 
-
-    public function ticket()
+    public function ticket(Request $request)
     {
         $userId = Auth::user();
         $parentLink = 'Reimbursement';
         $link = 'Ticket';
 
+        // Base query for filtering
+        $query = Tiket::where('user_id', $userId->id)->orderBy('created_at', 'desc');
+
+        // Get the filter value, default to 'request' if not provided
+        $filter = $request->input('filter', 'request');
+
+        // Apply filter to the query
+        if ($filter === 'request') {
+            $statusFilter = ['Pending L1', 'Pending L2', 'Approved', 'Draft'];
+        } elseif ($filter === 'rejected') {
+            $statusFilter = ['Rejected'];
+        }
+
+        // Apply status filter to the query
+        $query->whereIn('approval_status', $statusFilter);
+
+        // Log::info('Filtered Query:', ['query' => $query->toSql(), 'bindings' => $query->getBindings()]);
+
+        // Get the filtered tickets
+        $ticketsFilter = $query->get();
+
+        // Fetch latest ticket IDs
         $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
             ->where('user_id', $userId->id)
             ->groupBy('no_tkt')
             ->pluck('id');
 
+        // Get transactions with the latest ticket IDs
         $transactions = Tiket::whereIn('id', $latestTicketIds)
             ->with('businessTrip')
+            ->whereIn('approval_status', $statusFilter) // Apply the same filter to transactions
             ->orderBy('created_at', 'desc')
             ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
-
+        // Get all tickets for user
         $tickets = Tiket::where('user_id', $userId->id)
             ->with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
-        $ticket = Tiket::where('user_id', $userId->id)
-            ->with('businessTrip')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy('no_tkt');
+
+        // Group tickets by 'no_tkt'
+        $ticket = $tickets->groupBy('no_tkt');
+
+        // Get ticket IDs
+        $tiketIds = $tickets->pluck('id');
+
+        // Get ticket approvals
+        $ticketApprovals = TiketApproval::whereIn('tkt_id', $tiketIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
+
+        // Log ticket approvals
+        Log::info('Ticket Approvals:', $ticketApprovals->toArray());
+
+        // Key ticket approvals by ticket ID
+        $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
+
+        // Group transactions by 'no_tkt'
+        $ticketsGroups = $tickets->groupBy('no_tkt');
 
         // Fetch employee data
         $employeeIds = $tickets->pluck('user_id')->unique();
         $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
 
-        // Fetch manager IDs from the employees data
+        // Fetch manager IDs from employee data
         $managerL1Ids = $employees->pluck('manager_l1_id')->unique();
         $managerL2Ids = $employees->pluck('manager_l2_id')->unique();
-        // dd($managerL1Ids, $managerL2Ids);
 
         // Fetch manager names
         $managerL1Names = Employee::whereIn('employee_id', $managerL1Ids)->pluck('fullname');
         $managerL2Names = Employee::whereIn('employee_id', $managerL2Ids)->pluck('fullname');
-        // dd($managerL1Names, $managerL2Names);
 
+        // Count tickets grouped by 'no_tkt'
         $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
             return [$key => ['total' => $group->count()]];
         });
-        // dd($tickets, $transaction->no_tkt);
 
+        // Return the view with all the data
         return view('hcis.reimbursements.ticket.ticket', [
             'link' => $link,
             'parentLink' => $parentLink,
@@ -1311,8 +1389,13 @@ class ReimburseController extends Controller
             'ticketCounts' => $ticketCounts,
             'tickets' => $tickets,
             'ticket' => $ticket,
+            'ticketsGroups' => $ticketsGroups,
             'managerL1Names' => $managerL1Names,
             'managerL2Names' => $managerL2Names,
+            'ticketApprovals' => $ticketApprovals,
+            'employeeName' => $employeeName,
+            'filter' => $filter,
+            'ticketsFilter' => $ticketsFilter,
         ]);
     }
 
@@ -1802,6 +1885,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+
         $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
         $no_sppds = BusinessTrip::where('user_id', $userId)
             ->where(function ($query) {
@@ -1859,8 +1943,6 @@ class ReimburseController extends Controller
 
         // Find the ticket by ID
         $ticket = Tiket::findOrFail($id);
-
-        // Get the no_tkt value from the ticket
         $noTkt = $ticket->no_tkt;
 
         // Check the provided status_approval input
@@ -1868,7 +1950,13 @@ class ReimburseController extends Controller
 
         // Handle rejection scenario
         if ($statusApproval == 'Rejected') {
-            // Update all tickets with the same no_tkt
+
+            $rejectInfo = $request->input('reject_info');
+
+            // Get the current approval status before updating it
+            $currentApprovalStatus = $ticket->approval_status;
+
+            // Update all tickets with the same no_tkt to 'Rejected'
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Rejected']);
 
             // Log the rejection into the tkt_approvals table for all tickets with the same no_tkt
@@ -1878,9 +1966,17 @@ class ReimburseController extends Controller
                 $rejection->id = (string) Str::uuid();
                 $rejection->tkt_id = $ticket->id;
                 $rejection->employee_id = $employeeId;
-                $rejection->layer = $ticket->approval_status == 'Pending L2' ? 1 : 2; // L1 or L2 based on current approval
+
+                // Determine the correct layer based on the ticket's approval status BEFORE rejection
+                if ($currentApprovalStatus == 'Pending L2') {
+                    $rejection->layer = 2; // Layer 2 if ticket was at L2
+                } else {
+                    $rejection->layer = 1; // Otherwise, it's Layer 1
+                }
+
                 $rejection->approval_status = 'Rejected';
                 $rejection->approved_at = now();
+                $rejection->reject_info = $rejectInfo;
                 $rejection->save();
             }
 
@@ -1894,7 +1990,8 @@ class ReimburseController extends Controller
                 ]);
             }
 
-            return redirect()->back()->with('success', $message);
+            // Redirect to the ticket approval page instead of back to the same page
+            return redirect('/ticket/approval')->with('success', $message);
         }
 
         // If not rejected, proceed with normal approval process
@@ -1932,7 +2029,8 @@ class ReimburseController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', $message);
+        // Redirect to the ticket approval page
+        return redirect('/ticket/approval')->with('success', $message);
     }
 
 }

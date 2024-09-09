@@ -26,7 +26,7 @@
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-8">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data Hotel</h4>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Detail Hotel</h4>
                     <a href="{{ route('hotel.approval') }}" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" style="overflow-y: auto;">
