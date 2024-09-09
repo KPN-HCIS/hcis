@@ -137,7 +137,16 @@ class ApprovalReimburseController extends Controller
 
         // Cek jika tombol reject ditekan
         if ($req->input('action_ca_reject')) {
-            ca_approval::where('ca_id', $ca_id)->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
+            $caApprovals = ca_approval::where('ca_id', $ca_id)->get();
+            if ($caApprovals->isNotEmpty()) {
+                foreach ($caApprovals as $caApproval) {
+                    $caApproval->approval_status = 'Rejected';
+                    $caApproval->approved_at = Carbon::now();
+                    $caApproval->reject_reason = $req->reject_reason;
+                    $caApproval->save();
+                }
+            }
+            // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
             $caTransaction = ca_transaction::where('id', $ca_id)->first();
             if ($caTransaction) {
                 $caTransaction->approval_status = 'Rejected';
@@ -270,9 +279,17 @@ class ApprovalReimburseController extends Controller
             ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
             ->get();
 
-        // Cek jika tombol reject ditekan
         if ($req->input('action_ca_reject')) {
-            ca_sett_approval::where('ca_id', $ca_id)->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
+            $caApprovalsSett = ca_sett_approval::where('ca_id', $ca_id)->get();
+            if ($caApprovalsSett->isNotEmpty()) {
+                foreach ($caApprovalsSett as $caApprovalSett) {
+                    $caApprovalSett->approval_status = 'Rejected';
+                    $caApprovalSett->approved_at = Carbon::now();
+                    $caApprovalSett->reject_reason = $req->reject_reason;
+                    $caApprovalSett->save();
+                }
+            }
+            // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
             $caTransaction = ca_transaction::where('id', $ca_id)->first();
             if ($caTransaction) {
                 $caTransaction->approval_sett = 'Rejected';
@@ -280,7 +297,7 @@ class ApprovalReimburseController extends Controller
             }
 
             Alert::success('Success', 'All approvals rejected successfully.');
-            return redirect()->route('approval.cashadvancedDeklarasi');
+            return redirect()->route('approval.cashadvanced');
         }
 
         // Cek jika tombol approve ditekan

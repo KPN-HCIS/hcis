@@ -155,13 +155,19 @@
                                                     <p class="badge text-bg-warning style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_extend." - ".$ca_transaction->extName}}">
                                                         {{ "Extend : ".$ca_transaction->approval_extend }}
                                                     </p>
+                                                @elseif ($ca_transaction->approval_sett == 'Rejected')
+                                                    <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : ($ca_transaction->approval_sett == 'On Progress' ? 'warning' : 'default'))))) }}" style="pointer-events: auto; cursor: default;"
+                                                        title="{{ htmlspecialchars($ca_transaction->approval_sett . ' - ' . $ca_transaction->settName) . ' <br> ' . htmlspecialchars($reason[$ca_transaction->id] ?? 'Unknown Reason') }}">
+                                                        {{ $ca_transaction->approval_sett }}
+                                                    </p>
                                                 @else
                                                     <p class="badge text-bg-{{ $ca_transaction->approval_sett == 'Approved' ? 'success' : ($ca_transaction->approval_sett == 'Declaration' ? 'info' : ($ca_transaction->approval_sett == 'Pending' ? 'warning' : ($ca_transaction->approval_sett == 'Rejected' ? 'danger' : ($ca_transaction->approval_sett == 'Draft' ? 'secondary' : ($ca_transaction->approval_sett == 'On Progress' ? 'warning' : 'default'))))) }}" style="pointer-events: auto; cursor: default;" title="{{
-                                                        
+
                                                         $ca_transaction->approval_sett." - ".$ca_transaction->settName}}">
                                                         {{ $ca_transaction->approval_sett }}
                                                     </p>
                                                 @endif
+                                                {{-- {{dd($reason) }} --}}
                                             </td>
                                             <td class="text-center">
                                                 @if ($ca_transaction->approval_sett == 'Approved')
@@ -212,6 +218,7 @@
             </div>
         </div>
     </div>
+    @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
 @endsection
 
 @push('scripts')

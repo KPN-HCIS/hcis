@@ -672,7 +672,7 @@
                     <tr>
                         @foreach ($approval as $role)
                             <td>
-                                Tanggal: {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') : 'Data tidak tersedia' }}
+                                Date: <br> {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') : 'Data tidak tersedia' }}
                             </td>
                         @endforeach
                     </tr>
@@ -685,39 +685,41 @@
             </table>
             @endif
 
+            @if ($approval && count($approval) > 0)
             <table class="table-approve" style="width: 100%; text-align:center;">
                 <tr>
-                    <td colspan="5">Approval</td>
+                    <td colspan="{{ count($approval) }}">Approval</td>
                 </tr>
                 <tr>
-                    <td style="width: 20%">Div Head User</td>
-                    <td>Director User</td>
-                    <td>Div Head HC</td>
-                    <td>CFO</td>
-                    <td>CEO</td>
+                    @foreach ($approval as $role)
+                        <td>{{ $role->role_name }}</td>
+                    @endforeach
                 </tr>
                 <tr>
-                    <td><br><br><br><br></td>
-                    <td><br><br><br><br></td>
-                    <td><br><br><br><br></td>
-                    <td><br><br><br><br></td>
-                    <td><br><br><br><br></td>
+                    @foreach ($approval as $role)
+                        <td><br><br><br><br></td>
+                    @endforeach
                 </tr>
                 <tr>
-                    <td>Ivan</td>
-                    <td>...</td>
-                    <td>...</td>
-                    <td>...</td>
-                    <td>...</td>
+                    @foreach ($approval as $role)
+                        <td>{{ $role->employee ? $role->employee->fullname : 'Data tidak tersedia' }}</td>
+                    @endforeach
                 </tr>
                 <tr>
-                    <td>Tgl..</td>
-                    <td>Tgl..</td>
-                    <td>Tgl..</td>
-                    <td>Tgl..</td>
-                    <td>Tgl..</td>
+                    @foreach ($approval as $role)
+                        <td style="text-align: left">
+                            Date: <br>
+                        </td>
+                    @endforeach
                 </tr>
             </table>
+            @else
+            <table>
+                <tr>
+                    <td colspan="3">Tidak ada data approval.</td>
+                </tr>
+            </table>
+            @endif
         </div>
     @endif
 </body>

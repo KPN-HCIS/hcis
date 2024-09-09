@@ -123,6 +123,7 @@
                                     <th>Total Settlement</th>
                                     <th>Balance</th>
                                     <th>Status</th>
+                                    <th style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Reject Reason</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -155,13 +156,13 @@
                                         @if ($ca_transaction->approval_status == 'Approved' || $ca_transaction->approval_status == 'Done')
                                             @if ($ca_transaction->approval_sett == 'Waiting for Declaration')
                                                 <p class="badge text-bg-success"
-                                                
+
                                                 title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }} and Waiting for Declaration">
                                                 {{ $ca_transaction->approval_status }}
                                                 </p>
                                             @else
                                                 <p class="badge text-bg-success"
-                                                
+
                                                 title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
                                                 {{ $ca_transaction->approval_status }}
                                                 </p>
@@ -188,6 +189,8 @@
                                         </p>
                                         @endif
                                     </td>
+                                    {{-- {{dd($reason)}} --}}
+                                    <td>{{ $reason[$ca_transaction->id] ?? 'Unknown Reason' }}</td>
                                     <td class="text-center">
                                         @if ($ca_transaction->approval_status == 'Approved')
                                             <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>

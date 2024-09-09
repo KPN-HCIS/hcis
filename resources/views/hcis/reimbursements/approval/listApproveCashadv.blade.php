@@ -658,7 +658,15 @@
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('approval.cashadvanced') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                                <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                                {{-- <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button> --}}
+                                <button type="button" class="btn btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalReject"
+                                        data-no-id="{{ $transactions->id }}"
+                                        data-no-ca="{{ $transactions->no_ca }}"
+                                        data-start-date="{{ $transactions->start_date }}"
+                                        data-end-date="{{ $transactions->end_date }}"
+                                        data-total-days="{{ $transactions->total_days }}">
+                                        Reject
+                                </button>
                                 <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
                         </div>
                     </div>
@@ -668,6 +676,7 @@
         </div>
     </div>
     </div>
+    @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
@@ -1618,6 +1627,18 @@
 
             calculateTotalNominalEDetail();
             updateCheckboxVisibility();
+        });
+
+        // Mengisi modal saat tombol edit ditekan
+        const editButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const caNumber = this.getAttribute('data-no-ca');
+                const idNumber = this.getAttribute('data-no-id');
+
+                document.getElementById('reject_no_ca').textContent = caNumber;
+                document.getElementById('reject_no_id').value = idNumber; // Mengisi input no_id
+            });
         });
 
     </script>
