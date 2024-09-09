@@ -3338,6 +3338,7 @@
                     total += parseNumber(input.value);
                 });
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+                calculateTotalNominalBTTotal();
             }
 
             function calculateTotalNominalBTTransport() {
