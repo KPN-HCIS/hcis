@@ -109,21 +109,16 @@ class ReimburseController extends Controller
             ->get();
         // dd($ca_transactions);
         //tambah where status<>done
-        $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
+        // $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
+        $pendingCACount = CATransaction::where('user_id', $userId)
+        ->where('approval_status', '!=', 'Rejected')
+        ->where('ca_status', '!=', 'Done')
+        ->count();
+        // dd($pendingCACount);
         $today = Carbon::today();
 
         // Mengambil data karyawan yang sedang login
         $employee_data = Employee::where('id', $userId)->first();
-
-        // Mendapatkan transaksi CA yang terkait dengan user yang sedang login
-        // $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
-
-        // Mengambil fullname dari employee berdasarkan status_id
-        // $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))->pluck('fullname', 'employee_id');
-
-        $pendingCACount = CATransaction::where('user_id', $userId)
-            ->where('approval_status', 'Pending')
-            ->count();
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
@@ -134,34 +129,13 @@ class ReimburseController extends Controller
             ->where('end_date', '<=', $today)
             ->count();
 
-        foreach ($ca_transactions as $transaction) {
-            $transaction->settName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
-            if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
-                //$transaction->approval_status = 'Done';
-            }
-            // if ($transaction->approval_status == 'Approved') {
-            //     $transaction->approval_sett = 'On Progress';
-            // }
-            // if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved' && $transaction->approval_sett == 'On Progress') {
-            //     $transaction->approval_sett = 'Waiting for Declaration';
-            // }
-            // if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
-            //     $transaction->approval_sett = 'Declaration';
-            // }
-            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
-            // if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
-            //     $transaction->approval_status = 'Declaration';
-            // }
-            // if (is_null($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved')) {
-            //     $transaction->approval_sett = 'Waiting for Declaration';
-            // }
-            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
-            // if ($transaction->declare_estimate <= $today  && $transaction->approval_status == 'Approved') {
-            //     $transaction->approval_sett = 'Declaration';
-            // }
-            // Simpan perubahan
-            // $transaction->save();
-        }
+        // foreach ($ca_transactions as $transaction) {
+        //     $transaction->settName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
+        //     if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
+        //         //$transaction->approval_status = 'Done';
+        //     }
+            
+        // }
 
         return view('hcis.reimbursements.cashadv.cashadv', [
             'deklarasiCACount' => $deklarasiCACount,

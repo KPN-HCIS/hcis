@@ -410,7 +410,7 @@
                                                                                         <textarea name="keterangan_bt_lainnya[]" class="form-control bg-light" readonly>{{ $perdiem['keterangan'] }}</textarea>
                                                                                     </div>
                                                                                     <div class="mb-2">
-                                                                                        <label class="form-label">Accommodation</label>
+                                                                                        <label class="form-label">Amount</label>
                                                                                     </div>
                                                                                     <div class="input-group mb-3">
                                                                                         <div class="input-group-append">
@@ -472,7 +472,7 @@
                                                                                     <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>{{ $lainnya['keterangan_nbt'] }}</textarea>
                                                                                 </div>
                                                                                 <div class="mb-2">
-                                                                                    <label class="form-label">Accommodation</label>
+                                                                                    <label class="form-label">Amount</label>
                                                                                 </div>
                                                                                 <div class="input-group mb-3">
                                                                                     <div class="input-group-append">
@@ -1218,7 +1218,7 @@
                         <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Accommodation</label>
+                        <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">
@@ -1395,7 +1395,7 @@
                         <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>${keteranganValue}</textarea>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Accommodation</label>
+                        <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">

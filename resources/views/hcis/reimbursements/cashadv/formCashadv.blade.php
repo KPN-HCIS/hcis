@@ -436,7 +436,7 @@
                                                                             <textarea name="keterangan_nbt[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Accommodation</label>
+                                                                            <label class="form-label">Amount</label>
                                                                         </div>
                                                                         <div class="input-group mb-3">
                                                                             <div class="input-group-append">
@@ -1369,12 +1369,15 @@
 
                 newForm.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
+                        <label class="form-label">Date</label>
                         <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_nbt[]" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">

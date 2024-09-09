@@ -66,14 +66,14 @@
         <div class="modal-dialog" style="wid">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title text-center fs-5" id="modalRejectLabel">Rejection Reason - <label id="reject_no_ca"></label></h1>
+                    <h1 class="modal-title text-center fs-5" id="modalRejectLabel">Reject - <label id="reject_no_ca"></label></h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="POST" action="{{ route('approval.cashadvancedApproved',$transactions->id) }}">@csrf
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12 mb-2">
-                                <label class="form-label" for="reason">Reasons for Refusal</label>
+                                <label class="form-label" for="reason">Reason</label>
                                 <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
                             </div>
                             <input type="hidden" name="reject_no_id" id="reject_no_id">
