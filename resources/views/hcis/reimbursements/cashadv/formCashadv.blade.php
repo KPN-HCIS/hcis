@@ -940,10 +940,10 @@
 
                     // Memeriksa lokasi untuk menentukan persentase allowance
                     if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
-                        allowance *= 0.5; // allowance * 50%
+                        allowance *= 1; // allowance * 100%
                         console.log("ini Others:", allowance); // Debugging
                     } else {
-                        allowance *= 1; // allowance * 100%
+                        allowance *= 0.5; // allowance * 50%
                         console.log("Ini Not Others:", allowance); // Debugging
                     }
 
@@ -1204,6 +1204,9 @@
                     <div class="mb-2">
                         <label class="form-label">Information</label>
                         <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">

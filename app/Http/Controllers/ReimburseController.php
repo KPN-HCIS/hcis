@@ -45,7 +45,7 @@ class ReimburseController extends Controller
         $this->roles = Auth()->user()->roles;
         
         $restrictionData = [];
-        if(!is_null($this->roles)){
+        if(!is_null($this->roles) && $this->roles->isNotEmpty()){
             $restrictionData = json_decode($this->roles->first()->restriction, true);
         }
         
@@ -230,7 +230,7 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Report CA';
-        $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
+        $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee'])->orderBy('created_at', 'desc');
 
         $startDate = date('Y-m-d');
         $endDate = date('Y-m-d');
@@ -316,8 +316,8 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
-        $today = Carbon::today();
-
+        $today = Carbon::today()->format('Y-m-d');
+        // dd($today);
         $ca_transactions = CATransaction::with(['employee', 'statusSettEmployee', 'statusExtendEmployee'])
             ->where('user_id', $userId)
             ->where(function ($query) {

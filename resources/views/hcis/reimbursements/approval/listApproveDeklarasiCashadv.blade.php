@@ -1078,12 +1078,12 @@
                                             <span class="input-group-text">Rp</span>
                                         </div>
                                         <input class="form-control bg-light" name="totalca_deklarasi" id="totalca"
-                                            type="text" min="0" value="{{ $transactions->total_real }}" readonly>
+                                            type="text" min="0" value="{{ number_format($transactions->total_real, 0, ',', '.') }}" readonly>
                                     </div>
 
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label">Total Cash Advanced Real</label>
+                                    <label class="form-label">Balance Cash Advanced</label>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text">Rp</span>

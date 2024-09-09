@@ -132,7 +132,7 @@
                                         <td>Rp. {{ number_format($transaction->total_cost) }}</td>
                                         <td>
                                             <p class="badge text-bg-{{ $transaction->approval_status == 'Approved' ? 'success' : ($transaction->approval_status == 'Declaration' ? 'info' : ($transaction->approval_status == 'Pending' ? 'warning' : ($transaction->approval_status == 'Rejected' ? 'danger' : ($transaction->approval_status == 'Draft' ? 'secondary' : 'success')))) }}"
-                                                 title="Waiting Approve by: {{ isset($fullnames[$transaction->status_id]) ? $fullnames[$transaction->status_id] : 'Unknown Employee' }}">
+                                                 title="{{ $transaction->approval_status }} : {{ isset($fullnames[$transaction->status_id]) ? $fullnames[$transaction->status_id] : 'Unknown Employee' }}">
                                                 {{ $transaction->approval_status }}
                                             </p>
                                         </td>
