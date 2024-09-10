@@ -800,6 +800,7 @@ class BusinessTripController extends Controller
             $ca->destination = $request->tujuan;
             $ca->start_date = $request->mulai;
             $ca->end_date = $request->kembali;
+            $ca->ca_needs = $request->keperluan;
             $ca->type_ca = 'dns';
             $ca->date_required = Carbon::parse($request->kembali)->addDays(3);
             $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
@@ -976,12 +977,24 @@ class BusinessTripController extends Controller
         }
 
         $ca->declaration_at = Carbon::now();
+
         $total_real = (int) str_replace('.', '', $request->totalca);
         $total_ca = $ca->total_ca;
 
-        // Assign total_real and calculate total_cost
-        $ca->total_real = $total_real;
-        $ca->total_cost = $total_ca - $total_real;
+        if ($ca->detail_ca === null) {
+            $ca->total_ca = $total_real;
+            // dd($ca->total_ca);
+            $ca->total_real = $total_real;
+            // dd($ca->total_real);
+            $ca->total_cost = $ca->total_ca - $ca->total_real;
+        } else {
+            $ca->total_real = $total_real;
+            $ca->total_cost = $total_ca - $total_real;
+            Log::info('Total Real: ' . $total_real);
+            Log::info('Initial Total CA: ' . $ca->total_ca);
+            Log::info('Detail CA: ' . $ca->detail_ca);
+            Log::info('Updated Total CA: ' . $total_ca);
+        }
 
         // Initialize arrays for details
         $detail_perdiem = [];
@@ -1003,6 +1016,7 @@ class BusinessTripController extends Controller
                 ];
             }
         }
+        // dd($detail_perdiem);
 
         // Populate detail_transport
         if ($request->has('tanggal_bt_transport')) {
@@ -1964,7 +1978,9 @@ class BusinessTripController extends Controller
     {
         $user = Auth::user();
 
-        $query = BusinessTrip::where('status', '!=', 'Draft')->orderBy('created_at', 'desc');
+        $query = BusinessTrip::whereNotIn('status', ['Draft', 'Declaration Draft'])
+            ->orderBy('created_at', 'desc');
+
         $filter = $request->input('filter', 'all');
 
         if ($filter === 'request') {
@@ -1983,6 +1999,23 @@ class BusinessTripController extends Controller
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
+        $btIds = $sppd->pluck('id');
+
+        $btApprovals = BTApproval::whereIn('bt_id', $btIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
+        // Log::info('Ticket Approvals:', $btApprovals->toArray());
+
+        $btApprovals = $btApprovals->keyBy('bt_id');
+        // dd($btApprovals);
+        // Log::info('BT Approvals:', $btApprovals->toArray());
+
+        $employeeIds = $sppd->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
 
         // Related data
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
@@ -1995,7 +2028,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Business Trip (Admin)';
 
-        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter'));
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName'));
     }
     public function filterDateAdmin(Request $request)
     {
@@ -2129,7 +2162,18 @@ class BusinessTripController extends Controller
             }
 
             $ca->total_real = $totalReal;
-            $ca->total_cost = $totalCa - $totalReal;
+            $total_ca = $ca->total_ca;
+
+            if ($ca->detail_ca === null) {
+                $ca->total_ca = $totalReal;
+                // dd($ca->total_ca);
+                $ca->total_real = $totalReal;
+                // dd($ca->total_real);
+                $ca->total_cost = $ca->total_ca - $ca->total_real;
+            } else {
+                $ca->total_real = $totalReal;
+                $ca->total_cost = $total_ca - $totalReal;
+            }
 
             // Validate if the total cost is negative and status is 'Return/Refund'
             if ($ca->total_cost < 0 && $request->input('accept_status') === 'Return/Refund') {

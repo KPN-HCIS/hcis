@@ -54,7 +54,9 @@
                             <div class="">
                                 <input type="hidden" class="form-control bg-light" id="tujuan" name="tujuan"
                                     style="cursor:not-allowed;" value="{{ $n->tujuan }}" readonly>
+                                    <input type="hidden" class="form-control" id="keperluan" name="keperluan" value="{{ $n->keperluan }}"></input>
                             </div>
+
                             <!-- 1st Form -->
                             <div class="row mt-2" id="ca_div">
                                 <div class="col-md-6">
@@ -150,7 +152,7 @@
                                                                                                         class="form-label">Start
                                                                                                         Perdiem</label>
                                                                                                     <input type="date"
-                                                                                                        name="start_bt_perdiem[]"
+                                                                                                        name="start_bt_perdiem_deklarasi[]"
                                                                                                         class="form-control start-perdiem"
                                                                                                         value="{{ old('start_bt_perdiem.' . $index, $perdiem['start_date'] ?? '') }}"
                                                                                                         disabled>
@@ -160,7 +162,7 @@
                                                                                                         class="form-label">End
                                                                                                         Perdiem</label>
                                                                                                     <input type="date"
-                                                                                                        name="end_bt_perdiem[]"
+                                                                                                        name="end_bt_perdiem_deklarasi[]"
                                                                                                         class="form-control end-perdiem"
                                                                                                         value="{{ old('end_bt_perdiem.' . $index, $perdiem['end_date'] ?? '') }}"
                                                                                                         disabled>
@@ -175,7 +177,7 @@
                                                                                                         <input
                                                                                                             class="form-control bg-light total-days-perdiem"
                                                                                                             id="total_days_bt_perdiem_{{ $index }}"
-                                                                                                            name="total_days_bt_perdiem[]"
+                                                                                                            name="total_days_bt_perdiem_deklarasi[]"
                                                                                                             type="text"
                                                                                                             min="0"
                                                                                                             value="{{ old('total_days_bt_perdiem.' . $index, $perdiem['total_days'] ?? '') }}"
@@ -194,7 +196,7 @@
                                                                                                         Agency</label>
                                                                                                     <select
                                                                                                         class="form-control select2 location-select"
-                                                                                                        name="location_bt_perdiem[]"
+                                                                                                        name="location_bt_perdiem_deklarasi[]"
                                                                                                         disabled>
                                                                                                         <option
                                                                                                             value="">
@@ -217,7 +219,7 @@
                                                                                                     </select>
                                                                                                     <br>
                                                                                                     <input type="text"
-                                                                                                        name="other_location_bt_perdiem[]"
+                                                                                                        name="other_location_bt_perdiem_deklarasi[]"
                                                                                                         class="form-control other-location"
                                                                                                         placeholder="Other Location"
                                                                                                         value="{{ old('other_location_bt_perdiem.' . $index, $perdiem['other_location'] ?? '') }}"
@@ -232,7 +234,7 @@
                                                                                                     <select
                                                                                                         class="form-control select2"
                                                                                                         id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_perdiem[]"
+                                                                                                        name="company_bt_perdiem_deklarasi[]"
                                                                                                         disabled>
                                                                                                         <option
                                                                                                             value="">
@@ -280,7 +282,8 @@
                                                                                                         id="nominal_bt_perdiem_{{ $index }}"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominalPerdiem) }}" readonly>
+                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominalPerdiem) }}"
+                                                                                                        readonly>
 
                                                                                                 </div>
                                                                                                 <hr
@@ -293,7 +296,7 @@
                                                                                                     class="form-label">Start
                                                                                                     Perdiem</label>
                                                                                                 <input type="date"
-                                                                                                    name="start_bt_perdiem[]"
+                                                                                                    name="start_bt_perdiem_deklarasi[]"
                                                                                                     class="form-control start-perdiem"
                                                                                                     disabled>
                                                                                             </div>
@@ -302,7 +305,7 @@
                                                                                                     class="form-label">End
                                                                                                     Perdiem</label>
                                                                                                 <input type="date"
-                                                                                                    name="end_bt_perdiem[]"
+                                                                                                    name="end_bt_perdiem_deklarasi[]"
                                                                                                     class="form-control end-perdiem"
                                                                                                     disabled>
                                                                                             </div>
@@ -314,7 +317,7 @@
                                                                                                     <input
                                                                                                         class="form-control bg-light total-days-perdiem"
                                                                                                         id="total_days_bt_perdiem_0"
-                                                                                                        name="total_days_bt_perdiem[]"
+                                                                                                        name="total_days_bt_perdiem_deklarasi[]"
                                                                                                         type="text"
                                                                                                         min="0"
                                                                                                         readonly>
@@ -331,7 +334,7 @@
                                                                                                     Agency</label>
                                                                                                 <select
                                                                                                     class="form-control select2 location-select"
-                                                                                                    name="location_bt_perdiem[]"
+                                                                                                    name="location_bt_perdiem_deklarasi[]"
                                                                                                     disabled>
                                                                                                     <option value="">
                                                                                                         Select
@@ -349,7 +352,7 @@
                                                                                                 </select>
                                                                                                 <br>
                                                                                                 <input type="text"
-                                                                                                    name="other_location_bt_perdiem[]"
+                                                                                                    name="other_location_bt_perdiem_deklarasi[]"
                                                                                                     class="form-control other-location"
                                                                                                     placeholder="Other Location"
                                                                                                     style="display:none;"
@@ -362,7 +365,7 @@
                                                                                                 <select
                                                                                                     class="form-control select2"
                                                                                                     id="companyFilter_0"
-                                                                                                    name="company_bt_perdiem[]"
+                                                                                                    name="company_bt_perdiem_deklarasi[]"
                                                                                                     disabled>
                                                                                                     <option value="">
                                                                                                         --- Select
@@ -386,11 +389,13 @@
                                                                                                     <span
                                                                                                         class="input-group-text">Rp</span>
                                                                                                 </div>
-                                                                                                <input class="form-control bg-light"
-                                                                                                    name="nominal_bt_perdiem[]"
+                                                                                                <input
+                                                                                                    class="form-control bg-light"
+                                                                                                    name="nominal_bt_perdiem_deklarasi[]"
                                                                                                     id="nominal_bt_perdiem_0"
                                                                                                     type="text"
-                                                                                                    min="0" readonly>
+                                                                                                    min="0"
+                                                                                                    readonly>
                                                                                             </div>
                                                                                             <hr
                                                                                                 class="border border-primary border-1 opacity-50">
@@ -1405,7 +1410,7 @@
                                                                                                         @foreach ($locations as $location)
                                                                                                             <option
                                                                                                                 value="{{ $location->area }}"
-                                                                                                                {{ ($perdiem['location'] ?? '') == $location->area ? 'selected' : '' }}>
+                                                                                                                {{ ($perdiem2['location'] ?? '') == $location->area ? 'selected' : '' }}>
                                                                                                                 {{ $location->area . ' (' . $location->company_name . ')' }}
                                                                                                             </option>
                                                                                                         @endforeach
@@ -1645,7 +1650,7 @@
                                                                                     data-bs-toggle="collapse"
                                                                                     data-bs-target="#collapseTransport"
                                                                                     aria-expanded="@if ($detailTransport2[0]['tanggal'] === null) false @else true @endif"
-                                                                                    aria-controls="collapseTransport" @else
+                                                                                aria-controls="collapseTransport" @else
                                                                                     class="accordion-button collapsed fw-medium"
                                                                                     type="button"
                                                                                     data-bs-toggle="collapse"
@@ -2384,7 +2389,8 @@
                                                             );
                                                         @endphp
                                                         <div class="col-md-12 mb-2">
-                                                            <label class="form-label">Total Cash Advanced Declaration</label>
+                                                            <label class="form-label">Total Cash Advanced
+                                                                Declaration</label>
                                                             <div class="input-group">
                                                                 <div class="input-group-append">
                                                                     <span class="input-group-text">Rp</span>
@@ -2428,7 +2434,8 @@
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="button" class="btn btn-outline-primary rounded-pill me-2"
                                     id="save-draft">Save as Draft</button>
-                                <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
+                                <button type="submit" class="btn btn-primary rounded-pill"
+                                    id="submit-button">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -2438,6 +2445,51 @@
     </div>
 
     <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('btEditForm');
+    const totalcaInput = document.getElementById('totalca');
+    const submitButton = document.querySelector('button[type="submit"]');
+    const saveDraftButton = document.getElementById('save-draft');
+
+    console.log('Script loaded. Form:', form);
+    console.log('Submit button:', submitButton);
+
+    function handleFormSubmission(e) {
+        e.preventDefault(); // Prevent the default click action
+        console.log(e.target.id + ' clicked');
+
+        const totalcaValue = totalcaInput.value.replace(/[^0-9]/g, '');
+        console.log('Total CA value:', totalcaValue);
+
+        if (totalcaValue === '' || parseInt(totalcaValue) === 0) {
+            alert('Total Cash Advanced Declaration cannot be empty or zero.');
+            console.log('Form submission prevented due to invalid Total CA');
+            e.stopImmediatePropagation();
+            return; // Stop execution, prevent form submission
+        } else {
+            console.log('Form is valid, proceeding with submission...');
+            form.submit(); // Manually submit the form
+        }
+    }
+
+    if (submitButton) {
+        submitButton.addEventListener('click', handleFormSubmission);
+    } else {
+        console.error('Submit button not found');
+    }
+
+    if (saveDraftButton) {
+        saveDraftButton.addEventListener('click', handleFormSubmission);
+    } else {
+        console.error('Save draft button not found');
+    }
+
+    // Log all buttons on the page to help with debugging
+    const allButtons = document.querySelectorAll('button');
+    console.log('All buttons on the page:', allButtons);
+});
+
+
         function formatCurrency(input) {
             var cursorPos = input.selectionStart;
             var value = input.value.replace(/[^\d]/g, ''); // Remove everything that is not a digit
