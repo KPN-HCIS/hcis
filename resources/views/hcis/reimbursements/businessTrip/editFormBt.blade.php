@@ -32,19 +32,39 @@
                         <form action="{{ route('update.bt', ['id' => $n->id]) }}" method="POST" id="btEditForm">
                             @csrf
                             @method('PUT')
-
-                            <div class="mb-3">
+                            <div class="row mb-2">
+                            <div class="col-md-6 mb-2">
                                 <label for="nama" class="form-label">Name</label>
                                 <input type="text" class="form-control bg-light" id="nama" name="nama"
                                     style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
                             </div>
-                            <div class="mb-3">
+                            <div class="col-md-6 mb-2">
                                 <label for="divisi" class="form-label">Divison</label>
                                 <input type="text" class="form-control bg-light" id="divisi" name="divisi"
                                     style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
 
                             </div>
-                            <div class="row mb-3">
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-4 mb-2">
+                                <label for="norek_krywn" class="form-label">Employee Account Number</label>
+                                <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
+                                    value="{{ $employee_data->bank_account_number }}" readonly>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
+                                <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
+                                    name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label for="nama_bank" class="form-label">Bank Name</label>
+                                <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
+                                    value="{{ $employee_data->bank_name }}" placeholder="ex. BCA" readonly>
+                            </div>
+                        </div>
+                            <div class="row mb-2">
                                 <div class="col-md-6">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control datepicker" id="mulai" name="mulai"
@@ -60,7 +80,7 @@
                                 value="{{ $perdiem->amount }}" readonly>
                             <div class="mb-2">
                                 <label for="tujuan" class="form-label">Destination</label>
-                                <select class="form-select" name="tujuan" id="tujuan" onchange="BTtoggleOthers()"
+                                <select class="form-select select2" name="tujuan" id="tujuan" onchange="BTtoggleOthers()"
                                     required>
                                     <option value="">--- Choose Destination ---</option>
                                     @foreach ($locations as $location)
@@ -100,25 +120,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
-                            <div class="mb-3">
-                                <label for="norek_krywn" class="form-label">Employee Account Number</label>
-                                <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
-                                    value="{{ $employee_data->bank_account_number }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
-                                <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
-                                    name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="nama_bank" class="form-label">Bank Name</label>
-                                <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
-                                    value="{{ $employee_data->bank_name }}" placeholder="ex. BCA" readonly>
-                            </div>
-
                             <!-- HTML Part -->
                             <div class="col-md-14 mb-3">
                                 <label for="jns_dinas" class="form-label">Type of Service</label>

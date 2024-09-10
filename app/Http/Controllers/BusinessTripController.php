@@ -2432,6 +2432,7 @@ class BusinessTripController extends Controller
                 'type_tkt' => $ticket->type_tkt,
                 'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
                 'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'ket_tkt' => $ticket->ket_tkt,
                 'more_tkt' => ($index < count($tickets) - 1) ? 'Ya' : 'Tidak'
             ];
         }
