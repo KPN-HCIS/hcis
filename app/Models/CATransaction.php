@@ -35,7 +35,7 @@ class CATransaction extends Model
     {
         try {
             $id = decrypt($key);
-            
+
             return self::findOrFail($id);
         } catch (\Exception $e) {
             abort(404);
@@ -61,5 +61,9 @@ class CATransaction extends Model
     public function statusExtendEmployee()
     {
         return $this->belongsTo(Employee::class, 'extend_id', 'employee_id');
+    }
+    public function companies()
+    {
+        return $this->belongsTo(Company::class, 'contribution_level_code', 'contribution_level_code');
     }
 }

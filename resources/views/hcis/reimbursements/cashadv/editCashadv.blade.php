@@ -148,8 +148,13 @@
                                             Entertainment
                                         </option>
                                     </select>
-
                                     <input type="hidden" name="ca_type" value="{{ $transactions->type_ca }}">
+                                </div>
+                                <div class="col-md-12 mb-2">
+                                    <div class="mb-2">
+                                        <label class="form-label" for="bisnis_numb">Declaration Estimate</label>
+                                        <input type="text" name="bisnis_numb" id="bisnis_numb" class="form-control bg-light" value="{{ $transactions->no_sppd }}" readonly>
+                                    </div>
                                 </div>
                             </div>
                             @php
@@ -211,7 +216,12 @@
                                                                                     </select>
                                                                                     <br>
                                                                                     @if($perdiem['location'] == 'Others')
-                                                                                    <input type="text" name="other_location_bt_perdiem[]" id="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="{{ $perdiem['other_location'] }}" >
+                                                                                        <input type="text" name="other_location_bt_perdiem[]" id="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location"
+                                                                                        @if ($perdiem['other_location'] == '')
+                                                                                            value=""
+                                                                                        @else
+                                                                                            value="{{ $perdiem['other_location'] }}"
+                                                                                        @endif >
                                                                                     @endif
                                                                                 </div>
                                                                                 <div class="mb-2">

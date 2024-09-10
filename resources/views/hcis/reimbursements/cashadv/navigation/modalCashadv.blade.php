@@ -74,7 +74,7 @@
                         <div class="row">
                             <div class="col-md-12 mb-2">
                                 <label class="form-label" for="reason">Reasons for Refusal</label>
-                                <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
+                                <textarea name="reject_info" id="reject_info" class="form-control" required></textarea>
                             </div>
                             <input type="hidden" name="reject_no_id" id="reject_no_id">
                         </div>

@@ -142,7 +142,7 @@ class ApprovalReimburseController extends Controller
                 foreach ($caApprovals as $caApproval) {
                     $caApproval->approval_status = 'Rejected';
                     $caApproval->approved_at = Carbon::now();
-                    $caApproval->reject_reason = $req->reject_reason;
+                    $caApproval->reject_info = $req->reject_info;
                     $caApproval->save();
                 }
             }
@@ -285,7 +285,7 @@ class ApprovalReimburseController extends Controller
                 foreach ($caApprovalsSett as $caApprovalSett) {
                     $caApprovalSett->approval_status = 'Rejected';
                     $caApprovalSett->approved_at = Carbon::now();
-                    $caApprovalSett->reject_reason = $req->reject_reason;
+                    $caApprovalSett->reject_info = $req->reject_info;
                     $caApprovalSett->save();
                 }
             }

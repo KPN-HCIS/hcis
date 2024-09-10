@@ -2,10 +2,15 @@
 
 @section('css')
     <!-- Sertakan CSS Bootstrap jika diperlukan -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
+    {{-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css"> --}}
 @endsection
 
 @section('content')
+    <style>
+        .table > :not(caption) > * > * {
+            padding: 0.4rem 0.4rem; /* Sesuaikan padding di sini */
+        }
+    </style>
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <!-- Page Heading -->
@@ -32,109 +37,92 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <table class="table" style="border: none; border-collapse: collapse; padding: 1%;">
+                                    <tr>
+                                        <td colspan="3" style="border: none;" class="bg-info"><h4>Employee Data:</h4></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="width: 20%; border: none;">Name</th>
+                                        <td class="colon" style="width: 3%; border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->employee->fullname }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">NIK</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->employee->employee_id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">Email</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->employee->email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">Account Details</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->employee->bank_name }} - {{ $transactions->employee->bank_account_number }} - {{ $transactions->employee->bank_account_name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">Division/Dept</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->employee->unit }} / {{ $transactions->employee->designation_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">PT/Location</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->employee->company_name }} / {{ $transactions->employee->office_area }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <table class="table" style="border: none; border-collapse: collapse;">
+                                    <tr>
+                                        <td colspan="3" style="border: none;"><h4>Business Trip Data:</h4></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="width: 20%; border: none;">Costing Company</th>
+                                        <td class="colon" style="width: 3%; border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->companies->contribution_level }} ({{ $transactions->contribution_level_code }})</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="width: 20%; border: none;">Destination Location</th>
+                                        <td class="colon" style="width: 3%; border: none;">:</td>
+                                        <td class="value" style="border: none;">
+                                            {{ $transactions->destination == 'Others' ? $transactions->others_location : $transactions->destination }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">Date</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ \Carbon\Carbon::parse($transactions->start_date)->format('d-M-y') }} to {{ \Carbon\Carbon::parse($transactions->end_date)->format('d-M-y') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">Total Date</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->total_days }} Days</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">Date CA Required</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ \Carbon\Carbon::parse($transactions->date_required)->format('d-M-y') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">Declaration Estimate</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ \Carbon\Carbon::parse($transactions->declare_estimate)->format('d-M-y') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="label" style="border: none;">Purposes</th>
+                                        <td class="colon" style="border: none;">:</td>
+                                        <td class="value" style="border: none;">{{ $transactions->ca_needs }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
                         <form enctype="multipart/form-data" id="scheduleForm" method="post" action="{{ route('approval.cashadvancedApproved',$transactions->id) }}">
                             @csrf
-                            <div class="row">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="start">Employee ID</label>
-                                    <input type="text" name="name" id="name"
-                                        value="{{ $employee_data->employee_id }}" class="form-control bg-light" readonly>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="start">Employee Name</label>
-                                    <input type="text" name="name" id="name"
-                                        value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="start">Unit</label>
-                                    <input type="text" name="unit" id="unit" value="{{ $employee_data->unit }}"
-                                        class="form-control bg-light" readonly>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="start">Job Level</label>
-                                    <input type="text" name="grade" id="grade"
-                                        value="{{ $employee_data->job_level }}" class="form-control bg-light" readonly>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="name">Costing Company</label>
-                                    <select class="form-control bg-light" id="companyFilter" name="companyFilter" disabled>
-                                        <option value="">Select Company...</option>
-                                        @foreach ($companies as $company)
-                                            <option value="{{ $company->contribution_level_code }}"
-                                                {{ $company->contribution_level_code == $transactions->contribution_level_code ? 'selected' : '' }}>
-                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="name">Destination</label>
-                                    <select class="form-control bg-light" id="locationFilter" name="locationFilter"
-                                        onchange="toggleOthers()" disabled>
-                                        <option value="">Select location...</option>
-                                        <p>{{ $transactions->destination }}</p>
-                                        @foreach ($locations as $location)
-                                            <option value="{{ $location->area }}"
-                                                {{ $location->area == $transactions->destination ? 'selected' : '' }}>
-                                                {{ $location->area . ' (' . $location->company_name . ')' }}
-                                            </option>
-                                        @endforeach
-                                        <option value="Others"
-                                            {{ $transactions->destination == 'Others' ? 'selected' : '' }}>Others</option>
-                                    </select>
-                                    <br><input type="text" name="others_location" id="others_location"
-                                        class="form-control" placeholder="Other Location"
-                                        value="{{ $transactions->others_location }}"
-                                        style="{{ $transactions->destination == 'Others' ? 'display: block;' : 'display: none;' }}" readonly>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 mb-2">
-                                    <label class="form-label" for="name">CA Purposes</label>
-                                    <textarea name="ca_needs" id="ca_needs" class="form-control bg-light" readonly>{{ $transactions->ca_needs }}</textarea>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label" for="start">Start Date</label>
-                                    <input type="date" name="start_date" id="start_date" class="form-control bg-light"
-                                        value="{{ $transactions->start_date }}" readonly>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label" for="start">End Date</label>
-                                    <input type="date" name="end_date" id="end_date" class="form-control bg-light"
-                                        value="{{ $transactions->end_date }}" readonly>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label" for="start">Total Days</label>
-                                    <div class="input-group">
-                                        <input class="form-control bg-light" id="totaldays" name="totaldays"
-                                            type="text" min="0" value="{{ $transactions->total_days }}"
-                                            readonly>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">days</span>
-                                        </div>
-                                    </div>
-                                    <input class="form-control" id="perdiem" name="perdiem" type="hidden"
-                                        value="{{ $perdiem->amount }}" readonly>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="start">CA Date Required</label>
-                                    <input type="date" name="ca_required" id="ca_required" class="form-control bg-light"
-                                        value="{{ $transactions->date_required }}" readonly>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="start">Declaration Estimate</label>
-                                        <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" value="{{ $transactions->declare_estimate }}" readonly>
-                                    </div>
-                                </div>
+                            <div class="row" style="display: none">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="type">CA Type</label>
                                     <select name="ca_type_disabled" id="ca_type" class="form-control bg-light" disabled>
@@ -164,278 +152,176 @@
                                 @if ($transactions->type_ca == 'dns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
                                             <div class="d-flex flex-row gap-2">
                                                 <div class="col-md-12">
-                                                    <div class="card">
-                                                        <div id="perdiem-card" class="card-body">
-                                                            <div class="accordion" id="accordionPerdiem">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="enter-headingOne">
-                                                                        <button class="accordion-button @if($detailCA['detail_perdiem'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="@if($detailCA['detail_perdiem'][0]['start_date'] !== null) true @else false @endif" aria-controls="enter-collapseOne">
-                                                                            Rencana Perdiem
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse @if($detailCA['detail_perdiem'][0]['start_date'] !== null) show @endif" aria-labelledby="enter-headingOne">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-bt-perdiem">
-                                                                                @foreach ($detailCA['detail_perdiem'] as $perdiem)
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Start Perdiem</label>
-                                                                                        <input type="date" name="start_bt_perdiem[]" class="form-control bg-light start-perdiem" value="{{$perdiem['start_date']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">End Perdiem</label>
-                                                                                        <input type="date" name="end_bt_perdiem[]" class="form-control bg-light end-perdiem" value="{{$perdiem['end_date']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Total Days</label>
-                                                                                        <div class="input-group">
-                                                                                            <input class="form-control bg-light total-days-perdiem" id="total_days_bt_perdiem[]" name="total_days_bt_perdiem[]" type="text" min="0" value="{{$perdiem['total_days']}}" readonly>
-                                                                                            <div class="input-group-append">
-                                                                                                <span class="input-group-text">days</span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!-- HTML -->
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="name">Location Agency</label>
-                                                                                        <select class="form-control bg-light location-select" name="location_bt_perdiem[]" disabled>
-                                                                                            <option value="">Select location...</option>
-                                                                                            @foreach($locations as $location)
-                                                                                                <option value="{{ $location->area }}"
-                                                                                                    @if($location->area == $perdiem['location']) selected @endif>
-                                                                                                    {{ $location->area." (".$location->company_name.")" }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                            <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
-                                                                                        </select>
-                                                                                        <br>
-                                                                                        @if ($perdiem['location'] == 'Others')
-                                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control bg-light other-location" placeholder="Other Location" value="{{$perdiem['other_location']}}" readonly>
-                                                                                        @endif
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="name">Company Code</label>
-                                                                                        <select class="form-control bg-light" id="companyFilter" name="company_bt_perdiem[]" disabled>
-                                                                                            <option value="">Select Company...</option>
-                                                                                            @foreach($companies as $company)
-                                                                                                <option value="{{ $company->contribution_level_code }}"
-                                                                                                    @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
-                                                                                                    {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                        </select>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Amount</label>
-                                                                                    </div>
-                                                                                    <div class="input-group mb-3">
-                                                                                        <div class="input-group-append">
-                                                                                            <span class="input-group-text">Rp</span>
-                                                                                        </div>
-                                                                                        <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" readonly>
-                                                                                    </div>
-                                                                                    <hr class="border border-primary border-1 opacity-50">
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Total Perdiem</label>
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="total_bt_perdiem[]" id="total_bt_perdiem[]" type="text" min="0" value="0" readonly>
-                                                                                </div>
-                                                                            </div>
-                                                                            <button style="display: none" type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="perdiemTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr class="bg-primary">
+                                                                    <th colspan="7" class="text-center text-white"><b>Perdiem Plan :</b></th>
+                                                                </tr>
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Start Date</th>
+                                                                    <th>End Date</th>
+                                                                    <th>Location</th>
+                                                                    <th>Company Code</th>
+                                                                    <th>Total Days</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalPerdiem = 0; $totalDays = 0; ?>
+                                                                @foreach ($detailCA['detail_perdiem'] as $perdiem)
+                                                                    <tr class="text-center">
+                                                                        <td class="text-center">{{ $loop->index + 1 }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
+                                                                        <td>
+                                                                            @if ($perdiem['location']=='Others')
+                                                                                {{$perdiem['other_location']}}
+                                                                            @else
+                                                                                {{$perdiem['location']}}
+                                                                            @endif
+                                                                        </td>
+                                                                        <td>{{ $perdiem['company_code'] }}</td>
+                                                                        <td>{{ $perdiem['total_days'] }} Days</td>
+                                                                        <td style="text-align: right">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalPerdiem += $perdiem['nominal'];
+                                                                        $totalDays += $perdiem['total_days'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="5" class="text-right">Total</td>
+                                                                        <td class="text-center">{{$totalDays}} Days</td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalPerdiem, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
 
-                                                        <!-- Button and Card for Transport -->
-                                                        <div id="transport-card" class="card-body">
-                                                            <div class="accordion" id="accordionTransport">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingTransport">
-                                                                        <button class="accordion-button @if($detailCA['detail_transport'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="@if($detailCA['detail_transport'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseTransport">
-                                                                            Rencana Transport
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="collapseTransport" class="accordion-collapse collapse @if($detailCA['detail_transport'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingTransport" data-bs-parent="#accordionTransport">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-bt-transport">
-                                                                                @foreach ($detailCA['detail_transport'] as $transport)
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Tanggal Transport</label>
-                                                                                    <input type="date" name="tanggal_bt_transport[]" class="form-control bg-light" value="{{$transport['tanggal']}}" readonly>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label" for="name">Company Code</label>
-                                                                                    <select class="form-control bg-light" id="companyFilter" name="company_bt_perdiem[]" disabled>
-                                                                                        <option value="">Select Company...</option>
-                                                                                        @foreach($companies as $company)
-                                                                                            <option value="{{ $company->contribution_level_code }}"
-                                                                                                @if($company->contribution_level_code == $transport['company_code']) selected @endif>
-                                                                                                {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                                                                            </option>
-                                                                                        @endforeach
-                                                                                    </select>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Keterangan</label>
-                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control bg-light" readonly>{{$transport['keterangan']}}</textarea>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Amount</label>
-                                                                                </div>
-                                                                                <div class="input-group mb-3">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="nominal_bt_transport[]" id="nominal_bt_transport[]" type="text" min="0" value="{{number_format($transport['nominal'], 0, ',', '.')}}" readonly>
-                                                                                </div>
-                                                                                <hr class="border border-primary border-1 opacity-50">
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Total Transport</label>
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="total_bt_transport[]" id="total_bt_transport[]" type="text" min="0" value="0" readonly>
-                                                                                </div>
-                                                                            </div>
-                                                                            <button style="display: none" type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="transportTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr class="bg-primary">
+                                                                    <th colspan="5" class="text-center text-white">Transport Plan</th>
+                                                                </tr>
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Date</th>
+                                                                    <th>Information</th>
+                                                                    <th>Company Code</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalTransport = 0; $totalDays = 0; ?>
+                                                                @foreach ($detailCA['detail_transport'] as $transport)
+                                                                    <tr class="text-center">
+                                                                        <td class="text-center">{{ $loop->index + 1 }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
+                                                                        <td>
+                                                                            {{$transport['keterangan']}}
+                                                                        </td>
+                                                                        <td>{{ $transport['company_code'] }}</td>
+                                                                        <td style="text-align: right">Rp. {{ number_format($transport['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalTransport += $transport['nominal'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="4" class="text-right">Total</td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalTransport, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
 
-                                                        <div id="penginapan-card" class="card-body">
-                                                            <div class="accordion" id="accordionPenginapan">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingPenginapan">
-                                                                        <button class="accordion-button @if($detailCA['detail_penginapan'][0]['start_date'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="@if($detailCA['detail_penginapan'][0]['start_date'] !== null) true @else false @endif" aria-controls="collapsePenginapan">
-                                                                            Rencana Penginapan
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="collapsePenginapan" class="accordion-collapse collapse @if($detailCA['detail_penginapan'][0]['start_date'] !== null) show @endif" aria-labelledby="headingPenginapan">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-bt-penginapan">
-                                                                                @foreach($detailCA['detail_penginapan'] as $penginapan)
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Start Penginapan</label>
-                                                                                        <input type="date" name="start_bt_penginapan[]" class="form-control bg-light start-penginapan" value="{{$penginapan['start_date']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">End Penginapan</label>
-                                                                                        <input type="date" name="end_bt_penginapan[]" class="form-control bg-light end-penginapan" value="{{$penginapan['end_date']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Total Days</label>
-                                                                                        <div class="input-group">
-                                                                                            <input class="form-control bg-light total-days-penginapan" id="total_days_bt_penginapan[]" name="total_days_bt_penginapan[]" type="text" min="0" value="{{$penginapan['total_days']}}" readonly>
-                                                                                            <div class="input-group-append">
-                                                                                                <span class="input-group-text">days</span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="name">Hotel Name</label>
-                                                                                        <input type="text" name="hotel_name_bt_penginapan[]" class="form-control bg-light" value="{{$penginapan['hotel_name']}}" placeholder="Hotel" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="name">Company Code</label>
-                                                                                        <select class="form-control bg-light" id="companyFilter" name="company_bt_penginapan[]" disabled>
-                                                                                            <option value="">Select Company...</option>
-                                                                                            @foreach($companies as $company)
-                                                                                                <option value="{{ $company->contribution_level_code }}"
-                                                                                                    @if($company->contribution_level_code == $penginapan['company_code']) selected @endif>
-                                                                                                    {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                        </select>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Amount</label>
-                                                                                    </div>
-                                                                                    <div class="input-group mb-3">
-                                                                                        <div class="input-group-append">
-                                                                                            <span class="input-group-text">Rp</span>
-                                                                                        </div>
-                                                                                        <input class="form-control bg-light" name="nominal_bt_penginapan[]" id="nominal_bt_penginapan[]" type="text" min="0" value="{{$penginapan['nominal']}}" readonly>
-                                                                                    </div>
-                                                                                    <hr class="border border-primary border-1 opacity-50">
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Total Penginapan</label>
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="total_bt_penginapan[]" id="total_bt_penginapan" type="text" min="0" value="0" readonly>
-                                                                                </div>
-                                                                            </div>
-                                                                            <button style="display: none" type="button" id="add-more-bt-penginapan" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="penginapanTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr class="bg-primary">
+                                                                    <th colspan="7" class="text-center text-white">Accommodation Plan:</th>
+                                                                </tr>
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Start Date</th>
+                                                                    <th>End Date</th>
+                                                                    <th>Hotel Name</th>
+                                                                    <th>Company Code</th>
+                                                                    <th>Total Days</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalPenginapan = 0; $totalDays = 0; ?>
+                                                                @foreach ($detailCA['detail_penginapan'] as $penginapan)
+                                                                    <tr style="text-align-last: center;">
+                                                                        <td>{{ $loop->index + 1 }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($penginapan['start_date'])->format('d-M-y') }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($penginapan['end_date'])->format('d-M-y') }}</td>
+                                                                        <td>{{$penginapan['hotel_name']}}</td>
+                                                                        <td>{{ $penginapan['company_code'] }}</td>
+                                                                        <td>{{$penginapan['total_days']}}</td>
+                                                                        <td>Rp. {{ number_format($penginapan['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalPenginapan += $penginapan['nominal'];
+                                                                        $totalDays += $penginapan['total_days'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="5" class="text-right">Total</td>
+                                                                        <td class="text-center">{{ $totalDays }}</td>
+                                                                        <td class="text-center"> Rp. {{ number_format($totalPenginapan, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
 
-                                                        <div id="lainnya-card" class="card-body">
-                                                            <div class="accordion" id="accordionLainnya">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingLainnya">
-                                                                        <button class="accordion-button @if($detailCA['detail_lainnya'][0]['tanggal'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="@if($detailCA['detail_lainnya'][0]['tanggal'] !== null) true @else false @endif" aria-controls="collapseLainnya">
-                                                                            Rencana Lainnya
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="collapseLainnya" class="accordion-collapse collapse @if($detailCA['detail_lainnya'][0]['tanggal'] !== null) show @endif" aria-labelledby="headingLainnya">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-bt-lainnya">
-                                                                                @foreach ($detailCA['detail_lainnya'] as $perdiem)
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Tanggal</label>
-                                                                                        <input type="date" name="tanggal_bt_lainnya[]" class="form-control bg-light" value="{{$perdiem['tanggal']}}" placeholder="mm/dd/yyyy" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Keterangan</label>
-                                                                                        <textarea name="keterangan_bt_lainnya[]" class="form-control bg-light" readonly>{{ $perdiem['keterangan'] }}</textarea>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Accommodation</label>
-                                                                                    </div>
-                                                                                    <div class="input-group mb-3">
-                                                                                        <div class="input-group-append">
-                                                                                            <span class="input-group-text">Rp</span>
-                                                                                        </div>
-                                                                                        <input class="form-control bg-light" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya" type="text" min="0" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" readonly>
-                                                                                    </div>
-                                                                                    <hr class="border border-primary border-1 opacity-50">
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Total Lainnya</label>
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="total_bt_lainnya[]" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
-                                                                                </div>
-                                                                            </div>
-                                                                            <button style="display: none" type="button" id="add-more-bt-lainnya" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr class="bg-primary">
+                                                                    <th colspan="4" class="text-center text-white">Others Plan</th>
+                                                                </tr>
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Date</th>
+                                                                    <th>Information</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalLainnya = 0; $totalDays = 0; ?>
+                                                                @foreach ($detailCA['detail_lainnya'] as $lainnya)
+                                                                    <tr style="text-align-last: center;">
+                                                                        <td>{{ $loop->index + 1 }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($lainnya['tanggal'])->format('d-M-y') }}</td>
+                                                                        <td>{{$lainnya['keterangan']}}</td>
+                                                                        <td style="text-align-last: right;">Rp. {{ number_format($lainnya['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalLainnya += $lainnya['nominal'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-right">Total</td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalPenginapan, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -447,48 +333,42 @@
                                 @if ($transactions->type_ca == 'ndns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
                                             <div class="d-flex flex-row gap-2">
                                                 <div class="col-md-12">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="enter-headingOne">
-                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                            Non Business Trip
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-nbt">
-                                                                                @foreach ($detailCA as $lainnya)
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Tanggal</label>
-                                                                                    <input type="date" name="tanggal_nbt[]" class="form-control bg-light" value="{{ $lainnya['tanggal_nbt'] }}" readonly>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Keterangan</label>
-                                                                                    <textarea name="keterangan_nbt[]" class="form-control bg-light" readonly>{{ $lainnya['keterangan_nbt'] }}</textarea>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Accommodation</label>
-                                                                                </div>
-                                                                                <div class="input-group mb-3">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="nominal_nbt[]" type="text" min="0" value="{{ number_format($lainnya['nominal_nbt'], 0, ',', '.') }}" readonly>
-                                                                                </div>
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <button style="display: none" type="button" id="add-more" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                {{-- @endforeach --}}
-                                                            </div>
-                                                        </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr class="bg-primary">
+                                                                    <th colspan="4" class="text-center text-white">Non Bussiness Plan</th>
+                                                                </tr>
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Date</th>
+                                                                    <th>Information</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalBNT = 0; $totalDays = 0; ?>
+                                                                @foreach ($detailCA as $lainnya)
+                                                                    <tr style="text-align-last: center;">
+                                                                        <td>{{ $loop->index + 1 }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($lainnya['tanggal_nbt'])->format('d-M-y') }}</td>
+                                                                        <td>{{$lainnya['keterangan_nbt']}}</td>
+                                                                        <td style="text-align-last: right;">Rp. {{ number_format($lainnya['nominal_nbt'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalBNT += $lainnya['nominal_nbt'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-right">Total</td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalBNT, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -500,122 +380,110 @@
                                 @if ($transactions->type_ca == 'entr')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
                                             <div class="d-flex flex-row gap-2">
                                                 <div class="col-md-12">
-                                                    <div class="card">
-                                                        <div id="entertain-card" class="card-body">
-                                                            <div class="accordion" id="accordionEntertain">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingEntertain">
-                                                                        <button class="accordion-button @if($detailCA['detail_e'][0]['type'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="@if($detailCA['detail_e'][0]['type'] !== null) true @else false @endif" aria-controls="collapseEntertain">
-                                                                            Rencana Entertain
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="collapseEntertain" class="accordion-collapse collapse @if($detailCA['detail_e'][0]['type'] !== null) show @endif" aria-labelledby="headingEntertain">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-e-detail">
-                                                                                @foreach ($detailCA['detail_e'] as $detail)
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Entertainment Type</label>
-                                                                                        <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select bg-light" disabled>
-                                                                                            <option value="">-</option>
-                                                                                            <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
-                                                                                            <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
-                                                                                            <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
-                                                                                            <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
-                                                                                            <option value="fund" {{ $detail['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Entertainment Fee Detail</label>
-                                                                                        <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control bg-light" readonly>{{ $detail['fee_detail'] }}<</textarea>
-                                                                                    </div>
-                                                                                    <div class="input-group">
-                                                                                        <div class="input-group-append">
-                                                                                            <span class="input-group-text">Rp</span>
-                                                                                        </div>
-                                                                                        <input class="form-control bg-light" name="nominal_e_detail[]" id="nominal_e_detail[]" type="text" min="0" value="{{ number_format($detail['nominal'], 0, ',', '.') }}" readonly>
-                                                                                    </div>
-                                                                                    <hr class="border border-primary border-1 opacity-50">
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Total Entertain</label>
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="total_e_detail[]" id="total_e_detail[]" type="text" min="0" value="0" readonly>
-                                                                                </div>
-                                                                            </div>
-                                                                            <button style="display: none" type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr class="bg-primary">
+                                                                    <th colspan="4" class="text-center text-white">Detail Entertainment Plan</th>
+                                                                </tr>
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Entertainment Type</th>
+                                                                    <th>Entertainment Fee Detail</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalDetail = 0; $totalDays = 0; ?>
+                                                                @foreach ($detailCA['detail_e'] as $detail)
+                                                                    <tr style="text-align-last: center;">
+                                                                        <td>{{ $loop->index + 1 }}</td>
+                                                                        <td>
+                                                                            @php
+                                                                                $typeMap = [
+                                                                                    'food' => 'Food/Beverages/Souvenir',
+                                                                                    'transport' => 'Transport',
+                                                                                    'accommodation' => 'Accommodation',
+                                                                                    'gift' => 'Gift',
+                                                                                    'fund' => 'Fund',
+                                                                                ];
+                                                                            @endphp
+                                                                            {{ $typeMap[$detail['type']] ?? $detail['type'] }}
+                                                                        </td>
+                                                                        <td>{{$detail['fee_detail']}}</td>
+                                                                        <td style="text-align-last: right;">Rp. {{ number_format($detail['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalDetail += $detail['nominal'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-right">Total</td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalDetail, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
 
-                                                        <div id="relation-card" class="card-body">
-                                                            <div class="accordion" id="accordionRelation">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingRelation">
-                                                                        <button class="accordion-button @if($detailCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="@if($detailCA['relation_e'][0]['name'] !== null) true @else false @endif" aria-controls="collapseRelation">
-                                                                            Rencana Relation
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="collapseRelation" class="accordion-collapse collapse @if($detailCA['relation_e'][0]['name'] !== null) show @endif" aria-labelledby="headingRelation">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-e-relation">
-                                                                                @foreach($detailCA['relation_e'] as $relation)
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Relation Type</label>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation[]" value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }} disabled>
-                                                                                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
-                                                                                        </div>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" name="transport_e_relation[]" type="checkbox" id="transport_e_relation[]" value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }} disabled>
-                                                                                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
-                                                                                        </div>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" name="gift_e_relation[]" type="checkbox" id="gift_e_relation[]" value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }} disabled>
-                                                                                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
-                                                                                        </div>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }} disabled>
-                                                                                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
-                                                                                        </div>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" name="food_e_relation[]" type="checkbox" id="food_e_relation[]" value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }} disabled>
-                                                                                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Name</label>
-                                                                                        <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" value="{{ $relation['name'] }}" class="form-control bg-light" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Position</label>
-                                                                                        <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" value="{{ $relation['position'] }}" class="form-control bg-light" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Company</label>
-                                                                                        <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" value="{{ $relation['company'] }}" class="form-control bg-light" readonly>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Purpose</label>
-                                                                                        <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" value="{{ $relation['purpose'] }}" class="form-control bg-light" readonly>
-                                                                                    </div>
-                                                                                    <hr class="border border-primary border-1 opacity-50">
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <button style="display: none;" type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="penginapanTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr class="bg-primary">
+                                                                    <th colspan="6" class="text-center text-white">Relation Entertainment Plan</th>
+                                                                </tr>
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Relation Type</th>
+                                                                    <th>Name</th>
+                                                                    <th>Position</th>
+                                                                    <th>Company</th>
+                                                                    <th>Purpose</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($detailCA['relation_e'] as $relation)
+                                                                    <tr style="text-align-last: center;">
+                                                                        <td>{{ $loop->index + 1 }}</td>
+                                                                        <td>
+                                                                            @php
+                                                                                $relationTypes = [];
+                                                                                $typeMap = [
+                                                                                    'Food' => 'Food/Beverages/Souvenir',
+                                                                                    'Gift' => 'Gift',
+                                                                                    'Transport' => 'Transport',
+                                                                                    'Accommodation' => 'Accommodation',
+                                                                                    'Fund' => 'Fund',
+                                                                                ];
+
+                                                                                // Mengumpulkan semua tipe relasi yang berstatus true
+                                                                                foreach($relation['relation_type'] as $type => $status) {
+                                                                                    if ($status && isset($typeMap[$type])) {
+                                                                                        $relationTypes[] = $typeMap[$type]; // Menggunakan pemetaan untuk mendapatkan deskripsi
+                                                                                    }
+                                                                                }
+                                                                            @endphp
+
+                                                                            {{ implode(', ', $relationTypes) }} {{-- Menggabungkan tipe relasi yang relevan menjadi string --}}
+                                                                        </td>
+                                                                        <td>{{ $relation['name'] }}</td>
+                                                                        <td>{{$relation['position']}}</td>
+                                                                        <td>{{ $relation['company'] }}</td>
+                                                                        <td>{{$relation['purpose']}}</td>
+                                                                    </tr>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    {{-- <tr>
+                                                                        <td colspan="5" class="text-right">Total</td>
+                                                                        <td class="text-center">{{ $totalDays }}</td>
+                                                                        <td class="text-center"> Rp. {{ number_format($totalDetail, 0, ',', '.') }} </td>
+                                                                    </tr> --}}
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -631,7 +499,7 @@
                                             <span class="input-group-text">Rp</span>
                                         </div>
                                         <input class="form-control bg-light" name="totalca" id="totalca_declarasi"
-                                            type="text" min="0" value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
+                                            type="text" min="0" value="{{ number_format($transactions->total_ca, 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2" style="display: none">
@@ -813,8 +681,49 @@
             document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
         });
     </script>
-
     <script>
+
+        $(document).ready(function() {
+            // Check if DataTable is already initialized and destroy it
+            if ($.fn.dataTable.isDataTable('#perdiemTable')) {
+                $('#perdiemTable').DataTable().destroy();
+            }
+            if ($.fn.dataTable.isDataTable('#transportTable')) {
+                $('#transportTable').DataTable().destroy();
+            }
+            if ($.fn.dataTable.isDataTable('#penginapanTable')) {
+                $('#penginapanTable').DataTable().destroy();
+            }
+            if ($.fn.dataTable.isDataTable('#lainnyaTable')) {
+                $('#lainnyaTable').DataTable().destroy();
+            }
+
+            // Initialize DataTable
+            $('#perdiemTable').DataTable({
+                paging: false,
+                info: false,
+                searching: false
+            });
+
+            $('#transportTable').DataTable({
+                paging: false,
+                info: false,
+                searching: false
+            });
+
+            $('#penginapanTable').DataTable({
+                paging: false,
+                info: false,
+                searching: false
+            });
+
+            $('#lainnyaTable').DataTable({
+                paging: false,
+                info: false,
+                searching: false
+            });
+        });
+
         function previewFile() {
             const fileInput = document.getElementById('prove_declare');
             const file = fileInput.files[0];
@@ -1642,7 +1551,7 @@
         });
 
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+    {{-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script> --}}
+    {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script> --}}
 @endpush

@@ -72,8 +72,9 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
@@ -146,8 +147,9 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
@@ -252,7 +254,7 @@ class ReimburseController extends Controller
             ->get();
 
         $reason = ca_sett_approval::whereIn('ca_id', $ca_transactions->pluck('id'))
-            ->pluck('reject_reason', 'ca_id');
+            ->pluck('reject_info', 'ca_id');
 
         // dd($ca_transactions);
         foreach ($ca_transactions as $transaction) {
@@ -262,7 +264,7 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
@@ -318,7 +320,7 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
@@ -364,11 +366,11 @@ class ReimburseController extends Controller
             ->pluck('fullname', 'employee_id');
 
         $reason = ca_approval::whereIn('ca_id', $ca_transactions->pluck('id'))
-            ->pluck('reject_reason', 'ca_id');
+            ->pluck('reject_info', 'ca_id');
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
@@ -410,7 +412,19 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Verified')->get();
+        $noSppdListDNS = CATransaction::whereNotNull('no_sppd')
+            ->where('user_id', $userId)
+            ->where('no_sppd', '!=', '')
+            ->where('type_ca', 'dns')
+            ->pluck('no_sppd');
+        $noSppdListENT = CATransaction::whereNotNull('no_sppd')
+            ->where('user_id', $userId)
+            ->where('no_sppd', '!=', '')
+            ->where('type_ca', 'dns')
+            ->pluck('no_sppd');
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where('status', '!=', 'Verified')
+            ->get();
 
         function findDepartmentHead($employee)
         {
@@ -465,6 +479,8 @@ class ReimburseController extends Controller
             'employee_data' => $employee_data,
             'perdiem' => $perdiem,
             'no_sppds' => $no_sppds,
+            'noSppdListDNS' => $noSppdListDNS,
+            'noSppdListENT' => $noSppdListENT,
             'managerL1' => $managerL1,
             'managerL2' => $managerL2,
             'director_id' => $director_id,
@@ -498,7 +514,6 @@ class ReimburseController extends Controller
         $model->id = $uuid;
         $model->type_ca = $req->ca_type;
         $model->no_ca = $newNoCa;
-        $model->no_sppd = $req->bisnis_numb;
         $model->user_id = $userId;
         $model->unit = $req->unit;
         $model->contribution_level_code = $req->companyFilter;
@@ -601,6 +616,7 @@ class ReimburseController extends Controller
 
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
+            $model->no_sppd = $req->bisnis_numb_dns;
         } else if ($req->ca_type == 'ndns') {
             $detail_ndns = [];
             if ($req->has('tanggal_nbt')) {
@@ -662,6 +678,7 @@ class ReimburseController extends Controller
             ];
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
+            $model->no_sppd = $req->bisnis_numb_ent;
         }
 
         $model->total_ca = str_replace('.', '', $req->totalca);
@@ -785,7 +802,19 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $noSppdListDNS = CATransaction::whereNotNull('no_sppd')
+            ->where('user_id', $userId)
+            ->where('no_sppd', '!=', '')
+            ->where('type_ca', 'dns')
+            ->pluck('no_sppd');
+        $noSppdListENT = CATransaction::whereNotNull('no_sppd')
+            ->where('user_id', $userId)
+            ->where('no_sppd', '!=', '')
+            ->where('type_ca', 'dns')
+            ->pluck('no_sppd');
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where('status', '!=', 'Verified')
+            ->get();
         // $transactions = CATransaction::find($key);
         $transactions = CATransaction::findByRouteKey($key);
         // dd($key);
@@ -797,6 +826,8 @@ class ReimburseController extends Controller
             'locations' => $locations,
             'employee_data' => $employee_data,
             'perdiem' => $perdiem,
+            'noSppdListENT' => $noSppdListENT,
+            'noSppdListDNS' => $noSppdListDNS,
             'no_sppds' => $no_sppds,
             'transactions' => $transactions,
         ]);
@@ -834,7 +865,7 @@ class ReimburseController extends Controller
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
                     $location = $req->location_bt_perdiem[$key];
-                    $other_location = $req->other_location_bt_perdiem[$key];
+                    $other_location = $req->other_location_bt_perdiem[$key] ?? '';
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
 

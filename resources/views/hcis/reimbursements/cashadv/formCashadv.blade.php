@@ -70,7 +70,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="name">Destination</label>
+                                    <label class="form-label" for="locationFilter">Destination</label>
                                     <select class="form-control select2" id="locationFilter" name="locationFilter"
                                         onchange="toggleOthers()" required>
                                         <option value="">Select location...</option>
@@ -129,9 +129,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="type">CA Type</label>
-                                    <select name="ca_type" id="ca_type" class="form-select" onchange="toggleDivs()"
-                                        readonly>
+                                    <label class="form-label" for="ca_type">CA Type</label>
+                                    <select name="ca_type" id="ca_type" class="form-control" onchange="toggleDivs()">
                                         <option value="">-</option>
                                         <option value="dns">Business Trip</option>
                                         <option value="ndns">Non Business Trip</option>
@@ -139,13 +138,34 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row" id="div_bisnis_numb" style="display: none;">
+                            <div class="row" id="div_bisnis_numb_dns" style="display: none;">
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label" for="name">Business Trip Number</label>
-                                    <select class="form-control select2" id="bisnis_numb" name="bisnis_numb">
+                                    <select class="form-control select2" id="bisnis_numb_dns" name="bisnis_numb_dns">
                                         <option value="">Select</option>
                                         @foreach ($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_sppd }}">{{ $no_sppd->no_sppd }}</option>
+                                            <option value="{{ $no_sppd->no_sppd }}"
+                                                @if ($noSppdListDNS->contains($no_sppd->no_sppd))
+                                                    disabled title="No. SPPD already has CA Business Trip. Please apply for an extension if you want to add CA."
+                                                @endif>
+                                                {{ $no_sppd->no_sppd }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row" id="div_bisnis_numb_ent" style="display: none;">
+                                <div class="col-md-12 mb-2">
+                                    <label class="form-label" for="name">Business Trip Number</label>
+                                    <select class="form-control select2" id="bisnis_numb_ent" name="bisnis_numb_ent">
+                                        <option value="">Select</option>
+                                        @foreach ($no_sppds as $no_sppd)
+                                            <option value="{{ $no_sppd->no_sppd }}"
+                                                @if ($noSppdListENT->contains($no_sppd->no_sppd))
+                                                    disabled title="No. SPPD already has CA Entertain. Please apply for an extension if you want to add CA."
+                                                @endif>
+                                                {{ $no_sppd->no_sppd }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -172,7 +192,7 @@
                                                                     <div id="form-container-bt-perdiem">
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
+                                                                            <select class="form-control select2" id="companyFilter_perdiem" name="company_bt_perdiem[]">
                                                                                 <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -180,8 +200,8 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Location Agency</label>
-                                                                            <select class="form-control location-select" name="location_bt_perdiem[]">
+                                                                            <label class="form-label" for="locationFilter_perdiem">Location Agency</label>
+                                                                            <select class="form-control location-select" id="locationFilter_perdiem" name="location_bt_perdiem[]">
                                                                                 <option value="">Select location...</option>
                                                                                 @foreach($locations as $location)
                                                                                     <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
@@ -253,7 +273,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_transport[]">
+                                                                            <select class="form-control select2" id="companyFilter_transport" name="company_bt_transport[]">
                                                                                 <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -325,7 +345,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
+                                                                            <select class="form-control select2" id="companyFilter_penginapan" name="company_bt_penginapan[]">
                                                                                 <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -622,7 +642,8 @@
             var ca_type = document.getElementById("ca_type");
             var ca_nbt = document.getElementById("ca_nbt");
             var ca_e = document.getElementById("ca_e");
-            var div_bisnis_numb = document.getElementById("div_bisnis_numb");
+            var div_bisnis_numb_dns = document.getElementById("div_bisnis_numb_dns");
+            var div_bisnis_numb_ent = document.getElementById("div_bisnis_numb_ent");
             var bisnis_numb = document.getElementById("bisnis_numb");
             var div_allowance = document.getElementById("div_allowance");
 
@@ -630,25 +651,29 @@
                 ca_bt.style.display = "block";
                 ca_nbt.style.display = "none";
                 ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "block";
+                div_bisnis_numb_dns.style.display = "block";
+                div_bisnis_numb_ent.style.display = "none";
                 div_allowance.style.display = "block";
             } else if (ca_type.value === "ndns"){
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "block";
                 ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "none";
+                div_bisnis_numb_dns.style.display = "none";
+                div_bisnis_numb_ent.style.display = "none";
                 bisnis_numb.style.value = "";
                 div_allowance.style.display = "none";
             } else if (ca_type.value === "entr"){
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "none";
                 ca_e.style.display = "block";
-                div_bisnis_numb.style.display = "block";
+                div_bisnis_numb_dns.style.display = "none";
+                div_bisnis_numb_ent.style.display = "block";
             } else{
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "none";
                 ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "none";
+                div_bisnis_numb_dns.style.display = "none";
+                div_bisnis_numb_ent.style.display = "none";
                 bisnis_numb.style.value = "";
             }
         }
@@ -828,7 +853,6 @@
                     const startDateInput = this.closest('.accordion-body').querySelector('.start-perdiem');
                     const endDateInput = this.closest('.accordion-body').querySelector('.end-perdiem');
 
-                    // Kosongkan nilai Start Perdiem dan End Perdiem ketika Location Agency berubah
                     startDateInput.value = '';
                     endDateInput.value = '';
                 });
@@ -969,14 +993,17 @@
                 }
             }
 
+            let perdiemCounter = 0;
+
             function addNewPerdiemForm() {
+                perdiemCounter++;
                 const newFormBTPerdiem = document.createElement('div');
                 newFormBTPerdiem.classList.add('mb-2');
 
                 newFormBTPerdiem.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" name="company_bt_perdiem[]" >
+                        <label class="form-label" for="companyFilter_perdiem">Company Code</label>
+                        <select class="form-control select2" id="companyFilter_perdiem" name="company_bt_perdiem[]">
                             <option value="">Select Company...</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -985,7 +1012,7 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label" for="name">Location Agency</label>
-                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
+                        <select class="form-control location-select" name="location_bt_perdiem[]">
                             <option value="">Select location...</option>
                             @foreach($locations as $location)
                                 <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
@@ -1148,7 +1175,7 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
+                        <select class="form-control select2" id="companyFilter_penginapan" name="company_bt_penginapan[]">
                             <option value="">Select Company...</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
