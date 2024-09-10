@@ -1377,7 +1377,8 @@
                                                             </div>
                                                             <div class="card">
                                                                 <div class="card-body">
-                                                                    <div class="mb-2">
+                                                                    <div class="row mb-2">
+                                                                    <div class="col-md-4">
                                                                         <label class="form-label">NIK</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control" name="noktp_tkt[]"
@@ -1386,7 +1387,7 @@
                                                                                 placeholder="ex: 3521XXXXXXXXXXXX">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="col-md-4">
                                                                         <label class="form-label">From</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
@@ -1395,7 +1396,7 @@
                                                                                 value="{{ $ticket['dari_tkt'] ?? '' }}">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="col-md-4">
                                                                         <label class="form-label">To</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
@@ -1404,7 +1405,9 @@
                                                                                 value="{{ $ticket['ke_tkt'] ?? '' }}">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                </div>
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-8">
                                                                         <label class="form-label">Date</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
@@ -1414,7 +1417,7 @@
                                                                                 onchange="validateDates({{ $i }})">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="col-md-4">
                                                                         <label class="form-label">Time</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
@@ -1424,13 +1427,15 @@
                                                                                 onchange="validateDates({{ $i }})">
                                                                         </div>
                                                                     </div>
+                                                                </div>
                                                                     <div class="mb-2">
                                                                         <label for="ket_tkt_{{ $i }}"
                                                                             class="form-label">Information</label>
                                                                         <textarea class="form-control" id="ket_tkt_{{ $i }}" name="ket_tkt[]" rows="3"
                                                                             placeholder="This field is for editing ticket details, e.g., Citilink, Garuda Indonesia, etc.">{{ $ticket['ket_tkt'] ?? '' }}</textarea>
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="row mb-2">
+                                                                    <div class="col-md-8 mb-2">
                                                                         <label class="form-label"
                                                                             for="jenis_tkt_{{ $i }}">Transportation
                                                                             Type</label>
@@ -1457,7 +1462,7 @@
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="col-md-4 mb-2">
                                                                         <label for="type_tkt_{{ $i }}"
                                                                             class="form-label">Ticket Type</label>
                                                                         <select class="form-select" name="type_tkt[]"
@@ -1470,9 +1475,11 @@
                                                                                 Round Trip</option>
                                                                         </select>
                                                                     </div>
+                                                                </div>
                                                                     <div class="round-trip-options"
                                                                         style="display: {{ ($ticket['type_tkt'] ?? '') == 'Round Trip' ? 'block' : 'none' }};">
-                                                                        <div class="mb-2">
+                                                                        <div class="row mb-2">
+                                                                        <div class="col-md-8 mb-2">
                                                                             <label class="form-label">Return
                                                                                 Date</label>
                                                                             <div class="input-group">
@@ -1483,7 +1490,7 @@
                                                                                     onchange="validateDates({{ $i }})">
                                                                             </div>
                                                                         </div>
-                                                                        <div class="mb-2">
+                                                                        <div class="col-md-4 mb-2">
                                                                             <label class="form-label">Return
                                                                                 Time</label>
                                                                             <div class="input-group">
@@ -1495,6 +1502,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                </div>
                                                                     @if ($i < 5)
                                                                         <div class="mt-3">
                                                                             <label class="form-label">Add more
@@ -1557,7 +1565,8 @@
                                                             </div>
                                                             <div class="card">
                                                                 <div class="card-body">
-                                                                    <div class="mb-2">
+                                                                    <div class="row">
+                                                                    <div class="col-md-6 mb-2">
                                                                         <label class="form-label">Hotel Name</label>
                                                                         <div class="input-group">
                                                                             <input class="form-control bg-white"
@@ -1566,7 +1575,7 @@
                                                                                 placeholder="ex: Westin">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="col-md-6 mb-2">
                                                                         <label class="form-label">Hotel
                                                                             Location</label>
                                                                         <div class="input-group">
@@ -1576,17 +1585,9 @@
                                                                                 placeholder="ex: Jakarta">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Room</label>
-                                                                        <div class="input-group">
-                                                                            <input class="form-control bg-white"
-                                                                                name="jmlkmr_htl[]" type="number"
-                                                                                min="1"
-                                                                                value="{{ $hotel['jmlkmr_htl'] ?? '' }}"
-                                                                                placeholder="ex: 1">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="mb-2">
+                                                                </div>
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-9 mb-2">
                                                                         <label class="form-label">Bed Size</label>
                                                                         <select class="form-select" name="bed_htl[]"
                                                                             required>
@@ -1620,7 +1621,19 @@
                                                                             </option>
                                                                         </select>
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="col-md-3 mb-2">
+                                                                        <label class="form-label">Total Room</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                name="jmlkmr_htl[]" type="number"
+                                                                                min="1"
+                                                                                value="{{ $hotel['jmlkmr_htl'] ?? '' }}"
+                                                                                placeholder="ex: 1">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-5 mb-2">
                                                                         <label class="form-label">Check In Date</label>
                                                                         <input type="date"
                                                                             class="form-control datepicker check-in-date"
@@ -1629,7 +1642,7 @@
                                                                             data-index="{{ $i }}"
                                                                             onchange="calculateTotalDays(this)">
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="col-md-5 mb-2">
                                                                         <label class="form-label">Check Out
                                                                             Date</label>
                                                                         <input type="date"
@@ -1639,7 +1652,7 @@
                                                                             data-index="{{ $i }}"
                                                                             onchange="calculateTotalDays(this)">
                                                                     </div>
-                                                                    <div class="mb-2">
+                                                                    <div class="col-md-2 mb-2">
                                                                         <label class="form-label">Total Days</label>
                                                                         <input type="number"
                                                                             class="form-control datepicker bg-light total-days"
@@ -1647,6 +1660,7 @@
                                                                             value="{{ $hotel['total_hari'] ?? '' }}"
                                                                             readonly>
                                                                     </div>
+                                                                </div>
                                                                     @if ($i < 5)
                                                                         <div class="mt-3">
                                                                             <label class="form-label">Add more

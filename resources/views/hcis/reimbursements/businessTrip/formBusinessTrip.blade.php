@@ -31,19 +31,38 @@
 
                         <form id="btFrom" action="/businessTrip/form/post" method="POST">
                             @csrf
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="nama" class="form-label">Name</label>
+                                    <input type="text" class="form-control bg-light" id="nama" name="nama"
+                                        style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="divisi" class="form-label">Divison</label>
+                                    <input type="text" class="form-control bg-light" id="divisi" name="divisi"
+                                        style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
 
-                            <div class="mb-3">
-                                <label for="nama" class="form-label">Name</label>
-                                <input type="text" class="form-control bg-light" id="nama" name="nama"
-                                    style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="divisi" class="form-label">Divison</label>
-                                <input type="text" class="form-control bg-light" id="divisi" name="divisi"
-                                    style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
-
+                                </div>
                             </div>
                             <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="norek_krywn" class="form-label">Employee Account Number</label>
+                                    <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
+                                        value="{{ $employee_data->bank_account_number }}" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
+                                    <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
+                                        name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="nama_bank" class="form-label">Bank Name</label>
+                                    <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
+                                        placeholder="ex. BCA" value="{{ $employee_data->bank_name }}" readonly>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
                                 <div class="col-md-6">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control datepicker" id="mulai" name="mulai"
@@ -55,12 +74,12 @@
                                         placeholder="Tanggal Kembali" required>
                                 </div>
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden"
-                                value="{{ $perdiem->amount }}" readonly>
+                                    value="{{ $perdiem->amount }}" readonly>
                             </div>
                             <div class="mb-2">
                                 <label for="tujuan" class="form-label">Destination</label>
-                                <select class="form-select" name="tujuan" id="tujuan" onchange="BTtoggleOthers()"
-                                    required>
+                                <select class="form-select select2" name="tujuan" id="tujuan"
+                                    onchange="BTtoggleOthers()" required>
                                     <option value="">--- Choose Destination ---</option>
                                     @foreach ($locations as $location)
                                         <option value="{{ $location->area }}">
@@ -69,18 +88,21 @@
                                     @endforeach
                                     <option value="Others">Others</option>
                                 </select>
-                                <br><input type="text" name="others_location" id="others_location" class="form-control"
-                                    placeholder="Other Location" value="" style="display: none;">
+                                <br><input type="text" name="others_location" id="others_location"
+                                    class="form-control" placeholder="Other Location" value=""
+                                    style="display: none;">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="keperluan" class="form-label">Need (To be filled in according to visit
                                     service)</label>
-                                <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need" required></textarea>
+                                <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
+                                    required></textarea>
                             </div>
 
                             <div class="mb-3">
-                                <label for="bb_perusahaan" class="form-label">Company Cost Expenses (PT Service Needs / Not
+                                <label for="bb_perusahaan" class="form-label">Company Cost Expenses (PT Service Needs /
+                                    Not
                                     PT Payroll)</label>
                                 <select class="form-select" id="bb_perusahaan" name="bb_perusahaan" required>
                                     <option value="" disabled selected>--- Choose PT ---</option>
@@ -92,26 +114,8 @@
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="norek_krywn" class="form-label">Employee Account Number</label>
-                                <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
-                                    value="{{ $employee_data->bank_account_number }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
-                                <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
-                                    name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="nama_bank" class="form-label">Bank Name</label>
-                                <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
-                                    placeholder="ex. BCA" value="{{ $employee_data->bank_name }}" readonly>
-                            </div>
-
                             <!-- HTML Part -->
-                            <div class="col-md-14 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="jns_dinas" class="form-label">Type of Service</label>
                                 <select class="form-select" id="jns_dinas" name="jns_dinas" required>
                                     <option value="" selected disabled>-- Choose Type of Service --</option>
@@ -287,7 +291,8 @@
                                                                                                         id="nominal_bt_perdiem"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="0" readonly>
+                                                                                                        value="0"
+                                                                                                        readonly>
                                                                                                 </div>
                                                                                                 <hr
                                                                                                     class="border border-primary border-1 opacity-50">
@@ -357,7 +362,8 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">
-                                                                                                        Transport Date</label>
+                                                                                                        Transport
+                                                                                                        Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
@@ -570,8 +576,9 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Total Accommodation
-                                                                                                    </label>
+                                                                                                    class="form-label">Total
+                                                                                                    Accommodation
+                                                                                                </label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -667,7 +674,8 @@
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
-                                                                                                    class="form-label">Total Others</label>
+                                                                                                    class="form-label">Total
+                                                                                                    Others</label>
                                                                                                 <div class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
@@ -738,46 +746,50 @@
                                                             <?php echo $i; ?></div>
                                                         <div class="card">
                                                             <div class="card-body">
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">NIK</label>
-                                                                    <div class="input-group">
-                                                                        <input class="form-control" name="noktp_tkt[]"
-                                                                            type="number"
-                                                                            placeholder="ex: 3521XXXXXXXXXXXX">
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-4">
+                                                                        <label class="form-label">NIK</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control" name="noktp_tkt[]"
+                                                                                type="number"
+                                                                                placeholder="ex: 3521XXXXXXXXXXXX">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <label class="form-label">From</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                name="dari_tkt[]" type="text"
+                                                                                placeholder="ex. Yogyakarta (YIA)">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <label class="form-label">To</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                name="ke_tkt[]" type="text"
+                                                                                placeholder="ex. Jakarta (CGK)">
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">From</label>
-                                                                    <div class="input-group">
-                                                                        <input class="form-control bg-white"
-                                                                            name="dari_tkt[]" type="text"
-                                                                            placeholder="ex. Yogyakarta (YIA)">
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-8">
+                                                                        <label class="form-label">Date</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                id="tgl_brkt_tkt_<?php echo $i; ?>"
+                                                                                name="tgl_brkt_tkt[]" type="date"
+                                                                                onchange="validateDates(<?php echo $i; ?>)">
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">To</label>
-                                                                    <div class="input-group">
-                                                                        <input class="form-control bg-white"
-                                                                            name="ke_tkt[]" type="text"
-                                                                            placeholder="ex. Jakarta (CGK)">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">Date</label>
-                                                                    <div class="input-group">
-                                                                        <input class="form-control bg-white"
-                                                                            id="tgl_brkt_tkt_<?php echo $i; ?>"
-                                                                            name="tgl_brkt_tkt[]" type="date"
-                                                                            onchange="validateDates(<?php echo $i; ?>)">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">Time</label>
-                                                                    <div class="input-group">
-                                                                        <input class="form-control bg-white"
-                                                                            id="jam_brkt_tkt_<?php echo $i; ?>"
-                                                                            name="jam_brkt_tkt[]" type="time"
-                                                                            onchange="validateDates(<?php echo $i; ?>)">
+                                                                    <div class="col-md-4">
+                                                                        <label class="form-label">Time</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                id="jam_brkt_tkt_<?php echo $i; ?>"
+                                                                                name="jam_brkt_tkt[]" type="time"
+                                                                                onchange="validateDates(<?php echo $i; ?>)">
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
@@ -786,49 +798,54 @@
                                                                     <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3"
                                                                         placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
                                                                 </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label"
-                                                                        for="jenis_tkt_<?php echo $i; ?>">Transportation
-                                                                        Type</label>
-                                                                    <div class="input-group">
-                                                                        <select class="form-select" name="jenis_tkt[]"
-                                                                            id="jenis_tkt">
-                                                                            <option value="">Select Transportation
-                                                                                Type</option>
-                                                                            <option value="Train">Train</option>
-                                                                            <option value="Bus">Bus</option>
-                                                                            <option value="Airplane">Airplane</option>
-                                                                            <option value="Car">Car</option>
-                                                                            <option value="Ferry">Ferry</option>
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-8">
+                                                                        <label class="form-label"
+                                                                            for="jenis_tkt_<?php echo $i; ?>">Transportation
+                                                                            Type</label>
+                                                                        <div class="input-group">
+                                                                            <select class="form-select" name="jenis_tkt[]"
+                                                                                id="jenis_tkt">
+                                                                                <option value="">Select
+                                                                                    Transportation
+                                                                                    Type</option>
+                                                                                <option value="Train">Train</option>
+                                                                                <option value="Bus">Bus</option>
+                                                                                <option value="Airplane">Airplane</option>
+                                                                                <option value="Car">Car</option>
+                                                                                <option value="Ferry">Ferry</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <label for="type_tkt_<?php echo $i; ?>"
+                                                                            class="form-label">Ticket Type</label>
+                                                                        <select class="form-select" name="type_tkt[]"
+                                                                            required>
+                                                                            <option value="One Way">One Way</option>
+                                                                            <option value="Round Trip">Round Trip</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                                <div class="mb-2">
-                                                                    <label for="type_tkt_<?php echo $i; ?>"
-                                                                        class="form-label">Ticket Type</label>
-                                                                    <select class="form-select" name="type_tkt[]"
-                                                                        required>
-                                                                        <option value="One Way">One Way</option>
-                                                                        <option value="Round Trip">Round Trip</option>
-                                                                    </select>
-                                                                </div>
                                                                 <div class="round-trip-options" style="display: none;">
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Return Date</label>
-                                                                        <div class="input-group">
-                                                                            <input class="form-control bg-white"
-                                                                                name="tgl_plg_tkt[]" type="date"
-                                                                                id="tgl_plg_tkt_<?php echo $i; ?>"
-                                                                                onchange="validateDates(<?php echo $i; ?>)">
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-md-8">
+                                                                            <label class="form-label">Return Date</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    name="tgl_plg_tkt[]" type="date"
+                                                                                    id="tgl_plg_tkt_<?php echo $i; ?>"
+                                                                                    onchange="validateDates(<?php echo $i; ?>)">
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Return Time</label>
-                                                                        <div class="input-group">
-                                                                            <input class="form-control bg-white"
-                                                                                id="jam_plg_tkt_<?php echo $i; ?>"
-                                                                                name="jam_plg_tkt[]" type="time"
-                                                                                onchange="validateDates(<?php echo $i; ?>)">
+                                                                        <div class="col-md-4">
+                                                                            <label class="form-label">Return Time</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    id="jam_plg_tkt_<?php echo $i; ?>"
+                                                                                    name="jam_plg_tkt[]" type="time"
+                                                                                    onchange="validateDates(<?php echo $i; ?>)">
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -863,158 +880,174 @@
                                         </div>
                                     </div>
                                 </div>
+                                {{-- <div class="row"> --}}
+                                    <div class="col-md-12 mt-3">
+                                        <label for="hotel" class="form-label">Hotel</label>
+                                        <select class="form-select" id="hotel" name="hotel">
+                                            <option value="Tidak">Tidak</option>
+                                            <option value="Ya">Ya</option>
+                                        </select>
+                                        <div class="row mt-2" id="hotel_div" style="display: none;">
+                                            <div class="col-md-12">
+                                                <div class="table-responsive-sm">
+                                                    <div class="d-flex flex-column gap-2" id="hotel_forms_container">
+                                                        <?php for ($i = 1; $i <= 5; $i++) : ?>
+                                                        <div class="hotel-form" id="hotel-form-<?php echo $i; ?>"
+                                                            style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
+                                                            <div class="text-bg-primary p-2"
+                                                                style="text-align:center; border-radius:4px;">
+                                                                Hotel <?php echo $i; ?>
+                                                            </div>
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label class="form-label">Hotel Name</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    name="nama_htl[]" type="text"
+                                                                                    placeholder="ex: Hyatt">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label class="form-label">Hotel
+                                                                                Location</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    name="lokasi_htl[]" type="text"
+                                                                                    placeholder="ex: Jakarta">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-md-9 mb-2">
+                                                                            <label class="form-label">Bed Size</label>
+                                                                            <select class="form-select" name="bed_htl[]"
+                                                                                required>
+                                                                                <option value="Single Bed">Single Bed
+                                                                                </option>
+                                                                                <option value="Twin Bed">Twin Bed</option>
+                                                                                <option value="King Bed">King Bed</option>
+                                                                                <option value="Super King Bed">Super King
+                                                                                    Bed
+                                                                                </option>
+                                                                                <option value="Extra Bed">Extra Bed
+                                                                                </option>
+                                                                                <option value="Baby Cot">Baby Cot</option>
+                                                                                <option value="Sofa Bed">Sofa Bed</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-3 mb-2">
+                                                                            <label class="form-label">Total Room</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    name="jmlkmr_htl[]" type="number"
+                                                                                    min="1" placeholder="ex: 1">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-md-5 mb-2">
+                                                                            <label class="form-label">Check In Date</label>
+                                                                            <input type="date"
+                                                                                class="form-control datepicker"
+                                                                                name="tgl_masuk_htl[]"
+                                                                                onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                                                        </div>
+                                                                        <div class="col-md-5 mb-2">
+                                                                            <label class="form-label">Check Out
+                                                                                Date</label>
+                                                                            <input type="date"
+                                                                                class="form-control datepicker"
+                                                                                name="tgl_keluar_htl[]"
+                                                                                onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                                                        </div>
+                                                                        <div class="col-md-2 mb-2">
+                                                                            <label class="form-label">Total Days</label>
+                                                                            <input type="number"
+                                                                                class="form-control datepicker bg-light"
+                                                                                name="total_hari[]" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <?php if ($i < 5) : ?>
+                                                                    <div class="mt-3">
+                                                                        <label class="form-label">Add more hotel</label>
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input" type="radio"
+                                                                                id="more_htl_no_<?php echo $i; ?>"
+                                                                                name="more_htl_<?php echo $i; ?>"
+                                                                                value="Tidak" checked>
+                                                                            <label class="form-check-label"
+                                                                                for="more_htl_no_<?php echo $i; ?>">Tidak</label>
+                                                                        </div>
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input" type="radio"
+                                                                                id="more_htl_yes_<?php echo $i; ?>"
+                                                                                name="more_htl_<?php echo $i; ?>"
+                                                                                value="Ya">
+                                                                            <label class="form-check-label"
+                                                                                for="more_htl_yes_<?php echo $i; ?>">Ya</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <?php endfor; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="col-md-12 mt-3">
-                                    <label for="hotel" class="form-label">Hotel</label>
-                                    <select class="form-select" id="hotel" name="hotel">
-                                        <option value="Tidak">Tidak</option>
-                                        <option value="Ya">Ya</option>
-                                    </select>
-                                    <div class="row mt-2" id="hotel_div" style="display: none;">
-                                        <div class="col-md-12">
-                                            <div class="table-responsive-sm">
-                                                <div class="d-flex flex-column gap-2" id="hotel_forms_container">
-                                                    <?php for ($i = 1; $i <= 5; $i++) : ?>
-                                                    <div class="hotel-form" id="hotel-form-<?php echo $i; ?>"
-                                                        style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
-                                                        <div class="text-bg-primary p-2"
-                                                            style="text-align:center; border-radius:4px;">
-                                                            Hotel <?php echo $i; ?>
+                                    <div class="col-md-12 mt-3">
+                                        <label for="taksi" class="form-label">Taxi Voucher</label>
+                                        <select class="form-select" id="taksi" name="taksi">
+                                            <option value="Tidak">Tidak</option>
+                                            <option value="Ya">Ya</option>
+                                        </select>
+                                        <div class="row mt-2" id="taksi_div" style="display: none;">
+                                            <div class="col-md-12">
+                                                <div class="table-responsive-sm">
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <div class="text-bg-primary p-2 r-3"
+                                                            style="text-align:center; border-radius:4px;">Taxi Voucher
                                                         </div>
                                                         <div class="card">
                                                             <div class="card-body">
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">Hotel Name</label>
+                                                                <div class="mb-2" id="taksi_div">
+                                                                    <label class="form-label">Total Ticket</label>
                                                                     <div class="input-group">
+                                                                        <div class="input-group-append">
+                                                                        </div>
                                                                         <input class="form-control bg-white"
-                                                                            name="nama_htl[]" type="text"
-                                                                            placeholder="ex: Hyatt">
+                                                                            name="no_vt" id="no_vt" type="number"
+                                                                            min="0" placeholder="ex: 2">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
-                                                                    <label class="form-label">Hotel Location</label>
+                                                                    <label class="form-label">Voucher Nominal</label>
                                                                     <div class="input-group">
-                                                                        <input class="form-control bg-white"
-                                                                            name="lokasi_htl[]" type="text"
-                                                                            placeholder="ex: Jakarta">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">Rp</span>
+                                                                        </div>
+                                                                        <input class="form-control" name="nominal_vt"
+                                                                            id="nominal_vt" type="text"
+                                                                            placeholder="ex. 12.000"
+                                                                            oninput="formatCurrency(this)">
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-2">
-                                                                    <label class="form-label">Total Room</label>
+                                                                    <label class="form-label">Voucher Keeper</label>
                                                                     <div class="input-group">
-                                                                        <input class="form-control bg-white"
-                                                                            name="jmlkmr_htl[]" type="number"
-                                                                            min="1" placeholder="ex: 1">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">Rp</span>
+                                                                        </div>
+                                                                        <input class="form-control" name="keeper_vt"
+                                                                            id="keeper_vt" type="text"
+                                                                            placeholder="ex. 12.000"
+                                                                            oninput="formatCurrency(this)">
                                                                     </div>
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">Bed Size</label>
-                                                                    <select class="form-select" name="bed_htl[]" required>
-                                                                        <option value="Single Bed">Single Bed</option>
-                                                                        <option value="Twin Bed">Twin Bed</option>
-                                                                        <option value="King Bed">King Bed</option>
-                                                                        <option value="Super King Bed">Super King Bed
-                                                                        </option>
-                                                                        <option value="Extra Bed">Extra Bed</option>
-                                                                        <option value="Baby Cot">Baby Cot</option>
-                                                                        <option value="Sofa Bed">Sofa Bed</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">Check In Date</label>
-                                                                    <input type="date" class="form-control datepicker"
-                                                                        name="tgl_masuk_htl[]"
-                                                                        onchange="calculateTotalDays(<?php echo $i; ?>)">
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">Check Out Date</label>
-                                                                    <input type="date" class="form-control datepicker"
-                                                                        name="tgl_keluar_htl[]"
-                                                                        onchange="calculateTotalDays(<?php echo $i; ?>)">
-                                                                </div>
-                                                                <div class="mb-2">
-                                                                    <label class="form-label">Total Days</label>
-                                                                    <input type="number"
-                                                                        class="form-control datepicker bg-light"
-                                                                        name="total_hari[]" readonly>
-                                                                </div>
-                                                                <?php if ($i < 5) : ?>
-                                                                <div class="mt-3">
-                                                                    <label class="form-label">Add more hotel</label>
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="radio"
-                                                                            id="more_htl_no_<?php echo $i; ?>"
-                                                                            name="more_htl_<?php echo $i; ?>"
-                                                                            value="Tidak" checked>
-                                                                        <label class="form-check-label"
-                                                                            for="more_htl_no_<?php echo $i; ?>">Tidak</label>
-                                                                    </div>
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="radio"
-                                                                            id="more_htl_yes_<?php echo $i; ?>"
-                                                                            name="more_htl_<?php echo $i; ?>"
-                                                                            value="Ya">
-                                                                        <label class="form-check-label"
-                                                                            for="more_htl_yes_<?php echo $i; ?>">Ya</label>
-                                                                    </div>
-                                                                </div>
-                                                                <?php endif; ?>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <?php endfor; ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-12 mt-3">
-                                    <label for="taksi" class="form-label">Taxi Voucher</label>
-                                    <select class="form-select" id="taksi" name="taksi">
-                                        <option value="Tidak">Tidak</option>
-                                        <option value="Ya">Ya</option>
-                                    </select>
-                                    <div class="row mt-2" id="taksi_div" style="display: none;">
-                                        <div class="col-md-12">
-                                            <div class="table-responsive-sm">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <div class="text-bg-primary p-2 r-3"
-                                                        style="text-align:center; border-radius:4px;">Taxi Voucher</div>
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <div class="mb-2" id="taksi_div">
-                                                                <label class="form-label">Total Ticket</label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-append">
-                                                                    </div>
-                                                                    <input class="form-control bg-white" name="no_vt"
-                                                                        id="no_vt" type="number" min="0"
-                                                                        placeholder="ex: 2">
-                                                                </div>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <label class="form-label">Voucher Nominal</label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text">Rp</span>
-                                                                    </div>
-                                                                    <input class="form-control" name="nominal_vt"
-                                                                        id="nominal_vt" type="text"
-                                                                        placeholder="ex. 12.000"
-                                                                        oninput="formatCurrency(this)">
-                                                                </div>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <label class="form-label">Voucher Keeper</label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text">Rp</span>
-                                                                    </div>
-                                                                    <input class="form-control" name="keeper_vt"
-                                                                        id="keeper_vt" type="text"
-                                                                        placeholder="ex. 12.000"
-                                                                        oninput="formatCurrency(this)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1024,21 +1057,22 @@
                                         </div>
                                     </div>
                                 </div>
+                            {{-- </div> --}}
+                    {{-- </div> --}}
+                    <input type="hidden" name="status" value="Pending L1" id="status">
 
-                            </div>
-                            <input type="hidden" name="status" value="Pending L1" id="status">
-
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="button" class="btn btn-outline-primary rounded-pill me-2" name="action_ca_draft"
-                                    id="save-draft">Save as Draft</button>
-                                <button type="submit" class="btn btn-primary rounded-pill" name="action_ca_submit">Submit</button>
-                            </div>
-
-                        </form>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-outline-primary rounded-pill me-2" name="action_ca_draft"
+                            id="save-draft">Save as Draft</button>
+                        <button type="submit" class="btn btn-primary rounded-pill"
+                            name="action_ca_submit">Submit</button>
                     </div>
+
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- JavaScript Part -->
@@ -1879,9 +1913,11 @@
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
             }
+
             function parseNumberPerdiem(value) {
                 return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
             }
+
             function formatNumberPerdiem(num) {
                 return num.toLocaleString('id-ID');
             }
