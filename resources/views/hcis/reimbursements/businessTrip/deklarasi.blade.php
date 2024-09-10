@@ -195,7 +195,7 @@
                                                                                                         for="name">Location
                                                                                                         Agency</label>
                                                                                                     <select
-                                                                                                        class="form-control select2 location-select"
+                                                                                                        class="form-control location-select"
                                                                                                         name="location_bt_perdiem_deklarasi[]"
                                                                                                         disabled>
                                                                                                         <option
@@ -232,7 +232,7 @@
                                                                                                         for="name">Company
                                                                                                         Code</label>
                                                                                                     <select
-                                                                                                        class="form-control select2"
+                                                                                                        class="form-control"
                                                                                                         id="companyFilter_{{ $index }}"
                                                                                                         name="company_bt_perdiem_deklarasi[]"
                                                                                                         disabled>
@@ -333,7 +333,7 @@
                                                                                                     for="name">Location
                                                                                                     Agency</label>
                                                                                                 <select
-                                                                                                    class="form-control select2 location-select"
+                                                                                                    class="form-control location-select"
                                                                                                     name="location_bt_perdiem_deklarasi[]"
                                                                                                     disabled>
                                                                                                     <option value="">
@@ -363,7 +363,7 @@
                                                                                                     for="name">Company
                                                                                                     Code</label>
                                                                                                 <select
-                                                                                                    class="form-control select2"
+                                                                                                    class="form-control"
                                                                                                     id="companyFilter_0"
                                                                                                     name="company_bt_perdiem_deklarasi[]"
                                                                                                     disabled>
@@ -516,7 +516,7 @@
                                                                                                         for="name">Company
                                                                                                         Code</label>
                                                                                                     <select
-                                                                                                        class="form-control select2"
+                                                                                                        class="form-control"
                                                                                                         id="companyFilter_{{ $index }}"
                                                                                                         name="company_bt_transport[]"
                                                                                                         disabled>
@@ -1400,7 +1400,7 @@
                                                                                                         for="name">Location
                                                                                                         Agency</label>
                                                                                                     <select
-                                                                                                        class="form-control select2 location-select"
+                                                                                                        class="form-control location-select"
                                                                                                         name="location_bt_perdiem[]">
                                                                                                         <option
                                                                                                             value="">

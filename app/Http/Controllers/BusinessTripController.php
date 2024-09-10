@@ -89,11 +89,11 @@ class BusinessTripController extends Controller
                     ->orWhere('approval_status', 'Declaration Rejected');
             })
             ->get();
-        Log::info('Ticket Approvals:', $btApprovals->toArray());
+        // Log::info('Ticket Approvals:', $btApprovals->toArray());
 
         $btApprovals = $btApprovals->keyBy('bt_id');
         // dd($btApprovals);
-        Log::info('BT Approvals:', $btApprovals->toArray());
+        // Log::info('BT Approvals:', $btApprovals->toArray());
 
         $employeeIds = $sppd->pluck('user_id')->unique();
         $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
@@ -990,10 +990,6 @@ class BusinessTripController extends Controller
         } else {
             $ca->total_real = $total_real;
             $ca->total_cost = $total_ca - $total_real;
-            Log::info('Total Real: ' . $total_real);
-            Log::info('Initial Total CA: ' . $ca->total_ca);
-            Log::info('Detail CA: ' . $ca->detail_ca);
-            Log::info('Updated Total CA: ' . $total_ca);
         }
 
         // Initialize arrays for details
@@ -1229,9 +1225,10 @@ class BusinessTripController extends Controller
                             break;
                         case 'ca':
                             $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
-                            if (!$ca)
+                            if (!$ca || $ca->detail_ca === NULL) {
+                                Log::info('Skipping CA download: Not a CA or no detailed CA information');
                                 continue 2;
-
+                            }
                             // Integrate CA PDF generation from cashadvancedDownload
                             $pdfName = 'CA.pdf';
                             $viewPath = 'hcis.reimbursements.cashadv.printCashadv';
@@ -1310,7 +1307,7 @@ class BusinessTripController extends Controller
                                 continue 2;
                             }
                             $pdfName = 'Deklarasi.pdf';
-                            $viewPath = 'hcis.reimbursements.cashadv.printDeklarasiCashadv';
+                            $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
                             $employee_data = Employee::where('id', $user->id)->first();
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
@@ -1330,9 +1327,15 @@ class BusinessTripController extends Controller
                         default:
                             continue 2;
                     }
-
-                    $pdfContent = PDF::loadView($viewPath, $data)->output();
-                    $zip->addFromString($pdfName, $pdfContent);
+                    // $pdfContent = PDF::loadView($viewPath, $data)->output();
+                    // $zip->addFromString($pdfName, $pdfContent);
+                    try {
+                        $pdfContent = PDF::loadView($viewPath, $data)->output();
+                        $zip->addFromString($pdfName, $pdfContent);
+                    } catch (\Exception $e) {
+                        Log::error("Error generating PDF for {$type}: " . $e->getMessage());
+                        continue; // Skip to the next iteration if there's an error
+                    }
                 }
                 $zip->close();
             }
@@ -1409,8 +1412,10 @@ class BusinessTripController extends Controller
                             break;
                         case 'ca':
                             $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
-                            if (!$ca)
+                            if (!$ca || $ca->detail_ca === NULL) {
+                                Log::info('Skipping CA download: Not a CA or no detailed CA information');
                                 continue 2;
+                            }
 
                             // Integrate CA PDF generation from cashadvancedDownload
                             $pdfName = 'CA.pdf';
@@ -1491,7 +1496,7 @@ class BusinessTripController extends Controller
                                 continue 2;
                             }
                             $pdfName = 'Deklarasi.pdf';
-                            $viewPath = 'hcis.reimbursements.cashadv.printDeklarasiCashadv';
+                            $viewPath = 'hcis.reimbursements.businessTrip.deklarasi_pdf';
                             $employee_data = Employee::where('id', $user->id)->first();
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
@@ -1512,8 +1517,15 @@ class BusinessTripController extends Controller
                             continue 2;
                     }
 
-                    $pdfContent = PDF::loadView($viewPath, $data)->output();
-                    $zip->addFromString($pdfName, $pdfContent);
+                    // $pdfContent = PDF::loadView($viewPath, $data)->output();
+                    // $zip->addFromString($pdfName, $pdfContent);
+                    try {
+                        $pdfContent = PDF::loadView($viewPath, $data)->output();
+                        $zip->addFromString($pdfName, $pdfContent);
+                    } catch (\Exception $e) {
+                        Log::error("Error generating PDF for {$type}: " . $e->getMessage());
+                        continue; // Skip to the next iteration if there's an error
+                    }
                 }
                 $zip->close();
             }
