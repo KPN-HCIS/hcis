@@ -75,6 +75,9 @@
                 <div class="mt-1">
                     <button class="btn btn-sm btn-outline-primary">Add Hotel Data</button>
                 </div>
+                {{-- <div class="mt-1">
+                    <button class="btn btn-sm btn-outline-primary">Add Hotel Data</button>
+                </div> --}}
             </div>
             <?php endfor; ?>
         </div>
