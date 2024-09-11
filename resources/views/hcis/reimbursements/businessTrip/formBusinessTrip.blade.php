@@ -124,489 +124,124 @@
                                 </div>
                             </div>
 
+
                             <div id="additional-fields" class="row mb-3" style="display: none;">
                                 <div class="col-md-12">
-                                    <label for="ca" class="form-label">Cash Advanced</label>
-                                    <select class="form-select" id="ca" name="ca">
-                                        <option value="Tidak">Tidak</option>
-                                        <option value="Ya">Ya</option>
-                                    </select>
+                                    <label for="additional-fields-title" class="mb-3">Business Trip Needs</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox">
+                                        <label class="form-check-label" for="cashAdvancedCheckbox">
+                                            Cash Advanced
+                                        </label>
+                                    </div>
+                                    @include('hcis.reimbursements.businessTrip.btCa')
 
-                                    <div class="row mt-2" id="ca_div" style="display: none;">
-                                        <div class="col-md-12">
-                                            <div class="table-responsive-sm">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <div class="text-bg-primary p-2"
-                                                        style="text-align:center; border-radius:4px;">Cash Advanced</div>
-                                                    {{-- <div class="card"> --}}
-                                                    {{-- <div class="card-body"> --}}
 
-                                                    {{-- <div class="row"> --}}
-                                                    <div class="row" id="ca_bt" style="">
-                                                        <div class="col-md-12">
-                                                            <div class="table-responsive-sm">
-                                                                <div class="d-flex flex-column gap-2">
-                                                                    <ul class="nav nav-pills mb-3" id="pills-tab"
-                                                                        role="tablist">
-                                                                        <li class="nav-item" role="presentation">
-                                                                            <button class="nav-link active"
-                                                                                id="pills-perdiem-tab"
-                                                                                data-bs-toggle="pill"
-                                                                                data-bs-target="#pills-perdiem"
-                                                                                type="button" role="tab"
-                                                                                aria-controls="pills-perdiem"
-                                                                                aria-selected="true">Perdiem Plan</button>
-                                                                        </li>
-                                                                        <li class="nav-item" role="presentation">
-                                                                            <button class="nav-link"
-                                                                                id="pills-transport-tab"
-                                                                                data-bs-toggle="pill"
-                                                                                data-bs-target="#pills-transport"
-                                                                                type="button" role="tab"
-                                                                                aria-controls="pills-transport"
-                                                                                aria-selected="false">Transport
-                                                                                Plan</button>
-                                                                        </li>
-                                                                        <li class="nav-item" role="presentation">
-                                                                            <button class="nav-link"
-                                                                                id="pills-accomodation-tab"
-                                                                                data-bs-toggle="pill"
-                                                                                data-bs-target="#pills-accomodation"
-                                                                                type="button" role="tab"
-                                                                                aria-controls="pills-accomodation"
-                                                                                aria-selected="false">Accomodation
-                                                                                Plan</button>
-                                                                        </li>
-                                                                        <li class="nav-item" role="presentation">
-                                                                            <button class="nav-link" id="pills-other-tab"
-                                                                                data-bs-toggle="pill"
-                                                                                data-bs-target="#pills-other"
-                                                                                type="button" role="tab"
-                                                                                aria-controls="pills-other"
-                                                                                aria-selected="false">Other Plan</button>
-                                                                        </li>
-
-                                                                    </ul>
-                                                                    <div class="card">
-                                                                        <div class="tab-content" id="pills-tabContent">
-                                                                            <div class="tab-pane fade show active"
-                                                                                id="pills-perdiem" role="tabpanel"
-                                                                                aria-labelledby="pills-perdiem-tab">
-                                                                                {{-- ca perdiem content --}}
-                                                                                @include('hcis.reimbursements.businessTrip.caPerdiem')
-                                                                            </div>
-                                                                            <div class="tab-pane fade"
-                                                                                id="pills-transport" role="tabpanel"
-                                                                                aria-labelledby="pills-transport-tab">
-                                                                                {{-- ca transport content --}}
-                                                                                @include('hcis.reimbursements.businessTrip.caTransport')
-                                                                            </div>
-                                                                            <div class="tab-pane fade"
-                                                                                id="pills-accomodation" role="tabpanel"
-                                                                                aria-labelledby="pills-accomodation-tab">
-                                                                                {{-- ca accommodatioon content --}}
-                                                                                @include('hcis.reimbursements.businessTrip.caAccommodation')</div>
-                                                                            <div class="tab-pane fade" id="pills-other"
-                                                                                role="tabpanel"
-                                                                                aria-labelledby="pills-other-tab">
-                                                                                {{-- ca others content --}}
-                                                                                @include('hcis.reimbursements.businessTrip.caOther')</div>
-                                                                        </div>
-
-                                                                        <br>
-                                                                        <div class="col-md-12 mb-2">
-                                                                            <label class="form-label">Total Cash
-                                                                                Advanced</label>
-                                                                            <div class="input-group">
-                                                                                <div class="input-group-append">
-                                                                                    <span
-                                                                                        class="input-group-text">Rp</span>
-                                                                                </div>
-                                                                                <input class="form-control bg-light"
-                                                                                    name="totalca" id="totalca"
-                                                                                    type="text" min="0"
-                                                                                    value="0" readonly>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-12 mt-3">
-                                            <label for="tiket" class="form-label">Ticket</label>
-                                            <select class="form-select" id="tiket" name="tiket">
-                                                <option value="Tidak">Tidak</option>
-                                                <option value="Ya">Ya</option>
-                                            </select>
-                                            <div class="row mt-2" id="tiket_div" style="display: none;">
-                                                <div class="col-md-12">
-                                                    <div class="table-responsive-sm">
-                                                        <div class="d-flex flex-column gap-2" id="ticket_forms_container">
-                                                            <?php for ($i = 1; $i <= 5; $i++) : ?>
-                                                            <div class="ticket-form" id="ticket-form-<?php echo $i; ?>"
-                                                                style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
-                                                                <div class="text-bg-primary p-2"
-                                                                    style="text-align:center; border-radius:4px;">Ticket
-                                                                    <?php echo $i; ?></div>
-                                                                <div class="card">
-                                                                    <div class="card-body">
-                                                                        <div class="row mb-2">
-                                                                            <div class="col-md-4">
-                                                                                <label class="form-label">NIK</label>
-                                                                                <div class="input-group">
-                                                                                    <input class="form-control"
-                                                                                        name="noktp_tkt[]" type="number"
-                                                                                        placeholder="ex: 3521XXXXXXXXXXXX">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-4">
-                                                                                <label class="form-label">From</label>
-                                                                                <div class="input-group">
-                                                                                    <input class="form-control bg-white"
-                                                                                        name="dari_tkt[]" type="text"
-                                                                                        placeholder="ex. Yogyakarta (YIA)">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-4">
-                                                                                <label class="form-label">To</label>
-                                                                                <div class="input-group">
-                                                                                    <input class="form-control bg-white"
-                                                                                        name="ke_tkt[]" type="text"
-                                                                                        placeholder="ex. Jakarta (CGK)">
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mb-2">
-                                                                            <div class="col-md-8">
-                                                                                <label class="form-label">Date</label>
-                                                                                <div class="input-group">
-                                                                                    <input class="form-control bg-white"
-                                                                                        id="tgl_brkt_tkt_<?php echo $i; ?>"
-                                                                                        name="tgl_brkt_tkt[]"
-                                                                                        type="date"
-                                                                                        onchange="validateDates(<?php echo $i; ?>)">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-4">
-                                                                                <label class="form-label">Time</label>
-                                                                                <div class="input-group">
-                                                                                    <input class="form-control bg-white"
-                                                                                        id="jam_brkt_tkt_<?php echo $i; ?>"
-                                                                                        name="jam_brkt_tkt[]"
-                                                                                        type="time"
-                                                                                        onchange="validateDates(<?php echo $i; ?>)">
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label for="ket_tkt"
-                                                                                class="form-label">Information</label>
-                                                                            <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3"
-                                                                                placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
-                                                                        </div>
-                                                                        <div class="row mb-2">
-                                                                            <div class="col-md-8">
-                                                                                <label class="form-label"
-                                                                                    for="jenis_tkt_<?php echo $i; ?>">Transportation
-                                                                                    Type</label>
-                                                                                <div class="input-group">
-                                                                                    <select class="form-select"
-                                                                                        name="jenis_tkt[]" id="jenis_tkt">
-                                                                                        <option value="">Select
-                                                                                            Transportation
-                                                                                            Type</option>
-                                                                                        <option value="Train">Train
-                                                                                        </option>
-                                                                                        <option value="Bus">Bus</option>
-                                                                                        <option value="Airplane">Airplane
-                                                                                        </option>
-                                                                                        <option value="Car">Car</option>
-                                                                                        <option value="Ferry">Ferry
-                                                                                        </option>
-                                                                                    </select>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-4">
-                                                                                <label for="type_tkt_<?php echo $i; ?>"
-                                                                                    class="form-label">Ticket Type</label>
-                                                                                <select class="form-select"
-                                                                                    name="type_tkt[]" required>
-                                                                                    <option value="One Way">One Way
-                                                                                    </option>
-                                                                                    <option value="Round Trip">Round Trip
-                                                                                    </option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="round-trip-options"
-                                                                            style="display: none;">
-                                                                            <div class="row mb-2">
-                                                                                <div class="col-md-8">
-                                                                                    <label class="form-label">Return
-                                                                                        Date</label>
-                                                                                    <div class="input-group">
-                                                                                        <input
-                                                                                            class="form-control bg-white"
-                                                                                            name="tgl_plg_tkt[]"
-                                                                                            type="date"
-                                                                                            id="tgl_plg_tkt_<?php echo $i; ?>"
-                                                                                            onchange="validateDates(<?php echo $i; ?>)">
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <label class="form-label">Return
-                                                                                        Time</label>
-                                                                                    <div class="input-group">
-                                                                                        <input
-                                                                                            class="form-control bg-white"
-                                                                                            id="jam_plg_tkt_<?php echo $i; ?>"
-                                                                                            name="jam_plg_tkt[]"
-                                                                                            type="time"
-                                                                                            onchange="validateDates(<?php echo $i; ?>)">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <?php if ($i < 5) : ?>
-                                                                        <div class="mt-3">
-                                                                            <label class="form-label">Add more
-                                                                                ticket</label>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    type="radio"
-                                                                                    id="more_tkt_no_<?php echo $i; ?>"
-                                                                                    name="more_tkt_<?php echo $i; ?>"
-                                                                                    value="Tidak" checked>
-                                                                                <label class="form-check-label"
-                                                                                    for="more_tkt_no_<?php echo $i; ?>">Tidak</label>
-                                                                            </div>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    type="radio"
-                                                                                    id="more_tkt_yes_<?php echo $i; ?>"
-                                                                                    name="more_tkt_<?php echo $i; ?>"
-                                                                                    value="Ya">
-                                                                                <label class="form-check-label"
-                                                                                    for="more_tkt_yes_<?php echo $i; ?>">Ya</label>
-                                                                            </div>
-                                                                        </div>
-                                                                        <?php endif; ?>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php endfor; ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {{-- <div class="row"> --}}
                                     <div class="col-md-12 mt-3">
-                                        <label for="hotel" class="form-label">Hotel</label>
-                                        <select class="form-select" id="hotel" name="hotel">
-                                            <option value="Tidak">Tidak</option>
-                                            <option value="Ya">Ya</option>
-                                        </select>
-                                        <div class="row mt-2" id="hotel_div" style="display: none;">
-                                            <div class="col-md-12">
-                                                <div class="table-responsive-sm">
-                                                    <div class="d-flex flex-column gap-2" id="hotel_forms_container">
-                                                        <?php for ($i = 1; $i <= 5; $i++) : ?>
-                                                        <div class="hotel-form" id="hotel-form-<?php echo $i; ?>"
-                                                            style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
-                                                            <div class="text-bg-primary p-2"
-                                                                style="text-align:center; border-radius:4px;">
-                                                                Hotel <?php echo $i; ?>
-                                                            </div>
-                                                            <div class="card">
-                                                                <div class="card-body">
-                                                                    <div class="row mb-2">
-                                                                        <div class="col-md-6 mb-2">
-                                                                            <label class="form-label">Hotel
-                                                                                    Name</label>
-                                                                            <div class="input-group">
-                                                                                <input class="form-control bg-white"
-                                                                                    name="nama_htl[]" type="text"
-                                                                                    placeholder="ex: Hyatt">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-6 mb-2">
-                                                                            <label class="form-label">Hotel
-                                                                                Location</label>
-                                                                            <div class="input-group">
-                                                                                <input class="form-control bg-white"
-                                                                                    name="lokasi_htl[]" type="text"
-                                                                                    placeholder="ex: Jakarta">
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row mb-2">
-                                                                        <div class="col-md-9 mb-2">
-                                                                            <label class="form-label">Bed Size</label>
-                                                                            <select class="form-select"
-                                                                                name="bed_htl[]" required>
-                                                                                <option value="Single Bed">Single Bed
-                                                                                </option>
-                                                                                <option value="Twin Bed">Twin Bed
-                                                                                    </option>
-                                                                                <option value="King Bed">King Bed
-                                                                                    </option>
-                                                                                <option value="Super King Bed">Super
-                                                                                        King
-                                                                                    Bed
-                                                                                </option>
-                                                                                <option value="Extra Bed">Extra Bed
-                                                                                </option>
-                                                                                <option value="Baby Cot">Baby Cot
-                                                                                    </option>
-                                                                                <option value="Sofa Bed">Sofa Bed
-                                                                                    </option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="col-md-3 mb-2">
-                                                                            <label class="form-label">Total
-                                                                                    Room</label>
-                                                                            <div class="input-group">
-                                                                                <input class="form-control bg-white"
-                                                                                    name="jmlkmr_htl[]" type="number"
-                                                                                    min="1"
-                                                                                        placeholder="ex: 1">
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row mb-2">
-                                                                        <div class="col-md-5 mb-2">
-                                                                            <label class="form-label">Check In
-                                                                                    Date</label>
-                                                                            <input type="date"
-                                                                                class="form-control datepicker"
-                                                                                name="tgl_masuk_htl[]"
-                                                                                onchange="calculateTotalDays(<?php echo $i; ?>)">
-                                                                        </div>
-                                                                        <div class="col-md-5 mb-2">
-                                                                            <label class="form-label">Check Out
-                                                                                Date</label>
-                                                                            <input type="date"
-                                                                                class="form-control datepicker"
-                                                                                name="tgl_keluar_htl[]"
-                                                                                onchange="calculateTotalDays(<?php echo $i; ?>)">
-                                                                        </div>
-                                                                        <div class="col-md-2 mb-2">
-                                                                            <label class="form-label">Total
-                                                                                    Days</label>
-                                                                            <input type="number"
-                                                                                class="form-control datepicker bg-light"
-                                                                                name="total_hari[]" readonly>
-                                                                        </div>
-                                                                    </div>
-                                                                    <?php if ($i < 5) : ?>
-                                                                    <div class="mt-3">
-                                                                        <label class="form-label">Add more
-                                                                                hotel</label>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input"
-                                                                                    type="radio"
-                                                                                id="more_htl_no_<?php echo $i; ?>"
-                                                                                name="more_htl_<?php echo $i; ?>"
-                                                                                value="Tidak" checked>
-                                                                            <label class="form-check-label"
-                                                                                for="more_htl_no_<?php echo $i; ?>">Tidak</label>
-                                                                        </div>
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input"
-                                                                                    type="radio"
-                                                                                id="more_htl_yes_<?php echo $i; ?>"
-                                                                                name="more_htl_<?php echo $i; ?>"
-                                                                                value="Ya">
-                                                                            <label class="form-check-label"
-                                                                                for="more_htl_yes_<?php echo $i; ?>">Ya</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <?php endif; ?>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <?php endfor; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="ticketCheckbox"
+                                                name="tiket" value="Ya">
+                                            <label class="form-check-label" for="ticketCheckbox">
+                                                Ticket
+                                            </label>
                                         </div>
-                                    </div>
+                                        <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
+                                        <input type="hidden" name="tiket" value="Tidak">
+
+                                        {{-- bt ticket content --}}
+                                        @include('hcis.reimbursements.businessTrip.btTicket')
+
 
                                         <div class="col-md-12 mt-3">
-                                            <label for="taksi" class="form-label">Taxi Voucher</label>
-                                            <select class="form-select" id="taksi" name="taksi">
-                                                <option value="Tidak">Tidak</option>
-                                                <option value="Ya">Ya</option>
-                                            </select>
-                                            <div class="row mt-2" id="taksi_div" style="display: none;">
-                                                <div class="col-md-12">
-                                                    <div class="table-responsive-sm">
-                                                        <div class="d-flex flex-column gap-2">
-                                                            <div class="text-bg-primary p-2 r-3"
-                                                                style="text-align:center; border-radius:4px;">Taxi Voucher
-                                                            </div>
-                                                            <div class="card">
-                                                                <div class="card-body">
-                                                                    <div class="mb-2" id="taksi_div">
-                                                                        <label class="form-label">Total Ticket</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                            </div>
-                                                                            <input class="form-control bg-white"
-                                                                                name="no_vt" id="no_vt"
-                                                                                type="number" min="0"
-                                                                                placeholder="ex: 2">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Voucher Nominal</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-prepend">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control" name="nominal_vt"
-                                                                                id="nominal_vt" type="text"
-                                                                                placeholder="ex. 12.000"
-                                                                                oninput="formatCurrency(this)">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Voucher Keeper</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-prepend">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control" name="keeper_vt"
-                                                                                id="keeper_vt" type="text"
-                                                                                placeholder="ex. 12.000"
-                                                                                oninput="formatCurrency(this)">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="hotelCheckbox"
+                                                    name="hotel" value="Ya">
+                                                <label class="form-check-label" for="hotelCheckbox">
+                                                    Hotel
+                                                </label>
+                                            </div>
+                                            <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
+                                            <input type="hidden" name="hotel" value="Tidak">
+
+                                            {{-- bt hotel content --}}
+                                            @include('hcis.reimbursements.businessTrip.btHotel')
+
+                                            <div class="col-md-12 mt-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="taksiCheckbox"
+                                                        name="taksi" value="Ya">
+                                                    <label class="form-check-label" for="taksiCheckbox">
+                                                        Taxi Voucher
+                                                    </label>
+                                                </div>
+
+                                                <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
+                                                <input type="hidden" name="taksi" value="Tidak">
+                                                @include('hcis.reimbursements.businessTrip.btTaksi')
+
+                                                {{-- NAV BT INPUT --}}
+                                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link active" id="pills-cash-advanced-tab"
+                                                            data-bs-toggle="pill" data-bs-target="#pills-cash-advanced"
+                                                            type="button" role="tab"
+                                                            aria-controls="pills-cash-advanced" aria-selected="true">Cash
+                                                            Advanced</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link" id="pills-ticket-tab"
+                                                            data-bs-toggle="pill" data-bs-target="#pills-ticket"
+                                                            type="button" role="tab" aria-controls="pills-ticket"
+                                                            aria-selected="false">Ticket</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link" id="pills-hotel-tab"
+                                                            data-bs-toggle="pill" data-bs-target="#pills-hotel"
+                                                            type="button" role="tab" aria-controls="pills-hotel"
+                                                            aria-selected="false">Hotel</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link" id="pills-taksi-tab"
+                                                            data-bs-toggle="pill" data-bs-target="#pills-taksi"
+                                                            type="button" role="tab" aria-controls="pills-taksi"
+                                                            aria-selected="false">Taksi</button>
+                                                    </li>
+                                                </ul>
+                                                <div class="card">
+                                                    <div class="tab-content" id="pills-tabContent">
+                                                        <div class="tab-pane fade show active" id="pills-cash-advanced" role="tabpanel"
+                                                             aria-labelledby="pills-cash-advanced-tab">
+                                                            {{-- Cash Advanced content --}}
+                                                            @include('hcis.reimbursements.businessTrip.btCa')
+                                                        </div>
+
+                                                        <div class="tab-pane fade" id="pills-ticket" role="tabpanel" aria-labelledby="pills-ticket-tab">
+                                                            {{-- Ticket content --}}
+                                                            @include('hcis.reimbursements.businessTrip.btTicket')
+                                                        </div>
+
+                                                        <div class="tab-pane fade" id="pills-hotel" role="tabpanel" aria-labelledby="pills-hotel-tab">
+                                                            {{-- Hotel content --}}
+                                                            @include('hcis.reimbursements.businessTrip.btHotel')
+                                                        </div>
+
+                                                        <div class="tab-pane fade" id="pills-taksi" role="tabpanel" aria-labelledby="pills-taksi-tab">
+                                                            {{-- Taksi content --}}
+                                                            @include('hcis.reimbursements.businessTrip.btTaksi')
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {{-- </div> --}}
-                                    {{-- </div> --}}
-                                    <input type="hidden" name="status" value="Pending L1" id="status">
+                                                {{-- </div> --}}
+                                                {{-- </div> --}}
+                                                <input type="hidden" name="status" value="Pending L1" id="status">
 
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                                    name="action_ca_draft" id="save-draft">Save as Draft</button>
-                                <button type="submit" class="btn btn-primary rounded-pill"
-                                    name="action_ca_submit">Submit</button>
-                            </div>
+                                                <div class="d-flex justify-content-end mt-3">
+                                                    <button type="button"
+                                                        class="btn btn-outline-primary rounded-pill me-2"
+                                                        name="action_ca_draft" id="save-draft">Save as Draft</button>
+                                                    <button type="submit" class="btn btn-primary rounded-pill"
+                                                        name="action_ca_submit">Submit</button>
+                                                </div>
 
                         </form>
                     </div>
