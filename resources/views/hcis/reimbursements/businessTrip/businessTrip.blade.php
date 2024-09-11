@@ -157,7 +157,8 @@
                             </form>
 
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover nowrap" id="defaultTable" width="100%" cellspacing="0">
+                                <table class="table table-sm table-hover nowrap" id="defaultTable" width="100%"
+                                    cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
@@ -406,7 +407,8 @@
                         <div class="modal-content">
                             <div class="modal-header bg-primary">
                                 <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
-                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal"
+                                    aria-label="Close">
                                 </button>
                             </div>
                             <div class="modal-body">
@@ -424,6 +426,7 @@
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
+                <script src="{{ asset('public/js/ca.js') }}"></script>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {
