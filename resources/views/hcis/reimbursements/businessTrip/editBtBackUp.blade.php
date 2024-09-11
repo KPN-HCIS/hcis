@@ -10,1129 +10,380 @@
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Declaration Data</h4>
-                        <a href="{{ route('businessTrip') }}" class="btn-close btn-close-white"></a>
+                <div class="mb-3">
+                    {{-- <a href="{{ url()->previous() }}" class="btn btn-outline-primary">
+                    <i class="bi bi-caret-left-fill"></i> Kembali
+                </a> --}}
+                </div>
+                <div class="card">
+                    <div class="card-header d-flex bg-primary text-white justify-content-between">
+                        <h4 class="mb-0">Edit Data</h4>
+                        <a href="/businessTrip" type="button" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
-                        <form action="/businessTrip/update/{{ $n->id }}" method="POST"
-                            enctype="multipart/form-data">
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('update.bt', ['id' => $n->id]) }}" method="POST" id="btEditForm">
                             @csrf
                             @method('PUT')
-                            <div class="row mb-4">
-                                <div class="col-md-4">
-                                <label for="no_sppd" class="form-label">No SPPD</label>
-                                <input type="text" class="form-control bg-light" id="no_sppd" name="no_sppd"
-                                    value="{{ $n->no_sppd }}" readonly>
+                            <div class="row mb-2">
+                            <div class="col-md-6 mb-2">
+                                <label for="nama" class="form-label">Name</label>
+                                <input type="text" class="form-control bg-light" id="nama" name="nama"
+                                    style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
                             </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="divisi" class="form-label">Divison</label>
+                                <input type="text" class="form-control bg-light" id="divisi" name="divisi"
+                                    style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
 
-                            {{-- <div class="row mb-4"> --}}
-                                <div class="col-md-4">
-                                    <label for="mulai" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control bg-light" id="mulai" name="mulai"
-                                        value="{{ $n->mulai }}" readonly>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="kembali" class="form-label">End Date</label>
-                                    <input type="date" class="form-control bg-light" id="kembali" name="kembali"
-                                        value="{{ $n->kembali }}" readonly>
-                                {{-- </div> --}}
                             </div>
                         </div>
-                            <!-- 1st Form -->
-                            <div class="row mt-2" id="ca_div">
+                        <div class="row mb-2">
+                            <div class="col-md-4 mb-2">
+                                <label for="norek_krywn" class="form-label">Employee Account Number</label>
+                                <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
+                                    value="{{ $employee_data->bank_account_number }}" readonly>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
+                                <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
+                                    name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label for="nama_bank" class="form-label">Bank Name</label>
+                                <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
+                                    value="{{ $employee_data->bank_name }}" placeholder="ex. BCA" readonly>
+                            </div>
+                        </div>
+                            <div class="row mb-2">
                                 <div class="col-md-6">
-                                    <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-primary p-2" style="text-align:center; border-radius:4px;">
-                                                Cash Advanced Data</div>
-                                            <div class="row" id="ca_bt">
-                                                <div class="col-md-12">
-                                                    <div class="table-responsive-sm">
-                                                        <div class="d-flex flex-column gap-2">
-                                                            <div class="card">
-                                                                <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%" disabled
-                                                                        id="toggle-bt-perdiem-deklarasi" class="btn btn-primary mt-3"
-                                                                        data-state="false">
-                                                                        Perdiem</button>
-                                                                </div>
-                                                                <div id="perdiem-card" class="card-body"
-                                                                    style="display: none;">
-                                                                    <div class="accordion" id="accordionPerdiem">
-                                                                        <div class="accordion-item">
-                                                                            <h2 class="accordion-header"
-                                                                                id="enter-headingOne">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button" data-bs-toggle="collapse"
-                                                                                    data-bs-target="#enter-collapseOne"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="enter-collapseOne">
-                                                                                    Perdiem Plan
-                                                                                </button>
-                                                                            </h2>
-                                                                            <div id="enter-collapseOne"
-                                                                                class="accordion-collapse show"
-                                                                                aria-labelledby="enter-headingOne">
-                                                                                <div class="accordion-body">
-                                                                                    <div id="form-container-bt-perdiem-deklarasi">
-                                                                                        @php
-                                                                                            // Provide default empty arrays if caDetail or sections are not set
-                                                                                            $detailPerdiem =
-                                                                                                $caDetail[
-                                                                                                    'detail_perdiem'
-                                                                                                ] ?? [];
-                                                                                            $detailTransport =
-                                                                                                $caDetail[
-                                                                                                    'detail_transport'
-                                                                                                ] ?? [];
-                                                                                            $detailPenginapan =
-                                                                                                $caDetail[
-                                                                                                    'detail_penginapan'
-                                                                                                ] ?? [];
-                                                                                            $detailLainnya =
-                                                                                                $caDetail[
-                                                                                                    'detail_lainnya'
-                                                                                                ] ?? [];
+                                    <label for="mulai" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control datepicker" id="mulai" name="mulai"
+                                        placeholder="Tanggal Mulai" value="{{ $n->mulai }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="kembali" class="form-label">End Date</label>
+                                    <input type="date" class="form-control datepicker" id="kembali" name="kembali"
+                                        placeholder="Tanggal Kembali" value="{{ $n->kembali }}">
+                                </div>
+                            </div>
+                            <input class="form-control" id="perdiem" name="perdiem" type="hidden"
+                                value="{{ $perdiem->amount }}" readonly>
+                            <div class="mb-2">
+                                <label for="tujuan" class="form-label">Destination</label>
+                                <select class="form-select select2" name="tujuan" id="tujuan" onchange="BTtoggleOthers()"
+                                    required>
+                                    <option value="">--- Choose Destination ---</option>
+                                    @foreach ($locations as $location)
+                                        <option value="{{ $location->area }}"
+                                            {{ $n->tujuan === $location->area ? 'selected' : '' }}>
+                                            {{ $location->area . ' (' . $location->city . ')' }}
+                                        </option>
+                                    @endforeach
+                                    <option value="Others"
+                                        {{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? 'selected' : '' }}>
+                                        Others</option>
+                                </select>
+                                <br>
+                                <input type="text" name="others_location" id="others_location" class="form-control"
+                                    placeholder="Other Location"
+                                    value="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? $n->tujuan : '' }}"
+                                    style="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? '' : 'display: none;' }}">
+                            </div>
 
-                                                                                            // Calculate totals with default values
-                                                                                            $totalPerdiem = array_reduce(
-                                                                                                $detailPerdiem,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
+                            <div class="mb-3">
+                                <label for="keperluan" class="form-label">Need (To be filled in according to visit
+                                    service)</label>
+                                <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need" required>{{ $n->keperluan }}</textarea>
+                            </div>
 
-                                                                                            $totalTransport = array_reduce(
-                                                                                                $detailTransport,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
+                            <div class="mb-3">
+                                <label for="bb_perusahaan" class="form-label">
+                                    Company Cost Expenses (PT Service Needs / Not PT Payroll)
+                                </label>
+                                <select class="form-select" id="bb_perusahaan" name="bb_perusahaan" required>
+                                    <option value="">--- Choose PT ---</option>
+                                    @foreach ($companies as $company)
+                                        <option value="{{ $company->contribution_level_code }}"
+                                            {{ $company->contribution_level_code == $n->bb_perusahaan ? 'selected' : '' }}>
+                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!-- HTML Part -->
+                            <div class="col-md-14 mb-3">
+                                <label for="jns_dinas" class="form-label">Type of Service</label>
+                                <select class="form-select" id="jns_dinas" name="jns_dinas" required
+                                    onchange="toggleAdditionalFields()">
+                                    <option value="" selected disabled>-- Choose Type of Service --</option>
+                                    <option value="dalam kota" {{ $n->jns_dinas == 'dalam kota' ? 'selected' : '' }}>Dinas
+                                        Dalam Kota</option>
+                                    <option value="luar kota" {{ $n->jns_dinas == 'luar kota' ? 'selected' : '' }}>Dinas
+                                        Luar Kota</option>
+                                </select>
+                            </div>
+                            @php
+                                // Provide default empty arrays if caDetail or sections are not set
+                                $detailPerdiem =
+                                    $caDetail[
+                                        'detail_perdiem'
+                                    ] ?? [];
+                                $detailTransport =
+                                    $caDetail[
+                                        'detail_transport'
+                                    ] ?? [];
+                                $detailPenginapan =
+                                    $caDetail[
+                                        'detail_penginapan'
+                                    ] ?? [];
+                                $detailLainnya =
+                                    $caDetail[
+                                        'detail_lainnya'
+                                    ] ?? [];
 
-                                                                                            $totalPenginapan = array_reduce(
-                                                                                                $detailPenginapan,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
+                                // Calculate totals with default values
+                                $totalPerdiem = array_reduce(
+                                    $detailPerdiem,
+                                    function (
+                                        $carry,
+                                        $item,
+                                    ) {
+                                        return $carry +
+                                            (int) ($item[
+                                                'nominal'
+                                            ] ?? 0);
+                                    },
+                                    0,
+                                );
 
-                                                                                            $totalLainnya = array_reduce(
-                                                                                                $detailLainnya,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
+                                $totalTransport = array_reduce(
+                                    $detailTransport,
+                                    function (
+                                        $carry,
+                                        $item,
+                                    ) {
+                                        return $carry +
+                                            (int) ($item[
+                                                'nominal'
+                                            ] ?? 0);
+                                    },
+                                    0,
+                                );
 
-                                                                                            // Total Cash Advanced
-                                                                                            $totalCashAdvanced =
-                                                                                                $totalPerdiem +
-                                                                                                $totalTransport +
-                                                                                                $totalPenginapan +
-                                                                                                $totalLainnya;
-                                                                                        @endphp
-                                                                                        @if (!empty($detailPerdiem))
-                                                                                            @foreach ($detailPerdiem as $index => $perdiem)
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Start
-                                                                                                        Perdiem</label>
-                                                                                                    <input type="date"
-                                                                                                        name="start_bt_perdiem[]"
-                                                                                                        disabled
-                                                                                                        class="form-control start-perdiem"
-                                                                                                        value="{{ old('start_bt_perdiem.' . $index, $perdiem['start_date'] ?? '') }}">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">End
-                                                                                                        Perdiem</label>
-                                                                                                    <input type="date"
-                                                                                                        name="end_bt_perdiem[]"
-                                                                                                        class="form-control end-perdiem"
-                                                                                                        value="{{ old('end_bt_perdiem.' . $index, $perdiem['end_date'] ?? '') }}"
-                                                                                                        disabled>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="start">Total
-                                                                                                        Days</label>
-                                                                                                    <div
-                                                                                                        class="input-group">
-                                                                                                        <input
-                                                                                                            class="form-control bg-light total-days-perdiem"
-                                                                                                            id="total_days_bt_perdiem_{{ $index }}"
-                                                                                                            name="total_days_bt_perdiem[]"
-                                                                                                            type="text"
-                                                                                                            min="0"
-                                                                                                            value="{{ old('total_days_bt_perdiem.' . $index, $perdiem['total_days'] ?? '') }}"
-                                                                                                            readonly>
-                                                                                                        <div
-                                                                                                            class="input-group-append">
-                                                                                                            <span
-                                                                                                                class="input-group-text">days</span>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Location
-                                                                                                        Agency</label>
-                                                                                                    <select
-                                                                                                        class="form-control select2 location-select"
-                                                                                                        name="location_bt_perdiem[]"
-                                                                                                        disabled>
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            Select
-                                                                                                            location...
-                                                                                                        </option>
-                                                                                                        @foreach ($locations as $location)
-                                                                                                            <option
-                                                                                                                value="{{ $location->area }}"
-                                                                                                                {{ ($perdiem['location'] ?? '') == $location->area ? 'selected' : '' }}>
-                                                                                                                {{ $location->area . ' (' . $location->company_name . ')' }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                        <option
-                                                                                                            value="Others"
-                                                                                                            {{ ($perdiem['location'] ?? '') == 'Others' ? 'selected' : '' }}>
-                                                                                                            Others
-                                                                                                        </option>
-                                                                                                    </select>
-                                                                                                    <br>
-                                                                                                    <input type="text"
-                                                                                                        name="other_location_bt_perdiem[]"
-                                                                                                        class="form-control other-location"
-                                                                                                        placeholder="Other Location"
-                                                                                                        value="{{ old('other_location_bt_perdiem.' . $index, $perdiem['other_location'] ?? '') }}"
-                                                                                                        style="{{ ($perdiem['location'] ?? '') == 'Others' ? 'display:block;' : 'display:none;' }}">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Company
-                                                                                                        Code</label>
-                                                                                                    <select
-                                                                                                        class="form-control select2"
-                                                                                                        id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_perdiem[]"
-                                                                                                        disabled>
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            ---
-                                                                                                            Select
-                                                                                                            Company
-                                                                                                            ---
-                                                                                                        </option>
-                                                                                                        @foreach ($companies as $company)
-                                                                                                            <option
-                                                                                                                value="{{ $company->contribution_level_code }}"
-                                                                                                                {{ ($perdiem['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
-                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    </select>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Amount</label>
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    class="input-group mb-3">
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">Rp</span>
-                                                                                                    </div>
-                                                                                                    @php
-                                                                                                        // Format nominal value if available
-                                                                                                        $formattedNominal = isset(
-                                                                                                            $perdiem[
-                                                                                                                'nominal'
-                                                                                                            ],
-                                                                                                        )
-                                                                                                            ? number_format(
-                                                                                                                $perdiem[
-                                                                                                                    'nominal'
-                                                                                                                ],
-                                                                                                                0,
-                                                                                                                ',',
-                                                                                                                '.',
-                                                                                                            )
-                                                                                                            : '';
-                                                                                                    @endphp
-                                                                                                    <input
-                                                                                                        class="form-control"
-                                                                                                        name="nominal_bt_perdiem_1[]"
-                                                                                                        id="nominal_bt_perdiem_{{ $index }}"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominal) }}"
-                                                                                                        disabled>
-                                                                                                </div>
-                                                                                                <hr
-                                                                                                    class="border border-primary border-1 opacity-50">
-                                                                                            @endforeach
+                                $totalPenginapan = array_reduce(
+                                    $detailPenginapan,
+                                    function (
+                                        $carry,
+                                        $item,
+                                    ) {
+                                        return $carry +
+                                            (int) ($item[
+                                                'nominal'
+                                            ] ?? 0);
+                                    },
+                                    0,
+                                );
+
+                                $totalLainnya = array_reduce(
+                                    $detailLainnya,
+                                    function (
+                                        $carry,
+                                        $item,
+                                    ) {
+                                        return $carry +
+                                            (int) ($item[
+                                                'nominal'
+                                            ] ?? 0);
+                                    },
+                                    0,
+                                );
+
+                                // Total Cash Advanced
+                                $totalCashAdvanced =
+                                    $totalPerdiem +
+                                    $totalTransport +
+                                    $totalPenginapan +
+                                    $totalLainnya;
+                            @endphp
+                            <div id="additional-fields" class="row mb-3" style="display: none;">
+                                <div class="col-md-12">
+                                    <label for="ca" class="form-label">Cash Advanced</label>
+                                    <select class="form-select" id="ca" name="ca">
+                                        <option value="Tidak" {{ $n->ca == 'Tidak' ? 'selected' : '' }}>Tidak</option>
+                                        <option value="Ya" {{ $n->ca == 'Ya' ? 'selected' : '' }}>Ya</option>
+                                    </select>
+                                    <div class="row mt-2" id="ca_div" style="display: none;">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="text-bg-primary p-2"
+                                                        style="text-align:center; border-radius:4px;">Cash Advanced</div>
+                                                    <div class="row" id="ca_bt" style="">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive-sm">
+                                                                <div class="d-flex flex-column gap-2">
+                                                                    <div class="card">
+
+                                                                        <div id="perdiem-card" class="card-body"
+                                                                            style="display:">
+                                                                            <div class="accordion" id="accordionPerdiem">
+                                                                                <div class="accordion-item">
+                                                                                    <h2 class="accordion-header"
+                                                                                        id="enter-headingOne">
+                                                                                        <button
+                                                                                        @if (count($detailPerdiem) > 0)
+                                                                                            class="accordion-button @if($detailPerdiem[0]['start_date'] === NULL) collapsed @endif fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#enter-collapseOne"
+                                                                                            aria-expanded="@if($detailPerdiem[0]['start_date'] === NULL) true @else false @endif"
+                                                                                            aria-controls="enter-collapseOne"
                                                                                         @else
-                                                                                            <!-- Default empty fields if no data is available -->
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Start
-                                                                                                    Perdiem</label>
-                                                                                                <input type="date"
-                                                                                                    name="start_bt_perdiem[]"
-                                                                                                    class="form-control start-perdiem"
-                                                                                                    disabled>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">End
-                                                                                                    Perdiem</label>
-                                                                                                <input type="date"
-                                                                                                    name="end_bt_perdiem[]"
-                                                                                                    class="form-control end-perdiem"
-                                                                                                    disabled>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label class="form-label"
-                                                                                                    for="start">Total
-                                                                                                    Days</label>
-                                                                                                <div class="input-group">
-                                                                                                    <input
-                                                                                                        class="form-control bg-light total-days-perdiem"
-                                                                                                        id="total_days_bt_perdiem_0"
-                                                                                                        name="total_days_bt_perdiem[]"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        readonly>
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">days</span>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label class="form-label"
-                                                                                                    for="name">Location
-                                                                                                    Agency</label>
-                                                                                                <select
-                                                                                                    class="form-control select2 location-select"
-                                                                                                    name="location_bt_perdiem[]"
-                                                                                                    disabled>
-                                                                                                    <option value="">
-                                                                                                        Select
-                                                                                                        location...
-                                                                                                    </option>
-                                                                                                    @foreach ($locations as $location)
-                                                                                                        <option
-                                                                                                            value="{{ $location->area }}">
-                                                                                                            {{ $location->area . ' (' . $location->company_name . ')' }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                    <option value="Others">
-                                                                                                        Others
-                                                                                                    </option>
-                                                                                                </select>
-                                                                                                <br>
-
-                                                                                                <input type="text"
-                                                                                                    name="other_location_bt_perdiem[]"
-                                                                                                    class="form-control other-location"
-                                                                                                    placeholder="Other Location"
-                                                                                                    style="display:none;"
-                                                                                                    disabled>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label class="form-label"
-                                                                                                    for="name">Company
-                                                                                                    Code</label>
-                                                                                                <select
-                                                                                                    class="form-control select2"
-                                                                                                    id="companyFilter_0"
-                                                                                                    name="company_bt_perdiem[]"
-                                                                                                    disabled>
-                                                                                                    <option value="">
-                                                                                                        --- Select
-                                                                                                        Company ---
-                                                                                                    </option>
-                                                                                                    @foreach ($companies as $company)
-                                                                                                        <option
-                                                                                                            value="{{ $company->contribution_level_code }}">
-                                                                                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Amount</label>
-                                                                                            </div>
-                                                                                            <div class="input-group mb-3">
-                                                                                                <div
-                                                                                                    class="input-group-append">
-                                                                                                    <span
-                                                                                                        class="input-group-text">Rp</span>
-                                                                                                </div>
-                                                                                                <input class="form-control"
-                                                                                                    name="nominal_bt_perdiem[]"
-                                                                                                    id="nominal_bt_perdiem_0"
-                                                                                                    type="text"
-                                                                                                    min="0"
-                                                                                                    disabled>
-                                                                                            </div>
-                                                                                            <hr
-                                                                                                class="border border-primary border-1 opacity-50">
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#enter-collapseOne"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="enter-collapseOne"
                                                                                         @endif
-
-                                                                                        <div class="mb-2">
-                                                                                            <label class="form-label">Total
-                                                                                                Perdiem</label>
-                                                                                            <div class="input-group">
-                                                                                                <div
-                                                                                                    class="input-group-append">
-                                                                                                    <span
-                                                                                                        class="input-group-text">Rp</span>
-                                                                                                </div>
-                                                                                                @php
-                                                                                                    // Format totalPerdiem value if available
-                                                                                                    $formattedTotalPerdiem = number_format(
-                                                                                                        $totalPerdiem ??
-                                                                                                            0,
-                                                                                                        0,
-                                                                                                        ',',
-                                                                                                        '.',
-                                                                                                    );
-                                                                                                @endphp
-                                                                                                <input
-                                                                                                    class="form-control bg-light"
-                                                                                                    name="total_bt_perdiem_1[]"
-                                                                                                    id="total_bt_perdiem[]"
-                                                                                                    type="text"
-                                                                                                    min="0"
-                                                                                                    value="{{ $formattedTotalPerdiem ?? 0 }}"
-                                                                                                    readonly>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- Button and Card for Transport -->
-                                                                <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%" disabled
-                                                                        id="toggle-bt-transport-deklarasi"
-                                                                        class="btn btn-primary mt-3" data-state="false">
-                                                                        Transport</button>
-                                                                </div>
-                                                                <div id="transport-card" class="card-body"
-                                                                    style="display: none;">
-                                                                    <div class="accordion" id="accordionTransport">
-                                                                        <div class="accordion-item">
-                                                                            <h2 class="accordion-header"
-                                                                                id="headingTransport">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapseTransport"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapseTransport">
-                                                                                    Rencana Transport
-                                                                                </button>
-                                                                            </h2>
-                                                                            <div id="collapseTransport"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingTransport">
-                                                                                <div class="accordion-body">
-                                                                                    <div id="form-container-bt-transport-deklarasi">
-                                                                                        @php
-                                                                                            // Provide default empty array if detail_transport is not set
-                                                                                            $detailTransport =
-                                                                                                $caDetail[
-                                                                                                    'detail_transport'
-                                                                                                ] ?? [];
-
-                                                                                            // Calculate total transport cost with default values
-                                                                                            $totalTransport = array_reduce(
-                                                                                                $detailTransport,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-                                                                                        @endphp
-                                                                                        @if (!empty($detailTransport))
-                                                                                            @foreach ($detailTransport as $index => $transport)
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Tanggal
-                                                                                                        Transport</label>
-                                                                                                    <input type="date"
-                                                                                                        name="tanggal_bt_transport[]"
-                                                                                                        class="form-control"
-                                                                                                        placeholder="mm/dd/yyyy"
-                                                                                                        value="{{ old('tanggal_bt_transport.' . $index, $transport['tanggal'] ?? '') }}"
-                                                                                                        disabled>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Company
-                                                                                                        Code</label>
-                                                                                                    <select
-                                                                                                        class="form-control select2"
-                                                                                                        id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_transport[]"
-                                                                                                        disabled>
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            Select
-                                                                                                            Company...
-                                                                                                        </option>
-                                                                                                        @foreach ($companies as $company)
-                                                                                                            <option
-                                                                                                                value="{{ $company->contribution_level_code }}"
-                                                                                                                {{ ($transport['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
-                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    </select>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Keterangan</label>
-                                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
-                                                                                                        disabled>{{ old('keterangan_bt_transport.' . $index, $transport['keterangan'] ?? '') }}</textarea>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Amount</label>
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    class="input-group mb-3">
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">Rp</span>
-                                                                                                    </div>
-                                                                                                    @php
-                                                                                                        // Format the nominal value if available
-                                                                                                        $formattedNominalTransport = number_format(
-                                                                                                            old(
-                                                                                                                'nominal_bt_transport.' .
-                                                                                                                    $index,
-                                                                                                                $transport[
-                                                                                                                    'nominal'
-                                                                                                                ] ??
-                                                                                                                    '0',
-                                                                                                            ),
-                                                                                                            0,
-                                                                                                            ',',
-                                                                                                            '.',
-                                                                                                        );
-                                                                                                    @endphp
-                                                                                                    <input
-                                                                                                        class="form-control"
-                                                                                                        name="nominal_bt_transport_1[]"
-                                                                                                        id="nominal_bt_transport_{{ $index }}"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        value="{{ $formattedNominalTransport }}"
-                                                                                                        disabled>
-                                                                                                </div>
-
-                                                                                                <hr
-                                                                                                    class="border border-primary border-1 opacity-50">
-                                                                                            @endforeach
+                                                                                            >
+                                                                                            Perdiem Plan
+                                                                                        </button>
+                                                                                    </h2>
+                                                                                    <div id="enter-collapseOne"
+                                                                                        @if (count($detailPerdiem) > 0)
+                                                                                            class="accordion-collapse @if($detailPerdiem[0]['start_date'] === NULL) collapse @else show @endif"
                                                                                         @else
-                                                                                            <!-- Default empty fields if no data is available -->
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Tanggal
-                                                                                                    Transport</label>
-                                                                                                <input type="date"
-                                                                                                    name="tanggal_bt_transport[]"
-                                                                                                    class="form-control"
-                                                                                                    placeholder="mm/dd/yyyy"
-                                                                                                    disabled>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label class="form-label"
-                                                                                                    for="name">Company
-                                                                                                    Code</label>
-                                                                                                <select
-                                                                                                    class="form-control select2"
-                                                                                                    id="companyFilter_0"
-                                                                                                    name="company_bt_transport[]"
-                                                                                                    disabled>
-                                                                                                    <option value="">
-                                                                                                        Select
-                                                                                                        Company...
-                                                                                                    </option>
-                                                                                                    @foreach ($companies as $company)
-                                                                                                        <option
-                                                                                                            value="{{ $company->contribution_level_code }}">
-                                                                                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Keterangan</label>
-                                                                                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
-                                                                                                    disabled></textarea>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Amount</label>
-                                                                                            </div>
-                                                                                            <div class="input-group mb-3">
-                                                                                                <div
-                                                                                                    class="input-group-append">
-                                                                                                    <span
-                                                                                                        class="input-group-text">Rp</span>
-                                                                                                </div>
-                                                                                                <input class="form-control"
-                                                                                                    name="nominal_bt_transport_1[]"
-                                                                                                    id="nominal_bt_transport_0"
-                                                                                                    type="text"
-                                                                                                    min="0"
-                                                                                                    disabled>
-                                                                                            </div>
-
-                                                                                            <hr
-                                                                                                class="border border-primary border-1 opacity-50">
+                                                                                            class="accordion-collapse collapse"
                                                                                         @endif
-
-                                                                                        <div class="mb-2">
-                                                                                            <label class="form-label">Total
-                                                                                                Transport</label>
-                                                                                            <div class="input-group">
-                                                                                                <div
-                                                                                                    class="input-group-append">
-                                                                                                    <span
-                                                                                                        class="input-group-text">Rp</span>
-                                                                                                </div>
-                                                                                                @php
-                                                                                                    // Format the total transport value if available
-                                                                                                    $formattedTotalTransport = number_format(
-                                                                                                        $totalTransport ??
-                                                                                                            0,
-                                                                                                        0,
-                                                                                                        ',',
-                                                                                                        '.',
-                                                                                                    );
-                                                                                                @endphp
-                                                                                                <input
-                                                                                                    class="form-control bg-light"
-                                                                                                    name="total_bt_transport_1[]"
-                                                                                                    id="total_bt_transport[]"
-                                                                                                    type="text"
-                                                                                                    min="0"
-                                                                                                    value="{{ $formattedTotalTransport ?? 0 }}"
-                                                                                                    readonly>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- Button and Card for Penginapan -->
-                                                                <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%" disabled
-                                                                        id="toggle-bt-penginapan-deklarasi"
-                                                                        class="btn btn-primary mt-3" data-state="false">
-                                                                        Accommodation</button>
-                                                                </div>
-                                                                <div id="penginapan-card" class="card-body"
-                                                                    style="display: none;">
-                                                                    <div class="accordion" id="accordionPenginapan">
-                                                                        <div class="accordion-item">
-                                                                            <h2 class="accordion-header"
-                                                                                id="headingPenginapan">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapsePenginapan"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapsePenginapan">
-                                                                                    Rencana Penginapan
-                                                                                </button>
-                                                                            </h2>
-                                                                            <div id="collapsePenginapan"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingPenginapan">
-                                                                                <div class="accordion-body">
-                                                                                    <div id="form-container-bt-penginapan-deklarasi">
-                                                                                        @php
-                                                                                            // Default empty array if 'detail_penginapan' is not set
-                                                                                            $penginapan =
-                                                                                                $caDetail[
-                                                                                                    'detail_penginapan'
-                                                                                                ] ?? [];
-
-                                                                                            // Calculate total penginapan cost
-                                                                                            $totalPenginapanCost = array_reduce(
-                                                                                                $penginapan,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-                                                                                        @endphp
-
-                                                                                        <!-- Form for Penginapan Details -->
-                                                                                        <div
-                                                                                            id="form-container-bt-penginapan-deklarasi">
-                                                                                            @if (!empty($penginapan))
-                                                                                                @foreach ($penginapan as $index => $item)
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Start
-                                                                                                            Penginapan</label>
-                                                                                                        <input
-                                                                                                            type="date"
-                                                                                                            name="start_bt_penginapan[]"
-                                                                                                            class="form-control start-penginapan"
-                                                                                                            placeholder="mm/dd/yyyy"
-                                                                                                            value="{{ old('start_bt_penginapan.' . $index, $item['start_date'] ?? '') }}"
-                                                                                                            disabled>
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">End
-                                                                                                            Penginapan</label>
-                                                                                                        <input
-                                                                                                            type="date"
-                                                                                                            name="end_bt_penginapan[]"
-                                                                                                            class="form-control end-penginapan"
-                                                                                                            placeholder="mm/dd/yyyy"
-                                                                                                            value="{{ old('end_bt_penginapan.' . $index, $item['end_date'] ?? '') }}"
-                                                                                                            disabled>
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label"
-                                                                                                            for="start">Total
-                                                                                                            Days</label>
-                                                                                                        <div
-                                                                                                            class="input-group">
-                                                                                                            <input
-                                                                                                                class="form-control bg-light total-days-penginapan"
-                                                                                                                id="total_days_bt_penginapan_{{ $index }}"
-                                                                                                                name="total_days_bt_penginapan[]"
-                                                                                                                type="text"
-                                                                                                                min="0"
-                                                                                                                value="{{ old('total_days_bt_penginapan.' . $index, $item['total_days'] ?? '0') }}"
-                                                                                                                readonly>
-                                                                                                            <div
-                                                                                                                class="input-group-append">
-                                                                                                                <span
-                                                                                                                    class="input-group-text">days</span>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label"
-                                                                                                            for="name">Hotel
-                                                                                                            Name</label>
-                                                                                                        <input
-                                                                                                            type="text"
-                                                                                                            name="hotel_name_bt_penginapan[]"
-                                                                                                            class="form-control"
-                                                                                                            placeholder="ex: Westin"
-                                                                                                            value="{{ old('hotel_name_bt_penginapan.' . $index, $item['hotel_name'] ?? '') }}"
-                                                                                                            disabled>
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label"
-                                                                                                            for="name">Company
-                                                                                                            Code</label>
-                                                                                                        <select
-                                                                                                            class="form-control select2"
-                                                                                                            id="companyFilter_{{ $index }}"
-                                                                                                            name="company_bt_penginapan[]"
-                                                                                                            disabled>
-                                                                                                            <option
-                                                                                                                value="">
-                                                                                                                Select
-                                                                                                                Company...
-                                                                                                            </option>
-                                                                                                            @foreach ($companies as $company)
-                                                                                                                <option
-                                                                                                                    value="{{ $company->contribution_level_code }}"
-                                                                                                                    {{ ($item['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
-                                                                                                                    {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                                </option>
-                                                                                                            @endforeach
-                                                                                                        </select>
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Amount</label>
-                                                                                                    </div>
-                                                                                                    <div
-                                                                                                        class="input-group mb-3">
-                                                                                                        <div
-                                                                                                            class="input-group-append">
-                                                                                                            <span
-                                                                                                                class="input-group-text">Rp</span>
-                                                                                                        </div>
-                                                                                                        @php
-                                                                                                            // Format the nominal value for each item in the penginapan section
-                                                                                                            $formattedNominalPenginapan = number_format(
-                                                                                                                old(
-                                                                                                                    'nominal_bt_penginapan.' .
-                                                                                                                        $index,
-                                                                                                                    $item[
-                                                                                                                        'nominal'
-                                                                                                                    ] ??
-                                                                                                                        '0',
-                                                                                                                ),
-                                                                                                                0,
-                                                                                                                ',',
-                                                                                                                '.',
-                                                                                                            );
-                                                                                                        @endphp
-                                                                                                        <input
-                                                                                                            class="form-control"
-                                                                                                            name="nominal_bt_penginapan_1[]"
-                                                                                                            id="nominal_bt_penginapan_{{ $index }}"
-                                                                                                            type="text"
-                                                                                                            min="0"
-                                                                                                            value="{{ $formattedNominalPenginapan }}"
-                                                                                                            disabled>
-                                                                                                    </div>
-
-                                                                                                    <hr
-                                                                                                        class="border border-primary border-1 opacity-50">
-                                                                                                @endforeach
-                                                                                            @else
-                                                                                                <!-- Default empty fields if no data is available -->
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Start
-                                                                                                        Penginapan</label>
-                                                                                                    <input type="date"
-                                                                                                        name="start_bt_penginapan[]"
-                                                                                                        class="form-control start-penginapan"
-                                                                                                        placeholder="mm/dd/yyyy"
-                                                                                                        disabled>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">End
-                                                                                                        Penginapan</label>
-                                                                                                    <input type="date"
-                                                                                                        name="end_bt_penginapan[]"
-                                                                                                        class="form-control end-penginapan"
-                                                                                                        placeholder="mm/dd/yyyy"
-                                                                                                        disabled>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="start">Total
-                                                                                                        Days</label>
-                                                                                                    <div
-                                                                                                        class="input-group">
-                                                                                                        <input
-                                                                                                            class="form-control bg-light total-days-penginapan"
-                                                                                                            id="total_days_bt_penginapan_0"
-                                                                                                            name="total_days_bt_penginapan[]"
-                                                                                                            type="text"
-                                                                                                            min="0"
-                                                                                                            readonly>
-                                                                                                        <div
-                                                                                                            class="input-group-append">
-                                                                                                            <span
-                                                                                                                class="input-group-text">days</span>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Hotel
-                                                                                                        Name</label>
-                                                                                                    <input type="text"
-                                                                                                        name="hotel_name_bt_penginapan[]"
-                                                                                                        class="form-control"
-                                                                                                        placeholder="ex: Westin"
-                                                                                                        disabled>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Company
-                                                                                                        Code</label>
-                                                                                                    <select
-                                                                                                        class="form-control select2"
-                                                                                                        id="companyFilter_0"
-                                                                                                        name="company_bt_penginapan[]"
-                                                                                                        disabled>
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            Select
-                                                                                                            Company...
-                                                                                                        </option>
-                                                                                                        @foreach ($companies as $company)
-                                                                                                            <option
-                                                                                                                value="{{ $company->contribution_level_code }}">
-                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    </select>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Amount</label>
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    class="input-group mb-3">
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">Rp</span>
-                                                                                                    </div>
-                                                                                                    <input
-                                                                                                        class="form-control"
-                                                                                                        name="nominal_bt_penginapan[]"
-                                                                                                        id="nominal_bt_penginapan_0"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        disabled>
-                                                                                                </div>
-
-                                                                                                <hr
-                                                                                                    class="border border-primary border-1 opacity-50">
-                                                                                            @endif
-
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Total
-                                                                                                    Penginapan</label>
-                                                                                                <div class="input-group">
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">Rp</span>
-                                                                                                    </div>
-                                                                                                    @php
-                                                                                                        // Format the total penginapan cost
-                                                                                                        $formattedTotalPenginapanCost = number_format(
-                                                                                                            $totalPenginapanCost,
-                                                                                                            0,
-                                                                                                            ',',
-                                                                                                            '.',
-                                                                                                        );
-                                                                                                    @endphp
-                                                                                                    <input
-                                                                                                        class="form-control bg-light"
-                                                                                                        name="total_bt_penginapan_1[]"
-                                                                                                        id="total_bt_penginapan"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        value="{{ $formattedTotalPenginapanCost }}"
-                                                                                                        readonly>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-
-                                                                <!-- Button and Card for Lainnya -->
-                                                                <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%" disabled
-                                                                        id="toggle-bt-lainnya-deklarasi"
-                                                                        class="btn btn-primary mt-3" data-state="false">
-                                                                        Others</button>
-                                                                </div>
-                                                                <div id="lainnya-card" class="card-body"
-                                                                    style="display: none;">
-                                                                    <div class="accordion" id="accordionLainnya">
-                                                                        <div class="accordion-item">
-                                                                            <h2 class="accordion-header"
-                                                                                id="headingLainnya">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapseLainnya"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapseLainnya">
-                                                                                    Rencana Lainnya
-                                                                                </button>
-                                                                            </h2>
-                                                                            <div id="collapseLainnya"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingLainnya">
-                                                                                <div class="accordion-body">
-                                                                                    <div id="form-container-bt-lainnya-deklarasi">
-                                                                                        @php
-                                                                                            // Default empty array if 'detail_lainnya' is not set
-                                                                                            $lainnya =
-                                                                                                $caDetail[
-                                                                                                    'detail_lainnya'
-                                                                                                ] ?? [];
-
-                                                                                            // Calculate total lainnya cost
-                                                                                            $totalLainnyaCost = array_reduce(
-                                                                                                $lainnya,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-                                                                                        @endphp
-
-                                                                                        <div
-                                                                                            id="form-container-bt-lainnya-deklarasi">
-                                                                                            @if (!empty($lainnya))
-                                                                                                @foreach ($lainnya as $index => $lainnyaItem)
-                                                                                                    <div
-                                                                                                        class="lainnya-item">
+                                                                                        aria-labelledby="enter-headingOne">
+                                                                                        <div class="accordion-body">
+                                                                                            <div
+                                                                                                id="form-container-bt-perdiem">
+                                                                                                @if (!empty($detailPerdiem))
+                                                                                                    @foreach ($detailPerdiem as $index => $perdiem)
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Tanggal</label>
+                                                                                                                class="form-label">Start
+                                                                                                                Perdiem</label>
                                                                                                             <input
                                                                                                                 type="date"
-                                                                                                                name="tanggal_bt_lainnya[]"
-                                                                                                                class="form-control"
-                                                                                                                value="{{ old('tanggal_bt_lainnya.' . $index, $lainnyaItem['tanggal'] ?? '') }}"
-                                                                                                                placeholder="mm/dd/yyyy"
-                                                                                                                disabled>
+                                                                                                                name="start_bt_perdiem[]"
+                                                                                                                class="form-control start-perdiem"
+                                                                                                                value="{{ old('start_bt_perdiem.' . $index, $perdiem['start_date'] ?? '') }}">
                                                                                                         </div>
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
-                                                                                                                class="form-label">Keterangan</label>
-                                                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled>{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem['keterangan'] ?? '') }}</textarea>
+                                                                                                                class="form-label">End
+                                                                                                                Perdiem</label>
+                                                                                                            <input
+                                                                                                                type="date"
+                                                                                                                name="end_bt_perdiem[]"
+                                                                                                                class="form-control end-perdiem"
+                                                                                                                value="{{ old('end_bt_perdiem.' . $index, $perdiem['end_date'] ?? '') }}">
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label"
+                                                                                                                for="start">Total
+                                                                                                                Days</label>
+                                                                                                            <div
+                                                                                                                class="input-group">
+                                                                                                                <input
+                                                                                                                    class="form-control bg-light total-days-perdiem"
+                                                                                                                    id="total_days_bt_perdiem_{{ $index }}"
+                                                                                                                    name="total_days_bt_perdiem[]"
+                                                                                                                    type="text"
+                                                                                                                    min="0"
+                                                                                                                    value="{{ old('total_days_bt_perdiem.' . $index, $perdiem['total_days'] ?? '') }}"
+                                                                                                                    readonly>
+                                                                                                                <div
+                                                                                                                    class="input-group-append">
+                                                                                                                    <span
+                                                                                                                        class="input-group-text">days</span>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label"
+                                                                                                                for="name">Location
+                                                                                                                Agency</label>
+                                                                                                            <select
+                                                                                                                class="form-control location-select"
+                                                                                                                name="location_bt_perdiem[]">
+                                                                                                                <option
+                                                                                                                    value="">
+                                                                                                                    Select
+                                                                                                                    location...
+                                                                                                                </option>
+                                                                                                                @foreach ($locations as $location)
+                                                                                                                    <option
+                                                                                                                        value="{{ $location->area }}"
+                                                                                                                        {{ ($perdiem['location'] ?? '') == $location->area ? 'selected' : '' }}>
+                                                                                                                        {{ $location->area . ' (' . $location->company_name . ')' }}
+                                                                                                                    </option>
+                                                                                                                @endforeach
+                                                                                                                <option
+                                                                                                                    value="Others"
+                                                                                                                    {{ ($perdiem['location'] ?? '') == 'Others' ? 'selected' : '' }}>
+                                                                                                                    Others
+                                                                                                                </option>
+                                                                                                            </select>
+                                                                                                            <br>
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="other_location_bt_perdiem[]"
+                                                                                                                class="form-control other-location"
+                                                                                                                placeholder="Other Location"
+                                                                                                                value="{{ old('other_location_bt_perdiem.' . $index, $perdiem['other_location'] ?? '') }}"
+                                                                                                                style="{{ ($perdiem['location'] ?? '') == 'Others' ? 'display:block;' : 'display:none;' }}">
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label"
+                                                                                                                for="name">Company
+                                                                                                                Code</label>
+                                                                                                            <select
+                                                                                                                class="form-control select2"
+                                                                                                                id="companyFilter_{{ $index }}"
+                                                                                                                name="company_bt_perdiem[]">
+                                                                                                                <option
+                                                                                                                    value="">
+                                                                                                                    ---
+                                                                                                                    Select
+                                                                                                                    Company
+                                                                                                                    ---
+                                                                                                                </option>
+                                                                                                                @foreach ($companies as $company)
+                                                                                                                    <option
+                                                                                                                        value="{{ $company->contribution_level_code }}"
+                                                                                                                        {{ ($perdiem['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
+                                                                                                                        {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                                                                                    </option>
+                                                                                                                @endforeach
+                                                                                                            </select>
                                                                                                         </div>
                                                                                                         <div
                                                                                                             class="mb-2">
                                                                                                             <label
                                                                                                                 class="form-label">Amount</label>
-                                                                                                            <div
-                                                                                                                class="input-group mb-3">
-                                                                                                                <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
-                                                                                                                </div>
-                                                                                                                @php
-                                                                                                                    // Format the nominal value for 'lainnya' items
-                                                                                                                    $formattedNominalLainnya = number_format(
-                                                                                                                        old(
-                                                                                                                            'nominal_bt_lainnya.' .
-                                                                                                                                $index,
-                                                                                                                            $lainnyaItem[
-                                                                                                                                'nominal'
-                                                                                                                            ] ??
-                                                                                                                                '0',
-                                                                                                                        ),
-                                                                                                                        0,
-                                                                                                                        ',',
-                                                                                                                        '.',
-                                                                                                                    );
-                                                                                                                @endphp
-                                                                                                                <input
-                                                                                                                    class="form-control nominal-lainnya"
-                                                                                                                    name="nominal_bt_lainnya_1[]"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="{{ $formattedNominalLainnya }}"
-                                                                                                                    disabled>
-                                                                                                            </div>
                                                                                                         </div>
-                                                                                                        <hr
-                                                                                                            class="border border-primary border-1 opacity-50">
-                                                                                                    </div>
-                                                                                                @endforeach
-                                                                                            @else
-                                                                                                <div class="lainnya-item">
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Tanggal</label>
-                                                                                                        <input
-                                                                                                            type="date"
-                                                                                                            name="tanggal_bt_lainnya[]"
-                                                                                                            class="form-control"
-                                                                                                            placeholder="mm/dd/yyyy"
-                                                                                                            disabled>
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Keterangan</label>
-                                                                                                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled></textarea>
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Amount</label>
                                                                                                         <div
                                                                                                             class="input-group mb-3">
                                                                                                             <div
@@ -1141,820 +392,35 @@
                                                                                                                     class="input-group-text">Rp</span>
                                                                                                             </div>
                                                                                                             <input
-                                                                                                                class="form-control nominal-lainnya"
-                                                                                                                name="nominal_bt_lainnya[]"
+                                                                                                                class="form-control bg-light"
+                                                                                                                name="nominal_bt_perdiem[]"
+                                                                                                                id="nominal_bt_perdiem_{{ $index }}"
                                                                                                                 type="text"
                                                                                                                 min="0"
-                                                                                                                value="0"
-                                                                                                                disabled>
+                                                                                                                value="{{ old('nominal_bt_perdiem.' . $index, $perdiem['nominal'] ?? '') }}" readonly>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <hr
-                                                                                                        class="border border-primary border-1 opacity-50">
-                                                                                                </div>
-                                                                                            @endif
-
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Total
-                                                                                                    Lainnya</label>
-                                                                                                <div class="input-group">
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">Rp</span>
-                                                                                                    </div>
-                                                                                                    @php
-                                                                                                        $formattedTotalLainnya = number_format(
-                                                                                                            old(
-                                                                                                                'total_bt_lainnya.' .
-                                                                                                                    $index,
-                                                                                                                $lainnyaItem[
-                                                                                                                    'nominal'
-                                                                                                                ] ??
-                                                                                                                    '0',
-                                                                                                            ),
-                                                                                                            0,
-                                                                                                            ',',
-                                                                                                            '.',
-                                                                                                        );
-                                                                                                    @endphp
-                                                                                                    <input
-                                                                                                        class="form-control bg-light"
-                                                                                                        name="total_bt_lainnya_1[]"
-                                                                                                        id="total_bt_lainnya"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        value="{{ $formattedTotalLainnya }}"
-                                                                                                        readonly>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                {{-- </div> --}}
-                                                                {{-- </div> --}}
-                                                            </div>
-                                                        </div>
-                                                        <br>
-                                                        @php
-                                                            // Provide default empty arrays if any section is not set
-                                                            $detailPerdiem = $caDetail['detail_perdiem'] ?? [];
-                                                            $detailTransport = $caDetail['detail_transport'] ?? [];
-                                                            $detailPenginapan = $caDetail['detail_penginapan'] ?? [];
-                                                            $detailLainnya = $caDetail['detail_lainnya'] ?? [];
-
-                                                            // Calculate total costs for each section
-                                                            $totalPerdiem = array_reduce(
-                                                                $detailPerdiem,
-                                                                function ($carry, $item) {
-                                                                    return $carry + (int) ($item['nominal'] ?? 0);
-                                                                },
-                                                                0,
-                                                            );
-
-                                                            $totalTransport = array_reduce(
-                                                                $detailTransport,
-                                                                function ($carry, $item) {
-                                                                    return $carry + (int) ($item['nominal'] ?? 0);
-                                                                },
-                                                                0,
-                                                            );
-
-                                                            $totalPenginapan = array_reduce(
-                                                                $detailPenginapan,
-                                                                function ($carry, $item) {
-                                                                    return $carry + (int) ($item['nominal'] ?? 0);
-                                                                },
-                                                                0,
-                                                            );
-
-                                                            $totalLainnya = array_reduce(
-                                                                $detailLainnya,
-                                                                function ($carry, $item) {
-                                                                    return $carry + (int) ($item['nominal'] ?? 0);
-                                                                },
-                                                                0,
-                                                            );
-
-                                                            // Total Cash Advanced
-                                                            $totalCashAdvanced =
-                                                                $totalPerdiem +
-                                                                $totalTransport +
-                                                                $totalPenginapan +
-                                                                $totalLainnya;
-                                                                $formattedTotalCashAdvanced = number_format(
-                                                                $totalCashAdvanced,
-                                                                0,
-                                                                ',',
-                                                                '.',
-                                                            );
-                                                        @endphp
-                                                        <div class="col-md-12 mb-2">
-                                                            <label class="form-label">Total Cash Advanced</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">Rp</span>
-                                                                </div>
-                                                                <input class="form-control bg-light" name="totalca_1"
-                                                                    id="totalca" type="text" min="0"
-                                                                    value="{{ $formattedTotalCashAdvanced }}" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- 2ND FORM --}}
-                                <div class="col-md-6">
-                                    <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-primary p-2"
-                                                style="text-align:center; border-radius:4px;">Cash Advanced Declaration
-                                            </div>
-                                            <div class="row" id="ca_bt" style="">
-                                                <div class="col-md-12">
-                                                    <div class="table-responsive-sm">
-                                                        <div class="d-flex flex-row gap-2">
-                                                            <div class="card">
-                                                                <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%" disabled
-                                                                        id="toggle-bt-perdiem-2"
-                                                                        class="btn btn-primary mt-3" data-state="false">
-                                                                        Perdiem</button>
-                                                                </div>
-                                                                <div id="perdiem-card-2" class="card-body"
-                                                                    style="display: none;">
-                                                                    <div class="accordion" id="accordionPerdiem">
-                                                                        <div class="accordion-item">
-                                                                            <h2 class="accordion-header"
-                                                                                id="enter-headingOne">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="collapse"
-                                                                                    data-bs-target="#enter-collapseOne"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="enter-collapseOne">
-                                                                                    Perdiem Plan
-                                                                                </button>
-                                                                            </h2>
-                                                                            <div id="enter-collapseOne"
-                                                                                class="accordion-collapse show"
-                                                                                aria-labelledby="enter-headingOne">
-                                                                                <div class="accordion-body">
-                                                                                    <div id="form-container-bt-perdiem">
-                                                                                        @php
-                                                                                            $detailPerdiem2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_perdiem'
-                                                                                                ] ?? [];
-                                                                                            $detailTransport2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_transport'
-                                                                                                ] ?? [];
-                                                                                            $detailPenginapan2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_penginapan'
-                                                                                                ] ?? [];
-                                                                                            $detailLainnya2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_lainnya'
-                                                                                                ] ?? [];
-                                                                                            $totalPerdiem2 = array_reduce(
-                                                                                                $detailPerdiem2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalTransport2 = array_reduce(
-                                                                                                $detailTransport2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalPenginapan2 = array_reduce(
-                                                                                                $detailPenginapan2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-
-                                                                                            $totalLainnya2 = array_reduce(
-                                                                                                $detailLainnya2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-                                                                                        @endphp
-                                                                                        @if (!empty($detailPerdiem2))
-                                                                                            @foreach ($detailPerdiem2 as $index => $perdiem2)
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Start
-                                                                                                        Perdiem</label>
-                                                                                                    <input type="date"
-                                                                                                        name="start_bt_perdiem[]"
-                                                                                                        class="form-control start-perdiem"
-                                                                                                        value="{{ old('start_bt_perdiem.' . $index, $perdiem2['start_date'] ?? '') }}">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">End
-                                                                                                        Perdiem</label>
-                                                                                                    <input type="date"
-                                                                                                        name="end_bt_perdiem[]"
-                                                                                                        class="form-control end-perdiem"
-                                                                                                        value="{{ old('end_bt_perdiem.' . $index, $perdiem2['end_date'] ?? '') }}">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="start">Total
-                                                                                                        Days</label>
-                                                                                                    <div
-                                                                                                        class="input-group">
-                                                                                                        <input
-                                                                                                            class="form-control bg-light total-days-perdiem"
-                                                                                                            id="total_days_bt_perdiem_{{ $index }}"
-                                                                                                            name="total_days_bt_perdiem[]"
-                                                                                                            type="text"
-                                                                                                            min="0"
-                                                                                                            value="{{ old('total_days_bt_perdiem.' . $index, $perdiem2['total_days'] ?? '') }}"
-                                                                                                            readonly>
-                                                                                                        <div
-                                                                                                            class="input-group-append">
-                                                                                                            <span
-                                                                                                                class="input-group-text">days</span>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Location
-                                                                                                        Agency</label>
-                                                                                                    <select
-                                                                                                        class="form-control select2 location-select"
-                                                                                                        name="location_bt_perdiem[]">
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            Select
-                                                                                                            location...
-                                                                                                        </option>
-                                                                                                        @foreach ($locations as $location)
-                                                                                                            <option
-                                                                                                                value="{{ $location->area }}"
-                                                                                                                {{ ($perdiem['location'] ?? '') == $location->area ? 'selected' : '' }}>
-                                                                                                                {{ $location->area . ' (' . $location->company_name . ')' }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                        <option
-                                                                                                            value="Others"
-                                                                                                            {{ ($perdiem2['location'] ?? '') == 'Others' ? 'selected' : '' }}>
-                                                                                                            Others
-                                                                                                        </option>
-                                                                                                    </select>
-                                                                                                    <br>
-                                                                                                    <input type="text"
-                                                                                                        name="other_location_bt_perdiem[]"
-                                                                                                        class="form-control other-location"
-                                                                                                        placeholder="Other Location"
-                                                                                                        value="{{ old('other_location_bt_perdiem.' . $index, $perdiem2['other_location'] ?? '') }}"
-                                                                                                        style="{{ ($perdiem2['location'] ?? '') == 'Others' ? 'display:block;' : 'display:none;' }}">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Company
-                                                                                                        Code</label>
-                                                                                                    <select
-                                                                                                        class="form-control select2"
-                                                                                                        id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_perdiem[]">
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            ---
-                                                                                                            Select
-                                                                                                            Company
-                                                                                                            ---
-                                                                                                        </option>
-                                                                                                        @foreach ($companies as $company)
-                                                                                                            <option
-                                                                                                                value="{{ $company->contribution_level_code }}"
-                                                                                                                {{ ($perdiem2['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
-                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    </select>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Amount</label>
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    class="input-group mb-3">
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">Rp</span>
-                                                                                                    </div>
-                                                                                                    @php
-                                                                                                        // Format nominal value if available
-                                                                                                        $formattedNominal2 = isset(
-                                                                                                            $perdiem2[
-                                                                                                                'nominal'
-                                                                                                            ],
-                                                                                                        )
-                                                                                                            ? number_format(
-                                                                                                                $perdiem2[
-                                                                                                                    'nominal'
-                                                                                                                ],
-                                                                                                                0,
-                                                                                                                ',',
-                                                                                                                '.',
-                                                                                                            )
-                                                                                                            : '';
-                                                                                                    @endphp
-                                                                                                    <input
-                                                                                                        class="form-control"
-                                                                                                        name="nominal_bt_perdiem[]"
-                                                                                                        id="nominal_bt_perdiem_{{ $index }}"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominal2) }}">
-                                                                                                </div>
-                                                                                                <hr
-                                                                                                    class="border border-primary border-1 opacity-50">
-                                                                                            @endforeach
-                                                                                        @else
-                                                                                            <!-- Default empty fields if no data is available -->
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Start
-                                                                                                    Perdiem</label>
-                                                                                                <input type="date"
-                                                                                                    name="start_bt_perdiem[]"
-                                                                                                    class="form-control start-perdiem">
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">End
-                                                                                                    Perdiem</label>
-                                                                                                <input type="date"
-                                                                                                    name="end_bt_perdiem[]"
-                                                                                                    class="form-control end-perdiem">
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label class="form-label"
-                                                                                                    for="start">Total
-                                                                                                    Days</label>
-                                                                                                <div class="input-group">
-                                                                                                    <input
-                                                                                                        class="form-control bg-light total-days-perdiem"
-                                                                                                        id="total_days_bt_perdiem_0"
-                                                                                                        name="total_days_bt_perdiem[]"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        readonly>
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">days</span>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label class="form-label"
-                                                                                                    for="name">Location
-                                                                                                    Agency</label>
-                                                                                                <select
-                                                                                                    class="form-control select2 location-select"
-                                                                                                    name="location_bt_perdiem[]">
-                                                                                                    <option value="">
-                                                                                                        Select
-                                                                                                        location...
-                                                                                                    </option>
-                                                                                                    @foreach ($locations as $location)
-                                                                                                        <option
-                                                                                                            value="{{ $location->area }}">
-                                                                                                            {{ $location->area . ' (' . $location->company_name . ')' }}
-                                                                                                        </option>
+                                                                                                        <hr
+                                                                                                            class="border border-primary border-1 opacity-50">
                                                                                                     @endforeach
-                                                                                                    <option value="Others">
-                                                                                                        Others
-                                                                                                    </option>
-                                                                                                </select>
-                                                                                                <br>
-                                                                                                <input type="text"
-                                                                                                    name="other_location_bt_perdiem[]"
-                                                                                                    class="form-control other-location"
-                                                                                                    placeholder="Other Location"
-                                                                                                    style="display:none;">
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label class="form-label"
-                                                                                                    for="name">Company
-                                                                                                    Code</label>
-                                                                                                <select
-                                                                                                    class="form-control select2"
-                                                                                                    id="companyFilter_0"
-                                                                                                    name="company_bt_perdiem[]">
-                                                                                                    <option value="">
-                                                                                                        --- Select
-                                                                                                        Company ---
-                                                                                                    </option>
-                                                                                                    @foreach ($companies as $company)
-                                                                                                        <option
-                                                                                                            value="{{ $company->contribution_level_code }}">
-                                                                                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Amount</label>
-                                                                                            </div>
-                                                                                            <div class="input-group mb-3">
-                                                                                                <div
-                                                                                                    class="input-group-append">
-                                                                                                    <span
-                                                                                                        class="input-group-text">Rp</span>
-                                                                                                </div>
-                                                                                                <input class="form-control"
-                                                                                                    name="nominal_bt_perdiem[]"
-                                                                                                    id="nominal_bt_perdiem_0"
-                                                                                                    type="text"
-                                                                                                    min="0">
-                                                                                            </div>
-                                                                                            <hr
-                                                                                                class="border border-primary border-1 opacity-50">
-                                                                                        @endif
-
-                                                                                        <div class="mb-2">
-                                                                                            <label class="form-label">Total
-                                                                                                Perdiem</label>
-                                                                                            <div class="input-group">
-                                                                                                <div
-                                                                                                    class="input-group-append">
-                                                                                                    <span
-                                                                                                        class="input-group-text">Rp</span>
-                                                                                                </div>
-                                                                                                @php
-                                                                                                    // Format totalPerdiem value if available
-                                                                                                    $formattedTotalPerdiem2 = number_format(
-                                                                                                        $totalPerdiem2 ??
-                                                                                                            0,
-                                                                                                        0,
-                                                                                                        ',',
-                                                                                                        '.',
-                                                                                                    );
-                                                                                                @endphp
-                                                                                                <input
-                                                                                                    class="form-control bg-light"
-                                                                                                    name="total_bt_perdiem[]"
-                                                                                                    id="total_bt_perdiem[]"
-                                                                                                    type="text"
-                                                                                                    min="0"
-                                                                                                    value="{{ $formattedTotalPerdiem2 ?? 0 }}"
-                                                                                                    readonly>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-
-                                                                                    <button type="button"
-                                                                                        id="add-more-bt-perdiem"
-                                                                                        class="btn btn-primary mt-3">Add
-                                                                                        More</button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- Button and Card for Transport -->
-                                                                <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%" disabled
-                                                                        id="toggle-bt-transport-2"
-                                                                        class="btn btn-primary mt-3" data-state="false">
-                                                                        Transport</button>
-                                                                </div>
-                                                                <div id="transport-card-2" class="card-body"
-                                                                    style="display: none;">
-                                                                    <div class="accordion" id="accordionTransport">
-                                                                        <div class="accordion-item">
-                                                                            <h2 class="accordion-header"
-                                                                                id="headingTransport">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapseTransport"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapseTransport">
-                                                                                    Rencana Transport
-                                                                                </button>
-                                                                            </h2>
-                                                                            <div id="collapseTransport"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingTransport">
-                                                                                <div class="accordion-body">
-                                                                                    <div id="form-container-bt-transport">
-                                                                                        @php
-                                                                                            // Provide default empty array if detail_transport is not set
-                                                                                            $detailTransport2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_transport'
-                                                                                                ] ?? [];
-
-                                                                                            // Calculate total transport cost with default values
-                                                                                            $totalTransport2 = array_reduce(
-                                                                                                $detailTransport2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-                                                                                        @endphp
-                                                                                        @if (!empty($detailTransport2))
-                                                                                            @foreach ($detailTransport2 as $index => $transport2)
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Tanggal
-                                                                                                        Transport</label>
-                                                                                                    <input type="date"
-                                                                                                        name="tanggal_bt_transport[]"
-                                                                                                        class="form-control"
-                                                                                                        placeholder="mm/dd/yyyy"
-                                                                                                        value="{{ old('tanggal_bt_transport.' . $index, $transport2['tanggal'] ?? '') }}">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Company
-                                                                                                        Code</label>
-                                                                                                    <select
-                                                                                                        class="form-control select2"
-                                                                                                        id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_transport[]">
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            Select
-                                                                                                            Company...
-                                                                                                        </option>
-                                                                                                        @foreach ($companies as $company)
-                                                                                                            <option
-                                                                                                                value="{{ $company->contribution_level_code }}"
-                                                                                                                {{ ($transport['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
-                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    </select>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Keterangan</label>
-                                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here...">{{ old('keterangan_bt_transport.' . $index, $transport2['keterangan'] ?? '') }}</textarea>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Amount</label>
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    class="input-group mb-3">
-                                                                                                    <div
-                                                                                                        class="input-group-append">
-                                                                                                        <span
-                                                                                                            class="input-group-text">Rp</span>
-                                                                                                    </div>
-                                                                                                    <input
-                                                                                                        class="form-control"
-                                                                                                        name="nominal_bt_transport[]"
-                                                                                                        id="nominal_bt_transport_{{ $index }}"
-                                                                                                        type="text"
-                                                                                                        min="0"
-                                                                                                        value="{{ old('nominal_bt_transport.' . $index, $transport2['nominal'] ?? '0') }}">
-                                                                                                </div>
-
-                                                                                                <hr
-                                                                                                    class="border border-primary border-1 opacity-50">
-                                                                                            @endforeach
-                                                                                        @else
-                                                                                            <!-- Default empty fields if no data is available -->
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Tanggal
-                                                                                                    Transport</label>
-                                                                                                <input type="date"
-                                                                                                    name="tanggal_bt_transport[]"
-                                                                                                    class="form-control"
-                                                                                                    placeholder="mm/dd/yyyy">
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label class="form-label"
-                                                                                                    for="name">Company
-                                                                                                    Code</label>
-                                                                                                <select
-                                                                                                    class="form-control select2"
-                                                                                                    id="companyFilter_0"
-                                                                                                    name="company_bt_transport[]">
-                                                                                                    <option value="">
-                                                                                                        Select
-                                                                                                        Company...
-                                                                                                    </option>
-                                                                                                    @foreach ($companies as $company)
-                                                                                                        <option
-                                                                                                            value="{{ $company->contribution_level_code }}">
-                                                                                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Keterangan</label>
-                                                                                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."></textarea>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">Amount</label>
-                                                                                            </div>
-                                                                                            <div class="input-group mb-3">
-                                                                                                <div
-                                                                                                    class="input-group-append">
-                                                                                                    <span
-                                                                                                        class="input-group-text">Rp</span>
-                                                                                                </div>
-                                                                                                <input class="form-control"
-                                                                                                    name="nominal_bt_transport[]"
-                                                                                                    id="nominal_bt_transport_0"
-                                                                                                    type="text"
-                                                                                                    min="0">
-                                                                                            </div>
-
-                                                                                            <hr
-                                                                                                class="border border-primary border-1 opacity-50">
-                                                                                        @endif
-
-                                                                                        <div class="mb-2">
-                                                                                            <label class="form-label">Total
-                                                                                                Transport</label>
-                                                                                            <div class="input-group">
-                                                                                                <div
-                                                                                                    class="input-group-append">
-                                                                                                    <span
-                                                                                                        class="input-group-text">Rp</span>
-                                                                                                </div>
-                                                                                                @php
-                                                                                                    // Format totalPerdiem value if available
-                                                                                                    $formattedtotalTransport2 = number_format(
-                                                                                                        $totalTransport2 ??
-                                                                                                            0,
-                                                                                                        0,
-                                                                                                        ',',
-                                                                                                        '.',
-                                                                                                    );
-                                                                                                @endphp
-                                                                                                <input
-                                                                                                    class="form-control bg-light"
-                                                                                                    name="total_bt_transport[]"
-                                                                                                    id="total_bt_transport[]"
-                                                                                                    type="text"
-                                                                                                    min="0"
-                                                                                                    value="{{ $formattedtotalTransport2 ?? 0 }}"
-                                                                                                    readonly>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <button type="button"
-                                                                                        id="add-more-bt-transport"
-                                                                                        class="btn btn-primary mt-3">Add
-                                                                                        More</button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- Button and Card for Penginapan -->
-                                                                <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%" disabled
-                                                                        id="toggle-bt-penginapan-2"
-                                                                        class="btn btn-primary mt-3" data-state="false">
-                                                                        Accommodation</button>
-                                                                </div>
-                                                                <div id="penginapan-card-2" class="card-body"
-                                                                    style="display: none;">
-                                                                    <div class="accordion" id="accordionPenginapan">
-                                                                        <div class="accordion-item">
-                                                                            <h2 class="accordion-header"
-                                                                                id="headingPenginapan">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapsePenginapan"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapsePenginapan">
-                                                                                    Rencana Penginapan
-                                                                                </button>
-                                                                            </h2>
-                                                                            <div id="collapsePenginapan"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingPenginapan">
-                                                                                <div class="accordion-body">
-                                                                                    <div id="form-container-bt-penginapan">
-                                                                                        @php
-                                                                                            // Default empty array if 'detail_penginapan' is not set
-                                                                                            $penginapan2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_penginapan'
-                                                                                                ] ?? [];
-
-                                                                                            // Calculate total penginapan cost
-                                                                                            $totalPenginapanCost2 = array_reduce(
-                                                                                                $penginapan2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-                                                                                        @endphp
-
-                                                                                        <!-- Form for Penginapan Details -->
-                                                                                        <div
-                                                                                            id="form-container-bt-penginapan">
-                                                                                            @if (!empty($penginapan2))
-                                                                                                @foreach ($penginapan2 as $index => $item2)
+                                                                                                @else
+                                                                                                    <!-- Default empty fields if no data is available -->
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">Start
-                                                                                                            Penginapan</label>
+                                                                                                            Perdiem</label>
                                                                                                         <input
                                                                                                             type="date"
-                                                                                                            name="start_bt_penginapan[]"
-                                                                                                            class="form-control start-penginapan"
-                                                                                                            placeholder="mm/dd/yyyy"
-                                                                                                            value="{{ old('start_bt_penginapan.' . $index, $item2['start_date'] ?? '') }}">
+                                                                                                            name="start_bt_perdiem[]"
+                                                                                                            class="form-control start-perdiem">
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">End
-                                                                                                            Penginapan</label>
+                                                                                                            Perdiem</label>
                                                                                                         <input
                                                                                                             type="date"
-                                                                                                            name="end_bt_penginapan[]"
-                                                                                                            class="form-control end-penginapan"
-                                                                                                            placeholder="mm/dd/yyyy"
-                                                                                                            value="{{ old('end_bt_penginapan.' . $index, $item2['end_date'] ?? '') }}">
+                                                                                                            name="end_bt_perdiem[]"
+                                                                                                            class="form-control end-perdiem">
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -1964,12 +430,11 @@
                                                                                                         <div
                                                                                                             class="input-group">
                                                                                                             <input
-                                                                                                                class="form-control bg-light total-days-penginapan"
-                                                                                                                id="total_days_bt_penginapan_{{ $index }}"
-                                                                                                                name="total_days_bt_penginapan[]"
+                                                                                                                class="form-control bg-light total-days-perdiem"
+                                                                                                                id="total_days_bt_perdiem_0"
+                                                                                                                name="total_days_bt_perdiem[]"
                                                                                                                 type="text"
                                                                                                                 min="0"
-                                                                                                                value="{{ old('total_days_bt_penginapan.' . $index, $item2['total_days'] ?? '0') }}"
                                                                                                                 readonly>
                                                                                                             <div
                                                                                                                 class="input-group-append">
@@ -1981,14 +446,34 @@
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label"
-                                                                                                            for="name">Hotel
-                                                                                                            Name</label>
+                                                                                                            for="name">Location
+                                                                                                            Agency</label>
+                                                                                                        <select
+                                                                                                            class="form-control select2 location-select"
+                                                                                                            name="location_bt_perdiem[]">
+                                                                                                            <option
+                                                                                                                value="">
+                                                                                                                Select
+                                                                                                                location...
+                                                                                                            </option>
+                                                                                                            @foreach ($locations as $location)
+                                                                                                                <option
+                                                                                                                    value="{{ $location->area }}">
+                                                                                                                    {{ $location->area . ' (' . $location->company_name . ')' }}
+                                                                                                                </option>
+                                                                                                            @endforeach
+                                                                                                            <option
+                                                                                                                value="Others">
+                                                                                                                Others
+                                                                                                            </option>
+                                                                                                        </select>
+                                                                                                        <br>
                                                                                                         <input
                                                                                                             type="text"
-                                                                                                            name="hotel_name_bt_penginapan[]"
-                                                                                                            class="form-control"
-                                                                                                            placeholder="ex: Westin"
-                                                                                                            value="{{ old('hotel_name_bt_penginapan.' . $index, $item2['hotel_name'] ?? '') }}">
+                                                                                                            name="other_location_bt_perdiem[]"
+                                                                                                            class="form-control other-location"
+                                                                                                            placeholder="Other Location"
+                                                                                                            style="display:none;">
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -1997,17 +482,16 @@
                                                                                                             Code</label>
                                                                                                         <select
                                                                                                             class="form-control select2"
-                                                                                                            id="companyFilter_{{ $index }}"
-                                                                                                            name="company_bt_penginapan[]">
+                                                                                                            id="companyFilter_0"
+                                                                                                            name="company_bt_perdiem[]">
                                                                                                             <option
                                                                                                                 value="">
-                                                                                                                Select
-                                                                                                                Company...
+                                                                                                                --- Select
+                                                                                                                Company ---
                                                                                                             </option>
                                                                                                             @foreach ($companies as $company)
                                                                                                                 <option
-                                                                                                                    value="{{ $company->contribution_level_code }}"
-                                                                                                                    {{ ($item['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
+                                                                                                                    value="{{ $company->contribution_level_code }}">
                                                                                                                     {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
                                                                                                                 </option>
                                                                                                             @endforeach
@@ -2025,320 +509,757 @@
                                                                                                                 class="input-group-text">Rp</span>
                                                                                                         </div>
                                                                                                         <input
-                                                                                                            class="form-control"
-                                                                                                            name="nominal_bt_penginapan[]"
-                                                                                                            id="nominal_bt_penginapan_{{ $index }}"
+                                                                                                            class="form-control bg-light"
+                                                                                                            name="nominal_bt_perdiem[]"
+                                                                                                            id="nominal_bt_perdiem_0"
                                                                                                             type="text"
-                                                                                                            min="0"
-                                                                                                            value="{{ old('nominal_bt_penginapan.' . $index, $item2['nominal'] ?? '0') }}">
+                                                                                                            min="0" readonly>
                                                                                                     </div>
-
                                                                                                     <hr
                                                                                                         class="border border-primary border-1 opacity-50">
-                                                                                                @endforeach
-                                                                                            @else
-                                                                                                <!-- Default empty fields if no data is available -->
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Start
-                                                                                                        Penginapan</label>
-                                                                                                    <input type="date"
-                                                                                                        name="start_bt_penginapan[]"
-                                                                                                        class="form-control start-penginapan"
-                                                                                                        placeholder="mm/dd/yyyy">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">End
-                                                                                                        Penginapan</label>
-                                                                                                    <input type="date"
-                                                                                                        name="end_bt_penginapan[]"
-                                                                                                        class="form-control end-penginapan"
-                                                                                                        placeholder="mm/dd/yyyy">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="start">Total
-                                                                                                        Days</label>
-                                                                                                    <div
-                                                                                                        class="input-group">
-                                                                                                        <input
-                                                                                                            class="form-control bg-light total-days-penginapan"
-                                                                                                            id="total_days_bt_penginapan_0"
-                                                                                                            name="total_days_bt_penginapan[]"
-                                                                                                            type="text"
-                                                                                                            min="0"
-                                                                                                            readonly>
-                                                                                                        <div
-                                                                                                            class="input-group-append">
-                                                                                                            <span
-                                                                                                                class="input-group-text">days</span>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Hotel
-                                                                                                        Name</label>
-                                                                                                    <input type="text"
-                                                                                                        name="hotel_name_bt_penginapan[]"
-                                                                                                        class="form-control"
-                                                                                                        placeholder="ex: Westin">
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label"
-                                                                                                        for="name">Company
-                                                                                                        Code</label>
-                                                                                                    <select
-                                                                                                        class="form-control select2"
-                                                                                                        id="companyFilter_0"
-                                                                                                        name="company_bt_penginapan[]">
-                                                                                                        <option
-                                                                                                            value="">
-                                                                                                            Select
-                                                                                                            Company...
-                                                                                                        </option>
-                                                                                                        @foreach ($companies as $company)
-                                                                                                            <option
-                                                                                                                value="{{ $company->contribution_level_code }}">
-                                                                                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    </select>
-                                                                                                </div>
-                                                                                                <div class="mb-2">
-                                                                                                    <label
-                                                                                                        class="form-label">Amount</label>
-                                                                                                </div>
+                                                                                                @endif
+                                                                                            </div>
+
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Total
+                                                                                                    Perdiem</label>
                                                                                                 <div
-                                                                                                    class="input-group mb-3">
+                                                                                                    class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
                                                                                                         <span
                                                                                                             class="input-group-text">Rp</span>
                                                                                                     </div>
                                                                                                     <input
-                                                                                                        class="form-control"
-                                                                                                        name="nominal_bt_penginapan[]"
-                                                                                                        id="nominal_bt_penginapan_0"
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_perdiem[]"
+                                                                                                        id="total_bt_perdiem[]"
                                                                                                         type="text"
-                                                                                                        min="0">
+                                                                                                        min="0"
+                                                                                                        value="{{ $totalPerdiem ?? 0 }}"
+                                                                                                        readonly>
                                                                                                 </div>
+                                                                                            </div>
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-perdiem"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
 
-                                                                                                <hr
-                                                                                                    class="border border-primary border-1 opacity-50">
-                                                                                            @endif
+                                                                        <div id="transport-card" class="card-body"
+                                                                            style="display:">
+                                                                            <div class="accordion"
+                                                                                id="accordionTransport">
+                                                                                <div class="accordion-item">
+                                                                                    <h2 class="accordion-header"
+                                                                                        id="headingTransport">
+                                                                                        <button
+                                                                                        @if (count($detailTransport) > 0)
+                                                                                            class="accordion-button @if($detailTransport[0]['tanggal'] === NULL) collapsed @endif fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseTransport"
+                                                                                            aria-expanded="@if($detailTransport[0]['tanggal'] === NULL) false @else true @endif"
+                                                                                            aria-controls="collapseTransport"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseTransport"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapseTransport"
+                                                                                        @endif
+                                                                                            >
+                                                                                            Transport Plan
+                                                                                        </button>
+                                                                                    </h2>
+                                                                                    <div id="collapseTransport"
+                                                                                        @if (count($detailTransport) > 0)
+                                                                                            class="accordion-collapse @if($detailTransport[0]['tanggal'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
+                                                                                        aria-labelledby="headingTransport">
+                                                                                        <div class="accordion-body">
+                                                                                            <div
+                                                                                                id="form-container-bt-transport">
+                                                                                                @php
+                                                                                                    // Provide default empty array if detail_transport is not set
+                                                                                                    $detailTransport =
+                                                                                                        $caDetail[
+                                                                                                            'detail_transport'
+                                                                                                        ] ?? [];
+
+                                                                                                    // Calculate total transport cost with default values
+                                                                                                    $totalTransport = array_reduce(
+                                                                                                        $detailTransport,
+                                                                                                        function (
+                                                                                                            $carry,
+                                                                                                            $item,
+                                                                                                        ) {
+                                                                                                            return $carry +
+                                                                                                                (int) ($item[
+                                                                                                                    'nominal'
+                                                                                                                ] ?? 0);
+                                                                                                        },
+                                                                                                        0,
+                                                                                                    );
+                                                                                                @endphp
+                                                                                                @if (!empty($detailTransport))
+                                                                                                    @foreach ($detailTransport as $index => $transport)
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label">
+                                                                                                                Transport Date</label>
+                                                                                                            <input
+                                                                                                                type="date"
+                                                                                                                name="tanggal_bt_transport[]"
+                                                                                                                class="form-control"
+                                                                                                                placeholder="mm/dd/yyyy"
+                                                                                                                value="{{ old('tanggal_bt_transport.' . $index, $transport['tanggal'] ?? '') }}">
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label"
+                                                                                                                for="name">Company
+                                                                                                                Code</label>
+                                                                                                            <select
+                                                                                                                class="form-control select2"
+                                                                                                                id="companyFilter_{{ $index }}"
+                                                                                                                name="company_bt_transport[]">
+                                                                                                                <option
+                                                                                                                    value="">
+                                                                                                                    Select
+                                                                                                                    Company...
+                                                                                                                </option>
+                                                                                                                @foreach ($companies as $company)
+                                                                                                                    <option
+                                                                                                                        value="{{ $company->contribution_level_code }}"
+                                                                                                                        {{ ($transport['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
+                                                                                                                        {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                                                                                    </option>
+                                                                                                                @endforeach
+                                                                                                            </select>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label">Information</label>
+                                                                                                            <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here...">{{ old('keterangan_bt_transport.' . $index, $transport['keterangan'] ?? '') }}</textarea>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label">Amount</label>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="input-group mb-3">
+                                                                                                            <div
+                                                                                                                class="input-group-append">
+                                                                                                                <span
+                                                                                                                    class="input-group-text">Rp</span>
+                                                                                                            </div>
+                                                                                                            <input
+                                                                                                                class="form-control"
+                                                                                                                name="nominal_bt_transport[]"
+                                                                                                                id="nominal_bt_transport_{{ $index }}"
+                                                                                                                type="text"
+                                                                                                                min="0"
+                                                                                                                value="{{ old('nominal_bt_transport.' . $index, $transport['nominal'] ?? '0') }}">
+                                                                                                        </div>
+
+                                                                                                        <hr
+                                                                                                            class="border border-primary border-1 opacity-50">
+                                                                                                    @endforeach
+                                                                                                @else
+                                                                                                    <!-- Default empty fields if no data is available -->
+                                                                                                    <div class="mb-2">
+                                                                                                        <label
+                                                                                                            class="form-label">
+                                                                                                            Transport Date</label>
+                                                                                                        <input
+                                                                                                            type="date"
+                                                                                                            name="tanggal_bt_transport[]"
+                                                                                                            class="form-control"
+                                                                                                            placeholder="mm/dd/yyyy">
+                                                                                                    </div>
+                                                                                                    <div class="mb-2">
+                                                                                                        <label
+                                                                                                            class="form-label"
+                                                                                                            for="name">Company
+                                                                                                            Code</label>
+                                                                                                        <select
+                                                                                                            class="form-control select2"
+                                                                                                            id="companyFilter_0"
+                                                                                                            name="company_bt_transport[]">
+                                                                                                            <option
+                                                                                                                value="">
+                                                                                                                Select
+                                                                                                                Company...
+                                                                                                            </option>
+                                                                                                            @foreach ($companies as $company)
+                                                                                                                <option
+                                                                                                                    value="{{ $company->contribution_level_code }}">
+                                                                                                                    {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                                                                                </option>
+                                                                                                            @endforeach
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="mb-2">
+                                                                                                        <label
+                                                                                                            class="form-label">Information</label>
+                                                                                                        <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."></textarea>
+                                                                                                    </div>
+                                                                                                    <div class="mb-2">
+                                                                                                        <label
+                                                                                                            class="form-label">Amount</label>
+                                                                                                    </div>
+                                                                                                    <div
+                                                                                                        class="input-group mb-3">
+                                                                                                        <div
+                                                                                                            class="input-group-append">
+                                                                                                            <span
+                                                                                                                class="input-group-text">Rp</span>
+                                                                                                        </div>
+                                                                                                        <input
+                                                                                                            class="form-control"
+                                                                                                            name="nominal_bt_transport[]"
+                                                                                                            id="nominal_bt_transport_0"
+                                                                                                            type="text"
+                                                                                                            min="0">
+                                                                                                    </div>
+
+                                                                                                    <hr
+                                                                                                        class="border border-primary border-1 opacity-50">
+                                                                                                @endif
+                                                                                            </div>
 
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
-                                                                                                    Penginapan</label>
-                                                                                                <div class="input-group">
+                                                                                                    Transport</label>
+                                                                                                <div
+                                                                                                    class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
                                                                                                         <span
                                                                                                             class="input-group-text">Rp</span>
                                                                                                     </div>
-                                                                                                    @php
-                                                                                                        // Format totalPerdiem value if available
-                                                                                                        $formattedtotalPenginapanCost2 = number_format(
-                                                                                                            $totalPenginapanCost2 ??
-                                                                                                                0,
-                                                                                                            0,
-                                                                                                            ',',
-                                                                                                            '.',
-                                                                                                        );
-                                                                                                    @endphp
+                                                                                                    <input
+                                                                                                        class="form-control bg-light"
+                                                                                                        name="total_bt_transport[]"
+                                                                                                        id="total_bt_transport[]"
+                                                                                                        type="text"
+                                                                                                        min="0"
+                                                                                                        value="{{ $totalTransport ?? 0 }}"
+                                                                                                        readonly>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-transport"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div id="penginapan-card" class="card-body"
+                                                                            style="display:">
+                                                                            <div class="accordion"
+                                                                                id="accordionPenginapan">
+                                                                                <div class="accordion-item">
+                                                                                    <h2 class="accordion-header"
+                                                                                        id="headingPenginapan">
+                                                                                        <button
+                                                                                        @if (count($detailPenginapan) > 0)
+                                                                                            class="accordion-button @if($detailPenginapan[0]['start_date'] === NULL) collapsed @endif fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapsePenginapan"
+                                                                                            aria-expanded="@if($detailPenginapan[0]['start_date'] === NULL) false @else true  @endif"
+                                                                                            aria-controls="collapsePenginapan"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapsePenginapan"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapsePenginapan"
+                                                                                        @endif
+                                                                                        >
+                                                                                            Accommodation Plan
+                                                                                        </button>
+                                                                                    </h2>
+                                                                                    <div id="collapsePenginapan"
+                                                                                        @if (count($detailPenginapan) > 0)
+                                                                                            class="accordion-collapse @if($detailPenginapan[0]['start_date'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
+                                                                                        aria-labelledby="headingPenginapan">
+                                                                                        <div class="accordion-body">
+                                                                                            <div
+                                                                                                id="form-container-bt-penginapan">
+                                                                                                @php
+                                                                                                    // Default empty array if 'detail_penginapan' is not set
+                                                                                                    $penginapan =
+                                                                                                        $caDetail[
+                                                                                                            'detail_penginapan'
+                                                                                                        ] ?? [];
+
+                                                                                                    // Calculate total penginapan cost
+                                                                                                    $totalPenginapanCost = array_reduce(
+                                                                                                        $penginapan,
+                                                                                                        function (
+                                                                                                            $carry,
+                                                                                                            $item,
+                                                                                                        ) {
+                                                                                                            return $carry +
+                                                                                                                (int) ($item[
+                                                                                                                    'nominal'
+                                                                                                                ] ?? 0);
+                                                                                                        },
+                                                                                                        0,
+                                                                                                    );
+                                                                                                @endphp
+
+                                                                                                <!-- Form for Penginapan Details -->
+                                                                                                <div
+                                                                                                    id="form-container-bt-penginapan">
+                                                                                                    @if (!empty($penginapan))
+                                                                                                        @foreach ($penginapan as $index => $item)
+                                                                                                            <div
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label">Accommodation Start
+                                                                                                                    Date</label>
+                                                                                                                <input
+                                                                                                                    type="date"
+                                                                                                                    name="start_bt_penginapan[]"
+                                                                                                                    class="form-control start-penginapan"
+                                                                                                                    placeholder="mm/dd/yyyy"
+                                                                                                                    value="{{ old('start_bt_penginapan.' . $index, $item['start_date'] ?? '') }}">
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label">Accommodation End
+                                                                                                                    Date</label>
+                                                                                                                <input
+                                                                                                                    type="date"
+                                                                                                                    name="end_bt_penginapan[]"
+                                                                                                                    class="form-control end-penginapan"
+                                                                                                                    placeholder="mm/dd/yyyy"
+                                                                                                                    value="{{ old('end_bt_penginapan.' . $index, $item['end_date'] ?? '') }}">
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label"
+                                                                                                                    for="start">Total
+                                                                                                                    Days</label>
+                                                                                                                <div
+                                                                                                                    class="input-group">
+                                                                                                                    <input
+                                                                                                                        class="form-control bg-light total-days-penginapan"
+                                                                                                                        id="total_days_bt_penginapan_{{ $index }}"
+                                                                                                                        name="total_days_bt_penginapan[]"
+                                                                                                                        type="text"
+                                                                                                                        min="0"
+                                                                                                                        value="{{ old('total_days_bt_penginapan.' . $index, $item['total_days'] ?? '0') }}"
+                                                                                                                        readonly>
+                                                                                                                    <div
+                                                                                                                        class="input-group-append">
+                                                                                                                        <span
+                                                                                                                            class="input-group-text">days</span>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label"
+                                                                                                                    for="name">Hotel
+                                                                                                                    Name</label>
+                                                                                                                <input
+                                                                                                                    type="text"
+                                                                                                                    name="hotel_name_bt_penginapan[]"
+                                                                                                                    class="form-control"
+                                                                                                                    placeholder="ex: Westin"
+                                                                                                                    value="{{ old('hotel_name_bt_penginapan.' . $index, $item['hotel_name'] ?? '') }}">
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label"
+                                                                                                                    for="name">Company
+                                                                                                                    Code</label>
+                                                                                                                <select
+                                                                                                                    class="form-control select2"
+                                                                                                                    id="companyFilter_{{ $index }}"
+                                                                                                                    name="company_bt_penginapan[]">
+                                                                                                                    <option
+                                                                                                                        value="">
+                                                                                                                        Select
+                                                                                                                        Company...
+                                                                                                                    </option>
+                                                                                                                    @foreach ($companies as $company)
+                                                                                                                        <option
+                                                                                                                            value="{{ $company->contribution_level_code }}"
+                                                                                                                            {{ ($item['company_code'] ?? '') == $company->contribution_level_code ? 'selected' : '' }}>
+                                                                                                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                                                                                        </option>
+                                                                                                                    @endforeach
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label">Amount</label>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="input-group mb-3">
+                                                                                                                <div
+                                                                                                                    class="input-group-append">
+                                                                                                                    <span
+                                                                                                                        class="input-group-text">Rp</span>
+                                                                                                                </div>
+                                                                                                                <input
+                                                                                                                    class="form-control"
+                                                                                                                    name="nominal_bt_penginapan[]"
+                                                                                                                    id="nominal_bt_penginapan_{{ $index }}"
+                                                                                                                    type="text"
+                                                                                                                    min="0"
+                                                                                                                    value="{{ old('nominal_bt_penginapan.' . $index, $item['nominal'] ?? '0') }}">
+                                                                                                            </div>
+
+                                                                                                            <hr
+                                                                                                                class="border border-primary border-1 opacity-50">
+                                                                                                        @endforeach
+                                                                                                    @else
+                                                                                                        <!-- Default empty fields if no data is available -->
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label">Accommodation
+                                                                                                                Start Date</label>
+                                                                                                            <input
+                                                                                                                type="date"
+                                                                                                                name="start_bt_penginapan[]"
+                                                                                                                class="form-control start-penginapan"
+                                                                                                                placeholder="mm/dd/yyyy">
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label">Accommodation End Date</label>
+                                                                                                            <input
+                                                                                                                type="date"
+                                                                                                                name="end_bt_penginapan[]"
+                                                                                                                class="form-control end-penginapan"
+                                                                                                                placeholder="mm/dd/yyyy">
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label"
+                                                                                                                for="start">Total
+                                                                                                                Days</label>
+                                                                                                            <div
+                                                                                                                class="input-group">
+                                                                                                                <input
+                                                                                                                    class="form-control bg-light total-days-penginapan"
+                                                                                                                    id="total_days_bt_penginapan_0"
+                                                                                                                    name="total_days_bt_penginapan[]"
+                                                                                                                    type="text"
+                                                                                                                    min="0"
+                                                                                                                    readonly>
+                                                                                                                <div
+                                                                                                                    class="input-group-append">
+                                                                                                                    <span
+                                                                                                                        class="input-group-text">days</span>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label"
+                                                                                                                for="name">Hotel
+                                                                                                                Name</label>
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="hotel_name_bt_penginapan[]"
+                                                                                                                class="form-control"
+                                                                                                                placeholder="ex: Westin">
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label"
+                                                                                                                for="name">Company
+                                                                                                                Code</label>
+                                                                                                            <select
+                                                                                                                class="form-control select2"
+                                                                                                                id="companyFilter_0"
+                                                                                                                name="company_bt_penginapan[]">
+                                                                                                                <option
+                                                                                                                    value="">
+                                                                                                                    Select
+                                                                                                                    Company...
+                                                                                                                </option>
+                                                                                                                @foreach ($companies as $company)
+                                                                                                                    <option
+                                                                                                                        value="{{ $company->contribution_level_code }}">
+                                                                                                                        {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                                                                                    </option>
+                                                                                                                @endforeach
+                                                                                                            </select>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="mb-2">
+                                                                                                            <label
+                                                                                                                class="form-label">Amount</label>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            class="input-group mb-3">
+                                                                                                            <div
+                                                                                                                class="input-group-append">
+                                                                                                                <span
+                                                                                                                    class="input-group-text">Rp</span>
+                                                                                                            </div>
+                                                                                                            <input
+                                                                                                                class="form-control"
+                                                                                                                name="nominal_bt_penginapan[]"
+                                                                                                                id="nominal_bt_penginapan_0"
+                                                                                                                type="text"
+                                                                                                                min="0">
+                                                                                                        </div>
+
+                                                                                                        <hr
+                                                                                                            class="border border-primary border-1 opacity-50">
+                                                                                                    @endif
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label
+                                                                                                    class="form-label">Accommodation Total</label>
+                                                                                                <div
+                                                                                                    class="input-group">
+                                                                                                    <div
+                                                                                                        class="input-group-append">
+                                                                                                        <span
+                                                                                                            class="input-group-text">Rp</span>
+                                                                                                    </div>
                                                                                                     <input
                                                                                                         class="form-control bg-light"
                                                                                                         name="total_bt_penginapan[]"
                                                                                                         id="total_bt_penginapan"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ $formattedtotalPenginapanCost2 }}"
+                                                                                                        value="{{ $totalPenginapanCost }}"
                                                                                                         readonly>
                                                                                                 </div>
                                                                                             </div>
+
+                                                                                            <button type="button"
+                                                                                                id="add-more-bt-penginapan"
+                                                                                                class="btn btn-primary mt-3">Add
+                                                                                                More</button>
                                                                                         </div>
-
-
-                                                                                        <button type="button"
-                                                                                            id="add-more-bt-penginapan"
-                                                                                            class="btn btn-primary mt-3">Add
-                                                                                            More</button>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
 
+                                                                        <div id="lainnya-card" class="card-body"
+                                                                            style="display:">
+                                                                            <div class="accordion" id="accordionLainnya">
+                                                                                <div class="accordion-item">
+                                                                                    <h2 class="accordion-header"
+                                                                                        id="headingLainnya">
+                                                                                        <button
+                                                                                        @if (count($detailLainnya) > 0)
+                                                                                            class="accordion-button @if($detailLainnya[0]['tanggal'] === NULL) collapsed @endif fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseLainnya"
+                                                                                            aria-expanded="@if($detailLainnya[0]['tanggal'] === NULL) false @else true @endif"
+                                                                                            aria-controls="collapseLainnya"
+                                                                                        @else
+                                                                                            class="accordion-button collapsed fw-medium"
+                                                                                            type="button"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseLainnya"
+                                                                                            aria-expanded="false"
+                                                                                            aria-controls="collapseLainnya"
+                                                                                        @endif
+                                                                                        >
+                                                                                            Others Plan
+                                                                                        </button>
+                                                                                    </h2>
+                                                                                    <div id="collapseLainnya"
+                                                                                        @if (count($detailLainnya) > 0)
+                                                                                            class="accordion-collapse @if($detailLainnya[0]['tanggal'] === NULL) collapse @else show @endif"
+                                                                                        @else
+                                                                                            class="accordion-collapse collapse"
+                                                                                        @endif
+                                                                                        aria-labelledby="headingLainnya">
+                                                                                        <div class="accordion-body">
+                                                                                            <div
+                                                                                                id="form-container-bt-lainnya">
+                                                                                                @php
+                                                                                                    // Default empty array if 'detail_lainnya' is not set
+                                                                                                    $lainnya =
+                                                                                                        $caDetail[
+                                                                                                            'detail_lainnya'
+                                                                                                        ] ?? [];
 
-                                                                <!-- Button and Card for Lainnya -->
-                                                                <div class="card-body text-center">
-                                                                    <button type="button" style="width: 60%" disabled
-                                                                        id="toggle-bt-lainnya-2"
-                                                                        class="btn btn-primary mt-3" data-state="false">
-                                                                        Others</button>
-                                                                </div>
-                                                                <div id="lainnya-card-2" class="card-body"
-                                                                    style="display: none;">
-                                                                    <div class="accordion" id="accordionLainnya">
-                                                                        <div class="accordion-item">
-                                                                            <h2 class="accordion-header"
-                                                                                id="headingLainnya">
-                                                                                <button class="accordion-button fw-medium"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="collapse"
-                                                                                    data-bs-target="#collapseLainnya"
-                                                                                    aria-expanded="true"
-                                                                                    aria-controls="collapseLainnya">
-                                                                                    Rencana Lainnya
-                                                                                </button>
-                                                                            </h2>
-                                                                            <div id="collapseLainnya"
-                                                                                class="accordion-collapse collapse show"
-                                                                                aria-labelledby="headingLainnya">
-                                                                                <div class="accordion-body">
-                                                                                    <div id="form-container-bt-lainnya">
-                                                                                        @php
-                                                                                            // Default empty array if 'detail_lainnya' is not set
-                                                                                            $lainnya2 =
-                                                                                                $declareCa[
-                                                                                                    'detail_lainnya'
-                                                                                                ] ?? [];
+                                                                                                    // Calculate total lainnya cost
+                                                                                                    $totalLainnyaCost = array_reduce(
+                                                                                                        $lainnya,
+                                                                                                        function (
+                                                                                                            $carry,
+                                                                                                            $item,
+                                                                                                        ) {
+                                                                                                            return $carry +
+                                                                                                                (int) ($item[
+                                                                                                                    'nominal'
+                                                                                                                ] ?? 0);
+                                                                                                        },
+                                                                                                        0,
+                                                                                                    );
+                                                                                                @endphp
 
-                                                                                            // Calculate total lainnya cost
-                                                                                            $totalLainnyaCost2 = array_reduce(
-                                                                                                $lainnya2,
-                                                                                                function (
-                                                                                                    $carry,
-                                                                                                    $item,
-                                                                                                ) {
-                                                                                                    return $carry +
-                                                                                                        (int) ($item[
-                                                                                                            'nominal'
-                                                                                                        ] ?? 0);
-                                                                                                },
-                                                                                                0,
-                                                                                            );
-                                                                                        @endphp
-
-                                                                                        <div
-                                                                                            id="form-container-bt-lainnya">
-                                                                                            @if (!empty($lainnya2))
-                                                                                                @foreach ($lainnya2 as $index => $lainnyaItem2)
-                                                                                                    <div
-                                                                                                        class="lainnya-item">
-                                                                                                        <div
-                                                                                                            class="mb-2">
-                                                                                                            <label
-                                                                                                                class="form-label">Tanggal</label>
-                                                                                                            <input
-                                                                                                                type="date"
-                                                                                                                name="tanggal_bt_lainnya[]"
-                                                                                                                class="form-control"
-                                                                                                                value="{{ old('tanggal_bt_lainnya.' . $index, $lainnyaItem2['tanggal'] ?? '') }}"
-                                                                                                                placeholder="mm/dd/yyyy">
-                                                                                                        </div>
-                                                                                                        <div
-                                                                                                            class="mb-2">
-                                                                                                            <label
-                                                                                                                class="form-label">Keterangan</label>
-                                                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ...">{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem2['keterangan'] ?? '') }}</textarea>
-                                                                                                        </div>
-                                                                                                        <div
-                                                                                                            class="mb-2">
-                                                                                                            <label
-                                                                                                                class="form-label">Amount</label>
+                                                                                                <div
+                                                                                                    id="form-container-bt-lainnya">
+                                                                                                    @if (!empty($lainnya))
+                                                                                                        @foreach ($lainnya as $index => $lainnyaItem)
                                                                                                             <div
-                                                                                                                class="input-group mb-3">
+                                                                                                                class="lainnya-item">
                                                                                                                 <div
-                                                                                                                    class="input-group-append">
-                                                                                                                    <span
-                                                                                                                        class="input-group-text">Rp</span>
+                                                                                                                    class="mb-2">
+                                                                                                                    <label
+                                                                                                                        class="form-label">Date</label>
+                                                                                                                    <input
+                                                                                                                        type="date"
+                                                                                                                        name="tanggal_bt_lainnya[]"
+                                                                                                                        class="form-control"
+                                                                                                                        value="{{ old('tanggal_bt_lainnya.' . $index, $lainnyaItem['tanggal'] ?? '') }}"
+                                                                                                                        placeholder="mm/dd/yyyy">
                                                                                                                 </div>
-                                                                                                                <input
-                                                                                                                    class="form-control nominal-lainnya"
-                                                                                                                    name="nominal_bt_lainnya[]"
-                                                                                                                    type="text"
-                                                                                                                    min="0"
-                                                                                                                    value="{{ old('nominal_bt_lainnya.' . $index, $lainnyaItem2['nominal'] ?? '0') }}">
+                                                                                                                <div
+                                                                                                                    class="mb-2">
+                                                                                                                    <label
+                                                                                                                        class="form-label">Information</label>
+                                                                                                                    <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ...">{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem['keterangan'] ?? '') }}</textarea>
+                                                                                                                </div>
+                                                                                                                <div
+                                                                                                                    class="mb-2">
+                                                                                                                    <label
+                                                                                                                        class="form-label">Amount</label>
+                                                                                                                    <div
+                                                                                                                        class="input-group mb-3">
+                                                                                                                        <div
+                                                                                                                            class="input-group-append">
+                                                                                                                            <span
+                                                                                                                                class="input-group-text">Rp</span>
+                                                                                                                        </div>
+                                                                                                                        <input
+                                                                                                                            class="form-control nominal-lainnya"
+                                                                                                                            name="nominal_bt_lainnya[]"
+                                                                                                                            type="text"
+                                                                                                                            min="0"
+                                                                                                                            value="{{ old('nominal_bt_lainnya.' . $index, $lainnyaItem['nominal'] ?? '0') }}">
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                <hr
+                                                                                                                    class="border border-primary border-1 opacity-50">
                                                                                                             </div>
-                                                                                                        </div>
-                                                                                                        <hr
-                                                                                                            class="border border-primary border-1 opacity-50">
-                                                                                                    </div>
-                                                                                                @endforeach
-                                                                                            @else
-                                                                                                <div class="lainnya-item">
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Tanggal</label>
-                                                                                                        <input
-                                                                                                            type="date"
-                                                                                                            name="tanggal_bt_lainnya[]"
-                                                                                                            class="form-control"
-                                                                                                            placeholder="mm/dd/yyyy">
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Keterangan</label>
-                                                                                                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."></textarea>
-                                                                                                    </div>
-                                                                                                    <div class="mb-2">
-                                                                                                        <label
-                                                                                                            class="form-label">Amount</label>
+                                                                                                        @endforeach
+                                                                                                    @else
                                                                                                         <div
-                                                                                                            class="input-group mb-3">
+                                                                                                            class="lainnya-item">
                                                                                                             <div
-                                                                                                                class="input-group-append">
-                                                                                                                <span
-                                                                                                                    class="input-group-text">Rp</span>
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label">Date</label>
+                                                                                                                <input
+                                                                                                                    type="date"
+                                                                                                                    name="tanggal_bt_lainnya[]"
+                                                                                                                    class="form-control"
+                                                                                                                    placeholder="mm/dd/yyyy">
                                                                                                             </div>
-                                                                                                            <input
-                                                                                                                class="form-control nominal-lainnya"
-                                                                                                                name="nominal_bt_lainnya[]"
-                                                                                                                type="text"
-                                                                                                                min="0"
-                                                                                                                value="0">
+                                                                                                            <div
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label">Information</label>
+                                                                                                                <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."></textarea>
+                                                                                                            </div>
+                                                                                                            <div
+                                                                                                                class="mb-2">
+                                                                                                                <label
+                                                                                                                    class="form-label">Amount</label>
+                                                                                                                <div
+                                                                                                                    class="input-group mb-3">
+                                                                                                                    <div
+                                                                                                                        class="input-group-append">
+                                                                                                                        <span
+                                                                                                                            class="input-group-text">Rp</span>
+                                                                                                                    </div>
+                                                                                                                    <input
+                                                                                                                        class="form-control nominal-lainnya"
+                                                                                                                        name="nominal_bt_lainnya[]"
+                                                                                                                        type="text"
+                                                                                                                        min="0"
+                                                                                                                        value="0">
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <hr
+                                                                                                                class="border border-primary border-1 opacity-50">
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <hr
-                                                                                                        class="border border-primary border-1 opacity-50">
+                                                                                                    @endif
                                                                                                 </div>
-                                                                                            @endif
-                                                                                            @php
-                                                                                                // Assuming $totalLainnya is available and holds the total value for 'lainnya'
-                                                                                                $totalLainnya2 =
-                                                                                                    $totalLainnya2 ?? 0; // Default to 0 if $totalLainnya is not set
-                                                                                                $formattedTotalLainnya2 = number_format(
-                                                                                                    $totalLainnya2,
-                                                                                                    0,
-                                                                                                    ',',
-                                                                                                    '.',
-                                                                                                );
-                                                                                            @endphp
+                                                                                            </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Total
                                                                                                     Lainnya</label>
-                                                                                                <div class="input-group">
+                                                                                                <div
+                                                                                                    class="input-group">
                                                                                                     <div
                                                                                                         class="input-group-append">
                                                                                                         <span
                                                                                                             class="input-group-text">Rp</span>
                                                                                                     </div>
+                                                                                                      @php
+                                                                                                       $index = $index ?? 0;
+                                                                                                        $totalLainnya =
+                                                                                                            $totalLainnya ??
+                                                                                                            0; // Default to 0 if $totalLainnya is not set
+                                                                                                        $formattedTotalLainnya = number_format(
+                                                                                                            $totalLainnya,
+                                                                                                            0,
+                                                                                                            ',',
+                                                                                                            '.',
+                                                                                                        );
+                                                                                                    @endphp
                                                                                                     <input
                                                                                                         class="form-control bg-light"
                                                                                                         name="total_bt_lainnya[]"
                                                                                                         id="total_bt_lainnya"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ old('total_bt_lainnya.' . $index, $formattedTotalLainnya2) }}"
+                                                                                                         value="{{ old('total_bt_lainnya.' . $index, $formattedTotalLainnya) }}"
                                                                                                         readonly>
                                                                                                 </div>
                                                                                             </div>
@@ -2348,176 +1269,1040 @@
                                                                                                 class="btn btn-primary mt-3">Add
                                                                                                 More</button>
                                                                                         </div>
-
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        {{-- </div> --}}
+                                                                        {{-- </div> --}}
                                                                     </div>
                                                                 </div>
-                                                                {{-- </div> --}}
-                                                                {{-- </div> --}}
-                                                            </div>
-                                                        </div>
-                                                        <br>
-                                                        @php
-                                                            // Provide default empty arrays if any section is not set
-                                                            $detailPerdiem = $caDetail['detail_perdiem'] ?? [];
-                                                            $detailTransport = $caDetail['detail_transport'] ?? [];
-                                                            $detailPenginapan = $caDetail['detail_penginapan'] ?? [];
-                                                            $detailLainnya = $caDetail['detail_lainnya'] ?? [];
+                                                                <br>
+                                                                @php
+                                                                    // Provide default empty arrays if any section is not set
+                                                                    $detailPerdiem = $caDetail['detail_perdiem'] ?? [];
+                                                                    $detailTransport =
+                                                                        $caDetail['detail_transport'] ?? [];
+                                                                    $detailPenginapan =
+                                                                        $caDetail['detail_penginapan'] ?? [];
+                                                                    $detailLainnya = $caDetail['detail_lainnya'] ?? [];
 
-                                                            // Calculate total costs for each section
-                                                            $totalPerdiem = array_reduce(
-                                                                $detailPerdiem,
-                                                                function ($carry, $item) {
-                                                                    return $carry + (int) ($item['nominal'] ?? 0);
-                                                                },
-                                                                0,
-                                                            );
+                                                                    // Calculate total costs for each section
+                                                                    $totalPerdiem = array_reduce(
+                                                                        $detailPerdiem,
+                                                                        function ($carry, $item) {
+                                                                            return $carry +
+                                                                                (int) ($item['nominal'] ?? 0);
+                                                                        },
+                                                                        0,
+                                                                    );
 
-                                                            $totalTransport = array_reduce(
-                                                                $detailTransport,
-                                                                function ($carry, $item) {
-                                                                    return $carry + (int) ($item['nominal'] ?? 0);
-                                                                },
-                                                                0,
-                                                            );
+                                                                    $totalTransport = array_reduce(
+                                                                        $detailTransport,
+                                                                        function ($carry, $item) {
+                                                                            return $carry +
+                                                                                (int) ($item['nominal'] ?? 0);
+                                                                        },
+                                                                        0,
+                                                                    );
 
-                                                            $totalPenginapan = array_reduce(
-                                                                $detailPenginapan,
-                                                                function ($carry, $item) {
-                                                                    return $carry + (int) ($item['nominal'] ?? 0);
-                                                                },
-                                                                0,
-                                                            );
+                                                                    $totalPenginapan = array_reduce(
+                                                                        $detailPenginapan,
+                                                                        function ($carry, $item) {
+                                                                            return $carry +
+                                                                                (int) ($item['nominal'] ?? 0);
+                                                                        },
+                                                                        0,
+                                                                    );
 
-                                                            $totalLainnya = array_reduce(
-                                                                $detailLainnya,
-                                                                function ($carry, $item) {
-                                                                    return $carry + (int) ($item['nominal'] ?? 0);
-                                                                },
-                                                                0,
-                                                            );
+                                                                    $totalLainnya = array_reduce(
+                                                                        $detailLainnya,
+                                                                        function ($carry, $item) {
+                                                                            return $carry +
+                                                                                (int) ($item['nominal'] ?? 0);
+                                                                        },
+                                                                        0,
+                                                                    );
 
-                                                            // Total Cash Advanced
-                                                            $totalCashAdvanced2 =
-                                                                $totalPerdiem2 +
-                                                                $totalTransport2 +
-                                                                $totalPenginapan2 +
-                                                                $totalLainnya2;
-                                                            $formattedTotalCashAdvanced2 = number_format(
-                                                                $totalCashAdvanced2,
-                                                                0,
-                                                                ',',
-                                                                '.',
-                                                            );
-                                                        @endphp
-                                                        <div class="col-md-12 mb-2">
-                                                            <label class="form-label">Total Cash Advanced</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-append">
-                                                                    <span class="input-group-text">Rp</span>
+                                                                    // Total Cash Advanced
+                                                                    $totalCashAdvanced =
+                                                                        $totalPerdiem +
+                                                                        $totalTransport +
+                                                                        $totalPenginapan +
+                                                                        $totalLainnya;
+                                                                @endphp
+                                                                <div class="col-md-12 mb-2">
+                                                                    <label class="form-label">Total Cash Advanced</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-append">
+                                                                            <span class="input-group-text">Rp</span>
+                                                                        </div>
+                                                                        <input class="form-control bg-light"
+                                                                            name="totalca" id="totalca" type="text"
+                                                                            min="0"
+                                                                            value="{{ $totalCashAdvanced }}" readonly>
+                                                                    </div>
                                                                 </div>
-                                                                <input class="form-control bg-light" name="totalca"
-                                                                    id="totalca" type="text" min="0"
-                                                                    value="{{ $formattedTotalCashAdvanced2 }}" readonly>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div class="col-md-12 mt-3">
+                                    <label for="tiket" class="form-label">Ticket</label>
+                                    <select class="form-select" id="tiket" name="tiket">
+                                        <option value="Tidak" {{ count($ticketData) == 0 ? 'selected' : '' }}>Tidak
+                                        </option>
+                                        <option value="Ya" {{ count($ticketData) > 0 ? 'selected' : '' }}>Ya
+                                        </option>
+                                    </select>
+
+                                    <div class="row mt-2" id="tiket_div"
+                                        style="display: {{ count($ticketData) > 0 ? 'block' : 'none' }};">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2" id="ticket_forms_container">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @php
+                                                            $ticket = $ticketData[$i - 1] ?? null;
+                                                        @endphp
+                                                        <div class="ticket-form" id="ticket-form-{{ $i }}"
+                                                            style="display: {{ $i === 1 || ($ticket && $i <= count($ticketData)) ? 'block' : 'none' }};">
+                                                            <div class="text-bg-primary p-2"
+                                                                style="text-align:center; border-radius:4px;">
+                                                                Ticket {{ $i }}
+                                                            </div>
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <div class="row mb-2">
+                                                                    <div class="col-md-4">
+                                                                        <label class="form-label">NIK</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control" name="noktp_tkt[]"
+                                                                                type="number"
+                                                                                value="{{ $ticket['noktp_tkt'] ?? '' }}"
+                                                                                placeholder="ex: 3521XXXXXXXXXXXX">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <label class="form-label">From</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                name="dari_tkt[]" type="text"
+                                                                                placeholder="ex. Yogyakarta (YIA)"
+                                                                                value="{{ $ticket['dari_tkt'] ?? '' }}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <label class="form-label">To</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                name="ke_tkt[]" type="text"
+                                                                                placeholder="ex. Jakarta (CGK)"
+                                                                                value="{{ $ticket['ke_tkt'] ?? '' }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-8">
+                                                                        <label class="form-label">Date</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                id="tgl_brkt_tkt_{{ $i }}"
+                                                                                name="tgl_brkt_tkt[]" type="date"
+                                                                                value="{{ $ticket['tgl_brkt_tkt'] ?? '' }}"
+                                                                                onchange="validateDates({{ $i }})">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <label class="form-label">Time</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                id="jam_brkt_tkt_{{ $i }}"
+                                                                                name="jam_brkt_tkt[]" type="time"
+                                                                                value="{{ $ticket['jam_brkt_tkt'] ?? '' }}"
+                                                                                onchange="validateDates({{ $i }})">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                    <div class="mb-2">
+                                                                        <label for="ket_tkt_{{ $i }}"
+                                                                            class="form-label">Information</label>
+                                                                        <textarea class="form-control" id="ket_tkt_{{ $i }}" name="ket_tkt[]" rows="3"
+                                                                            placeholder="This field is for editing ticket details, e.g., Citilink, Garuda Indonesia, etc.">{{ $ticket['ket_tkt'] ?? '' }}</textarea>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                    <div class="col-md-8 mb-2">
+                                                                        <label class="form-label"
+                                                                            for="jenis_tkt_{{ $i }}">Transportation
+                                                                            Type</label>
+                                                                        <div class="input-group">
+                                                                            <select class="form-select" name="jenis_tkt[]"
+                                                                                id="jenis_tkt_{{ $i }}">
+                                                                                <option value="">Select
+                                                                                    Transportation Type</option>
+                                                                                <option value="Train"
+                                                                                    {{ ($ticket['jenis_tkt'] ?? '') == 'Train' ? 'selected' : '' }}>
+                                                                                    Train</option>
+                                                                                <option value="Bus"
+                                                                                    {{ ($ticket['jenis_tkt'] ?? '') == 'Bus' ? 'selected' : '' }}>
+                                                                                    Bus</option>
+                                                                                <option value="Airplane"
+                                                                                    {{ ($ticket['jenis_tkt'] ?? '') == 'Airplane' ? 'selected' : '' }}>
+                                                                                    Airplane</option>
+                                                                                <option value="Car"
+                                                                                    {{ ($ticket['jenis_tkt'] ?? '') == 'Car' ? 'selected' : '' }}>
+                                                                                    Car</option>
+                                                                                <option value="Ferry"
+                                                                                    {{ ($ticket['jenis_tkt'] ?? '') == 'Ferry' ? 'selected' : '' }}>
+                                                                                    Ferry</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4 mb-2">
+                                                                        <label for="type_tkt_{{ $i }}"
+                                                                            class="form-label">Ticket Type</label>
+                                                                        <select class="form-select" name="type_tkt[]"
+                                                                            required>
+                                                                            <option value="One Way"
+                                                                                {{ ($ticket['type_tkt'] ?? '') == 'One Way' ? 'selected' : '' }}>
+                                                                                One Way</option>
+                                                                            <option value="Round Trip"
+                                                                                {{ ($ticket['type_tkt'] ?? '') == 'Round Trip' ? 'selected' : '' }}>
+                                                                                Round Trip</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                    <div class="round-trip-options"
+                                                                        style="display: {{ ($ticket['type_tkt'] ?? '') == 'Round Trip' ? 'block' : 'none' }};">
+                                                                        <div class="row mb-2">
+                                                                        <div class="col-md-8 mb-2">
+                                                                            <label class="form-label">Return
+                                                                                Date</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    name="tgl_plg_tkt[]" type="date"
+                                                                                    id="tgl_plg_tkt_{{ $i }}"
+                                                                                    value="{{ $ticket['tgl_plg_tkt'] ?? '' }}"
+                                                                                    onchange="validateDates({{ $i }})">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4 mb-2">
+                                                                            <label class="form-label">Return
+                                                                                Time</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    id="jam_plg_tkt_{{ $i }}"
+                                                                                    name="jam_plg_tkt[]" type="time"
+                                                                                    value="{{ $ticket['jam_plg_tkt'] ?? '' }}"
+                                                                                    onchange="validateDates({{ $i }})">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                    @if ($i < 5)
+                                                                        <div class="mt-3">
+                                                                            <label class="form-label">Add more
+                                                                                ticket</label>
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input"
+                                                                                    type="radio"
+                                                                                    id="more_tkt_no_{{ $i }}"
+                                                                                    name="more_tkt_{{ $i }}"
+                                                                                    value="Tidak"
+                                                                                    {{ ($ticket['more_tkt'] ?? 'Tidak') == 'Tidak' ? 'checked' : '' }}>
+                                                                                <label class="form-check-label"
+                                                                                    for="more_tkt_no_{{ $i }}">Tidak</label>
+                                                                            </div>
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input"
+                                                                                    type="radio"
+                                                                                    id="more_tkt_yes_{{ $i }}"
+                                                                                    name="more_tkt_{{ $i }}"
+                                                                                    value="Ya"
+                                                                                    {{ ($ticket['more_tkt'] ?? 'Tidak') == 'Ya' ? 'checked' : '' }}>
+                                                                                <label class="form-check-label"
+                                                                                    for="more_tkt_yes_{{ $i }}">Ya</label>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 mt-3">
+                                    <label for="hotel" class="form-label">Hotel</label>
+                                    <select class="form-select" id="hotel" name="hotel">
+                                        <option value="Tidak" {{ count($hotelData) == 0 ? 'selected' : '' }}>Tidak
+                                        </option>
+                                        <option value="Ya" {{ count($hotelData) > 0 ? 'selected' : '' }}>Ya
+                                        </option>
+                                    </select>
+
+                                    <div class="row mt-2" id="hotel_div"
+                                        style="display: {{ count($hotelData) > 0 ? 'block' : 'none' }};">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2" id="hotel_forms_container">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @php
+                                                            $hotel = $hotelData[$i - 1] ?? null;
+                                                        @endphp
+                                                        <div class="hotel-form" id="hotel-form-{{ $i }}"
+                                                            style="display: {{ $i === 1 || ($hotel && $i <= count($hotelData)) ? 'block' : 'none' }};">
+                                                            <div class="text-bg-primary p-2"
+                                                                style="text-align:center; border-radius:4px;">
+                                                                Hotel {{ $i }}
+                                                            </div>
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label class="form-label">Hotel Name</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                name="nama_htl[]" type="text"
+                                                                                value="{{ $hotel['nama_htl'] ?? '' }}"
+                                                                                placeholder="ex: Westin">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6 mb-2">
+                                                                        <label class="form-label">Hotel
+                                                                            Location</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                name="lokasi_htl[]" type="text"
+                                                                                value="{{ $hotel['lokasi_htl'] ?? '' }}"
+                                                                                placeholder="ex: Jakarta">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-9 mb-2">
+                                                                        <label class="form-label">Bed Size</label>
+                                                                        <select class="form-select" name="bed_htl[]"
+                                                                            required>
+                                                                            <option value="Single Bed"
+                                                                                {{ ($hotel['bed_htl'] ?? '') == 'Single Bed' ? 'selected' : '' }}>
+                                                                                Single Bed
+                                                                            </option>
+                                                                            <option value="Twin Bed"
+                                                                                {{ ($hotel['bed_htl'] ?? '') == 'Twin Bed' ? 'selected' : '' }}>
+                                                                                Twin Bed
+                                                                            </option>
+                                                                            <option value="King Bed"
+                                                                                {{ ($hotel['bed_htl'] ?? '') == 'King Bed' ? 'selected' : '' }}>
+                                                                                King Bed
+                                                                            </option>
+                                                                            <option value="Super King Bed"
+                                                                                {{ ($hotel['bed_htl'] ?? '') == 'Super King Bed' ? 'selected' : '' }}>
+                                                                                Super King Bed
+                                                                            </option>
+                                                                            <option value="Extra Bed"
+                                                                                {{ ($hotel['bed_htl'] ?? '') == 'Extra Bed' ? 'selected' : '' }}>
+                                                                                Extra Bed
+                                                                            </option>
+                                                                            <option value="Baby Cot"
+                                                                                {{ ($hotel['bed_htl'] ?? '') == 'Baby Cot' ? 'selected' : '' }}>
+                                                                                Baby Cot
+                                                                            </option>
+                                                                            <option value="Sofa Bed"
+                                                                                {{ ($hotel['bed_htl'] ?? '') == 'Sofa Bed' ? 'selected' : '' }}>
+                                                                                Sofa Bed
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-md-3 mb-2">
+                                                                        <label class="form-label">Total Room</label>
+                                                                        <div class="input-group">
+                                                                            <input class="form-control bg-white"
+                                                                                name="jmlkmr_htl[]" type="number"
+                                                                                min="1"
+                                                                                value="{{ $hotel['jmlkmr_htl'] ?? '' }}"
+                                                                                placeholder="ex: 1">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mb-2">
+                                                                    <div class="col-md-5 mb-2">
+                                                                        <label class="form-label">Check In Date</label>
+                                                                        <input type="date"
+                                                                            class="form-control datepicker check-in-date"
+                                                                            name="tgl_masuk_htl[]"
+                                                                            value="{{ $hotel['tgl_masuk_htl'] ?? '' }}"
+                                                                            data-index="{{ $i }}"
+                                                                            onchange="calculateTotalDays(this)">
+                                                                    </div>
+                                                                    <div class="col-md-5 mb-2">
+                                                                        <label class="form-label">Check Out
+                                                                            Date</label>
+                                                                        <input type="date"
+                                                                            class="form-control datepicker check-out-date"
+                                                                            name="tgl_keluar_htl[]"
+                                                                            value="{{ $hotel['tgl_keluar_htl'] ?? '' }}"
+                                                                            data-index="{{ $i }}"
+                                                                            onchange="calculateTotalDays(this)">
+                                                                    </div>
+                                                                    <div class="col-md-2 mb-2">
+                                                                        <label class="form-label">Total Days</label>
+                                                                        <input type="number"
+                                                                            class="form-control datepicker bg-light total-days"
+                                                                            name="total_hari[]"
+                                                                            value="{{ $hotel['total_hari'] ?? '' }}"
+                                                                            readonly>
+                                                                    </div>
+                                                                </div>
+                                                                    @if ($i < 5)
+                                                                        <div class="mt-3">
+                                                                            <label class="form-label">Add more
+                                                                                hotel</label>
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input"
+                                                                                    type="radio"
+                                                                                    id="more_htl_no_{{ $i }}"
+                                                                                    name="more_htl_{{ $i }}"
+                                                                                    value="Tidak"
+                                                                                    {{ ($hotel['more_htl'] ?? 'Tidak') == 'Tidak' ? 'checked' : '' }}>
+                                                                                <label class="form-check-label"
+                                                                                    for="more_htl_no_{{ $i }}">Tidak</label>
+                                                                            </div>
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input"
+                                                                                    type="radio"
+                                                                                    id="more_htl_yes_{{ $i }}"
+                                                                                    name="more_htl_{{ $i }}"
+                                                                                    value="Ya"
+                                                                                    {{ ($hotel['more_htl'] ?? 'Tidak') == 'Ya' ? 'checked' : '' }}>
+                                                                                <label class="form-check-label"
+                                                                                    for="more_htl_yes_{{ $i }}">Ya</label>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-3">
+                                    <label for="taksi" class="form-label">Taxi Voucher</label>
+                                    <select class="form-select" id="taksi" name="taksi">
+                                        <option value="Tidak" {{ $n->taksi === 'Tidak' ? 'selected' : '' }}>Tidak
+                                        </option>
+                                        <option value="Ya" {{ $n->taksi === 'Ya' ? 'selected' : '' }}>Ya</option>
+                                    </select>
+                                    <div class="row mt-2" id="taksi_div"
+                                        style="display: {{ $n->taksi === 'Ya' ? 'block' : 'none' }};">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="text-bg-primary p-2 r-3"
+                                                        style="text-align:center; border-radius:4px;">
+                                                        Taxi Voucher
+                                                    </div>
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="mb-2">
+                                                                <label class="form-label">How Much Ticket</label>
+                                                                <div class="input-group">
+                                                                    <input class="form-control" name="no_vt"
+                                                                        id="no_vt" type="number"
+                                                                        value="{{ $taksiData->no_vt ?? '' }}"
+                                                                        placeholder="0">
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <label class="form-label">Voucher Nominal</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Rp</span>
+                                                                    </div>
+                                                                    <input class="form-control" name="nominal_vt"
+                                                                        id="nominal_vt" type="text"
+                                                                        placeholder="ex. 12.000"
+                                                                        value="{{ $taksiData->nominal_vt ?? '' }}"
+                                                                        oninput="formatCurrency(this)">
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <label class="form-label">Voucher Keeper</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text">Rp</span>
+                                                                    </div>
+                                                                    <input class="form-control" name="keeper_vt"
+                                                                        id="keeper_vt" type="text"
+                                                                        placeholder="ex. 12.000"
+                                                                        value="{{ $taksiData->keeper_vt ?? '' }}"
+                                                                        oninput="formatCurrency(this)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="struk" class="form-label">Upload Proof</label>
-                                <input type="file" id="struk" name="struk" accept="image/*,application/pdf"
-                                    class="form-control">
-                            </div>
-                            <div class="text-end">
+                            <input type="hidden" name="status" value="Pending L1" id="status">
+                            <input type="hidden" name="id_ca" value="{{ $ca->id ?? 0 }}">
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                    id="save-draft">Save as Draft</button>
                                 <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
                             </div>
+
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
 
-@section('script')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+    <!-- JavaScript Part -->
     <script>
-        //CA JS
-        $(document).ready(function() {
-            function toggleCard2(buttonId, cardId, shouldOpen) {
-                var $button = $(buttonId);
-                var $card = $(cardId);
+        function formatCurrency(input) {
+            var cursorPos = input.selectionStart;
+            var value = input.value.replace(/[^\d]/g, ''); // Remove everything that is not a digit
+            var formattedValue = '';
 
-                if (shouldOpen === undefined) {
-                    // Determine if the card is currently visible
-                    shouldOpen = !$card.is(':visible');
+            // Format the value with dots
+            if (value.length > 3) {
+                formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            } else {
+                formattedValue = value;
+            }
+
+            input.value = formattedValue;
+
+            // Adjust the cursor position after formatting
+            cursorPos += (formattedValue.length - value.length);
+            input.setSelectionRange(cursorPos, cursorPos);
+        }
+
+        document.getElementById('btEditForm').addEventListener('submit', function(event) {
+            // Unformat the voucher fields before submission
+            var nominalField = document.getElementById('nominal_vt');
+            var keeperField = document.getElementById('keeper_vt');
+
+            // Remove dots from the formatted value to keep the number intact
+            nominalField.value = nominalField.value.replace(/\./g, '');
+            keeperField.value = keeperField.value.replace(/\./g, '');
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('save-draft').addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Remove the existing status input
+                const existingStatus = document.getElementById('status');
+                if (existingStatus) {
+                    existingStatus.remove();
                 }
 
-                if (shouldOpen) {
-                    $card.slideDown('fast', function() {
-                        // Set button text and icon for open state
-                        var buttonText = $button.data('text') || $button.text();
-                        $button.html('<i class="bi bi-dash-circle"></i> ' + buttonText);
-                        $button.data('state', 'true');
-                    });
-                } else {
-                    $card.slideUp('fast', function() {
-                        // Clear form inputs after hiding
-                        // $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        // $card.find('select').prop('selectedIndex', 0);
-                        // $card.find('input[readonly]').val(0);
-                        // $card.find('input[type="number"]').val(0);
+                // Create a new hidden input for "Draft"
+                const draftInput = document.createElement('input');
+                draftInput.type = 'hidden';
+                draftInput.name = 'status';
+                draftInput.value = 'Draft';
+                draftInput.id = 'status';
 
-                        // // Set button text and icon for closed state
-                        // var buttonText = $button.data('text') || $button.text();
-                        // $button.html('<i class="bi bi-plus-circle"></i> ' + buttonText);
-                        // $button.data('state', 'false');
+                // Append the draft input to the form
+                this.closest('form').appendChild(draftInput);
+
+                // Submit the form
+                this.closest('form').submit();
+            });
+        });
+
+
+        function calculateTotalDays(index) {
+            const checkInInput = document.querySelector(`#hotel-form-${index} input[name="tgl_masuk_htl[]"]`);
+            const checkOutInput = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
+            const totalDaysInput = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
+
+            // Get Start Date and End Date from the main form
+            const mulaiInput = document.getElementById('mulai');
+            const kembaliInput = document.getElementById('kembali');
+
+            if (!checkInInput || !checkOutInput || !mulaiInput || !kembaliInput) {
+                return; // Ensure elements are present before proceeding
+            }
+
+            // Parse the dates
+            const checkInDate = new Date(checkInInput.value);
+            const checkOutDate = new Date(checkOutInput.value);
+            const mulaiDate = new Date(mulaiInput.value);
+            const kembaliDate = new Date(kembaliInput.value);
+
+            // Validate Check In Date
+            if (checkInDate < mulaiDate) {
+                alert('Check In date cannot be earlier than Start date.');
+                checkInInput.value = ''; // Reset the Check In field
+                totalDaysInput.value = ''; // Clear total days
+                return;
+            }
+
+            // Ensure Check Out Date is not earlier than Check In Date
+            if (checkOutDate < checkInDate) {
+                alert('Check Out date cannot be earlier than Check In date.');
+                checkOutInput.value = ''; // Reset the Check Out field
+                totalDaysInput.value = ''; // Clear total days
+                return;
+            }
+
+            // Calculate the total days if all validations pass
+            if (checkInDate && checkOutDate) {
+                const diffTime = Math.abs(checkOutDate - checkInDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                totalDaysInput.value = diffDays;
+            } else {
+                totalDaysInput.value = '';
+            }
+        }
+
+        // Attach event listeners to the hotel forms
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.hotel-form').forEach((form, index) => {
+                const i = index + 1; // Adjust for 1-based index
+
+                form.querySelector('input[name="tgl_masuk_htl[]"]').addEventListener('change', () =>
+                    calculateTotalDays(i));
+                form.querySelector('input[name="tgl_keluar_htl[]"]').addEventListener('change', () =>
+                    calculateTotalDays(i));
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var jnsDinasSelect = document.getElementById('jns_dinas');
+            var additionalFields = document.getElementById('additional-fields');
+
+            function showAdditionalFields() {
+                if (jnsDinasSelect.value === 'luar kota') {
+                    additionalFields.style.display = 'block';
+                } else {
+                    additionalFields.style.display = 'none';
+                }
+            }
+
+            // Show additional fields on page load if 'luar kota' is selected
+            showAdditionalFields();
+
+            jnsDinasSelect.addEventListener('change', function() {
+                showAdditionalFields();
+                if (this.value !== 'luar kota') {
+                    // Reset all fields to "Tidak" if not 'luar kota'
+                    document.getElementById('ca').value = 'Tidak';
+                    document.getElementById('tiket').value = 'Tidak';
+                    document.getElementById('hotel').value = 'Tidak';
+                    document.getElementById('taksi').value = 'Tidak';
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const caSelect = document.getElementById('ca');
+            const caNbtDiv = document.getElementById('ca_div');
+
+            const hotelSelect = document.getElementById('hotel');
+            const hotelDiv = document.getElementById('hotel_div');
+
+            const taksiSelect = document.getElementById('taksi');
+            const taksiDiv = document.getElementById('taksi_div');
+
+            const tiketSelect = document.getElementById('tiket');
+            const tiketDiv = document.getElementById('tiket_div');
+
+
+            function toggleDisplay(selectElement, targetDiv) {
+                if (selectElement.value === 'Ya') {
+                    targetDiv.style.display = 'block';
+                } else {
+                    targetDiv.style.display = 'none';
+                }
+            }
+
+            caSelect.addEventListener('change', function() {
+                toggleDisplay(caSelect, caNbtDiv);
+            });
+
+            hotelSelect.addEventListener('change', function() {
+                toggleDisplay(hotelSelect, hotelDiv);
+            });
+
+            taksiSelect.addEventListener('change', function() {
+                toggleDisplay(taksiSelect, taksiDiv);
+            });
+
+            tiketSelect.addEventListener('change', function() {
+                toggleDisplay(tiketSelect, tiketDiv);
+            });
+
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to the caSelect and caDiv elements
+            const caSelect = document.getElementById('ca'); // Make sure this matches your HTML ID
+            const caDiv = document.getElementById('ca_div');
+
+            // Check if elements exist
+            if (!caSelect || !caDiv) {
+                console.error('caSelect or caDiv element not found.');
+                return;
+            }
+
+            // Function to handle display of ca_div based on caSelect value
+            function handleCaDisplay() {
+                // Ensure caSelect has a value
+                if (caSelect.value === 'Ya') {
+                    caDiv.style.display = 'block';
+                } else {
+                    caDiv.style.display = 'none';
+                }
+            }
+
+            // Initial check on page load
+            handleCaDisplay();
+
+            // Add event listener to handle changes in caSelect
+            caSelect.addEventListener('change', function() {
+                handleCaDisplay();
+            });
+
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainerBTPerdiem = document.getElementById('form-container-bt-perdiem');
+            const formContainerBTTransport = document.getElementById('form-container-bt-transport');
+            const formContainerBTPenginapan = document.getElementById('form-container-bt-penginapan');
+            const formContainerBTLainnya = document.getElementById('form-container-bt-lainnya');
+
+            function toggleOthersBT(selectElement) {
+                const formGroup = selectElement.closest('.mb-2').parentElement;
+                const othersInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
+
+                if (selectElement.value === "Others") {
+                    othersInput.style.display = 'block';
+                    othersInput.required = true;
+                } else {
+                    othersInput.style.display = 'none';
+                    othersInput.required = false;
+                    othersInput.value = "";
+                }
+            }
+
+            document.querySelectorAll('.location-select').forEach(function(selectElement) {
+                selectElement.addEventListener('change', function() {
+                    toggleOthersBT(this);
+                });
+            });
+        });
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ticket form handling
+            const ticketSelect = document.getElementById('tiket');
+            const ticketDiv = document.getElementById('tiket_div');
+
+            ticketSelect.addEventListener('change', function() {
+                if (this.value === 'Ya') {
+                    ticketDiv.style.display = 'block';
+                } else {
+                    ticketDiv.style.display = 'none';
+                    // Reset all input fields within the ticketDiv when 'Tidak' is selected
+                    resetTicketFields(ticketDiv);
+                }
+            });
+
+            function resetTicketFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
+                });
+            }
+
+            for (let i = 1; i <= 4; i++) {
+                const yesRadio = document.getElementById(`more_tkt_yes_${i}`);
+                const noRadio = document.getElementById(`more_tkt_no_${i}`);
+                const nextForm = document.getElementById(`ticket-form-${i + 1}`);
+
+                yesRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'block';
+                    }
+                });
+
+                noRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'none';
+                        // Hide all subsequent forms
+                        for (let j = i + 1; j <= 5; j++) {
+                            const form = document.getElementById(`ticket-form-${j}`);
+                            if (form) {
+                                form.style.display = 'none';
+                                // Reset the form when it is hidden
+                                resetTicketFields(form);
+                            }
+                        }
+                        // Reset radio buttons for subsequent forms
+                        for (let j = i + 1; j <= 4; j++) {
+                            const noRadioButton = document.getElementById(`more_tkt_no_${j}`);
+                            if (noRadioButton) {
+                                noRadioButton.checked = true;
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Handle Round Trip options
+            const ticketTypes = document.querySelectorAll('select[name="type_tkt[]"]');
+            ticketTypes.forEach((select, index) => {
+                select.addEventListener('change', function() {
+                    const roundTripOptions = this.closest('.card-body').querySelector(
+                        '.round-trip-options');
+                    if (this.value === 'Round Trip') {
+                        roundTripOptions.style.display = 'block';
+                    } else {
+                        roundTripOptions.style.display = 'none';
+                    }
+                });
+            });
+            // Handle hotel forms
+            for (let i = 1; i <= 4; i++) {
+                const yesRadio = document.getElementById(`more_htl_yes_${i}`);
+                const noRadio = document.getElementById(`more_htl_no_${i}`);
+                const nextForm = document.getElementById(`hotel-form-${i + 1}`);
+
+                if (yesRadio) {
+                    yesRadio.addEventListener('change', function() {
+                        if (this.checked) {
+                            nextForm.style.display = 'block';
+                        }
+                    });
+                }
+
+                if (noRadio) {
+                    noRadio.addEventListener('change', function() {
+                        if (this.checked) {
+                            nextForm.style.display = 'none';
+                            // Hide all subsequent forms
+                            for (let j = i + 1; j <= 5; j++) {
+                                const form = document.getElementById(`hotel-form-${j}`);
+                                if (form) {
+                                    form.style.display = 'none';
+                                    // Reset the form when it is hidden
+                                    resetHotelFields(form);
+                                }
+                            }
+                            // Reset radio buttons for subsequent forms
+                            for (let j = i + 1; j <= 4; j++) {
+                                const noRadioButton = document.getElementById(`more_htl_no_${j}`);
+                                if (noRadioButton) {
+                                    noRadioButton.checked = true;
+                                }
+                            }
+                        }
                     });
                 }
             }
 
-            // Store the original button text for the second form
-            $('#toggle-bt-perdiem-2, #toggle-bt-transport-2, #toggle-bt-penginapan-2, #toggle-bt-lainnya-2')
-                .each(function() {
-                    $(this).data('text', $(this).text().trim());
+            // Function to reset hotel fields
+            function resetHotelFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
                 });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
+                });
+            }
 
-            // Attach click event handlers for the second form
-            $('#toggle-bt-perdiem-2').click(function() {
-                toggleCard2('#toggle-bt-perdiem-2', '#perdiem-card-2');
+            // Calculate total days for each hotel form
+            function calculateTotalDays(index) {
+                const checkIn = document.querySelector(`#hotel-form-${index} input[name="tgl_masuk_htl[]"]`);
+                const checkOut = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
+                const totalDays = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
+
+                if (checkIn && checkOut && totalDays) {
+                    const start = new Date(checkIn.value);
+                    const end = new Date(checkOut.value);
+
+                    if (checkIn.value && checkOut.value) {
+                        // Calculate difference in milliseconds and convert to days, excluding the same day
+                        const difference = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                        if (difference < 0) {
+                            alert("Check out date cannot be earlier than check in date.");
+                            checkOut.value = ''; // Clear the check-out date if invalid
+                            totalDays.value = ''; // Clear the total days if check-out date is reset
+                        } else {
+                            totalDays.value = difference >= 0 ? difference : 0;
+                        }
+                    } else {
+                        totalDays.value = ''; // Clear total days if dates are not set
+                    }
+                } else {
+                    console.error("Elements not found. Check selectors.");
+                }
+            }
+
+            // Add event listeners for date inputs in hotel forms
+            for (let i = 1; i <= 5; i++) {
+                const checkIn = document.querySelector(`#hotel-form-${i} input[name="tgl_masuk_htl[]"]`);
+                const checkOut = document.querySelector(`#hotel-form-${i} input[name="tgl_keluar_htl[]"]`);
+
+                if (checkIn && checkOut) {
+                    checkIn.addEventListener('change', () => calculateTotalDays(i));
+                    checkOut.addEventListener('change', () => calculateTotalDays(i));
+                }
+            }
+
+            // Handle date validation for the return date
+            document.getElementById('kembali').addEventListener('change', function() {
+                const mulaiDate = document.getElementById('mulai').value;
+                const kembaliDate = this.value;
+
+                if (kembaliDate < mulaiDate) {
+                    alert('Return date cannot be earlier than Start date.');
+                    this.value = ''; // Reset the kembali field
+                }
             });
-
-            $('#toggle-bt-transport-2').click(function() {
-                toggleCard2('#toggle-bt-transport-2', '#transport-card-2');
-            });
-
-            $('#toggle-bt-penginapan-2').click(function() {
-                toggleCard2('#toggle-bt-penginapan-2', '#penginapan-card-2');
-            });
-
-            $('#toggle-bt-lainnya-2').click(function() {
-                toggleCard2('#toggle-bt-lainnya-2', '#lainnya-card-2');
-            });
-
-            // Open all cards by default when the page loads
-            toggleCard2('#toggle-bt-perdiem-2', '#perdiem-card-2', true);
-            toggleCard2('#toggle-bt-transport-2', '#transport-card-2', true);
-            toggleCard2('#toggle-bt-penginapan-2', '#penginapan-card-2', true);
-            toggleCard2('#toggle-bt-lainnya-2', '#lainnya-card-2', true);
         });
 
 
+
+        document.getElementById('tgl_keluar_htl').addEventListener('change', function() {
+            var masukHtl = document.getElementById('tgl_masuk_htl').value;
+            var keluarDate = this.value;
+
+            if (masukHtl && keluarDate) {
+                var checkInDate = new Date(masukHtl);
+                var checkOutDate = new Date(keluarDate);
+
+                if (checkOutDate < checkInDate) {
+                    alert("Check out date cannot be earlier than check in date.");
+                    this.value = ''; // Reset the check out date field
+                }
+            }
+        });
+
+        document.getElementById('type_tkt').addEventListener('change', function() {
+            var roundTripOptions = document.getElementById('roundTripOptions');
+            if (this.value === 'Round Trip') {
+                roundTripOptions.style.display = 'block';
+            } else {
+                roundTripOptions.style.display = 'none';
+            }
+        });
+
+
+        function BTtoggleOthers() {
+            var locationFilter = document.getElementById("tujuan");
+            var others_location = document.getElementById("others_location");
+            var selectedValue = locationFilter.value;
+            var options = Array.from(locationFilter.options).map(option => option.value);
+
+            // Check if the selected value is "Others" or not in the list
+            if (selectedValue === "Others" || !options.includes(selectedValue)) {
+                others_location.style.display = "block";
+
+                if (!options.includes(selectedValue)) {
+                    locationFilter.value = "Others"; // Select "Others"
+                    others_location.value = selectedValue; // Show the unlisted value in the text field
+                }
+            } else {
+                others_location.style.display = "none";
+                others_location.value = ""; // Clear the input field
+            }
+        }
+
+        // Call the function on page load to handle any pre-filled values
+        window.onload = toggleOthers;
+
+        function validateDates(index) {
+            // Get the departure and return date inputs for the given form index
+            const departureDate = document.querySelector(`#tgl_brkt_tkt_${index}`);
+            const returnDate = document.querySelector(`#tgl_plg_tkt_${index}`);
+
+            // Get the departure and return time inputs for the given form index
+            const departureTime = document.querySelector(`#jam_brkt_tkt_${index}`);
+            const returnTime = document.querySelector(`#jam_plg_tkt_${index}`);
+
+            if (departureDate && returnDate) {
+                const depDate = new Date(departureDate.value);
+                const retDate = new Date(returnDate.value);
+
+                // Check if both dates are valid
+                if (depDate && retDate) {
+                    // Validate if return date is earlier than departure date
+                    if (retDate < depDate) {
+                        alert("Return date cannot be earlier than departure date.");
+                        returnDate.value = ''; // Reset the return date field
+                    } else if (retDate.getTime() === depDate.getTime() && departureTime && returnTime) {
+                        // If dates are the same, validate time
+                        const depTime = departureTime.value;
+                        const retTime = returnTime.value;
+
+                        // Check if both times are set and validate
+                        if (depTime && retTime) {
+                            const depDateTime = new Date(`1970-01-01T${depTime}:00`);
+                            const retDateTime = new Date(`1970-01-01T${retTime}:00`);
+
+                            if (retDateTime < depDateTime) {
+                                alert("Return time cannot be earlier than departure time on the same day.");
+                                returnTime.value = ''; // Reset the return time field
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        document.getElementById('nik').addEventListener('change', function() {
+            var nik = this.value;
+
+            fetch('/get-employee-data?nik=' + nik)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('jk_tkt').value = data.jk_tkt;
+                        document.getElementById('tlp_tkt').value = data.tlp_tkt;
+                    } else {
+                        alert('Employee data not found!');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        //CA JS
         function toggleDivs() {
             // ca_type ca_nbt ca_e
             var ca_type = document.getElementById("ca_type");
@@ -2699,66 +2484,72 @@
         });
 
         $(document).ready(function() {
-            function toggleCard(buttonId, cardId, shouldOpen) {
+            function toggleCard(buttonId, cardId) {
                 var $button = $(buttonId);
                 var $card = $(cardId);
+                var isVisible = $card.is(':visible');
 
-                if (shouldOpen === undefined) {
-                    // Determine if the card is currently visible
-                    shouldOpen = !$card.is(':visible');
-                }
+                $card.slideToggle('fast', function() {
+                    if (isVisible) {
+                        // Clear form inputs
+                        $card.find('input[type="text"], input[type="date"], textarea').val('');
+                        $card.find('select').prop('selectedIndex', 0);
+                        $card.find('input[readonly]').val(0);
+                        $card.find('input[type="number"]').val(0);
 
-                if (shouldOpen) {
-                    $card.slideDown('fast', function() {
-                        // Set button text and icon for open state
+                        // Set button text and icon
+                        var buttonText = $button.data('text') || $button.text();
+                        $button.html('<i class="bi bi-plus-circle"></i> ' + buttonText);
+                        $button.data('state', 'false');
+                    } else {
+                        // Set button text and icon
                         var buttonText = $button.data('text') || $button.text();
                         $button.html('<i class="bi bi-dash-circle"></i> ' + buttonText);
                         $button.data('state', 'true');
-                    });
-                } else {
-                    $card.slideUp('fast', function() {
-                        // Clear form inputs after hiding
-                        // $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        // $card.find('select').prop('selectedIndex', 0);
-                        // $card.find('input[readonly]').val(0);
-                        // $card.find('input[type="number"]').val(0);
-
-                        // // Set button text and icon for closed state
-                        // var buttonText = $button.data('text') || $button.text();
-                        // $button.html('<i class="bi bi-plus-circle"></i> ' + buttonText);
-                        // $button.data('state', 'false');
-                    });
-                }
+                    }
+                });
             }
 
-            // Store the original button text for the second form
-            $('#toggle-bt-perdiem, #toggle-bt-transport, #toggle-bt-penginapan, #toggle-bt-lainnya')
+            // Store the original button text
+            $('#toggle-bt-perdiem, #toggle-bt-transport, #toggle-bt-penginapan, #toggle-bt-lainnya, #toggle-e-detail, #toggle-e-relation')
                 .each(function() {
                     $(this).data('text', $(this).text().trim());
                 });
 
-            // Attach click event handlers for the second form
-            $('#toggle-bt-perdiem-2').click(function() {
+            $('#toggle-bt-perdiem').click(function() {
                 toggleCard('#toggle-bt-perdiem', '#perdiem-card');
             });
 
-            $('#toggle-bt-transport-2').click(function() {
+            $('#toggle-bt-transport').click(function() {
                 toggleCard('#toggle-bt-transport', '#transport-card');
             });
 
-            $('#toggle-bt-penginapan-2').click(function() {
+            $('#toggle-bt-penginapan').click(function() {
                 toggleCard('#toggle-bt-penginapan', '#penginapan-card');
             });
 
-            $('#toggle-bt-lainnya-2').click(function() {
+            $('#toggle-bt-lainnya').click(function() {
                 toggleCard('#toggle-bt-lainnya', '#lainnya-card');
             });
 
-            // Open all cards by default when the page loads
-            toggleCard('#toggle-bt-perdiem', '#perdiem-card', true);
-            toggleCard('#toggle-bt-transport', '#transport-card', true);
-            toggleCard('#toggle-bt-penginapan', '#penginapan-card', true);
-            toggleCard('#toggle-bt-lainnya', '#lainnya-card', true);
+            $('#toggle-e-detail').click(function() {
+                toggleCard('#toggle-e-detail', '#entertain-card');
+            });
+
+            $('#toggle-e-relation').click(function() {
+                toggleCard('#toggle-e-relation', '#relation-card');
+            });
+            var caType = $('input[name="ca"]').val();
+            var caType = $('#ca').val(); // Get the value of the <select> element
+
+            // Check if the value of 'ca' is 'Ya'
+            if (caType === 'Ya') {
+                $('#toggle-bt-perdiem').click();
+                $('#toggle-bt-transport').click();
+                $('#toggle-bt-penginapan').click();
+                $('#toggle-bt-lainnya').click();
+            }
+
         });
 
 
@@ -2792,6 +2583,10 @@
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
+
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
             }
@@ -2817,6 +2612,7 @@
                     total += parseNumber(input.value);
                 });
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+                calculateTotalNominalBTTotal();
             }
 
             function calculateTotalNominalBTTransport() {
@@ -2860,15 +2656,40 @@
                 document.querySelector('input[name="totalca"]').value = formatNumber(total);
             }
 
-
-
             function calculateTotalDaysPerdiem(input) {
                 const formGroup = input.closest('.mb-2').parentElement;
                 const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
                 const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
+                const totalDaysInput = formGroup.querySelector('input[name="total_days_bt_perdiem[]"]');
+                const perdiemInput = document.getElementById('perdiem');
+                const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+                const locationSelect = formGroup.querySelector('select[name="location_bt_perdiem[]"]');
+                const otherLocationInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
 
                 const startDate = new Date(startDateInput.value);
                 const endDate = new Date(endDateInput.value);
+
+                if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
+                    const diffTime = Math.abs(endDate - startDate);
+                    const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    // Memeriksa lokasi untuk menentukan persentase allowance
+                    if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 100%
+                    } else {
+                        allowance *= 0.5; // allowance * 50%
+                    }
+
+                    allowanceInput.value = formatNumberPerdiem(allowance);
+                    calculateTotalNominalBTPerdiem();
+                } else {
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
+                }
 
                 if (!isNaN(startDate) && !isNaN(endDate)) {
                     if (startDate > endDate) {
@@ -2961,7 +2782,7 @@
                         <div class="input-group-append">
                             <span class="input-group-text">Rp</span>
                         </div>
-                        <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
+                        <input class="form-control bg-light" name="nominal_bt_perdiem[]" type="text" min="0" value="0" readonly>
                     </div>
                     <button type="button" class="btn btn-danger remove-form">Remove</button>
                     <hr class="border border-primary border-1 opacity-50">
@@ -3021,7 +2842,7 @@
 
                 newFormBTTransport.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal Transport</label>
+                        <label class="form-label">Transport Date</label>
                         <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
                     </div>
                     <div class="mb-2">
@@ -3034,8 +2855,8 @@
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                        <label class="form-label">Information</label>
+                        <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here ..."></textarea>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Amount</label>
@@ -3072,11 +2893,11 @@
 
                 newFormBTPenginapan.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Start Penginapan</label>
+                        <label class="form-label">Accommodation Start</label>
                         <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">End Penginapan</label>
+                        <label class="form-label">Accommodation End</label>
                         <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
@@ -3147,15 +2968,15 @@
 
                 newFormBTLainnya.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
+                        <label class="form-label">Date</label>
                         <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                        <label class="form-label">Information</label>
+                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your information here ..."></textarea>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Accommodation</label>
+                        <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">
@@ -3296,8 +3117,16 @@
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
+
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function parseNumberPerdiem(value) {
+                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
             }
 
             function formatInput(input) {
@@ -3329,7 +3158,7 @@
                         <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_nbt[]" class="form-control"></textarea>
                     </div>
                     <div class="input-group mb-3">

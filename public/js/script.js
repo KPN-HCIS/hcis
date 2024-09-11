@@ -46,6 +46,12 @@ document.addEventListener("DOMContentLoaded", function () {
         pageLength: 50,
     });
 
+    const defaultTable = $("#defaultTable").DataTable({
+        dom: "lrtip",
+        pageLength: 50,
+        scrollX: true,
+    });
+
     const goalTable = $("#goalTable").DataTable({
         dom: "lrtip",
         pageLength: 50,
@@ -55,6 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
         goalTable.search($(this).val()).draw();
         layerTable.search($(this).val()).draw();
         scheduleTable.search($(this).val()).draw();
+        defaultTable.search($(this).val()).draw();
     });
 });
 
@@ -372,7 +379,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
                 $.each(data.locations, function (index, location) {
                     $("#location").append(
-                        `<option value="${location.work_area}">${location.area} (${location.company_name})</option>`
+                        <option value="${location.work_area}">${location.area} (${location.company_name})</option>
                     );
                 });
             },
