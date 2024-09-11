@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+
 document.addEventListener("DOMContentLoaded", function () {
     // Function to handle "Select All" button click
     $("#select-all").on("click", function () {
