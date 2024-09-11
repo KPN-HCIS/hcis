@@ -567,7 +567,7 @@
 
                             function createTableHtml(data, title) {
                                 var tableHtml = '<h5>' + title + '</h5>';
-                                tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+                                tableHtml += '<div class="table-responsive"><table class="table table-sm nowrap"><thead><tr>';
                                 var isArray = Array.isArray(data) && data.length > 0;
 
                                 // Assuming all objects in the data array have the same keys, use the first object to create headers

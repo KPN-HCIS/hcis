@@ -31,7 +31,7 @@
 
                         <form id="btFrom" action="/businessTrip/form/post" method="POST">
                             @csrf
-                            <div class="row mb-3">
+                            <div class="row mb-2">
                                 <div class="col-md-6">
                                     <label for="nama" class="form-label">Name</label>
                                     <input type="text" class="form-control bg-light" id="nama" name="nama"
@@ -41,10 +41,9 @@
                                     <label for="divisi" class="form-label">Divison</label>
                                     <input type="text" class="form-control bg-light" id="divisi" name="divisi"
                                         style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
-
                                 </div>
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-2">
                                 <div class="col-md-4">
                                     <label for="norek_krywn" class="form-label">Employee Account Number</label>
                                     <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
@@ -63,65 +62,66 @@
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control datepicker" id="mulai" name="mulai"
                                         placeholder="Tanggal Mulai" required>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control datepicker" id="kembali" name="kembali"
                                         placeholder="Tanggal Kembali" required>
                                 </div>
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden"
                                     value="{{ $perdiem->amount }}" readonly>
+                                <div class="col-md-4">
+                                    <label for="tujuan" class="form-label">Destination</label>
+                                    <select class="form-select select2" name="tujuan" id="tujuan"
+                                        onchange="BTtoggleOthers()" required>
+                                        <option value="">--- Choose Destination ---</option>
+                                        @foreach ($locations as $location)
+                                            <option value="{{ $location->area }}">
+                                                {{ $location->area . ' (' . $location->city . ')' }}
+                                            </option>
+                                        @endforeach
+                                        <option value="Others">Others</option>
+                                    </select>
+                                    <br><input type="text" name="others_location" id="others_location"
+                                        class="form-control" placeholder="Other Location" value=""
+                                        style="display: none;">
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <label for="tujuan" class="form-label">Destination</label>
-                                <select class="form-select select2" name="tujuan" id="tujuan"
-                                    onchange="BTtoggleOthers()" required>
-                                    <option value="">--- Choose Destination ---</option>
-                                    @foreach ($locations as $location)
-                                        <option value="{{ $location->area }}">
-                                            {{ $location->area . ' (' . $location->city . ')' }}
-                                        </option>
-                                    @endforeach
-                                    <option value="Others">Others</option>
-                                </select>
-                                <br><input type="text" name="others_location" id="others_location"
-                                    class="form-control" placeholder="Other Location" value=""
-                                    style="display: none;">
+                            <div class="row mb-2">
+                                <div class="col-md-12">
+                                    <label for="keperluan" class="form-label">Need (To be filled in according to visit
+                                        service)</label>
+                                    <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
+                                        required></textarea>
+                                </div>
                             </div>
-
-                            <div class="mb-2">
-                                <label for="keperluan" class="form-label">Need (To be filled in according to visit
-                                    service)</label>
-                                <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
-                                    required></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="bb_perusahaan" class="form-label">Company Cost Expenses (PT Service Needs /
-                                    Not
-                                    PT Payroll)</label>
-                                <select class="form-select" id="bb_perusahaan" name="bb_perusahaan" required>
-                                    <option value="" disabled selected>--- Choose PT ---</option>
-                                    @foreach ($companies as $company)
-                                        <option value="{{ $company->contribution_level_code }}">
-                                            {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- HTML Part -->
-                            <div class="col-md-12 mb-3">
-                                <label for="jns_dinas" class="form-label">Type of Service</label>
-                                <select class="form-select" id="jns_dinas" name="jns_dinas" required>
-                                    <option value="" selected disabled>-- Choose Type of Service --</option>
-                                    <option value="dalam kota">Dinas Dalam Kota</option>
-                                    <option value="luar kota">Dinas Luar Kota</option>
-                                </select>
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <label for="bb_perusahaan" class="form-label">Company Cost Expenses (PT Service Needs
+                                        /
+                                        Not
+                                        PT Payroll)</label>
+                                    <select class="form-select" id="bb_perusahaan" name="bb_perusahaan" required>
+                                        <option value="" disabled selected>--- Choose PT ---</option>
+                                        @foreach ($companies as $company)
+                                            <option value="{{ $company->contribution_level_code }}">
+                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="jns_dinas" class="form-label">Type of Service</label>
+                                    <select class="form-select" id="jns_dinas" name="jns_dinas" required>
+                                        <option value="" selected disabled>-- Choose Type of Service --</option>
+                                        <option value="dalam kota">Dinas Dalam Kota</option>
+                                        <option value="luar kota">Dinas Luar Kota</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div id="additional-fields" class="row mb-3" style="display: none;">
@@ -407,137 +407,137 @@
                                             </div>
                                         </div>
                                         {{-- <div class="row"> --}}
-                                        <div class="col-md-12 mt-3">
-                                            <label for="hotel" class="form-label">Hotel</label>
-                                            <select class="form-select" id="hotel" name="hotel">
-                                                <option value="Tidak">Tidak</option>
-                                                <option value="Ya">Ya</option>
-                                            </select>
-                                            <div class="row mt-2" id="hotel_div" style="display: none;">
-                                                <div class="col-md-12">
-                                                    <div class="table-responsive-sm">
-                                                        <div class="d-flex flex-column gap-2" id="hotel_forms_container">
-                                                            <?php for ($i = 1; $i <= 5; $i++) : ?>
-                                                            <div class="hotel-form" id="hotel-form-<?php echo $i; ?>"
-                                                                style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
-                                                                <div class="text-bg-primary p-2"
-                                                                    style="text-align:center; border-radius:4px;">
-                                                                    Hotel <?php echo $i; ?>
-                                                                </div>
-                                                                <div class="card">
-                                                                    <div class="card-body">
-                                                                        <div class="row mb-2">
-                                                                            <div class="col-md-6 mb-2">
-                                                                                <label class="form-label">Hotel
+                                    <div class="col-md-12 mt-3">
+                                        <label for="hotel" class="form-label">Hotel</label>
+                                        <select class="form-select" id="hotel" name="hotel">
+                                            <option value="Tidak">Tidak</option>
+                                            <option value="Ya">Ya</option>
+                                        </select>
+                                        <div class="row mt-2" id="hotel_div" style="display: none;">
+                                            <div class="col-md-12">
+                                                <div class="table-responsive-sm">
+                                                    <div class="d-flex flex-column gap-2" id="hotel_forms_container">
+                                                        <?php for ($i = 1; $i <= 5; $i++) : ?>
+                                                        <div class="hotel-form" id="hotel-form-<?php echo $i; ?>"
+                                                            style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
+                                                            <div class="text-bg-primary p-2"
+                                                                style="text-align:center; border-radius:4px;">
+                                                                Hotel <?php echo $i; ?>
+                                                            </div>
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label class="form-label">Hotel
                                                                                     Name</label>
-                                                                                <div class="input-group">
-                                                                                    <input class="form-control bg-white"
-                                                                                        name="nama_htl[]" type="text"
-                                                                                        placeholder="ex: Hyatt">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-6 mb-2">
-                                                                                <label class="form-label">Hotel
-                                                                                    Location</label>
-                                                                                <div class="input-group">
-                                                                                    <input class="form-control bg-white"
-                                                                                        name="lokasi_htl[]" type="text"
-                                                                                        placeholder="ex: Jakarta">
-                                                                                </div>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    name="nama_htl[]" type="text"
+                                                                                    placeholder="ex: Hyatt">
                                                                             </div>
                                                                         </div>
-                                                                        <div class="row mb-2">
-                                                                            <div class="col-md-9 mb-2">
-                                                                                <label class="form-label">Bed Size</label>
-                                                                                <select class="form-select"
-                                                                                    name="bed_htl[]" required>
-                                                                                    <option value="Single Bed">Single Bed
-                                                                                    </option>
-                                                                                    <option value="Twin Bed">Twin Bed
-                                                                                    </option>
-                                                                                    <option value="King Bed">King Bed
-                                                                                    </option>
-                                                                                    <option value="Super King Bed">Super
-                                                                                        King
-                                                                                        Bed
-                                                                                    </option>
-                                                                                    <option value="Extra Bed">Extra Bed
-                                                                                    </option>
-                                                                                    <option value="Baby Cot">Baby Cot
-                                                                                    </option>
-                                                                                    <option value="Sofa Bed">Sofa Bed
-                                                                                    </option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-md-3 mb-2">
-                                                                                <label class="form-label">Total
-                                                                                    Room</label>
-                                                                                <div class="input-group">
-                                                                                    <input class="form-control bg-white"
-                                                                                        name="jmlkmr_htl[]" type="number"
-                                                                                        min="1"
-                                                                                        placeholder="ex: 1">
-                                                                                </div>
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <label class="form-label">Hotel
+                                                                                Location</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    name="lokasi_htl[]" type="text"
+                                                                                    placeholder="ex: Jakarta">
                                                                             </div>
                                                                         </div>
-                                                                        <div class="row mb-2">
-                                                                            <div class="col-md-5 mb-2">
-                                                                                <label class="form-label">Check In
-                                                                                    Date</label>
-                                                                                <input type="date"
-                                                                                    class="form-control datepicker"
-                                                                                    name="tgl_masuk_htl[]"
-                                                                                    onchange="calculateTotalDays(<?php echo $i; ?>)">
-                                                                            </div>
-                                                                            <div class="col-md-5 mb-2">
-                                                                                <label class="form-label">Check Out
-                                                                                    Date</label>
-                                                                                <input type="date"
-                                                                                    class="form-control datepicker"
-                                                                                    name="tgl_keluar_htl[]"
-                                                                                    onchange="calculateTotalDays(<?php echo $i; ?>)">
-                                                                            </div>
-                                                                            <div class="col-md-2 mb-2">
-                                                                                <label class="form-label">Total
-                                                                                    Days</label>
-                                                                                <input type="number"
-                                                                                    class="form-control datepicker bg-light"
-                                                                                    name="total_hari[]" readonly>
-                                                                            </div>
-                                                                        </div>
-                                                                        <?php if ($i < 5) : ?>
-                                                                        <div class="mt-3">
-                                                                            <label class="form-label">Add more
-                                                                                hotel</label>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    type="radio"
-                                                                                    id="more_htl_no_<?php echo $i; ?>"
-                                                                                    name="more_htl_<?php echo $i; ?>"
-                                                                                    value="Tidak" checked>
-                                                                                <label class="form-check-label"
-                                                                                    for="more_htl_no_<?php echo $i; ?>">Tidak</label>
-                                                                            </div>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    type="radio"
-                                                                                    id="more_htl_yes_<?php echo $i; ?>"
-                                                                                    name="more_htl_<?php echo $i; ?>"
-                                                                                    value="Ya">
-                                                                                <label class="form-check-label"
-                                                                                    for="more_htl_yes_<?php echo $i; ?>">Ya</label>
-                                                                            </div>
-                                                                        </div>
-                                                                        <?php endif; ?>
                                                                     </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-md-9 mb-2">
+                                                                            <label class="form-label">Bed Size</label>
+                                                                            <select class="form-select"
+                                                                                name="bed_htl[]" required>
+                                                                                <option value="Single Bed">Single Bed
+                                                                                </option>
+                                                                                <option value="Twin Bed">Twin Bed
+                                                                                    </option>
+                                                                                <option value="King Bed">King Bed
+                                                                                    </option>
+                                                                                <option value="Super King Bed">Super
+                                                                                        King
+                                                                                    Bed
+                                                                                </option>
+                                                                                <option value="Extra Bed">Extra Bed
+                                                                                </option>
+                                                                                <option value="Baby Cot">Baby Cot
+                                                                                    </option>
+                                                                                <option value="Sofa Bed">Sofa Bed
+                                                                                    </option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-3 mb-2">
+                                                                            <label class="form-label">Total
+                                                                                    Room</label>
+                                                                            <div class="input-group">
+                                                                                <input class="form-control bg-white"
+                                                                                    name="jmlkmr_htl[]" type="number"
+                                                                                    min="1"
+                                                                                        placeholder="ex: 1">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-md-5 mb-2">
+                                                                            <label class="form-label">Check In
+                                                                                    Date</label>
+                                                                            <input type="date"
+                                                                                class="form-control datepicker"
+                                                                                name="tgl_masuk_htl[]"
+                                                                                onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                                                        </div>
+                                                                        <div class="col-md-5 mb-2">
+                                                                            <label class="form-label">Check Out
+                                                                                Date</label>
+                                                                            <input type="date"
+                                                                                class="form-control datepicker"
+                                                                                name="tgl_keluar_htl[]"
+                                                                                onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                                                        </div>
+                                                                        <div class="col-md-2 mb-2">
+                                                                            <label class="form-label">Total
+                                                                                    Days</label>
+                                                                            <input type="number"
+                                                                                class="form-control datepicker bg-light"
+                                                                                name="total_hari[]" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <?php if ($i < 5) : ?>
+                                                                    <div class="mt-3">
+                                                                        <label class="form-label">Add more
+                                                                                hotel</label>
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                    type="radio"
+                                                                                id="more_htl_no_<?php echo $i; ?>"
+                                                                                name="more_htl_<?php echo $i; ?>"
+                                                                                value="Tidak" checked>
+                                                                            <label class="form-check-label"
+                                                                                for="more_htl_no_<?php echo $i; ?>">Tidak</label>
+                                                                        </div>
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                    type="radio"
+                                                                                id="more_htl_yes_<?php echo $i; ?>"
+                                                                                name="more_htl_<?php echo $i; ?>"
+                                                                                value="Ya">
+                                                                            <label class="form-check-label"
+                                                                                for="more_htl_yes_<?php echo $i; ?>">Ya</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <?php endif; ?>
                                                                 </div>
                                                             </div>
-                                                            <?php endfor; ?>
                                                         </div>
+                                                        <?php endfor; ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
                                         <div class="col-md-12 mt-3">
                                             <label for="taksi" class="form-label">Taxi Voucher</label>
@@ -601,12 +601,12 @@
                                     {{-- </div> --}}
                                     <input type="hidden" name="status" value="Pending L1" id="status">
 
-                                    <div class="d-flex justify-content-end mt-3">
-                                        <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                                            name="action_ca_draft" id="save-draft">Save as Draft</button>
-                                        <button type="submit" class="btn btn-primary rounded-pill"
-                                            name="action_ca_submit">Submit</button>
-                                    </div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                    name="action_ca_draft" id="save-draft">Save as Draft</button>
+                                <button type="submit" class="btn btn-primary rounded-pill"
+                                    name="action_ca_submit">Submit</button>
+                            </div>
 
                         </form>
                     </div>
