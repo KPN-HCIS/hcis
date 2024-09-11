@@ -21,7 +21,7 @@ toggleSection(
 );
 toggleSection("ticketCheckbox", "nav-ticket", "pills-ticket-tab");
 toggleSection("hotelCheckbox", "nav-hotel", "pills-hotel-tab");
-toggleSection("taksiCheckbox", "nav-taksi", "pills-taksi-tab")
+toggleSection("taksiCheckbox", "nav-taksi", "pills-taksi-tab");
 
 function formatCurrency(input) {
     var cursorPos = input.selectionStart;
@@ -223,21 +223,20 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const ticketSelect = document.getElementById("tiket");
-    const ticketDiv = document.getElementById("tiket_div");
+    const ticketCheckbox = document.getElementById("ticketCheckbox");
     const ticketFormsContainer = document.getElementById(
         "ticket_forms_container"
     );
     const maxTickets = 5; // Set this to your desired maximum
     let currentTicketCount = 1; // Start with 1 visible ticket form
 
-    // Hide/show ticket form based on select option
-    if (ticketSelect) {
-        ticketSelect.addEventListener("change", function () {
-            if (this.value === "Ya") {
-                ticketDiv.style.display = "block";
+    // Hide/show ticket forms based on checkbox
+    if (ticketCheckbox) {
+        ticketCheckbox.addEventListener("change", function () {
+            if (this.checked) {
+                ticketFormsContainer.style.display = "block";
             } else {
-                ticketDiv.style.display = "none";
+                ticketFormsContainer.style.display = "none";
                 resetAllTicketForms();
             }
         });
@@ -246,7 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to reset ticket fields
     function resetTicketFields(container) {
         const inputs = container.querySelectorAll(
-            'input[type="text"], input[type="number"], textarea'
+            'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
         );
         inputs.forEach((input) => {
             input.value = "";
@@ -329,21 +328,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Handle Round Trip options
-    if (ticketFormsContainer) {
-        ticketFormsContainer.addEventListener("change", function (e) {
-            if (e.target.name === "type_tkt[]") {
-                const roundTripOptions = e.target
-                    .closest(".card-body")
-                    .querySelector(".round-trip-options");
-                if (roundTripOptions) {
-                    roundTripOptions.style.display =
-                        e.target.value === "Round Trip" ? "block" : "none";
-                }
+    ticketFormsContainer.addEventListener("change", function (e) {
+        if (e.target.name === "type_tkt[]") {
+            const roundTripOptions = e.target
+                .closest(".card-body")
+                .querySelector(".round-trip-options");
+            if (roundTripOptions) {
+                roundTripOptions.style.display =
+                    e.target.value === "Round Trip" ? "block" : "none";
             }
-        });
-    }
+        }
+    });
 
     // Initial setup
+    ticketFormsContainer.style.display = "none";
     resetAllTicketForms();
     updateButtonVisibility();
 });

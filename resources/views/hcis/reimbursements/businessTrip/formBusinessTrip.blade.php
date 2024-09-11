@@ -129,7 +129,7 @@
                                 <div class="col-md-12">
                                     <label for="additional-fields-title" class="mb-3">Business Trip Needs</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox" value="Ya">
+                                        <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox">
                                         <label class="form-check-label" for="cashAdvancedCheckbox">
                                             Cash Advanced
                                         </label>
@@ -251,7 +251,7 @@
                                                 </label>
                                             </div>
                                             <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
-                                            <input type="hidden" name="tiket" value="Tidak">
+                                            {{-- <input type="hidden" name="tiket" value="Tidak"> --}}
 
                                             {{-- bt ticket content --}}
                                             {{-- @include('hcis.reimbursements.businessTrip.btTicket') --}}
