@@ -112,11 +112,12 @@
                     </div>
                 </div>
 
-                <?php if ($i < 5) : ?>
-                <div class="mt-1">
-                    <button class="btn btn-sm btn-outline-primary">Add Ticket Data</button>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary add-ticket-btn">Add Ticket
+                        Data</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn">Remove
+                        Ticket</button>
                 </div>
-                <?php endif; ?>
             </div>
             <?php endfor; ?>
         </div>

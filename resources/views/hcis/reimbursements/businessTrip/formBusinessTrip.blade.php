@@ -331,13 +331,13 @@
                                                         </div>
                                                         <div class="tab-pane fade" id="pills-hotel" role="tabpanel"
                                                             aria-labelledby="pills-hotel-tab">
-                                                            Hotel content
-                                                            @include('hcis.reimbursements.businessTrip.btHotel')
+                                                            {{-- Hotel content --}}
+                                                            @include('hcis.reimbursements.businessTrip.form.hotel')
                                                         </div>
                                                         <div class="tab-pane fade" id="pills-taksi" role="tabpanel"
                                                             aria-labelledby="pills-taksi-tab">
-                                                            Taksi content
-                                                            @include('hcis.reimbursements.businessTrip.btTaksi')
+                                                            {{-- Taksi content --}}
+                                                            @include('hcis.reimbursements.businessTrip.form.taxi')
                                                         </div>
                                                     </div>
                                                 </div>
