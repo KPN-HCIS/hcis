@@ -158,7 +158,7 @@
                                 </button>
                             </form>
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
+                                <table class="table table-sm table-hover" id="defaultTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>

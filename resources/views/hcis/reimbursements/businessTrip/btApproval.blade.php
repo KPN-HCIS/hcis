@@ -135,7 +135,7 @@
                             </form>
 
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
+                                <table class="table table-sm table-hover" id="defaultTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
@@ -395,7 +395,7 @@
                             });
                         });
                     });
-                    //    let table = new DataTable('#scheduleTable');
+                    //    let table = new DataTable('#defaultTable');
 
                     function getDate() {
                         var today = new Date();
