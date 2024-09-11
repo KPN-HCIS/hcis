@@ -9,16 +9,13 @@
                 <div class="row">
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Employee Name</label>
-                        <select class="form-select" name="jenis_tkt[]" id="jenis_tkt">
-                            <option value="">Select Employee Name</option>
-                            <option value="Train">Train
-                            </option>
-                            <option value="Bus">Bus</option>
-                            <option value="Airplane">Airplane
-                            </option>
-                            <option value="Car">Car</option>
-                            <option value="Ferry">Ferry
-                            </option>
+                        <select class="form-select" id="noktp_tkt" name="noktp_tkt[]" required>
+                            <option value="" disabled selected>--- Choose Passengers ---</option>
+                            @foreach ($employees as $employee)
+                                <option value="{{ $employee->ktp }}">
+                                    {{ $employee->ktp . ' - ' . $employee->fullname }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-4 mb-2">

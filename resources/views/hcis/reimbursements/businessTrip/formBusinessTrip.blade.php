@@ -129,11 +129,12 @@
                                 <div class="col-md-12">
                                     <label for="additional-fields-title" class="mb-3">Business Trip Needs</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox">
+                                        <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox" value="Ya">
                                         <label class="form-check-label" for="cashAdvancedCheckbox">
                                             Cash Advanced
                                         </label>
                                     </div>
+                                    <input type="hidden" name="ca" value="Tidak">
                                     <div class="row mt-2" id="ca_div" style="display: none;">
                                         <div class="col-md-12">
                                             <div class="table-responsive-sm">

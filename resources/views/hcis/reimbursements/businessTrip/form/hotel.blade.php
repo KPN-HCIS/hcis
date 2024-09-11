@@ -72,9 +72,8 @@
                         <input type="number" class="form-control datepicker bg-light" name="total_hari[]" readonly>
                     </div>
                 </div>
-                <div class="mt-1">
-                    <button class="btn btn-sm btn-outline-primary">Add Hotel Data</button>
-                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn">Add Hotel Data</button>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn">Remove Hotel</button>
                 {{-- <div class="mt-1">
                     <button class="btn btn-sm btn-outline-primary">Add Hotel Data</button>
                 </div> --}}

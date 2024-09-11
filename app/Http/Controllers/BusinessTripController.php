@@ -1722,9 +1722,9 @@ class BusinessTripController extends Controller
                     // Fetch employee data inside the loop
                     $employee_data = Employee::where('ktp', $value)->first();
 
-                    if (!$employee_data) {
-                        return redirect()->back()->with('error', "NIK $value not found");
-                    }
+                    // if (!$employee_data) {
+                    //     return redirect()->back()->with('error', "NIK $value not found");
+                    // }
 
                     $tiket = new Tiket();
                     $tiket->id = (string) Str::uuid();
