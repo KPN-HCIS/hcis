@@ -1550,12 +1550,14 @@ class BusinessTripController extends Controller
         $employee_data = Employee::where('id', $userId)->first();
         $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
+        $employees = Employee::orderBy('ktp')->get();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         return view(
             'hcis.reimbursements.businessTrip.formBusinessTrip',
             [
                 'employee_data' => $employee_data,
+                'employees' => $employees,
                 'companies' => $companies,
                 'locations' => $locations,
                 'no_sppds' => $no_sppds,

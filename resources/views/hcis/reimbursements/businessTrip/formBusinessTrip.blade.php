@@ -134,114 +134,223 @@
                                             Cash Advanced
                                         </label>
                                     </div>
-                                    @include('hcis.reimbursements.businessTrip.btCa')
+                                    <div class="row mt-2" id="ca_div" style="display: none;">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-sm">
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="text-bg-primary p-2"
+                                                        style="text-align:center; border-radius:4px;">Cash Advanced</div>
+                                                    {{-- <div class="card"> --}}
+                                                    {{-- <div class="card-body"> --}}
 
+                                                    {{-- <div class="row"> --}}
+                                                    <div class="row" id="ca_bt" style="">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive-sm">
+                                                                <div class="d-flex flex-column gap-2">
+                                                                    <ul class="nav nav-pills mb-3" id="pills-tab"
+                                                                        role="tablist">
+                                                                        <li class="nav-item" role="presentation">
+                                                                            <button class="nav-link active"
+                                                                                id="pills-perdiem-tab"
+                                                                                data-bs-toggle="pill"
+                                                                                data-bs-target="#pills-perdiem"
+                                                                                type="button" role="tab"
+                                                                                aria-controls="pills-perdiem"
+                                                                                aria-selected="true">Perdiem Plan</button>
+                                                                        </li>
+                                                                        <li class="nav-item" role="presentation">
+                                                                            <button class="nav-link"
+                                                                                id="pills-transport-tab"
+                                                                                data-bs-toggle="pill"
+                                                                                data-bs-target="#pills-transport"
+                                                                                type="button" role="tab"
+                                                                                aria-controls="pills-transport"
+                                                                                aria-selected="false">Transport
+                                                                                Plan</button>
+                                                                        </li>
+                                                                        <li class="nav-item" role="presentation">
+                                                                            <button class="nav-link"
+                                                                                id="pills-accomodation-tab"
+                                                                                data-bs-toggle="pill"
+                                                                                data-bs-target="#pills-accomodation"
+                                                                                type="button" role="tab"
+                                                                                aria-controls="pills-accomodation"
+                                                                                aria-selected="false">Accomodation
+                                                                                Plan</button>
+                                                                        </li>
+                                                                        <li class="nav-item" role="presentation">
+                                                                            <button class="nav-link" id="pills-other-tab"
+                                                                                data-bs-toggle="pill"
+                                                                                data-bs-target="#pills-other"
+                                                                                type="button" role="tab"
+                                                                                aria-controls="pills-other"
+                                                                                aria-selected="false">Other Plan</button>
+                                                                        </li>
 
-                                    <div class="col-md-12 mt-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="ticketCheckbox"
-                                                name="tiket" value="Ya">
-                                            <label class="form-check-label" for="ticketCheckbox">
-                                                Ticket
-                                            </label>
+                                                                    </ul>
+                                                                    <div class="card">
+                                                                        <div class="tab-content" id="pills-tabContent">
+                                                                            <div class="tab-pane fade show active"
+                                                                                id="pills-perdiem" role="tabpanel"
+                                                                                aria-labelledby="pills-perdiem-tab">
+                                                                                {{-- ca perdiem content --}}
+                                                                                @include('hcis.reimbursements.businessTrip.caPerdiem')
+                                                                            </div>
+                                                                            <div class="tab-pane fade"
+                                                                                id="pills-transport" role="tabpanel"
+                                                                                aria-labelledby="pills-transport-tab">
+                                                                                {{-- ca transport content --}}
+                                                                                @include('hcis.reimbursements.businessTrip.caTransport')
+                                                                            </div>
+                                                                            <div class="tab-pane fade"
+                                                                                id="pills-accomodation" role="tabpanel"
+                                                                                aria-labelledby="pills-accomodation-tab">
+                                                                                {{-- ca accommodatioon content --}}
+                                                                                @include('hcis.reimbursements.businessTrip.caAccommodation')</div>
+                                                                            <div class="tab-pane fade" id="pills-other"
+                                                                                role="tabpanel"
+                                                                                aria-labelledby="pills-other-tab">
+                                                                                {{-- ca others content --}}
+                                                                                @include('hcis.reimbursements.businessTrip.caOther')</div>
+                                                                        </div>
+
+                                                                        <br>
+                                                                        <div class="col-md-12 mb-2">
+                                                                            <label class="form-label">Total Cash
+                                                                                Advanced</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-append">
+                                                                                    <span
+                                                                                        class="input-group-text">Rp</span>
+                                                                                </div>
+                                                                                <input class="form-control bg-light"
+                                                                                    name="totalca" id="totalca"
+                                                                                    type="text" min="0"
+                                                                                    value="0" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
-                                        <input type="hidden" name="tiket" value="Tidak">
 
-                                        {{-- bt ticket content --}}
-                                        @include('hcis.reimbursements.businessTrip.btTicket')
 
 
                                         <div class="col-md-12 mt-3">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="hotelCheckbox"
-                                                    name="hotel" value="Ya">
-                                                <label class="form-check-label" for="hotelCheckbox">
-                                                    Hotel
+                                                <input class="form-check-input" type="checkbox" id="ticketCheckbox"
+                                                    name="tiket" value="Ya">
+                                                <label class="form-check-label" for="ticketCheckbox">
+                                                    Ticket
                                                 </label>
                                             </div>
                                             <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
-                                            <input type="hidden" name="hotel" value="Tidak">
+                                            <input type="hidden" name="tiket" value="Tidak">
 
-                                            {{-- bt hotel content --}}
-                                            @include('hcis.reimbursements.businessTrip.btHotel')
+                                            {{-- bt ticket content --}}
+                                            {{-- @include('hcis.reimbursements.businessTrip.btTicket') --}}
+
 
                                             <div class="col-md-12 mt-3">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="taksiCheckbox"
-                                                        name="taksi" value="Ya">
-                                                    <label class="form-check-label" for="taksiCheckbox">
-                                                        Taxi Voucher
+                                                    <input class="form-check-input" type="checkbox" id="hotelCheckbox"
+                                                        name="hotel" value="Ya">
+                                                    <label class="form-check-label" for="hotelCheckbox">
+                                                        Hotel
                                                     </label>
                                                 </div>
-
                                                 <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
-                                                <input type="hidden" name="taksi" value="Tidak">
-                                                @include('hcis.reimbursements.businessTrip.btTaksi')
+                                                <input type="hidden" name="hotel" value="Tidak">
 
-                                                {{-- NAV BT INPUT --}}
-                                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                                    <li class="nav-item" role="presentation">
-                                                        <button class="nav-link active" id="pills-cash-advanced-tab"
-                                                            data-bs-toggle="pill" data-bs-target="#pills-cash-advanced"
-                                                            type="button" role="tab"
-                                                            aria-controls="pills-cash-advanced" aria-selected="true">Cash
-                                                            Advanced</button>
-                                                    </li>
-                                                    <li class="nav-item" role="presentation">
-                                                        <button class="nav-link" id="pills-ticket-tab"
-                                                            data-bs-toggle="pill" data-bs-target="#pills-ticket"
-                                                            type="button" role="tab" aria-controls="pills-ticket"
-                                                            aria-selected="false">Ticket</button>
-                                                    </li>
-                                                    <li class="nav-item" role="presentation">
-                                                        <button class="nav-link" id="pills-hotel-tab"
-                                                            data-bs-toggle="pill" data-bs-target="#pills-hotel"
-                                                            type="button" role="tab" aria-controls="pills-hotel"
-                                                            aria-selected="false">Hotel</button>
-                                                    </li>
-                                                    <li class="nav-item" role="presentation">
-                                                        <button class="nav-link" id="pills-taksi-tab"
-                                                            data-bs-toggle="pill" data-bs-target="#pills-taksi"
-                                                            type="button" role="tab" aria-controls="pills-taksi"
-                                                            aria-selected="false">Taksi</button>
-                                                    </li>
-                                                </ul>
-                                                <div class="card">
+                                                {{-- bt hotel content --}}
+                                                {{-- @include('hcis.reimbursements.businessTrip.btHotel') --}}
+
+                                                <div class="col-md-12 mt-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="taksiCheckbox" name="taksi" value="Ya">
+                                                        <label class="form-check-label" for="taksiCheckbox">
+                                                            Taxi Voucher
+                                                        </label>
+                                                    </div>
+
+                                                    <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
+                                                    <input type="hidden" name="taksi" value="Tidak">
+                                                    {{-- @include('hcis.reimbursements.businessTrip.btTaksi') --}}
+
+                                                    {{-- NAV BT INPUT --}}
+                                                    <ul class="nav nav-pills mb-3 mt-3" id="pills-tab" role="tablist">
+                                                        <li class="nav-item" role="presentation" style="display: none;"
+                                                            id="nav-cash-advanced">
+                                                            <button class="nav-link" id="pills-cash-advanced-tab"
+                                                                data-bs-toggle="pill"
+                                                                data-bs-target="#pills-cash-advanced" type="button"
+                                                                role="tab" aria-controls="pills-cash-advanced"
+                                                                aria-selected="false">Cash
+                                                                Advanced</button>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation" style="display: none;"
+                                                            id="nav-ticket">
+                                                            <button class="nav-link" id="pills-ticket-tab"
+                                                                data-bs-toggle="pill" data-bs-target="#pills-ticket"
+                                                                type="button" role="tab"
+                                                                aria-controls="pills-ticket"
+                                                                aria-selected="false">Ticket</button>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation" style="display: none;"
+                                                            id="nav-hotel">
+                                                            <button class="nav-link" id="pills-hotel-tab"
+                                                                data-bs-toggle="pill" data-bs-target="#pills-hotel"
+                                                                type="button" role="tab" aria-controls="pills-hotel"
+                                                                aria-selected="false">Hotel</button>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation" style="display: none;"
+                                                            id="nav-taksi">
+                                                            <button class="nav-link" id="pills-taksi-tab"
+                                                                data-bs-toggle="pill" data-bs-target="#pills-taksi"
+                                                                type="button" role="tab" aria-controls="pills-taksi"
+                                                                aria-selected="false">Taksi</button>
+                                                        </li>
+                                                    </ul>
+                                                    {{-- <div class="card"> --}}
                                                     <div class="tab-content" id="pills-tabContent">
-                                                        <div class="tab-pane fade show active" id="pills-cash-advanced" role="tabpanel"
-                                                             aria-labelledby="pills-cash-advanced-tab">
-                                                            {{-- Cash Advanced content --}}
-                                                            @include('hcis.reimbursements.businessTrip.btCa')
+                                                        <div class="tab-pane fade" id="pills-cash-advanced"
+                                                            role="tabpanel" aria-labelledby="pills-cash-advanced-tab">
+                                                            Cash Advanced content
+                                                            {{-- @include('hcis.reimbursements.businessTrip.btCa') --}}
                                                         </div>
-
-                                                        <div class="tab-pane fade" id="pills-ticket" role="tabpanel" aria-labelledby="pills-ticket-tab">
+                                                        <div class="tab-pane fade" id="pills-ticket" role="tabpanel"
+                                                            aria-labelledby="pills-ticket-tab">
                                                             {{-- Ticket content --}}
-                                                            @include('hcis.reimbursements.businessTrip.btTicket')
+                                                            @include('hcis.reimbursements.businessTrip.form.ticket')
                                                         </div>
-
-                                                        <div class="tab-pane fade" id="pills-hotel" role="tabpanel" aria-labelledby="pills-hotel-tab">
-                                                            {{-- Hotel content --}}
+                                                        <div class="tab-pane fade" id="pills-hotel" role="tabpanel"
+                                                            aria-labelledby="pills-hotel-tab">
+                                                            Hotel content
                                                             @include('hcis.reimbursements.businessTrip.btHotel')
                                                         </div>
-
-                                                        <div class="tab-pane fade" id="pills-taksi" role="tabpanel" aria-labelledby="pills-taksi-tab">
-                                                            {{-- Taksi content --}}
+                                                        <div class="tab-pane fade" id="pills-taksi" role="tabpanel"
+                                                            aria-labelledby="pills-taksi-tab">
+                                                            Taksi content
                                                             @include('hcis.reimbursements.businessTrip.btTaksi')
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {{-- </div> --}}
-                                                {{-- </div> --}}
-                                                <input type="hidden" name="status" value="Pending L1" id="status">
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="status" value="Pending L1" id="status">
 
-                                                <div class="d-flex justify-content-end mt-3">
-                                                    <button type="button"
-                                                        class="btn btn-outline-primary rounded-pill me-2"
-                                                        name="action_ca_draft" id="save-draft">Save as Draft</button>
-                                                    <button type="submit" class="btn btn-primary rounded-pill"
-                                                        name="action_ca_submit">Submit</button>
-                                                </div>
+                                        <div class="d-flex justify-content-end mt-3">
+                                            <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                                name="action_ca_draft" id="save-draft">Save as Draft</button>
+                                            <button type="submit" class="btn btn-primary rounded-pill"
+                                                name="action_ca_submit">Submit</button>
+                                        </div>
 
                         </form>
                     </div>

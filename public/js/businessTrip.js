@@ -1,36 +1,27 @@
-$(document).ready(function() {
-    // Show additional fields when "luar kota" is selected
-    $('#businessTripSelect').change(function() {
-        if ($(this).val() === 'luar kota') {
-            $('#additional-fields').show();
+function toggleSection(checkboxId, navId, tabId) {
+    const checkbox = document.getElementById(checkboxId);
+    const nav = document.getElementById(navId);
+    const tab = document.getElementById(tabId); // The tab itself (button)
+
+    checkbox.addEventListener("change", function () {
+        if (this.checked) {
+            nav.style.display = "block";
+            tab.click(); // Programmatically activate the tab
         } else {
-            $('#additional-fields').hide();
-            $('#additional-fields input[type=checkbox]').prop('checked', false);
-            $('#additional-fields .tab-content .tab-pane').hide();
-            $('#additional-fields .nav-pills .nav-link').removeClass('active');
+            nav.style.display = "none";
         }
     });
+}
 
-    // Show relevant content based on selected checkboxes
-    $('#additional-fields input[type=checkbox]').change(function() {
-        let selectedTabs = [];
-
-        $('#additional-fields input[type=checkbox]:checked').each(function() {
-            let tabId = $(this).attr('id').replace('Checkbox', '');
-            $(`#pills-${tabId}-tab`).addClass('active');
-            $(`#pills-${tabId}`).show();
-        });
-
-        // Hide unselected tabs
-        $('#additional-fields .nav-pills .nav-link').each(function() {
-            let tabId = $(this).attr('id').replace('pills-', '').replace('-tab', '');
-            if (!selectedTabs.includes(tabId)) {
-                $(this).removeClass('active');
-                $(`#pills-${tabId}`).hide();
-            }
-        });
-    });
-});
+// Initialize toggling for each checkbox and tab
+toggleSection(
+    "cashAdvancedCheckbox",
+    "nav-cash-advanced",
+    "pills-cash-advanced-tab"
+);
+toggleSection("ticketCheckbox", "nav-ticket", "pills-ticket-tab");
+toggleSection("hotelCheckbox", "nav-hotel", "pills-hotel-tab");
+toggleSection("taksiCheckbox", "nav-taksi", "pills-taksi-tab")
 
 function formatCurrency(input) {
     var cursorPos = input.selectionStart;
@@ -234,17 +225,23 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
     const ticketSelect = document.getElementById("tiket");
     const ticketDiv = document.getElementById("tiket_div");
+    const ticketFormsContainer = document.getElementById(
+        "ticket_forms_container"
+    );
+    const maxTickets = 5; // Set this to your desired maximum
+    let currentTicketCount = 1; // Start with 1 visible ticket form
 
     // Hide/show ticket form based on select option
-    ticketSelect.addEventListener("change", function () {
-        if (this.value === "Ya") {
-            ticketDiv.style.display = "block";
-        } else {
-            ticketDiv.style.display = "none";
-            // Reset all input fields within the ticketDiv when 'Tidak' is selected
-            resetTicketFields(ticketDiv);
-        }
-    });
+    if (ticketSelect) {
+        ticketSelect.addEventListener("change", function () {
+            if (this.value === "Ya") {
+                ticketDiv.style.display = "block";
+            } else {
+                ticketDiv.style.display = "none";
+                resetAllTicketForms();
+            }
+        });
+    }
 
     // Function to reset ticket fields
     function resetTicketFields(container) {
@@ -254,64 +251,101 @@ document.addEventListener("DOMContentLoaded", function () {
         inputs.forEach((input) => {
             input.value = "";
         });
-        // Also reset select fields if needed
         const selects = container.querySelectorAll("select");
         selects.forEach((select) => {
-            select.selectedIndex = 0; // or set to a specific default value
+            select.selectedIndex = 0;
         });
     }
 
-    // Handling form visibility and reset for multiple ticket forms
-    for (let i = 1; i <= 4; i++) {
-        const yesRadio = document.getElementById(`more_tkt_yes_${i}`);
-        const noRadio = document.getElementById(`more_tkt_no_${i}`);
-        const nextForm = document.getElementById(`ticket-form-${i + 1}`);
-
-        yesRadio.addEventListener("change", function () {
-            if (this.checked) {
-                nextForm.style.display = "block";
+    // Function to reset all ticket forms
+    function resetAllTicketForms() {
+        for (let i = 2; i <= maxTickets; i++) {
+            const form = document.getElementById(`ticket-form-${i}`);
+            if (form) {
+                form.style.display = "none";
+                resetTicketFields(form);
             }
-        });
+        }
+        currentTicketCount = 1;
+        updateButtonVisibility();
+    }
 
-        noRadio.addEventListener("change", function () {
-            if (this.checked) {
-                nextForm.style.display = "none";
-                // Hide all subsequent forms
-                for (let j = i + 1; j <= 5; j++) {
-                    const form = document.getElementById(`ticket-form-${j}`);
-                    if (form) {
-                        form.style.display = "none";
-                        // Reset the form when it is hidden
-                        resetTicketFields(form);
-                    }
-                }
-                // Reset radio buttons for subsequent forms
-                for (let j = i + 1; j <= 4; j++) {
-                    const noRadioButton = document.getElementById(
-                        `more_tkt_no_${j}`
+    // Add event listeners for Add and Remove buttons
+    if (ticketFormsContainer) {
+        ticketFormsContainer.addEventListener("click", function (e) {
+            if (e.target.classList.contains("add-ticket-btn")) {
+                if (currentTicketCount < maxTickets) {
+                    currentTicketCount++;
+                    const nextForm = document.getElementById(
+                        `ticket-form-${currentTicketCount}`
                     );
-                    if (noRadioButton) {
-                        noRadioButton.checked = true;
+                    if (nextForm) {
+                        nextForm.style.display = "block";
                     }
+                    updateButtonVisibility();
+                }
+            } else if (e.target.classList.contains("remove-ticket-btn")) {
+                if (currentTicketCount > 1) {
+                    const currentForm = document.getElementById(
+                        `ticket-form-${currentTicketCount}`
+                    );
+                    if (currentForm) {
+                        currentForm.style.display = "none";
+                        resetTicketFields(currentForm);
+                    }
+                    currentTicketCount--;
+                    updateButtonVisibility();
                 }
             }
         });
+    }
+
+    // Function to update button visibility
+    function updateButtonVisibility() {
+        for (let i = 1; i <= maxTickets; i++) {
+            const form = document.getElementById(`ticket-form-${i}`);
+            if (form) {
+                const addButton = form.querySelector(".add-ticket-btn");
+                const removeButton = form.querySelector(".remove-ticket-btn");
+
+                if (addButton) {
+                    // Only show add button on the last visible form if not at max tickets
+                    addButton.style.display =
+                        i === currentTicketCount &&
+                        currentTicketCount < maxTickets
+                            ? "inline-block"
+                            : "none";
+                }
+
+                if (removeButton) {
+                    // Show remove button on all forms except the first one
+                    removeButton.style.display =
+                        i > 1 && i <= currentTicketCount
+                            ? "inline-block"
+                            : "none";
+                }
+            }
+        }
     }
 
     // Handle Round Trip options
-    const ticketTypes = document.querySelectorAll('select[name="type_tkt[]"]');
-    ticketTypes.forEach((select, index) => {
-        select.addEventListener("change", function () {
-            const roundTripOptions = this.closest(".card-body").querySelector(
-                ".round-trip-options"
-            );
-            if (this.value === "Round Trip") {
-                roundTripOptions.style.display = "block";
-            } else {
-                roundTripOptions.style.display = "none";
+    if (ticketFormsContainer) {
+        ticketFormsContainer.addEventListener("change", function (e) {
+            if (e.target.name === "type_tkt[]") {
+                const roundTripOptions = e.target
+                    .closest(".card-body")
+                    .querySelector(".round-trip-options");
+                if (roundTripOptions) {
+                    roundTripOptions.style.display =
+                        e.target.value === "Round Trip" ? "block" : "none";
+                }
             }
         });
-    });
+    }
+
+    // Initial setup
+    resetAllTicketForms();
+    updateButtonVisibility();
 });
 
 document.addEventListener("DOMContentLoaded", function () {
