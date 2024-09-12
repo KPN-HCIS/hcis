@@ -105,7 +105,7 @@
                                         /
                                         Not
                                         PT Payroll)</label>
-                                    <select class="form-select" id="bb_perusahaan" name="bb_perusahaan" required>
+                                    <select class="form-select select2" id="bb_perusahaan" name="bb_perusahaan" required>
                                         <option value="" disabled selected>--- Choose PT ---</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}">
@@ -352,6 +352,7 @@
 
     <!-- JavaScript Part -->
     <script src="{{ asset('/js/businessTrip.js') }}"></script>
+    {{-- <script src="{{ asset('/js/ca.js') }}"></script> --}}
     <script>
         //CA JS
         document.addEventListener('DOMContentLoaded', function() {
