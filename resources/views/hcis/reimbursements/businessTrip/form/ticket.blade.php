@@ -11,7 +11,7 @@
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Employee Name</label>
                             <select class="form-select select2" id="noktp_tkt_<?php echo $i; ?>" name="noktp_tkt[]" required>
-                                <option value="" disabled selected>--- Choose Passengers ---</option>
+                                <option value="" selected>--- Choose Passengers ---</option>
                                 @foreach ($employees as $employee)
                                     <option value="{{ $employee->ktp }}">
                                         {{ $employee->ktp . ' - ' . $employee->fullname }}
