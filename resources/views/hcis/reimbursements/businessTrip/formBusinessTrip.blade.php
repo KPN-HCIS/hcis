@@ -129,15 +129,17 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-check">
+                                            <input type="hidden" name="ca" value="Tidak">
                                             <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox">
                                             <label class="form-check-label" for="cashAdvancedCheckbox">Cash
                                                 Advanced</label>
                                         </div>
 
-                                        <input type="hidden" name="ca" value="Tidak">
+
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-check">
+                                            <input type="hidden" name="tiket" value="Tidak">
                                             <input class="form-check-input" type="checkbox" id="ticketCheckbox"
                                                 name="tiket" value="Ya">
                                             <label class="form-check-label" for="ticketCheckbox">Ticket</label>
@@ -145,20 +147,20 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-check">
+                                            <input type="hidden" name="hotel" value="Tidak">
                                             <input class="form-check-input" type="checkbox" id="hotelCheckbox"
                                                 name="hotel" value="Ya">
                                             <label class="form-check-label" for="hotelCheckbox">Hotel</label>
                                         </div>
-                                        <input type="hidden" name="hotel" value="Tidak">
                                     </div>
 
                                     <div class="col-md-3">
                                         <div class="form-check">
+                                            <input type="hidden" name="taksi" value="Tidak">
                                             <input class="form-check-input" type="checkbox" id="taksiCheckbox"
                                                 name="taksi" value="Ya">
                                             <label class="form-check-label" for="taksiCheckbox">Taxi Voucher</label>
                                         </div>
-                                        <input type="hidden" name="taksi" value="Tidak">
                                     </div>
                                 </div>
 

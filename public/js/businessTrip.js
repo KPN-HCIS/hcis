@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function handleTicketForms() {
     const ticketCheckbox = document.getElementById("ticketCheckbox");
     const ticketFormsContainer = document.getElementById(
-        "ticket_forms_container"
+        "tiket_div"
     );
     const maxTickets = 5;
 
@@ -463,7 +463,7 @@ function handleTicketForms() {
 function handleHotelForms() {
     const hotelCheckbox = document.getElementById("hotelCheckbox");
     const hotelFormsContainer = document.getElementById(
-        "hotel_forms_container"
+        "hotel_div"
     );
     const maxHotels = 5;
     let currentHotelCount = 1;

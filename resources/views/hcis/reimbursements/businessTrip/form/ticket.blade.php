@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Employee Name</label>
-                            <select class="form-select form-select-sm select2" id="noktp_tkt_<?php echo $i; ?>" name="noktp_tkt[]" required>
+                            <select class="form-select form-select-sm select2" id="noktp_tkt_<?php echo $i; ?>" name="noktp_tkt[]">
                                 <option value="" disabled selected>--- Choose Passengers ---</option>
                                 @foreach ($employees as $employee)
                                     <option value="{{ $employee->ktp }}">
@@ -65,7 +65,7 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label for="type_tkt_<?php echo $i; ?>" class="form-label">Ticket Type</label>
-                            <select class="form-select form-select-sm" name="type_tkt[]" required>
+                            <select class="form-select form-select-sm" name="type_tkt[]">
                                 <option value="One Way">One Way</option>
                                 <option value="Round Trip">Round Trip</option>
                             </select>

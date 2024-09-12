@@ -23,7 +23,7 @@
                         </div>
                         <div class="col-md-2 mb-2">
                             <label class="form-label">Bed Size</label>
-                            <select class="form-select form-select-sm select2" name="bed_htl[]" required>
+                            <select class="form-select form-select-sm select2" name="bed_htl[]">
                                 <option value="Single Bed">Single Bed</option>
                                 <option value="Twin Bed">Twin Bed</option>
                                 <option value="King Bed">King Bed</option>
