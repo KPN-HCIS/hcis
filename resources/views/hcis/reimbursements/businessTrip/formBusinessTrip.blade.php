@@ -123,9 +123,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <label for="additional-fields-title" class="mb-1">Business Trip Needs</label>
 
                             <div id="additional-fields" class="row mb-3" style="display: none;">
+                                <label for="additional-fields-title" class="mb-1">Business Trip Needs</label>
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-check">
@@ -291,7 +291,7 @@
 
                                 <input type="hidden" name="status" value="Pending L1" id="status">
 
-                                <div class="d-flex justify-content-end mt-3">
+                                <div class="d-flex justify-content-end px-3 mb-3">
                                     <button type="button" class="btn btn-outline-primary rounded-pill me-2"
                                         name="action_ca_draft" id="save-draft">Save as Draft</button>
                                     <button type="submit" class="btn btn-primary rounded-pill"

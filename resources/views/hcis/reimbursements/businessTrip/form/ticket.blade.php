@@ -1,8 +1,7 @@
-<div class="container-fluid">
     <div id="tiket_div">
         <div class="d-flex flex-column gap-1" id="ticket_forms_container">
             <?php for ($i = 1; $i <= 5; $i++) : ?>
-            <div class="card bg-light" id="ticket-form-<?php echo $i; ?>" style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
+            <div class="card bg-light shadow-none" id="ticket-form-<?php echo $i; ?>" style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
                 <div class="card-body">
                     <div class="h5 text-uppercase">
                         <b>TICKET <?php echo $i; ?></b>
@@ -10,7 +9,7 @@
                     <div class="row">
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Employee Name</label>
-                            <select class="form-select select2" id="noktp_tkt_<?php echo $i; ?>" name="noktp_tkt[]" required>
+                            <select class="form-select form-select-sm select2" id="noktp_tkt_<?php echo $i; ?>" name="noktp_tkt[]" required>
                                 <option value="" disabled selected>--- Choose Passengers ---</option>
                                 @foreach ($employees as $employee)
                                     <option value="{{ $employee->ktp }}">
@@ -22,14 +21,14 @@
                         <div class="col-md-4 mb-2">
                             <label class="form-label">From</label>
                             <div class="input-group">
-                                <input class="form-control bg-white" name="dari_tkt[]" type="text"
+                                <input class="form-control form-control-sm" name="dari_tkt[]" type="text"
                                     placeholder="ex. Yogyakarta (YIA)">
                             </div>
                         </div>
                         <div class="col-md-4 mb-2">
                             <label class="form-label">To</label>
                             <div class="input-group">
-                                <input class="form-control bg-white" name="ke_tkt[]" type="text"
+                                <input class="form-control form-control-sm" name="ke_tkt[]" type="text"
                                     placeholder="ex. Jakarta (CGK)">
                             </div>
                         </div>
@@ -38,14 +37,14 @@
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Date</label>
                             <div class="input-group">
-                                <input class="form-control bg-white" id="tgl_brkt_tkt_<?php echo $i; ?>"
+                                <input class="form-control form-control-sm" id="tgl_brkt_tkt_<?php echo $i; ?>"
                                     name="tgl_brkt_tkt[]" type="date" onchange="validateDates(<?php echo $i; ?>)">
                             </div>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Time</label>
                             <div class="input-group">
-                                <input class="form-control bg-white" id="jam_brkt_tkt_<?php echo $i; ?>"
+                                <input class="form-control form-control-sm" id="jam_brkt_tkt_<?php echo $i; ?>"
                                     name="jam_brkt_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
                             </div>
                         </div>
@@ -54,7 +53,7 @@
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="jenis_tkt_<?php echo $i; ?>">Transportation Type</label>
                             <div class="input-group">
-                                <select class="form-select" name="jenis_tkt[]" id="jenis_tkt_<?php echo $i; ?>">
+                                <select class="form-select form-select-sm" name="jenis_tkt[]" id="jenis_tkt_<?php echo $i; ?>">
                                     <option value="">Select Transportation Type</option>
                                     <option value="Train">Train</option>
                                     <option value="Bus">Bus</option>
@@ -66,7 +65,7 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label for="type_tkt_<?php echo $i; ?>" class="form-label">Ticket Type</label>
-                            <select class="form-select" name="type_tkt[]" required>
+                            <select class="form-select form-select-sm" name="type_tkt[]" required>
                                 <option value="One Way">One Way</option>
                                 <option value="Round Trip">Round Trip</option>
                             </select>
@@ -84,7 +83,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Return Date</label>
                                 <div class="input-group">
-                                    <input class="form-control bg-white" name="tgl_plg_tkt[]" type="date"
+                                    <input class="form-control form-control-sm" name="tgl_plg_tkt[]" type="date"
                                         id="tgl_plg_tkt_<?php echo $i; ?>"
                                         onchange="validateDates(<?php echo $i; ?>)">
                                 </div>
@@ -92,7 +91,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Return Time</label>
                                 <div class="input-group">
-                                    <input class="form-control bg-white" id="jam_plg_tkt_<?php echo $i; ?>"
+                                    <input class="form-control form-control-sm" id="jam_plg_tkt_<?php echo $i; ?>"
                                         name="jam_plg_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
                                 </div>
                             </div>
@@ -107,4 +106,3 @@
             <?php endfor; ?>
         </div>
     </div>
-</div>
