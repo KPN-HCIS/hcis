@@ -82,6 +82,39 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
+<<<<<<< HEAD
+=======
+// VALIDATION DATE JS SECTIONS
+//BT Validation Date
+function validateStartEndDates() {
+    const startDateInput = document.getElementById("mulai");
+    const endDateInput = document.getElementById("kembali");
+
+    if (startDateInput && endDateInput) {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        if (endDate < startDate) {
+            alert("End Date cannot be earlier than the Start Date.");
+            endDateInput.value = ""; // Reset the end date if it's invalid
+        }
+    }
+}
+
+//BT Toggle Other Locations
+function BTtoggleOthers() {
+    var locationFilter = document.getElementById("tujuan");
+    var others_location = document.getElementById("others_location");
+
+    if (locationFilter.value === "Others") {
+        others_location.style.display = "block";
+    } else {
+        others_location.style.display = "none";
+        others_location.value = "";
+    }
+}
+
+>>>>>>> a01c8f0e65cc1067656d19d43f6ee0a312f05d21
 //Ticket Validation Date
 function validateDates(index) {
     const departureDateInput = document.getElementById(`tgl_brkt_tkt_${index}`);
@@ -89,6 +122,7 @@ function validateDates(index) {
     const departureTimeInput = document.getElementById(`jam_brkt_tkt_${index}`);
     const returnTimeInput = document.getElementById(`jam_plg_tkt_${index}`);
 
+<<<<<<< HEAD
     if (departureDateInput && returnDateInput) {
         const departureDate = new Date(departureDateInput.value);
         const returnDate = new Date(returnDateInput.value);
@@ -96,6 +130,33 @@ function validateDates(index) {
         if (returnDate < departureDate) {
             alert("Return date cannot be earlier than the departure date.");
             returnDateInput.value = ""; // Reset the return date if it's invalid
+=======
+    if (
+        departureDateInput &&
+        returnDateInput &&
+        departureTimeInput &&
+        returnTimeInput
+    ) {
+        const departureDate = new Date(departureDateInput.value);
+        const returnDate = new Date(returnDateInput.value);
+
+        // Check if return date is earlier than departure date
+        if (returnDate < departureDate) {
+            alert("Return date cannot be earlier than the departure date.");
+            returnDateInput.value = ""; // Reset the return date if it's invalid
+            return; // Stop further validation
+        }
+
+        // If the dates are the same, check the times
+        if (returnDate.getTime() === departureDate.getTime()) {
+            const departureTime = departureTimeInput.value;
+            const returnTime = returnTimeInput.value;
+
+            if (departureTime && returnTime && returnTime < departureTime) {
+                alert("Return time cannot be earlier than the departure time.");
+                returnTimeInput.value = ""; // Reset the return time if it's invalid
+            }
+>>>>>>> a01c8f0e65cc1067656d19d43f6ee0a312f05d21
         }
     }
 }
