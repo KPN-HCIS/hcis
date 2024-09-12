@@ -3,7 +3,7 @@
 
     function addMoreFormPenginapan(event) {
         event.preventDefault();
-        if (formCount < 100) { // Assuming a maximum of 100 forms
+        if (formCount < 20) { // Assuming a maximum of 100 forms
             formCount++;
             document.getElementById(`form-container-bt-penginapan-${formCount}`).style.display = 'block';
         }
@@ -12,24 +12,64 @@
     function removeFormPenginapan(index, event) {
         event.preventDefault();
         if (formCount > 1) {
-            let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_penginapan_${index}`).value);
+            let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_penginapan_${formCount}`).value);
+
             let total = cleanNumber(document.querySelector('input[name="total_bt_penginapan"]').value);
             total -= nominalValue;
             document.querySelector('input[name="total_bt_penginapan"]').value = formatNumber(total);
 
-            document.getElementById(`form-container-bt-penginapan-${index}`).style.display = 'none';
-            formCount--;
+            let formContainer = document.getElementById(`form-container-bt-penginapan-${index}`);
 
-            document.querySelector(`#nominal_bt_penginapan_${index}`).value = 0;
+            formContainer.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                input.value = '';
+            });
+
+            formContainer.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = 0;
+            });
+
+            formContainer.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+
+            document.querySelector(`#nominal_bt_penginapan_${formCount}`).value = 0;
+
+            document.getElementById(`form-container-bt-penginapan-${formCount}`).style.display = 'none';
+            formCount--;
+            calculateTotalNominalBTTotal();
         }
     }
 
-   function cleanNumber(value) {
-        return parseFloat(value.replace(/\./g, '')) || 0;
-    }
+    function clearFormPenginapan(index, event) {
+        event.preventDefault();
+        if (formCount > 0) {
+            let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_penginapan_${formCount}`).value);
 
-    function formatNumber(number) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            let total = cleanNumber(document.querySelector('input[name="total_bt_penginapan"]').value);
+            total -= nominalValue;
+            document.querySelector('input[name="total_bt_penginapan"]').value = formatNumber(total);
+
+            let formContainer = document.getElementById(`form-container-bt-penginapan-${index}`);
+
+            formContainer.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                input.value = '';
+            });
+
+            formContainer.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = 0;
+            });
+
+            formContainer.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+
+            formContainer.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+
+            document.querySelector(`#nominal_bt_penginapan_${formCount}`).value = 0;
+            calculateTotalNominalBTTotal();
+        }
     }
 
     function calculateTotalNominalBTPenginapan() {
@@ -57,7 +97,7 @@
     }
 </script>
 
-@for ($i = 1; $i <= 100; $i++)
+@for ($i = 1; $i <= 20; $i++)
     <div id="form-container-bt-penginapan-{{ $i }}" class="card-body bg-light p-2 mb-3" style="{{ $i > 1 ? 'display: none;' : '' }} border-radius: 1%;">
         <div class="row">
             <!-- Penginapan Date -->
@@ -82,7 +122,7 @@
                         class="form-control bg-light total-days-penginapan"
                         id="total_days_bt_penginapan_{{ $i }}"
                         name="total_days_bt_penginapan[]"
-                        type="text" min="0"
+                        type="number" min="0"
                         value="0" readonly>
                     <div class="input-group-append">
                         <span class="input-group-text">days</span>
@@ -126,13 +166,16 @@
             </div>
         </div>
         <br>
-        @if ($i > 1)
-            <div class="mt-3">
-                <div class="d-flex justify-content-end">
+        <div class="row mt-3">
+            <div class="d-flex justify-start w-100">
+                @if ($i > 0)
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" id="form-container-bt-penginapan-{{ $i }}-cl" name="form-container-bt-penginapan-{{ $i }}" value="Clear" onclick="clearFormPenginapan({{ $i }}, event)">Clear</button>
+                @endif
+                @if ($i > 1)
                     <button class="btn btn-warning mr-2" id="form-container-bt-penginapan-{{ $i }}-no" name="form-container-bt-penginapan-{{ $i }}" value="Tidak" onclick="removeFormPenginapan({{ $i }}, event)">Remove</button>
-                </div>
+                @endif
             </div>
-        @endif
+        </div>
     </div>
 @endfor
 

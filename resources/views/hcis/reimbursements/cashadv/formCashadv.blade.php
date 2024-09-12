@@ -230,54 +230,11 @@
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced
+                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced Non Business Trip
                                             </div>
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button"
-                                                                    data-bs-toggle="collapse"
-                                                                    data-bs-target="#enter-collapseOne" aria-expanded="false"
-                                                                    aria-controls="enter-collapseOne">
-                                                                    Non Business Trip
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse show"
-                                                                aria-labelledby="enter-headingOne">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Date</label>
-                                                                            <input type="date" name="tanggal_nbt[]"
-                                                                                class="form-control" placeholder="mm/dd/yyyy">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Information</label>
-                                                                            <textarea name="keterangan_nbt[]" class="form-control"></textarea>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Amount</label>
-                                                                        </div>
-                                                                        <div class="input-group mb-3">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control" name="nominal_nbt[]"
-                                                                                id="nominal_nbt" type="text"
-                                                                                min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <button type="button" id="add-more"
-                                                                        class="btn btn-primary mt-3">Add More</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            @include('hcis.reimbursements.cashadv.form.nbt')
+                                            <button type="button" id="add-more" style="display: none"
+                                                class="btn btn-primary mt-3">Add More</button>
                                         </div>
                                     </div>
                                 </div>
@@ -288,78 +245,33 @@
                                         <div class="d-flex flex-column gap-2">
                                             <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment
                                             </div>
-                                            <div class="card">
-                                                <div id="entertain-card" class="card-body">
-                                                    <div class="accordion" id="accordionEntertain">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="headingEntertain">
-                                                                <button class="accordion-button fw-medium" type="button"
-                                                                    data-bs-toggle="collapse"
-                                                                    data-bs-target="#collapseEntertain" aria-expanded="true"
-                                                                    aria-controls="collapseEntertain">
-                                                                    Rencana Entertain
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapseEntertain"
-                                                                class="accordion-collapse collapse show"
-                                                                aria-labelledby="headingEntertain">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-e-detail">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Entertainment
-                                                                                Type</label>
-                                                                            <select name="enter_type_e_detail[]"
-                                                                                id="enter_type_e_detail[]"
-                                                                                class="form-select">
-                                                                                <option value="">-</option>
-                                                                                <option value="food">Food/Beverages/Souvenir
-                                                                                </option>
-                                                                                <option value="transport">Transport</option>
-                                                                                <option value="accommodation">Accommodation
-                                                                                </option>
-                                                                                <option value="gift">Gift</option>
-                                                                                <option value="fund">Fund</option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Entertainment Fee
-                                                                                Detail</label>
-                                                                            <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control"></textarea>
-                                                                        </div>
-                                                                        <div class="mb-1">
-                                                                            <label class="form-label">Amount</label>
-                                                                        </div>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control"
-                                                                                name="nominal_e_detail[]"
-                                                                                id="nominal_e_detail[]" type="text"
-                                                                                min="0" value="0">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <div class="mb-2">
-                                                                        <label class="form-label">Total Entertain</label>
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">Rp</span>
-                                                                            </div>
-                                                                            <input class="form-control bg-light"
-                                                                                name="total_e_detail[]" id="total_e_detail[]"
-                                                                                type="text" min="0" value="0"
-                                                                                readonly>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="button" id="add-more-e-detail"
-                                                                        class="btn btn-primary mt-3">Add More</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="pills-detail-tab"
+                                                        data-bs-toggle="pill" data-bs-target="#pills-detail" type="button"
+                                                        role="tab" aria-controls="pills-detail"
+                                                        aria-selected="true">Detail Entertain Plan</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="pills-relation-tab" data-bs-toggle="pill"
+                                                        data-bs-target="#pills-relation" type="button" role="tab"
+                                                        aria-controls="pills-relation" aria-selected="false">Relation Entertain
+                                                        Plan</button>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content" id="pills-tabContent">
+                                                <div class="tab-pane fade show active" id="pills-detail" role="tabpanel"
+                                                    aria-labelledby="pills-detail-tab">
+                                                    @include('hcis.reimbursements.cashadv.form.detail')
                                                 </div>
-
+                                                <div class="tab-pane fade" id="pills-relation" role="tabpanel"
+                                                    aria-labelledby="pills-relation-tab">
+                                                    @include('hcis.reimbursements.cashadv.form.relation')
+                                                </div>
+                                            </div>
+                                            <button type="button" id="add-more-e-detail" style="display: none"
+                                                class="btn btn-primary mt-3">Add More</button>
+                                            <div class="card">
                                                 <div id="relation-card" class="card-body">
                                                     <div class="accordion" id="accordionRelation">
                                                         <div class="accordion-item">
@@ -375,48 +287,6 @@
                                                                 aria-labelledby="headingRelation">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-e-relation">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Relation Type</label>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    type="checkbox"
-                                                                                    name="accommodation_e_relation[]"
-                                                                                    id="accommodation_e_relation[]"
-                                                                                    value="accommodation">
-                                                                                <label class="form-check-label"
-                                                                                    for="accommodation_e_relation[]">Accommodation</label>
-                                                                            </div>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    name="transport_e_relation[]"
-                                                                                    type="checkbox"
-                                                                                    id="transport_e_relation[]"
-                                                                                    value="transport">
-                                                                                <label class="form-check-label"
-                                                                                    for="transport_e_relation[]">Transport</label>
-                                                                            </div>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    name="gift_e_relation[]" type="checkbox"
-                                                                                    id="gift_e_relation[]" value="gift">
-                                                                                <label class="form-check-label"
-                                                                                    for="gift_e_relation[]">Gift</label>
-                                                                            </div>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    name="fund_e_relation[]" type="checkbox"
-                                                                                    id="fund_e_relation[]" value="fund">
-                                                                                <label class="form-check-label"
-                                                                                    for="fund_e_relation[]">Fund</label>
-                                                                            </div>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input"
-                                                                                    name="food_e_relation[]" type="checkbox"
-                                                                                    id="food_e_relation[]" value="food">
-                                                                                <label class="form-check-label"
-                                                                                    for="food_e_relation[]">Food/Beverages/Souvenir</label>
-                                                                            </div>
-                                                                        </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label"
                                                                                 for="start">Name</label>
@@ -495,13 +365,11 @@
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
     <script>
-        // Fungsi untuk membersihkan format angka, menghapus titik/koma agar bisa dihitung
         function cleanNumber(value) {
-            return parseFloat(value.replace(/\./g, '')) || 0;
+            return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
         }
 
-        // Fungsi untuk format ulang angka ke format IDR (Rp)
-        function formatNumber(number) {
+        function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
@@ -512,6 +380,43 @@
         function parseNumberPerdiem(value) {
             return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
         }
+
+        function parseNumber(value) {
+            return parseFloat(value.replace(/\./g, '')) || 0;
+        }
+
+        function formatInput(input) {
+            let value = input.value.replace(/\./g, '');
+            value = parseFloat(value);
+            if (!isNaN(value)) {
+                input.value = formatNumber(Math.floor(value));
+            } else {
+                input.value = formatNumber(0);
+            }
+            calculateTotalNominalBTPerdiem();
+            calculateTotalNominalBTTransport();
+            calculateTotalNominalBTPenginapan();
+            calculateTotalNominalBTLainnya();
+            calculateTotalNominalBTTotal();
+        }
+
+        function calculateTotalNominalBTTotal() {
+            let total = 0;
+            document.querySelectorAll('input[name="total_bt_perdiem"]').forEach(input => {
+                total += parseNumber(input.value);
+            });
+            document.querySelectorAll('input[name="total_bt_transport"]').forEach(input => {
+                total += parseNumber(input.value);
+            });
+            document.querySelectorAll('input[name="total_bt_penginapan"]').forEach(input => {
+                total += parseNumber(input.value);
+            });
+            document.querySelectorAll('input[name="total_bt_lainnya"]').forEach(input => {
+                total += parseNumber(input.value);
+            });
+            document.querySelector('input[name="totalca"]').value = formatNumber(total);
+        }
+
     </script>
     <script>
         function toggleDivs() {
@@ -692,93 +597,6 @@
     </script>
 
     <script>
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function parseNumber(value) {
-            return parseFloat(value.replace(/\./g, '')) || 0;
-        }
-
-        function formatInput(input) {
-            let value = input.value.replace(/\./g, '');
-            value = parseFloat(value);
-            if (!isNaN(value)) {
-                input.value = formatNumber(Math.floor(value));
-            } else {
-                input.value = formatNumber(0);
-            }
-            calculateTotalNominalBTPerdiem();
-            calculateTotalNominalBTTransport();
-            calculateTotalNominalBTPenginapan();
-            calculateTotalNominalBTLainnya();
-            calculateTotalNominalBTTotal();
-        }
-
-        function calculateTotalNominalBTTotal() {
-            let total = 0;
-            document.querySelectorAll('input[name="total_bt_perdiem"]').forEach(input => {
-                total += parseNumber(input.value);
-            });
-            document.querySelectorAll('input[name="total_bt_transport"]').forEach(input => {
-                total += parseNumber(input.value);
-            });
-            document.querySelectorAll('input[name="total_bt_penginapan"]').forEach(input => {
-                total += parseNumber(input.value);
-            });
-            document.querySelectorAll('input[name="total_bt_lainnya"]').forEach(input => {
-                total += parseNumber(input.value);
-            });
-            document.querySelector('input[name="totalca"]').value = formatNumber(total);
-        }
-
-        // Attach input event to the existing nominal fields
-        document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-            input.addEventListener('input', function() {
-                formatInput(this);
-            });
-        });
-
-        document.querySelectorAll('input[name="nominal_bt_transport[]"]').forEach(input => {
-            input.addEventListener('input', function() {
-                formatInput(this);
-            });
-        });
-
-        document.querySelectorAll('input[name="nominal_bt_penginapan[]"]').forEach(input => {
-            input.addEventListener('input', function() {
-                formatInput(this);
-            });
-        });
-
-        // Attach change event to the existing start and end date fields to calculate total days
-        document.querySelectorAll('input[name="start_bt_perdiem[]"], input[name="end_bt_perdiem[]"]').forEach(
-            input => {
-                input.addEventListener('change', function() {
-                    calculateTotalDaysPerdiem(this);
-                });
-            });
-
-        document.querySelectorAll('input[name="start_bt_penginapan[]"], input[name="end_bt_penginapan[]"]')
-            .forEach(input => {
-                input.addEventListener('change', function() {
-                    calculateTotalDaysPenginapan(this);
-                });
-            });
-
-        document.querySelectorAll('input[name="nominal_bt_lainnya[]"]').forEach(input => {
-            input.addEventListener('input', function() {
-                formatInput(this);
-            });
-        });
-
-        // Initial calculation for the total nominal
-        calculateTotalNominalBTPerdiem();
-        calculateTotalNominalBTTransport();
-        calculateTotalNominalBTPenginapan();
-        calculateTotalNominalBTLainnya();
-        calculateTotalNominalBTTotal();
-
         document.getElementById('start_date').addEventListener('change', handleDateChange);
         document.getElementById('end_date').addEventListener('change', handleDateChange);
 
@@ -813,330 +631,6 @@
                 calculateTotalDaysPerdiem(input);
             });
         }
-
-        document.querySelectorAll('.remove-form').forEach(button => {
-            button.addEventListener('click', function() {
-                this.closest('.mb-2').remove();
-                calculateTotalNominalBTPerdiem();
-                calculateTotalNominalBTTransport();
-                calculateTotalNominalBTPenginapan();
-                calculateTotalNominalBTLainnya();
-                calculateTotalNominalBTTotal();
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const formContainer = document.getElementById('form-container');
-
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
-
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-                calculateTotalNominal();
-            }
-
-            function calculateTotalNominal() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.getElementById('totalca').value = formatNumber(total);
-            }
-
-            document.getElementById('add-more').addEventListener('click', function() {
-                const newForm = document.createElement('div');
-                newForm.classList.add('mb-2', 'form-group');
-
-                newForm.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Date</label>
-                        <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Information</label>
-                        <textarea name="keterangan_nbt[]" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Amount</label>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_nbt[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainer.appendChild(newForm);
-
-                // Attach input event to the newly added nominal field
-                newForm.querySelector('input[name="nominal_nbt[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
-
-                // Attach click event to the remove button
-                newForm.querySelector('.remove-form').addEventListener('click', function() {
-                    newForm.remove();
-                    calculateTotalNominal();
-                });
-
-                // Update the date constraints for the new 'tanggal_nbt[]' input fields
-                const startDateInput = document.getElementById('start_date').value;
-                const endDateInput = document.getElementById('end_date').value;
-
-                newForm.querySelectorAll('input[name="tanggal_nbt[]"]').forEach(function(input) {
-                    input.min = startDateInput;
-                    input.max = endDateInput;
-                });
-            });
-
-            // Attach input event to the existing nominal fields
-            document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            // Initial calculation for the total nominal
-            calculateTotalNominal();
-
-            // Note Kalo dpt Revisi di suruh di kunci
-            // document.getElementById('start_date').addEventListener('change', handleDateChange);
-            // document.getElementById('end_date').addEventListener('change', handleDateChange);
-
-            // function handleDateChange() {
-            //     const startDateInput = document.getElementById('start_date');
-            //     const endDateInput = document.getElementById('end_date');
-
-            //     const startDate = new Date(startDateInput.value);
-            //     const endDate = new Date(endDateInput.value);
-
-            //     // Set the min attribute of the end_date input to the selected start_date
-            //     endDateInput.min = startDateInput.value;
-
-            //     // Validate dates
-            //     if (endDate < startDate) {
-            //         alert("End Date cannot be earlier than Start Date.");
-            //         endDateInput.value = '';
-            //     }
-
-            //     // Update the min and max attributes for all 'tanggal_nbt[]' inputs
-            //     const tanggalNbtInputs = document.querySelectorAll('input[name="tanggal_nbt[]"]');
-            //     tanggalNbtInputs.forEach(function(input) {
-            //         input.min = startDateInput.value;
-            //         input.max = endDateInput.value;
-
-            //         // Reset the value if it's out of the allowed range
-            //         if (input.value < startDateInput.value || input.value > endDateInput.value) {
-            //             input.value = '';
-            //         }
-            //     });
-            // }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const formContainerEDetail = document.getElementById('form-container-e-detail');
-            const formContainerERelation = document.getElementById('form-container-e-relation');
-
-            // Function to update checkboxes visibility based on selected options
-            function updateCheckboxVisibility() {
-                // Gather all selected options from enter_type_e_detail
-                const selectedOptions = Array.from(document.querySelectorAll(
-                        'select[name="enter_type_e_detail[]"]'))
-                    .map(select => select.value)
-                    .filter(value => value !== "");
-
-                // Update visibility for each checkbox in enter_type_e_relation
-                formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
-                    const checkbox = checkDiv.querySelector('input.form-check-input');
-                    const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
-                    if (selectedOptions.includes(checkboxValue)) {
-                        checkDiv.style.display = 'block';
-                    } else {
-                        checkDiv.style.display = 'none';
-                    }
-                });
-            }
-
-            // Function to format number with thousands separator
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            // Function to parse number from formatted string
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
-
-            // Function to format input fields
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-                calculateTotalNominalEDetail();
-            }
-
-            // Function to calculate the total nominal value for EDetail
-            function calculateTotalNominalEDetail() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_e_detail[]"]').value = formatNumber(total);
-                document.getElementById('totalca').value = formatNumber(total);
-            }
-
-            // Function to add new EDetail form
-            function addNewEDetailForm() {
-                const newFormEDetail = document.createElement('div');
-                newFormEDetail.classList.add('mb-2');
-
-                newFormEDetail.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Entertainment Type</label>
-                        <select name="enter_type_e_detail[]" class="form-select">
-                            <option value="">-</option>
-                            <option value="food">Food/Beverages/Souvenir</option>
-                            <option value="transport">Transport</option>
-                            <option value="accommodation">Accommodation</option>
-                            <option value="gift">Gift</option>
-                            <option value="fund">Fund</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Entertainment Fee Detail</label>
-                        <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_e_detail[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form-e-detail">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerEDetail.appendChild(newFormEDetail);
-
-                // Attach input event to the newly added nominal field
-                newFormEDetail.querySelector('input[name="nominal_e_detail[]"]').addEventListener('input',
-                    function() {
-                        formatInput(this);
-                    });
-
-                // Attach change event to update checkbox visibility
-                newFormEDetail.querySelector('select[name="enter_type_e_detail[]"]').addEventListener('change',
-                    updateCheckboxVisibility);
-
-                // Attach click event to the remove button
-                newFormEDetail.querySelector('.remove-form-e-detail').addEventListener('click', function() {
-                    newFormEDetail.remove();
-                    updateCheckboxVisibility();
-                    calculateTotalNominalEDetail();
-                });
-            }
-
-            let relationCounter = 0; // Counter untuk membuat ID unik
-
-            // Function to add new ERelation form
-            function addNewERelationForm() {
-                relationCounter++; // Increment counter setiap kali form baru ditambahkan
-                const newFormERelation = document.createElement('div');
-                newFormERelation.classList.add('mb-2');
-
-                newFormERelation.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Relation Type</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation_${relationCounter}" value="accommodation">
-                            <label class="form-check-label" for="accommodation_e_relation_${relationCounter}">Accommodation</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="transport_e_relation_${relationCounter}" value="transport">
-                            <label class="form-check-label" for="transport_e_relation_${relationCounter}">Transport</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation_${relationCounter}" value="gift">
-                            <label class="form-check-label" for="gift_e_relation_${relationCounter}">Gift</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="fund_e_relation[]" id="fund_e_relation_${relationCounter}" value="fund">
-                            <label class="form-check-label" for="fund_e_relation_${relationCounter}">Fund</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="food_e_relation[]" id="food_e_relation_${relationCounter}" value="food">
-                            <label class="form-check-label" for="food_e_relation_${relationCounter}">Food/Beverages/Souvenir</label>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="rname_e_relation[]" class="form-control" id="rname_e_relation_${relationCounter}">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Position</label>
-                        <input type="text" name="rposition_e_relation[]" class="form-control" id="rposition_e_relation_${relationCounter}">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Company</label>
-                        <input type="text" name="rcompany_e_relation[]" class="form-control" id="rcompany_e_relation_${relationCounter}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Purpose</label>
-                        <input type="text" name="rpurpose_e_relation[]" class="form-control" id="rpurpose_e_relation_${relationCounter}">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form-e-relation">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerERelation.appendChild(newFormERelation);
-
-                // Initial update of checkbox visibility
-                updateCheckboxVisibility();
-
-                // Attach click event to the remove button
-                newFormERelation.querySelector('.remove-form-e-relation').addEventListener('click', function() {
-                    newFormERelation.remove();
-                    updateCheckboxVisibility();
-                });
-            }
-
-            document.getElementById('add-more-e-detail').addEventListener('click', addNewEDetailForm);
-            document.getElementById('add-more-e-relation').addEventListener('click', addNewERelationForm);
-
-            // Attach input event to the existing nominal fields
-            document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            // Attach change event to existing select fields for checkbox visibility
-            document.querySelectorAll('select[name="enter_type_e_detail[]"]').forEach(select => {
-                select.addEventListener('change', updateCheckboxVisibility);
-            });
-
-            calculateTotalNominalEDetail();
-            updateCheckboxVisibility();
-        });
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

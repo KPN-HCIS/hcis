@@ -3,7 +3,7 @@
 
     function addMoreFormLainnya(event) {
         event.preventDefault();
-        if (formCount < 5) {
+        if (formCount < 100) {
             formCount++;
             document.getElementById(`form-container-bt-lainnya-${formCount}`).style.display = 'block';
         }
@@ -12,29 +12,70 @@
     function removeFormLainnya(index, event) {
         event.preventDefault();
         if (formCount > 1) {
-            // Ambil nilai nominal dari form yang akan dihapus
             let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_lainnya_${index}`).value);
-
-            // Kurangi nilai nominal dari total
             let total = cleanNumber(document.querySelector('input[name="total_bt_lainnya"]').value);
             total -= nominalValue;
             document.querySelector('input[name="total_bt_lainnya"]').value = formatNumber(total);
 
-            // Sembunyikan form
-            document.getElementById(`form-container-bt-lainnya-${index}`).style.display = 'none';
+            // Clear the form inputs for cleanliness
+            let formContainer = document.getElementById(`form-container-bt-lainnya-${index}`);
+            formContainer.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                input.value = '';
+            });
+            formContainer.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = 0;
+            });
+            formContainer.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+            formContainer.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+
+            // Remove the form container from the DOM
+            formContainer.style.display = 'none';
             formCount--;
 
             // Reset nilai nominal di form yang disembunyikan (optional)
             document.querySelector(`#nominal_bt_lainnya_${index}`).value = 0;
+            calculateTotalNominalBTTotal();
+        }
+    }
+
+    function clearFormLainnya(index, event) {
+        event.preventDefault();
+        if (formCount > 0) {
+            let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_lainnya_${index}`).value);
+            let total = cleanNumber(document.querySelector('input[name="total_bt_lainnya"]').value);
+            total -= nominalValue;
+            document.querySelector('input[name="total_bt_lainnya"]').value = formatNumber(total);
+
+            // Clear the form inputs for cleanliness
+            let formContainer = document.getElementById(`form-container-bt-lainnya-${index}`);
+            formContainer.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                input.value = '';
+            });
+            formContainer.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = 0;
+            });
+            formContainer.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+            formContainer.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+
+            document.querySelector(`#nominal_bt_lainnya_${index}`).value = 0;
+            calculateTotalNominalBTTotal();
         }
     }
 
     function calculateTotalNominalBTLainnya() {
         let total = 0;
         document.querySelectorAll('input[name="nominal_bt_lainnya[]"]').forEach(input => {
-            total += cleanNumber(input.value); // Gunakan cleanNumber untuk parsing
+            total += cleanNumber(input.value);
         });
-        document.querySelector('input[name="total_bt_lainnya"]').value = formatNumber(total); // Tampilkan dengan format
+        document.querySelector('input[name="total_bt_lainnya"]').value = formatNumber(total);
     }
 
     function onNominalChange() {
@@ -59,7 +100,7 @@
                     </div>
                     <input class="form-control"
                         name="nominal_bt_lainnya[]"
-                        id="nominal_bt_lainnya" type="text"
+                        id="nominal_bt_lainnya_{{ $i }}" type="text"
                         min="0" value="0"
                         onfocus="this.value = this.value === '0' ? '' : this.value;"
                         oninput="formatInput(this)"
@@ -76,13 +117,16 @@
             </div>
         </div>
         <br>
-        @if ($i > 1)
-            <div class="mt-3">
-                <div class="d-flex justify-content-end">
+        <div class="row mt-3">
+            <div class="d-flex justify-start w-100">
+                @if ($i > 0)
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" id="form-container-bt-lainnya-{{ $i }}-cl" name="form-container-bt-lainnya-{{ $i }}" value="Clear" onclick="clearFormLainnya({{ $i }}, event)">Clear</button>
+                @endif
+                @if ($i > 1)
                     <button class="btn btn-warning mr-2" id="form-container-bt-lainnya-{{ $i }}-no" name="form-container-bt-lainnya-{{ $i }}" value="Tidak" onclick="removeFormLainnya({{ $i }}, event)">Remove</button>
-                </div>
+                @endif
             </div>
-        @endif
+        </div>
     </div>
 @endfor
 
@@ -96,9 +140,6 @@
         <div class="input-group-append">
             <span class="input-group-text">Rp</span>
         </div>
-        <input class="form-control bg-light"
-            name="total_bt_lainnya"
-            id="total_bt_lainnya" type="text"
-            min="0" value="0" readonly>
+        <input class="form-control bg-light" name="total_bt_lainnya" id="total_bt_lainnya" type="text" min="0" value="0" readonly>
     </div>
 </div>

@@ -3,7 +3,7 @@
 
     function addMoreFormTransport(event) {
         event.preventDefault();
-        if (formCount < 5) {
+        if (formCount < 20) {
             formCount++;
             document.getElementById(`form-container-bt-transport-${formCount}`).style.display = 'block';
         }
@@ -12,20 +12,67 @@
     function removeFormTransport(index, event) {
         event.preventDefault();
         if (formCount > 1) {
-            // Ambil nilai nominal dari form yang akan dihapus
             let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_transport_${index}`).value);
 
-            // Kurangi nilai nominal dari total
             let total = cleanNumber(document.querySelector('input[name="total_bt_transport"]').value);
             total -= nominalValue;
             document.querySelector('input[name="total_bt_transport"]').value = formatNumber(total);
 
-            // Sembunyikan form
+            let formContainer = document.getElementById(`form-container-bt-transport-${index}`);
+
+            formContainer.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                input.value = '';
+            });
+
+            formContainer.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = 0;
+            });
+
+            formContainer.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+
+            formContainer.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+
+            document.querySelector(`#nominal_bt_transport_${index}`).value = 0;
+
             document.getElementById(`form-container-bt-transport-${index}`).style.display = 'none';
             formCount--;
+            calculateTotalNominalBTTotal();
+        }
+    }
 
-            // Reset nilai nominal di form yang disembunyikan (optional)
+    function clearFormTransport(index, event) {
+        event.preventDefault();
+        if (formCount > 0) {
+            let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_transport_${index}`).value);
+
+            let total = cleanNumber(document.querySelector('input[name="total_bt_transport"]').value);
+            total -= nominalValue;
+            document.querySelector('input[name="total_bt_transport"]').value = formatNumber(total);
+
+            let formContainer = document.getElementById(`form-container-bt-transport-${index}`);
+
+            formContainer.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                input.value = '';
+            });
+
+            formContainer.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = 0;
+            });
+
+            formContainer.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+
+            formContainer.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+
             document.querySelector(`#nominal_bt_transport_${index}`).value = 0;
+            calculateTotalNominalBTTotal();
         }
     }
 
@@ -42,7 +89,7 @@
     }
 </script>
 
-@for ($i = 1; $i <= 100; $i++)
+@for ($i = 1; $i <= 20; $i++)
     <div id="form-container-bt-transport-{{ $i }}" class="card-body bg-light p-2 mb-3" style="{{ $i > 1 ? 'display: none;' : '' }} border-radius: 1%;">
         <div class="row">
             <!-- Transport Date -->
@@ -88,13 +135,16 @@
             </div>
         </div>
         <br>
-        @if ($i > 1)
-            <div class="mt-3">
-                <div class="d-flex justify-content-end">
+        <div class="row mt-3">
+            <div class="d-flex justify-start w-100">
+                @if ($i > 0)
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" id="form-container-bt-transport-{{ $i }}-cl" name="form-container-bt-transport-{{ $i }}" value="Clear" onclick="clearFormTransport({{ $i }}, event)">Clear</button>
+                @endif
+                @if ($i > 1)
                     <button class="btn btn-warning mr-2" id="form-container-bt-transport-{{ $i }}-no" name="form-container-bt-transport-{{ $i }}" value="Tidak" onclick="removeFormTransport({{ $i }}, event)">Remove</button>
-                </div>
+                @endif
             </div>
-        @endif
+        </div>
     </div>
 @endfor
 

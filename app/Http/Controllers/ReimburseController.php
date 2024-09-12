@@ -401,12 +401,19 @@ class ReimburseController extends Controller
             'reason' => $reason,
         ]);
     }
-    function cashadvancedCreate()
+    function cashadvancedCreate(Request $request)
     {
 
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
+
+        $formCount = $request->input('form_count', 1);  // Default to 1 if no form_count
+
+        // If "Add More" was clicked, increase the form count
+        if ($request->has('add_more')) {
+            $formCount++;
+        }
 
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
@@ -484,6 +491,7 @@ class ReimburseController extends Controller
             'managerL1' => $managerL1,
             'managerL2' => $managerL2,
             'director_id' => $director_id,
+            'formCount' => $formCount,
         ]);
     }
     public function cashadvancedSubmit(Request $req)
@@ -534,7 +542,6 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -542,17 +549,19 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
-                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'location' => $location,
-                        'other_location' => $other_location,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    // Check for valid data before adding to detail array
+                    if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_perdiem[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'location' => $location,
+                            'other_location' => $other_location,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -563,12 +572,14 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_transport[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($keterangan) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_transport[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -581,14 +592,16 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_penginapan[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_penginapan[$key]);
 
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'hotel_name' => $hotelName,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_penginapan[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'hotel_name' => $hotelName,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -598,11 +611,13 @@ class ReimburseController extends Controller
                     $keterangan = $req->keterangan_bt_lainnya[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_lainnya[$key]);
 
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($keterangan) && !empty($nominal)) {
+                        $detail_lainnya[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -624,11 +639,13 @@ class ReimburseController extends Controller
                     $keterangan_nbt = $req->keterangan_nbt[$key];
                     $nominal_nbt = str_replace('.', '', $req->nominal_nbt[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
-                    $detail_ndns[] = [
-                        'tanggal_nbt' => $tanggal,
-                        'keterangan_nbt' => $keterangan_nbt,
-                        'nominal_nbt' => $nominal_nbt,
-                    ];
+                    if (!empty($tanggal) && !empty($keterangan_nbt) && !empty($nominal_nbt)) {
+                        $detail_ndns[] = [
+                            'tanggal_nbt' => $tanggal,
+                            'keterangan_nbt' => $keterangan_nbt,
+                            'nominal_nbt' => $nominal_nbt,
+                        ];
+                    }
                 }
             }
             $detail_ndns_json = json_encode($detail_ndns);
@@ -644,30 +661,39 @@ class ReimburseController extends Controller
                     $fee_detail = $req->enter_fee_e_detail[$key];
                     $nominal = str_replace('.', '', $req->nominal_e_detail[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
-                    $detail_e[] = [
-                        'type' => $type,
-                        'fee_detail' => $fee_detail,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($type) && !empty($fee_detail) && !empty($nominal)) {
+                        $detail_e[] = [
+                            'type' => $type,
+                            'fee_detail' => $fee_detail,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
             // Mengumpulkan detail relation
             if ($req->has('rname_e_relation')) {
                 foreach ($req->rname_e_relation as $key => $name) {
-                    $relation_e[] = [
-                        'name' => $name,
-                        'position' => $req->rposition_e_relation[$key],
-                        'company' => $req->rcompany_e_relation[$key],
-                        'purpose' => $req->rpurpose_e_relation[$key],
-                        'relation_type' => array_filter([
-                            'Food' => in_array('food', $req->food_e_relation ?? [$key]),
-                            'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                            'Accomsmodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
-                            'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
-                            'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
-                        ], fn($checked) => $checked),
-                    ];
+                    $position = $req->rposition_e_relation[$key];
+                    $company = $req->rcompany_e_relation[$key];
+                    $purpose = $req->rpurpose_e_relation[$key];
+
+                    // Memastikan semua data yang diperlukan untuk relation terisi
+                    if (!empty($name) && !empty($position) && !empty($company) && !empty($purpose)) {
+                        $relation_e[] = [
+                            'name' => $name,
+                            'position' => $position,
+                            'company' => $company,
+                            'purpose' => $purpose,
+                            'relation_type' => array_filter([
+                                'Food' => in_array('food', $req->food_e_relation ?? [$key]),
+                                'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
+                                'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
+                                'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
+                                'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
+                            ], fn($checked) => $checked),
+                        ];
+                    }
                 }
             }
 
