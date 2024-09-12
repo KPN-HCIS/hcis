@@ -1,3 +1,9 @@
+document.addEventListener("DOMContentLoaded", function () {
+    handleTicketForms();
+    handleHotelForms();
+    handleTaksiForms();
+});
+
 function toggleSection(checkboxId, navId, tabId) {
     const checkbox = document.getElementById(checkboxId);
     const nav = document.getElementById(navId);
@@ -76,6 +82,25 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
+//Ticket Validation Date
+function validateDates(index) {
+    const departureDateInput = document.getElementById(`tgl_brkt_tkt_${index}`);
+    const returnDateInput = document.getElementById(`tgl_plg_tkt_${index}`);
+    const departureTimeInput = document.getElementById(`jam_brkt_tkt_${index}`);
+    const returnTimeInput = document.getElementById(`jam_plg_tkt_${index}`);
+
+    if (departureDateInput && returnDateInput) {
+        const departureDate = new Date(departureDateInput.value);
+        const returnDate = new Date(returnDateInput.value);
+
+        if (returnDate < departureDate) {
+            alert("Return date cannot be earlier than the departure date.");
+            returnDateInput.value = ""; // Reset the return date if it's invalid
+        }
+    }
+}
+
+//Hotel Validation Date
 function calculateTotalDays(index) {
     const checkInInput = document.querySelector(
         `#hotel-form-${index} input[name="tgl_masuk_htl[]"]`
@@ -222,15 +247,15 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+//Ticket JS
+function handleTicketForms() {
     const ticketCheckbox = document.getElementById("ticketCheckbox");
     const ticketFormsContainer = document.getElementById(
         "ticket_forms_container"
     );
-    const maxTickets = 5; // Set this to your desired maximum
-    let currentTicketCount = 1; // Start with 1 visible ticket form
+    const maxTickets = 5;
+    let currentTicketCount = 1;
 
-    // Hide/show ticket forms based on checkbox
     if (ticketCheckbox) {
         ticketCheckbox.addEventListener("change", function () {
             if (this.checked) {
@@ -242,21 +267,15 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Function to reset ticket fields
     function resetTicketFields(container) {
         const inputs = container.querySelectorAll(
             'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
         );
-        inputs.forEach((input) => {
-            input.value = "";
-        });
+        inputs.forEach((input) => (input.value = ""));
         const selects = container.querySelectorAll("select");
-        selects.forEach((select) => {
-            select.selectedIndex = 0;
-        });
+        selects.forEach((select) => (select.selectedIndex = 0));
     }
 
-    // Function to reset all ticket forms
     function resetAllTicketForms() {
         for (let i = 2; i <= maxTickets; i++) {
             const form = document.getElementById(`ticket-form-${i}`);
@@ -269,37 +288,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateButtonVisibility();
     }
 
-    // Add event listeners for Add and Remove buttons
-    if (ticketFormsContainer) {
-        ticketFormsContainer.addEventListener("click", function (e) {
-            if (e.target.classList.contains("add-ticket-btn")) {
-                if (currentTicketCount < maxTickets) {
-                    currentTicketCount++;
-                    const nextForm = document.getElementById(
-                        `ticket-form-${currentTicketCount}`
-                    );
-                    if (nextForm) {
-                        nextForm.style.display = "block";
-                    }
-                    updateButtonVisibility();
-                }
-            } else if (e.target.classList.contains("remove-ticket-btn")) {
-                if (currentTicketCount > 1) {
-                    const currentForm = document.getElementById(
-                        `ticket-form-${currentTicketCount}`
-                    );
-                    if (currentForm) {
-                        currentForm.style.display = "none";
-                        resetTicketFields(currentForm);
-                    }
-                    currentTicketCount--;
-                    updateButtonVisibility();
-                }
-            }
-        });
-    }
-
-    // Function to update button visibility
     function updateButtonVisibility() {
         for (let i = 1; i <= maxTickets; i++) {
             const form = document.getElementById(`ticket-form-${i}`);
@@ -308,7 +296,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const removeButton = form.querySelector(".remove-ticket-btn");
 
                 if (addButton) {
-                    // Only show add button on the last visible form if not at max tickets
                     addButton.style.display =
                         i === currentTicketCount &&
                         currentTicketCount < maxTickets
@@ -317,7 +304,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 if (removeButton) {
-                    // Show remove button on all forms except the first one
                     removeButton.style.display =
                         i > 1 && i <= currentTicketCount
                             ? "inline-block"
@@ -327,7 +313,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Handle Round Trip options
+    ticketFormsContainer.addEventListener("click", function (e) {
+        if (e.target.classList.contains("add-ticket-btn")) {
+            if (currentTicketCount < maxTickets) {
+                currentTicketCount++;
+                const nextForm = document.getElementById(
+                    `ticket-form-${currentTicketCount}`
+                );
+                if (nextForm) {
+                    nextForm.style.display = "block";
+                }
+                updateButtonVisibility();
+            }
+        } else if (e.target.classList.contains("remove-ticket-btn")) {
+            if (currentTicketCount > 1) {
+                const currentForm = document.getElementById(
+                    `ticket-form-${currentTicketCount}`
+                );
+                if (currentForm) {
+                    currentForm.style.display = "none";
+                    resetTicketFields(currentForm);
+                }
+                currentTicketCount--;
+                updateButtonVisibility();
+            }
+        }
+    });
+
     ticketFormsContainer.addEventListener("change", function (e) {
         if (e.target.name === "type_tkt[]") {
             const roundTripOptions = e.target
@@ -344,207 +356,111 @@ document.addEventListener("DOMContentLoaded", function () {
     ticketFormsContainer.style.display = "none";
     resetAllTicketForms();
     updateButtonVisibility();
-});
+}
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Ticket form handling
-    const ticketCheckbox = document.getElementById("ticketCheckbox");
-    const ticketDiv = document.getElementById("tiket_div");
-
-    ticketCheckbox.addEventListener("change", function () {
-        if (this.checked) {
-            // Checkbox is checked
-            ticketDiv.style.display = "block";
-        } else {
-            // Checkbox is unchecked
-            ticketDiv.style.display = "none";
-            // Reset all input fields within the ticketDiv when unchecked
-            resetTicketFields(ticketDiv);
-        }
-    });
-
-    function resetTicketFields(container) {
-        const inputs = container.querySelectorAll(
-            'input[type="text"], input[type="number"], textarea'
-        );
-        inputs.forEach((input) => {
-            input.value = "";
-        });
-        const selects = container.querySelectorAll("select");
-        selects.forEach((select) => {
-            select.selectedIndex = 0;
-        });
-    }
-
-    for (let i = 1; i <= 4; i++) {
-        const yesRadio = document.getElementById(`more_tkt_yes_${i}`);
-        const noRadio = document.getElementById(`more_tkt_no_${i}`);
-        const nextForm = document.getElementById(`ticket-form-${i + 1}`);
-
-        yesRadio.addEventListener("change", function () {
-            if (this.checked) {
-                nextForm.style.display = "block";
-            }
-        });
-
-        noRadio.addEventListener("change", function () {
-            if (this.checked) {
-                nextForm.style.display = "none";
-                // Hide all subsequent forms
-                for (let j = i + 1; j <= 5; j++) {
-                    const form = document.getElementById(`ticket-form-${j}`);
-                    if (form) {
-                        form.style.display = "none";
-                        // Reset the form when it is hidden
-                        resetTicketFields(form);
-                    }
-                }
-                // Reset radio buttons for subsequent forms
-                for (let j = i + 1; j <= 4; j++) {
-                    const noRadioButton = document.getElementById(
-                        `more_tkt_no_${j}`
-                    );
-                    if (noRadioButton) {
-                        noRadioButton.checked = true;
-                    }
-                }
-            }
-        });
-    }
-
-    // Handle Round Trip options
-    const ticketTypes = document.querySelectorAll('select[name="type_tkt[]"]');
-    ticketTypes.forEach((select, index) => {
-        select.addEventListener("change", function () {
-            const roundTripOptions = this.closest(".card-body").querySelector(
-                ".round-trip-options"
-            );
-            if (this.value === "Round Trip") {
-                roundTripOptions.style.display = "block";
-            } else {
-                roundTripOptions.style.display = "none";
-            }
-        });
-    });
-
-    // Hotel form handling
-    for (let i = 1; i <= 4; i++) {
-        const yesRadio = document.getElementById(`more_htl_yes_${i}`);
-        const noRadio = document.getElementById(`more_htl_no_${i}`);
-        const nextForm = document.getElementById(`hotel-form-${i + 1}`);
-
-        yesRadio.addEventListener("change", function () {
-            if (this.checked) {
-                nextForm.style.display = "block";
-            }
-        });
-
-        noRadio.addEventListener("change", function () {
-            if (this.checked) {
-                nextForm.style.display = "none";
-                // Hide all subsequent forms
-                for (let j = i + 1; j <= 5; j++) {
-                    const form = document.getElementById(`hotel-form-${j}`);
-                    if (form) {
-                        form.style.display = "none";
-                        // Reset the form when it is hidden
-                        resetHotelFields(form);
-                    }
-                }
-                // Reset radio buttons for subsequent forms
-                for (let j = i + 1; j <= 4; j++) {
-                    const noRadioButton = document.getElementById(
-                        `more_htl_no_${j}`
-                    );
-                    if (noRadioButton) {
-                        noRadioButton.checked = true;
-                    }
-                }
-            }
-        });
-    }
-
-    // Function to reset hotel fields
-    function resetHotelFields(container) {
-        const inputs = container.querySelectorAll(
-            'input[type="text"], input[type="number"], textarea'
-        );
-        inputs.forEach((input) => {
-            input.value = "";
-        });
-        const selects = container.querySelectorAll("select");
-        selects.forEach((select) => {
-            select.selectedIndex = 0;
-        });
-    }
-
-    // Calculate total days for each hotel form
-    function calculateTotalDays(index) {
-        const checkIn = document.querySelector(
-            `#hotel-form-${index} input[name="tgl_masuk_htl[]"]`
-        );
-        const checkOut = document.querySelector(
-            `#hotel-form-${index} input[name="tgl_keluar_htl[]"]`
-        );
-        const totalDays = document.querySelector(
-            `#hotel-form-${index} input[name="total_hari[]"]`
-        );
-
-        if (checkIn && checkOut && totalDays) {
-            const start = new Date(checkIn.value);
-            const end = new Date(checkOut.value);
-
-            if (checkIn.value && checkOut.value) {
-                // Calculate difference in milliseconds and convert to days, excluding the same day
-                const difference = Math.ceil(
-                    (end - start) / (1000 * 60 * 60 * 24)
-                );
-                if (difference < 0) {
-                    alert(
-                        "Check out date cannot be earlier than check in date."
-                    );
-                    checkOut.value = ""; // Clear the check-out date if invalid
-                    totalDays.value = ""; // Clear the total days if check-out date is reset
-                } else {
-                    totalDays.value = difference >= 0 ? difference : 0;
-                }
-            } else {
-                totalDays.value = ""; // Clear total days if dates are not set
-            }
-        } else {
-            console.error("Elements not found. Check selectors.");
-        }
-    }
-
+//Hotel JS
+function handleHotelForms() {
     const hotelCheckbox = document.getElementById("hotelCheckbox");
-    const hotelDiv = document.getElementById("hotel_div");
     const hotelFormsContainer = document.getElementById(
         "hotel_forms_container"
     );
+    const maxHotels = 5;
+    let currentHotelCount = 1;
 
-    // Handle checkbox change event
-    hotelCheckbox.addEventListener("change", function () {
-        if (this.checked) {
-            hotelDiv.style.display = "block";
-            // Show the first hotel form when checkbox is checked
-            document.getElementById("hotel-form-1").style.display = "block";
-        } else {
-            hotelDiv.style.display = "none";
-            // Hide all hotel forms when checkbox is unchecked
-            for (let i = 1; i <= 5; i++) {
-                const form = document.getElementById(`hotel-form-${i}`);
-                if (form) {
-                    form.style.display = "none";
-                    // Reset the form when it is hidden
-                    resetHotelFields(form);
+    if (hotelCheckbox) {
+        hotelCheckbox.addEventListener("change", function () {
+            if (this.checked) {
+                hotelFormsContainer.style.display = "block";
+            } else {
+                hotelFormsContainer.style.display = "none";
+                resetAllHotelForms();
+            }
+        });
+    }
+
+    function resetHotelFields(container) {
+        const inputs = container.querySelectorAll(
+            'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
+        );
+        inputs.forEach((input) => (input.value = ""));
+        const selects = container.querySelectorAll("select");
+        selects.forEach((select) => (select.selectedIndex = 0));
+    }
+
+    function resetAllHotelForms() {
+        for (let i = 2; i <= maxHotels; i++) {
+            const form = document.getElementById(`hotel-form-${i}`);
+            if (form) {
+                form.style.display = "none";
+                resetHotelFields(form);
+            }
+        }
+        currentHotelCount = 1;
+        updateButtonVisibility();
+    }
+
+    function updateButtonVisibility() {
+        for (let i = 1; i <= maxHotels; i++) {
+            const form = document.getElementById(`hotel-form-${i}`);
+            if (form) {
+                const addButton = form.querySelector(".add-hotel-btn");
+                const removeButton = form.querySelector(".remove-hotel-btn");
+
+                if (addButton) {
+                    addButton.style.display =
+                        i === currentHotelCount && currentHotelCount < maxHotels
+                            ? "inline-block"
+                            : "none";
+                }
+
+                if (removeButton) {
+                    removeButton.style.display =
+                        i > 1 && i <= currentHotelCount
+                            ? "inline-block"
+                            : "none";
                 }
             }
         }
+    }
+
+    hotelFormsContainer.addEventListener("click", function (e) {
+        if (e.target.classList.contains("add-hotel-btn")) {
+            if (currentHotelCount < maxHotels) {
+                currentHotelCount++;
+                const nextForm = document.getElementById(
+                    `hotel-form-${currentHotelCount}`
+                );
+                if (nextForm) {
+                    nextForm.style.display = "block";
+                }
+                updateButtonVisibility();
+            }
+        } else if (e.target.classList.contains("remove-hotel-btn")) {
+            if (currentHotelCount > 1) {
+                const currentForm = document.getElementById(
+                    `hotel-form-${currentHotelCount}`
+                );
+                if (currentForm) {
+                    currentForm.style.display = "none";
+                    resetHotelFields(currentForm);
+                }
+                currentHotelCount--;
+                updateButtonVisibility();
+            }
+        }
     });
+
+    // Initial setup
+    hotelFormsContainer.style.display = "none";
+    resetAllHotelForms();
+    updateButtonVisibility();
+}
+
+//Taksi JS
+function handleTaksiForms() {
     const taksiCheckbox = document.getElementById("taksiCheckbox");
     const taksiDiv = document.getElementById("taksi_div");
 
-    // Handle checkbox change event
     taksiCheckbox.addEventListener("change", function () {
         if (this.checked) {
             taksiDiv.style.display = "block";
@@ -552,116 +468,6 @@ document.addEventListener("DOMContentLoaded", function () {
             taksiDiv.style.display = "none";
         }
     });
-
-    // Add event listeners for date inputs
-    for (let i = 1; i <= 5; i++) {
-        const checkIn = document.querySelector(
-            `#hotel-form-${i} input[name="tgl_masuk_htl[]"]`
-        );
-        const checkOut = document.querySelector(
-            `#hotel-form-${i} input[name="tgl_keluar_htl[]"]`
-        );
-
-        if (checkIn && checkOut) {
-            checkIn.addEventListener("change", () => calculateTotalDays(i));
-            checkOut.addEventListener("change", () => calculateTotalDays(i));
-        }
-    }
-
-    // Handle date validation for the return date
-    document.getElementById("kembali").addEventListener("change", function () {
-        var mulaiDate = document.getElementById("mulai").value;
-        var kembaliDate = this.value;
-
-        if (kembaliDate < mulaiDate) {
-            alert("Return date cannot be earlier than Start date.");
-            this.value = ""; // Reset the kembali field
-        }
-    });
-});
-
-document
-    .getElementById("tgl_keluar_htl")
-    .addEventListener("change", function () {
-        var masukHtl = document.getElementById("tgl_masuk_htl").value;
-        var keluarDate = this.value;
-
-        if (masukHtl && keluarDate) {
-            var checkInDate = new Date(masukHtl);
-            var checkOutDate = new Date(keluarDate);
-
-            if (checkOutDate < checkInDate) {
-                alert("Check out date cannot be earlier than check in date.");
-                this.value = ""; // Reset the check out date field
-            }
-        }
-    });
-
-document.getElementById("type_tkt").addEventListener("change", function () {
-    var roundTripOptions = document.getElementById("roundTripOptions");
-    if (this.value === "Round Trip") {
-        roundTripOptions.style.display = "block";
-    } else {
-        roundTripOptions.style.display = "none";
-    }
-});
-
-function BTtoggleOthers() {
-    // ca_type ca_nbt ca_e
-    var locationFilter = document.getElementById("tujuan");
-    var others_location = document.getElementById("others_location");
-
-    if (locationFilter.value === "Others") {
-        others_location.style.display = "block";
-    } else {
-        others_location.style.display = "none";
-        others_location.value = "";
-    }
-}
-
-function validateDates(index) {
-    // Get the departure and return date inputs for the given form index
-    const departureDate = document.querySelector(`#tgl_brkt_tkt_${index}`);
-    const returnDate = document.querySelector(`#tgl_plg_tkt_${index}`);
-
-    // Get the departure and return time inputs for the given form index
-    const departureTime = document.querySelector(`#jam_brkt_tkt_${index}`);
-    const returnTime = document.querySelector(`#jam_plg_tkt_${index}`);
-
-    if (departureDate && returnDate) {
-        const depDate = new Date(departureDate.value);
-        const retDate = new Date(returnDate.value);
-
-        // Check if both dates are valid
-        if (depDate && retDate) {
-            // Validate if return date is earlier than departure date
-            if (retDate < depDate) {
-                alert("Return date cannot be earlier than departure date.");
-                returnDate.value = ""; // Reset the return date field
-            } else if (
-                retDate.getTime() === depDate.getTime() &&
-                departureTime &&
-                returnTime
-            ) {
-                // If dates are the same, validate time
-                const depTime = departureTime.value;
-                const retTime = returnTime.value;
-
-                // Check if both times are set and validate
-                if (depTime && retTime) {
-                    const depDateTime = new Date(`1970-01-01T${depTime}:00`);
-                    const retDateTime = new Date(`1970-01-01T${retTime}:00`);
-
-                    if (retDateTime < depDateTime) {
-                        alert(
-                            "Return time cannot be earlier than departure time on the same day."
-                        );
-                        returnTime.value = ""; // Reset the return time field
-                    }
-                }
-            }
-        }
-    }
 }
 
 document.getElementById("nik").addEventListener("change", function () {
