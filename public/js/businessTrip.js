@@ -299,9 +299,10 @@ document.addEventListener("DOMContentLoaded", function () {
 function handleTicketForms() {
     const ticketCheckbox = document.getElementById("ticketCheckbox");
     const ticketFormsContainer = document.getElementById(
-        "tiket_div"
+        "ticket_forms_container"
     );
     const maxTickets = 5;
+    let currentTicketCount = 1;
 
     if (ticketCheckbox) {
         ticketCheckbox.addEventListener("change", function () {
@@ -319,126 +320,70 @@ function handleTicketForms() {
             'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
         );
         inputs.forEach((input) => (input.value = ""));
-
         const selects = container.querySelectorAll("select");
-        selects.forEach((select) => {
-            select.value = "";
-            if ($(select).data("select2")) {
-                $(select).val(null).trigger("change");
-            }
-        });
+        selects.forEach((select) => (select.selectedIndex = 0));
     }
 
     function resetAllTicketForms() {
-        const forms = ticketFormsContainer.querySelectorAll(
-            '[id^="ticket-form-"]'
-        );
-        forms.forEach((form, index) => {
-            resetTicketFields(form);
-            if (index === 0) {
-                form.style.display = "block";
-            } else {
+        for (let i = 2; i <= maxTickets; i++) {
+            const form = document.getElementById(`ticket-form-${i}`);
+            if (form) {
                 form.style.display = "none";
+                resetTicketFields(form);
             }
-        });
-        updateFormNumbers();
+        }
+        currentTicketCount = 1;
         updateButtonVisibility();
-    }
-
-    function updateFormNumbers() {
-        const visibleForms = Array.from(
-            ticketFormsContainer.querySelectorAll(
-                '[id^="ticket-form-"]:not([style*="display: none"])'
-            )
-        );
-        visibleForms.sort((a, b) => {
-            return a.dataset.formIndex - b.dataset.formIndex;
-        });
-        visibleForms.forEach((form, index) => {
-            const titleElement = form.querySelector(".h5.text-uppercase b");
-            if (titleElement) {
-                titleElement.textContent = `TICKET ${index + 1}`;
-            }
-            form.dataset.visibleIndex = index.toString();
-        });
     }
 
     function updateButtonVisibility() {
-        const visibleForms = ticketFormsContainer.querySelectorAll(
-            '[id^="ticket-form-"]:not([style*="display: none"])'
-        );
-        visibleForms.forEach((form, index) => {
-            const addButton = form.querySelector(".add-ticket-btn");
-            const removeButton = form.querySelector(".remove-ticket-btn");
+        for (let i = 1; i <= maxTickets; i++) {
+            const form = document.getElementById(`ticket-form-${i}`);
+            if (form) {
+                const addButton = form.querySelector(".add-ticket-btn");
+                const removeButton = form.querySelector(".remove-ticket-btn");
 
-            if (addButton) {
-                addButton.style.display =
-                    index === visibleForms.length - 1 &&
-                    visibleForms.length < maxTickets
-                        ? "inline-block"
-                        : "none";
+                if (addButton) {
+                    addButton.style.display =
+                        i === currentTicketCount &&
+                        currentTicketCount < maxTickets
+                            ? "inline-block"
+                            : "none";
+                }
+
+                if (removeButton) {
+                    removeButton.style.display =
+                        i > 1 && i <= currentTicketCount
+                            ? "inline-block"
+                            : "none";
+                }
             }
-
-            if (removeButton) {
-                removeButton.style.display =
-                    visibleForms.length > 1 ? "inline-block" : "none";
-            }
-        });
-    }
-
-    function removeForm(formToRemove) {
-        formToRemove.style.display = "none";
-        resetTicketFields(formToRemove);
-        updateFormNumbers();
-        updateButtonVisibility();
-    }
-
-    function addForm() {
-        const forms = Array.from(
-            ticketFormsContainer.querySelectorAll('[id^="ticket-form-"]')
-        );
-        const visibleForms = forms.filter(
-            (form) => form.style.display !== "none"
-        );
-
-        if (visibleForms.length < maxTickets) {
-            // Find the highest form index
-            const highestIndex = Math.max(
-                ...forms.map((form) => parseInt(form.dataset.formIndex) || 0)
-            );
-
-            // Find the first hidden form
-            const hiddenForm = forms.find(
-                (form) => form.style.display === "none"
-            );
-
-            if (hiddenForm) {
-                hiddenForm.style.display = "block";
-                hiddenForm.dataset.formIndex = (highestIndex + 1).toString();
-
-                // Move the form to the end of the container
-                ticketFormsContainer.appendChild(hiddenForm);
-            }
-
-            updateFormNumbers();
-            updateButtonVisibility();
         }
     }
 
-    // Initialize form indices
-    ticketFormsContainer
-        .querySelectorAll('[id^="ticket-form-"]')
-        .forEach((form, index) => {
-            form.dataset.formIndex = index.toString();
-        });
-
     ticketFormsContainer.addEventListener("click", function (e) {
         if (e.target.classList.contains("add-ticket-btn")) {
-            addForm();
+            if (currentTicketCount < maxTickets) {
+                currentTicketCount++;
+                const nextForm = document.getElementById(
+                    `ticket-form-${currentTicketCount}`
+                );
+                if (nextForm) {
+                    nextForm.style.display = "block";
+                }
+                updateButtonVisibility();
+            }
         } else if (e.target.classList.contains("remove-ticket-btn")) {
-            const formToRemove = e.target.closest('[id^="ticket-form-"]');
-            if (formToRemove) {
-                removeForm(formToRemove);
+            if (currentTicketCount > 1) {
+                const currentForm = document.getElementById(
+                    `ticket-form-${currentTicketCount}`
+                );
+                if (currentForm) {
+                    currentForm.style.display = "none";
+                    resetTicketFields(currentForm);
+                }
+                currentTicketCount--;
+                updateButtonVisibility();
             }
         }
     });
@@ -456,15 +401,15 @@ function handleTicketForms() {
     });
 
     // Initial setup
+    ticketFormsContainer.style.display = "none";
     resetAllTicketForms();
+    updateButtonVisibility();
 }
 
 //Hotel JS
 function handleHotelForms() {
     const hotelCheckbox = document.getElementById("hotelCheckbox");
-    const hotelFormsContainer = document.getElementById(
-        "hotel_div"
-    );
+    const hotelFormsContainer = document.getElementById("hotel_div");
     const maxHotels = 5;
     let currentHotelCount = 1;
 
