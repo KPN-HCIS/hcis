@@ -302,7 +302,6 @@ function handleTicketForms() {
         "ticket_forms_container"
     );
     const maxTickets = 5;
-    let currentTicketCount = 1; // Track how many tickets are currently visible
 
     if (ticketCheckbox) {
         ticketCheckbox.addEventListener("change", function () {
@@ -320,8 +319,14 @@ function handleTicketForms() {
             'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
         );
         inputs.forEach((input) => (input.value = ""));
+
         const selects = container.querySelectorAll("select");
-        selects.forEach((select) => (select.selectedIndex = 0));
+        selects.forEach((select) => {
+            select.value = "";
+            if ($(select).data("select2")) {
+                $(select).val(null).trigger("change");
+            }
+        });
     }
 
     function resetAllTicketForms() {
@@ -329,28 +334,32 @@ function handleTicketForms() {
             '[id^="ticket-form-"]'
         );
         forms.forEach((form, index) => {
+            resetTicketFields(form);
             if (index === 0) {
                 form.style.display = "block";
             } else {
                 form.style.display = "none";
-                resetTicketFields(form);
             }
         });
-        currentTicketCount = 1; // Reset to 1 visible form
         updateFormNumbers();
         updateButtonVisibility();
     }
 
     function updateFormNumbers() {
-        const visibleForms = ticketFormsContainer.querySelectorAll(
-            '[id^="ticket-form-"]:not([style*="display: none"])'
+        const visibleForms = Array.from(
+            ticketFormsContainer.querySelectorAll(
+                '[id^="ticket-form-"]:not([style*="display: none"])'
+            )
         );
+        visibleForms.sort((a, b) => {
+            return a.dataset.formIndex - b.dataset.formIndex;
+        });
         visibleForms.forEach((form, index) => {
             const titleElement = form.querySelector(".h5.text-uppercase b");
             if (titleElement) {
                 titleElement.textContent = `TICKET ${index + 1}`;
             }
-            form.dataset.visibleIndex = (index + 1).toString();
+            form.dataset.visibleIndex = index.toString();
         });
     }
 
@@ -380,32 +389,48 @@ function handleTicketForms() {
     function removeForm(formToRemove) {
         formToRemove.style.display = "none";
         resetTicketFields(formToRemove);
-        currentTicketCount--; // Decrease visible form count
         updateFormNumbers();
         updateButtonVisibility();
     }
 
     function addForm() {
-        const forms = ticketFormsContainer.querySelectorAll(
-            '[id^="ticket-form-"]'
+        const forms = Array.from(
+            ticketFormsContainer.querySelectorAll('[id^="ticket-form-"]')
         );
-        const visibleForms = ticketFormsContainer.querySelectorAll(
-            '[id^="ticket-form-"]:not([style*="display: none"])'
+        const visibleForms = forms.filter(
+            (form) => form.style.display !== "none"
         );
 
-        if (currentTicketCount < maxTickets) {
-            // Find the first hidden form and make it visible
-            for (let i = 0; i < forms.length; i++) {
-                if (forms[i].style.display === "none") {
-                    forms[i].style.display = "block";
-                    currentTicketCount++; // Increase visible form count
-                    break;
-                }
+        if (visibleForms.length < maxTickets) {
+            // Find the highest form index
+            const highestIndex = Math.max(
+                ...forms.map((form) => parseInt(form.dataset.formIndex) || 0)
+            );
+
+            // Find the first hidden form
+            const hiddenForm = forms.find(
+                (form) => form.style.display === "none"
+            );
+
+            if (hiddenForm) {
+                hiddenForm.style.display = "block";
+                hiddenForm.dataset.formIndex = (highestIndex + 1).toString();
+
+                // Move the form to the end of the container
+                ticketFormsContainer.appendChild(hiddenForm);
             }
+
             updateFormNumbers();
             updateButtonVisibility();
         }
     }
+
+    // Initialize form indices
+    ticketFormsContainer
+        .querySelectorAll('[id^="ticket-form-"]')
+        .forEach((form, index) => {
+            form.dataset.formIndex = index.toString();
+        });
 
     ticketFormsContainer.addEventListener("click", function (e) {
         if (e.target.classList.contains("add-ticket-btn")) {
