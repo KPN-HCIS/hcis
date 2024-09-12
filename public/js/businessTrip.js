@@ -119,31 +119,13 @@ function validateDates(index) {
     const departureTimeInput = document.getElementById(`jam_brkt_tkt_${index}`);
     const returnTimeInput = document.getElementById(`jam_plg_tkt_${index}`);
 
-    if (
-        departureDateInput &&
-        returnDateInput &&
-        departureTimeInput &&
-        returnTimeInput
-    ) {
+    if (departureDateInput && returnDateInput) {
         const departureDate = new Date(departureDateInput.value);
         const returnDate = new Date(returnDateInput.value);
 
-        // Check if return date is earlier than departure date
         if (returnDate < departureDate) {
             alert("Return date cannot be earlier than the departure date.");
             returnDateInput.value = ""; // Reset the return date if it's invalid
-            return; // Stop further validation
-        }
-
-        // If the dates are the same, check the times
-        if (returnDate.getTime() === departureDate.getTime()) {
-            const departureTime = departureTimeInput.value;
-            const returnTime = returnTimeInput.value;
-
-            if (departureTime && returnTime && returnTime < departureTime) {
-                alert("Return time cannot be earlier than the departure time.");
-                returnTimeInput.value = ""; // Reset the return time if it's invalid
-            }
         }
     }
 }
