@@ -65,12 +65,12 @@
                                 <div class="col-md-4">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control datepicker" id="mulai" name="mulai"
-                                        placeholder="Tanggal Mulai" required>
+                                        placeholder="Tanggal Mulai" required onchange="validateStartEndDates()">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control datepicker" id="kembali" name="kembali"
-                                        placeholder="Tanggal Kembali" required>
+                                        placeholder="Tanggal Kembali" required onchange="validateStartEndDates()">
                                 </div>
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden"
                                     value="{{ $perdiem->amount }}" readonly>
@@ -129,12 +129,13 @@
                                 <div class="col-md-12">
                                     <label for="additional-fields-title" class="mb-3">Business Trip Needs</label>
                                     <div class="form-check">
+                                        <input type="hidden" name="ca" value="Tidak">
                                         <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox">
                                         <label class="form-check-label" for="cashAdvancedCheckbox">
                                             Cash Advanced
                                         </label>
                                     </div>
-                                    <input type="hidden" name="ca" value="Tidak">
+
                                     <div class="row mt-2" id="ca_div" style="display: none;">
                                         <div class="col-md-12">
                                             <div class="table-responsive-sm">
@@ -241,48 +242,37 @@
                                         </div>
 
 
-
+                                        {{-- Ticket CheckBox --}}
                                         <div class="col-md-12 mt-3">
                                             <div class="form-check">
+                                                <input type="hidden" name="tiket" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="ticketCheckbox"
                                                     name="tiket" value="Ya">
                                                 <label class="form-check-label" for="ticketCheckbox">
                                                     Ticket
                                                 </label>
                                             </div>
-                                            <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
-                                            {{-- <input type="hidden" name="tiket" value="Tidak"> --}}
 
-                                            {{-- bt ticket content --}}
-                                            {{-- @include('hcis.reimbursements.businessTrip.btTicket') --}}
-
-
+                                            {{-- Hotel CheckBox --}}
                                             <div class="col-md-12 mt-3">
                                                 <div class="form-check">
+                                                    <input type="hidden" name="hotel" value="Tidak">
                                                     <input class="form-check-input" type="checkbox" id="hotelCheckbox"
                                                         name="hotel" value="Ya">
                                                     <label class="form-check-label" for="hotelCheckbox">
                                                         Hotel
                                                     </label>
                                                 </div>
-                                                <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
-                                                <input type="hidden" name="hotel" value="Tidak">
-
-                                                {{-- bt hotel content --}}
-                                                {{-- @include('hcis.reimbursements.businessTrip.btHotel') --}}
-
+                                                {{-- Taksi CheckBox --}}
                                                 <div class="col-md-12 mt-3">
                                                     <div class="form-check">
+                                                        <input type="hidden" name="taksi" value="Tidak">
                                                         <input class="form-check-input" type="checkbox"
                                                             id="taksiCheckbox" name="taksi" value="Ya">
                                                         <label class="form-check-label" for="taksiCheckbox">
                                                             Taxi Voucher
                                                         </label>
                                                     </div>
-
-                                                    <!-- Hidden input to handle "Tidak" value when checkbox is unchecked -->
-                                                    <input type="hidden" name="taksi" value="Tidak">
-                                                    {{-- @include('hcis.reimbursements.businessTrip.btTaksi') --}}
 
                                                     {{-- NAV BT INPUT --}}
                                                     <ul class="nav nav-pills mb-3 mt-3" id="pills-tab" role="tablist">

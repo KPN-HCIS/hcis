@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <div class="card-body p-2 bg-light" id="taksi_div">
+    <div class="card-body p-2 bg-light rounded" id="taksi_div">
         <div class="h5 text-uppercase">
             <b>Taxi Voucher</b>
         </div>
