@@ -1716,7 +1716,9 @@ class BusinessTripController extends Controller
                 'approval_status' => $request->status,
                 'jns_dinas_tkt' => "Dinas",
             ];
-
+            $jml_ktp=count($request->noktp_tkt);
+            // dd($cekcek);
+            // dd($ticketData);
             foreach ($ticketData['noktp_tkt'] as $key => $value) {
                 if (!empty($value)) {
                     // Fetch employee data inside the loop
@@ -1725,7 +1727,7 @@ class BusinessTripController extends Controller
                     // if (!$employee_data) {
                     //     return redirect()->back()->with('error', "NIK $value not found");
                     // }
-
+                    // dd($key);
                     $tiket = new Tiket();
                     $tiket->id = (string) Str::uuid();
                     $tiket->no_tkt = $noSppdTkt;
@@ -1736,15 +1738,28 @@ class BusinessTripController extends Controller
                     $tiket->np_tkt = $employee_data ? $employee_data->fullname : null;
                     $tiket->noktp_tkt = $value;
                     $tiket->tlp_tkt = $employee_data ? $employee_data->personal_mobile_number : null;
-                    $tiket->dari_tkt = $ticketData['dari_tkt'][$key] ?? null;
-                    $tiket->ke_tkt = $ticketData['ke_tkt'][$key] ?? null;
-                    $tiket->tgl_brkt_tkt = $ticketData['tgl_brkt_tkt'][$key] ?? null;
-                    $tiket->tgl_plg_tkt = $ticketData['tgl_plg_tkt'][$key] ?? null;
-                    $tiket->jam_brkt_tkt = $ticketData['jam_brkt_tkt'][$key] ?? null;
-                    $tiket->jam_plg_tkt = $ticketData['jam_plg_tkt'][$key] ?? null;
-                    $tiket->jenis_tkt = $ticketData['jenis_tkt'][$key] ?? null;
+                    $nilai = 0; // Default value
+
+                    if ($jml_ktp >= 1 && $jml_ktp <= 5 && $key >= 0 && $key <= $jml_ktp - 1) {
+                        $nilai_map = [
+                            1 => [0],
+                            2 => [0, 4],
+                            3 => [0, 3, 4],
+                            4 => [0, 2, 3, 4],
+                            5 => [0, 1, 2, 3, 4]
+                        ];
+
+                        $nilai = $nilai_map[$jml_ktp][$key];
+                    }
+                    $tiket->dari_tkt = $ticketData['dari_tkt'][$nilai] ?? null;
+                    $tiket->ke_tkt = $ticketData['ke_tkt'][$nilai] ?? null;
+                    $tiket->tgl_brkt_tkt = $ticketData['tgl_brkt_tkt'][$nilai] ?? null;
+                    $tiket->tgl_plg_tkt = $ticketData['tgl_plg_tkt'][$nilai] ?? null;
+                    $tiket->jam_brkt_tkt = $ticketData['jam_brkt_tkt'][$nilai] ?? null;
+                    $tiket->jam_plg_tkt = $ticketData['jam_plg_tkt'][$nilai] ?? null;
+                    $tiket->jenis_tkt = $ticketData['jenis_tkt'][$nilai] ?? null;
                     $tiket->type_tkt = $ticketData['type_tkt'][$key] ?? null;
-                    $tiket->ket_tkt = $ticketData['ket_tkt'][$key] ?? null;
+                    $tiket->ket_tkt = $ticketData['ket_tkt'][$nilai] ?? null;
                     $tiket->approval_status = $request->status;
                     $tiket->jns_dinas_tkt = 'Dinas';
 

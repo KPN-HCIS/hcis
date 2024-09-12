@@ -66,7 +66,8 @@
                         <div class="col-md-6 mb-2">
                             <label for="type_tkt_<?php echo $i; ?>" class="form-label">Ticket Type</label>
                             <select class="form-select form-select-sm" name="type_tkt[]">
-                                <option value="One Way">One Way</option>
+                                {{-- <option value="" selected>Choose Ticket Type</option> --}}
+                                <option value="One Way" selected>One Way</option>
                                 <option value="Round Trip">Round Trip</option>
                             </select>
                         </div>
