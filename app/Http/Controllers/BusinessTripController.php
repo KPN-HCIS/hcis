@@ -1178,11 +1178,11 @@ class BusinessTripController extends Controller
         $btIds = $sppd->pluck('id');
 
         $btApprovals = BTApproval::whereIn('bt_id', $btIds)
-        ->where(function ($query) {
-            $query->where('approval_status', 'Rejected')
-                ->orWhere('approval_status', 'Declaration Rejected');
-        })
-        ->get();
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
 
         $btApprovals = $btApprovals->keyBy('bt_id');
 
@@ -1209,11 +1209,11 @@ class BusinessTripController extends Controller
         if ($startDate && $endDate) {
             $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
                 ->whereBetween('mulai', [$startDate, $endDate])
-                ->orderBy('mulai', 'asc')
+                ->orderBy('created_at', 'desc')
                 ->get(); // Adjust the pagination as needed
         } else {
             $sppd = BusinessTrip::where('user_id', $user->id) // Filter by the user's ID
-                ->orderBy('mulai', 'asc')
+                ->orderBy('created_at', 'desc')
                 ->get();
         }
         $parentLink = 'Reimbursement';
@@ -2106,23 +2106,50 @@ class BusinessTripController extends Controller
     }
     public function filterDateAdmin(Request $request)
     {
+
+        $query = BusinessTrip::whereNotIn('status', ['Draft', 'Declaration Draft'])
+            ->orderBy('created_at', 'desc');
+
+        $filter = $request->input('filter', 'all');
+
+        if ($filter === 'request') {
+            $query->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
+        } elseif ($filter === 'declaration') {
+            $query->whereIn('status', ['Declaration Approved', 'Declaration L1', 'Declaration L2']);
+        } elseif ($filter === 'done') {
+            $query->whereIn('status', ['Doc Accepted', 'Verified']);
+        } elseif ($filter === 'return_refund') {
+            $query->whereIn('status', ['Return/Refund']);
+        } elseif ($filter === 'rejected') {
+            $query->whereIn('status', ['Rejected', 'Declaration Rejected']);
+        }
+
+        $sppd = $query->get();
+
+        $sppdNos = $sppd->pluck('no_sppd');
+        $btIds = $sppd->pluck('id');
         // Retrieve the start and end dates from the request
+        $btApprovals = BTApproval::whereIn('bt_id', $btIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
+
+        $employeeIds = $sppd->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
+
         $startDate = $request->query('start-date');
         $endDate = $request->query('end-date');
 
-        // Build the query to exclude drafts and apply date filtering
-        $query = BusinessTrip::where('status', '!=', 'Draft');
 
         if ($startDate && $endDate) {
             $query->whereBetween('mulai', [$startDate, $endDate])
-                ->orderBy('mulai', 'asc');
+                ->orderBy('created_at', 'desc');
         } else {
-            $query->orderBy('mulai', 'asc');
+            $query->orderBy('created_at', 'desc');
         }
-
-        // Execute the query and get the results
-        $sppd = $query->get();
-        $sppdNos = $sppd->pluck('no_sppd');
 
         // Fetch related data based on the filtered SPPD numbers
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
@@ -2130,10 +2157,13 @@ class BusinessTripController extends Controller
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
+        $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
+        $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
+
         $parentLink = 'Reimbursement';
         $link = 'Business Trip (Admin)';
 
-        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName'));
     }
     public function deklarasiAdmin($id)
     {
@@ -3028,26 +3058,50 @@ class BusinessTripController extends Controller
         $user = Auth::user();
         $startDate = $request->query('start-date');
         $endDate = $request->query('end-date');
+        $filter = $request->input('filter', 'all');
 
-        $sppd = BusinessTrip::query();
+        // Base query for filtering by user's role and status
+        $query = BusinessTrip::query()
+            ->where(function ($query) use ($user) {
+                $query->where(function ($q) use ($user) {
+                    $q->where('manager_l1_id', $user->employee_id)
+                        ->whereIn('status', ['Pending L1', 'Declaration L1']);
+                })->orWhere(function ($q) use ($user) {
+                    $q->where('manager_l2_id', $user->employee_id)
+                        ->whereIn('status', ['Pending L2', 'Declaration L2']);
+                });
+            });
 
         // Apply date filtering if both startDate and endDate are provided
         if ($startDate && $endDate) {
-            $sppd = $sppd->whereBetween('mulai', [$startDate, $endDate]);
+            $query->whereBetween('mulai', [$startDate, $endDate]);
         }
 
-        // Filter based on manager's role and status
-        $sppd = $sppd->where(function ($query) use ($user) {
-            $query->where('manager_l1_id', $user->employee_id)
-                ->where('status', 'Pending L1')
-                ->orWhere(function ($query) use ($user) {
-                    $query->where('manager_l2_id', $user->employee_id)
+        // Apply status filter based on the 'filter' parameter
+        if ($filter === 'request') {
+            $query->where(function ($q) use ($user) {
+                $q->where(function ($subQ) use ($user) {
+                    $subQ->where('manager_l1_id', $user->employee_id)
+                        ->where('status', 'Pending L1');
+                })->orWhere(function ($subQ) use ($user) {
+                    $subQ->where('manager_l2_id', $user->employee_id)
                         ->where('status', 'Pending L2');
                 });
-        });
+            });
+        } elseif ($filter === 'declaration') {
+            $query->where(function ($q) use ($user) {
+                $q->where(function ($subQ) use ($user) {
+                    $subQ->where('manager_l1_id', $user->employee_id)
+                        ->where('status', 'Declaration L1');
+                })->orWhere(function ($subQ) use ($user) {
+                    $subQ->where('manager_l2_id', $user->employee_id)
+                        ->where('status', 'Declaration L2');
+                });
+            });
+        }
 
         // Order and retrieve the filtered results
-        $sppd = $sppd->orderBy('mulai', 'asc')->get();
+        $sppd = $query->orderBy('created_at', 'desc')->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
@@ -3062,8 +3116,9 @@ class BusinessTripController extends Controller
         $link = 'Business Trip';
         $showData = true;
 
-        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData'));
+        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData', 'filter'));
     }
+
 
     private function generateNoSppd()
     {
