@@ -1,7 +1,8 @@
     <div id="tiket_div">
         <div class="d-flex flex-column gap-1" id="ticket_forms_container">
             <?php for ($i = 1; $i <= 5; $i++) : ?>
-            <div class="card bg-light shadow-none" id="ticket-form-<?php echo $i; ?>" style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
+            <div class="card bg-light shadow-none" id="ticket-form-<?php echo $i; ?>"
+                style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
                 <div class="card-body">
                     <div class="h5 text-uppercase">
                         <b>TICKET <?php echo $i; ?></b>
@@ -9,7 +10,8 @@
                     <div class="row">
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Employee Name</label>
-                            <select class="form-select form-select-sm select2" id="noktp_tkt_<?php echo $i; ?>" name="noktp_tkt[]">
+                            <select class="form-select form-select-sm select2" id="noktp_tkt_<?php echo $i; ?>"
+                                name="noktp_tkt[]">
                                 <option value="" disabled selected>--- Choose Passengers ---</option>
                                 @foreach ($employees as $employee)
                                     <option value="{{ $employee->ktp }}">
@@ -53,7 +55,8 @@
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="jenis_tkt_<?php echo $i; ?>">Transportation Type</label>
                             <div class="input-group">
-                                <select class="form-select form-select-sm" name="jenis_tkt[]" id="jenis_tkt_<?php echo $i; ?>">
+                                <select class="form-select form-select-sm" name="jenis_tkt[]"
+                                    id="jenis_tkt_<?php echo $i; ?>">
                                     <option value="">Select Transportation Type</option>
                                     <option value="Train">Train</option>
                                     <option value="Bus">Bus</option>
@@ -93,17 +96,22 @@
                                 <label class="form-label">Return Time</label>
                                 <div class="input-group">
                                     <input class="form-control form-control-sm" id="jam_plg_tkt_<?php echo $i; ?>"
-                                        name="jam_plg_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
+                                        name="jam_plg_tkt[]" type="time"
+                                        onchange="validateDates(<?php echo $i; ?>)">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary add-ticket-btn">Add Ticket Data</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn">Remove Ticket</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary add-ticket-btn">Add Ticket
+                            Data</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn">Remove
+                            Ticket</button>
                     </div>
                 </div>
             </div>
             <?php endfor; ?>
         </div>
     </div>
+    </div>
+    {{-- </div> --}}
