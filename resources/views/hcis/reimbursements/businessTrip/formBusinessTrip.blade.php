@@ -65,12 +65,12 @@
                                 <div class="col-md-4">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control datepicker" id="mulai" name="mulai"
-                                        placeholder="Tanggal Mulai" required onchange="validateStartEndDates()">
+                                        placeholder="Tanggal Mulai" onchange="validateStartEndDates()" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control datepicker" id="kembali" name="kembali"
-                                        placeholder="Tanggal Kembali" required onchange="validateStartEndDates()">
+                                        placeholder="Tanggal Kembali" onchange="validateStartEndDates()" required>
                                 </div>
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden"
                                     value="{{ $perdiem->amount }}" readonly>

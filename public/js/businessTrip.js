@@ -1,33 +1,49 @@
 document.addEventListener("DOMContentLoaded", function () {
+    setupCheckboxListeners();
     handleTicketForms();
     handleHotelForms();
     handleTaksiForms();
 });
 
-function toggleSection(checkboxId, navId, tabId) {
-    const checkbox = document.getElementById(checkboxId);
-    const nav = document.getElementById(navId);
-    const tab = document.getElementById(tabId); // The tab itself (button)
+function setupCheckboxListeners() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", function () {
+            const section = this.id.replace("Checkbox", "");
+            const navItem = document.getElementById(`nav-${section}`);
+            const tabContent = document.getElementById(`pills-${section}`);
+            const tabButton = document.getElementById(`pills-${section}-tab`);
 
-    checkbox.addEventListener("change", function () {
-        if (this.checked) {
-            nav.style.display = "block";
-            tab.click(); // Programmatically activate the tab
-        } else {
-            nav.style.display = "none";
-        }
+            if (this.checked) {
+                navItem.style.display = "block";
+                tabButton.click(); // Activate this tab
+                // Ensure the tab content shows
+                tabContent.classList.add("show", "active");
+            } else {
+                navItem.style.display = "none";
+                tabContent.classList.remove("show", "active");
+
+                // Find the next available tab to activate
+                const nextTab = findNextAvailableTab();
+                if (nextTab) {
+                    nextTab.click();
+                }
+            }
+        });
     });
 }
 
-// Initialize toggling for each checkbox and tab
-toggleSection(
-    "cashAdvancedCheckbox",
-    "nav-cash-advanced",
-    "pills-cash-advanced-tab"
-);
-toggleSection("ticketCheckbox", "nav-ticket", "pills-ticket-tab");
-toggleSection("hotelCheckbox", "nav-hotel", "pills-hotel-tab");
-toggleSection("taksiCheckbox", "nav-taksi", "pills-taksi-tab");
+function findNextAvailableTab() {
+    const tabs = document.querySelectorAll(".nav-link");
+    for (let tab of tabs) {
+        const section = tab.id.replace("pills-", "").replace("-tab", "");
+        const checkbox = document.getElementById(`${section}Checkbox`);
+        if (checkbox && checkbox.checked) {
+            return tab;
+        }
+    }
+    return null;
+}
 
 function formatCurrency(input) {
     var cursorPos = input.selectionStart;
@@ -345,19 +361,53 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //Ticket JS
-function handleTicketForms() {
+document.addEventListener("DOMContentLoaded", function () {
+    let formTicketCount = 1;
+    const maxTicketForms = 5;
+    const ticketFormsContainer = document.getElementById(
+        "ticket_forms_container"
+    );
     const ticketCheckbox = document.getElementById("ticketCheckbox");
-    const ticketFormsContainer = document.getElementById("tiket_div");
-    const maxTickets = 5;
 
-    if (ticketCheckbox) {
-        ticketCheckbox.addEventListener("change", function () {
-            if (this.checked) {
-                ticketFormsContainer.style.display = "block";
-            } else {
-                ticketFormsContainer.style.display = "none";
-                resetAllTicketForms();
+    function updateFormNumbers() {
+        const forms = ticketFormsContainer.querySelectorAll(
+            '[id^="ticket-form-"]'
+        );
+        forms.forEach((form, index) => {
+            const formNumber = index + 1;
+            form.querySelector(
+                ".h5.text-uppercase b"
+            ).textContent = `TICKET ${formNumber}`;
+            form.id = `ticket-form-${formNumber}`;
+            form.querySelector(".remove-ticket-btn").dataset.formId =
+                formNumber;
+
+            updateFormElementIds(form, formNumber);
+        });
+        formTicketCount = forms.length;
+        updateRemoveButtons();
+    }
+
+    function updateFormElementIds(form, formNumber) {
+        const elements = form.querySelectorAll("[id],[name]");
+        elements.forEach((element) => {
+            if (element.id) {
+                element.id = element.id.replace(/\d+$/, formNumber);
             }
+            if (element.name) {
+                element.name = element.name.replace(
+                    /\[\d*\]/,
+                    `[${formNumber}]`
+                );
+            }
+        });
+    }
+
+    function updateRemoveButtons() {
+        const removeButtons = document.querySelectorAll(".remove-ticket-btn");
+        removeButtons.forEach((button) => {
+            button.style.display =
+                formTicketCount > 1 ? "inline-block" : "none";
         });
     }
 
@@ -377,11 +427,9 @@ function handleTicketForms() {
                     : select.querySelector("option").value;
             }
         });
-
-        // Reset the round-trip options
         const roundTripOptions = container.querySelector(".round-trip-options");
         if (roundTripOptions) {
-            roundTripOptions.style.display = "none"; // Hide round-trip input by default
+            roundTripOptions.style.display = "none";
         }
     }
 
@@ -394,117 +442,39 @@ function handleTicketForms() {
             if (index === 0) {
                 form.style.display = "block";
             } else {
-                form.style.display = "none";
+                form.remove();
             }
         });
+        formTicketCount = 1;
         updateFormNumbers();
-        updateButtonVisibility();
     }
 
-    function updateFormNumbers() {
-        const visibleForms = Array.from(
-            ticketFormsContainer.querySelectorAll(
-                '[id^="ticket-form-"]:not([style*="display: none"])'
-            )
-        );
-        visibleForms.sort((a, b) => {
-            return a.dataset.formIndex - b.dataset.formIndex;
-        });
-        visibleForms.forEach((form, index) => {
-            const titleElement = form.querySelector(".h5.text-uppercase b");
-            if (titleElement) {
-                titleElement.textContent = `TICKET ${index + 1}`;
-            }
-            form.dataset.visibleIndex = index.toString();
-        });
-    }
-
-    function updateButtonVisibility() {
-        const visibleForms = ticketFormsContainer.querySelectorAll(
-            '[id^="ticket-form-"]:not([style*="display: none"])'
-        );
-        visibleForms.forEach((form, index) => {
-            const addButton = form.querySelector(".add-ticket-btn");
-            const removeButton = form.querySelector(".remove-ticket-btn");
-
-            if (addButton) {
-                addButton.style.display =
-                    index === visibleForms.length - 1 &&
-                    visibleForms.length < maxTickets
-                        ? "inline-block"
-                        : "none";
-            }
-
-            if (removeButton) {
-                removeButton.style.display =
-                    visibleForms.length > 1 ? "inline-block" : "none";
-            }
-        });
-    }
-
-    function removeForm(formToRemove) {
-        formToRemove.style.display = "none";
-        resetTicketFields(formToRemove);
-        updateFormNumbers();
-        updateButtonVisibility();
-    }
-
-    function addForm() {
-        const forms = Array.from(
-            ticketFormsContainer.querySelectorAll('[id^="ticket-form-"]')
-        );
-        const visibleForms = forms.filter(
-            (form) => form.style.display !== "none"
-        );
-
-        if (visibleForms.length < maxTickets) {
-            const highestIndex = Math.max(
-                ...forms.map((form) => parseInt(form.dataset.formIndex) || 0)
-            );
-
-            const hiddenForm = forms.find(
-                (form) => form.style.display === "none"
-            );
-
-            if (hiddenForm) {
-                hiddenForm.style.display = "block";
-                hiddenForm.dataset.formIndex = (highestIndex + 1).toString();
-                ticketFormsContainer.appendChild(hiddenForm);
-
-                // Hide round-trip input by default for the newly added form
-                const roundTripOptions = hiddenForm.querySelector(
-                    ".round-trip-options"
-                );
-                if (roundTripOptions) {
-                    roundTripOptions.style.display = "none";
-                }
-            }
-
+    function addNewTicketForm() {
+        if (formTicketCount < maxTicketForms) {
+            formTicketCount++;
+            const newTicketForm = createNewTicketForm(formTicketCount);
+            ticketFormsContainer.insertAdjacentHTML("beforeend", newTicketForm);
             updateFormNumbers();
-            updateButtonVisibility();
+            initializeAllSelect2(); // Initialize Select2 for new dropdowns
+        } else {
+            alert("You have reached the maximum number of tickets (5).");
         }
     }
 
-    // Initialize form indices
-    ticketFormsContainer
-        .querySelectorAll('[id^="ticket-form-"]')
-        .forEach((form, index) => {
-            form.dataset.formIndex = index.toString();
-        });
+    document
+        .getElementById("add-ticket-btn")
+        .addEventListener("click", addNewTicketForm);
 
     ticketFormsContainer.addEventListener("click", function (e) {
-        if (e.target.classList.contains("add-ticket-btn")) {
-            addForm();
-        } else if (e.target.classList.contains("remove-ticket-btn")) {
-            const formToRemove = e.target.closest('[id^="ticket-form-"]');
-            if (formToRemove) {
-                removeForm(formToRemove);
-            }
+        if (e.target.classList.contains("remove-ticket-btn")) {
+            const formId = e.target.dataset.formId;
+            document.getElementById(`ticket-form-${formId}`).remove();
+            updateFormNumbers();
         }
     });
 
     ticketFormsContainer.addEventListener("change", function (e) {
-        if (e.target.name === "type_tkt[]") {
+        if (e.target.name && e.target.name.startsWith("type_tkt")) {
             const roundTripOptions = e.target
                 .closest(".card-body")
                 .querySelector(".round-trip-options");
@@ -515,9 +485,153 @@ function handleTicketForms() {
         }
     });
 
+    if (ticketCheckbox) {
+        ticketCheckbox.addEventListener("change", function () {
+            ticketFormsContainer.style.display = this.checked
+                ? "block"
+                : "none";
+            if (!this.checked) {
+                resetAllTicketForms();
+            }
+        });
+    }
+
+    function createNewTicketForm(formNumber) {
+        return `
+            <div class="card bg-light shadow-none" id="ticket-form-${formNumber}" style="display: block;">
+                <div class="card-body">
+                    <div class="h5 text-uppercase">
+                        <b>TICKET ${formNumber}</b>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Employee Name</label>
+                            <select class="form-select form-select-sm selection2" id="noktp_tkt_${formNumber}" name="noktp_tkt[]">
+                               <option value="">Please Select</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">From</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" name="dari_tkt[]" type="text" placeholder="ex. Yogyakarta (YIA)">
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">To</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" name="ke_tkt[]" type="text" placeholder="ex. Jakarta (CGK)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Date</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" id="tgl_brkt_tkt_${formNumber}" name="tgl_brkt_tkt[]" type="date" onchange="validateDates(${formNumber})">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Time</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" id="jam_brkt_tkt_${formNumber}" name="jam_brkt_tkt[]" type="time" onchange="validateDates(${formNumber})">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Transportation Type</label>
+                            <div class="input-group">
+                                <select class="form-select form-select-sm" name="jenis_tkt[]" id="jenis_tkt_${formNumber}">
+                                    <option value="">Select Transportation Type</option>
+                                    <option value="Train">Train</option>
+                                    <option value="Bus">Bus</option>
+                                    <option value="Airplane">Airplane</option>
+                                    <option value="Car">Car</option>
+                                    <option value="Ferry">Ferry</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Ticket Type</label>
+                            <select class="form-select form-select-sm" name="type_tkt[]">
+                                <option value="One Way" selected>One Way</option>
+                                <option value="Round Trip">Round Trip</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label">Information</label>
+                            <textarea class="form-control" id="ket_tkt_${formNumber}" name="ket_tkt[]" rows="3" placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                        </div>
+                    </div>
+                    <div class="round-trip-options" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Return Date</label>
+                                <div class="input-group">
+                                    <input class="form-control form-control-sm" name="tgl_plg_tkt[]" type="date" id="tgl_plg_tkt_${formNumber}" onchange="validateDates(${formNumber})">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Return Time</label>
+                                <div class="input-group">
+                                    <input class="form-control form-control-sm" id="jam_plg_tkt_${formNumber}" name="jam_plg_tkt[]" type="time" onchange="validateDates(${formNumber})">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn" data-form-id="${formNumber}">Remove Ticket</button>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function initializeAllSelect2() {
+        $(".selection2").each(function () {
+            const $select = $(this);
+            if (!$select.data("select2")) {
+                const config = {
+                    theme: "bootstrap-5",
+                    width: "100%",
+                };
+
+                if ($select.find("option").length > 1) {
+                    config.minimumResultsForSearch = 10;
+                } else {
+                    config.minimumInputLength = 1;
+                    config.ajax = {
+                        url: "/search/name",
+                        dataType: "json",
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                searchTerm: params.term,
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: $.map(data, function (item) {
+                                    return {
+                                        id: item.ktp,
+                                        text: item.fullname + " - " + item.ktp,
+                                    };
+                                }),
+                            };
+                        },
+                        cache: true,
+                    };
+                }
+
+                $select.select2(config);
+            }
+        });
+    }
     // Initial setup
-    resetAllTicketForms();
-}
+    updateRemoveButtons();
+    initializeAllSelect2();
+});
 
 //Hotel JS
 function handleHotelForms() {

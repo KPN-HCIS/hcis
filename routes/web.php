@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\BusinessTripController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\BussinessTripController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignationController;
@@ -203,6 +204,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/businessTrip/update/{id}', [BusinessTripController::class, 'update'])->name('update.bt');
     Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
     Route::post('/businessTrip/saveDraft', [BusinessTripController::class, 'saveDraft'])->name('businessTrip.saveDraft');
+
+    //Search
+    Route::get('/search/name', [SearchController::class, 'searchNik'])->name('searchNik');
 
     //DEKLARASI BT
     Route::get('/businessTrip/deklarasi/{id}', [BusinessTripController::class, 'deklarasi'])->name('businessTrip.deklarasi');

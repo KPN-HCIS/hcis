@@ -1,6 +1,9 @@
     <div id="tiket_div">
         <div class="d-flex flex-column gap-1" id="ticket_forms_container">
-            <?php for ($i = 1; $i <= 5; $i++) : ?>
+            <?php
+            $i = 1;
+            // for ($i = 1; $i <= 5; $i++) :
+            ?>
             <div class="card bg-light shadow-none" id="ticket-form-<?php echo $i; ?>"
                 style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
                 <div class="card-body">
@@ -12,7 +15,7 @@
                             <label class="form-label">Employee Name</label>
                             <select class="form-select form-select-sm select2" id="noktp_tkt_<?php echo $i; ?>"
                                 name="noktp_tkt[]">
-                                <option value="" disabled selected>--- Choose Passengers ---</option>
+                                <option value="" selected>Please Select</option>
                                 @foreach ($employees as $employee)
                                     <option value="{{ $employee->ktp }}">
                                         {{ $employee->ktp . ' - ' . $employee->fullname }}
@@ -103,15 +106,17 @@
                         </div>
                     </div>
                     <div class="mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary add-ticket-btn">Add Ticket
-                            Data</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn">Remove
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn"
+                            id="remove-ticket-btn">Remove
                             Ticket</button>
                     </div>
                 </div>
             </div>
-            <?php endfor; ?>
+
         </div>
+        <button type="button" class="btn btn-sm btn-outline-primary add-ticket-btn" id="add-ticket-btn">Add
+            Ticket
+            Data</button>
     </div>
-    </div>
+    {{-- </div> --}}
     {{-- </div> --}}

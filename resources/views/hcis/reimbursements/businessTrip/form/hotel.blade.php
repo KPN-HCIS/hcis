@@ -70,5 +70,5 @@
             <?php endfor; ?>
         </div>
     </div>
-    {{-- </div> --}}
+    </div>
     {{-- </div> --}}
