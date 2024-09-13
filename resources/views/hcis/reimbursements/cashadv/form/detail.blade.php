@@ -3,7 +3,7 @@
 
     function addMoreFormDetail(event) {
         event.preventDefault();
-        if (formCount < 20) {
+        if (formCount < 3) {
             formCount++;
             document.getElementById(`form-container-e-detail-${formCount}`).style.display = 'block';
         }
@@ -138,7 +138,7 @@
     });
 </script>
 
-@for ($i = 1; $i <= 20; $i++)
+@for ($i = 1; $i <= 3; $i++)
     <div id="form-container-e-detail-{{ $i }}" class="card-body bg-light p-2 mb-3" style="{{ $i > 1 ? 'display: none;' : '' }} border-radius: 1%;">
         <div class="row">
             <div class="col-md-6 mb-2">

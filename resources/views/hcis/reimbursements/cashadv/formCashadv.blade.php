@@ -340,7 +340,7 @@
                                             <span class="input-group-text">Rp</span>
                                         </div>
                                         <input class="form-control bg-light" name="totalca" id="totalca"
-                                            type="text" min="0" value="0" readonly>
+                                            type="text" min="0" value="0">
                                     </div>
                                 </div>
                             </div>

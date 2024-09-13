@@ -3,7 +3,7 @@
 
     function addMoreFormLainnya(event) {
         event.preventDefault();
-        if (formCount < 100) {
+        if (formCount < 3) {
             formCount++;
             document.getElementById(`form-container-bt-lainnya-${formCount}`).style.display = 'block';
         }
@@ -83,7 +83,7 @@
     }
 </script>
 
-@for ($i = 1; $i <= 100; $i++)
+@for ($i = 1; $i <= 3; $i++)
     <div id="form-container-bt-lainnya-{{ $i }}" class="card-body bg-light p-2 mb-3" style="{{ $i > 1 ? 'display: none;' : '' }} border-radius: 1%;">
         <div class="row">
             <!-- Lainnya Date -->

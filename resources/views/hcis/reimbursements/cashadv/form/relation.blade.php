@@ -3,7 +3,7 @@
 
     function addMoreFormRelation(event) {
         event.preventDefault();
-        if (formCount < 20) { // Assuming a maximum of 100 forms
+        if (formCount < 3) { // Assuming a maximum of 100 forms
             formCount++;
             document.getElementById(`form-container-e-relation-${formCount}`).style.display = 'block';
         }
@@ -67,7 +67,7 @@
     }
 </script>
 
-@for ($i = 1; $i <= 20; $i++)
+@for ($i = 1; $i <= 3; $i++)
     <div id="form-container-e-relation-{{ $i }}" class="card-body bg-light p-2 mb-3" style="{{ $i > 1 ? 'display: none;' : '' }} border-radius: 1%;">
         <div class="row">
             <!-- Penginapan Date -->
