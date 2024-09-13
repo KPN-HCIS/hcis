@@ -1,7 +1,8 @@
     <div id="hotel_div">
         <div class="d-flex flex-column gap-1" id="hotel_forms_container">
             <?php for ($i = 1; $i <= 5; $i++) : ?>
-            <div class="card bg-light shadow-none" id="hotel-form-<?php echo $i; ?>" style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
+            <div class="card bg-light shadow-none" id="hotel-form-<?php echo $i; ?>"
+                style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
                 <div class="card-body">
                     <div class="h5 text-uppercase">
                         <b>Hotel <?php echo $i; ?></b>
@@ -36,8 +37,8 @@
                         <div class="col-md-2 mb-2">
                             <label class="form-label">Total Room</label>
                             <div class="input-group">
-                                <input class="form-control form-control-sm" name="jmlkmr_htl[]" type="number" min="1"
-                                    placeholder="ex: 1">
+                                <input class="form-control form-control-sm" name="jmlkmr_htl[]" type="number"
+                                    min="1" placeholder="ex: 1">
                             </div>
                         </div>
                     </div>
@@ -54,7 +55,8 @@
                         </div>
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Total Days</label>
-                            <input type="number" class="form-control form-control-sm bg-light" name="total_hari[]" readonly>
+                            <input type="number" class="form-control form-control-sm bg-light" name="total_hari[]"
+                                readonly>
                         </div>
                     </div>
                     <div class="mt-2">
@@ -68,3 +70,5 @@
             <?php endfor; ?>
         </div>
     </div>
+    {{-- </div> --}}
+    {{-- </div> --}}

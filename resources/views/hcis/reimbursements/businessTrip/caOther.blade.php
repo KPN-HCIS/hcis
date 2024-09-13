@@ -1,4 +1,4 @@
-<div id="lainnya-card" class="card-body"
+{{-- <div id="lainnya-card" class="card-body"
                                                                             style="display:">
                                                                             <div class="accordion" id="accordionLainnya">
                                                                                 <div class="accordion-item">
@@ -88,4 +88,4 @@
                                                                         {{-- </div> --}}
                                                                         {{-- </div> --}}
                                                                     </div>
-                                                                </div>
+                                                                </div> --}}

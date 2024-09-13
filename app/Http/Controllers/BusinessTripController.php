@@ -1136,13 +1136,72 @@ class BusinessTripController extends Controller
     public function filterDate(Request $request)
     {
         $user = Auth::user();
-        $sppd = BusinessTrip::where('user_id', $user->id);
+        $query = BusinessTrip::where('user_id', $user->id)->orderBy('created_at', 'desc');
+        // $sppd = BusinessTrip::where('user_id', $user->id);
+        $filter = $request->input('filter', 'all');
+
+        if ($filter === 'request') {
+            // Show all data where the date is < today and status is in ['Pending L1', 'Pending L2', 'Draft']
+            $query->where(function ($query) {
+                $query->whereDate('kembali', '<', now())
+                    ->whereIn('status', ['Pending L1', 'Pending L2']);
+            });
+        } elseif ($filter === 'declaration') {
+            // Show data with Approved, Declaration L1, Declaration L2, Draft Declaration
+            $query->where(function ($query) {
+                $query->whereIn('status', ['Approved', 'Declaration L1', 'Declaration L2', 'Declaration Approved']);
+            });
+        } elseif ($filter === 'rejected') {
+            // Show data with Rejected, Refund, Doc Accepted, Verified
+            $query->where(function ($query) {
+                $query->whereIn('status', ['Rejected', 'Declaration Rejected']);
+            });
+        } elseif ($filter === 'done') {
+            // Show data with Rejected, Refund, Doc Accepted, Verified
+            $query->where(function ($query) {
+                $query->whereIn('status', ['Return/Refund', 'Doc Accepted', 'Verified']);
+            });
+        } elseif ($filter === 'draft') {
+            // Show data with Rejected, Refund, Doc Accepted, Verified
+            $query->where(function ($query) {
+                $query->whereIn('status', ['Draft', 'Declaration Draft']);
+            });
+        }
+
+        // If 'all' is selected or no filter is applied, just get all data
+        if ($filter === 'all') {
+            // No additional where clauses needed for 'all'
+        }
+
+        $sppd = $query->get();
         $sppdNos = $sppd->pluck('no_sppd');
+        $btIds = $sppd->pluck('id');
+
+        $btApprovals = BTApproval::whereIn('bt_id', $btIds)
+        ->where(function ($query) {
+            $query->where('approval_status', 'Rejected')
+                ->orWhere('approval_status', 'Declaration Rejected');
+        })
+        ->get();
+
+        $btApprovals = $btApprovals->keyBy('bt_id');
+
+        $employeeIds = $sppd->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
+        // Fetch related data
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+
+        $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
+        $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
 
         $startDate = $request->query('start-date');
         $endDate = $request->query('end-date');
@@ -1160,7 +1219,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName'));
     }
 
 

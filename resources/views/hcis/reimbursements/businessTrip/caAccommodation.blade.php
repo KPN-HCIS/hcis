@@ -1,4 +1,4 @@
-<div id="penginapan-card" class="card-body"
+{{-- <div id="penginapan-card" class="card-body"
                                                                             style="display: ">
                                                                             <div class="accordion"
                                                                                 id="accordionPenginapan">
@@ -144,4 +144,4 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
+                                                                        </div> --}}

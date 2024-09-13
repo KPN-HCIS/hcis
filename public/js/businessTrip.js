@@ -55,6 +55,7 @@ document.getElementById("btFrom").addEventListener("submit", function (event) {
     keeperField.value = keeperField.value.replace(/\./g, "");
 });
 
+//save to draft
 document.addEventListener("DOMContentLoaded", function () {
     document
         .getElementById("save-draft")
@@ -222,23 +223,71 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+//RESET CHECKBOX FIELDS
 document.addEventListener("DOMContentLoaded", function () {
     var jnsDinasSelect = document.getElementById("jns_dinas");
     var additionalFields = document.getElementById("additional-fields");
+
+    var checkboxes = [
+        "cashAdvancedCheckbox",
+        "ticketCheckbox",
+        "hotelCheckbox",
+        "taksiCheckbox",
+    ];
+
+    // Corresponding section divs to hide/reset
+    var sections = [
+        "nav-cash-advanced",
+        "nav-ticket",
+        "nav-hotel",
+        "nav-taksi",
+    ];
 
     jnsDinasSelect.addEventListener("change", function () {
         if (this.value === "luar kota") {
             additionalFields.style.display = "block";
         } else {
             additionalFields.style.display = "none";
-            // Reset all fields to "Tidak"
-            document.getElementById("ca").value = "Tidak";
-            document.getElementById("tiket").value = "Tidak";
-            document.getElementById("hotel").value = "Tidak";
-            document.getElementById("taksi").value = "Tidak";
+
+            // Uncheck all the checkboxes and hide/reset related fields
+            checkboxes.forEach(function (checkboxId) {
+                var checkbox = document.getElementById(checkboxId);
+                if (checkbox.checked) {
+                    checkbox.checked = false; // Uncheck the checkbox
+                    // Trigger the change event to ensure corresponding sections are hidden
+                    checkbox.dispatchEvent(new Event("change"));
+                }
+            });
         }
     });
 });
+
+// Function to toggle the visibility of sections based on checkboxes
+function toggleSection(checkboxId, navId, tabId) {
+    const checkbox = document.getElementById(checkboxId);
+    const nav = document.getElementById(navId);
+    const tab = document.getElementById(tabId); // The tab button (anchor) for navigation
+
+    checkbox.addEventListener("change", function () {
+        if (this.checked) {
+            nav.style.display = "block";
+            tab.click(); // Programmatically activate the tab
+        } else {
+            nav.style.display = "none";
+        }
+    });
+}
+
+// Initialize toggling for each checkbox and tab
+toggleSection(
+    "cashAdvancedCheckbox",
+    "nav-cash-advanced",
+    "pills-cash-advanced-tab"
+);
+toggleSection("ticketCheckbox", "nav-ticket", "pills-ticket-tab");
+toggleSection("hotelCheckbox", "nav-hotel", "pills-hotel-tab");
+toggleSection("taksiCheckbox", "nav-taksi", "pills-taksi-tab");
+
 document.addEventListener("DOMContentLoaded", function () {
     // Elements
     const caSelect = document.getElementById("ca");
@@ -298,9 +347,7 @@ document.addEventListener("DOMContentLoaded", function () {
 //Ticket JS
 function handleTicketForms() {
     const ticketCheckbox = document.getElementById("ticketCheckbox");
-    const ticketFormsContainer = document.getElementById(
-        "tiket_div"
-    );
+    const ticketFormsContainer = document.getElementById("tiket_div");
     const maxTickets = 5;
 
     if (ticketCheckbox) {
@@ -322,11 +369,20 @@ function handleTicketForms() {
 
         const selects = container.querySelectorAll("select");
         selects.forEach((select) => {
-            select.value = "";
             if ($(select).data("select2")) {
                 $(select).val(null).trigger("change");
+            } else {
+                select.value = select.querySelector("option[selected]")
+                    ? select.querySelector("option[selected]").value
+                    : select.querySelector("option").value;
             }
         });
+
+        // Reset the round-trip options
+        const roundTripOptions = container.querySelector(".round-trip-options");
+        if (roundTripOptions) {
+            roundTripOptions.style.display = "none"; // Hide round-trip input by default
+        }
     }
 
     function resetAllTicketForms() {
@@ -402,12 +458,10 @@ function handleTicketForms() {
         );
 
         if (visibleForms.length < maxTickets) {
-            // Find the highest form index
             const highestIndex = Math.max(
                 ...forms.map((form) => parseInt(form.dataset.formIndex) || 0)
             );
 
-            // Find the first hidden form
             const hiddenForm = forms.find(
                 (form) => form.style.display === "none"
             );
@@ -415,9 +469,15 @@ function handleTicketForms() {
             if (hiddenForm) {
                 hiddenForm.style.display = "block";
                 hiddenForm.dataset.formIndex = (highestIndex + 1).toString();
-
-                // Move the form to the end of the container
                 ticketFormsContainer.appendChild(hiddenForm);
+
+                // Hide round-trip input by default for the newly added form
+                const roundTripOptions = hiddenForm.querySelector(
+                    ".round-trip-options"
+                );
+                if (roundTripOptions) {
+                    roundTripOptions.style.display = "none";
+                }
             }
 
             updateFormNumbers();
@@ -462,9 +522,7 @@ function handleTicketForms() {
 //Hotel JS
 function handleHotelForms() {
     const hotelCheckbox = document.getElementById("hotelCheckbox");
-    const hotelFormsContainer = document.getElementById(
-        "hotel_div"
-    );
+    const hotelFormsContainer = document.getElementById("hotel_div");
     const maxHotels = 5;
     let currentHotelCount = 1;
 

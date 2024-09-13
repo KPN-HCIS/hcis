@@ -1,4 +1,4 @@
-<div id="perdiem-card" class="card-body" style="display: ">
+{{-- <div id="perdiem-card" class="card-body" style="display: ">
     <div id="form-container-bt-perdiem">
         <div class="row mb-2">
         <div class="col-md-5 mb-2">
@@ -70,4 +70,4 @@
         </div>
     </div>
     <button type="button" id="add-more-bt-perdiem" class="btn btn-primary mt-3">Add More</button>
-</div>
+</div> --}}

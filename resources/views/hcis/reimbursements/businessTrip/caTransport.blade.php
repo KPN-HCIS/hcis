@@ -1,4 +1,4 @@
-<div id="transport-card" class="card-body" style="display:">
+{{-- <div id="transport-card" class="card-body" style="display:">
     <div id="form-container-bt-transport">
         <div class="mb-2">
             <label class="form-label">
@@ -50,4 +50,4 @@
     </div>
     <button type="button" id="add-more-bt-transport" class="btn btn-primary mt-3">Add
         More</button>
-</div>
+</div> --}}
