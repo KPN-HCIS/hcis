@@ -3,16 +3,70 @@
 
     function addMoreFormTransport(event) {
         event.preventDefault();
-        if (formCount < 3) {
-            formCount++;
-            document.getElementById(`form-container-bt-transport-${formCount}`).style.display = 'block';
-        }
+        formCount++;
+
+        const newForm = document.createElement("div");
+        newForm.id = `form-container-bt-transport-${formCount}`;
+        newForm.className = "card-body bg-light p-2 mb-3";
+        newForm.innerHTML = `
+            <div class="row">
+                <!-- Transport Date -->
+                <div class="col-md-4 mb-2">
+                    <label class="form-label">Transport Date</label>
+                    <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy">
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label class="form-label" for="name">Company Code</label>
+                    <select class="form-control select2" id="company_bt_transport_${formCount}" name="company_bt_transport[]">
+                        <option value="">Select Company...</option>
+                        @foreach ($companies as $company)
+                            <option value="{{ $company->contribution_level_code }}">
+                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label class="form-label">Amount</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input class="form-control"
+                                name="nominal_bt_transport[]"
+                                id="nominal_bt_transport_${formCount}"
+                                type="text"
+                                min="0"
+                                value="0"
+                                onfocus="this.value = this.value === '0' ? '' : this.value;"
+                                oninput="formatInput(this)"
+                                onblur="formatOnBlur(this)" onchange="calculateTotalNominalBTTransport()">
+                    </div>
+                </div>
+
+                <!-- Information -->
+                <div class="col-md-12 mb-2">
+                    <div class="mb-2">
+                        <label class="form-label">Information</label>
+                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row mt-3">
+                <div class="d-flex justify-start w-100">
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(${formCount}, event)">Clear</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormTransport(${formCount}, event)">Remove</button>
+                </div>
+            </div>
+        `;
+        document.getElementById("form-container-transport").appendChild(newForm);
     }
 
     function removeFormTransport(index, event) {
         event.preventDefault();
-        if (formCount > 1) {
-            let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_transport_${index}`).value);
+        if (formCount > 0) {
+            let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_transport_${formCount}`).value);
 
             let total = cleanNumber(document.querySelector('input[name="total_bt_transport"]').value);
             total -= nominalValue;
@@ -38,7 +92,7 @@
 
             document.querySelector(`#nominal_bt_transport_${index}`).value = 0;
 
-            document.getElementById(`form-container-bt-transport-${index}`).style.display = 'none';
+            formContainer.remove();
             formCount--;
             calculateTotalNominalBTTotal();
         }
@@ -89,8 +143,8 @@
     }
 </script>
 
-@for ($i = 1; $i <= 3; $i++)
-    <div id="form-container-bt-transport-{{ $i }}" class="card-body bg-light p-2 mb-3" style="{{ $i > 1 ? 'display: none;' : '' }} border-radius: 1%;">
+<div id="form-container-transport">
+    <div id="form-container-bt-transport-1" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
         <div class="row">
             <!-- Transport Date -->
             <div class="col-md-4 mb-2">
@@ -99,7 +153,7 @@
             </div>
             <div class="col-md-4 mb-2">
                 <label class="form-label" for="name">Company Code</label>
-                <select class="form-control select2" id="company_bt_transport_{{ $i }}" name="company_bt_transport[]">
+                <select class="form-control select2" id="company_bt_transport_1" name="company_bt_transport[]">
                     <option value="">Select Company...</option>
                     @foreach ($companies as $company)
                         <option value="{{ $company->contribution_level_code }}">
@@ -115,14 +169,14 @@
                         <span class="input-group-text">Rp</span>
                     </div>
                     <input class="form-control"
-                           name="nominal_bt_transport[]"
-                           id="nominal_bt_transport_{{ $i }}"
-                           type="text"
-                           min="0"
-                           value="0"
-                           onfocus="this.value = this.value === '0' ? '' : this.value;"
-                           oninput="formatInput(this)"
-                           onblur="formatOnBlur(this)">
+                            name="nominal_bt_transport[]"
+                            id="nominal_bt_transport_1"
+                            type="text"
+                            min="0"
+                            value="0"
+                            onfocus="this.value = this.value === '0' ? '' : this.value;"
+                            oninput="formatInput(this)"
+                            onblur="formatOnBlur(this)">
                 </div>
             </div>
 
@@ -137,19 +191,15 @@
         <br>
         <div class="row mt-3">
             <div class="d-flex justify-start w-100">
-                @if ($i > 0)
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" id="form-container-bt-transport-{{ $i }}-cl" name="form-container-bt-transport-{{ $i }}" value="Clear" onclick="clearFormTransport({{ $i }}, event)">Clear</button>
-                @endif
-                @if ($i > 1)
-                    <button class="btn btn-warning mr-2" id="form-container-bt-transport-{{ $i }}-no" name="form-container-bt-transport-{{ $i }}" value="Tidak" onclick="removeFormTransport({{ $i }}, event)">Remove</button>
-                @endif
+                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(1, event)">Clear</button>
+                <button class="btn btn-warning mr-2" onclick="removeFormTransport(1, event)">Remove</button>
             </div>
         </div>
     </div>
-@endfor
+</div>
 
 <div class="mt-3">
-    <button class="btn btn-primary" id="form-container-bt-transport-{{ $i }}-yes" name="form-container-bt-transport-{{ $i }}" value="Ya" onclick="addMoreFormTransport(event)">Add More</button>
+    <button class="btn btn-primary" id="addMoreButtonTransport" onclick="addMoreFormTransport(event)">Add More</button>
 </div>
 
 <div class="mt-2">

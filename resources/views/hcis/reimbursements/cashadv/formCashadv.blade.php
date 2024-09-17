@@ -271,60 +271,6 @@
                                             </div>
                                             <button type="button" id="add-more-e-detail" style="display: none"
                                                 class="btn btn-primary mt-3">Add More</button>
-                                            <div class="card">
-                                                <div id="relation-card" class="card-body">
-                                                    <div class="accordion" id="accordionRelation">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="headingRelation">
-                                                                <button class="accordion-button collapsed fw-medium"
-                                                                    type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#collapseRelation" aria-expanded="false"
-                                                                    aria-controls="collapseRelation">
-                                                                    Rencana Relation
-                                                                </button>
-                                                            </h2>
-                                                            <div id="collapseRelation" class="accordion-collapse collapse"
-                                                                aria-labelledby="headingRelation">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container-e-relation">
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label"
-                                                                                for="start">Name</label>
-                                                                            <input type="text" name="rname_e_relation[]"
-                                                                                id="rname_e_relation[]" class="form-control">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label"
-                                                                                for="start">Position</label>
-                                                                            <input type="text"
-                                                                                name="rposition_e_relation[]"
-                                                                                id="rposition_e_relation[]"
-                                                                                class="form-control">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label"
-                                                                                for="start">Company</label>
-                                                                            <input type="text" name="rcompany_e_relation[]"
-                                                                                id="rcompany_e_relation[]"
-                                                                                class="form-control">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label"
-                                                                                for="start">Purpose</label>
-                                                                            <input type="text" name="rpurpose_e_relation[]"
-                                                                                id="rpurpose_e_relation[]"
-                                                                                class="form-control">
-                                                                        </div>
-                                                                        <hr class="border border-primary border-1 opacity-50">
-                                                                    </div>
-                                                                    <button type="button" id="add-more-e-relation"
-                                                                        class="btn btn-primary mt-3">Add More</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -502,32 +448,6 @@
 
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
-            }
-
-            function calculateTotalDays() {
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-                if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
-                    const timeDiff = endDate - startDate;
-                    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
-                    totalDaysInput.value = totalDays;
-
-                    const perdiem = parseFloat(perdiemInput.value) || 0;
-                    let allowance = totalDays * perdiem;
-
-                    if (othersLocationInput.value.trim() !== '') {
-                        allowance *= 1; // allowance * 50%
-                    } else {
-                        allowance *= 0.5;
-                    }
-
-                    allowanceInput.value = formatNumber(Math.floor(allowance));
-                } else {
-                    totalDaysInput.value = 0;
-                    allowanceInput.value = 0;
-                }
-                calculateTotalCA();
             }
 
             function formatInput(input) {
