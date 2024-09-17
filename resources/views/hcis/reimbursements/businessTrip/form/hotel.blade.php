@@ -1,6 +1,9 @@
     <div id="hotel_div">
         <div class="d-flex flex-column gap-1" id="hotel_forms_container">
-            <?php for ($i = 1; $i <= 5; $i++) : ?>
+            <?php
+            $i = 1;
+            // for ($i = 1; $i <= 5; $i++) :
+            ?>
             <div class="card bg-light shadow-none" id="hotel-form-<?php echo $i; ?>"
                 style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
                 <div class="card-body">
@@ -46,29 +49,28 @@
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Check In Date</label>
                             <input type="date" class="form-control form-control-sm" name="tgl_masuk_htl[]"
-                                onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                id="check-in-<?php echo $i; ?>" onchange="calculateTotalDays(<?php echo $i; ?>)">
                         </div>
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Check Out Date</label>
                             <input type="date" class="form-control form-control-sm" name="tgl_keluar_htl[]"
-                                onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                id="check-out-<?php echo $i; ?>" onchange="calculateTotalDays(<?php echo $i; ?>)">
                         </div>
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Total Days</label>
                             <input type="number" class="form-control form-control-sm bg-light" name="total_hari[]"
-                                readonly>
+                                id="total-days-<?php echo $i; ?>" readonly>
                         </div>
                     </div>
                     <div class="mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn">Add Hotel
-                            Data</button>
                         <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn">Remove
                             Data</button>
                     </div>
                 </div>
             </div>
-            <?php endfor; ?>
         </div>
+        <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn">Add Hotel
+            Data</button>
     </div>
     {{-- </div> --}}
     {{-- </div> --}}

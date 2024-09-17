@@ -138,7 +138,7 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
-
+        $employees = Employee::orderBy('ktp')->get();
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
         // Initialize caDetail with an empty array if it's null
@@ -201,6 +201,7 @@ class BusinessTripController extends Controller
             'taksiData' => $taksi, // Pass the taxi data
             'ticketData' => $ticketData,
             'employee_data' => $employee_data,
+            'employees' => $employees,
             'companies' => $companies,
             'locations' => $locations,
             'caDetail' => $caDetail,
