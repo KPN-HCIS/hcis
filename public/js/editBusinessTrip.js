@@ -1,9 +1,36 @@
 document.addEventListener("DOMContentLoaded", function () {
     setupCheckboxListeners();
-    handleTicketForms();
-    handleHotelForms();
+    // handleTicketForms();
+    // handleHotelForms();
     handleTaksiForms();
     handleCaForms();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    var jnsDinasSelect = document.getElementById("jns_dinas");
+    var additionalFields = document.getElementById("additional-fields");
+
+    function showAdditionalFields() {
+        if (jnsDinasSelect.value === "luar kota") {
+            additionalFields.style.display = "block";
+        } else {
+            additionalFields.style.display = "none";
+        }
+    }
+
+    // Show additional fields on page load if 'luar kota' is selected
+    showAdditionalFields();
+
+    jnsDinasSelect.addEventListener("change", function () {
+        showAdditionalFields();
+        if (this.value !== "luar kota") {
+            // Reset all fields to "Tidak" if not 'luar kota'
+            document.getElementById("ca").value = "Tidak";
+            document.getElementById("tiket").value = "Tidak";
+            document.getElementById("hotel").value = "Tidak";
+            document.getElementById("taksi").value = "Tidak";
+        }
+    });
 });
 
 function setupCheckboxListeners() {
@@ -14,7 +41,6 @@ function setupCheckboxListeners() {
             const navItem = document.getElementById(`nav-${section}`);
             const tabContent = document.getElementById(`pills-${section}`);
             const tabButton = document.getElementById(`pills-${section}-tab`);
-
             if (this.checked) {
                 navItem.style.display = "block";
                 tabButton.click(); // Activate this tab
@@ -33,6 +59,30 @@ function setupCheckboxListeners() {
         });
     });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Check if any checkbox is already checked and activate its tab
+    if (document.getElementById("cashAdvancedCheckbox").checked) {
+        activateTab("pills-cashAdvanced-tab");
+    }
+    if (document.getElementById("ticketCheckbox").checked) {
+        activateTab("pills-ticket-tab");
+    }
+    if (document.getElementById("hotelCheckbox").checked) {
+        activateTab("pills-hotel-tab");
+    }
+    if (document.getElementById("taksiCheckbox").checked) {
+        activateTab("pills-taksi-tab");
+    }
+
+    function activateTab(tabId) {
+        // Activate the tab by clicking on the button
+        var tab = document.getElementById(tabId);
+        if (tab) {
+            tab.click();
+        }
+    }
+});
 
 function findNextAvailableTab() {
     const tabs = document.querySelectorAll(".nav-link");
@@ -64,15 +114,34 @@ function formatCurrency(input) {
     input.setSelectionRange(cursorPos, cursorPos);
 }
 
-document.getElementById("btFrom").addEventListener("submit", function (event) {
-    // Unformat the voucher fields before submission
-    var nominalField = document.getElementById("nominal_vt");
-    var keeperField = document.getElementById("keeper_vt");
+document.addEventListener("DOMContentLoaded", function () {
+    var nominalVtInput = document.getElementById("nominal_vt");
+    var keeperVtInput = document.getElementById("keeper_vt");
 
-    // Remove dots from the formatted value
-    nominalField.value = nominalField.value.replace(/\./g, "");
-    keeperField.value = keeperField.value.replace(/\./g, "");
+    // If the inputs have values, format them on page load
+    if (nominalVtInput.value) {
+        formatCurrency(nominalVtInput);
+    }
+    if (keeperVtInput.value) {
+        formatCurrency(keeperVtInput);
+    }
+
+    // Add event listener to the form submission
+    document
+        .getElementById("btFrom")
+        .addEventListener("submit", function (event) {
+            // Unformat the voucher fields before submission by removing dots
+            nominalVtInput.value = nominalVtInput.value.replace(/\./g, "");
+            keeperVtInput.value = keeperVtInput.value.replace(/\./g, "");
+        });
 });
+
+// Example formatCurrency function for formatting input value
+function formatCurrency(input) {
+    let value = input.value.replace(/[^,\d]/g, "").toString(); // Remove anything that's not a digit
+    let formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Add thousands separators
+    input.value = formattedValue;
+}
 
 //save to draft
 document.addEventListener("DOMContentLoaded", function () {
@@ -280,6 +349,8 @@ function toggleSection(checkboxId, navId, tabId) {
     const checkbox = document.getElementById(checkboxId);
     const nav = document.getElementById(navId);
     const tab = document.getElementById(tabId); // The tab button (anchor) for navigation
+
+    console.log(checkbox);
 
     checkbox.addEventListener("change", function () {
         if (this.checked) {
@@ -831,15 +902,15 @@ function handleTaksiForms() {
     });
 }
 //CA JS
-function handleCaForms() {
-    const caCheckbox = document.getElementById("caCheckbox");
-    const caDiv = document.getElementById("ca_div");
+// function handleCaForms() {
+//     const caCheckbox = document.getElementById("cashAdvancedCheckbox");
+//     const caDiv = document.getElementById("ca_div");
 
-    caCheckbox.addEventListener("change", function () {
-        if (this.checked) {
-            caDiv.style.display = "block";
-        } else {
-            caDiv.style.display = "none";
-        }
-    });
-}
+//     caCheckbox.addEventListener("change", function () {
+//         if (this.checked) {
+//             caDiv.style.display = "block";
+//         } else {
+//             caDiv.style.display = "none";
+//         }
+//     });
+// }

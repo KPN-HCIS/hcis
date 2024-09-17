@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     setupCheckboxListeners();
-    handleTicketForms();
-    handleHotelForms();
+    // handleTicketForms();
+    // handleHotelForms();
     handleTaksiForms();
     handleCaForms();
 });
@@ -281,6 +281,7 @@ function toggleSection(checkboxId, navId, tabId) {
     const nav = document.getElementById(navId);
     const tab = document.getElementById(tabId); // The tab button (anchor) for navigation
 
+    console.log(checkbox);
     checkbox.addEventListener("change", function () {
         if (this.checked) {
             nav.style.display = "block";

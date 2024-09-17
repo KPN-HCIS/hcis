@@ -176,11 +176,11 @@
                                     <div class="row mt-3">
                                         <div class="col-md-12">
                                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                                <li class="nav-item" role="presentation" id="nav-cash-advanced"
+                                                <li class="nav-item" role="presentation" id="nav-cashAdvanced"
                                                     style="display: none;">
-                                                    <button class="nav-link" id="pills-cash-advanced-tab"
-                                                        data-bs-toggle="pill" data-bs-target="#pills-cash-advanced"
-                                                        type="button" role="tab" aria-controls="pills-cash-advanced"
+                                                    <button class="nav-link" id="pills-cashAdvanced-tab"
+                                                        data-bs-toggle="pill" data-bs-target="#pills-cashAdvanced"
+                                                        type="button" role="tab" aria-controls="pills-cashAdvanced"
                                                         aria-selected="false">Cash Advanced</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation" id="nav-ticket"
@@ -204,8 +204,8 @@
                                             </ul>
 
                                             <div class="tab-content" id="pills-tabContent">
-                                                <div class="tab-pane fade" id="pills-cash-advanced" role="tabpanel"
-                                                    aria-labelledby="pills-cash-advanced-tab">
+                                                <div class="tab-pane fade" id="pills-cashAdvanced" role="tabpanel"
+                                                    aria-labelledby="pills-cashAdvanced-tab">
                                                     Cash Advanced content
                                                     {{-- @include('hcis.reimbursements.businessTrip.btCa') --}}
                                                 </div>

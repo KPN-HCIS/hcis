@@ -183,13 +183,12 @@
                             @endphp
                             <div id="additional-fields" class="row mb-3" style="display: none;">
                                 <div class="col-md-12">
-                                    <label for="additional-fields-title" class="mb-3">Business Trip Needs</label>
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-check">
                                                 <input type="hidden" name="ca" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox"
-                                                    name="ca" value="Ya" <?= $n->ca == 'Ya' ? 'checked' : '' ?>>
+                                                    name="ca" value="Ya" {{ $n->ca == 'Ya' ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="cashAdvancedCheckbox">
                                                     Cash Advanced
                                                 </label>
@@ -201,7 +200,7 @@
                                                 <input type="hidden" name="tiket" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="ticketCheckbox"
                                                     name="tiket" value="Ya"
-                                                    <?= $n->tiket == 'Ya' ? 'checked' : '' ?>>
+                                                    {{ $n->tiket == 'Ya' ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="ticketCheckbox">
                                                     Ticket
                                                 </label>
@@ -213,7 +212,7 @@
                                                 <input type="hidden" name="hotel" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="hotelCheckbox"
                                                     name="hotel" value="Ya"
-                                                    <?= $n->hotel == 'Ya' ? 'checked' : '' ?>>
+                                                    {{ $n->hotel == 'Ya' ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="hotelCheckbox">
                                                     Hotel
                                                 </label>
@@ -225,38 +224,37 @@
                                                 <input type="hidden" name="taksi" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="taksiCheckbox"
                                                     name="taksi" value="Ya"
-                                                    <?= $n->taksi == 'Ya' ? 'checked' : '' ?>>
+                                                    {{ $n->taksi == 'Ya' ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="taksiCheckbox">
                                                     Taxi Voucher
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="row mt-3">
                                         <div class="col-md-12">
                                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                                <li class="nav-item" role="presentation" id="nav-cashAdvanced"
-                                                    style="display: <?= $n->ca == 'Ya' ? 'block' : 'none' ?>;">
-                                                    <button class="nav-link" id="pills-cashAdvanced-tab"
-                                                        data-bs-toggle="pill" data-bs-target="#pills-cashAdvanced"
-                                                        type="button" role="tab" aria-controls="pills-cashAdvanced"
+                                                <li class="nav-item" role="presentation" id="nav-cash-advanced"
+                                                    style="{{ $n->ca == 'Ya' ? '' : 'display: none;' }}">
+                                                    <button class="nav-link" id="pills-cash-advanced-tab"
+                                                        data-bs-toggle="pill" data-bs-target="#pills-cash-advanced"
+                                                        type="button" role="tab" aria-controls="pills-cash-advanced"
                                                         aria-selected="false">Cash Advanced</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation" id="nav-ticket"
-                                                    style="display: <?= $n->tiket == 'Ya' ? 'block' : 'none' ?>;">
+                                                    style="{{ $n->tiket == 'Ya' ? '' : 'display: none;' }}">
                                                     <button class="nav-link" id="pills-ticket-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-ticket" type="button" role="tab"
                                                         aria-controls="pills-ticket" aria-selected="false">Ticket</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation" id="nav-hotel"
-                                                    style="display: <?= $n->hotel == 'Ya' ? 'block' : 'none' ?>;">
+                                                    style="{{ $n->hotel == 'Ya' ? '' : 'display: none;' }}">
                                                     <button class="nav-link" id="pills-hotel-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-hotel" type="button" role="tab"
                                                         aria-controls="pills-hotel" aria-selected="false">Hotel</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation" id="nav-taksi"
-                                                    style="display: <?= $n->taksi == 'Ya' ? 'block' : 'none' ?>;">
+                                                    style="{{ $n->taksi == 'Ya' ? '' : 'display: none;' }}">
                                                     <button class="nav-link" id="pills-taksi-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-taksi" type="button" role="tab"
                                                         aria-controls="pills-taksi" aria-selected="false">Taxi</button>
@@ -264,45 +262,70 @@
                                             </ul>
 
                                             <div class="tab-content" id="pills-tabContent">
-                                                <div class="tab-pane fade" id="pills-cashAdvanced" role="tabpanel"
-                                                    aria-labelledby="pills-cashAdvanced-tab">
-                                                    Cash Advanced content
-                                                    {{-- @include('hcis.reimbursements.businessTrip.btCa') --}}
+                                                <div class="tab-pane fade" id="pills-cash-advanced" role="tabpanel"
+                                                    aria-labelledby="pills-cash-advanced-tab">
+                                                    <div class="row mt-2" id="ca_div" style="display: none;">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive-sm">
+                                                                <div class="d-flex flex-column gap-2">
+                                                                    <div class="text-bg-primary p-2"
+                                                                    style="text-align:center; border-radius:4px;">Cash
+                                                                    Advanced</div>
+                                                                    <div class="row" id="ca_bt" style="">
+                                                                        Cash Advanced content
+                                                                        {{-- @include('hcis.reimbursements.businessTrip.editForm.editCa') --}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="tab-pane fade" id="pills-ticket" role="tabpanel"
                                                     aria-labelledby="pills-ticket-tab">
                                                     {{-- Ticket content --}}
-                                                    @include('hcis.reimbursements.businessTrip.editForm.editTicket')
+                                                    <div class="col-md-12 mt-3">
+                                                        @include('hcis.reimbursements.businessTrip.editForm.editTicket')
+                                                    </div>
                                                 </div>
-                                                <div class="tab-pane fade" id="pills-hotel" role="tabpanel"
-                                                    aria-labelledby="pills-hotel-tab">
-                                                    {{-- Hotel content --}}
-                                                    @include('hcis.reimbursements.businessTrip.editForm.editHotel')
-                                                </div>
-                                                <div class="tab-pane fade" id="pills-taksi" role="tabpanel"
-                                                    aria-labelledby="pills-taksi-tab">
-                                                    {{-- Taxi content --}}
-                                                    @include('hcis.reimbursements.businessTrip.editForm.editTaxi')
-                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="pills-hotel" role="tabpanel"
+                                            aria-labelledby="pills-hotel-tab">
+                                            {{-- Hotel content --}}
+                                            <div class="col-md-12 mt-3">
+                                                @include('hcis.reimbursements.businessTrip.editForm.editHotel')
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <input type="hidden" name="status" value="Pending L1" id="status">
-
-                                <div class="d-flex justify-content-end mt-3">
-                                    <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                                        name="action_ca_draft" id="save-draft">Save as Draft</button>
-                                    <button type="submit" class="btn btn-primary rounded-pill"
-                                        name="action_ca_submit">Submit</button>
+                                <div class="tab-pane fade" id="pills-taksi" role="tabpanel"
+                                    aria-labelledby="pills-taksi-tab">
+                                    {{-- Taxi content --}}
+                                    <div class="col-md-12 mt-3">
+                                        @include('hcis.reimbursements.businessTrip.editForm.editTaxi')
+                                    </div>
                                 </div>
-
-                        </form>
+                            </div>
                     </div>
                 </div>
             </div>
         </div>
+        {{-- </div> --}}
+
+        <input type="hidden" name="status" value="Pending L1" id="status">
+        <input type="hidden" name="id_ca" value="{{ $ca->id ?? 0 }}">
+
+        <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-outline-primary rounded-pill me-2" id="save-draft">Save as
+                Draft</button>
+            <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
+        </div>
+
+        </form>
+    </div>
+    </div>
+    </div>
+    </div>
     </div>
 
     <!-- JavaScript Part -->
@@ -311,6 +334,531 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        function formatCurrency(input) {
+            var cursorPos = input.selectionStart;
+            var value = input.value.replace(/[^\d]/g, ''); // Remove everything that is not a digit
+            var formattedValue = '';
+
+            // Format the value with dots
+            if (value.length > 3) {
+                formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            } else {
+                formattedValue = value;
+            }
+
+            input.value = formattedValue;
+
+            // Adjust the cursor position after formatting
+            cursorPos += (formattedValue.length - value.length);
+            input.setSelectionRange(cursorPos, cursorPos);
+        }
+
+        document.getElementById('btEditForm').addEventListener('submit', function(event) {
+            // Unformat the voucher fields before submission
+            var nominalField = document.getElementById('nominal_vt');
+            var keeperField = document.getElementById('keeper_vt');
+
+            // Remove dots from the formatted value to keep the number intact
+            nominalField.value = nominalField.value.replace(/\./g, '');
+            keeperField.value = keeperField.value.replace(/\./g, '');
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('save-draft').addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Remove the existing status input
+                const existingStatus = document.getElementById('status');
+                if (existingStatus) {
+                    existingStatus.remove();
+                }
+
+                // Create a new hidden input for "Draft"
+                const draftInput = document.createElement('input');
+                draftInput.type = 'hidden';
+                draftInput.name = 'status';
+                draftInput.value = 'Draft';
+                draftInput.id = 'status';
+
+                // Append the draft input to the form
+                this.closest('form').appendChild(draftInput);
+
+                // Submit the form
+                this.closest('form').submit();
+            });
+        });
+
+
+        function calculateTotalDays(index) {
+            const checkInInput = document.querySelector(`#hotel-form-${index} input[name="tgl_masuk_htl[]"]`);
+            const checkOutInput = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
+            const totalDaysInput = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
+
+            // Get Start Date and End Date from the main form
+            const mulaiInput = document.getElementById('mulai');
+            const kembaliInput = document.getElementById('kembali');
+
+            if (!checkInInput || !checkOutInput || !mulaiInput || !kembaliInput) {
+                return; // Ensure elements are present before proceeding
+            }
+
+            // Parse the dates
+            const checkInDate = new Date(checkInInput.value);
+            const checkOutDate = new Date(checkOutInput.value);
+            const mulaiDate = new Date(mulaiInput.value);
+            const kembaliDate = new Date(kembaliInput.value);
+
+            // Validate Check In Date
+            if (checkInDate < mulaiDate) {
+                alert('Check In date cannot be earlier than Start date.');
+                checkInInput.value = ''; // Reset the Check In field
+                totalDaysInput.value = ''; // Clear total days
+                return;
+            }
+
+            // Ensure Check Out Date is not earlier than Check In Date
+            if (checkOutDate < checkInDate) {
+                alert('Check Out date cannot be earlier than Check In date.');
+                checkOutInput.value = ''; // Reset the Check Out field
+                totalDaysInput.value = ''; // Clear total days
+                return;
+            }
+
+            // Calculate the total days if all validations pass
+            if (checkInDate && checkOutDate) {
+                const diffTime = Math.abs(checkOutDate - checkInDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                totalDaysInput.value = diffDays;
+            } else {
+                totalDaysInput.value = '';
+            }
+        }
+
+        // Attach event listeners to the hotel forms
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.hotel-form').forEach((form, index) => {
+                const i = index + 1; // Adjust for 1-based index
+
+                form.querySelector('input[name="tgl_masuk_htl[]"]').addEventListener('change', () =>
+                    calculateTotalDays(i));
+                form.querySelector('input[name="tgl_keluar_htl[]"]').addEventListener('change', () =>
+                    calculateTotalDays(i));
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var jnsDinasSelect = document.getElementById('jns_dinas');
+            var additionalFields = document.getElementById('additional-fields');
+
+            function showAdditionalFields() {
+                if (jnsDinasSelect.value === 'luar kota') {
+                    additionalFields.style.display = 'block';
+                } else {
+                    additionalFields.style.display = 'none';
+                }
+            }
+
+            // Show additional fields on page load if 'luar kota' is selected
+            showAdditionalFields();
+
+            jnsDinasSelect.addEventListener('change', function() {
+                showAdditionalFields();
+                if (this.value !== 'luar kota') {
+                    // Reset all fields to "Tidak" if not 'luar kota'
+                    document.getElementById('ca').value = 'Tidak';
+                    document.getElementById('tiket').value = 'Tidak';
+                    document.getElementById('hotel').value = 'Tidak';
+                    document.getElementById('taksi').value = 'Tidak';
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const caSelect = document.getElementById('ca');
+            const caNbtDiv = document.getElementById('ca_div');
+
+            const hotelSelect = document.getElementById('hotel');
+            const hotelDiv = document.getElementById('hotel_div');
+
+            const taksiSelect = document.getElementById('taksi');
+            const taksiDiv = document.getElementById('taksi_div');
+
+            const tiketSelect = document.getElementById('tiket');
+            const tiketDiv = document.getElementById('tiket_div');
+
+
+            function toggleDisplay(selectElement, targetDiv) {
+                if (selectElement.value === 'Ya') {
+                    targetDiv.style.display = 'block';
+                } else {
+                    targetDiv.style.display = 'none';
+                }
+            }
+
+            caSelect.addEventListener('change', function() {
+                toggleDisplay(caSelect, caNbtDiv);
+            });
+
+            hotelSelect.addEventListener('change', function() {
+                toggleDisplay(hotelSelect, hotelDiv);
+            });
+
+            taksiSelect.addEventListener('change', function() {
+                toggleDisplay(taksiSelect, taksiDiv);
+            });
+
+            tiketSelect.addEventListener('change', function() {
+                toggleDisplay(tiketSelect, tiketDiv);
+            });
+
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to the caSelect and caDiv elements
+            const caSelect = document.getElementById('ca'); // Make sure this matches your HTML ID
+            const caDiv = document.getElementById('ca_div');
+
+            // Check if elements exist
+            if (!caSelect || !caDiv) {
+                console.error('caSelect or caDiv element not found.');
+                return;
+            }
+
+            // Function to handle display of ca_div based on caSelect value
+            function handleCaDisplay() {
+                // Ensure caSelect has a value
+                if (caSelect.value === 'Ya') {
+                    caDiv.style.display = 'block';
+                } else {
+                    caDiv.style.display = 'none';
+                }
+            }
+
+            // Initial check on page load
+            handleCaDisplay();
+
+            // Add event listener to handle changes in caSelect
+            caSelect.addEventListener('change', function() {
+                handleCaDisplay();
+            });
+
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const formContainerBTPerdiem = document.getElementById('form-container-bt-perdiem');
+            const formContainerBTTransport = document.getElementById('form-container-bt-transport');
+            const formContainerBTPenginapan = document.getElementById('form-container-bt-penginapan');
+            const formContainerBTLainnya = document.getElementById('form-container-bt-lainnya');
+
+            function toggleOthersBT(selectElement) {
+                const formGroup = selectElement.closest('.mb-2').parentElement;
+                const othersInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
+
+                if (selectElement.value === "Others") {
+                    othersInput.style.display = 'block';
+                    othersInput.required = true;
+                } else {
+                    othersInput.style.display = 'none';
+                    othersInput.required = false;
+                    othersInput.value = "";
+                }
+            }
+
+            document.querySelectorAll('.location-select').forEach(function(selectElement) {
+                selectElement.addEventListener('change', function() {
+                    toggleOthersBT(this);
+                });
+            });
+        });
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ticket form handling
+            const ticketSelect = document.getElementById('tiket');
+            const ticketDiv = document.getElementById('tiket_div');
+
+            ticketSelect.addEventListener('change', function() {
+                if (this.value === 'Ya') {
+                    ticketDiv.style.display = 'block';
+                } else {
+                    ticketDiv.style.display = 'none';
+                    // Reset all input fields within the ticketDiv when 'Tidak' is selected
+                    resetTicketFields(ticketDiv);
+                }
+            });
+
+            function resetTicketFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
+                });
+            }
+
+            for (let i = 1; i <= 4; i++) {
+                const yesRadio = document.getElementById(`more_tkt_yes_${i}`);
+                const noRadio = document.getElementById(`more_tkt_no_${i}`);
+                const nextForm = document.getElementById(`ticket-form-${i + 1}`);
+
+                yesRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'block';
+                    }
+                });
+
+                noRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        nextForm.style.display = 'none';
+                        // Hide all subsequent forms
+                        for (let j = i + 1; j <= 5; j++) {
+                            const form = document.getElementById(`ticket-form-${j}`);
+                            if (form) {
+                                form.style.display = 'none';
+                                // Reset the form when it is hidden
+                                resetTicketFields(form);
+                            }
+                        }
+                        // Reset radio buttons for subsequent forms
+                        for (let j = i + 1; j <= 4; j++) {
+                            const noRadioButton = document.getElementById(`more_tkt_no_${j}`);
+                            if (noRadioButton) {
+                                noRadioButton.checked = true;
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Handle Round Trip options
+            const ticketTypes = document.querySelectorAll('select[name="type_tkt[]"]');
+            ticketTypes.forEach((select, index) => {
+                select.addEventListener('change', function() {
+                    const roundTripOptions = this.closest('.card-body').querySelector(
+                        '.round-trip-options');
+                    if (this.value === 'Round Trip') {
+                        roundTripOptions.style.display = 'block';
+                    } else {
+                        roundTripOptions.style.display = 'none';
+                    }
+                });
+            });
+            // Handle hotel forms
+            for (let i = 1; i <= 4; i++) {
+                const yesRadio = document.getElementById(`more_htl_yes_${i}`);
+                const noRadio = document.getElementById(`more_htl_no_${i}`);
+                const nextForm = document.getElementById(`hotel-form-${i + 1}`);
+
+                if (yesRadio) {
+                    yesRadio.addEventListener('change', function() {
+                        if (this.checked) {
+                            nextForm.style.display = 'block';
+                        }
+                    });
+                }
+
+                if (noRadio) {
+                    noRadio.addEventListener('change', function() {
+                        if (this.checked) {
+                            nextForm.style.display = 'none';
+                            // Hide all subsequent forms
+                            for (let j = i + 1; j <= 5; j++) {
+                                const form = document.getElementById(`hotel-form-${j}`);
+                                if (form) {
+                                    form.style.display = 'none';
+                                    // Reset the form when it is hidden
+                                    resetHotelFields(form);
+                                }
+                            }
+                            // Reset radio buttons for subsequent forms
+                            for (let j = i + 1; j <= 4; j++) {
+                                const noRadioButton = document.getElementById(`more_htl_no_${j}`);
+                                if (noRadioButton) {
+                                    noRadioButton.checked = true;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Function to reset hotel fields
+            function resetHotelFields(container) {
+                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => {
+                    select.selectedIndex = 0;
+                });
+            }
+
+            // Calculate total days for each hotel form
+            function calculateTotalDays(index) {
+                const checkIn = document.querySelector(`#hotel-form-${index} input[name="tgl_masuk_htl[]"]`);
+                const checkOut = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
+                const totalDays = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
+
+                if (checkIn && checkOut && totalDays) {
+                    const start = new Date(checkIn.value);
+                    const end = new Date(checkOut.value);
+
+                    if (checkIn.value && checkOut.value) {
+                        // Calculate difference in milliseconds and convert to days, excluding the same day
+                        const difference = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                        if (difference < 0) {
+                            alert("Check out date cannot be earlier than check in date.");
+                            checkOut.value = ''; // Clear the check-out date if invalid
+                            totalDays.value = ''; // Clear the total days if check-out date is reset
+                        } else {
+                            totalDays.value = difference >= 0 ? difference : 0;
+                        }
+                    } else {
+                        totalDays.value = ''; // Clear total days if dates are not set
+                    }
+                } else {
+                    console.error("Elements not found. Check selectors.");
+                }
+            }
+
+            // Add event listeners for date inputs in hotel forms
+            for (let i = 1; i <= 5; i++) {
+                const checkIn = document.querySelector(`#hotel-form-${i} input[name="tgl_masuk_htl[]"]`);
+                const checkOut = document.querySelector(`#hotel-form-${i} input[name="tgl_keluar_htl[]"]`);
+
+                if (checkIn && checkOut) {
+                    checkIn.addEventListener('change', () => calculateTotalDays(i));
+                    checkOut.addEventListener('change', () => calculateTotalDays(i));
+                }
+            }
+
+            // Handle date validation for the return date
+            document.getElementById('kembali').addEventListener('change', function() {
+                const mulaiDate = document.getElementById('mulai').value;
+                const kembaliDate = this.value;
+
+                if (kembaliDate < mulaiDate) {
+                    alert('Return date cannot be earlier than Start date.');
+                    this.value = ''; // Reset the kembali field
+                }
+            });
+        });
+
+
+
+        document.getElementById('tgl_keluar_htl').addEventListener('change', function() {
+            var masukHtl = document.getElementById('tgl_masuk_htl').value;
+            var keluarDate = this.value;
+
+            if (masukHtl && keluarDate) {
+                var checkInDate = new Date(masukHtl);
+                var checkOutDate = new Date(keluarDate);
+
+                if (checkOutDate < checkInDate) {
+                    alert("Check out date cannot be earlier than check in date.");
+                    this.value = ''; // Reset the check out date field
+                }
+            }
+        });
+
+        document.getElementById('type_tkt').addEventListener('change', function() {
+            var roundTripOptions = document.getElementById('roundTripOptions');
+            if (this.value === 'Round Trip') {
+                roundTripOptions.style.display = 'block';
+            } else {
+                roundTripOptions.style.display = 'none';
+            }
+        });
+
+
+        function BTtoggleOthers() {
+            var locationFilter = document.getElementById("tujuan");
+            var others_location = document.getElementById("others_location");
+            var selectedValue = locationFilter.value;
+            var options = Array.from(locationFilter.options).map(option => option.value);
+
+            // Check if the selected value is "Others" or not in the list
+            if (selectedValue === "Others" || !options.includes(selectedValue)) {
+                others_location.style.display = "block";
+
+                if (!options.includes(selectedValue)) {
+                    locationFilter.value = "Others"; // Select "Others"
+                    others_location.value = selectedValue; // Show the unlisted value in the text field
+                }
+            } else {
+                others_location.style.display = "none";
+                others_location.value = ""; // Clear the input field
+            }
+        }
+
+        // Call the function on page load to handle any pre-filled values
+        window.onload = toggleOthers;
+
+        function validateDates(index) {
+            // Get the departure and return date inputs for the given form index
+            const departureDate = document.querySelector(`#tgl_brkt_tkt_${index}`);
+            const returnDate = document.querySelector(`#tgl_plg_tkt_${index}`);
+
+            // Get the departure and return time inputs for the given form index
+            const departureTime = document.querySelector(`#jam_brkt_tkt_${index}`);
+            const returnTime = document.querySelector(`#jam_plg_tkt_${index}`);
+
+            if (departureDate && returnDate) {
+                const depDate = new Date(departureDate.value);
+                const retDate = new Date(returnDate.value);
+
+                // Check if both dates are valid
+                if (depDate && retDate) {
+                    // Validate if return date is earlier than departure date
+                    if (retDate < depDate) {
+                        alert("Return date cannot be earlier than departure date.");
+                        returnDate.value = ''; // Reset the return date field
+                    } else if (retDate.getTime() === depDate.getTime() && departureTime && returnTime) {
+                        // If dates are the same, validate time
+                        const depTime = departureTime.value;
+                        const retTime = returnTime.value;
+
+                        // Check if both times are set and validate
+                        if (depTime && retTime) {
+                            const depDateTime = new Date(`1970-01-01T${depTime}:00`);
+                            const retDateTime = new Date(`1970-01-01T${retTime}:00`);
+
+                            if (retDateTime < depDateTime) {
+                                alert("Return time cannot be earlier than departure time on the same day.");
+                                returnTime.value = ''; // Reset the return time field
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        document.getElementById('nik').addEventListener('change', function() {
+            var nik = this.value;
+
+            fetch('/get-employee-data?nik=' + nik)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('jk_tkt').value = data.jk_tkt;
+                        document.getElementById('tlp_tkt').value = data.tlp_tkt;
+                    } else {
+                        alert('Employee data not found!');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
         //CA JS
         function toggleDivs() {
             // ca_type ca_nbt ca_e
