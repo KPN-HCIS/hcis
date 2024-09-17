@@ -633,6 +633,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initializeAllSelect2();
 });
 
+
 //Hotel JS
 function handleHotelForms() {
     const hotelCheckbox = document.getElementById("hotelCheckbox");

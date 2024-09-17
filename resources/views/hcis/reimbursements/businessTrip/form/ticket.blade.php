@@ -120,3 +120,38 @@
     </div>
     {{-- </div> --}}
     {{-- </div> --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $(".selection2").select2({
+                theme: "bootstrap-5",
+                width: "100%",
+                minimumInputLength: 1,
+                ajax: {
+                    url: "/search/name", // Ensure this matches your route
+                    dataType: "json",
+                    delay: 250,
+                    data: function(params) {
+                        console.log("Requesting data with term:", params.term); // Log search term
+                        return {
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        console.log("Received data:", data); // Log received data
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.ktp,
+                                    text: item.fullname + " - " + item.ktp
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                }
+            });
+        });
+    </script>
