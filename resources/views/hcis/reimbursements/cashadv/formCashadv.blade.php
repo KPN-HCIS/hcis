@@ -463,6 +463,32 @@
                 calculateTotalCA();
             }
 
+            function calculateTotalDays() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
+                    const timeDiff = endDate - startDate;
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    if (othersLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 50%
+                    } else {
+                        allowance *= 0.5;
+                    }
+
+                    allowanceInput.value = formatNumber(Math.floor(allowance));
+                } else {
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
+                }
+                calculateTotalCA();
+            }
+
             function calculateTotalCA() {
                 const allowance = parseNumber(allowanceInput.value);
                 const transport = parseNumber(transportInput.value);

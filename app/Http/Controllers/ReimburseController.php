@@ -912,7 +912,7 @@ class ReimburseController extends Controller
             if ($req->has('tanggal_bt_transport')) {
                 foreach ($req->tanggal_bt_transport as $key => $tanggal) {
                     $keterangan = $req->keterangan_bt_transport[$key];
-                    // $companyCode = $req->company_bt_transport[$key];
+                    $companyCode = $req->company_bt_transport[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
                     $detail_transport[] = [

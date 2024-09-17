@@ -1,5 +1,9 @@
 <script>
-    var formCount = 1;
+    var formCount = 0;
+
+    window.addEventListener('DOMContentLoaded', function() {
+        formCount = document.querySelectorAll('#form-container-perdiem > div').length;
+    });
 
     function addMoreFormPerdiem(event) {
         event.preventDefault();
@@ -85,9 +89,36 @@
             </div>
         `;
         document.getElementById("form-container-perdiem").appendChild(newForm);
+        handleDateChange();
     }
 
+    $('.btn-warning').click(function(event) {
+        event.preventDefault();
+        var index = $(this).closest('.card-body').index() + 1;
+        removeFormPerdiem(index, event);
+    });
+
     function removeFormPerdiem(index, event) {
+        event.preventDefault();
+        if (formCount > 0) {
+            const formContainer = document.getElementById(`form-container-bt-perdiem-${index}`);
+            if (formContainer) {
+                const nominalInput = formContainer.querySelector(`#nominal_bt_perdiem_${index}`);
+                if (nominalInput) {
+                    let nominalValue = cleanNumber(nominalInput.value);
+                    let total = cleanNumber(document.querySelector('input[name="total_bt_perdiem"]').value);
+                    total -= nominalValue;
+                    document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
+                    calculateTotalNominalBTTotal();
+                }
+                $(`#form-container-bt-perdiem-${index}`).remove();
+                formCount--;
+            }
+            console.log("Ini",formContainer);
+        }
+    }
+
+    function clearFormPerdiem(index, event) {
         event.preventDefault();
         if (formCount > 0) {
             const nominalInput = document.querySelector(`#nominal_bt_perdiem_${index}`);
@@ -96,59 +127,31 @@
                 let total = cleanNumber(document.querySelector('input[name="total_bt_perdiem"]').value);
                 total -= nominalValue;
                 document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
+                nominalInput.value = 0;
+                calculateTotalNominalBTTotal();
             }
 
             const formContainer = document.getElementById(`form-container-bt-perdiem-${index}`);
             if (formContainer) {
-                formContainer.remove();
-                formCount--;
+                formContainer.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                    input.value = '';
+                });
+
+                formContainer.querySelectorAll('input[type="number"]').forEach(input => {
+                    input.value = 0;
+                });
+
+                formContainer.querySelectorAll('select').forEach(select => {
+                    select.selectedIndex = 0;
+                });
+
+                formContainer.querySelectorAll('textarea').forEach(textarea => {
+                    textarea.value = '';
+                });
+
                 calculateTotalNominalBTTotal();
             }
         }
-    }
-
-
-    function clearFormPerdiem(index, event) {
-        event.preventDefault();
-        if (formCount > 0) {
-            let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_perdiem_${index}`).value);
-            let total = cleanNumber(document.querySelector('input[name="total_bt_perdiem"]').value);
-            total -= nominalValue;
-            document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
-
-            let formContainer = document.getElementById(`form-container-bt-perdiem-${index}`);
-            formContainer.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
-                input.value = '';
-            });
-
-            formContainer.querySelectorAll('input[type="number"]').forEach(input => {
-                input.value = 0;
-            });
-
-            formContainer.querySelectorAll('select').forEach(select => {
-                select.selectedIndex = 0;
-            });
-
-            formContainer.querySelectorAll('textarea').forEach(textarea => {
-                textarea.value = '';
-            });
-
-            document.querySelector(`#nominal_bt_perdiem_${index}`).value = 0;
-            calculateTotalNominalBTTotal();
-        }
-    }
-
-    function calculateTotalNominalBTPerdiem() {
-        let total = 0;
-        document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-            total += cleanNumber(input.value);
-        });
-        document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
-        calculateTotalNominalBTTotal();
-    }
-
-    function onNominalChange() {
-        calculateTotalNominalBTPerdiem();
     }
 
     function calculateTotalDaysPerdiem(input) {
@@ -192,6 +195,19 @@
         }
     }
 
+    function calculateTotalNominalBTPerdiem() {
+        let total = 0;
+        document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
+            total += cleanNumber(input.value);
+        });
+        document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
+        calculateTotalNominalBTTotal();
+    }
+
+    function onNominalChange() {
+        calculateTotalNominalBTPerdiem();
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Use event delegation to handle changes on dynamically added select elements
         document.getElementById('form-container-perdiem').addEventListener('change', function(event) {
@@ -224,16 +240,15 @@
 
 
 </script>
-
 @if (!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null)
     <div id="form-container-perdiem">
         @foreach ($detailCA['detail_perdiem'] as $perdiem)
-            <div id="form-container-bt-perdiem-1" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
+            <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
                 <div class="row">
                     <!-- Company Code -->
                     <div class="col-md-6 mb-2">
-                        <label class="form-label" for="company_bt_perdiem1">Company Code</label>
-                        <select class="form-control select2" id="company_bt_perdiem_1" name="company_bt_perdiem[]">
+                        <label class="form-label" for="company_bt_perdiem{{ $loop->index + 1 }}">Company Code</label>
+                        <select class="form-control select2" id="company_bt_perdiem_{{ $loop->index + 1 }}" name="company_bt_perdiem[]">
                             <option value="">Select Company...</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->contribution_level_code }}"
@@ -281,7 +296,7 @@
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Total Days</label>
                         <div class="input-group">
-                            <input class="form-control bg-light total-days-perdiem" name="total_days_bt_perdiem[]" type="number" value="0" readonly>
+                            <input class="form-control bg-light total-days-perdiem" name="total_days_bt_perdiem[]" type="number" value="{{$perdiem['total_days']}}" readonly>
                             <div class="input-group-append">
                                 <span class="input-group-text">days</span>
                             </div>
@@ -295,13 +310,13 @@
                     <div class="input-group-append">
                         <span class="input-group-text">Rp</span>
                     </div>
-                    <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_1   " type="text" value="{{$perdiem['total_days']}}" onchange="onNominalChange()">
+                    <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" onchange="onNominalChange()">
                 </div>
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem(1, event)">Clear</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPerdiem(1, event)">Remove</button>
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Clear</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Remove</button>
                     </div>
                 </div>
             </div>
@@ -318,7 +333,7 @@
             <div class="input-group-append">
                 <span class="input-group-text">Rp</span>
             </div>
-            <input class="form-control bg-light" name="total_bt_perdiem" id="total_bt_perdiem" type="text" value="0" readonly>
+            <input class="form-control bg-light" name="total_bt_perdiem" id="total_bt_perdiem" type="text" value="{{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}" readonly>
         </div>
     </div>
 @else
@@ -385,7 +400,7 @@
                 <div class="input-group-append">
                     <span class="input-group-text">Rp</span>
                 </div>
-                <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_1   " type="text" value="0" onchange="onNominalChange()">
+                <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_1" type="text" value="0" onchange="onNominalChange()">
             </div>
             <br>
             <div class="row mt-3">
