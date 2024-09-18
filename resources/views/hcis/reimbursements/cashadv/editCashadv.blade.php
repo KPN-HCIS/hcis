@@ -179,19 +179,19 @@
                                                             aria-selected="{{ isset($detailCA['detail_perdiem'][0]['start_date']) && $detailCA['detail_perdiem'][0]['start_date'] ? 'true' : 'false' }}">Perdiem Plan</button>
                                                     </li>
                                                     <li class="nav-item" role="presentation">
-                                                        <button class="nav-link {{ isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'active' : '' }}" id="pills-transport-tab"
+                                                        <button class="nav-link {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'active' : '' }}" id="pills-transport-tab"
                                                             data-bs-toggle="pill" data-bs-target="#pills-transport" type="button" role="tab"
                                                             aria-controls="pills-transport"
                                                             aria-selected="{{ isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'true' : 'false' }}">Transport Plan</button>
                                                     </li>
                                                     <li class="nav-item" role="presentation">
-                                                        <button class="nav-link {{ isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'active' : '' }}" id="pills-accomodation-tab"
+                                                        <button class="nav-link {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && !isset($detailCA['detail_transport'][0]['tanggal']) && isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'active' : '' }}" id="pills-accomodation-tab"
                                                             data-bs-toggle="pill" data-bs-target="#pills-accomodation"
                                                             type="button" role="tab" aria-controls="pills-accomodation"
                                                             aria-selected="{{ isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'true' : 'false' }}">Accomodation Plan</button>
                                                     </li>
                                                     <li class="nav-item" role="presentation">
-                                                        <button class="nav-link {{ isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'active' : '' }}" id="pills-other-tab" data-bs-toggle="pill"
+                                                        <button class="nav-link {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && !isset($detailCA['detail_transport'][0]['tanggal']) && !isset($detailCA['detail_penginapan'][0]['start_date']) && isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'active' : '' }}" id="pills-other-tab" data-bs-toggle="pill"
                                                             data-bs-target="#pills-other" type="button" role="tab"
                                                             aria-controls="pills-other" aria-selected="{{ isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'true' : 'false' }}">Other Plan</button>
                                                     </li>
@@ -202,17 +202,17 @@
                                                         aria-labelledby="pills-perdiem-tab">
                                                         @include('hcis.reimbursements.cashadv.form.perdiem')
                                                     </div>
-                                                    <div class="tab-pane fade {{ isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'show active' : '' }}"
+                                                    <div class="tab-pane fade {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'show active' : '' }}"
                                                         id="pills-transport" role="tabpanel"
                                                         aria-labelledby="pills-transport-tab">
                                                         @include('hcis.reimbursements.cashadv.form.transport')
                                                     </div>
-                                                    <div class="tab-pane fade {{ isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'show active' : '' }}"
+                                                    <div class="tab-pane fade {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && !isset($detailCA['detail_transport'][0]['tanggal']) && isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'show active' : '' }}"
                                                         id="pills-accomodation" role="tabpanel"
                                                         aria-labelledby="pills-accomodation-tab">
                                                         @include('hcis.reimbursements.cashadv.form.penginapan')
                                                     </div>
-                                                    <div class="tab-pane fade {{ isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'show active' : '' }}" id="pills-other" role="tabpanel"
+                                                    <div class="tab-pane fade {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && !isset($detailCA['detail_transport'][0]['tanggal']) && !isset($detailCA['detail_penginapan'][0]['start_date']) && isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'show active' : '' }}" id="pills-other" role="tabpanel"
                                                         aria-labelledby="pills-other-tab">
                                                         @include('hcis.reimbursements.cashadv.form.others')
                                                     </div>
@@ -223,154 +223,51 @@
                                 @endif
                             </div>
                             <div class="row" id="ca_nbt" style="display: none;">
-                                <div class="col-md-12">
-                                    <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                        <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                    Non Business Trip
-                                                                </button>
-                                                            </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
-                                                                <div class="accordion-body">
-                                                                    <div id="form-container"></div>
-                                                                    <button type="button" id="add-more" class="btn btn-primary mt-3">Add More</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                @if ($transactions->type_ca == 'ndns')
+                                    <div class="col-md-12">
+                                        <div class="table-responsive-sm">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced Non Business Trip
                                                 </div>
+                                                @include('hcis.reimbursements.cashadv.form.nbt')
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                             <div class="row" id="ca_e" style="display: none;">
                                 @if ($transactions->type_ca == 'entr')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
                                             <div class="d-flex flex-column gap-2">
-                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
-                                                    <div class="card">
-                                                        <div id="entertain-card" class="card-body">
-                                                            <div class="accordion" id="accordionEntertain">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingEntertain">
-                                                                        <button class="accordion-button @if($detailCA['detail_e'][0]['type'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="@if($detailCA['detail_e'][0]['type'] !== null) true @else false @endif" aria-controls="collapseEntertain">
-                                                                            Rencana Entertain
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="collapseEntertain" class="accordion-collapse collapse @if($detailCA['detail_e'][0]['type'] !== null) show @endif" aria-labelledby="headingEntertain">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-e-detail">
-                                                                                @foreach ($detailCA['detail_e'] as $detail)
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Entertainment Type</label>
-                                                                                        <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
-                                                                                            <option value="">-</option>
-                                                                                            <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
-                                                                                            <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
-                                                                                            <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
-                                                                                            <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
-                                                                                            <option value="fund" {{ $detail['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Entertainment Fee Detail</label>
-                                                                                        <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control">{{ $detail['fee_detail'] }}<</textarea>
-                                                                                    </div>
-                                                                                    <div class="input-group">
-                                                                                        <div class="input-group-append">
-                                                                                            <span class="input-group-text">Rp</span>
-                                                                                        </div>
-                                                                                        <input class="form-control" name="nominal_e_detail[]" id="nominal_e_detail[]" type="text" min="0" value="{{ number_format($detail['nominal'], 0, ',', '.') }}">
-                                                                                    </div>
-                                                                                    <hr class="border border-primary border-1 opacity-50">
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <div class="mb-2">
-                                                                                <label class="form-label">Total Entertain</label>
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-append">
-                                                                                        <span class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light" name="total_e_detail[]" id="total_e_detail[]" type="text" min="0" value="0" readonly>
-                                                                                </div>
-                                                                            </div>
-                                                                            <button type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div id="relation-card" class="card-body">
-                                                            <div class="accordion" id="accordionRelation">
-                                                                <div class="accordion-item">
-                                                                    <h2 class="accordion-header" id="headingRelation">
-                                                                        <button class="accordion-button @if($detailCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="@if($detailCA['relation_e'][0]['name'] !== null) true @else false @endif" aria-controls="collapseRelation">
-                                                                            Rencana Relation
-                                                                        </button>
-                                                                    </h2>
-                                                                    <div id="collapseRelation" class="accordion-collapse collapse @if($detailCA['relation_e'][0]['name'] !== null) show @endif" aria-labelledby="headingRelation">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container-e-relation">
-                                                                                @foreach($detailCA['relation_e'] as $relation)
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label">Relation Type</label>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation[]" value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
-                                                                                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
-                                                                                        </div>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" name="transport_e_relation[]" type="checkbox" id="transport_e_relation[]" value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
-                                                                                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
-                                                                                        </div>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" name="gift_e_relation[]" type="checkbox" id="gift_e_relation[]" value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
-                                                                                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
-                                                                                        </div>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
-                                                                                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
-                                                                                        </div>
-                                                                                        <div class="form-check">
-                                                                                            <input class="form-check-input" name="food_e_relation[]" type="checkbox" id="food_e_relation[]" value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
-                                                                                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Name</label>
-                                                                                        <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" value="{{ $relation['name'] }}" class="form-control">
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Position</label>
-                                                                                        <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" value="{{ $relation['position'] }}" class="form-control">
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Company</label>
-                                                                                        <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" value="{{ $relation['company'] }}" class="form-control">
-                                                                                    </div>
-                                                                                    <div class="mb-2">
-                                                                                        <label class="form-label" for="start">Purpose</label>
-                                                                                        <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" value="{{ $relation['purpose'] }}" class="form-control">
-                                                                                    </div>
-                                                                                    <hr class="border border-primary border-1 opacity-50">
-                                                                                @endforeach
-                                                                            </div>
-                                                                            <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment
+                                                </div>
+                                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link active" id="pills-detail-tab"
+                                                            data-bs-toggle="pill" data-bs-target="#pills-detail" type="button"
+                                                            role="tab" aria-controls="pills-detail"
+                                                            aria-selected="true">Detail Entertain Plan</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link" id="pills-relation-tab" data-bs-toggle="pill"
+                                                            data-bs-target="#pills-relation" type="button" role="tab"
+                                                            aria-controls="pills-relation" aria-selected="false">Relation Entertain
+                                                            Plan</button>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content" id="pills-tabContent">
+                                                    <div class="tab-pane fade show active" id="pills-detail" role="tabpanel"
+                                                        aria-labelledby="pills-detail-tab">
+                                                        @include('hcis.reimbursements.cashadv.form.detail')
+                                                    </div>
+                                                    <div class="tab-pane fade" id="pills-relation" role="tabpanel"
+                                                        aria-labelledby="pills-relation-tab">
+                                                        @include('hcis.reimbursements.cashadv.form.relation')
                                                     </div>
                                                 </div>
+                                                <button type="button" id="add-more-e-detail" style="display: none"
+                                                    class="btn btn-primary mt-3">Add More</button>
                                             </div>
                                         </div>
                                     </div>
@@ -384,7 +281,7 @@
                                             <span class="input-group-text">Rp</span>
                                         </div>
                                         <input class="form-control bg-light" name="totalca" id="totalca"
-                                            type="text" min="0" value="{{ number_format( $transactions->total_cost , 0, ',', '.') }}" readonly>
+                                            type="text" min="0" value="{{ number_format( $transactions->total_ca , 0, ',', '.') }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -401,8 +298,8 @@
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('cashadvanced') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_draft" value="Draft" class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
-                            <button type="submit" name="action_ca_submit" value="Pending" class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
+                            <button type="submit" name="action_ca_draft" value="Draft" class="btn btn-secondary btn-pill px-4 me-2">Draft</button>
+                            <button type="submit" name="action_ca_submit" value="Pending" class="btn btn-primary btn-pill px-4 me-2">Submit</button>
                         </div>
                     </div>
                     </form>
@@ -450,6 +347,17 @@
             calculateTotalNominalBTTotal();
         }
 
+        function formatInputENT(input) {
+            let value = input.value.replace(/\./g, '');
+            value = parseFloat(value);
+            if (!isNaN(value)) {
+                input.value = formatNumber(Math.floor(value));
+            } else {
+                input.value = formatNumber(0);
+            }
+            calculateTotalNominalEDetail();
+        }
+
         function calculateTotalNominalBTTotal() {
             let total = 0;
             document.querySelectorAll('input[name="total_bt_perdiem"]').forEach(input => {
@@ -466,7 +374,6 @@
             });
             document.querySelector('input[name="totalca"]').value = formatNumber(total);
         }
-
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -559,285 +466,193 @@
                 });
             });
         });
-        //
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const formContainer = document.getElementById('form-container');
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const formContainerEDetail = document.getElementById('form-container-e-detail');
+        //     const formContainerERelation = document.getElementById('form-container-e-relation');
 
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
+        //     // Function to update checkboxes visibility based on selected options
+        //     function updateCheckboxVisibility() {
+        //         // Gather all selected options from enter_type_e_detail
+        //         const selectedOptions = Array.from(document.querySelectorAll('select[name="enter_type_e_detail[]"]'))
+        //             .map(select => select.value)
+        //             .filter(value => value !== "");
 
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
+        //         // Update visibility for each checkbox in enter_type_e_relation
+        //         formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
+        //             const checkbox = checkDiv.querySelector('input.form-check-input');
+        //             const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
+        //             if (selectedOptions.includes(checkboxValue)) {
+        //                 checkDiv.style.display = 'block';
+        //             } else {
+        //                 checkDiv.style.display = 'none';
+        //             }
+        //         });
+        //     }
 
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-                calculateTotalNominal();
-            }
+        //     // Function to format number with thousands separator
+        //     function formatNumber(num) {
+        //         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        //     }
 
-            function calculateTotalNominal() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.getElementById('totalca').value = formatNumber(total);
-            }
+        //     // Function to parse number from formatted string
+        //     function parseNumber(value) {
+        //         return parseFloat(value.replace(/\./g, '')) || 0;
+        //     }
 
-            function addForm(data, isFirst = false) {
-                const newForm = document.createElement('div');
-                newForm.classList.add('mb-2', 'form-group');
+        //     // Function to format input fields
+        //     function formatInput(input) {
+        //         let value = input.value.replace(/\./g, '');
+        //         value = parseFloat(value);
+        //         if (!isNaN(value)) {
+        //             input.value = formatNumber(Math.floor(value));
+        //         } else {
+        //             input.value = formatNumber(0);
+        //         }
+        //         calculateTotalNominalEDetail();
+        //     }
 
-                const dateValue = data ? data.tanggal_nbt : '';
-                const keteranganValue = data ? data.keterangan_nbt : '';
-                const nominalValue = data ? formatNumber(data.nominal_nbt) : "0";
+        //     // Function to calculate the total nominal value for EDetail
+        //     function calculateTotalNominalEDetail() {
+        //         let total = 0;
+        //         document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
+        //             total += parseNumber(input.value);
+        //         });
+        //         document.querySelector('input[name="total_e_detail[]"]').value = formatNumber(total);
+        //         document.getElementById('totalca').value = formatNumber(total);
+        //     }
 
-                newForm.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
-                        <input type="date" name="tanggal_nbt[]" class="form-control" value="${dateValue}">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan_nbt[]" class="form-control">${keteranganValue}</textarea>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_nbt[]" type="text" min="0" value="${nominalValue}">
-                    </div>
-                `;
+        //     // Function to add new EDetail form
+        //     function addNewEDetailForm() {
+        //         const newFormEDetail = document.createElement('div');
+        //         newFormEDetail.classList.add('mb-2');
 
-                // Only add Remove button if it's not the first form
-                if (!isFirst) {
-                    newForm.innerHTML += `<button type="button" class="btn btn-danger remove-form">Remove</button>`;
-                }
+        //         newFormEDetail.innerHTML = `
+        //             <div class="mb-2">
+        //                 <label class="form-label">Entertainment Type</label>
+        //                 <select name="enter_type_e_detail[]" class="form-select">
+        //                     <option value="">-</option>
+        //                     <option value="food">Food/Beverages/Souvenir</option>
+        //                     <option value="transport">Transport</option>
+        //                     <option value="accommodation">Accommodation</option>
+        //                     <option value="gift">Gift</option>
+        //                     <option value="fund">Fund</option>
+        //                 </select>
+        //             </div>
+        //             <div class="mb-2">
+        //                 <label class="form-label">Entertainment Fee Detail</label>
+        //                 <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
+        //             </div>
+        //             <div class="input-group mb-3">
+        //                 <div class="input-group-append">
+        //                     <span class="input-group-text">Rp</span>
+        //                 </div>
+        //                 <input class="form-control" name="nominal_e_detail[]" type="text" min="0" value="0">
+        //             </div>
+        //             <button type="button" class="btn btn-danger remove-form-e-detail">Remove</button>
+        //             <hr class="border border-primary border-1 opacity-50">
+        //         `;
 
-                newForm.innerHTML += `<hr class="border border-primary border-1 opacity-50">`;
-                formContainer.appendChild(newForm);
+        //         formContainerEDetail.appendChild(newFormEDetail);
 
-                // Attach input event to the newly added nominal field
-                newForm.querySelector('input[name="nominal_nbt[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
+        //         // Attach input event to the newly added nominal field
+        //         newFormEDetail.querySelector('input[name="nominal_e_detail[]"]').addEventListener('input', function() {
+        //             formatInput(this);
+        //         });
 
-                // Attach click event to the remove button if it exists
-                if (!isFirst) {
-                    newForm.querySelector('.remove-form').addEventListener('click', function() {
-                        newForm.remove();
-                        calculateTotalNominal();
-                    });
-                }
-            }
+        //         // Attach change event to update checkbox visibility
+        //         newFormEDetail.querySelector('select[name="enter_type_e_detail[]"]').addEventListener('change', updateCheckboxVisibility);
 
-            initialDetailCA.forEach((item, index) => {
-                addForm(item, index === 0);  // Pass true if it's the first item
-            });
+        //         // Attach click event to the remove button
+        //         newFormEDetail.querySelector('.remove-form-e-detail').addEventListener('click', function() {
+        //             newFormEDetail.remove();
+        //             updateCheckboxVisibility();
+        //             calculateTotalNominalEDetail();
+        //         });
+        //     }
 
-            document.getElementById('add-more').addEventListener('click', function () {
-                addForm(); // Add an empty form
-            });
+        //     // Function to add new ERelation form
+        //     function addNewERelationForm() {
+        //         const newFormERelation = document.createElement('div');
+        //         newFormERelation.classList.add('mb-2');
 
-            // Attach input event to the existing nominal fields
-            document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
+        //         newFormERelation.innerHTML = `
+        //             <div class="mb-2">
+        //                 <label class="form-label">Relation Type</label>
+        //                 <div class="form-check">
+        //                     <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="transport_e_relation[]" value="transport">
+        //                     <label class="form-check-label" for="transport_e_relation[]">Transport</label>
+        //                 </div>
+        //                 <div class="form-check">
+        //                     <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
+        //                     <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
+        //                 </div>
+        //                 <div class="form-check">
+        //                     <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation[]" value="gift">
+        //                     <label class="form-check-label" for="gift_e_relation[]">Gift</label>
+        //                 </div>
+        //                 <div class="form-check">
+        //                     <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
+        //                     <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+        //                 </div>
+        //                 <div class="form-check">
+        //                     <input class="form-check-input" type="checkbox" id="food_e_relation[]" name="food_e_relation[]" value="food">
+        //                     <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
+        //                 </div>
+        //             </div>
+        //             <div class="mb-2">
+        //                 <label class="form-label">Name</label>
+        //                 <input type="text" name="rname_e_relation[]" class="form-control">
+        //             </div>
+        //             <div class="mb-2">
+        //                 <label class="form-label">Position</label>
+        //                 <input type="text" name="rposition_e_relation[]" class="form-control">
+        //             </div>
+        //             <div class="mb-2">
+        //                 <label class="form-label">Company</label>
+        //                 <input type="text" name="rcompany_e_relation[]" class="form-control">
+        //             </div>
+        //             <div class="mb-3">
+        //                 <label class="form-label">Purpose</label>
+        //                 <input type="text" name="rpurpose_e_relation[]" class="form-control">
+        //             </div>
+        //             <button type="button" class="btn btn-danger remove-form-e-relation">Remove</button>
+        //             <hr class="border border-primary border-1 opacity-50">
+        //         `;
 
-            calculateTotalNominal();
-        });
+        //         formContainerERelation.appendChild(newFormERelation);
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const formContainerEDetail = document.getElementById('form-container-e-detail');
-            const formContainerERelation = document.getElementById('form-container-e-relation');
+        //         // Initial update of checkbox visibility
+        //         updateCheckboxVisibility();
 
-            // Function to update checkboxes visibility based on selected options
-            function updateCheckboxVisibility() {
-                // Gather all selected options from enter_type_e_detail
-                const selectedOptions = Array.from(document.querySelectorAll('select[name="enter_type_e_detail[]"]'))
-                    .map(select => select.value)
-                    .filter(value => value !== "");
+        //         // Attach click event to the remove button
+        //         newFormERelation.querySelector('.remove-form-e-relation').addEventListener('click', function() {
+        //             newFormERelation.remove();
+        //             updateCheckboxVisibility();
+        //         });
+        //     }
 
-                // Update visibility for each checkbox in enter_type_e_relation
-                formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
-                    const checkbox = checkDiv.querySelector('input.form-check-input');
-                    const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
-                    if (selectedOptions.includes(checkboxValue)) {
-                        checkDiv.style.display = 'block';
-                    } else {
-                        checkDiv.style.display = 'none';
-                    }
-                });
-            }
+        //     document.getElementById('add-more-e-detail').addEventListener('click', addNewEDetailForm);
+        //     document.getElementById('add-more-e-relation').addEventListener('click', addNewERelationForm);
 
-            // Function to format number with thousands separator
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
+        //     // Attach input event to the existing nominal fields
+        //     document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
+        //         input.addEventListener('input', function() {
+        //             formatInput(this);
+        //         });
+        //     });
 
-            // Function to parse number from formatted string
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
+        //     // Attach change event to existing select fields for checkbox visibility
+        //     document.querySelectorAll('select[name="enter_type_e_detail[]"]').forEach(select => {
+        //         select.addEventListener('change', updateCheckboxVisibility);
+        //     });
 
-            // Function to format input fields
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-                calculateTotalNominalEDetail();
-            }
+        //     calculateTotalNominalEDetail();
+        //     updateCheckboxVisibility();
+        // });
 
-            // Function to calculate the total nominal value for EDetail
-            function calculateTotalNominalEDetail() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.querySelector('input[name="total_e_detail[]"]').value = formatNumber(total);
-                document.getElementById('totalca').value = formatNumber(total);
-            }
-
-            // Function to add new EDetail form
-            function addNewEDetailForm() {
-                const newFormEDetail = document.createElement('div');
-                newFormEDetail.classList.add('mb-2');
-
-                newFormEDetail.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Entertainment Type</label>
-                        <select name="enter_type_e_detail[]" class="form-select">
-                            <option value="">-</option>
-                            <option value="food">Food/Beverages/Souvenir</option>
-                            <option value="transport">Transport</option>
-                            <option value="accommodation">Accommodation</option>
-                            <option value="gift">Gift</option>
-                            <option value="fund">Fund</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Entertainment Fee Detail</label>
-                        <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control" name="nominal_e_detail[]" type="text" min="0" value="0">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form-e-detail">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerEDetail.appendChild(newFormEDetail);
-
-                // Attach input event to the newly added nominal field
-                newFormEDetail.querySelector('input[name="nominal_e_detail[]"]').addEventListener('input', function() {
-                    formatInput(this);
-                });
-
-                // Attach change event to update checkbox visibility
-                newFormEDetail.querySelector('select[name="enter_type_e_detail[]"]').addEventListener('change', updateCheckboxVisibility);
-
-                // Attach click event to the remove button
-                newFormEDetail.querySelector('.remove-form-e-detail').addEventListener('click', function() {
-                    newFormEDetail.remove();
-                    updateCheckboxVisibility();
-                    calculateTotalNominalEDetail();
-                });
-            }
-
-            // Function to add new ERelation form
-            function addNewERelationForm() {
-                const newFormERelation = document.createElement('div');
-                newFormERelation.classList.add('mb-2');
-
-                newFormERelation.innerHTML = `
-                    <div class="mb-2">
-                        <label class="form-label">Relation Type</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="transport_e_relation[]" value="transport">
-                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
-                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation[]" value="gift">
-                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
-                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="food_e_relation[]" name="food_e_relation[]" value="food">
-                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="rname_e_relation[]" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Position</label>
-                        <input type="text" name="rposition_e_relation[]" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Company</label>
-                        <input type="text" name="rcompany_e_relation[]" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Purpose</label>
-                        <input type="text" name="rpurpose_e_relation[]" class="form-control">
-                    </div>
-                    <button type="button" class="btn btn-danger remove-form-e-relation">Remove</button>
-                    <hr class="border border-primary border-1 opacity-50">
-                `;
-
-                formContainerERelation.appendChild(newFormERelation);
-
-                // Initial update of checkbox visibility
-                updateCheckboxVisibility();
-
-                // Attach click event to the remove button
-                newFormERelation.querySelector('.remove-form-e-relation').addEventListener('click', function() {
-                    newFormERelation.remove();
-                    updateCheckboxVisibility();
-                });
-            }
-
-            document.getElementById('add-more-e-detail').addEventListener('click', addNewEDetailForm);
-            document.getElementById('add-more-e-relation').addEventListener('click', addNewERelationForm);
-
-            // Attach input event to the existing nominal fields
-            document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    formatInput(this);
-                });
-            });
-
-            // Attach change event to existing select fields for checkbox visibility
-            document.querySelectorAll('select[name="enter_type_e_detail[]"]').forEach(select => {
-                select.addEventListener('change', updateCheckboxVisibility);
-            });
-
-            calculateTotalNominalEDetail();
-            updateCheckboxVisibility();
+        document.querySelector("#test").addEventListener("click", ()=>{
+            Swal.fire("SweetAlert2 is working!");
         });
 
     </script>

@@ -72,7 +72,8 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', '')
+                $query->where('approval_status', 'Approved')
+                    ->orWhere('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
@@ -713,6 +714,9 @@ class ReimburseController extends Controller
 
         if ($req->input('action_ca_draft')) {
             $model->approval_status = $req->input('action_ca_draft');
+            $model->created_by = $userId;
+            $model->save();
+            return redirect()->route('cashadvanced')->with('success', 'Transaction successfully Added in Draft.');
         }
         if ($req->input('action_ca_submit')) {
             $model->approval_status = $req->input('action_ca_submit');
@@ -813,11 +817,9 @@ class ReimburseController extends Controller
         }
 
         $model->created_by = $userId;
-        // dd($model);
         $model->save();
 
-        Alert::success('Success');
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
     }
     function cashadvancedEdit($key)
     {
@@ -1035,6 +1037,8 @@ class ReimburseController extends Controller
         $model->total_cost = str_replace('.', '', $req->totalca);
         if ($req->input('action_ca_draft')) {
             $model->approval_status = $req->input('action_ca_draft');
+            $model->save();
+            return redirect()->route('cashadvanced')->with('success', 'Transaction successfully Added in Draft.');
         }
         if ($req->input('action_ca_submit')) {
             $model->approval_status = $req->input('action_ca_submit');
@@ -1134,10 +1138,7 @@ class ReimburseController extends Controller
             }
         }
         $model->save();
-        // dd($model);
-
-        Alert::success('Success Update');
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
     }
     public function cashadvancedExtend(Request $req)
     {
@@ -1237,9 +1238,13 @@ class ReimburseController extends Controller
     function cashadvancedDelete($id)
     {
         $model = ca_transaction::find($id);
-        $model->delete();
-        // return redirect()->intended(route('cashadvanced.admin', absolute: false));
-        return redirect()->back()->with('success', 'Transaction successfully deleted.');
+
+        if ($model) {
+            $model->delete();
+            return redirect()->back()->with('success', 'Transaction successfully deleted.');
+        } else {
+            return redirect()->back()->with('error', 'Transaction not found.');
+        }
     }
     function cashadvancedDownload($key)
     {

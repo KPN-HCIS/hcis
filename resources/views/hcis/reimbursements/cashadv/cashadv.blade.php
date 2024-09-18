@@ -95,8 +95,8 @@
             <!-- Add Data Button -->
             <div class="col-md-6 mt-4 text-end">
                 @if ($pendingCACount >= 2)
-                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill"
-                        onclick="alert('Cannot Add Data, you still have 2 Pending CA.'); return false; ">
+                    <a href="#" class="btn btn-outline-primary rounded-pill"
+                        onclick="showPendingAlert(); return false;">
                         <i class="bi bi-plus-circle"></i> Add Data
                     </a>
                 @else
@@ -181,10 +181,9 @@
                                                 @elseif ($ca_transaction->approval_status == 'Reject')
                                                 @elseif ($ca_transaction->approval_status == 'Draft')
                                                     <a href="{{ route('cashadvanced.edit', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                                    {{-- <a href="{{ route('cashadvanced.show', $ca_transaction->id) }}" class="btn btn-outline-info" title="Edit"><i class="bi bi-card-checklist"></i></a> --}}
-                                                    <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
+                                                    <form id="delete-form-{{ $ca_transaction->id }}" action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
                                                         @csrf
-                                                        <button onclick="return confirm('Do you want to delete this transaction?')" class="btn btn-outline-danger" title="Delete">
+                                                        <button type="button" class="btn btn-outline-danger delete-button" data-id="{{ $ca_transaction->id }}" title="Delete">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </form>
@@ -207,13 +206,48 @@
 @endsection
 
 @push('scripts')
+    @if (session('success'))
     <script>
-        // Periksa apakah ada pesan sukses
-        var successMessage = "{{ session('success') }}";
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: "Success!",
+                text: "{{ session('success') }}",
+                icon: "success"
+                confirmButtonText: 'Ok'
+            });
+        });
+    </script>
+    @endif
+    <script>
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const transactionId = button.getAttribute('data-id');
+                const form = document.getElementById(`delete-form-${transactionId}`);
 
-        // Jika ada pesan sukses, tampilkan sebagai alert
-        if (successMessage) {
-            alert(successMessage);
+                Swal.fire({
+                    title: "Do you want to delete this transaction?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#0c63e4",
+                    cancelButtonColor: "#9a2a27",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        function showPendingAlert() {
+            Swal.fire({
+                title: 'Cannot Add Data!',
+                text: 'You still have 2 Pending CA.',
+                icon: 'warning',
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'Ok'
+            });
         }
     </script>
 @endpush
