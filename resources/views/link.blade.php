@@ -6,7 +6,7 @@
 {{-- <link href="{{ asset('css/sb-admin-2.css') }}" rel="stylesheet" type="text/css" /> --}}
 <!-- Custom styles for this page -->
 
-{{-- <link href="{{ asset('vendor/datatables/dataTables.bootstrap5.min.css') }}?v={{ config('app.version') }}" rel="stylesheet"> --}}
+<link href="{{ asset('vendor/datatables/dataTables.bootstrap5.min.css') }}?v={{ config('app.version') }}" rel="stylesheet">
 <link href="{{ asset('css/quill.snow.css') }}?v={{ config('app.version') }}" rel="stylesheet">
 <!-- Select2 CSS -->
 <link rel="stylesheet" href="//cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
