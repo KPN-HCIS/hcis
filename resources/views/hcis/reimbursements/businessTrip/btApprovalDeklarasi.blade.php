@@ -20,34 +20,89 @@
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
-                            <div class="row mb-2">
-                                <div class="col-md-4">
-                                    <label for="no_sppd" class="form-label">No SPPD</label>
-                                    <input type="text" class="form-control bg-light" id="no_sppd" name="no_sppd"
-                                        value="{{ $n->no_sppd }}" readonly>
+
+                            <!-- Employee Data Table -->
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="col-sm-6 col-form-label">Employee Name</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail"
+                                                value="Metta Saputra">
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="col-sm-6 col-form-label">Employee Name</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail"
+                                                value="Metta Saputra">
+                                        </div>
+
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="nama" class="form-label">Name</label>
-                                    <input type="text" class="form-control bg-light" id="nama" name="nama"
-                                        value="{{ $n->nama }}" readonly>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="divisi" class="form-label">Unit</label>
-                                    <input type="text" class="form-control bg-light" id="divisi" name="divisi"
-                                        value="{{ $n->divisi }}" readonly>
+                                <div class="col-md-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="col-sm-6 col-md-6 col-form-label">Employee
+                                            Name</label>
+                                        <div class="col-sm-6 col-md-6">
+                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail"
+                                                value="Metta Saputra">
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <label for="mulai" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control bg-light" id="mulai" name="mulai"
-                                        value="{{ $n->mulai }}" readonly>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="kembali" class="form-label">End Date</label>
-                                    <input type="date" class="form-control bg-light" id="kembali" name="kembali"
-                                        value="{{ $n->kembali }}" readonly>
-                                    {{-- </div> --}}
+
+
+
+
+                            <div class="row">
+                                <div class="col-md-12 mb-2">
+
+
+                                    <!-- Business Trip Data Table -->
+                                    <table class="table" style="border: none; border-collapse: collapse;">
+                                        <tr>
+                                            <td colspan="3" style="border: none; text-align: left;">
+                                                <h4>Business Trip Data:</h4>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">No SPPD
+                                            </th>
+                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
+                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->no_sppd }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">Name</th>
+                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
+                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->nama }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">Division
+                                            </th>
+                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
+                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->divisi }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">Start
+                                                Date</th>
+                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
+                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->mulai }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">End Date
+                                            </th>
+                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
+                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->kembali }}
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                             <!-- 1st Form -->
@@ -55,86 +110,47 @@
                                 <div class="col-md-6">
                                     @php
                                         // Provide default empty arrays if caDetail or sections are not set
-                                        $detailPerdiem =
-                                            $caDetail[
-                                                'detail_perdiem'
-                                            ] ?? [];
-                                        $detailTransport =
-                                            $caDetail[
-                                                'detail_transport'
-                                            ] ?? [];
-                                        $detailPenginapan =
-                                            $caDetail[
-                                                'detail_penginapan'
-                                            ] ?? [];
-                                        $detailLainnya =
-                                            $caDetail[
-                                                'detail_lainnya'
-                                            ] ?? [];
+                                        $detailPerdiem = $caDetail['detail_perdiem'] ?? [];
+                                        $detailTransport = $caDetail['detail_transport'] ?? [];
+                                        $detailPenginapan = $caDetail['detail_penginapan'] ?? [];
+                                        $detailLainnya = $caDetail['detail_lainnya'] ?? [];
 
                                         // Calculate totals with default values
                                         $totalPerdiem = array_reduce(
                                             $detailPerdiem,
-                                            function (
-                                                $carry,
-                                                $item,
-                                            ) {
-                                                return $carry +
-                                                    (int) ($item[
-                                                        'nominal'
-                                                    ] ?? 0);
+                                            function ($carry, $item) {
+                                                return $carry + (int) ($item['nominal'] ?? 0);
                                             },
                                             0,
                                         );
 
                                         $totalTransport = array_reduce(
                                             $detailTransport,
-                                            function (
-                                                $carry,
-                                                $item,
-                                            ) {
-                                                return $carry +
-                                                    (int) ($item[
-                                                        'nominal'
-                                                    ] ?? 0);
+                                            function ($carry, $item) {
+                                                return $carry + (int) ($item['nominal'] ?? 0);
                                             },
                                             0,
                                         );
 
                                         $totalPenginapan = array_reduce(
                                             $detailPenginapan,
-                                            function (
-                                                $carry,
-                                                $item,
-                                            ) {
-                                                return $carry +
-                                                    (int) ($item[
-                                                        'nominal'
-                                                    ] ?? 0);
+                                            function ($carry, $item) {
+                                                return $carry + (int) ($item['nominal'] ?? 0);
                                             },
                                             0,
                                         );
 
                                         $totalLainnya = array_reduce(
                                             $detailLainnya,
-                                            function (
-                                                $carry,
-                                                $item,
-                                            ) {
-                                                return $carry +
-                                                    (int) ($item[
-                                                        'nominal'
-                                                    ] ?? 0);
+                                            function ($carry, $item) {
+                                                return $carry + (int) ($item['nominal'] ?? 0);
                                             },
                                             0,
                                         );
 
                                         // Total Cash Advanced
                                         $totalCashAdvanced =
-                                            $totalPerdiem +
-                                            $totalTransport +
-                                            $totalPenginapan +
-                                            $totalLainnya;
+                                            $totalPerdiem + $totalTransport + $totalPenginapan + $totalLainnya;
                                     @endphp
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
@@ -179,7 +195,7 @@
                                                                             </h2>
                                                                             <div id="enter-collapseOneDec"
                                                                                 @if (count($detailPerdiem) > 0) class="accordion-collapse @if ($detailPerdiem[0]['start_date'] === null) collapse @else show @endif"
-                                                                                @else class="accordion-collapse collapse"
+                                                                            @else class="accordion-collapse collapse"
                                                                                 @endif
                                                                                 aria-labelledby="enter-headingOne">
                                                                                 <div class="accordion-body">
@@ -548,7 +564,8 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">
-                                                                                                        Transport Date</label>
+                                                                                                        Transport
+                                                                                                        Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
@@ -627,8 +644,7 @@
                                                                                         @else
                                                                                             <!-- Default empty fields if no data is available -->
                                                                                             <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">
+                                                                                                <label class="form-label">
                                                                                                     Transport Date</label>
                                                                                                 <input type="date"
                                                                                                     name="tanggal_bt_transport[]"
@@ -1339,74 +1355,38 @@
                                 {{-- 2ND FORM --}}
                                 <div class="col-md-6">
                                     @php
-                                        $detailPerdiem2 =
-                                            $declareCa[
-                                                'detail_perdiem'
-                                            ] ?? [];
-                                        $detailTransport2 =
-                                            $declareCa[
-                                                'detail_transport'
-                                            ] ?? [];
-                                        $detailPenginapan2 =
-                                            $declareCa[
-                                                'detail_penginapan'
-                                            ] ?? [];
-                                        $detailLainnya2 =
-                                            $declareCa[
-                                                'detail_lainnya'
-                                            ] ?? [];
+                                        $detailPerdiem2 = $declareCa['detail_perdiem'] ?? [];
+                                        $detailTransport2 = $declareCa['detail_transport'] ?? [];
+                                        $detailPenginapan2 = $declareCa['detail_penginapan'] ?? [];
+                                        $detailLainnya2 = $declareCa['detail_lainnya'] ?? [];
                                         $totalPerdiem2 = array_reduce(
                                             $detailPerdiem2,
-                                            function (
-                                                $carry,
-                                                $item,
-                                            ) {
-                                                return $carry +
-                                                    (int) ($item[
-                                                        'nominal'
-                                                    ] ?? 0);
+                                            function ($carry, $item) {
+                                                return $carry + (int) ($item['nominal'] ?? 0);
                                             },
                                             0,
                                         );
 
                                         $totalTransport2 = array_reduce(
                                             $detailTransport2,
-                                            function (
-                                                $carry,
-                                                $item,
-                                            ) {
-                                                return $carry +
-                                                    (int) ($item[
-                                                        'nominal'
-                                                    ] ?? 0);
+                                            function ($carry, $item) {
+                                                return $carry + (int) ($item['nominal'] ?? 0);
                                             },
                                             0,
                                         );
 
                                         $totalPenginapan2 = array_reduce(
                                             $detailPenginapan2,
-                                            function (
-                                                $carry,
-                                                $item,
-                                            ) {
-                                                return $carry +
-                                                    (int) ($item[
-                                                        'nominal'
-                                                    ] ?? 0);
+                                            function ($carry, $item) {
+                                                return $carry + (int) ($item['nominal'] ?? 0);
                                             },
                                             0,
                                         );
 
                                         $totalLainnya2 = array_reduce(
                                             $detailLainnya2,
-                                            function (
-                                                $carry,
-                                                $item,
-                                            ) {
-                                                return $carry +
-                                                    (int) ($item[
-                                                        'nominal'
-                                                    ] ?? 0);
+                                            function ($carry, $item) {
+                                                return $carry + (int) ($item['nominal'] ?? 0);
                                             },
                                             0,
                                         );
@@ -1468,7 +1448,8 @@
                                                                                                     <input type="date"
                                                                                                         name="start_bt_perdiem[]"
                                                                                                         class="form-control start-perdiem"
-                                                                                                        value="{{ old('start_bt_perdiem.' . $index, $perdiem2['start_date'] ?? '') }}" disabled>
+                                                                                                        value="{{ old('start_bt_perdiem.' . $index, $perdiem2['start_date'] ?? '') }}"
+                                                                                                        disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1477,7 +1458,8 @@
                                                                                                     <input type="date"
                                                                                                         name="end_bt_perdiem[]"
                                                                                                         class="form-control end-perdiem"
-                                                                                                        value="{{ old('end_bt_perdiem.' . $index, $perdiem2['end_date'] ?? '') }}" disabled>
+                                                                                                        value="{{ old('end_bt_perdiem.' . $index, $perdiem2['end_date'] ?? '') }}"
+                                                                                                        disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1508,7 +1490,8 @@
                                                                                                         Agency</label>
                                                                                                     <select
                                                                                                         class="form-control select2 location-select"
-                                                                                                        name="location_bt_perdiem[]" disabled>
+                                                                                                        name="location_bt_perdiem[]"
+                                                                                                        disabled>
                                                                                                         <option
                                                                                                             value="">
                                                                                                             Select
@@ -1533,7 +1516,8 @@
                                                                                                         class="form-control other-location"
                                                                                                         placeholder="Other Location"
                                                                                                         value="{{ old('other_location_bt_perdiem.' . $index, $perdiem2['other_location'] ?? '') }}"
-                                                                                                        style="{{ ($perdiem2['location'] ?? '') == 'Others' ? 'display:block;' : 'display:none;' }}" disabled>
+                                                                                                        style="{{ ($perdiem2['location'] ?? '') == 'Others' ? 'display:block;' : 'display:none;' }}"
+                                                                                                        disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1543,7 +1527,8 @@
                                                                                                     <select
                                                                                                         class="form-control select2"
                                                                                                         id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_perdiem[]" disabled>
+                                                                                                        name="company_bt_perdiem[]"
+                                                                                                        disabled>
                                                                                                         <option
                                                                                                             value="">
                                                                                                             ---
@@ -1594,7 +1579,8 @@
                                                                                                         id="nominal_bt_perdiem_{{ $index }}"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominal2) }}" disabled>
+                                                                                                        value="{{ old('nominal_bt_perdiem.' . $index, $formattedNominal2) }}"
+                                                                                                        disabled>
                                                                                                 </div>
                                                                                                 <hr
                                                                                                     class="border border-primary border-1 opacity-50">
@@ -1607,7 +1593,8 @@
                                                                                                     Perdiem</label>
                                                                                                 <input type="date"
                                                                                                     name="start_bt_perdiem[]"
-                                                                                                    class="form-control start-perdiem" disabled>
+                                                                                                    class="form-control start-perdiem"
+                                                                                                    disabled>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
@@ -1615,7 +1602,8 @@
                                                                                                     Perdiem</label>
                                                                                                 <input type="date"
                                                                                                     name="end_bt_perdiem[]"
-                                                                                                    class="form-control end-perdiem" disabled>
+                                                                                                    class="form-control end-perdiem"
+                                                                                                    disabled>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label class="form-label"
@@ -1642,7 +1630,8 @@
                                                                                                     Agency</label>
                                                                                                 <select
                                                                                                     class="form-control select2 location-select"
-                                                                                                    name="location_bt_perdiem[]" disabled>
+                                                                                                    name="location_bt_perdiem[]"
+                                                                                                    disabled>
                                                                                                     <option value="">
                                                                                                         Select
                                                                                                         location...
@@ -1662,7 +1651,8 @@
                                                                                                     name="other_location_bt_perdiem[]"
                                                                                                     class="form-control other-location"
                                                                                                     placeholder="Other Location"
-                                                                                                    style="display:none;" disabled>
+                                                                                                    style="display:none;"
+                                                                                                    disabled>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label class="form-label"
@@ -1698,7 +1688,8 @@
                                                                                                     name="nominal_bt_perdiem[]"
                                                                                                     id="nominal_bt_perdiem_0"
                                                                                                     type="text"
-                                                                                                    min="0" disabled>
+                                                                                                    min="0"
+                                                                                                    disabled>
                                                                                             </div>
                                                                                             <hr
                                                                                                 class="border border-primary border-1 opacity-50">
@@ -1806,12 +1797,14 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">
-                                                                                                        Transport Date</label>
+                                                                                                        Transport
+                                                                                                        Date</label>
                                                                                                     <input type="date"
                                                                                                         name="tanggal_bt_transport[]"
                                                                                                         class="form-control"
                                                                                                         placeholder="mm/dd/yyyy"
-                                                                                                        value="{{ old('tanggal_bt_transport.' . $index, $transport2['tanggal'] ?? '') }}" disabled>
+                                                                                                        value="{{ old('tanggal_bt_transport.' . $index, $transport2['tanggal'] ?? '') }}"
+                                                                                                        disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1821,7 +1814,8 @@
                                                                                                     <select
                                                                                                         class="form-control select2"
                                                                                                         id="companyFilter_{{ $index }}"
-                                                                                                        name="company_bt_transport[]" disabled>
+                                                                                                        name="company_bt_transport[]"
+                                                                                                        disabled>
                                                                                                         <option
                                                                                                             value="">
                                                                                                             Select
@@ -1839,7 +1833,8 @@
                                                                                                 <div class="mb-2">
                                                                                                     <label
                                                                                                         class="form-label">Information</label>
-                                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..." disabled>{{ old('keterangan_bt_transport.' . $index, $transport2['keterangan'] ?? '') }}</textarea>
+                                                                                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
+                                                                                                        disabled>{{ old('keterangan_bt_transport.' . $index, $transport2['keterangan'] ?? '') }}</textarea>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -1858,7 +1853,8 @@
                                                                                                         id="nominal_bt_transport_{{ $index }}"
                                                                                                         type="text"
                                                                                                         min="0"
-                                                                                                        value="{{ old('nominal_bt_transport.' . $index, $transport2['nominal'] ?? '0') }}" disabled>
+                                                                                                        value="{{ old('nominal_bt_transport.' . $index, $transport2['nominal'] ?? '0') }}"
+                                                                                                        disabled>
                                                                                                 </div>
 
                                                                                                 <hr
@@ -1867,13 +1863,13 @@
                                                                                         @else
                                                                                             <!-- Default empty fields if no data is available -->
                                                                                             <div class="mb-2">
-                                                                                                <label
-                                                                                                    class="form-label">
+                                                                                                <label class="form-label">
                                                                                                     Transport Date</label>
                                                                                                 <input type="date"
                                                                                                     name="tanggal_bt_transport[]"
                                                                                                     class="form-control"
-                                                                                                    placeholder="mm/dd/yyyy" disabled>
+                                                                                                    placeholder="mm/dd/yyyy"
+                                                                                                    disabled>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label class="form-label"
@@ -1882,7 +1878,8 @@
                                                                                                 <select
                                                                                                     class="form-control select2"
                                                                                                     id="companyFilter_0"
-                                                                                                    name="company_bt_transport[]" disabled>
+                                                                                                    name="company_bt_transport[]"
+                                                                                                    disabled>
                                                                                                     <option value="">
                                                                                                         Select
                                                                                                         Company...
@@ -1898,7 +1895,8 @@
                                                                                             <div class="mb-2">
                                                                                                 <label
                                                                                                     class="form-label">Information</label>
-                                                                                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..." disabled></textarea>
+                                                                                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information here..."
+                                                                                                    disabled></textarea>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <label
@@ -1914,7 +1912,8 @@
                                                                                                     name="nominal_bt_transport[]"
                                                                                                     id="nominal_bt_transport_0"
                                                                                                     type="text"
-                                                                                                    min="0" disabled>
+                                                                                                    min="0"
+                                                                                                    disabled>
                                                                                             </div>
 
                                                                                             <hr
@@ -2038,7 +2037,8 @@
                                                                                                             name="start_bt_penginapan[]"
                                                                                                             class="form-control start-penginapan"
                                                                                                             placeholder="mm/dd/yyyy"
-                                                                                                            value="{{ old('start_bt_penginapan.' . $index, $item2['start_date'] ?? '') }}" disabled>
+                                                                                                            value="{{ old('start_bt_penginapan.' . $index, $item2['start_date'] ?? '') }}"
+                                                                                                            disabled>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -2049,7 +2049,8 @@
                                                                                                             name="end_bt_penginapan[]"
                                                                                                             class="form-control end-penginapan"
                                                                                                             placeholder="mm/dd/yyyy"
-                                                                                                            value="{{ old('end_bt_penginapan.' . $index, $item2['end_date'] ?? '') }}" disabled>
+                                                                                                            value="{{ old('end_bt_penginapan.' . $index, $item2['end_date'] ?? '') }}"
+                                                                                                            disabled>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -2083,7 +2084,8 @@
                                                                                                             name="hotel_name_bt_penginapan[]"
                                                                                                             class="form-control"
                                                                                                             placeholder="ex: Westin"
-                                                                                                            value="{{ old('hotel_name_bt_penginapan.' . $index, $item2['hotel_name'] ?? '') }}" disabled>
+                                                                                                            value="{{ old('hotel_name_bt_penginapan.' . $index, $item2['hotel_name'] ?? '') }}"
+                                                                                                            disabled>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -2093,7 +2095,8 @@
                                                                                                         <select
                                                                                                             class="form-control select2"
                                                                                                             id="companyFilter_{{ $index }}"
-                                                                                                            name="company_bt_penginapan[]" disabled>
+                                                                                                            name="company_bt_penginapan[]"
+                                                                                                            disabled>
                                                                                                             <option
                                                                                                                 value="">
                                                                                                                 Select
@@ -2125,7 +2128,8 @@
                                                                                                             id="nominal_bt_penginapan_{{ $index }}"
                                                                                                             type="text"
                                                                                                             min="0"
-                                                                                                            value="{{ old('nominal_bt_penginapan.' . $index, $item2['nominal'] ?? '0') }}" disabled>
+                                                                                                            value="{{ old('nominal_bt_penginapan.' . $index, $item2['nominal'] ?? '0') }}"
+                                                                                                            disabled>
                                                                                                     </div>
 
                                                                                                     <hr
@@ -2140,7 +2144,8 @@
                                                                                                     <input type="date"
                                                                                                         name="start_bt_penginapan[]"
                                                                                                         class="form-control start-penginapan"
-                                                                                                        placeholder="mm/dd/yyyy" disabled>
+                                                                                                        placeholder="mm/dd/yyyy"
+                                                                                                        disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -2149,7 +2154,8 @@
                                                                                                     <input type="date"
                                                                                                         name="end_bt_penginapan[]"
                                                                                                         class="form-control end-penginapan"
-                                                                                                        placeholder="mm/dd/yyyy" disabled>
+                                                                                                        placeholder="mm/dd/yyyy"
+                                                                                                        disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -2180,7 +2186,8 @@
                                                                                                     <input type="text"
                                                                                                         name="hotel_name_bt_penginapan[]"
                                                                                                         class="form-control"
-                                                                                                        placeholder="ex: Westin" disabled>
+                                                                                                        placeholder="ex: Westin"
+                                                                                                        disabled>
                                                                                                 </div>
                                                                                                 <div class="mb-2">
                                                                                                     <label
@@ -2190,7 +2197,8 @@
                                                                                                     <select
                                                                                                         class="form-control select2"
                                                                                                         id="companyFilter_0"
-                                                                                                        name="company_bt_penginapan[]" disabled>
+                                                                                                        name="company_bt_penginapan[]"
+                                                                                                        disabled>
                                                                                                         <option
                                                                                                             value="">
                                                                                                             Select
@@ -2220,7 +2228,8 @@
                                                                                                         name="nominal_bt_penginapan[]"
                                                                                                         id="nominal_bt_penginapan_0"
                                                                                                         type="text"
-                                                                                                        min="0" disabled>
+                                                                                                        min="0"
+                                                                                                        disabled>
                                                                                                 </div>
 
                                                                                                 <hr
@@ -2348,7 +2357,8 @@
                                                                                                                 name="tanggal_bt_lainnya[]"
                                                                                                                 class="form-control"
                                                                                                                 value="{{ old('tanggal_bt_lainnya.' . $index, $lainnyaItem2['tanggal'] ?? '') }}"
-                                                                                                                placeholder="mm/dd/yyyy" disabled>
+                                                                                                                placeholder="mm/dd/yyyy"
+                                                                                                                disabled>
                                                                                                         </div>
                                                                                                         <div
                                                                                                             class="mb-2">
@@ -2372,7 +2382,8 @@
                                                                                                                     name="nominal_bt_lainnya[]"
                                                                                                                     type="text"
                                                                                                                     min="0"
-                                                                                                                    value="{{ old('nominal_bt_lainnya.' . $index, $lainnyaItem2['nominal'] ?? '0') }}" disabled>
+                                                                                                                    value="{{ old('nominal_bt_lainnya.' . $index, $lainnyaItem2['nominal'] ?? '0') }}"
+                                                                                                                    disabled>
                                                                                                             </div>
                                                                                                         </div>
                                                                                                         <hr
@@ -2388,12 +2399,14 @@
                                                                                                             type="date"
                                                                                                             name="tanggal_bt_lainnya[]"
                                                                                                             class="form-control"
-                                                                                                            placeholder="mm/dd/yyyy" disabled>
+                                                                                                            placeholder="mm/dd/yyyy"
+                                                                                                            disabled>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
                                                                                                             class="form-label">Information</label>
-                                                                                                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled></textarea>
+                                                                                                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."
+                                                                                                            disabled></textarea>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
                                                                                                         <label
@@ -2410,7 +2423,8 @@
                                                                                                                 name="nominal_bt_lainnya[]"
                                                                                                                 type="text"
                                                                                                                 min="0"
-                                                                                                                value="0" disabled>
+                                                                                                                value="0"
+                                                                                                                disabled>
                                                                                                         </div>
                                                                                                     </div>
                                                                                                     <hr
@@ -2549,11 +2563,11 @@
                                     class="btn btn-outline-primary rounded-pill" style="margin-right: 20px;">View</a>
                             @endif
 
-                           <!-- Decline Form -->
-                           <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal"
-                           data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
-                           Decline
-                       </button>
+                            <!-- Decline Form -->
+                            <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal"
+                                data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
+                                Decline
+                            </button>
 
                             <form method="POST" action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}"
                                 style="display: inline-block; margin-right: 5px;" class="status-form">
@@ -2572,41 +2586,44 @@
             </div>
         </div>
 
-  <!-- Rejection Reason Modal -->
-  <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow">
-          <div class="modal-header bg-light border-bottom-0">
-              <h5 class="modal-title" id="rejectReasonModalLabel" style="color: #333; font-weight: 600;">Rejection
-                  Reason</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-4">
-              <form id="rejectReasonForm" method="POST"
-                  action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}">
-                  @csrf
-                  @method('PUT')
-                  <input type="hidden" name="status_approval" value="Declaration Rejected">
+        <!-- Rejection Reason Modal -->
+        <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-light border-bottom-0">
+                        <h5 class="modal-title" id="rejectReasonModalLabel" style="color: #333; font-weight: 600;">
+                            Rejection
+                            Reason</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form id="rejectReasonForm" method="POST"
+                            action="{{ route('confirm.deklarasi', ['id' => $n->id]) }}">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="status_approval" value="Declaration Rejected">
 
-                  <div class="mb-3">
-                      <label for="reject_info" class="form-label" style="color: #555; font-weight: 500;">Please
-                          provide a reason for rejection:</label>
-                      <textarea class="form-control border-2" name="reject_info" id="reject_info" rows="4" required
-                          style="resize: vertical; min-height: 100px;"></textarea>
-                  </div>
+                            <div class="mb-3">
+                                <label for="reject_info" class="form-label"
+                                    style="color: #555; font-weight: 500;">Please
+                                    provide a reason for rejection:</label>
+                                <textarea class="form-control border-2" name="reject_info" id="reject_info" rows="4" required
+                                    style="resize: vertical; min-height: 100px;"></textarea>
+                            </div>
 
-                  <div class="d-flex justify-content-end mt-4">
-                      <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                          data-bs-dismiss="modal" style="min-width: 100px;">Cancel</button>
-                      <button type="submit" class="btn btn-primary rounded-pill"
-                          style="min-width: 100px;">Submit</button>
-                  </div>
-              </form>
-          </div>
-      </div>
-  </div>
-</div>
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                    data-bs-dismiss="modal" style="min-width: 100px;">Cancel</button>
+                                <button type="submit" class="btn btn-primary rounded-pill"
+                                    style="min-width: 100px;">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Success Modal -->
         <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
             aria-hidden="true">
@@ -2629,31 +2646,31 @@
 
         <script>
             function confirmSubmission(event) {
-            event.preventDefault(); // Stop the form from submitting immediately
+                event.preventDefault(); // Stop the form from submitting immediately
 
-            // Display a confirmation alert
-            const userConfirmed = confirm("Are you sure you want to approve this request?");
+                // Display a confirmation alert
+                const userConfirmed = confirm("Are you sure you want to approve this request?");
 
-            if (userConfirmed) {
-                // If the user confirms, submit the form
-                event.target.closest('form').submit();
-            } else {
-                // If the user cancels, do nothing
-                alert("Approval cancelled.");
+                if (userConfirmed) {
+                    // If the user confirms, submit the form
+                    event.target.closest('form').submit();
+                } else {
+                    // If the user cancels, do nothing
+                    alert("Approval cancelled.");
+                }
             }
-        }
-        document.getElementById('rejectReasonForm').addEventListener('submit', function(event) {
-            const reason = document.getElementById('reject_info').value.trim();
-            if (!reason) {
-                alert('Please provide a reason for rejection.');
-                event.preventDefault(); // Stop form submission if no reason is provided
-            }
-        });
+            document.getElementById('rejectReasonForm').addEventListener('submit', function(event) {
+                const reason = document.getElementById('reject_info').value.trim();
+                if (!reason) {
+                    alert('Please provide a reason for rejection.');
+                    event.preventDefault(); // Stop form submission if no reason is provided
+                }
+            });
 
-        // Add event listener to the decline button to open the modal
-        document.getElementById('declineButton').addEventListener('click', function() {
-            $('#rejectReasonModal').modal('show');
-        });
+            // Add event listener to the decline button to open the modal
+            document.getElementById('declineButton').addEventListener('click', function() {
+                $('#rejectReasonModal').modal('show');
+            });
 
             document.addEventListener('DOMContentLoaded', function() {
                 const forms = document.querySelectorAll('.status-form');
