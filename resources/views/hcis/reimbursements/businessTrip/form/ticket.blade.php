@@ -108,7 +108,7 @@
                     <div class="mt-2">
                         <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn"
                             id="remove-ticket-btn">Remove
-                            Ticket</button>
+                            Data</button>
                     </div>
                 </div>
             </div>
