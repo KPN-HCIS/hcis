@@ -350,7 +350,7 @@ function toggleSection(checkboxId, navId, tabId) {
     const nav = document.getElementById(navId);
     const tab = document.getElementById(tabId); // The tab button (anchor) for navigation
 
-    console.log(checkbox);
+    // console.log(checkbox);
 
     checkbox.addEventListener("change", function () {
         if (this.checked) {
@@ -430,7 +430,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Ticket JS
 document.addEventListener("DOMContentLoaded", function () {
-    let formTicketCount = 1;
+    let formTicketCount =
+        document.querySelectorAll('[id^="ticket-form-"]').length || 1; // Count existing forms on page load
     const maxTicketForms = 5;
     const ticketFormsContainer = document.getElementById(
         "ticket_forms_container"
@@ -456,6 +457,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formTicketCount = forms.length;
         updateRemoveButtons();
         updateAddButtonVisibility();
+        // initializeRoundTripOptions();
     }
 
     function updateAddButtonVisibility() {
@@ -464,16 +466,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateFormElementIds(form, formNumber) {
-        const elements = form.querySelectorAll("[id],[name]");
+        const elements = form.querySelectorAll("[id],[name],[onchange]");
         elements.forEach((element) => {
+            // Update IDs
             if (element.id) {
                 element.id = element.id.replace(/\d+$/, formNumber);
             }
+            // Update names
             if (element.name) {
                 element.name = element.name.replace(
                     /\[\d*\]/,
                     `[${formNumber}]`
                 );
+            }
+            // Update onchange attributes
+            if (element.hasAttribute("onchange")) {
+                const onchangeValue = element.getAttribute("onchange");
+                const updatedOnchangeValue = onchangeValue.replace(
+                    /\d+/,
+                    formNumber
+                );
+                element.setAttribute("onchange", updatedOnchangeValue);
             }
         });
     }
@@ -502,6 +515,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     : select.querySelector("option").value;
             }
         });
+
         const roundTripOptions = container.querySelector(".round-trip-options");
         if (roundTripOptions) {
             roundTripOptions.style.display = "none";
@@ -710,18 +724,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Hotel JS
 document.addEventListener("DOMContentLoaded", function () {
-    let formHotelCount = 1;
     const maxHotelForms = 5;
     const hotelFormsContainer = document.getElementById(
         "hotel_forms_container"
     );
-    const hotelCheckbox = document.getElementById("hotelCheckbox");
     const addHotelButton = document.querySelector(".add-hotel-btn");
+    let formHotelCount = hotelFormsContainer.querySelectorAll(".card").length;
+
+    function initializeForms() {
+        updateFormNumbers();
+        attachDateChangeListeners();
+        initializeSelect2();
+        updateButtonVisibility();
+    }
 
     function updateFormNumbers() {
-        const forms = hotelFormsContainer.querySelectorAll(
-            '[id^="hotel-form-"]'
-        );
+        const forms = hotelFormsContainer.querySelectorAll(".card");
         forms.forEach((form, index) => {
             const formNumber = index + 1;
             form.querySelector(
@@ -729,7 +747,6 @@ document.addEventListener("DOMContentLoaded", function () {
             ).textContent = `Hotel ${formNumber}`;
             form.id = `hotel-form-${formNumber}`;
             form.querySelector(".remove-hotel-btn").dataset.formId = formNumber;
-
             updateFormElementIds(form, formNumber);
         });
         formHotelCount = forms.length;
@@ -737,16 +754,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateFormElementIds(form, formNumber) {
-        const elements = form.querySelectorAll("[id],[name]");
+        const elements = form.querySelectorAll("[id],[name],[onchange]");
         elements.forEach((element) => {
+            // Update IDs
             if (element.id) {
                 element.id = element.id.replace(/\d+$/, formNumber);
             }
+            // Update names
             if (element.name) {
                 element.name = element.name.replace(
                     /\[\d*\]/,
                     `[${formNumber}]`
                 );
+            }
+            // Update onchange attributes
+            if (element.hasAttribute("onchange")) {
+                const onchangeValue = element.getAttribute("onchange");
+                const updatedOnchangeValue = onchangeValue.replace(
+                    /\d+/,
+                    formNumber
+                );
+                element.setAttribute("onchange", updatedOnchangeValue);
             }
         });
     }
@@ -761,64 +789,108 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function resetHotelFields(container) {
-        const inputs = container.querySelectorAll(
-            'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
-        );
-        inputs.forEach((input) => (input.value = ""));
-
-        const selects = container.querySelectorAll("select");
-        selects.forEach((select) => {
-            select.value = select.querySelector("option[selected]")
-                ? select.querySelector("option[selected]").value
-                : select.querySelector("option").value;
-        });
-    }
-
-    function resetAllHotelForms() {
-        const forms = hotelFormsContainer.querySelectorAll(
-            '[id^="hotel-form-"]'
-        );
-        forms.forEach((form, index) => {
-            resetHotelFields(form);
-            if (index === 0) {
-                form.style.display = "block";
-            } else {
-                form.remove();
-            }
-        });
-        formHotelCount = 1;
-        updateButtonVisibility();
-    }
-
     function addNewHotelForm() {
         if (formHotelCount < maxHotelForms) {
             formHotelCount++;
             const newHotelForm = createNewHotelForm(formHotelCount);
             hotelFormsContainer.insertAdjacentHTML("beforeend", newHotelForm);
-            updateFormNumbers();
+            initializeForms();
         } else {
             alert("You have reached the maximum number of hotels (5).");
         }
     }
 
-    addHotelButton.addEventListener("click", addNewHotelForm);
+    function attachDateChangeListeners() {
+        hotelFormsContainer.querySelectorAll(".card").forEach((form) => {
+            const checkInInput = form.querySelector(
+                'input[name="tgl_masuk_htl[]"]'
+            );
+            const checkOutInput = form.querySelector(
+                'input[name="tgl_keluar_htl[]"]'
+            );
 
-    hotelFormsContainer.addEventListener("click", function (e) {
-        if (e.target.classList.contains("remove-hotel-btn")) {
-            const formId = e.target.dataset.formId;
-            document.getElementById(`hotel-form-${formId}`).remove();
-            updateFormNumbers();
-        }
-    });
-
-    if (hotelCheckbox) {
-        hotelCheckbox.addEventListener("change", function () {
-            hotelFormsContainer.style.display = this.checked ? "block" : "none";
-            if (!this.checked) {
-                resetAllHotelForms();
+            if (checkInInput && checkOutInput) {
+                checkInInput.removeEventListener(
+                    "change",
+                    calculateTotalDaysHandler
+                );
+                checkOutInput.removeEventListener(
+                    "change",
+                    calculateTotalDaysHandler
+                );
+                checkInInput.addEventListener(
+                    "change",
+                    calculateTotalDaysHandler
+                );
+                checkOutInput.addEventListener(
+                    "change",
+                    calculateTotalDaysHandler
+                );
             }
         });
+    }
+
+    function calculateTotalDaysHandler(event) {
+        const form = event.target.closest(".card");
+        const formNumber = form.id.split("-").pop();
+        calculateTotalDays(formNumber);
+    }
+
+    function calculateTotalDays(index) {
+        const form = document.getElementById(`hotel-form-${index}`);
+        const checkInInput = form.querySelector(
+            'input[name="tgl_masuk_htl[]"]'
+        );
+        const checkOutInput = form.querySelector(
+            'input[name="tgl_keluar_htl[]"]'
+        );
+        const totalDaysInput = form.querySelector('input[name="total_hari[]"]');
+
+        const mulaiInput = document.getElementById("mulai");
+        const kembaliInput = document.getElementById("kembali");
+
+        if (
+            !checkInInput ||
+            !checkOutInput ||
+            !mulaiInput ||
+            !kembaliInput ||
+            !totalDaysInput
+        ) {
+            return;
+        }
+
+        const checkInDate = new Date(checkInInput.value);
+        const checkOutDate = new Date(checkOutInput.value);
+        const mulaiDate = new Date(mulaiInput.value);
+        const kembaliDate = new Date(kembaliInput.value);
+
+        if (checkInDate < mulaiDate) {
+            alert("Check In date cannot be earlier than Start date.");
+            checkInInput.value = "";
+            totalDaysInput.value = "";
+            return;
+        }
+        if (checkInDate > kembaliDate) {
+            alert("Check In date cannot be more than End date.");
+            checkInInput.value = "";
+            totalDaysInput.value = "";
+            return;
+        }
+
+        if (checkOutDate < checkInDate) {
+            alert("Check Out date cannot be earlier than Check In date.");
+            checkOutInput.value = "";
+            totalDaysInput.value = "";
+            return;
+        }
+
+        if (checkInDate && checkOutDate) {
+            const diffTime = Math.abs(checkOutDate - checkInDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            totalDaysInput.value = diffDays;
+        } else {
+            totalDaysInput.value = "";
+        }
     }
 
     function createNewHotelForm(formNumber) {
@@ -843,7 +915,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                         <div class="col-md-2 mb-2">
                             <label class="form-label">Bed Size</label>
-                            <select class="form-select form-select-sm" name="bed_htl[]">
+                            <select class="form-select form-select-sm select2" name="bed_htl[]">
                                 <option value="Single Bed">Single Bed</option>
                                 <option value="Twin Bed">Twin Bed</option>
                                 <option value="King Bed">King Bed</option>
@@ -862,20 +934,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-2">
-                        <label class="form-label">Check In Date</label>
-                        <input type="date" class="form-control form-control-sm" id="check-in-${formNumber}" name="tgl_masuk_htl[]"
-                            onchange="calculateTotalDays(${formNumber})">
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <label class="form-label">Check Out Date</label>
-                        <input type="date" class="form-control form-control-sm" id="check-out-${formNumber}" name="tgl_keluar_htl[]"
-                            onchange="calculateTotalDays(${formNumber})">
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <label class="form-label">Total Days</label>
-                        <input type="number" class="form-control form-control-sm bg-light" id="total-days-${formNumber}" name="total_hari[]"
-                            readonly>
-                    </div>
+                            <label class="form-label">Check In Date</label>
+                            <input type="date" class="form-control form-control-sm" id="check-in-${formNumber}" name="tgl_masuk_htl[]"
+                                onchange="calculateTotalDays(${formNumber})">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Check Out Date</label>
+                            <input type="date" class="form-control form-control-sm" id="check-out-${formNumber}" name="tgl_keluar_htl[]"
+                                onchange="calculateTotalDays(${formNumber})">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Total Days</label>
+                            <input type="number" class="form-control form-control-sm bg-light" id="total-days-${formNumber}" name="total_hari[]"
+                                readonly>
+                        </div>
                     </div>
                     <div class="mt-2">
                         <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn" data-form-id="${formNumber}">Remove Data</button>
@@ -884,8 +956,39 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>`;
     }
 
-    // Initial setup
-    updateButtonVisibility();
+    function initializeSelect2() {
+        $(".select2").select2();
+    }
+
+    function resetAllHotelForms() {
+        const forms = hotelFormsContainer.querySelectorAll(".card");
+        forms.forEach((form, index) => {
+            if (index === 0) {
+                form.style.display = "block";
+            } else {
+                form.remove();
+            }
+        });
+        formHotelCount = 1;
+        updateButtonVisibility();
+    }
+
+    // Initialize forms
+    initializeForms();
+
+    addHotelButton.addEventListener("click", addNewHotelForm);
+
+    hotelFormsContainer.addEventListener("click", function (e) {
+        if (e.target.classList.contains("remove-hotel-btn")) {
+            const formId = e.target.dataset.formId;
+            document.getElementById(`hotel-form-${formId}`).remove();
+            formHotelCount--;
+            updateFormNumbers();
+        }
+    });
+
+    // Ensure Select2 is initialized on document ready
+    initializeSelect2();
 });
 
 //Taksi JS

@@ -327,7 +327,7 @@ class BusinessTripController extends Controller
         if ($request->hotel === 'Ya') {
             // Get all existing hotels for this business trip
             $existingHotels = Hotel::where('no_sppd', $oldNoSppd)->get()->keyBy('id');
-
+            // dd($existingHotels->no_htl);
             $processedHotelIds = [];
 
             foreach ($request->nama_htl as $key => $value) {
@@ -352,9 +352,12 @@ class BusinessTripController extends Controller
                         $processedHotelIds[] = $hotelId;
                     } else {
                         // Create a new hotel record if no valid ID is provided
+                        $existingNoHtl = $existingHotels->first()?->no_htl ?? $this->generateNoSppdHtl();
                         $newHotel = Hotel::create([
                             'id' => (string) Str::uuid(),
-                            'no_htl' => $this->generateNoSppdHtl(),
+                            // 'no_htl' => $this->generateNoSppdHtl(),
+                            'no_htl' => $existingNoHtl,
+                            // dd($existingNoHtl),
                             'user_id' => Auth::id(),
                             'unit' => $request->divisi,
                             'no_sppd' => $oldNoSppd,
@@ -423,10 +426,12 @@ class BusinessTripController extends Controller
                         $existingTicket = $existingTickets[$value];
                         $existingTicket->update($ticketData);
                     } else {
-                        // Create a new ticket entry
+                        $existingNoTkt = $existingTicket->no_tkt ?? $this->generateNoSppdTkt();
                         Tiket::create(array_merge($ticketData, [
                             'id' => (string) Str::uuid(),
-                            'no_tkt' => $this->generateNoSppdTkt(),
+                            // 'no_tkt' => $this->generateNoSppdTkt(),
+                            'no_tkt' => $existingNoTkt,
+                            // dd($existingNoTkt),
                             'noktp_tkt' => $value,
                             'approval_status' => $request->status,
                         ]));
