@@ -38,7 +38,6 @@
                                             <input type="text" readonly class="form-control-plaintext" id="staticEmail"
                                                 value="Metta Saputra">
                                         </div>
-
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-sm-6">
@@ -49,7 +48,6 @@
                                             <input type="text" readonly class="form-control-plaintext" id="staticEmail"
                                                 value="Metta Saputra">
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
