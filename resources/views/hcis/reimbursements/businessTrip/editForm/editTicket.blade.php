@@ -118,7 +118,7 @@
                 </div>
                 <div class="mt-2">
                     <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn"
-                        id="remove-ticket-btn" data-form-id="<?php echo $i; ?>">Remove Ticket</button>
+                        id="remove-ticket-btn" data-form-id="<?php echo $i; ?>">Remove Data</button>
                 </div>
 
             </div>

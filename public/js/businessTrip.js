@@ -587,7 +587,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     </div>
                     <div class="mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn" data-form-id="${formNumber}">Remove Ticket</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn" data-form-id="${formNumber}">Remove Data</button>
                     </div>
                 </div>
             </div>`;
