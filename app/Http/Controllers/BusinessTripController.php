@@ -2982,8 +2982,8 @@ class BusinessTripController extends Controller
     {
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
-        $employee_data = Employee::where('id', $userId)->first();
-
+        $employee_data = Employee::where('id', $n->user_id)->first();
+// dd($employee_data);
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
         // Initialize caDetail with an empty array if it's null

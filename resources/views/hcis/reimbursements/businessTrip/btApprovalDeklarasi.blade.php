@@ -23,81 +23,116 @@
 
                             <!-- Employee Data Table -->
                             <div class="row">
-                                <div class="col-md-6 col-sm-6">
+                                <div class="col-6 col-sm-6">
                                     <div class="form-group row">
-                                        <label for="staticEmail" class="col-sm-6 col-form-label">Employee Name</label>
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">Employee Name</label>
                                         <div class="col-sm-6">
-                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail"
-                                                value="Metta Saputra">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail" value="{{ $employee_data->fullname }}">
                                         </div>
+                                    </div>
 
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="col-sm-6 col-form-label">Employee Name</label>
-                                        <div class="col-sm-6">
-                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail"
-                                                value="Metta Saputra">
-                                        </div>
-                                    </div>
                                 </div>
-                                <div class="col-md-6 col-sm-6">
+                                <div class="col-6 col-sm-6">
                                     <div class="form-group row">
-                                        <label for="staticEmail" class="col-sm-6 col-md-6 col-form-label">Employee
-                                            Name</label>
-                                        <div class="col-sm-6 col-md-6">
-                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail"
-                                                value="Metta Saputra">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">NIK</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail" value="{{ $employee_data->ktp }}">
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
-
                             <div class="row">
-                                <div class="col-md-12 mb-2">
+                                <div class="col-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">Email</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail" value="{{ $employee_data->email }}">
+                                        </div>
+                                    </div>
 
+                                </div>
+                                <div class="col-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">Bank Account</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail"
+                                                value="{{ $employee_data->bank_name }} - {{ $employee_data->bank_account_number }} - {{ $employee_data->bank_account_name }}">
+                                        </div>
+                                    </div>
 
-                                    <!-- Business Trip Data Table -->
-                                    <table class="table" style="border: none; border-collapse: collapse;">
-                                        <tr>
-                                            <td colspan="3" style="border: none; text-align: left;">
-                                                <h4>Business Trip Data:</h4>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">No SPPD
-                                            </th>
-                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
-                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->no_sppd }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">Name</th>
-                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
-                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->nama }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">Division
-                                            </th>
-                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
-                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->divisi }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">Start
-                                                Date</th>
-                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
-                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->mulai }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th class="label" style="width: 20%; border: none; padding: 4px 8px;">End Date
-                                            </th>
-                                            <td class="colon" style="width: 3%; border: none; padding: 4px 8px;">:</td>
-                                            <td class="value" style="border: none; padding: 4px 8px;">{{ $n->kembali }}
-                                            </td>
-                                        </tr>
-                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">Division</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail"
+                                                value=" {{ $employee_data->unit }} / {{ $employee_data->designation_name }}">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">PT/Location</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail"
+                                                value="{{ $employee_data->company_name }} / {{ $employee_data->office_area }}">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">NO SPPD</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail" value="{{ $n->no_sppd }}">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">Requestor</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail" value="{{ $n->nama }}">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">Start Date</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail" value="{{ $n->mulai }}">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-6 col-sm-6">
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="py-0 col-sm-6 col-form-label">End Date</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
+                                                id="staticEmail" value="{{ $n->kembali }}">
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             <!-- 1st Form -->
@@ -149,7 +184,8 @@
                                     @endphp
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-primary p-2" style="text-align:center; border-radius:4px;">
+                                            <div class="text-bg-primary p-2"
+                                                style="text-align:center; border-radius:4px;">
                                                 Cash Advanced</div>
                                             <div class="row" id="ca_bt" style="">
                                                 <div class="col-md-12">
@@ -2359,7 +2395,8 @@
                                                                                                             class="mb-2">
                                                                                                             <label
                                                                                                                 class="form-label">Information</label>
-                                                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..." disabled>{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem2['keterangan'] ?? '') }}</textarea>
+                                                                                                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your other purposes ..."
+                                                                                                                disabled>{{ old('keterangan_bt_lainnya.' . $index, $lainnyaItem2['keterangan'] ?? '') }}</textarea>
                                                                                                         </div>
                                                                                                         <div
                                                                                                             class="mb-2">
