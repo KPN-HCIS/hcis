@@ -350,7 +350,7 @@ function toggleSection(checkboxId, navId, tabId) {
     const nav = document.getElementById(navId);
     const tab = document.getElementById(tabId); // The tab button (anchor) for navigation
 
-    console.log(checkbox);
+    // console.log(checkbox);
 
     checkbox.addEventListener("change", function () {
         if (this.checked) {
@@ -430,7 +430,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Ticket JS
 document.addEventListener("DOMContentLoaded", function () {
-    let formTicketCount = 1;
+    let formTicketCount =
+        document.querySelectorAll('[id^="ticket-form-"]').length || 1; // Count existing forms on page load
     const maxTicketForms = 5;
     const ticketFormsContainer = document.getElementById(
         "ticket_forms_container"
@@ -456,6 +457,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formTicketCount = forms.length;
         updateRemoveButtons();
         updateAddButtonVisibility();
+        // initializeRoundTripOptions();
     }
 
     function updateAddButtonVisibility() {
@@ -464,16 +466,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateFormElementIds(form, formNumber) {
-        const elements = form.querySelectorAll("[id],[name]");
+        const elements = form.querySelectorAll("[id],[name],[onchange]");
         elements.forEach((element) => {
+            // Update IDs
             if (element.id) {
                 element.id = element.id.replace(/\d+$/, formNumber);
             }
+            // Update names
             if (element.name) {
                 element.name = element.name.replace(
                     /\[\d*\]/,
                     `[${formNumber}]`
                 );
+            }
+            // Update onchange attributes
+            if (element.hasAttribute("onchange")) {
+                const onchangeValue = element.getAttribute("onchange");
+                const updatedOnchangeValue = onchangeValue.replace(
+                    /\d+/,
+                    formNumber
+                );
+                element.setAttribute("onchange", updatedOnchangeValue);
             }
         });
     }
@@ -502,6 +515,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     : select.querySelector("option").value;
             }
         });
+
         const roundTripOptions = container.querySelector(".round-trip-options");
         if (roundTripOptions) {
             roundTripOptions.style.display = "none";
@@ -710,18 +724,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Hotel JS
 document.addEventListener("DOMContentLoaded", function () {
-    let formHotelCount = 1;
     const maxHotelForms = 5;
     const hotelFormsContainer = document.getElementById(
         "hotel_forms_container"
     );
-    const hotelCheckbox = document.getElementById("hotelCheckbox");
     const addHotelButton = document.querySelector(".add-hotel-btn");
+    let formHotelCount = hotelFormsContainer.querySelectorAll(".card").length;
+
+    function initializeForms() {
+        updateFormNumbers();
+        attachDateChangeListeners();
+        initializeSelect2();
+        updateButtonVisibility();
+    }
 
     function updateFormNumbers() {
-        const forms = hotelFormsContainer.querySelectorAll(
-            '[id^="hotel-form-"]'
-        );
+        const forms = hotelFormsContainer.querySelectorAll(".card");
         forms.forEach((form, index) => {
             const formNumber = index + 1;
             form.querySelector(
@@ -729,7 +747,6 @@ document.addEventListener("DOMContentLoaded", function () {
             ).textContent = `Hotel ${formNumber}`;
             form.id = `hotel-form-${formNumber}`;
             form.querySelector(".remove-hotel-btn").dataset.formId = formNumber;
-
             updateFormElementIds(form, formNumber);
         });
         formHotelCount = forms.length;
@@ -737,16 +754,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateFormElementIds(form, formNumber) {
-        const elements = form.querySelectorAll("[id],[name]");
+        const elements = form.querySelectorAll("[id],[name],[onchange]");
         elements.forEach((element) => {
+            // Update IDs
             if (element.id) {
                 element.id = element.id.replace(/\d+$/, formNumber);
             }
+            // Update names
             if (element.name) {
                 element.name = element.name.replace(
                     /\[\d*\]/,
                     `[${formNumber}]`
                 );
+            }
+            // Update onchange attributes
+            if (element.hasAttribute("onchange")) {
+                const onchangeValue = element.getAttribute("onchange");
+                const updatedOnchangeValue = onchangeValue.replace(
+                    /\d+/,
+                    formNumber
+                );
+                element.setAttribute("onchange", updatedOnchangeValue);
             }
         });
     }
@@ -761,64 +789,108 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function resetHotelFields(container) {
-        const inputs = container.querySelectorAll(
-            'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
-        );
-        inputs.forEach((input) => (input.value = ""));
-
-        const selects = container.querySelectorAll("select");
-        selects.forEach((select) => {
-            select.value = select.querySelector("option[selected]")
-                ? select.querySelector("option[selected]").value
-                : select.querySelector("option").value;
-        });
-    }
-
-    function resetAllHotelForms() {
-        const forms = hotelFormsContainer.querySelectorAll(
-            '[id^="hotel-form-"]'
-        );
-        forms.forEach((form, index) => {
-            resetHotelFields(form);
-            if (index === 0) {
-                form.style.display = "block";
-            } else {
-                form.remove();
-            }
-        });
-        formHotelCount = 1;
-        updateButtonVisibility();
-    }
-
     function addNewHotelForm() {
         if (formHotelCount < maxHotelForms) {
             formHotelCount++;
             const newHotelForm = createNewHotelForm(formHotelCount);
             hotelFormsContainer.insertAdjacentHTML("beforeend", newHotelForm);
-            updateFormNumbers();
+            initializeForms();
         } else {
             alert("You have reached the maximum number of hotels (5).");
         }
     }
 
-    addHotelButton.addEventListener("click", addNewHotelForm);
+    function attachDateChangeListeners() {
+        hotelFormsContainer.querySelectorAll(".card").forEach((form) => {
+            const checkInInput = form.querySelector(
+                'input[name="tgl_masuk_htl[]"]'
+            );
+            const checkOutInput = form.querySelector(
+                'input[name="tgl_keluar_htl[]"]'
+            );
 
-    hotelFormsContainer.addEventListener("click", function (e) {
-        if (e.target.classList.contains("remove-hotel-btn")) {
-            const formId = e.target.dataset.formId;
-            document.getElementById(`hotel-form-${formId}`).remove();
-            updateFormNumbers();
-        }
-    });
-
-    if (hotelCheckbox) {
-        hotelCheckbox.addEventListener("change", function () {
-            hotelFormsContainer.style.display = this.checked ? "block" : "none";
-            if (!this.checked) {
-                resetAllHotelForms();
+            if (checkInInput && checkOutInput) {
+                checkInInput.removeEventListener(
+                    "change",
+                    calculateTotalDaysHandler
+                );
+                checkOutInput.removeEventListener(
+                    "change",
+                    calculateTotalDaysHandler
+                );
+                checkInInput.addEventListener(
+                    "change",
+                    calculateTotalDaysHandler
+                );
+                checkOutInput.addEventListener(
+                    "change",
+                    calculateTotalDaysHandler
+                );
             }
         });
+    }
+
+    function calculateTotalDaysHandler(event) {
+        const form = event.target.closest(".card");
+        const formNumber = form.id.split("-").pop();
+        calculateTotalDays(formNumber);
+    }
+
+    function calculateTotalDays(index) {
+        const form = document.getElementById(`hotel-form-${index}`);
+        const checkInInput = form.querySelector(
+            'input[name="tgl_masuk_htl[]"]'
+        );
+        const checkOutInput = form.querySelector(
+            'input[name="tgl_keluar_htl[]"]'
+        );
+        const totalDaysInput = form.querySelector('input[name="total_hari[]"]');
+
+        const mulaiInput = document.getElementById("mulai");
+        const kembaliInput = document.getElementById("kembali");
+
+        if (
+            !checkInInput ||
+            !checkOutInput ||
+            !mulaiInput ||
+            !kembaliInput ||
+            !totalDaysInput
+        ) {
+            return;
+        }
+
+        const checkInDate = new Date(checkInInput.value);
+        const checkOutDate = new Date(checkOutInput.value);
+        const mulaiDate = new Date(mulaiInput.value);
+        const kembaliDate = new Date(kembaliInput.value);
+
+        if (checkInDate < mulaiDate) {
+            alert("Check In date cannot be earlier than Start date.");
+            checkInInput.value = "";
+            totalDaysInput.value = "";
+            return;
+        }
+        if (checkInDate > kembaliDate) {
+            alert("Check In date cannot be more than End date.");
+            checkInInput.value = "";
+            totalDaysInput.value = "";
+            return;
+        }
+
+        if (checkOutDate < checkInDate) {
+            alert("Check Out date cannot be earlier than Check In date.");
+            checkOutInput.value = "";
+            totalDaysInput.value = "";
+            return;
+        }
+
+        if (checkInDate && checkOutDate) {
+            const diffTime = Math.abs(checkOutDate - checkInDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            totalDaysInput.value = diffDays;
+        } else {
+            totalDaysInput.value = "";
+        }
     }
 
     function createNewHotelForm(formNumber) {
@@ -843,7 +915,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                         <div class="col-md-2 mb-2">
                             <label class="form-label">Bed Size</label>
-                            <select class="form-select form-select-sm" name="bed_htl[]">
+                            <select class="form-select form-select-sm select2" name="bed_htl[]">
                                 <option value="Single Bed">Single Bed</option>
                                 <option value="Twin Bed">Twin Bed</option>
                                 <option value="King Bed">King Bed</option>
@@ -862,20 +934,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-2">
-                        <label class="form-label">Check In Date</label>
-                        <input type="date" class="form-control form-control-sm" id="check-in-${formNumber}" name="tgl_masuk_htl[]"
-                            onchange="calculateTotalDays(${formNumber})">
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <label class="form-label">Check Out Date</label>
-                        <input type="date" class="form-control form-control-sm" id="check-out-${formNumber}" name="tgl_keluar_htl[]"
-                            onchange="calculateTotalDays(${formNumber})">
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <label class="form-label">Total Days</label>
-                        <input type="number" class="form-control form-control-sm bg-light" id="total-days-${formNumber}" name="total_hari[]"
-                            readonly>
-                    </div>
+                            <label class="form-label">Check In Date</label>
+                            <input type="date" class="form-control form-control-sm" id="check-in-${formNumber}" name="tgl_masuk_htl[]"
+                                onchange="calculateTotalDays(${formNumber})">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Check Out Date</label>
+                            <input type="date" class="form-control form-control-sm" id="check-out-${formNumber}" name="tgl_keluar_htl[]"
+                                onchange="calculateTotalDays(${formNumber})">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Total Days</label>
+                            <input type="number" class="form-control form-control-sm bg-light" id="total-days-${formNumber}" name="total_hari[]"
+                                readonly>
+                        </div>
                     </div>
                     <div class="mt-2">
                         <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn" data-form-id="${formNumber}">Remove Data</button>
@@ -884,8 +956,39 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>`;
     }
 
-    // Initial setup
-    updateButtonVisibility();
+    function initializeSelect2() {
+        $(".select2").select2();
+    }
+
+    function resetAllHotelForms() {
+        const forms = hotelFormsContainer.querySelectorAll(".card");
+        forms.forEach((form, index) => {
+            if (index === 0) {
+                form.style.display = "block";
+            } else {
+                form.remove();
+            }
+        });
+        formHotelCount = 1;
+        updateButtonVisibility();
+    }
+
+    // Initialize forms
+    initializeForms();
+
+    addHotelButton.addEventListener("click", addNewHotelForm);
+
+    hotelFormsContainer.addEventListener("click", function (e) {
+        if (e.target.classList.contains("remove-hotel-btn")) {
+            const formId = e.target.dataset.formId;
+            document.getElementById(`hotel-form-${formId}`).remove();
+            formHotelCount--;
+            updateFormNumbers();
+        }
+    });
+
+    // Ensure Select2 is initialized on document ready
+    initializeSelect2();
 });
 
 //Taksi JS
@@ -902,15 +1005,320 @@ function handleTaksiForms() {
     });
 }
 //CA JS
-// function handleCaForms() {
-//     const caCheckbox = document.getElementById("cashAdvancedCheckbox");
-//     const caDiv = document.getElementById("ca_div");
+function handleCaForms() {
+    const caCheckbox = document.getElementById("cashAdvancedCheckbox");
+    const caDiv = document.getElementById("ca_div");
 
-//     caCheckbox.addEventListener("change", function () {
-//         if (this.checked) {
-//             caDiv.style.display = "block";
-//         } else {
-//             caDiv.style.display = "none";
-//         }
-//     });
-// }
+    caCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+            caDiv.style.display = "block";
+        } else {
+            caDiv.style.display = "none";
+        }
+    });
+}
+
+function handleCaForms() {
+    const caCheckbox = document.getElementById("caCheckbox");
+    const caDiv = document.getElementById("ca_div");
+
+    caCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+            caDiv.style.display = "block";
+        } else {
+            caDiv.style.display = "none";
+        }
+    });
+}
+
+function cleanNumber(value) {
+    return parseFloat(value.replace(/\./g, "").replace(/,/g, "")) || 0;
+}
+
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function formatNumberPerdiem(num) {
+    return num.toLocaleString("id-ID");
+}
+
+function parseNumberPerdiem(value) {
+    return parseFloat(value.replace(/\./g, "").replace(/,/g, "")) || 0;
+}
+
+function parseNumber(value) {
+    return parseFloat(value.replace(/\./g, "")) || 0;
+}
+
+function formatInput(input) {
+    let value = input.value.replace(/\./g, "");
+    value = parseFloat(value);
+    if (!isNaN(value)) {
+        input.value = formatNumber(Math.floor(value));
+    } else {
+        input.value = formatNumber(0);
+    }
+    calculateTotalNominalBTPerdiem();
+    calculateTotalNominalBTTransport();
+    calculateTotalNominalBTPenginapan();
+    calculateTotalNominalBTLainnya();
+    calculateTotalNominalBTTotal();
+}
+
+function calculateTotalNominalBTTotal() {
+    let total = 0;
+    document
+        .querySelectorAll('input[name="total_bt_perdiem"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_transport"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_penginapan"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_lainnya"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document.querySelector('input[name="totalca"]').value = formatNumber(total);
+}
+
+function toggleDivs() {
+    // ca_type ca_nbt ca_e
+    var ca_type = document.getElementById("ca_type");
+    var ca_nbt = document.getElementById("ca_nbt");
+    var ca_e = document.getElementById("ca_e");
+    var div_bisnis_numb_dns = document.getElementById("div_bisnis_numb_dns");
+    var div_bisnis_numb_ent = document.getElementById("div_bisnis_numb_ent");
+    var bisnis_numb = document.getElementById("bisnis_numb");
+    var div_allowance = document.getElementById("div_allowance");
+
+    if (ca_type.value === "dns") {
+        ca_bt.style.display = "block";
+        ca_nbt.style.display = "none";
+        ca_e.style.display = "none";
+        div_bisnis_numb_dns.style.display = "block";
+        div_bisnis_numb_ent.style.display = "none";
+        div_allowance.style.display = "block";
+    } else if (ca_type.value === "ndns") {
+        ca_bt.style.display = "none";
+        ca_nbt.style.display = "block";
+        ca_e.style.display = "none";
+        div_bisnis_numb_dns.style.display = "none";
+        div_bisnis_numb_ent.style.display = "none";
+        bisnis_numb.style.value = "";
+        div_allowance.style.display = "none";
+    } else if (ca_type.value === "entr") {
+        ca_bt.style.display = "none";
+        ca_nbt.style.display = "none";
+        ca_e.style.display = "block";
+        div_bisnis_numb_dns.style.display = "none";
+        div_bisnis_numb_ent.style.display = "block";
+    } else {
+        ca_bt.style.display = "none";
+        ca_nbt.style.display = "none";
+        ca_e.style.display = "none";
+        div_bisnis_numb_dns.style.display = "none";
+        div_bisnis_numb_ent.style.display = "none";
+        bisnis_numb.style.value = "";
+    }
+}
+
+function toggleOthers() {
+    // ca_type ca_nbt ca_e
+    var locationFilter = document.getElementById("locationFilter");
+    var others_location = document.getElementById("others_location");
+
+    if (locationFilter.value === "Others") {
+        others_location.style.display = "block";
+    } else {
+        others_location.style.display = "none";
+        others_location.value = "";
+    }
+}
+
+function validateInput(input) {
+    //input.value = input.value.replace(/[^0-9,]/g, '');
+    input.value = input.value.replace(/[^0-9]/g, "");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const startDateInput = document.getElementById("start_date");
+    const endDateInput = document.getElementById("end_date");
+    const totalDaysInput = document.getElementById("totaldays");
+    const perdiemInput = document.getElementById("perdiem");
+    const allowanceInput = document.getElementById("allowance");
+    const othersLocationInput = document.getElementById("others_location");
+    const transportInput = document.getElementById("transport");
+    const accommodationInput = document.getElementById("accommodation");
+    const otherInput = document.getElementById("other");
+    const totalcaInput = document.getElementById("totalca");
+    const nominal_1Input = document.getElementById("nominal_1");
+    const nominal_2Input = document.getElementById("nominal_2");
+    const nominal_3Input = document.getElementById("nominal_3");
+    const nominal_4Input = document.getElementById("nominal_4");
+    const nominal_5Input = document.getElementById("nominal_5");
+    const caTypeInput = document.getElementById("ca_type");
+
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function parseNumber(value) {
+        return parseFloat(value.replace(/\./g, "")) || 0;
+    }
+
+    function formatInput(input) {
+        let value = input.value.replace(/\./g, "");
+        value = parseFloat(value);
+        if (!isNaN(value)) {
+            // input.value = formatNumber(value);
+            input.value = formatNumber(Math.floor(value));
+        } else {
+            input.value = formatNumber(0);
+        }
+
+        calculateTotalCA();
+    }
+
+    function calculateTotalDays() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
+            const timeDiff = endDate - startDate;
+            const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
+            totalDaysInput.value = totalDays;
+
+            const perdiem = parseFloat(perdiemInput.value) || 0;
+            let allowance = totalDays * perdiem;
+
+            if (othersLocationInput.value.trim() !== "") {
+                allowance *= 1; // allowance * 50%
+            } else {
+                allowance *= 0.5;
+            }
+
+            allowanceInput.value = formatNumber(Math.floor(allowance));
+        } else {
+            totalDaysInput.value = 0;
+            allowanceInput.value = 0;
+        }
+        calculateTotalCA();
+    }
+
+    function calculateTotalCA() {
+        const allowance = parseNumber(allowanceInput.value);
+        const transport = parseNumber(transportInput.value);
+        const accommodation = parseNumber(accommodationInput.value);
+        const other = parseNumber(otherInput.value);
+        const nominal_1 = parseNumber(nominal_1Input.value);
+        const nominal_2 = parseNumber(nominal_2Input.value);
+        const nominal_3 = parseNumber(nominal_3Input.value);
+        const nominal_4 = parseNumber(nominal_4Input.value);
+        const nominal_5 = parseNumber(nominal_5Input.value);
+
+        // Perbaiki penulisan caTypeInput.value
+        const ca_type = caTypeInput.value;
+
+        let totalca = 0;
+        if (ca_type === "dns") {
+            totalca = allowance + transport + accommodation + other;
+        } else if (ca_type === "ndns") {
+            totalca = transport + accommodation + other;
+            allowanceInput.value = 0;
+        } else if (ca_type === "entr") {
+            totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
+            allowanceInput.value = 0;
+        }
+
+        // totalcaInput.value = formatNumber(totalca.toFixed(2));
+        totalcaInput.value = formatNumber(Math.floor(totalca));
+    }
+
+    startDateInput.addEventListener("change", calculateTotalDays);
+    endDateInput.addEventListener("change", calculateTotalDays);
+    othersLocationInput.addEventListener("input", calculateTotalDays);
+    caTypeInput.addEventListener("change", calculateTotalDays);
+    [
+        transportInput,
+        accommodationInput,
+        otherInput,
+        allowanceInput,
+        nominal_1,
+        nominal_2,
+        nominal_3,
+        nominal_4,
+        nominal_5,
+    ].forEach((input) => {
+        input.addEventListener("input", () => formatInput(input));
+    });
+});
+
+document.getElementById("end_date").addEventListener("change", function () {
+    const endDate = new Date(this.value);
+    const declarationEstimateDate = new Date(endDate);
+    declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+    const year = declarationEstimateDate.getFullYear();
+    const month = String(declarationEstimateDate.getMonth() + 1).padStart(
+        2,
+        "0"
+    );
+    const day = String(declarationEstimateDate.getDate()).padStart(2, "0");
+
+    document.getElementById("ca_decla").value = `${year}-${month}-${day}`;
+});
+
+document
+    .getElementById("start_date")
+    .addEventListener("change", handleDateChange);
+document
+    .getElementById("end_date")
+    .addEventListener("change", handleDateChange);
+
+function handleDateChange() {
+    const startDateInput = document.getElementById("start_date");
+    const endDateInput = document.getElementById("end_date");
+
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
+
+    // Set the min attribute of the end_date input to the selected start_date
+    endDateInput.min = startDateInput.value;
+
+    // Validate dates
+    if (endDate < startDate) {
+        alert("End Date cannot be earlier than Start Date");
+        endDateInput.value = "";
+    }
+
+    // Update min and max values for all dynamic perdiem date fields
+    document
+        .querySelectorAll('input[name="start_bt_perdiem[]"]')
+        .forEach(function (input) {
+            input.min = startDateInput.value;
+            input.max = endDateInput.value;
+        });
+
+    document
+        .querySelectorAll('input[name="end_bt_perdiem[]"]')
+        .forEach(function (input) {
+            input.min = startDateInput.value;
+            input.max = endDateInput.value;
+        });
+
+    document
+        .querySelectorAll('input[name="total_days_bt_perdiem[]"]')
+        .forEach(function (input) {
+            calculateTotalDaysPerdiem(input);
+        });
+}
