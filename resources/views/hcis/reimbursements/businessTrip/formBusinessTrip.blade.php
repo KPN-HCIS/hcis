@@ -206,8 +206,8 @@
                                             <div class="tab-content" id="pills-tabContent">
                                                 <div class="tab-pane fade" id="pills-cashAdvanced" role="tabpanel"
                                                     aria-labelledby="pills-cashAdvanced-tab">
-                                                    Cash Advanced content
-                                                    {{-- @include('hcis.reimbursements.businessTrip.btCa') --}}
+                                                    {{-- Cash Advanced content --}}
+                                                    @include('hcis.reimbursements.businessTrip.btCa')
                                                 </div>
                                                 <div class="tab-pane fade" id="pills-ticket" role="tabpanel"
                                                     aria-labelledby="pills-ticket-tab">
