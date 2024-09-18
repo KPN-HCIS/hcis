@@ -48,7 +48,7 @@
                     <label class="form-label">Hotel Name</label>
                     <input type="text"
                         name="hotel_name_bt_penginapan[]"
-                        class="form-control" placeholder="Hotel">
+                        class="form-control" placeholder="ex: Westin">
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Company Code</label>
@@ -313,7 +313,7 @@
                     <label class="form-label">Hotel Name</label>
                     <input type="text"
                         name="hotel_name_bt_penginapan[]"
-                        class="form-control" placeholder="Hotel" id="hotel_name_bt_penginapan_1">
+                        class="form-control" placeholder="ex: Westin" id="hotel_name_bt_penginapan_1">
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Company Code</label>

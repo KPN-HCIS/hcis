@@ -52,7 +52,7 @@
                 <div class="col-md-12 mb-2">
                     <div class="mb-2">
                         <label class="form-label">Information</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                        <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ..."></textarea>
                     </div>
                 </div>
             </div>
@@ -181,7 +181,7 @@
                     <div class="col-md-12 mb-2">
                         <div class="mb-2">
                             <label class="form-label">Information</label>
-                            <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport['keterangan']}}</textarea>
+                            <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ...">{{$transport['keterangan']}}</textarea>
                         </div>
                     </div>
                 </div>
@@ -254,7 +254,7 @@
                 <div class="col-md-12 mb-2">
                     <div class="mb-2">
                         <label class="form-label">Information</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                        <textarea name="keterangan_bt_transport[]" placeholder="Write your information ..." class="form-control"></textarea>
                     </div>
                 </div>
             </div>

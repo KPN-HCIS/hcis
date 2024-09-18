@@ -145,7 +145,7 @@ class BusinessTripController extends Controller
         $caDetail = $ca ? json_decode($ca->detail_ca, true) : [];
 
         // Safely access nominalPerdiem with default '0' if caDetail is empty
-        $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
+        // $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
 
         // Retrieve the taxi data for the specific BusinessTrip
         $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
@@ -206,7 +206,7 @@ class BusinessTripController extends Controller
             'locations' => $locations,
             'caDetail' => $caDetail,
             'ca' => $ca,
-            'nominalPerdiem' => $nominalPerdiem,
+            // 'nominalPerdiem' => $nominalPerdiem,
             'perdiem' => $perdiem,
         ]);
     }

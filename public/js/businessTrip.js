@@ -394,16 +394,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateFormElementIds(form, formNumber) {
-        const elements = form.querySelectorAll("[id],[name]");
+        const elements = form.querySelectorAll("[id],[name],[onchange]");
         elements.forEach((element) => {
+            // Update IDs
             if (element.id) {
                 element.id = element.id.replace(/\d+$/, formNumber);
             }
+            // Update names
             if (element.name) {
                 element.name = element.name.replace(
                     /\[\d*\]/,
                     `[${formNumber}]`
                 );
+            }
+            // Update onchange attributes
+            if (element.hasAttribute("onchange")) {
+                const onchangeValue = element.getAttribute("onchange");
+                const updatedOnchangeValue = onchangeValue.replace(
+                    /\d+/,
+                    formNumber
+                );
+                element.setAttribute("onchange", updatedOnchangeValue);
             }
         });
     }
@@ -667,16 +678,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateFormElementIds(form, formNumber) {
-        const elements = form.querySelectorAll("[id],[name]");
+        const elements = form.querySelectorAll("[id],[name],[onchange]");
         elements.forEach((element) => {
+            // Update IDs
             if (element.id) {
                 element.id = element.id.replace(/\d+$/, formNumber);
             }
+            // Update names
             if (element.name) {
                 element.name = element.name.replace(
                     /\[\d*\]/,
                     `[${formNumber}]`
                 );
+            }
+            // Update onchange attributes
+            if (element.hasAttribute("onchange")) {
+                const onchangeValue = element.getAttribute("onchange");
+                const updatedOnchangeValue = onchangeValue.replace(
+                    /\d+/,
+                    formNumber
+                );
+                element.setAttribute("onchange", updatedOnchangeValue);
             }
         });
     }
@@ -831,6 +853,7 @@ function handleTaksiForms() {
         }
     });
 }
+
 //CA JS
 function handleCaForms() {
     const caCheckbox = document.getElementById("caCheckbox");
@@ -845,3 +868,294 @@ function handleCaForms() {
     });
 }
 
+function cleanNumber(value) {
+    return parseFloat(value.replace(/\./g, "").replace(/,/g, "")) || 0;
+}
+
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function formatNumberPerdiem(num) {
+    return num.toLocaleString("id-ID");
+}
+
+function parseNumberPerdiem(value) {
+    return parseFloat(value.replace(/\./g, "").replace(/,/g, "")) || 0;
+}
+
+function parseNumber(value) {
+    return parseFloat(value.replace(/\./g, "")) || 0;
+}
+
+function formatInput(input) {
+    let value = input.value.replace(/\./g, "");
+    value = parseFloat(value);
+    if (!isNaN(value)) {
+        input.value = formatNumber(Math.floor(value));
+    } else {
+        input.value = formatNumber(0);
+    }
+    calculateTotalNominalBTPerdiem();
+    calculateTotalNominalBTTransport();
+    calculateTotalNominalBTPenginapan();
+    calculateTotalNominalBTLainnya();
+    calculateTotalNominalBTTotal();
+}
+
+function calculateTotalNominalBTTotal() {
+    let total = 0;
+    document
+        .querySelectorAll('input[name="total_bt_perdiem"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_transport"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_penginapan"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_lainnya"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document.querySelector('input[name="totalca"]').value = formatNumber(total);
+}
+
+function toggleDivs() {
+    // ca_type ca_nbt ca_e
+    var ca_type = document.getElementById("ca_type");
+    var ca_nbt = document.getElementById("ca_nbt");
+    var ca_e = document.getElementById("ca_e");
+    var div_bisnis_numb_dns = document.getElementById("div_bisnis_numb_dns");
+    var div_bisnis_numb_ent = document.getElementById("div_bisnis_numb_ent");
+    var bisnis_numb = document.getElementById("bisnis_numb");
+    var div_allowance = document.getElementById("div_allowance");
+
+    if (ca_type.value === "dns") {
+        ca_bt.style.display = "block";
+        ca_nbt.style.display = "none";
+        ca_e.style.display = "none";
+        div_bisnis_numb_dns.style.display = "block";
+        div_bisnis_numb_ent.style.display = "none";
+        div_allowance.style.display = "block";
+    } else if (ca_type.value === "ndns") {
+        ca_bt.style.display = "none";
+        ca_nbt.style.display = "block";
+        ca_e.style.display = "none";
+        div_bisnis_numb_dns.style.display = "none";
+        div_bisnis_numb_ent.style.display = "none";
+        bisnis_numb.style.value = "";
+        div_allowance.style.display = "none";
+    } else if (ca_type.value === "entr") {
+        ca_bt.style.display = "none";
+        ca_nbt.style.display = "none";
+        ca_e.style.display = "block";
+        div_bisnis_numb_dns.style.display = "none";
+        div_bisnis_numb_ent.style.display = "block";
+    } else {
+        ca_bt.style.display = "none";
+        ca_nbt.style.display = "none";
+        ca_e.style.display = "none";
+        div_bisnis_numb_dns.style.display = "none";
+        div_bisnis_numb_ent.style.display = "none";
+        bisnis_numb.style.value = "";
+    }
+}
+
+function toggleOthers() {
+    // ca_type ca_nbt ca_e
+    var locationFilter = document.getElementById("locationFilter");
+    var others_location = document.getElementById("others_location");
+
+    if (locationFilter.value === "Others") {
+        others_location.style.display = "block";
+    } else {
+        others_location.style.display = "none";
+        others_location.value = "";
+    }
+}
+
+function validateInput(input) {
+    //input.value = input.value.replace(/[^0-9,]/g, '');
+    input.value = input.value.replace(/[^0-9]/g, "");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const startDateInput = document.getElementById("start_date");
+    const endDateInput = document.getElementById("end_date");
+    const totalDaysInput = document.getElementById("totaldays");
+    const perdiemInput = document.getElementById("perdiem");
+    const allowanceInput = document.getElementById("allowance");
+    const othersLocationInput = document.getElementById("others_location");
+    const transportInput = document.getElementById("transport");
+    const accommodationInput = document.getElementById("accommodation");
+    const otherInput = document.getElementById("other");
+    const totalcaInput = document.getElementById("totalca");
+    const nominal_1Input = document.getElementById("nominal_1");
+    const nominal_2Input = document.getElementById("nominal_2");
+    const nominal_3Input = document.getElementById("nominal_3");
+    const nominal_4Input = document.getElementById("nominal_4");
+    const nominal_5Input = document.getElementById("nominal_5");
+    const caTypeInput = document.getElementById("ca_type");
+
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function parseNumber(value) {
+        return parseFloat(value.replace(/\./g, "")) || 0;
+    }
+
+    function formatInput(input) {
+        let value = input.value.replace(/\./g, "");
+        value = parseFloat(value);
+        if (!isNaN(value)) {
+            // input.value = formatNumber(value);
+            input.value = formatNumber(Math.floor(value));
+        } else {
+            input.value = formatNumber(0);
+        }
+
+        calculateTotalCA();
+    }
+
+    function calculateTotalDays() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
+            const timeDiff = endDate - startDate;
+            const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
+            totalDaysInput.value = totalDays;
+
+            const perdiem = parseFloat(perdiemInput.value) || 0;
+            let allowance = totalDays * perdiem;
+
+            if (othersLocationInput.value.trim() !== "") {
+                allowance *= 1; // allowance * 50%
+            } else {
+                allowance *= 0.5;
+            }
+
+            allowanceInput.value = formatNumber(Math.floor(allowance));
+        } else {
+            totalDaysInput.value = 0;
+            allowanceInput.value = 0;
+        }
+        calculateTotalCA();
+    }
+
+    function calculateTotalCA() {
+        const allowance = parseNumber(allowanceInput.value);
+        const transport = parseNumber(transportInput.value);
+        const accommodation = parseNumber(accommodationInput.value);
+        const other = parseNumber(otherInput.value);
+        const nominal_1 = parseNumber(nominal_1Input.value);
+        const nominal_2 = parseNumber(nominal_2Input.value);
+        const nominal_3 = parseNumber(nominal_3Input.value);
+        const nominal_4 = parseNumber(nominal_4Input.value);
+        const nominal_5 = parseNumber(nominal_5Input.value);
+
+        // Perbaiki penulisan caTypeInput.value
+        const ca_type = caTypeInput.value;
+
+        let totalca = 0;
+        if (ca_type === "dns") {
+            totalca = allowance + transport + accommodation + other;
+        } else if (ca_type === "ndns") {
+            totalca = transport + accommodation + other;
+            allowanceInput.value = 0;
+        } else if (ca_type === "entr") {
+            totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
+            allowanceInput.value = 0;
+        }
+
+        // totalcaInput.value = formatNumber(totalca.toFixed(2));
+        totalcaInput.value = formatNumber(Math.floor(totalca));
+    }
+
+    startDateInput.addEventListener("change", calculateTotalDays);
+    endDateInput.addEventListener("change", calculateTotalDays);
+    othersLocationInput.addEventListener("input", calculateTotalDays);
+    caTypeInput.addEventListener("change", calculateTotalDays);
+    [
+        transportInput,
+        accommodationInput,
+        otherInput,
+        allowanceInput,
+        nominal_1,
+        nominal_2,
+        nominal_3,
+        nominal_4,
+        nominal_5,
+    ].forEach((input) => {
+        input.addEventListener("input", () => formatInput(input));
+    });
+});
+
+document.getElementById("end_date").addEventListener("change", function () {
+    const endDate = new Date(this.value);
+    const declarationEstimateDate = new Date(endDate);
+    declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+    const year = declarationEstimateDate.getFullYear();
+    const month = String(declarationEstimateDate.getMonth() + 1).padStart(
+        2,
+        "0"
+    );
+    const day = String(declarationEstimateDate.getDate()).padStart(2, "0");
+
+    document.getElementById("ca_decla").value = `${year}-${month}-${day}`;
+});
+
+document
+    .getElementById("start_date")
+    .addEventListener("change", handleDateChange);
+document
+    .getElementById("end_date")
+    .addEventListener("change", handleDateChange);
+
+function handleDateChange() {
+    const startDateInput = document.getElementById("start_date");
+    const endDateInput = document.getElementById("end_date");
+
+    const startDate = new Date(startDateInput.value);
+    const endDate = new Date(endDateInput.value);
+
+    // Set the min attribute of the end_date input to the selected start_date
+    endDateInput.min = startDateInput.value;
+
+    // Validate dates
+    if (endDate < startDate) {
+        alert("End Date cannot be earlier than Start Date");
+        endDateInput.value = "";
+    }
+
+    // Update min and max values for all dynamic perdiem date fields
+    document
+        .querySelectorAll('input[name="start_bt_perdiem[]"]')
+        .forEach(function (input) {
+            input.min = startDateInput.value;
+            input.max = endDateInput.value;
+        });
+
+    document
+        .querySelectorAll('input[name="end_bt_perdiem[]"]')
+        .forEach(function (input) {
+            input.min = startDateInput.value;
+            input.max = endDateInput.value;
+        });
+
+    document
+        .querySelectorAll('input[name="total_days_bt_perdiem[]"]')
+        .forEach(function (input) {
+            calculateTotalDaysPerdiem(input);
+        });
+}

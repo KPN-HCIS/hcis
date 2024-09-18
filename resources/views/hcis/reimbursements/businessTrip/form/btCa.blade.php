@@ -2,7 +2,7 @@
     <div class="col-md-12">
         <div class="table-responsive-sm">
             <div class="d-flex flex-column gap-2">
-                <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+                <ul class="nav mb-1" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-perdiem-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-perdiem" type="button" role="tab" aria-controls="pills-perdiem"
@@ -25,7 +25,6 @@
                             data-bs-target="#pills-other" type="button" role="tab" aria-controls="pills-other"
                             aria-selected="false">Other Plan</button>
                     </li>
-
                 </ul>
                 {{-- <div class="card"> --}}
                 <div class="tab-content" id="pills-tabContent">

@@ -29,7 +29,7 @@
                     <div class="col-md-12 mb-2">
                         <div class="mb-2">
                             <label class="form-label">Information</label>
-                            <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your information here ..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                     <div class="col-md-12 mb-2">
                         <div class="mb-2">
                             <label class="form-label">Information</label>
-                            <textarea name="keterangan_bt_lainnya[]" class="form-control">{{ $lainnya['keterangan'] }}</textarea>
+                            <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your information ...">{{ $lainnya['keterangan'] }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -173,7 +173,7 @@
                 <div class="col-md-12 mb-2">
                     <div class="mb-2">
                         <label class="form-label">Information</label>
-                        <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
+                        <textarea name="keterangan_bt_lainnya[]" class="form-control" placeholder="Write your information ..."></textarea>
                     </div>
                 </div>
             </div>

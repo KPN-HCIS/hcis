@@ -3,8 +3,15 @@
         <?php
         $maxForms = 5;
         $hotelCount = count($hotelData); // Assuming $hotelData contains hotel data from the controller
+
+        // Ensure at least one form is shown if no data exists
+        if ($hotelCount === 0) {
+            $hotelCount = 1;
+            $hotelData = [null]; // Set an empty form data
+        }
+
         for ($i = 1; $i <= $hotelCount; $i++) :
-            $hotel = $hotelData[$i - 1];
+            $hotel = $hotelData[$i - 1] ?? null;
         ?>
         <div class="card bg-light shadow-none" id="hotel-form-<?php echo $i; ?>" style="display: <?php echo $i <= $hotelCount ? 'block' : 'none'; ?>;">
             <div class="card-body">
@@ -81,7 +88,8 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn" data-form-id="<?php echo $i; ?>">Remove Data</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn"
+                        data-form-id="<?php echo $i; ?>">Remove Data</button>
                 </div>
             </div>
         </div>

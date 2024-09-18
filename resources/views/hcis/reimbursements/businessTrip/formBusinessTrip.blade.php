@@ -4,6 +4,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css"
         rel="stylesheet">
+
+    <style>
+        .nav-link {
+            color: black;
+            border-bottom: 2px solid transparent;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        .nav-link.active {
+            color: #AB2F2B;
+            /* Primary color */
+            border-bottom: 2px solid #AB2F2B;
+            font-weight: bold;
+            /* Underline with primary color */
+        }
+
+        .nav-link:hover {
+            color: #AB2F2B;
+            /* Change color on hover */
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -131,8 +152,8 @@
                                         <div class="col-md-3">
                                             <div class="form-check">
                                                 <input type="hidden" name="ca" value="Tidak">
-                                                <input class="form-check-input" type="checkbox"
-                                                    id="cashAdvancedCheckbox">
+                                                <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox"
+                                                    name="ca" value="Ya">
                                                 <label class="form-check-label" for="cashAdvancedCheckbox">
                                                     Cash Advanced
                                                 </label>
@@ -175,7 +196,7 @@
 
                                     <div class="row mt-3">
                                         <div class="col-md-12">
-                                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                            <ul class="nav nav-tabs nav-pills mb-2" id="pills-tab" role="tablist">
                                                 <li class="nav-item" role="presentation" id="nav-cashAdvanced"
                                                     style="display: none;">
                                                     <button class="nav-link" id="pills-cashAdvanced-tab"
@@ -207,7 +228,7 @@
                                                 <div class="tab-pane fade" id="pills-cashAdvanced" role="tabpanel"
                                                     aria-labelledby="pills-cashAdvanced-tab">
                                                     {{-- Cash Advanced content --}}
-                                                    @include('hcis.reimbursements.businessTrip.btCa')
+                                                    @include('hcis.reimbursements.businessTrip.form.btCa')
                                                 </div>
                                                 <div class="tab-pane fade" id="pills-ticket" role="tabpanel"
                                                     aria-labelledby="pills-ticket-tab">

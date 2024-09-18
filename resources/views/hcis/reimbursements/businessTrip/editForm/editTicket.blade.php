@@ -2,7 +2,13 @@
     <div class="d-flex flex-column gap-1" id="ticket_forms_container">
         <?php
         $maxForms = 5;
-        $ticketCount = count($ticketData); // Assuming $ticketData contains ticket data from the controller
+        $ticketCount = count($ticketData);
+
+        if ($ticketCount === 0) {
+            $ticketCount = 1;
+            $ticketData = [null]; // Set an empty form data
+        }
+
         for ($i = 1; $i <= $ticketCount; $i++) :
             $ticket = $ticketData[$i - 1];
         ?>
@@ -96,7 +102,7 @@
                     </div>
                 </div>
                 <div class="round-trip-options"
-                    style="display: {{ $ticket['type_tkt'] == 'Round Trip' ? 'block' : 'none' }};">
+                    style="display: {{ isset($ticket['type_tkt']) && $ticket['type_tkt'] == 'Round Trip' ? 'block' : 'none' }};">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Return Date</label>
