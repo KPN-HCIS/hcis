@@ -2523,6 +2523,7 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
+        $employees = Employee::orderBy('ktp')->get();
 
         // Retrieve the taxi data for the specific BusinessTrip
         $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
@@ -2589,6 +2590,7 @@ class BusinessTripController extends Controller
             'caDetail' => $caDetail,
             'ca' => $ca,
             'nominalPerdiem' => $nominalPerdiem,
+            'employees' => $employees,
         ]);
     }
     public function updateStatus($id, Request $request)

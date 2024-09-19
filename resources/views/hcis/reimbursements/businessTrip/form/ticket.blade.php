@@ -13,8 +13,8 @@
                     <div class="row">
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Employee Name</label>
-                            <select class="form-select form-select-sm select2" id="noktp_tkt_<?php echo $i; ?>"
-                                name="noktp_tkt[]">
+                            <select class="form-select form-select-sm select2"
+                                id="noktp_tkt_<?php echo $i; ?>" name="noktp_tkt[]">
                                 <option value="" selected>Please Select</option>
                                 @foreach ($employees as $employee)
                                     <option value="{{ $employee->ktp }}">
@@ -125,33 +125,33 @@
 
     <script>
         $(document).ready(function() {
-            $(".selection2").select2({
-                theme: "bootstrap-5",
-                width: "100%",
-                minimumInputLength: 1,
-                ajax: {
-                    url: "/search/name", // Ensure this matches your route
-                    dataType: "json",
-                    delay: 250,
-                    data: function(params) {
-                        console.log("Requesting data with term:", params.term); // Log search term
-                        return {
-                            searchTerm: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        console.log("Received data:", data); // Log received data
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.ktp,
-                                    text: item.fullname + " - " + item.ktp
-                                };
-                            })
-                        };
-                    },
-                    cache: true
-                }
+            $(".select2-special").each(function() {
+                $(this).select2({
+                    theme: "bootstrap-5",
+                    width: "100%",
+                    minimumInputLength: 1, // Trigger search when at least 1 character is entered
+                    ajax: {
+                        url: "/search/name", // URL to your search endpoint
+                        dataType: "json",
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                searchTerm: params.term // Send search term to server
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.ktp,
+                                        text: item.fullname + " - " + item.ktp
+                                    };
+                                })
+                            };
+                        },
+                        cache: true
+                    }
+                });
             });
         });
     </script>

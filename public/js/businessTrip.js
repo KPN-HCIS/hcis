@@ -74,34 +74,6 @@ document.getElementById("btFrom").addEventListener("submit", function (event) {
     keeperField.value = keeperField.value.replace(/\./g, "");
 });
 
-//save to draft
-// document.addEventListener("DOMContentLoaded", function () {
-//     document
-//         .getElementById("save-draft")
-//         .addEventListener("click", function (event) {
-//             event.preventDefault();
-
-//             // Remove the existing status input
-//             const existingStatus = document.getElementById("status");
-//             if (existingStatus) {
-//                 existingStatus.remove();
-//             }
-
-//             // Create a new hidden input for "Draft"
-//             const draftInput = document.createElement("input");
-//             draftInput.type = "hidden";
-//             draftInput.name = "status";
-//             draftInput.value = "Draft";
-//             draftInput.id = "status";
-
-//             // Append the draft input to the form
-//             this.closest("form").appendChild(draftInput);
-
-//             // Submit the form
-//             this.closest("form").submit();
-//         });
-// });
-
 // VALIDATION DATE JS SECTIONS
 //BT Validation Date
 function validateStartEndDates() {
@@ -281,7 +253,7 @@ function toggleSection(checkboxId, navId, tabId) {
     const nav = document.getElementById(navId);
     const tab = document.getElementById(tabId); // The tab button (anchor) for navigation
 
-    console.log(checkbox);
+    // console.log(checkbox);
     checkbox.addEventListener("change", function () {
         if (this.checked) {
             nav.style.display = "block";

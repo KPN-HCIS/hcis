@@ -1124,13 +1124,13 @@
                 calculateTotalNominal();
             }
 
-            function calculateTotalNominal() {
-                let total = 0;
-                document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
-                    total += parseNumber(input.value);
-                });
-                document.getElementById('totalca').value = formatNumber(total);
-            }
+            // function calculateTotalNominal() {
+            //     let total = 0;
+            //     document.querySelectorAll('input[name="nominal_nbt[]"]').forEach(input => {
+            //         total += parseNumber(input.value);
+            //     });
+            //     document.getElementById('totalca').value = formatNumber(total);
+            // }
 
             document.getElementById('add-more').addEventListener('click', function() {
                 const newForm = document.createElement('div');
