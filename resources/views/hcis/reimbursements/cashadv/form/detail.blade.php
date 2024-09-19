@@ -1,24 +1,24 @@
 <script>
-    var formCount = 0;
+    var formCountDetail = 0;
 
     window.addEventListener('DOMContentLoaded', function() {
-        formCount = document.querySelectorAll('#form-container-detail > div').length;
-        console.log("Form ada",formCount);
+        formCountDetail = document.querySelectorAll('#form-container-detail > div').length;
+        console.log("Form ada",formCountDetail);
         updateCheckboxVisibility();
     });
 
     function addMoreFormDetail(event) {
         event.preventDefault();
-        formCount++;
+        formCountDetail++;
 
         const newForm = document.createElement("div");
-        newForm.id = `form-container-e-detail-${formCount}`;
+        newForm.id = `form-container-e-detail-${formCountDetail}`;
         newForm.className = "card-body bg-light p-2 mb-3";
         newForm.innerHTML = `
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label class="form-label">Entertainment Type</label>
-                    <select name="enter_type_e_detail[]" id="enter_type_e_detail_${formCount}" class="form-select">
+                    <select name="enter_type_e_detail[]" id="enter_type_e_detail_${formCountDetail}" class="form-select">
                         <option value="">-</option>
                         <option value="food">Food/Beverages/Souvenir</option>
                         <option value="transport">Transport</option>
@@ -34,7 +34,7 @@
                             <span class="input-group-text">Rp</span>
                         </div>
                         <input class="form-control" name="nominal_e_detail[]"
-                            id="nominal_e_detail_${formCount}"
+                            id="nominal_e_detail_${formCountDetail}"
                             type="text" min="0" value="0"
                             onfocus="this.value = this.value === '0' ? '' : this.value;"
                             oninput="formatInputENT(this)">
@@ -49,9 +49,9 @@
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
                     <button class="btn btn-danger mr-2" style="margin-right: 10px"
-                        onclick="clearFormDetail(${formCount}, event)">Clear</button>
+                        onclick="clearFormDetail(${formCountDetail}, event)">Reset</button>
                     <button class="btn btn-warning mr-2"
-                        onclick="removeFormDetail(${formCount}, event)">Remove</button>
+                        onclick="removeFormDetail(${formCountDetail}, event)">Delete</button>
                 </div>
             </div>
         `;
@@ -78,7 +78,7 @@
 
     function removeFormDetail(index, event) {
         event.preventDefault();
-        if (formCount > 0) {
+        if (formCountDetail > 0) {
             let nominalValue = cleanNumber(document.querySelector(`#nominal_e_detail_${index}`).value);
             let totalCA = cleanNumber(document.querySelector('input[name="totalca"]').value) || 0;
             totalCA -= nominalValue;
@@ -88,7 +88,7 @@
             // Hide the form to be removed
             let formContainer = document.getElementById(`form-container-e-detail-${index}`);
             formContainer.remove();
-            formCount--;
+            formCountDetail--;
 
             updateCheckboxVisibility();
         }
@@ -96,7 +96,7 @@
 
     function clearFormDetail(index, event) {
         event.preventDefault();
-        if (formCount > 0) {
+        if (formCountDetail > 0) {
             let nominalValue = cleanNumber(document.querySelector(`#nominal_e_detail_${index}`).value);
             let totalCA = cleanNumber(document.querySelector('input[name="totalca"]').value) || 0;
             totalCA -= nominalValue;
@@ -141,7 +141,7 @@
         const selectedOptions = Array.from(document.querySelectorAll('select[name="enter_type_e_detail[]"]'))
             .map(select => select.value)
             .filter(value => value !== "");
-        for (let i = 1; i <= formCount; i++) {
+        for (let i = 1; i <= formCountDetail; i++) {
             const formContainerERelation = document.getElementById(`form-container-e-relation-${i}`);
             if (!formContainerERelation) continue; // Skip if the form does not exist
 
@@ -169,6 +169,17 @@
         calculateTotalNominalEDetail();
         updateCheckboxVisibility();
     });
+
+    function formatInputENT(input) {
+        let value = input.value.replace(/\./g, '');
+        value = parseFloat(value);
+        if (!isNaN(value)) {
+            input.value = formatNumber(Math.floor(value));
+        } else {
+            input.value = formatNumber(0);
+        }
+        calculateTotalNominalEDetail();
+    }
 </script>
 
 @if (!empty($detailCA['detail_e']) && $detailCA['detail_e'][0]['type'] !== null)
@@ -208,8 +219,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail({{ $loop->index + 1 }}, event)">Clear</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormDetail({{ $loop->index + 1 }}, event)">Remove</button>
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormDetail({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -268,8 +279,8 @@
             <br>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail(1, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormDetail(1, event)">Remove</button>
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail(1, event)">Reset</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormDetail(1, event)">Delete</button>
                 </div>
             </div>
         </div>

@@ -168,6 +168,55 @@
                                 @if ($transactions->type_ca == 'dns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
+                                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link {{ isset($detailCA['detail_perdiem'][0]['start_date']) && $detailCA['detail_perdiem'][0]['start_date'] ? 'active' : '' }}" id="pills-perdiem-tab"
+                                                            data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
+                                                            role="tab" aria-controls="pills-perdiem"
+                                                            aria-selected="{{ isset($detailCA['detail_perdiem'][0]['start_date']) && $detailCA['detail_perdiem'][0]['start_date'] ? 'true' : 'false' }}">Perdiem Plan</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'active' : '' }}" id="pills-transport-tab"
+                                                            data-bs-toggle="pill" data-bs-target="#pills-transport" type="button" role="tab"
+                                                            aria-controls="pills-transport"
+                                                            aria-selected="{{ isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'true' : 'false' }}">Transport Plan</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && !isset($detailCA['detail_transport'][0]['tanggal']) && isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'active' : '' }}" id="pills-accomodation-tab"
+                                                            data-bs-toggle="pill" data-bs-target="#pills-accomodation"
+                                                            type="button" role="tab" aria-controls="pills-accomodation"
+                                                            aria-selected="{{ isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'true' : 'false' }}">Accomodation Plan</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && !isset($detailCA['detail_transport'][0]['tanggal']) && !isset($detailCA['detail_penginapan'][0]['start_date']) && isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'active' : '' }}" id="pills-other-tab" data-bs-toggle="pill"
+                                                            data-bs-target="#pills-other" type="button" role="tab"
+                                                            aria-controls="pills-other" aria-selected="{{ isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'true' : 'false' }}">Other Plan</button>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content" id="pills-tabContent">
+                                                    <div class="tab-pane fade {{ isset($detailCA['detail_perdiem'][0]['start_date']) && $detailCA['detail_perdiem'][0]['start_date'] ? 'show active' : '' }}"
+                                                        id="pills-perdiem" role="tabpanel"
+                                                        aria-labelledby="pills-perdiem-tab">
+                                                        @include('hcis.reimbursements.cashadv.form.perdiem')
+                                                    </div>
+                                                    <div class="tab-pane fade {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'show active' : '' }}"
+                                                        id="pills-transport" role="tabpanel"
+                                                        aria-labelledby="pills-transport-tab">
+                                                        @include('hcis.reimbursements.cashadv.form.transport')
+                                                    </div>
+                                                    <div class="tab-pane fade {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && !isset($detailCA['detail_transport'][0]['tanggal']) && isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'show active' : '' }}"
+                                                        id="pills-accomodation" role="tabpanel"
+                                                        aria-labelledby="pills-accomodation-tab">
+                                                        @include('hcis.reimbursements.cashadv.form.penginapan')
+                                                    </div>
+                                                    <div class="tab-pane fade {{ !isset($detailCA['detail_perdiem'][0]['start_date']) && !isset($detailCA['detail_transport'][0]['tanggal']) && !isset($detailCA['detail_penginapan'][0]['start_date']) && isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'show active' : '' }}" id="pills-other" role="tabpanel"
+                                                        aria-labelledby="pills-other-tab">
+                                                        @include('hcis.reimbursements.cashadv.form.others')
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated Cash Advanced Request</div>

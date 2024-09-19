@@ -72,13 +72,12 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_status', 'Approved')
-                    ->orWhere('approval_sett', '')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
-            ->where('end_date', '<=', $today)
+            ->where('end_date', '<=', $today)->where('approval_status', 'Approved')
             ->count();
 
         foreach ($ca_transactions as $transaction) {

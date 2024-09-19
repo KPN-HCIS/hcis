@@ -347,17 +347,6 @@
             calculateTotalNominalBTTotal();
         }
 
-        function formatInputENT(input) {
-            let value = input.value.replace(/\./g, '');
-            value = parseFloat(value);
-            if (!isNaN(value)) {
-                input.value = formatNumber(Math.floor(value));
-            } else {
-                input.value = formatNumber(0);
-            }
-            calculateTotalNominalEDetail();
-        }
-
         function calculateTotalNominalBTTotal() {
             let total = 0;
             document.querySelectorAll('input[name="total_bt_perdiem"]').forEach(input => {

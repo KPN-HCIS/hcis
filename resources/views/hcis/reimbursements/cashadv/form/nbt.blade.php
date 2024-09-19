@@ -1,15 +1,15 @@
 <script>
-    var formCount = 0;
+    var formCountNBT = 0;
 
         window.addEventListener('DOMContentLoaded', function() {
-            formCount = document.querySelectorAll('#form-container-transport > div').length;
+            formCountNBT = document.querySelectorAll('#form-container-transport > div').length;
         });
 
     function addMoreFormNBT(event) {
         event.preventDefault();
-        formCount++;
+        formCountNBT++;
         const newForm = document.createElement('div');
-        newForm.id = `form-container-nbt-${formCount}`;
+        newForm.id = `form-container-nbt-${formCountNBT}`;
         newForm.className = "card-body bg-light p-2 mb-3";
         newForm.innerHTML = `
             <div class="row">
@@ -23,7 +23,7 @@
                         <div class="input-group-append">
                             <span class="input-group-text">Rp</span>
                         </div>
-                        <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_${formCount}" type="text" min="0" value="0"
+                        <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_${formCountNBT}" type="text" min="0" value="0"
                             onfocus="this.value = this.value === '0' ? '' : this.value;"
                             oninput="formatInput(this)"
                             onblur="formatOnBlur(this)">
@@ -38,15 +38,15 @@
             </div>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(${formCount}, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormNBT(${formCount}, event)">Remove</button>
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(${formCountNBT}, event)">Reset</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormNBT(${formCountNBT}, event)">Delete</button>
                 </div>
             </div>
         `;
         document.getElementById('form-container-nonb').appendChild(newForm);
 
         // Hanya nominal field yang menggunakan event listener
-        document.querySelector(`#nominal_nbt_${formCount}`).addEventListener('input', function() {
+        document.querySelector(`#nominal_nbt_${formCountNBT}`).addEventListener('input', function() {
             formatInput(this);
             calculateTotalNominal();
         });
@@ -62,7 +62,7 @@
 
     function removeFormNBT(index, event) {
         event.preventDefault();
-        if (formCount > 0) {
+        if (formCountNBT > 0) {
             const formContainer = document.getElementById(`form-container-nbt-${index}`);
             if (formContainer) {
                 const nominalInput = formContainer.querySelector(`#nominal_nbt_${index}`);
@@ -71,7 +71,7 @@
                     calculateTotalNominal();
                 }
                 $(`#form-container-nbt-${index}`).remove();
-                formCount--;
+                formCountNBT--;
             }
         }
     }
@@ -144,8 +144,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Clear</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Remove</button>
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -181,8 +181,8 @@
             </div>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(1, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormNBT(1, event)">Remove</button>
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(1, event)">Reset</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormNBT(1, event)">Delete</button>
                 </div>
             </div>
         </div>

@@ -1,15 +1,15 @@
 <script>
-    var formCount = 0;
+    var formCountOthers = 0;
 
     window.addEventListener('DOMContentLoaded', function() {
-        formCount = document.querySelectorAll('#form-container-lainnya > div').length;
+        formCountOthers = document.querySelectorAll('#form-container-lainnya > div').length;
     });
 
     function addMoreFormLainnya(event) {
         event.preventDefault();
-        formCount++;
+        formCountOthers++;
         const newForm = document.createElement("div");
-        newForm.id = `form-container-bt-lainnya-${formCount}`;
+        newForm.id = `form-container-bt-lainnya-${formCountOthers}`;
         newForm.className = "card-body bg-light p-2 mb-3";
         newForm.innerHTML = `
                 <div class="row">
@@ -23,7 +23,7 @@
                             <div class="input-group-append">
                                 <span class="input-group-text">Rp</span>
                             </div>
-                            <input class="form-control" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya_${formCount}" type="text" min="0" value="0" onfocus="this.value = this.value === '0' ? '' : this.value;" oninput="formatInput(this)" onblur="formatOnBlur(this)">
+                            <input class="form-control" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya_${formCountOthers}" type="text" min="0" value="0" onfocus="this.value = this.value === '0' ? '' : this.value;" oninput="formatInput(this)" onblur="formatOnBlur(this)">
                         </div>
                     </div>
                     <div class="col-md-12 mb-2">
@@ -35,8 +35,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya(${formCount}, event)">Clear</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormLainnya(${formCount}, event)">Remove</button>
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya(${formCountOthers}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormLainnya(${formCountOthers}, event)">Delete</button>
                     </div>
                 </div>
             `;
@@ -51,7 +51,7 @@
 
     function removeFormLainnya(index, event) {
         event.preventDefault();
-        if (formCount > 0) {
+        if (formCountOthers > 0) {
             const formContainer = document.getElementById(`form-container-bt-lainnya-${index}`);
             if (formContainer) {
                 const nominalInput = formContainer.querySelector(`#nominal_bt_lainnya_${index}`);
@@ -63,7 +63,7 @@
                     calculateTotalNominalBTTotal();
                 }
                 $(`#form-container-bt-lainnya-${index}`).remove();
-                formCount--;
+                formCountOthers--;
             }
         }
     }
@@ -129,8 +129,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya({{ $loop->index + 1 }}, event)">Clear</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormLainnya({{ $loop->index + 1 }}, event)">Remove</button>
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormLainnya({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -179,8 +179,8 @@
             </div>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya(1, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormLainnya(1, event)">Remove</button>
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya(1, event)">Reset</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormLainnya(1, event)">Delete</button>
                 </div>
             </div>
         </div>
