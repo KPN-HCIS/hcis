@@ -2427,15 +2427,14 @@
                                 </div>
                             </div>
 
-                            <input type="hidden" name="status" value="Declaration L1" id="status">
+                            {{-- <input type="hidden" name="status" value="Declaration L1" id="status"> --}}
                             <input type="hidden" name="no_id" value="{{ $ca->id ?? 0 }}">
                             <input type="hidden" name="ca_id" value="{{ $ca->no_ca ?? 0 }}">
 
                             <div class="d-flex justify-content-end mt-3">
-                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                                    id="save-draft">Save as Draft</button>
+                                <button type="submit" class="btn btn-outline-primary rounded-pill me-2" value="Declaration Draft" name="action_draft">Save as Draft</button>
                                 <button type="submit" class="btn btn-primary rounded-pill"
-                                    id="submit-button">Submit</button>
+                                name="action_submit" value="Declaration L1">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -2445,49 +2444,42 @@
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('btEditForm');
-    const totalcaInput = document.getElementById('totalca');
-    const submitButton = document.querySelector('button[type="submit"]');
-    const saveDraftButton = document.getElementById('save-draft');
+// document.addEventListener('DOMContentLoaded', function() {
+//     const form = document.getElementById('btEditForm');
+//     const totalcaInput = document.getElementById('totalca');
+//     const submitButton = document.querySelector('button[type="submit"]');
 
-    console.log('Script loaded. Form:', form);
-    console.log('Submit button:', submitButton);
+//     console.log('Script loaded. Form:', form);
+//     console.log('Submit button:', submitButton);
 
-    function handleFormSubmission(e) {
-        e.preventDefault(); // Prevent the default click action
-        console.log(e.target.id + ' clicked');
+//     function handleFormSubmission(e) {
+//         e.preventDefault(); // Prevent the default click action
+//         console.log(e.target.id + ' clicked');
 
-        const totalcaValue = totalcaInput.value.replace(/[^0-9]/g, '');
-        console.log('Total CA value:', totalcaValue);
+//         const totalcaValue = totalcaInput.value.replace(/[^0-9]/g, '');
+//         console.log('Total CA value:', totalcaValue);
 
-        if (totalcaValue === '' || parseInt(totalcaValue) === 0) {
-            alert('Total Cash Advanced Declaration cannot be empty or zero.');
-            console.log('Form submission prevented due to invalid Total CA');
-            e.stopImmediatePropagation();
-            return; // Stop execution, prevent form submission
-        } else {
-            console.log('Form is valid, proceeding with submission...');
-            form.submit(); // Manually submit the form
-        }
-    }
+//         if (totalcaValue === '' || parseInt(totalcaValue) === 0) {
+//             alert('Total Cash Advanced Declaration cannot be empty or zero.');
+//             console.log('Form submission prevented due to invalid Total CA');
+//             e.stopImmediatePropagation();
+//             return; // Stop execution, prevent form submission
+//         } else {
+//             console.log('Form is valid, proceeding with submission...');
+//             form.submit(); // Manually submit the form
+//         }
+//     }
 
-    if (submitButton) {
-        submitButton.addEventListener('click', handleFormSubmission);
-    } else {
-        console.error('Submit button not found');
-    }
+//     if (submitButton) {
+//         submitButton.addEventListener('click', handleFormSubmission);
+//     } else {
+//         console.error('Submit button not found');
+//     }
 
-    if (saveDraftButton) {
-        saveDraftButton.addEventListener('click', handleFormSubmission);
-    } else {
-        console.error('Save draft button not found');
-    }
-
-    // Log all buttons on the page to help with debugging
-    const allButtons = document.querySelectorAll('button');
-    console.log('All buttons on the page:', allButtons);
-});
+//     // Log all buttons on the page to help with debugging
+//     const allButtons = document.querySelectorAll('button');
+//     console.log('All buttons on the page:', allButtons);
+// });
 
 
         function formatCurrency(input) {
@@ -2520,30 +2512,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('save-draft').addEventListener('click', function(event) {
-                event.preventDefault();
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     document.getElementById('save-draft').addEventListener('click', function(event) {
+        //         event.preventDefault();
 
-                // Remove the existing status input
-                const existingStatus = document.getElementById('status');
-                if (existingStatus) {
-                    existingStatus.remove();
-                }
+        //         // Remove the existing status input
+        //         const existingStatus = document.getElementById('status');
+        //         if (existingStatus) {
+        //             existingStatus.remove();
+        //         }
 
-                // Create a new hidden input for "Draft"
-                const draftInput = document.createElement('input');
-                draftInput.type = 'hidden';
-                draftInput.name = 'status';
-                draftInput.value = 'Declaration Draft';
-                draftInput.id = 'status';
+        //         // Create a new hidden input for "Draft"
+        //         const draftInput = document.createElement('input');
+        //         draftInput.type = 'hidden';
+        //         draftInput.name = 'status';
+        //         draftInput.value = 'Declaration Draft';
+        //         draftInput.id = 'status';
 
-                // Append the draft input to the form
-                this.closest('form').appendChild(draftInput);
+        //         // Append the draft input to the form
+        //         this.closest('form').appendChild(draftInput);
 
-                // Submit the form
-                this.closest('form').submit();
-            });
-        });
+        //         // Submit the form
+        //         this.closest('form').submit();
+        //     });
+        // });
 
 
         function calculateTotalDays(index) {

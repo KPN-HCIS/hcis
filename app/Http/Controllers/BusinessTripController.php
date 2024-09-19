@@ -225,6 +225,12 @@ class BusinessTripController extends Controller
             $tujuan = $request->tujuan;  // Use the selected dropdown value
         }
 
+        if ($request->has('action_draft')) {
+            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+        } elseif ($request->has('action_submit')) {
+            $statusValue = 'Pending L1';  // When "Submit" is clicked
+        }
+
         // Store old SPPD number for later use
         $oldNoSppd = $n->no_sppd;
         $userId = Auth::id();
@@ -275,7 +281,7 @@ class BusinessTripController extends Controller
             'tiket' => $request->tiket,
             'hotel' => $request->hotel,
             'taksi' => $request->taksi,
-            'status' => $request->status,
+            'status' => $statusValue,
             'manager_l1_id' => $managerL1,
             'manager_l2_id' => $managerL2,
             // 'id_ca' => $request->id_ca,
@@ -300,7 +306,7 @@ class BusinessTripController extends Controller
                     'no_sppd' => $oldNoSppd,
                     'nominal_vt' => (int) str_replace('.', '', $request->nominal_vt),  // Convert to integer
                     'keeper_vt' => (int) str_replace('.', '', $request->keeper_vt),
-                    'approval_status' => $request->status,
+                    'approval_status' => $statusValue,
                 ];
 
                 // Check if there's an existing Taksi record to update
@@ -346,7 +352,7 @@ class BusinessTripController extends Controller
                             'tgl_masuk_htl' => $request->tgl_masuk_htl[$key],
                             'tgl_keluar_htl' => $request->tgl_keluar_htl[$key],
                             'total_hari' => $request->total_hari[$key],
-                            'approval_status' => $request->status,
+                            'approval_status' => $statusValue,
                         ]);
 
                         $processedHotelIds[] = $hotelId;
@@ -368,7 +374,7 @@ class BusinessTripController extends Controller
                             'tgl_masuk_htl' => $request->tgl_masuk_htl[$key],
                             'tgl_keluar_htl' => $request->tgl_keluar_htl[$key],
                             'total_hari' => $request->total_hari[$key],
-                            'approval_status' => $request->status,
+                            'approval_status' => $statusValue,
                         ]);
 
                         $processedHotelIds[] = $newHotel->id;
@@ -405,7 +411,7 @@ class BusinessTripController extends Controller
                         'tgl_plg_tkt' => $request->tgl_plg_tkt[$key] ?? null,
                         'jam_plg_tkt' => $request->jam_plg_tkt[$key] ?? null,
                         'ket_tkt' => $request->ket_tkt[$key] ?? null,
-                        'approval_status' => $request->status,
+                        'approval_status' => $statusValue,
                         'jns_dinas_tkt' => 'Dinas',
                     ];
 
@@ -433,7 +439,7 @@ class BusinessTripController extends Controller
                             'no_tkt' => $existingNoTkt,
                             // dd($existingNoTkt),
                             'noktp_tkt' => $value,
-                            'approval_status' => $request->status,
+                            'approval_status' => $statusValue,
                         ]));
                     }
 
@@ -479,6 +485,14 @@ class BusinessTripController extends Controller
                 $ca->no_ca = $ca->no_ca; // Keep the existing no_ca
             }
 
+            if ($statusValue === 'Draft') {
+                // Set CA status to Draft
+                $caStatus = $ca->approval_status = 'Draft';
+            } elseif ($statusValue === 'Pending L1') {
+                // Set CA status to Pending
+                $caStatus = $ca->approval_status = 'Pending';
+            }
+
             // Assign or update values to $ca model
             $ca->type_ca = 'dns';
             $ca->no_sppd = $oldNoSppd;
@@ -496,7 +510,7 @@ class BusinessTripController extends Controller
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);
             $ca->total_real = '0';
             $ca->total_cost = (int) str_replace('.', '', $request->totalca);
-            $ca->approval_status = 'Pending';
+            $ca->approval_status = $caStatus;
             $ca->approval_sett = $request->approval_sett;
             $ca->approval_extend = $request->approval_extend;
             $ca->created_by = $userId;
@@ -746,17 +760,20 @@ class BusinessTripController extends Controller
     {
         // Fetch the business trip record to update
         $n = BusinessTrip::find($id);
-
+        if ($request->has('action_draft')) {
+            $statusValue = 'Declaration Draft';  // When "Save as Draft" is clicked
+        } elseif ($request->has('action_submit')) {
+            $statusValue = 'Declaration L1';  // When "Submit" is clicked
+        }
         // Update the status field in the BusinessTrip record
         $n->update([
-            'status' => $request->status,
+            'status' => $statusValue,
         ]);
 
         // Store old SPPD number for later use
         $oldNoSppd = $n->no_sppd;
         $userId = Auth::id();
         $employee = Employee::where('id', $userId)->first();
-
         function findDepartmentHead($employee)
         {
             $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
@@ -784,6 +801,13 @@ class BusinessTripController extends Controller
 
         if (!$ca) {
             // Create a new CA transaction if it doesn't exist
+            if ($statusValue === 'Declaration Draft') {
+                // Set CA status to Draft
+                $caStatus = $ca->approval_status = 'Draft';
+            } elseif ($statusValue === 'Pending L1') {
+                // Set CA status to Pending
+                $caStatus = $ca->approval_status = 'Pending';
+            }
             $ca = new CATransaction();
             // $ca_sett = new ca_sett_approval();
 
@@ -814,17 +838,17 @@ class BusinessTripController extends Controller
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);
             $ca->total_real = $request->totalca;
             $ca->total_cost = (int) str_replace('.', '', $request->totalca);
-            $ca->approval_status = 'Pending';
+            $ca->approval_status = $caStatus;
             $ca->approval_sett = $request->approval_sett;
             $ca->approval_extend = $request->approval_extend;
             $ca->created_by = $userId;
 
-            if ($request->status === 'Declaration L1') {
+            if ($statusValue === 'Declaration L1') {
                 $ca->approval_sett = 'Pending';
-            } elseif ($request->status === 'Declaration Draft') {
+            } elseif ($statusValue === 'Declaration Draft') {
                 $ca->approval_sett = 'Draft';
             } else {
-                $ca->approval_sett = $request->status;
+                $ca->approval_sett = $statusValue;
             }
 
             $ca->declaration_at = Carbon::now();
@@ -914,7 +938,7 @@ class BusinessTripController extends Controller
             $model->sett_id = $managerL1;
 
             // Only proceed with approval process if not 'Declaration Draft'
-            if ($request->status !== 'Declaration Draft') {
+            if ($statusValue !== 'Declaration Draft') {
                 $cek_director_id = Employee::select([
                     'dsg.department_level2',
                     'dsg2.director_flag',
@@ -963,7 +987,7 @@ class BusinessTripController extends Controller
                     $model_approval->role_name = $data_matrix_approval->desc;
                     $model_approval->employee_id = $employee_id;
                     $model_approval->layer = $data_matrix_approval->layer;
-                    $model_approval->approval_status = 'Pending';
+                    $model_approval->approval_status = $caStatus;
 
                     $model_approval->save();
                 }
@@ -974,12 +998,12 @@ class BusinessTripController extends Controller
         $ca->no_sppd = $oldNoSppd;
         $ca->user_id = $userId;
         // Update approval_status based on the status value from the request
-        if ($request->status === 'Declaration L1') {
+        if ($statusValue === 'Declaration L1') {
             $ca->approval_sett = 'Pending';
-        } elseif ($request->status === 'Declaration Draft') {
+        } elseif ($statusValue === 'Declaration Draft') {
             $ca->approval_sett = 'Draft';
         } else {
-            $ca->approval_sett = $request->status;
+            $ca->approval_sett = $statusValue;
         }
 
         $ca->declaration_at = Carbon::now();
@@ -1078,7 +1102,7 @@ class BusinessTripController extends Controller
         $model->sett_id = $managerL1;
 
         // Only proceed with approval process if not 'Declaration Draft'
-        if ($request->status !== 'Declaration Draft') {
+        if ($statusValue !== 'Declaration Draft') {
             $cek_director_id = Employee::select([
                 'dsg.department_level2',
                 'dsg2.director_flag',
@@ -1653,6 +1677,12 @@ class BusinessTripController extends Controller
             $tujuan = $request->tujuan;  // Use the selected dropdown value
         }
 
+        if ($request->has('action_draft')) {
+            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+        } elseif ($request->has('action_submit')) {
+            $statusValue = 'Pending L1';  // When "Submit" is clicked
+        }
+
         $noSppd = $this->generateNoSppd();
         // $noSppdCa = $this->generateNoSppdCa();
         $noSppdTkt = $this->generateNoSppdTkt();
@@ -1707,7 +1737,8 @@ class BusinessTripController extends Controller
             'tiket' => $request->tiket,
             'hotel' => $request->hotel,
             'taksi' => $request->taksi,
-            'status' => $request->status,
+            'status' => $statusValue,
+            // dd($statusValue),
             'manager_l1_id' => $managerL1,
             'manager_l2_id' => $managerL2,
             'id_ca' => $request->id_ca,
@@ -1726,7 +1757,7 @@ class BusinessTripController extends Controller
             $taksi->unit = $request->divisi;
             $taksi->nominal_vt = (int) str_replace('.', '', $request->nominal_vt);  // Convert to integer
             $taksi->keeper_vt = (int) str_replace('.', '', $request->keeper_vt);
-            $taksi->approval_status = $request->status;
+            $taksi->approval_status = $statusValue;
 
             $taksi->save();
         }
@@ -1741,7 +1772,7 @@ class BusinessTripController extends Controller
                 'tgl_masuk_htl' => $request->tgl_masuk_htl,
                 'tgl_keluar_htl' => $request->tgl_keluar_htl,
                 'total_hari' => $request->total_hari,
-                'approval_status' => $request->status,
+                'approval_status' => $statusValue,
             ];
 
             foreach ($hotelData['nama_htl'] as $key => $value) {
@@ -1759,7 +1790,7 @@ class BusinessTripController extends Controller
                     $hotel->tgl_masuk_htl = $hotelData['tgl_masuk_htl'][$key];
                     $hotel->tgl_keluar_htl = $hotelData['tgl_keluar_htl'][$key];
                     $hotel->total_hari = $hotelData['total_hari'][$key];
-                    $hotel->approval_status = $request->status;
+                    $hotel->approval_status = $statusValue;
 
                     $hotel->save();
                 }
@@ -1778,7 +1809,7 @@ class BusinessTripController extends Controller
                 'jenis_tkt' => $request->jenis_tkt,
                 'type_tkt' => $request->type_tkt,
                 'ket_tkt' => $request->ket_tkt,
-                'approval_status' => $request->status,
+                'approval_status' => $statusValue,
                 'jns_dinas_tkt' => "Dinas",
             ];
 
@@ -1811,7 +1842,7 @@ class BusinessTripController extends Controller
                     $tiket->jenis_tkt = $ticketData['jenis_tkt'][$key] ?? null;
                     $tiket->type_tkt = $ticketData['type_tkt'][$key] ?? null;
                     $tiket->ket_tkt = $ticketData['ket_tkt'][$key] ?? null;
-                    $tiket->approval_status = $request->status;
+                    $tiket->approval_status = $statusValue;
                     $tiket->jns_dinas_tkt = 'Dinas';
 
                     $tiket->save();
@@ -1836,6 +1867,13 @@ class BusinessTripController extends Controller
             $newNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
             $newNoCa = "$prefix$currentYearShort$newNumber";
 
+            if ($statusValue === 'Draft') {
+                // Set CA status to Draft
+                $caStatus = $ca->approval_status = 'Draft';
+            } elseif ($statusValue === 'Pending L1') {
+                // Set CA status to Pending
+                $caStatus = $ca->approval_status = 'Pending';
+            }
             $ca_id = (string) Str::uuid();
             // Assign values to $ca model
             $ca->id = $ca_id;
@@ -1856,7 +1894,7 @@ class BusinessTripController extends Controller
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);
             $ca->total_real = '0';
             $ca->total_cost = (int) str_replace('.', '', $request->totalca);
-            $ca->approval_status = 'Pending';
+            $ca->approval_status = $caStatus;
             $ca->approval_sett = $request->approval_sett;
             $ca->approval_extend = $request->approval_extend;
             $ca->created_by = $userId;
@@ -1956,7 +1994,7 @@ class BusinessTripController extends Controller
             $ca->declare_ca = json_encode($detail_ca);
             $ca->save();
 
-            if ($businessTripStatus !== 'Draft') {
+            if ($statusValue !== 'Draft') {
 
                 $model = $ca;
 
@@ -2983,7 +3021,7 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
         $employee_data = Employee::where('id', $n->user_id)->first();
-// dd($employee_data);
+        // dd($employee_data);
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
         // Initialize caDetail with an empty array if it's null

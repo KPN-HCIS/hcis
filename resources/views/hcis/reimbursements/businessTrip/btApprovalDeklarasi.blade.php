@@ -242,7 +242,7 @@
                                                             </td>
                                                         </tr>
                                                         <?php
-                                                         $totalTransport += floatval($transport['nominal'] ?? 0);
+                                                        $totalTransport += floatval($transport['nominal'] ?? 0);
                                                         ?>
                                                     @endforeach
                                                 @else
@@ -295,8 +295,8 @@
                                                             </td>
                                                         </tr>
                                                         <?php
-                                                           $totalPenginapan += floatval($penginapan['nominal'] ?? 0);
-                                                           $totalDays += intval($penginapan['total_days'] ?? 0);
+                                                        $totalPenginapan += floatval($penginapan['nominal'] ?? 0);
+                                                        $totalDays += intval($penginapan['total_days'] ?? 0);
                                                         ?>
                                                     @endforeach
                                                 @else
@@ -341,7 +341,7 @@
                                                             </td>
                                                         </tr>
                                                         <?php
-                                                       $totalLainnya += floatval($lainnya['nominal'] ?? 0);
+                                                        $totalLainnya += floatval($lainnya['nominal'] ?? 0);
                                                         ?>
                                                     @endforeach
                                                 @else
@@ -775,32 +775,34 @@
             // '#otherTableDec'
         ];
         tableIds.forEach(function(id) {
-            $(id).DataTable({
-                responsive: {
-                    details: {
-                        type: 'column',
-                        target: 'tr',
+            if ($(id).length && $(id + ' tbody tr').length) {
+                $(id).DataTable({
+                    responsive: {
+                        details: {
+                            type: 'column',
+                            target: 'tr',
+                        },
                     },
-                },
-                columnDefs: [{
-                        className: 'control',
-                        orderable: false,
-                        targets: 0
-                    },
-                    {
-                        responsivePriority: 1,
-                        targets: 0
-                    },
-                    {
-                        responsivePriority: 2,
-                        targets: -1
-                    }
-                ],
-                order: [1, 'asc'],
-                info: false,
-                paging: false,
-                searching: false,
-            });
+                    columnDefs: [{
+                            className: 'control',
+                            orderable: false,
+                            targets: 0
+                        },
+                        {
+                            responsivePriority: 1,
+                            targets: 0
+                        },
+                        {
+                            responsivePriority: 2,
+                            targets: -1
+                        }
+                    ],
+                    order: [1, 'asc'],
+                    info: false,
+                    paging: false,
+                    searching: false,
+                });
+            }
         });
         // $('#deklarasiTable').each(function() {
         //     $(this).DataTable({

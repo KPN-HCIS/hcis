@@ -319,10 +319,10 @@
                                 <input type="hidden" name="status" value="Pending L1" id="status">
 
                                 <div class="d-flex justify-content-end mt-3">
-                                    <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                                        name="action_ca_draft" id="save-draft">Save as Draft</button>
-                                    <button type="submit" class="btn btn-primary rounded-pill"
-                                        name="action_ca_submit">Submit</button>
+                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2"
+                                        name="action_draft" id="save-draft" value="Draft">Save as Draft</button>
+                                    <button type="submit" class="btn btn-primary rounded-pill" name="action_submit"
+                                        value="Pending L1">Submit</button>
                                 </div>
 
                         </form>
