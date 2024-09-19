@@ -71,7 +71,6 @@
                 </div>
             </div>
 
-
             {{-- Jenis Plafond --}}
             <div class="card shadow-none">
                 <div class="card-body">
@@ -142,10 +141,10 @@
                                         <th>Rawat Jalan</th>
                                         <th>Lensa Kacamata</th>
                                         <th>Bingkai Kacamata</th>
-                                        <th  data-priority="1">Status</th>
+                                        <th data-priority="1">Status</th>
                                         <th>Action</th>
                                     </tr>
-            
+
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -193,21 +192,27 @@
 
     <script>
         $("#example").DataTable({
-        responsive: {
-            details: {
-                type: 'column',
-                target: 'tr',
+            responsive: {
+                details: {
+                    type: 'column',
+                    target: 'tr',
+                },
             },
-
-        },
-        columnDefs: [ {
-            className: 'control',
-            orderable: false,
-            targets:   0
-        },
-        { responsivePriority: 1, targets: 0 },
-        { responsivePriority: 4, targets: 3 } ],
-        order: [ 1, 'asc' ]
-    });
+            columnDefs: [{
+                    className: 'control',
+                    orderable: false,
+                    targets: 0
+                },
+                {
+                    responsivePriority: 1,
+                    targets: 0
+                },
+                {
+                    responsivePriority: 4,
+                    targets: 3
+                }
+            ],
+            order: [1, 'asc']
+        });
     </script>
 @endsection
