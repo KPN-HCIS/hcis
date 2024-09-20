@@ -118,17 +118,17 @@
 @endif
 
 @if (session('success'))
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        Swal.fire({
-            title: "Success!",
-            text: "{{ session('success') }}",
-            icon: "success",
-            confirmButtonColor: "#9a2a27",
-            confirmButtonText: 'Ok'
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: "Success!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'Ok'
+            });
         });
-    });
-</script>
+    </script>
 @endif
 <script>
     document.querySelectorAll('.delete-button').forEach(button => {
