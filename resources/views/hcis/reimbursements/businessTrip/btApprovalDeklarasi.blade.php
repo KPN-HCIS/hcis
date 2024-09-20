@@ -4,6 +4,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css"
         rel="stylesheet">
+
+        <style>
+            table{
+               white-space: nowrap;
+            }
+        </style>
 @endsection
 
 @section('content')
@@ -147,7 +153,7 @@
                             <div class="row mt-2" id="ca_div">
                                 <div class="col-md-6">
                                     <div class="table-responsive">
-                                        <table class="table table-hover table-sm nowrap" id="perdiemTable" width="100%"
+                                        <table class="table table-hover table-sm nowrap" id="" width="100%"
                                             cellspacing="0">
                                             <thead class="thead-light">
                                                 <tr class="bg-primary">
@@ -212,7 +218,7 @@
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover table-sm nowrap"
-                                            id="transportTable
+                                            id="transportTable"
                                             width="100%"
                                             cellspacing="0">
                                             <thead class="thead-light">
@@ -361,7 +367,7 @@
                                 {{-- DECLARE TABLE --}}
                                 <div class="col-md-6">
                                     <div class="table-responsive">
-                                        <table class="table table-hover table-sm nowrap" id="perdiemTableDec"
+                                        <table class="table table-hover table-sm" id="perdiemTableDec"
                                             width="100%" cellspacing="0">
                                             <thead class="thead-light">
                                                 <tr class="bg-primary">
@@ -682,7 +688,7 @@
                             @endif
 
                             <!-- Decline Form -->
-                            <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal"
                                 data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
                                 Decline
                             </button>
@@ -769,7 +775,7 @@
             '#perdiemTableDec',
             // '#transportTable',
             // '#transportTableDec',
-            // '#penginapanTable',
+            '#penginapanTable',
             // '#penginapanTableDec',
             // '#otherTable',
             // '#otherTableDec'
