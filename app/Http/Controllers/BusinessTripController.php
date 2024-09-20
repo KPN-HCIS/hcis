@@ -1167,7 +1167,7 @@ class BusinessTripController extends Controller
         }
 
         $ca->save();
-        return redirect('/businessTrip')->with('success', 'Business trip updated successfully');
+        return redirect('/businessTrip')->with('success', 'Declaration created successfully');
     }
 
 
@@ -2076,8 +2076,7 @@ class BusinessTripController extends Controller
                 $ca->save();
             }
         }
-        session()->flash('message', 'Successfully Added');
-        return redirect('/businessTrip');
+        return redirect()->route('businessTrip')->with('success', 'Request Successfully Added');
     }
 
     public function saveDraft(Request $request)
@@ -2447,7 +2446,7 @@ class BusinessTripController extends Controller
             $ca->save();
         }
 
-        return redirect()->route('businessTrip.admin');
+        return redirect('/businessTrip/admin')->with('success', 'Status updated successfully');
     }
 
 
@@ -2913,8 +2912,7 @@ class BusinessTripController extends Controller
             ]);
         }
 
-        Alert::success('Success', $message);
-        return redirect()->route('businessTrip.approval');
+        return redirect('/businessTrip/approval')->with('success', 'Request updated successfully');
     }
 
     public function updateStatusDeklarasi($id, Request $request)
@@ -3038,7 +3036,7 @@ class BusinessTripController extends Controller
         }
 
         // Redirect back to the previous page with a success message
-        return redirect('/businessTrip/approval')->with('success', $message);
+        return redirect('/businessTrip/approval')->with('success', 'Request updated successfully');
     }
 
     public function ApprovalDeklarasi($id)

@@ -84,7 +84,7 @@
             </div>
         </div>
     </div>
-
+   @include('hcis.reimbursements.businessTrip.modal')
 
     <div class="card">
         <div class="card-body">
@@ -320,8 +320,8 @@
                                                             @method('DELETE')
 
                                                             <button type="button"
-                                                                class="btn btn-outline-danger rounded-pill"
-                                                                onclick="confirmDelete('{{ $n->id }}')"
+                                                                class="btn btn-outline-danger rounded-pill delete-button"
+                                                                data-id="{{ $n->id }}"
                                                                 {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
                                                                 <i class="bi bi-trash-fill"></i>
                                                             </button>
@@ -524,11 +524,11 @@
                             window.location.search = `?per_page=${perPage}&page=${currentPage}`;
                         });
 
-                        function confirmDelete(id) {
-                            if (confirm("Are you sure you want to delete this item?")) {
-                                document.getElementById('deleteForm_' + id).submit();
-                            }
-                        }
+                        // function confirmDelete(id) {
+                        //     if (confirm("Are you sure you want to delete this item?")) {
+                        //         document.getElementById('deleteForm_' + id).submit();
+                        //     }
+                        // }
 
                     }
                     // Initialize DataTable for all tables with the class 'data-table'
@@ -567,7 +567,8 @@
 
                             function createTableHtml(data, title) {
                                 var tableHtml = '<h5>' + title + '</h5>';
-                                tableHtml += '<div class="table-responsive"><table class="table table-sm nowrap"><thead><tr>';
+                                tableHtml +=
+                                    '<div class="table-responsive"><table class="table table-sm nowrap"><thead><tr>';
                                 var isArray = Array.isArray(data) && data.length > 0;
 
                                 // Assuming all objects in the data array have the same keys, use the first object to create headers

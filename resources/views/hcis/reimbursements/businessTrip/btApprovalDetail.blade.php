@@ -34,7 +34,8 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('businessTrip.approval') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a
+                                    href="{{ route('businessTrip.approval') }}">{{ $parentLink }}</a></li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -52,13 +53,7 @@
                         <a href="/businessTrip/approval" type="button" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
-                        @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-                        @endif
+                        @include('hcis.reimbursements.businessTrip.modal')
 
                         <form action="{{ route('confirm.status', ['id' => $n->id]) }}" method="POST" id="btEditForm">
                             @csrf
@@ -128,7 +123,8 @@
                                     <input type="text" name="others_location" id="others_location"
                                         class="form-control bg-light" placeholder="Other Location"
                                         value="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? $n->tujuan : '' }}"
-                                        style="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? '' : 'display: none;' }}" readonly>
+                                        style="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? '' : 'display: none;' }}"
+                                        readonly>
                                 </div>
                             </div>
 
@@ -339,13 +335,13 @@
                             </button>
 
                             <form method="POST" action="{{ route('confirm.status', ['id' => $n->id]) }}"
-                                style="display: inline-block; margin-right: 5px;" class="status-form">
+                                style="display: inline-block; margin-right: 5px;" class="status-form" id="approve-form-{{ $n->id }}">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="status_approval"
                                     value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}">
-                                <button type="submit" class="btn btn-success rounded-pill" style="padding: 0.5rem 1rem;"
-                                    onclick="confirmSubmission(event)">
+                                <button type="button" class="btn btn-success rounded-pill approve-button"
+                                    style="padding: 0.5rem 1rem;" data-id="{{ $n->id }}">
                                     Approve
                                 </button>
                             </form>
@@ -418,20 +414,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        function confirmSubmission(event) {
-            event.preventDefault(); // Stop the form from submitting immediately
+        // function confirmSubmission(event) {
+        //     event.preventDefault(); // Stop the form from submitting immediately
 
-            // Display a confirmation alert
-            const userConfirmed = confirm("Are you sure you want to approve this request?");
+        //     // Display a confirmation alert
+        //     const userConfirmed = confirm("Are you sure you want to approve this request?");
 
-            if (userConfirmed) {
-                // If the user confirms, submit the form
-                event.target.closest('form').submit();
-            } else {
-                // If the user cancels, do nothing
-                alert("Approval cancelled.");
-            }
-        }
+        //     if (userConfirmed) {
+        //         // If the user confirms, submit the form
+        //         event.target.closest('form').submit();
+        //     } else {
+        //         // If the user cancels, do nothing
+        //         alert("Approval cancelled.");
+        //     }
+        // }
         document.getElementById('rejectReasonForm').addEventListener('submit', function(event) {
             const reason = document.getElementById('reject_info').value.trim();
             if (!reason) {
@@ -445,80 +441,80 @@
             $('#rejectReasonModal').modal('show');
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const forms = document.querySelectorAll('.status-form');
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const forms = document.querySelectorAll('.status-form');
 
-            forms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
+        //     forms.forEach(form => {
+        //         form.addEventListener('submit', function(e) {
+        //             e.preventDefault();
 
-                    const action = this.querySelector('input[name="status_approval"]').value;
-                    const confirmMessage = action === 'Rejected' ?
-                        'Are you sure you want to reject this?' :
-                        'Are you sure you want to approve this?';
+        //             const action = this.querySelector('input[name="status_approval"]').value;
+        //             const confirmMessage = action === 'Rejected' ?
+        //                 'Are you sure you want to reject this?' :
+        //                 'Are you sure you want to approve this?';
 
-                    if (action === 'Approved') {
-                        // Show the approval confirmation modal
-                        document.getElementById('confirmationMessage').textContent = confirmMessage;
-                        var approvalConfirmationModal = new bootstrap.Modal(document.getElementById(
-                            'approvalConfirmationModal'));
-                        approvalConfirmationModal.show();
+        //             if (action === 'Approved') {
+        //                 // Show the approval confirmation modal
+        //                 document.getElementById('confirmationMessage').textContent = confirmMessage;
+        //                 var approvalConfirmationModal = new bootstrap.Modal(document.getElementById(
+        //                     'approvalConfirmationModal'));
+        //                 approvalConfirmationModal.show();
 
-                        // Handle confirmation
-                        document.getElementById('confirmApproveButton').addEventListener('click',
-                            () => {
-                                const formData = new FormData(this);
-                                fetch(this.action, {
-                                        method: 'POST',
-                                        body: formData,
-                                        headers: {
-                                            'X-Requested-With': 'XMLHttpRequest'
-                                        }
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            // Redirect after successful approval
-                                            window.location.href = '/businessTrip/approval';
-                                        } else {
-                                            alert('An error occurred. Please try again.');
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        alert('An error occurred. Please try again.');
-                                    });
-                            });
+        //                 // Handle confirmation
+        //                 document.getElementById('confirmApproveButton').addEventListener('click',
+        //                     () => {
+        //                         const formData = new FormData(this);
+        //                         fetch(this.action, {
+        //                                 method: 'POST',
+        //                                 body: formData,
+        //                                 headers: {
+        //                                     'X-Requested-With': 'XMLHttpRequest'
+        //                                 }
+        //                             })
+        //                             .then(response => response.json())
+        //                             .then(data => {
+        //                                 if (data.success) {
+        //                                     // Redirect after successful approval
+        //                                     window.location.href = '/businessTrip/approval';
+        //                                 } else {
+        //                                     alert('An error occurred. Please try again.');
+        //                                 }
+        //                             })
+        //                             .catch(error => {
+        //                                 console.error('Error:', error);
+        //                                 alert('An error occurred. Please try again.');
+        //                             });
+        //                     });
 
-                    } else if (action === 'Rejected') {
-                        // Handle rejection directly
-                        if (confirm(confirmMessage)) {
-                            const formData = new FormData(this);
-                            fetch(this.action, {
-                                    method: 'POST',
-                                    body: formData,
-                                    headers: {
-                                        'X-Requested-With': 'XMLHttpRequest'
-                                    }
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        alert('The request has been successfully Rejected.');
-                                        window.location.href = '/businessTrip/approval';
-                                    } else {
-                                        alert('An error occurred. Please try again.');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    alert('An error occurred. Please try again.');
-                                });
-                        }
-                    }
-                });
-            });
-        });
+        //             } else if (action === 'Rejected') {
+        //                 // Handle rejection directly
+        //                 if (confirm(confirmMessage)) {
+        //                     const formData = new FormData(this);
+        //                     fetch(this.action, {
+        //                             method: 'POST',
+        //                             body: formData,
+        //                             headers: {
+        //                                 'X-Requested-With': 'XMLHttpRequest'
+        //                             }
+        //                         })
+        //                         .then(response => response.json())
+        //                         .then(data => {
+        //                             if (data.success) {
+        //                                 alert('The request has been successfully Rejected.');
+        //                                 window.location.href = '/businessTrip/approval';
+        //                             } else {
+        //                                 alert('An error occurred. Please try again.');
+        //                             }
+        //                         })
+        //                         .catch(error => {
+        //                             console.error('Error:', error);
+        //                             alert('An error occurred. Please try again.');
+        //                         });
+        //                 }
+        //             }
+        //         });
+        //     });
+        // });
 
         function formatCurrency(input) {
             var cursorPos = input.selectionStart;

@@ -33,7 +33,8 @@
                             id="btEditForm" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
-                            @if (session('error'))
+                            @include('hcis.reimbursements.businessTrip.modal')
+                            {{-- @if (session('error'))
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                     {{ session('error') }}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"
@@ -47,7 +48,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"
                                         aria-label="Close"></button>
                                 </div>
-                            @endif
+                            @endif --}}
 
                             <div class="row mb-2">
                                 <div class="col-md-4">
@@ -2485,23 +2486,23 @@
             totalcaDeklarasi.addEventListener('input', calculateRefund);
         });
 
-        document.getElementById('accept-status').addEventListener('change', function() {
-            var refundDiv = document.getElementById('refund-amount-div');
-            if (this.value === 'Return/Refund') {
-                refundDiv.style.display = 'block';
-            } else {
-                refundDiv.style.display = 'none';
-            }
-        });
+        // document.getElementById('accept-status').addEventListener('change', function() {
+        //     var refundDiv = document.getElementById('refund-amount-div');
+        //     if (this.value === 'Return/Refund') {
+        //         refundDiv.style.display = 'block';
+        //     } else {
+        //         refundDiv.style.display = 'none';
+        //     }
+        // });
 
-        // Ensure the field is shown if "Return/Refund" was previously selected
-        window.addEventListener('load', function() {
-            var acceptStatus = document.getElementById('accept-status').value;
-            var refundDiv = document.getElementById('refund-amount-div');
-            if (acceptStatus === 'Return/Refund') {
-                refundDiv.style.display = 'block';
-            }
-        });
+        // // Ensure the field is shown if "Return/Refund" was previously selected
+        // window.addEventListener('load', function() {
+        //     var acceptStatus = document.getElementById('accept-status').value;
+        //     var refundDiv = document.getElementById('refund-amount-div');
+        //     if (acceptStatus === 'Return/Refund') {
+        //         refundDiv.style.display = 'block';
+        //     }
+        // });
 
         function formatCurrency(input) {
             var cursorPos = input.selectionStart;

@@ -55,14 +55,6 @@
                         <a href="/businessTrip" type="button" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
-                        @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-                        @endif
-
                         <form id="btFrom" action="/businessTrip/form/post" method="POST">
                             @csrf
                             <div class="row mb-2">

@@ -89,7 +89,7 @@
 
         </div>
     </div>
-
+    @include('hcis.reimbursements.businessTrip.modal')
 
     <div class="card">
         <div class="card-body">
@@ -307,8 +307,8 @@
                                                         @method('DELETE')
 
                                                         <button type="button"
-                                                            class="btn btn-outline-danger rounded-pill mb-1"
-                                                            onclick="confirmDelete('{{ $n->id }}')"
+                                                            class="btn btn-outline-danger rounded-pill mb-1 delete-button"
+                                                            data-id="{{ $n->id }}"
                                                             {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
                                                             <i class="bi bi-trash-fill"></i>
                                                         </button>

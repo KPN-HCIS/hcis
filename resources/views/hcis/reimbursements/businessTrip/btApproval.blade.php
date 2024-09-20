@@ -98,7 +98,7 @@
                     </div>
                 </div>
             </form>
-
+            @include('hcis.reimbursements.businessTrip.modal')
             <div class="row">
                 <div class="col-md-12">
                     <div class="card shadow mb-4">
