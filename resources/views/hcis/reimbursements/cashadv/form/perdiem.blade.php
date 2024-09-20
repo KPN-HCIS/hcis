@@ -545,20 +545,22 @@
                             </div>
                         </div>
                     </div>
-                    <br>
-                    <div class="row mt-3">
-                        <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
-                        </div>
+                    <input class="form-control form-control-sm bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" onchange="onNominalChange()">
+                </div> --}}
+                <br>
+                <div class="row mt-3">
+                    <div class="d-flex justify-start w-100">
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
-            @endforeach
-        </div>
+            </div>
+        @endforeach
+    </div>
 
-        <div class="mt-3">
-            <button class="btn btn-primary" onclick="addMoreFormPerdiem(event)">Add More</button>
-        </div>
+    <div class="mt-3">
+        <button class="btn btn-primary" onclick="addMoreFormPerdiem(event)">Add More</button>
+    </div>
 
         <div class="mt-2">
             <label class="form-label">Total Perdiem</label>
@@ -618,6 +620,8 @@
                     <input type="date" name="end_bt_perdiem[]" class="form-control form-control-sm end-perdiem" placeholder="mm/dd/yyyy"
                         onchange="calculateTotalDaysPerdiem(this)">
                 </div>
+
+                <!-- Total Days -->
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Total Days</label>
                     <div class="input-group">
