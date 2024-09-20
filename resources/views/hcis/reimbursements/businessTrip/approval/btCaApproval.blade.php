@@ -32,20 +32,20 @@
                     <div class="tab-pane fade show active" id="pills-perdiem" role="tabpanel"
                         aria-labelledby="pills-perdiem-tab">
                         {{-- ca perdiem content --}}
-                        @include('hcis.reimbursements.businessTrip.caPerdiem')
+                        @include('hcis.reimbursements.businessTrip.approval.caPerdiemApproval')
                     </div>
                     <div class="tab-pane fade" id="pills-transport" role="tabpanel"
                         aria-labelledby="pills-transport-tab">
                         {{-- ca transport content --}}
-                        @include('hcis.reimbursements.businessTrip.caTransport')
+                        @include('hcis.reimbursements.businessTrip.approval.caTransportApproval')
                     </div>
                     <div class="tab-pane fade" id="pills-accomodation" role="tabpanel"
                         aria-labelledby="pills-accomodation-tab">
                         {{-- ca accommodatioon content --}}
-                        @include('hcis.reimbursements.businessTrip.caAccommodation')</div>
+                        @include('hcis.reimbursements.businessTrip.approval.caAccommodationApproval')</div>
                     <div class="tab-pane fade" id="pills-other" role="tabpanel" aria-labelledby="pills-other-tab">
                         {{-- ca others content --}}
-                        @include('hcis.reimbursements.businessTrip.caOther')
+                        @include('hcis.reimbursements.businessTrip.approval.caOtherApproval')
                     </div>
                 </div>
 

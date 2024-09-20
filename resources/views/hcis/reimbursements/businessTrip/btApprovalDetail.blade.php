@@ -126,9 +126,9 @@
 
                                     <br>
                                     <input type="text" name="others_location" id="others_location"
-                                        class="form-control" placeholder="Other Location"
+                                        class="form-control bg-light" placeholder="Other Location"
                                         value="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? $n->tujuan : '' }}"
-                                        style="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? '' : 'display: none;' }}">
+                                        style="{{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? '' : 'display: none;' }}" readonly>
                                 </div>
                             </div>
 
