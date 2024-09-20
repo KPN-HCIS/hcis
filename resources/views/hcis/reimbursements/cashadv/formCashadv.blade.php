@@ -373,7 +373,6 @@
             var div_bisnis_numb_dns = document.getElementById("div_bisnis_numb_dns");
             var div_bisnis_numb_ent = document.getElementById("div_bisnis_numb_ent");
             var bisnis_numb = document.getElementById("bisnis_numb");
-            var div_allowance = document.getElementById("div_allowance");
 
             if (ca_type.value === "dns") {
                 ca_bt.style.display = "block";
@@ -381,7 +380,6 @@
                 ca_e.style.display = "none";
                 div_bisnis_numb_dns.style.display = "block";
                 div_bisnis_numb_ent.style.display = "none";
-                div_allowance.style.display = "block";
             } else if (ca_type.value === "ndns"){
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "block";
@@ -389,7 +387,6 @@
                 div_bisnis_numb_dns.style.display = "none";
                 div_bisnis_numb_ent.style.display = "none";
                 bisnis_numb.style.value = "";
-                div_allowance.style.display = "none";
             } else if (ca_type.value === "entr"){
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "none";
@@ -428,111 +425,39 @@
             const startDateInput = document.getElementById('start_date');
             const endDateInput = document.getElementById('end_date');
             const totalDaysInput = document.getElementById('totaldays');
-            const perdiemInput = document.getElementById('perdiem');
-            const allowanceInput = document.getElementById('allowance');
-            const othersLocationInput = document.getElementById('others_location');
-            const transportInput = document.getElementById('transport');
-            const accommodationInput = document.getElementById('accommodation');
-            const otherInput = document.getElementById('other');
-            const totalcaInput = document.getElementById('totalca');
-            const nominal_1Input = document.getElementById('nominal_1');
-            const nominal_2Input = document.getElementById('nominal_2');
-            const nominal_3Input = document.getElementById('nominal_3');
-            const nominal_4Input = document.getElementById('nominal_4');
-            const nominal_5Input = document.getElementById('nominal_5');
-            const caTypeInput = document.getElementById('ca_type');
-
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
-
-            function formatInput(input) {
-                let value = input.value.replace(/\./g, '');
-                value = parseFloat(value);
-                if (!isNaN(value)) {
-                    // input.value = formatNumber(value);
-                    input.value = formatNumber(Math.floor(value));
-                } else {
-                    input.value = formatNumber(0);
-                }
-
-                calculateTotalCA();
-            }
 
             function calculateTotalDays() {
                 const startDate = new Date(startDateInput.value);
                 const endDate = new Date(endDateInput.value);
+
+                // Memastikan kedua tanggal valid
                 if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
                     const timeDiff = endDate - startDate;
                     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
+                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0; // Menambahkan 1 untuk menghitung hari awal
                     totalDaysInput.value = totalDays;
-
-                    const perdiem = parseFloat(perdiemInput.value) || 0;
-                    let allowance = totalDays * perdiem;
-
-                    if (othersLocationInput.value.trim() !== '') {
-                        allowance *= 1; // allowance * 50%
-                    } else {
-                        allowance *= 0.5;
-                    }
-
-                    allowanceInput.value = formatNumber(Math.floor(allowance));
                 } else {
-                    totalDaysInput.value = 0;
-                    allowanceInput.value = 0;
+                    totalDaysInput.value = 0; // Mengatur ke 0 jika tidak valid
                 }
-                calculateTotalCA();
             }
 
-            function calculateTotalCA() {
-                const allowance = parseNumber(allowanceInput.value);
-                const transport = parseNumber(transportInput.value);
-                const accommodation = parseNumber(accommodationInput.value);
-                const other = parseNumber(otherInput.value);
-                const nominal_1 = parseNumber(nominal_1Input.value);
-                const nominal_2 = parseNumber(nominal_2Input.value);
-                const nominal_3 = parseNumber(nominal_3Input.value);
-                const nominal_4 = parseNumber(nominal_4Input.value);
-                const nominal_5 = parseNumber(nominal_5Input.value);
-
-                // Perbaiki penulisan caTypeInput.value
-                const ca_type = caTypeInput.value;
-
-                let totalca = 0;
-                if (ca_type === 'dns') {
-                    totalca = allowance + transport + accommodation + other;
-                } else if (ca_type === 'ndns') {
-                    totalca = transport + accommodation + other;
-                    allowanceInput.value = 0;
-                } else if (ca_type === 'entr') {
-                    totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
-                    allowanceInput.value = 0;
-                }
-
-                // totalcaInput.value = formatNumber(totalca.toFixed(2));
-                totalcaInput.value = formatNumber(Math.floor(totalca));
-            }
-
+            // Menambahkan event listener untuk perubahan di input tanggal
             startDateInput.addEventListener('change', calculateTotalDays);
             endDateInput.addEventListener('change', calculateTotalDays);
-            othersLocationInput.addEventListener('input', calculateTotalDays);
-            caTypeInput.addEventListener('change', calculateTotalDays);
-            [transportInput, accommodationInput, otherInput, allowanceInput, nominal_1, nominal_2, nominal_3,
-                nominal_4, nominal_5
-            ].forEach(input => {
-                input.addEventListener('input', () => formatInput(input));
-            });
         });
 
         document.getElementById('end_date').addEventListener('change', function() {
             const endDate = new Date(this.value);
             const declarationEstimateDate = new Date(endDate);
             declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+            // Mengecek apakah tanggal jatuh pada akhir pekan
+            const dayOfWeek = declarationEstimateDate.getDay();
+            if (dayOfWeek === 6) { // Sabtu
+                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 2); // Tambah 2 hari untuk ke Senin
+            } else if (dayOfWeek === 0) { // Minggu
+                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1); // Tambah 1 hari untuk ke Senin
+            }
 
             const year = declarationEstimateDate.getFullYear();
             const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');

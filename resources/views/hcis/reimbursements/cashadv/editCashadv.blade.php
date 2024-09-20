@@ -24,10 +24,10 @@
         </div>
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
-                <div class="card-header d-flex bg-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Cash Advance -
+                <div class="card-header d-flex bg-primary justify-content-between">
+                    <h4 class="modal-title text-white" id="viewFormEmployeeLabel">Edit Cash Advance -
                         <b>{{ $transactions->no_ca }}</b></h4>
-                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
+                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">

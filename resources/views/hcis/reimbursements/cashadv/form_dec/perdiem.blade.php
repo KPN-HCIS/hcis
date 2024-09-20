@@ -114,8 +114,26 @@
                 $(`#form-container-bt-perdiem-${index}`).remove();
                 formCountPerdiem--;
             }
-            console.log("Ini",formContainer);
         }
+    }
+
+    function removeFormPerdiemDec(index, event) {
+        event.preventDefault();
+        $(`#form-container-bt-perdiem-declare-${index}`).remove();
+        // if (formCountPerdiem > 0) {
+        //     const formContainer = document.getElementById(`form-container-bt-perdiem-${index}`);
+        //     if (formContainer) {
+        //         const nominalInput = formContainer.querySelector(`#nominal_bt_perdiem_${index}`);
+        //         if (nominalInput) {
+        //             let nominalValue = cleanNumber(nominalInput.value);
+        //             let total = cleanNumber(document.querySelector('input[name="total_bt_perdiem"]').value);
+        //             total -= nominalValue;
+        //             document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
+        //             calculateTotalNominalBTTotal();
+        //         }
+        //         formCountPerdiem--;
+        //     }
+        // }
     }
 
     function clearFormPerdiem(index, event) {
@@ -317,9 +335,9 @@
                             <span class="mx-3 text-primary">Form Deklarasi</span>
                         <hr class="flex-grow-1 border border-primary border-3 opacity-75">
                     </div>
-                    <div class="row">
-                        <input type="hidden" value="{{$perdiem['location']}}" name="location_bt_perdiem[]">
-                        @if (isset($declareCA['detail_perdiem'][$index]))
+                    <input type="hidden" value="{{$perdiem['location']}}" name="location_bt_perdiem[]">
+                    @if (isset($declareCA['detail_perdiem'][$index]))
+                        <div class="row" id="form-container-bt-perdiem-declare-{{ $loop->index + 1 }}">
                             @php
                                 $perdiem_dec = $declareCA['detail_perdiem'][$index];
                             @endphp
@@ -353,12 +371,12 @@
                                     <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text" value="{{ number_format($perdiem_dec['nominal'], 0, ',', '.') }}" onchange="onNominalChange()" readonly>
                                 </div>
                             </div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-warning mr-2" onclick="removeFormPerdiemDec({{ $loop->index + 1 }}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
