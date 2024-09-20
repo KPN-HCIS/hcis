@@ -53,7 +53,7 @@ class BusinessTripController extends Controller
         } elseif ($filter === 'declaration') {
             // Show data with Approved, Declaration L1, Declaration L2, Draft Declaration
             $query->where(function ($query) {
-                $query->whereIn('status', ['Approved', 'Declaration L1', 'Declaration L2', 'Declaration Approved']);
+                $query->whereIn('status', ['Approved', 'Declaration L1', 'Declaration L2', 'Declaration Approved', 'Declaration Draft']);
             });
         } elseif ($filter === 'rejected') {
             // Show data with Rejected, Refund, Doc Accepted, Verified
@@ -153,6 +153,8 @@ class BusinessTripController extends Controller
         // Retrieve all hotels for the specific BusinessTrip
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $parentLink = 'Business Trip';
+        $link = 'Business Trip Edit';
 
         // Prepare hotel data for the view
         $hotelData = [];
@@ -208,6 +210,8 @@ class BusinessTripController extends Controller
             'ca' => $ca,
             // 'nominalPerdiem' => $nominalPerdiem,
             'perdiem' => $perdiem,
+            'parentLink' => $parentLink,
+            'link' => $link,
         ]);
     }
 
@@ -699,6 +703,9 @@ class BusinessTripController extends Controller
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
 
+        $parentLink = 'Business Trip';
+        $link = 'Declaration Business Trip';
+
         // Prepare hotel data for the view
         $hotelData = [];
         foreach ($hotels as $index => $hotel) {
@@ -754,6 +761,8 @@ class BusinessTripController extends Controller
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
             'hasCaData' => $hasCaData,
             'perdiem' => $perdiem,
+            'parentLink' => $parentLink,
+            'link' => $link,
         ]);
     }
     public function deklarasiCreate(Request $request, $id)
@@ -1642,6 +1651,8 @@ class BusinessTripController extends Controller
         $employees = Employee::orderBy('ktp')->get();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $parentLink = 'Business Trip';
+        $link = 'Business Trip Request';
         return view(
             'hcis.reimbursements.businessTrip.formBusinessTrip',
             [
@@ -1651,6 +1662,8 @@ class BusinessTripController extends Controller
                 'locations' => $locations,
                 'no_sppds' => $no_sppds,
                 'perdiem' => $perdiem,
+                'parentLink' => $parentLink,
+                'link' => $link,
             ]
         );
     }
@@ -2273,6 +2286,9 @@ class BusinessTripController extends Controller
         $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
 
+        $parentLink = 'Business Trip Admin';
+        $link = 'Declaration Data';
+
         return view('hcis.reimbursements.businessTrip.deklarasiAdmin', [
             'n' => $n,
             'hotelData' => $hotelData,
@@ -2288,6 +2304,8 @@ class BusinessTripController extends Controller
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
             'hasCaData' => $hasCaData,
             'perdiem' => $perdiem,
+            'parentLink' => $parentLink,
+            'link' => $link,
         ]);
     }
     public function deklarasiStatusAdmin(Request $request, $id)
@@ -2522,7 +2540,7 @@ class BusinessTripController extends Controller
     {
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
-        $employee_data = Employee::where('id', $userId)->first();
+        $employee_data = Employee::where('id', $n->user_id)->first();
         $employees = Employee::orderBy('ktp')->get();
 
         // Retrieve the taxi data for the specific BusinessTrip
@@ -2579,6 +2597,9 @@ class BusinessTripController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         // dd($taksi->toArray());
 
+        $parentLink = 'Business Trip Approval';
+        $link = 'Approval Details';
+
         return view('hcis.reimbursements.businessTrip.btApprovalDetail', [
             'n' => $n,
             'hotelData' => $hotelData,
@@ -2591,6 +2612,8 @@ class BusinessTripController extends Controller
             'ca' => $ca,
             'nominalPerdiem' => $nominalPerdiem,
             'employees' => $employees,
+            'parentLink' => $parentLink,
+            'link' => $link,
         ]);
     }
     public function updateStatus($id, Request $request)
@@ -3081,6 +3104,9 @@ class BusinessTripController extends Controller
         $locations = Location::orderBy('id')->get();
         $companies = Company::orderBy('contribution_level')->get();
 
+        $parentLink = 'Business Trip Approval';
+        $link = 'Approval Details';
+
         return view('hcis.reimbursements.businessTrip.btApprovalDeklarasi', [
             'n' => $n,
             'hotelData' => $hotelData,
@@ -3094,7 +3120,9 @@ class BusinessTripController extends Controller
             'ca' => $ca,
             'nominalPerdiem' => $nominalPerdiem,
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
-            'hasCaData' => $hasCaData, // Pass the flag to the view
+            'hasCaData' => $hasCaData,
+            'parentLink' => $parentLink,
+            'link' => $link,
         ]);
     }
 

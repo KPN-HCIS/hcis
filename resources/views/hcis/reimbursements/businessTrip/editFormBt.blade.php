@@ -28,7 +28,20 @@
 @endsection
 
 @section('content')
-    <div class="container mt-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('businessTrip') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="mb-3">
@@ -284,7 +297,10 @@
                                                 </li>
                                             </ul>
                                             @php
-                                                $detailCA = json_decode($ca->detail_ca, true) ?? [];
+                                                $detailCA =
+                                                    isset($ca) && $ca->detail_ca
+                                                        ? json_decode($ca->detail_ca, true)
+                                                        : [];
                                             @endphp
                                             <script>
                                                 // Pass the PHP array into a JavaScript variable

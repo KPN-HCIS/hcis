@@ -28,14 +28,27 @@
 @endsection
 
 @section('content')
-    <div class="container mt-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('businessTrip.approval') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="mb-3">
                 </div>
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
-                        <h4 class="mb-0">Detail Data</h4>
+                        <h4 class="mb-0">Detail Data - {{ $n->no_sppd }}</h4>
                         <a href="/businessTrip/approval" type="button" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
@@ -60,7 +73,6 @@
                                     <label for="divisi" class="form-label">Divison</label>
                                     <input type="text" class="form-control bg-light" id="divisi" name="divisi"
                                         style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
-
                                 </div>
                             </div>
                             <div class="row mb-2">

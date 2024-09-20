@@ -58,7 +58,7 @@
                             <span class="input-group-text">Rp</span>
                         </div>
                         <input class="form-control bg-light" name="totalca" id="totalca" type="text" min="0"
-                            value="{{ number_format( $ca->total_cost , 0, ',', '.') }}" readonly>
+                        value="{{ isset($ca) && $ca->total_cost ? number_format($ca->total_cost, 0, ',', '.') : '0' }}" readonly>
                     </div>
                 </div>
                 {{-- </div> --}}

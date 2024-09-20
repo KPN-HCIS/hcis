@@ -324,7 +324,7 @@
                                                     @endphp
                                                     @if ($n->status != 'Pending L1' && $n->status != 'Pending L2' && $n->status != 'Rejected')
                                                         <form method="GET"
-                                                            action="/businessTrip/deklarasi/admin/{{ $n->id }}"
+                                                            action="/businessTrip/declaration/admin/{{ $n->id }}"
                                                             style="display: inline-block;">
                                                             <button type="submit"
                                                                 class="btn btn-outline-success rounded-pill mb-1"

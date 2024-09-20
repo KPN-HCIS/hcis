@@ -26,16 +26,29 @@
 @endsection
 
 @section('content')
-    <div class="container mt-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('businessTrip.approval') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Declaration Data</h4>
+                        <h4 class="mb-0">Declaration Data - {{ $n->no_sppd }}</h4>
                         <a href="{{ route('businessTrip.approval') }}" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
-                        <form action="/businessTrip/deklarasi/update/{{ $n->id }}" method="POST" id="btEditForm"
+                        <form action="/businessTrip/declaration/update/{{ $n->id }}" method="POST" id="btEditForm"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
@@ -913,11 +926,11 @@
         });
 
 
-        var tableIds = [
+        var tableIdPerdiem = [
             '#perdiemTable',
             '#perdiemTableDec',
         ];
-        tableIds.forEach(function(id) {
+        tableIdPerdiem.forEach(function(id) {
 
             $(id).DataTable({
                 responsive: {

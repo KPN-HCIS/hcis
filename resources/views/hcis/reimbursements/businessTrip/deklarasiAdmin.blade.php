@@ -7,7 +7,20 @@
 @endsection
 
 @section('content')
-    <div class="container mt-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('businessTrip.admin') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">{{ $link }}</h4>
+                </div>
+            </div>
+        </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card shadow-sm mb-4">
@@ -16,7 +29,7 @@
                         <a href="{{ route('businessTrip.admin') }}" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
-                        <form action="/businessTrip/deklarasi/admin/status/{{ $n->id }}" method="POST"
+                        <form action="/businessTrip/declaration/admin/status/{{ $n->id }}" method="POST"
                             id="btEditForm" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
@@ -2150,7 +2163,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                </div>
+                                                                {{-- </div> --}}
 
                                                                 <div id="lainnya-card" class="card-body"
                                                                     style="display: ">

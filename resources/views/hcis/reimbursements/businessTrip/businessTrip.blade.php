@@ -337,7 +337,7 @@
                                                         @endphp
                                                         @if (($n->kembali < $today && $n->status == 'Approved') || $n->status == 'Declaration Draft')
                                                             <form method="GET"
-                                                                action="/businessTrip/deklarasi/{{ $n->id }}"
+                                                                action="/businessTrip/declaration/{{ $n->id }}"
                                                                 style="display: inline-block;">
                                                                 <button type="submit"
                                                                     class="btn btn-outline-success rounded-pill"
