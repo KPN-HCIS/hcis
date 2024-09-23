@@ -60,49 +60,49 @@
                             <div class="row mb-2">
                                 <div class="col-md-6">
                                     <label for="nama" class="form-label">Name</label>
-                                    <input type="text" class="form-control bg-light" id="nama" name="nama"
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama" name="nama"
                                         style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="divisi" class="form-label">Divison</label>
-                                    <input type="text" class="form-control bg-light" id="divisi" name="divisi"
+                                    <input type="text" class="form-control form-control-sm bg-light" id="divisi" name="divisi"
                                         style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-4">
                                     <label for="norek_krywn" class="form-label">Employee Account Number</label>
-                                    <input type="number" class="form-control bg-light" id="norek_krywn" name="norek_krywn"
+                                    <input type="number" class="form-control form-control-sm bg-light" id="norek_krywn" name="norek_krywn"
                                         value="{{ $employee_data->bank_account_number }}" readonly>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
-                                    <input type="text" class="form-control bg-light" id="nama_pemilik_rek"
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_pemilik_rek"
                                         name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="nama_bank" class="form-label">Bank Name</label>
-                                    <input type="text" class="form-control bg-light" id="nama_bank" name="nama_bank"
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_bank" name="nama_bank"
                                         placeholder="ex. BCA" value="{{ $employee_data->bank_name }}" readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-4">
                                     <label for="mulai" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control datepicker" id="mulai" name="mulai"
+                                    <input type="date" class="form-control form-control-sm" id="mulai" name="mulai"
                                         placeholder="Tanggal Mulai" onchange="validateStartEndDates()" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="kembali" class="form-label">End Date</label>
-                                    <input type="date" class="form-control datepicker" id="kembali" name="kembali"
+                                    <input type="date" class="form-control form-control-sm" id="kembali" name="kembali"
                                         placeholder="Tanggal Kembali" onchange="validateStartEndDates()" required>
                                 </div>
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden"
                                     value="{{ $perdiem->amount }}" readonly>
                                 <div class="col-md-4">
                                     <label for="tujuan" class="form-label">Destination</label>
-                                    <select class="form-select select2" name="tujuan" id="tujuan"
+                                    <select class="form-select form-select-sm select2" name="tujuan" id="tujuan"
                                         onchange="BTtoggleOthers()" required>
                                         <option value="">--- Choose Destination ---</option>
                                         @foreach ($locations as $location)
@@ -113,7 +113,7 @@
                                         <option value="Others">Others</option>
                                     </select>
                                     <br><input type="text" name="others_location" id="others_location"
-                                        class="form-control" placeholder="Other Location" value=""
+                                        class="form-control form-control-sm" placeholder="Other Location" value=""
                                         style="display: none;">
                                 </div>
                             </div>
@@ -121,7 +121,7 @@
                                 <div class="col-md-12">
                                     <label for="keperluan" class="form-label">Need (To be filled in according to visit
                                         service)</label>
-                                    <textarea class="form-control" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
+                                    <textarea class="form-control form-control-sm" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
                                         required></textarea>
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                                         /
                                         Not
                                         PT Payroll)</label>
-                                    <select class="form-select select2" id="bb_perusahaan" name="bb_perusahaan" required>
+                                    <select class="form-select form-select-sm select2" id="bb_perusahaan" name="bb_perusahaan" required>
                                         <option value="" disabled selected>--- Choose PT ---</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}">
@@ -142,7 +142,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="jns_dinas" class="form-label">Type of Service</label>
-                                    <select class="form-select" id="jns_dinas" name="jns_dinas" required>
+                                    <select class="form-select form-select-sm" id="jns_dinas" name="jns_dinas" required>
                                         <option value="" selected disabled>-- Choose Type of Service --</option>
                                         <option value="dalam kota">Dinas Dalam Kota</option>
                                         <option value="luar kota">Dinas Luar Kota</option>
