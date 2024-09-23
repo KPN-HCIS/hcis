@@ -1,13 +1,38 @@
 <script>
     var formCountPerdiem = 0;
+    let perdiemData = [];
 
     window.addEventListener('DOMContentLoaded', function() {
         formCountPerdiem = document.querySelectorAll('#form-container-perdiem > div').length;
     });
 
+    function isDateInRange(date, startDate, endDate) {
+        const targetDate = new Date(date).setHours(0, 0, 0, 0);
+        const start = new Date(startDate).setHours(0, 0, 0, 0);
+        const end = new Date(endDate).setHours(0, 0, 0, 0);
+        return targetDate >= start && targetDate <= end;
+    }
+
+
+    function isDateUsed(startDate, endDate, index) {
+        // Cek apakah tanggal sudah digunakan di form lain
+        return perdiemData.some(data => {
+            if (data.index !== index) { // Cek untuk index yang berbeda
+                // Cek apakah range tanggal bentrok dengan form lain
+                return isDateInRange(startDate, data.startDate, data.endDate) ||
+                    isDateInRange(endDate, data.startDate, data.endDate) ||
+                    isDateInRange(data.startDate, startDate, endDate) ||
+                    isDateInRange(data.endDate, startDate, endDate);
+            }
+            return false;
+        });
+    }
+
+
     function addMoreFormPerdiem(event) {
         event.preventDefault();
         formCountPerdiem++;
+        const index = formCountPerdiem;
 
         const newForm = document.createElement("div");
         newForm.id = `form-container-bt-perdiem-${formCountPerdiem}`;
@@ -15,9 +40,10 @@
         newForm.innerHTML = `
             <div class="row">
                 <!-- Company Code -->
+                <p class="fs-4 text-primary" style="font-weight: bold;">Perdiem ${formCountPerdiem}</p>
                 <div class="col-md-6 mb-2">
                     <label class="form-label" for="company_bt_perdiem${formCountPerdiem}">Company Code</label>
-                    <select class="form-control form-control-sm select2" id="company_bt_perdiem_${formCountPerdiem}" name="company_bt_perdiem[]">
+                    <select class="form-control" id="company_bt_perdiem_${formCountPerdiem}" name="company_bt_perdiem[]">
                         <option value="">Select Company...</option>
                         @foreach ($companies as $company)
                             <option value="{{ $company->contribution_level_code }}">
@@ -30,17 +56,18 @@
                 <!-- Location Agency -->
                 <div class="col-md-6 mb-2">
                     <label class="form-label" for="locationFilter">Location Agency</label>
-                    <select class="form-control form-control-sm location-select" name="location_bt_perdiem[]" id="location_bt_perdiem_${formCountPerdiem}">
-                        <option value="">Select Location...</option>
-                        @foreach ($locations as $location)
-                            <option value="{{ $location->area }}">
-                                {{ $location->area . ' (' . $location->company_name . ')' }}
+                    <select class="form-control select2" name="location_bt_perdiem[]" id="location_bt_perdiem_${formCountPerdiem}" onchange="toggleOtherLocation(this, ${formCountPerdiem})">
+                        <option value="">Select location...</option>
+                        @foreach($locations as $location)
+                            <option value="{{ $location->area }}" @if($location->area == $perdiem['location']) selected @endif>
+                                {{ $location->area." (".$location->company_name.")" }}
                             </option>
                         @endforeach
-                        <option value="Others">Others</option>
+                        <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
                     </select>
-                    <br>
-                    <input type="text" name="other_location_bt_perdiem[]" class="form-control form-control-sm other-location" placeholder="Other Location" value="" style="display: none;">
+                    <div id="other-location-${formCountPerdiem}" class="mt-3" @if($perdiem['location'] != 'Others') style="display: none;" @endif>
+                        <input type="text" name="other_location_bt_perdiem[]" class="form-control" placeholder="Other Location" value="{{ $perdiem['other_location'] ?? '' }}">
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -89,6 +116,19 @@
             </div>
         `;
         document.getElementById("form-container-perdiem").appendChild(newForm);
+
+        // Inisialisasi select2 setelah elemen baru ditambahkan
+        $(`#company_bt_perdiem_${formCountPerdiem}, #location_bt_perdiem_${formCountPerdiem}`).select2({
+            theme: "bootstrap-5",
+        });
+
+        $(`#company_bt_perdiem_${formCountPerdiem}, #location_bt_perdiem_${formCountPerdiem}`).on('change', function() {
+            handleDateChange();
+        });
+
+        perdiemData.push({ index: index.toString(), startDate: '', endDate: '' });
+        // console.log("Data Perdiem setelah Add More:", perdiemData);
+
         handleDateChange();
     }
 
@@ -103,7 +143,8 @@
         if (formCountPerdiem > 0) {
             const formContainer = document.getElementById(`form-container-bt-perdiem-${index}`);
             if (formContainer) {
-                const nominalInput = formContainer.querySelector(`#nominal_bt_perdiem_${index}`);
+                // const nominalInput = formContainer.querySelector(`#nominal_bt_perdiem_${index}`);
+                const nominalInput = document.querySelector(`#nominal_bt_perdiem_${index}`);
                 if (nominalInput) {
                     let nominalValue = cleanNumber(nominalInput.value);
                     let total = cleanNumber(document.querySelector('input[name="total_bt_perdiem"]').value);
@@ -111,29 +152,38 @@
                     document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
                     calculateTotalNominalBTTotal();
                 }
-                $(`#form-container-bt-perdiem-${index}`).remove();
-                formCountPerdiem--;
+                formContainer.remove();
+
+                perdiemData = perdiemData.filter(data => data.index !== index.toString());
+                console.log("Data Perdiem setelah dihapus:", perdiemData); // Cek di console
+
+                calculateTotalNominalBTPerdiem();
             }
         }
     }
 
     function removeFormPerdiemDec(index, event) {
         event.preventDefault();
-        $(`#form-container-bt-perdiem-declare-${index}`).remove();
-        // if (formCountPerdiem > 0) {
-        //     const formContainer = document.getElementById(`form-container-bt-perdiem-${index}`);
-        //     if (formContainer) {
-        //         const nominalInput = formContainer.querySelector(`#nominal_bt_perdiem_${index}`);
-        //         if (nominalInput) {
-        //             let nominalValue = cleanNumber(nominalInput.value);
-        //             let total = cleanNumber(document.querySelector('input[name="total_bt_perdiem"]').value);
-        //             total -= nominalValue;
-        //             document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
-        //             calculateTotalNominalBTTotal();
-        //         }
-        //         formCountPerdiem--;
-        //     }
-        // }
+        if (formCountPerdiem > 0) {
+            const formContainer = document.getElementById(`form-container-bt-perdiem-dec-${index}`);
+            if (formContainer) {
+                // const nominalInput = formContainer.querySelector(`#nominal_bt_perdiem_${index}`);
+                const nominalInput = document.querySelector(`#nominal_bt_perdiem_${index}`);
+                if (nominalInput) {
+                    let nominalValue = cleanNumber(nominalInput.value);
+                    let total = cleanNumber(document.querySelector('input[name="total_bt_perdiem"]').value);
+                    total -= nominalValue;
+                    document.querySelector('input[name="total_bt_perdiem"]').value = formatNumber(total);
+                    calculateTotalNominalBTTotal();
+                }
+                formContainer.remove();
+
+                perdiemData = perdiemData.filter(data => data.index !== index.toString());
+                console.log("Data Perdiem setelah dihapus:", perdiemData); // Cek di console
+
+                calculateTotalNominalBTPerdiem();
+            }
+        }
     }
 
     function clearFormPerdiem(index, event) {
@@ -159,6 +209,20 @@
                     input.value = 0;
                 });
 
+                const companyCodeSelect = formContainer.querySelector(`#company_bt_perdiem_${index}`);
+                if (companyCodeSelect) {
+                    companyCodeSelect.selectedIndex = 0; // Reset the select element to the default option
+                    var event = new Event('change');
+                    companyCodeSelect.dispatchEvent(event); // Trigger the change event to update the select2 component
+                }
+
+                const locationSelect = formContainer.querySelector(`#location_bt_perdiem_${index}`);
+                if (locationSelect) {
+                    locationSelect.selectedIndex = 0; // Reset the select element to the default option
+                    var event = new Event('change');
+                    locationSelect.dispatchEvent(event); // Trigger the change event to update the select2 component
+                }
+
                 formContainer.querySelectorAll('select').forEach(select => {
                     select.selectedIndex = 0;
                 });
@@ -169,6 +233,8 @@
 
                 calculateTotalNominalBTTotal();
             }
+
+            perdiemData = perdiemData.filter(data => data.index !== index.toString());
         }
     }
 
@@ -179,6 +245,20 @@
         const totalDaysInput = formGroup.querySelector('input.total-days-perdiem');
         const perdiemInput = document.getElementById('perdiem');
         const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+
+        const formIndex = formGroup.getAttribute('id').match(/\d+/)[0];
+        // Cek apakah tanggal sudah digunakan di form lain
+        if (isDateUsed(startDateInput.value, endDateInput.value, formIndex)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Tanggal telah digunakan',
+                text: 'Silakan pilih tanggal yang berbeda!',
+                timer: 2000
+            });
+            startDateInput.value = '';
+            endDateInput.value = '';
+            return;
+        }
 
         if (startDateInput.value && endDateInput.value) {
             const startDate = new Date(startDateInput.value);
@@ -211,6 +291,21 @@
             totalDaysInput.value = 0;
             allowanceInput.value = 0;
         }
+
+        // Cek apakah data Perdiem untuk index ini sudah ada, jika ada update, jika belum tambahkan
+        const existingPerdiemIndex = perdiemData.findIndex(data => data.index === formIndex);
+
+        if (existingPerdiemIndex !== -1) {
+            // Jika ada, perbarui data di array
+            perdiemData[existingPerdiemIndex].startDate = startDateInput.value;
+            perdiemData[existingPerdiemIndex].endDate = endDateInput.value;
+        }  else {
+            perdiemData.push({
+                index: formIndex,
+                startDate: startDateInput.value,
+                endDate: endDateInput.value
+            });
+        }
     }
 
     function calculateTotalNominalBTPerdiem() {
@@ -226,49 +321,90 @@
         calculateTotalNominalBTPerdiem();
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Use event delegation to handle changes on dynamically added select elements
-        document.getElementById('form-container-perdiem').addEventListener('change', function(event) {
-            if (event.target && event.target.classList.contains('location-select')) {
-                toggleOthersBT(event.target);
-            }
-        });
+    function toggleOtherLocation(selectElement, index) {
+        const otherLocationDiv = document.getElementById('other-location-' + index);
 
-        // Function to toggle the visibility of the 'Others' input field
-        function toggleOthersBT(selectElement) {
-            const formGroup = selectElement.closest('.mb-2').parentElement;
-            const othersInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
-            if (selectElement.value === "Others") {
-                othersInput.style.display = 'block';
-                othersInput.required = true;
-            } else {
-                othersInput.style.display = 'none';
-                othersInput.required = false;
-                othersInput.value = "";
-            }
+        if (selectElement.value === 'Others') {
+            otherLocationDiv.style.display = 'block';
+        } else {
+            otherLocationDiv.style.display = 'none';
         }
+    }
 
-        // Add event listener to the existing select elements on page load
-        document.querySelectorAll('.location-select').forEach(function(selectElement) {
-            selectElement.addEventListener('change', function() {
-                toggleOthersBT(this);
-            });
+    // Optionally, if you want to trigger this on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        const selects = document.querySelectorAll('[id^="location_bt_perdiem_"]');
+        selects.forEach(select => {
+            const index = select.id.split('_').pop();
+            toggleOtherLocation(select, index);
         });
     });
 
 
 </script>
 @if (!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null)
-    @if (request()->routeIs('cashadvanced.deklarasi'))
-        {{-- Form Deklarasi --}}
-        <div id="form-container-perdiem">
-            @foreach ($detailCA['detail_perdiem'] as $index => $perdiem)
-                <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
+    {{-- Form Edit --}}
+    <div id="form-container-perdiem">
+        @foreach ($detailCA['detail_perdiem'] as $index => $perdiem)
+            <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
+                <p class="fs-4 text-primary" style="font-weight: bold; ">Perdiem {{ $loop->index + 1 }}</p>
+                <div id="form-container-bt-perdiem-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
+                    <div class="row">
+                        <!-- Company Code -->
+                        <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Request</p>
+                        <div class="col-md-6">
+                            <table class="table" style="border: none; border-collapse: collapse; padding: 1%;">
+                                <tr>
+                                    <th class="label" style="border: none; width:40%;">Company Code</th>
+                                    <td class="colon" style="border: none; width:1%;">:</td>
+                                    <td class="value" style="border: none;">{{ $perdiem['company_code'] }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="label" style="border: none;">Location Agency</th>
+                                    <td class="colon" style="border: none;">:</td>
+                                    <td class="value" style="border: none;">
+                                        @if($perdiem['location'] == 'Others')
+                                            {{$perdiem['other_location']}}
+                                        @else
+                                            {{$perdiem['location']}}
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="label" style="border: none;">Amount</th>
+                                    <td class="colon" style="border: none;">:</td>
+                                    <td class="value" style="border: none;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table" style="border: none; border-collapse: collapse; padding: 1%;">
+                                <tr>
+                                    <th class="label" style="border: none; width:40%;">Start Perdiem</th>
+                                    <td class="colon" style="border: none; width:1%;">:</td>
+                                    <td class="value" style="border: none;">{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="label" style="border: none;">End Perdiem</th>
+                                    <td class="colon" style="border: none;">:</td>
+                                    <td class="value" style="border: none;">{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="label" style="border: none;">Amount</th>
+                                    <td class="colon" style="border: none;">:</td>
+                                    <td class="value" style="border: none;">{{$perdiem['total_days']}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="form-container-bt-perdiem-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
+                    <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
                     <div class="row">
                         <!-- Company Code -->
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="company_bt_perdiem{{ $loop->index + 1 }}">Company Code</label>
-                            <select class="form-control bg-light" id="company_bt_perdiem_{{ $loop->index + 1 }}" name="company_bt_perdiem[]" disabled>
+                            <select class="form-control select2" id="company_bt_perdiem_{{ $loop->index + 1 }}" name="company_bt_perdiem[]">
                                 <option value="">Select Company...</option>
                                 @foreach($companies as $company)
                                     <option value="{{ $company->contribution_level_code }}"
@@ -282,62 +418,23 @@
                         <!-- Location Agency -->
                         <div class="col-md-6 mb-2">
                             <label class="form-label" for="locationFilter">Location Agency</label>
-                            <select class="form-control location-select bg-light" name="location_bt_perdiem_dec[]" id="location_bt_perdiem_dec[]" disabled>
+                            <select class="form-control select2" name="location_bt_perdiem[]" id="location_bt_perdiem_{{ $loop->index + 1 }}" onchange="toggleOtherLocation(this, {{ $loop->index + 1 }})">
                                 <option value="">Select location...</option>
                                 @foreach($locations as $location)
-                                    <option value="{{ $location->area }}"
-                                        @if($location->area == $perdiem['location']) selected @endif>
+                                    <option value="{{ $location->area }}" @if($location->area == $perdiem['location']) selected @endif>
                                         {{ $location->area." (".$location->company_name.")" }}
                                     </option>
                                 @endforeach
                                 <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
                             </select>
-                            @if($perdiem['location'] == 'Others')
-                                <input type="text" name="other_location_bt_perdiem[]" class="form-control mt-3 other-location" placeholder="Other Location" value="{{ $perdiem['other_location'] }}">
-                            @endif
-                            <br>
-                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
+                            <div id="other-location-{{ $loop->index + 1 }}" class="mt-3" @if($perdiem['location'] != 'Others') style="display: none;" @endif>
+                                <input type="text" name="other_location_bt_perdiem[]" class="form-control" placeholder="Other Location" value="{{ $perdiem['other_location'] ?? '' }}">
+                            </div>
                         </div>
                     </div>
                     <div class="row">
-                        <!-- Start Perdiem -->
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label">Start Perdiem</label>
-                            <input type="date" name="start_bt_perdiem_dec[]" class="form-control bg-light" value="{{$perdiem['start_date']}}" placeholder="mm/dd/yyyy" readonly>
-                        </div>
-
-                        <!-- End Perdiem -->
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label">End Perdiem</label>
-                            <input type="date" name="end_bt_perdiem_dec[]" class="form-control bg-light" value="{{$perdiem['end_date']}}" placeholder="mm/dd/yyyy" readonly>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                            <label class="form-label">Total Days</label>
-                            <div class="input-group">
-                                <input class="form-control bg-light" name="total_days_bt_perdiem_dec[]" type="number" value="{{$perdiem['total_days']}}" readonly>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">days</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Amount</label>
-                            <div class="input-group">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">Rp</span>
-                                </div>
-                                <input class="form-control bg-light" name="nominal_bt_perdiem_dec[]" type="text" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center my-4">
-                        <hr class="flex-grow-1 border border-primary border-3 opacity-75">
-                            <span class="mx-3 text-primary">Form Deklarasi</span>
-                        <hr class="flex-grow-1 border border-primary border-3 opacity-75">
-                    </div>
-                    <input type="hidden" value="{{$perdiem['location']}}" name="location_bt_perdiem[]">
-                    @if (isset($declareCA['detail_perdiem'][$index]))
-                        <div class="row" id="form-container-bt-perdiem-declare-{{ $loop->index + 1 }}">
+                        <input type="hidden" value="{{$perdiem['location']}}" name="location_bt_perdiem[]">
+                        @if (isset($declareCA['detail_perdiem'][$index]))
                             @php
                                 $perdiem_dec = $declareCA['detail_perdiem'][$index];
                             @endphp
@@ -371,8 +468,8 @@
                                     <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text" value="{{ number_format($perdiem_dec['nominal'], 0, ',', '.') }}" onchange="onNominalChange()" readonly>
                                 </div>
                             </div>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
@@ -380,126 +477,17 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
-            @foreach ($declareCA['detail_perdiem'] as $index => $perdiem_dec)
-                @if (!isset($detailCA['detail_perdiem'][$index]))
-                    <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
-                        <div class="row">
-                            <!-- Company Code -->
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label" for="company_bt_perdiem{{ $loop->index + 1 }}">Company Code</label>
-                                <select class="form-control select2" id="company_bt_perdiem_{{ $loop->index + 1 }}" name="company_bt_perdiem[]">
-                                    <option value="">Select Company...</option>
-                                    @foreach($companies as $company)
-                                        <option value="{{ $company->contribution_level_code }}"
-                                            @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
-                                            {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Location Agency -->
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label" for="locationFilter">Location Agency</label>
-                                <select class="form-control location-select" name="location_bt_perdiem[]" id="location_bt_perdiem[]">
-                                    <option value="">Select location...</option>
-                                    @foreach($locations as $location)
-                                        <option value="{{ $location->area }}"
-                                            @if($location->area == $perdiem['location']) selected @endif>
-                                            {{ $location->area." (".$location->company_name.")" }}
-                                        </option>
-                                    @endforeach
-                                    <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
-                                </select>
-                                @if($perdiem['location'] == 'Others')
-                                    <input type="text" name="other_location_bt_perdiem[]" class="form-control mt-3 other-location" placeholder="Other Location" value="{{ $perdiem['other_location'] }}">
-                                @endif
-                                <br>
-                                <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <!-- Start Perdiem -->
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label">Start Perdiem</label>
-                                <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" value="{{$perdiem_dec['start_date']}}" placeholder="mm/dd/yyyy"
-                                    onchange="calculateTotalDaysPerdiem(this)">
-                            </div>
-                            <!-- End Perdiem -->
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label">End Perdiem</label>
-                                <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" value="{{$perdiem_dec['end_date']}}" placeholder="mm/dd/yyyy"
-                                    onchange="calculateTotalDaysPerdiem(this)">
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <label class="form-label">Total Days</label>
-                                <div class="input-group">
-                                    <input class="form-control bg-light total-days-perdiem" name="total_days_bt_perdiem[]" type="number" value="{{$perdiem_dec['total_days']}}" readonly>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">days</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Amount</label>
-                                <div class="input-group">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">Rp</span>
-                                    </div>
-                                    <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text" value="{{ number_format($perdiem_dec['nominal'], 0, ',', '.') }}" onchange="onNominalChange()" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
-                                <button class="btn btn-warning mr-2" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            @endforeach
-        </div>
-
-        <div class="mt-3">
-            <button class="btn btn-primary" onclick="addMoreFormPerdiem(event)">Add More</button>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-2">
-                <div class="mt-2">
-                    <label class="form-label">Total Perdiem Request</label>
-                    <div class="input-group">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control bg-light" name="total_bt_perdiem_dec" id="total_bt_perdiem_dec" type="text" value="{{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}" readonly>
-                    </div>
-                </div>
             </div>
-            <div class="col-md-6 mb-2">
-                <div class="mt-2">
-                    <label class="form-label">Total Perdiem Declare</label>
-                    <div class="input-group">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
-                        </div>
-                        <input class="form-control bg-light" name="total_bt_perdiem" id="total_bt_perdiem" type="text" value="{{ number_format(array_sum(array_column($declareCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}" readonly>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @else
-        {{-- Form Edit --}}
-        <div id="form-container-perdiem">
-            @foreach ($detailCA['detail_perdiem'] as $perdiem)
+        @endforeach
+        @foreach ($declareCA['detail_perdiem'] as $index => $perdiem_dec)
+            @if (!isset($detailCA['detail_perdiem'][$index]))
                 <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
+                    <p class="fs-4 text-primary" style="font-weight: bold;">Perdiem {{ $loop->index + 1 }}</p>
                     <div class="row">
                         <!-- Company Code -->
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-6 mb-2">
                             <label class="form-label" for="company_bt_perdiem{{ $loop->index + 1 }}">Company Code</label>
-                            <select class="form-control form-control-sm select2" id="company_bt_perdiem_{{ $loop->index + 1 }}" name="company_bt_perdiem[]">
+                            <select class="form-control select2" id="company_bt_perdiem_{{ $loop->index + 1 }}" name="company_bt_perdiem[]">
                                 <option value="">Select Company...</option>
                                 @foreach($companies as $company)
                                     <option value="{{ $company->contribution_level_code }}"
@@ -511,43 +499,39 @@
                         </div>
 
                         <!-- Location Agency -->
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-6 mb-2">
                             <label class="form-label" for="locationFilter">Location Agency</label>
-                            <select class="form-control location-select" name="location_bt_perdiem[]" id="location_bt_perdiem[]">
+                            <select class="form-control select2" name="location_bt_perdiem[]" id="location_bt_perdiem_{{ $loop->index + 1 }}" onchange="toggleOtherLocation(this, {{ $loop->index + 1 }})">
                                 <option value="">Select location...</option>
                                 @foreach($locations as $location)
-                                    <option value="{{ $location->area }}"
-                                        @if($location->area == $perdiem['location']) selected @endif>
+                                    <option value="{{ $location->area }}" @if($location->area == $perdiem['location']) selected @endif>
                                         {{ $location->area." (".$location->company_name.")" }}
                                     </option>
                                 @endforeach
                                 <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
                             </select>
-                            @if($perdiem['location'] == 'Others')
-                                <input type="text" name="other_location_bt_perdiem[]" class="form-control form-control-sm mt-3 other-location" placeholder="Other Location" value="{{ $perdiem['other_location'] }}">
-                            @endif
-                            <br>
-                            <input type="text" name="other_location_bt_perdiem[]" class="form-control form-control-sm other-location" placeholder="Other Location" value="" style="display: none;">
+                            <div id="other-location-{{ $loop->index + 1 }}" class="mt-3" @if($perdiem['location'] != 'Others') style="display: none;" @endif>
+                                <input type="text" name="other_location_bt_perdiem[]" class="form-control" placeholder="Other Location" value="{{ $perdiem['other_location'] ?? '' }}">
+                            </div>
                         </div>
                     </div>
                     <div class="row">
                         <!-- Start Perdiem -->
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Start Perdiem</label>
-                            <input type="date" name="start_bt_perdiem[]" class="form-control form-control-sm start-perdiem" value="{{$perdiem['start_date']}}" placeholder="mm/dd/yyyy"
+                            <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" value="{{$perdiem_dec['start_date']}}" placeholder="mm/dd/yyyy"
                                 onchange="calculateTotalDaysPerdiem(this)">
                         </div>
-
                         <!-- End Perdiem -->
                         <div class="col-md-4 mb-2">
                             <label class="form-label">End Perdiem</label>
-                            <input type="date" name="end_bt_perdiem[]" class="form-control form-control-sm end-perdiem" value="{{$perdiem['end_date']}}" placeholder="mm/dd/yyyy"
+                            <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" value="{{$perdiem_dec['end_date']}}" placeholder="mm/dd/yyyy"
                                 onchange="calculateTotalDaysPerdiem(this)">
                         </div>
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Total Days</label>
                             <div class="input-group">
-                                <input class="form-control form-control-sm bg-light total-days-perdiem" name="total_days_bt_perdiem[]" type="number" value="{{$perdiem['total_days']}}" readonly>
+                                <input class="form-control bg-light total-days-perdiem" name="total_days_bt_perdiem[]" type="number" value="{{$perdiem_dec['total_days']}}" readonly>
                                 <div class="input-group-append">
                                     <span class="input-group-text">days</span>
                                 </div>
@@ -559,11 +543,10 @@
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
                                 </div>
-                                <input class="form-control form-control-sm bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text" value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" onchange="onNominalChange()" readonly>
+                                <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text" value="{{ number_format($perdiem_dec['nominal'], 0, ',', '.') }}" onchange="onNominalChange()" readonly>
                             </div>
                         </div>
                     </div>
-                    <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
@@ -571,23 +554,24 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
-        </div>
+            @endif
+        @endforeach
+    </div>
 
-        <div class="mt-3">
-            <button class="btn btn-primary" onclick="addMoreFormPerdiem(event)">Add More</button>
-        </div>
+    <div class="mt-3">
+        <button class="btn btn-primary" onclick="addMoreFormPerdiem(event)">Add More</button>
+    </div>
 
-        <div class="mt-2">
-            <label class="form-label">Total Perdiem</label>
-            <div class="input-group">
-                <div class="input-group-append">
-                    <span class="input-group-text">Rp</span>
-                </div>
-                <input class="form-control form-control-sm bg-light" name="total_bt_perdiem" id="total_bt_perdiem" type="text" value="{{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}" readonly>
+    <div class="mt-2">
+        <label class="form-label">Total Perdiem</label>
+        <div class="input-group">
+            <div class="input-group-append">
+                <span class="input-group-text">Rp</span>
             </div>
+            <input class="form-control form-control-sm bg-light" name="total_bt_perdiem" id="total_bt_perdiem" type="text" value="{{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}" readonly>
         </div>
-    @endif
+    </div>
+
 @else
     {{-- Form Add --}}
     <div id="form-container-perdiem">
@@ -609,7 +593,7 @@
                 <!-- Location Agency -->
                 <div class="col-md-6 mb-2">
                     <label class="form-label" for="locationFilter">Location Agency</label>
-                    <select class="form-control location-select" name="location_bt_perdiem[]" id="location_bt_perdiem_${formCountPerdiem}">
+                    <select class="form-control location-select" name="location_bt_perdiem[]" id="location_bt_perdiem_1">
                         <option value="">Select Location...</option>
                         @foreach ($locations as $location)
                             <option value="{{ $location->area }}">
@@ -636,6 +620,8 @@
                     <input type="date" name="end_bt_perdiem[]" class="form-control form-control-sm end-perdiem" placeholder="mm/dd/yyyy"
                         onchange="calculateTotalDaysPerdiem(this)">
                 </div>
+
+                <!-- Total Days -->
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Total Days</label>
                     <div class="input-group">

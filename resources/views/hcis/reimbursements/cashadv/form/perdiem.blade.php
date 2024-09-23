@@ -116,7 +116,6 @@
         document.getElementById("form-container-perdiem").appendChild(newForm);
 
         perdiemData.push({ index: index.toString(), startDate: '', endDate: '' });
-        console.log("Data Perdiem setelah Add More:", perdiemData);
 
         handleDateChange();
     }
