@@ -45,9 +45,6 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="mb-3">
-                    {{-- <a href="{{ url()->previous() }}" class="btn btn-outline-primary">
-                    <i class="bi bi-caret-left-fill"></i> Kembali
-                </a> --}}
                 </div>
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
