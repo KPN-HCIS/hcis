@@ -85,7 +85,13 @@ function validateStartEndDates() {
         const endDate = new Date(endDateInput.value);
 
         if (endDate < startDate) {
-            alert("End Date cannot be earlier than the Start Date.");
+            Swal.fire({
+                title: "Warning!",
+                text: "End Date cannot be earlier than Start Date",
+                icon: "error",
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'OK'
+            });
             endDateInput.value = ""; // Reset the end date if it's invalid
         }
     }
@@ -122,7 +128,13 @@ function validateDates(index) {
 
         // Check if return date is earlier than departure date
         if (returnDate < departureDate) {
-            alert("Return date cannot be earlier than the departure date.");
+            Swal.fire({
+                title: "Warning!",
+                text: "Return date cannot be earlier than the departure date.",
+                icon: "error",
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'OK'
+            });
             returnDateInput.value = ""; // Reset the return date if it's invalid
             return; // Stop further validation
         }
@@ -133,7 +145,13 @@ function validateDates(index) {
             const returnTime = returnTimeInput.value;
 
             if (departureTime && returnTime && returnTime < departureTime) {
-                alert("Return time cannot be earlier than the departure time.");
+                Swal.fire({
+                    title: "Warning!",
+                    text: "Return time cannot be earlier than the departure time.",
+                    icon: "error",
+                    confirmButtonColor: "#9a2a27",
+                    confirmButtonText: 'OK'
+                });
                 returnTimeInput.value = ""; // Reset the return time if it's invalid
             }
         }
@@ -162,13 +180,25 @@ function calculateTotalDays(index) {
 
     // Validate Check In Date
     if (checkInDate < mulaiDate) {
-        alert("Check In date cannot be earlier than Start date.");
+        Swal.fire({
+            title: "Warning!",
+            text: "Check In date cannot be earlier than Start date.",
+            icon: "error",
+            confirmButtonColor: "#9a2a27",
+            confirmButtonText: 'OK'
+        });
         checkInInput.value = ""; // Reset the Check In field
         totalDaysInput.value = ""; // Clear total days
         return;
     }
     if (checkInDate > kembaliDate) {
-        alert("Check In date cannot be more than End date.");
+        Swal.fire({
+            title: "Warning!",
+            text: "Check In date cannot be more than End date.",
+            icon: "error",
+            confirmButtonColor: "#9a2a27",
+            confirmButtonText: 'OK'
+        });
         checkInInput.value = ""; // Reset the Check In field
         totalDaysInput.value = ""; // Clear total days
         return;
@@ -176,7 +206,13 @@ function calculateTotalDays(index) {
 
     // Ensure Check Out Date is not earlier than Check In Date
     if (checkOutDate < checkInDate) {
-        alert("Check Out date cannot be earlier than Check In date.");
+        Swal.fire({
+            title: "Warning!",
+            text: "Check Out date cannot be earlier than Check In date.",
+            icon: "error",
+            confirmButtonColor: "#9a2a27",
+            confirmButtonText: 'OK'
+        });
         checkOutInput.value = ""; // Reset the Check Out field
         totalDaysInput.value = ""; // Clear total days
         return;
@@ -340,6 +376,51 @@ document.addEventListener("DOMContentLoaded", function () {
     const ticketCheckbox = document.getElementById("ticketCheckbox");
     const addTicketButton = document.getElementById("add-ticket-btn");
 
+    function toggleRequiredAttributes(form, isRequired) {
+        const fields = [
+            'select[name="noktp_tkt[]"]',
+            'input[name="dari_tkt[]"]',
+            'input[name="ke_tkt[]"]',
+            'input[name="tgl_brkt_tkt[]"]',
+            'input[name="jam_brkt_tkt[]"]',
+            'select[name="jenis_tkt[]"]',
+            'select[name="type_tkt[]"]',
+        ];
+
+        fields.forEach((selector) => {
+            const field = form.querySelector(selector);
+            if (field) {
+                field.required = isRequired;
+            }
+        });
+        const typeSelect = form.querySelector('select[name="type_tkt[]"]');
+        const returnDateField = form.querySelector(
+            'input[name="tgl_plg_tkt[]"]'
+        );
+        const returnTimeField = form.querySelector(
+            'input[name="jam_plg_tkt[]"]'
+        );
+
+        function updateReturnFields() {
+            if (isRequired && typeSelect.value === "Round Trip") {
+                returnDateField.required = true;
+                returnTimeField.required = true;
+            } else {
+                returnDateField.required = false;
+                returnTimeField.required = false;
+            }
+        }
+
+        typeSelect.addEventListener("change", updateReturnFields);
+        updateReturnFields(); // Initial call to set the correct state
+    }
+
+    function updateAllFormsRequiredState(isRequired) {
+        document.querySelectorAll('[id^="ticket-form-"]').forEach((form) => {
+            toggleRequiredAttributes(form, isRequired);
+        });
+    }
+
     function updateFormNumbers() {
         const forms = ticketFormsContainer.querySelectorAll(
             '[id^="ticket-form-"]'
@@ -442,10 +523,18 @@ document.addEventListener("DOMContentLoaded", function () {
             formTicketCount++;
             const newTicketForm = createNewTicketForm(formTicketCount);
             ticketFormsContainer.insertAdjacentHTML("beforeend", newTicketForm);
+            const addedForm = ticketFormsContainer.lastElementChild;
+            toggleRequiredAttributes(addedForm, ticketCheckbox.checked);
             updateFormNumbers();
             initializeAllSelect2(); // Initialize Select2 for new dropdowns
         } else {
-            alert("You have reached the maximum number of tickets (5).");
+            Swal.fire({
+                title: "Warning!",
+                text: "You have reached the maximum number of tickets (5).",
+                icon: "error",
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'OK'
+            });
         }
     }
 
@@ -478,6 +567,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ticketFormsContainer.style.display = this.checked
                 ? "block"
                 : "none";
+            updateAllFormsRequiredState(this.checked);
             if (!this.checked) {
                 resetAllTicketForms();
             }
@@ -619,6 +709,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial setup
     updateRemoveButtons();
     initializeAllSelect2();
+    updateAllFormsRequiredState(ticketCheckbox.checked);
 });
 
 //Hotel JS
@@ -715,14 +806,46 @@ document.addEventListener("DOMContentLoaded", function () {
         updateButtonVisibility();
     }
 
+    function toggleRequiredAttributes(form, isRequired) {
+        const fields = [
+            'input[name="nama_htl[]"]',
+            'input[name="lokasi_htl[]"]',
+            'select[name="bed_htl[]"]',
+            'input[name="jmlkmr_htl[]"]',
+            'input[name="tgl_masuk_htl[]"]',
+            'input[name="tgl_keluar_htl[]"]',
+        ];
+
+        fields.forEach((selector) => {
+            const field = form.querySelector(selector);
+            if (field) {
+                field.required = isRequired;
+            }
+        });
+    }
+
+    function updateAllFormsRequiredState(isRequired) {
+        document.querySelectorAll('[id^="hotel-form-"]').forEach((form) => {
+            toggleRequiredAttributes(form, isRequired);
+        });
+    }
+
     function addNewHotelForm() {
         if (formHotelCount < maxHotelForms) {
             formHotelCount++;
             const newHotelForm = createNewHotelForm(formHotelCount);
             hotelFormsContainer.insertAdjacentHTML("beforeend", newHotelForm);
+            const addedForm = hotelFormsContainer.lastElementChild;
+            toggleRequiredAttributes(addedForm, hotelCheckbox.checked);
             updateFormNumbers();
         } else {
-            alert("You have reached the maximum number of hotels (5).");
+            Swal.fire({
+                title: "Warning!",
+                text: "You have reached the maximum number of hotels (5).",
+                icon: "error",
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'OK'
+            });
         }
     }
 
@@ -739,6 +862,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (hotelCheckbox) {
         hotelCheckbox.addEventListener("change", function () {
             hotelFormsContainer.style.display = this.checked ? "block" : "none";
+            updateAllFormsRequiredState(this.checked);
             if (!this.checked) {
                 resetAllHotelForms();
             }
@@ -810,20 +934,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initial setup
     updateButtonVisibility();
+    updateAllFormsRequiredState(hotelCheckbox.checked);
 });
 
 //Taksi JS
 function handleTaksiForms() {
     const taksiCheckbox = document.getElementById("taksiCheckbox");
     const taksiDiv = document.getElementById("taksi_div");
+    const formFields = taksiDiv.querySelectorAll("input");
 
+    // Function to toggle 'required' attribute
+    function toggleRequired() {
+        if (taksiDiv.style.display === "block") {
+            // If form is visible
+            formFields.forEach(function (field) {
+                field.setAttribute("required", "required"); // Add 'required' attribute
+            });
+        } else {
+            formFields.forEach(function (field) {
+                field.removeAttribute("required"); // Remove 'required' attribute
+            });
+        }
+    }
+
+    // Handle checkbox change event
     taksiCheckbox.addEventListener("change", function () {
         if (this.checked) {
             taksiDiv.style.display = "block";
         } else {
             taksiDiv.style.display = "none";
         }
+        toggleRequired(); // Toggle required based on visibility
     });
+    toggleRequired();
 }
 
 //CA JS
@@ -1106,7 +1249,13 @@ function handleDateChange() {
 
     // Validate dates
     if (endDate < startDate) {
-        alert("End Date cannot be earlier than Start Date");
+        Swal.fire({
+            title: "Warning!",
+            text: "End Date cannot be earlier than Start Date",
+            icon: "error",
+            confirmButtonColor: "#9a2a27",
+            confirmButtonText: 'OK'
+        });
         endDateInput.value = "";
     }
 

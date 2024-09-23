@@ -6,7 +6,7 @@
                 text: "{{ session('success') }}",
                 icon: "success",
                 confirmButtonColor: "#9a2a27",
-                confirmButtonText: 'Close'
+                confirmButtonText: 'OK'
             });
         });
     </script>
@@ -20,7 +20,7 @@
                 text: "{{ session('error') }}",
                 icon: "error",
                 confirmButtonColor: "#9a2a27",
-                confirmButtonText: 'Close'
+                confirmButtonText: 'OK'
             });
         });
     </script>
