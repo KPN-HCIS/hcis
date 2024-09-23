@@ -2521,6 +2521,28 @@ class BusinessTripController extends Controller
 
         $sppd = $query->orderBy('created_at', 'desc')->get();
 
+        // Count only "Request" status (Pending L1 and L2)
+        $requestCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->where('status', 'Pending L1');
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->where('status', 'Pending L2');
+            });
+        })->count();
+
+        // Count only "Declaration" status (Declaration L1 and L2)
+        $declarationCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->where('status', 'Declaration L1');
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->where('status', 'Declaration L2');
+            });
+        })->count();
+
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
 
@@ -2533,7 +2555,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Approval';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'filter'));
+        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'filter', 'requestCount', 'declarationCount'));
     }
     public function approvalDetail($id)
     {

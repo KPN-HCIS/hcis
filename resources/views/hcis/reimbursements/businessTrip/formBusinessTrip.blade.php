@@ -131,7 +131,7 @@
                                         /
                                         Not
                                         PT Payroll)</label>
-                                    <select class="form-select" id="bb_perusahaan" name="bb_perusahaan" required>
+                                    <select class="form-select select2" id="bb_perusahaan" name="bb_perusahaan" required>
                                         <option value="" disabled selected>--- Choose PT ---</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}">

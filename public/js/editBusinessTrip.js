@@ -186,7 +186,7 @@ function validateStartEndDates() {
                 title: "Warning!",
                 text: "End Date cannot be earlier than Start Date",
                 icon: "error",
-                confirmButtonColor: "#9a2a27",
+                confirmButtonColor: "#AB2F2B",
                 confirmButtonText: 'OK'
             });
             endDateInput.value = ""; // Reset the end date if it's invalid
@@ -229,7 +229,7 @@ function validateDates(index) {
                 title: "Warning!",
                 text: "Return date cannot be earlier than the departure date.",
                 icon: "error",
-                confirmButtonColor: "#9a2a27",
+                confirmButtonColor: "#AB2F2B",
                 confirmButtonText: 'OK'
             });
             returnDateInput.value = ""; // Reset the return date if it's invalid
@@ -246,7 +246,7 @@ function validateDates(index) {
                     title: "Warning!",
                     text: "Return time cannot be earlier than the departure time.",
                     icon: "error",
-                    confirmButtonColor: "#9a2a27",
+                    confirmButtonColor: "#AB2F2B",
                     confirmButtonText: 'OK'
                 });
                 returnTimeInput.value = ""; // Reset the return time if it's invalid
@@ -281,7 +281,7 @@ function calculateTotalDays(index) {
             title: "Warning!",
             text: "Check In date cannot be earlier than Start date.",
             icon: "error",
-            confirmButtonColor: "#9a2a27",
+            confirmButtonColor: "#AB2F2B",
             confirmButtonText: 'OK'
         });
         checkInInput.value = ""; // Reset the Check In field
@@ -293,7 +293,7 @@ function calculateTotalDays(index) {
             title: "Warning!",
             text: "Check In date cannot be more than End date.",
             icon: "error",
-            confirmButtonColor: "#9a2a27",
+            confirmButtonColor: "#AB2F2B",
             confirmButtonText: 'OK'
         });
         checkInInput.value = ""; // Reset the Check In field
@@ -307,7 +307,7 @@ function calculateTotalDays(index) {
             title: "Warning!",
             text: "Check Out date cannot be earlier than Check In date.",
             icon: "error",
-            confirmButtonColor: "#9a2a27",
+            confirmButtonColor: "#AB2F2B",
             confirmButtonText: 'OK'
         });
         checkOutInput.value = ""; // Reset the Check Out field
@@ -633,7 +633,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 title: "Warning!",
                 text: "You have reached the maximum number of tickets (5).",
                 icon: "error",
-                confirmButtonColor: "#9a2a27",
+                confirmButtonColor: "#AB2F2B",
                 confirmButtonText: "OK",
             });
         }
@@ -945,7 +945,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 title: "Warning!",
                 text: "You have reached the maximum number of hotels (5).",
                 icon: "error",
-                confirmButtonColor: "#9a2a27",
+                confirmButtonColor: "#AB2F2B",
                 confirmButtonText: 'OK'
             });
         }
@@ -1345,53 +1345,53 @@ document.getElementById("end_date").addEventListener("change", function () {
     document.getElementById("ca_decla").value = `${year}-${month}-${day}`;
 });
 
-document
-    .getElementById("start_date")
-    .addEventListener("change", handleDateChange);
-document
-    .getElementById("end_date")
-    .addEventListener("change", handleDateChange);
+// document
+//     .getElementById("start_date")
+//     .addEventListener("change", handleDateChange);
+// document
+//     .getElementById("end_date")
+//     .addEventListener("change", handleDateChange);
 
-function handleDateChange() {
-    const startDateInput = document.getElementById("start_date");
-    const endDateInput = document.getElementById("end_date");
+// function handleDateChange() {
+//     const startDateInput = document.getElementById("start_date");
+//     const endDateInput = document.getElementById("end_date");
 
-    const startDate = new Date(startDateInput.value);
-    const endDate = new Date(endDateInput.value);
+//     const startDate = new Date(startDateInput.value);
+//     const endDate = new Date(endDateInput.value);
 
-    // Set the min attribute of the end_date input to the selected start_date
-    endDateInput.min = startDateInput.value;
+//     // Set the min attribute of the end_date input to the selected start_date
+//     endDateInput.min = startDateInput.value;
 
-    // Validate dates
-    if (endDate < startDate) {
-        Swal.fire({
-            title: "Warning!",
-            text: "End Date cannot be earlier than Start Date",
-            icon: "error",
-            confirmButtonColor: "#9a2a27",
-            confirmButtonText: 'OK'
-        });
-        endDateInput.value = "";
-    }
+//     // Validate dates
+//     if (endDate < startDate) {
+//         Swal.fire({
+//             title: "Warning!",
+//             text: "End Date cannot be earlier than Start Date",
+//             icon: "error",
+//             confirmButtonColor: "#9a2a27",
+//             confirmButtonText: 'OK'
+//         });
+//         endDateInput.value = "";
+//     }
 
-    // Update min and max values for all dynamic perdiem date fields
-    document
-        .querySelectorAll('input[name="start_bt_perdiem[]"]')
-        .forEach(function (input) {
-            input.min = startDateInput.value;
-            input.max = endDateInput.value;
-        });
+//     // Update min and max values for all dynamic perdiem date fields
+//     document
+//         .querySelectorAll('input[name="start_bt_perdiem[]"]')
+//         .forEach(function (input) {
+//             input.min = startDateInput.value;
+//             input.max = endDateInput.value;
+//         });
 
-    document
-        .querySelectorAll('input[name="end_bt_perdiem[]"]')
-        .forEach(function (input) {
-            input.min = startDateInput.value;
-            input.max = endDateInput.value;
-        });
+//     document
+//         .querySelectorAll('input[name="end_bt_perdiem[]"]')
+//         .forEach(function (input) {
+//             input.min = startDateInput.value;
+//             input.max = endDateInput.value;
+//         });
 
-    document
-        .querySelectorAll('input[name="total_days_bt_perdiem[]"]')
-        .forEach(function (input) {
-            calculateTotalDaysPerdiem(input);
-        });
-}
+//     document
+//         .querySelectorAll('input[name="total_days_bt_perdiem[]"]')
+//         .forEach(function (input) {
+//             calculateTotalDaysPerdiem(input);
+//         });
+// }

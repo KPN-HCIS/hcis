@@ -51,7 +51,7 @@
                 </div>
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
-                        <h4 class="mb-0">Edit Data</h4>
+                        <h4 class="mb-0">Edit Data - {{ $n->no_sppd }}</h4>
                         <a href="/businessTrip" type="button" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">

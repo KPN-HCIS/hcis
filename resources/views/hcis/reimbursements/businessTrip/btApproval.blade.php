@@ -118,19 +118,28 @@
                             @php
                                 $currentFilter = request('filter', 'all');
                             @endphp
-
                             <form method="GET" action="{{ route('businessTrip.approval') }}">
                                 <button type="submit" name="filter" value="all"
-                                    class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
                                     All
                                 </button>
+
                                 <button type="submit" name="filter" value="request"
-                                    class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
                                     Request
+                                    @if ($requestCount >= 1)
+                                        <span
+                                            class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-circle">{{ $requestCount }}</span>
+                                    @endif
                                 </button>
+
                                 <button type="submit" name="filter" value="declaration"
-                                    class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                    class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
                                     Declaration
+                                    @if ($declarationCount >= 1)
+                                        <span
+                                            class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-circle">{{ $declarationCount }}</span>
+                                    @endif
                                 </button>
                             </form>
 
@@ -321,7 +330,8 @@
                         <div class="modal-content">
                             <div class="modal-header bg-primary">
                                 <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
-                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal"
+                                    aria-label="Close">
                                 </button>
                             </div>
                             <div class="modal-body">

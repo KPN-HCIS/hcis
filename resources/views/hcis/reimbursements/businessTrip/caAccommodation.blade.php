@@ -166,6 +166,17 @@
         } else {
             totalDaysInput.value = 0; // Set to 0 if invalid dates
         }
+
+        if(endDate < startDate){
+            Swal.fire({
+                icon: 'error',
+                title: 'End Date cannot be earlier than Start Date',
+                text: 'Choose another date!',
+                timer: 3000,
+                confirmButtonColor: "#AB2F2B",
+                confirmButtonText: "OK",
+            });
+        }
     }
 </script>
 

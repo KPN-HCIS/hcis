@@ -5,7 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css"
         rel="stylesheet">
 
-    <style>
+    {{-- <style>
         table {
             white-space: nowrap;
         }
@@ -22,7 +22,7 @@
         .table-responsive.table-container thead tr:first-child th {
             border-top: none;
         }
-    </style>
+    </style> --}}
 @endsection
 
 @section('content')
@@ -56,118 +56,90 @@
                             @include('hcis.reimbursements.businessTrip.modal')
                             <!-- Employee Data Table -->
                             <div class="row">
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">Employee Name</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail" value=": {{ $employee_data->fullname }}">
-                                        </div>
-                                    </div>
-
+                                <div class="col-md-6">
+                                    <table width="100%" class="">
+                                        <tr>
+                                            <th width="40%">Employee ID</th>
+                                            <td class="block">:</td>
+                                            <td > {{ $employee_data->employee_id }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Employee Name</th>
+                                            <td class="block">:</td>
+                                            <td> {{ $employee_data->fullname }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Unit</th>
+                                            <td class="block">:</td>
+                                            <td> {{ $employee_data->unit }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Job Level</th>
+                                            <td class="block">:</td>
+                                            <td> {{ $employee_data->job_level }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Costing Company</th>
+                                            <td class="block">:</td>
+                                            <td> {{ $ca->contribution_level }}
+                                                ({{ $ca->contribution_level_code }})</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Destination</th>
+                                            <td class="block">:</td>
+                                            @if ($ca->others_location == null)
+                                                <td> {{ $ca->destination }}</td>
+                                            @else
+                                                <td> {{ $ca->others_location }}</td>
+                                            @endif
+                                        </tr>
+                                        <tr>
+                                            <th>CA Purposes</th>
+                                            <td class="block">:</td>
+                                            <td>{{ $ca->ca_needs }}</td>
+                                        </tr>
+                                    </table>
                                 </div>
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">NIK</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail" value=": {{ $employee_data->ktp }}">
-                                        </div>
-                                    </div>
-
+                                <div class="col-md-6">
+                                    <table width="100%">
+                                        <tr>
+                                            <th width="40%">Start Date</th>
+                                            <td class="block">: </td>
+                                            <td width="60%"> {{date('d M Y', strtotime($n->mulai))}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>End Date</th>
+                                            <td class="block">:</td>
+                                            <td> {{date('d M Y', strtotime($n->kembali))}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Days</th>
+                                            <td class="block">:</td>
+                                            <td> {{ $ca->total_days }} days</td>
+                                        </tr>
+                                        <tr>
+                                            <th>CA Date Required</th>
+                                            <td class="block">:</td>
+                                            <td> {{date('d M Y', strtotime($ca->date_required))}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Declaration Estimate</th>
+                                            <td class="block">:</td>
+                                            <td> {{date('d M Y', strtotime($ca->declare_estimate))}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Cash Advance Type</th>
+                                            <td class="block">:</td>
+                                            @if ($ca->type_ca == 'dns')
+                                                <td> Business Trip</td>
+                                            @elseif ($ca->type_ca == 'ndns')
+                                                <td> Non Business Trip</td>
+                                            @else
+                                                <td> Entertainment</td>
+                                            @endif
+                                        </tr>
+                                    </table>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">Email</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail" value=": {{ $employee_data->email }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">Bank Account</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail"
-                                                value=": {{ $employee_data->bank_name }} - {{ $employee_data->bank_account_number }} - {{ $employee_data->bank_account_name }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">Division</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail"
-                                                value=": {{ $employee_data->unit }} / {{ $employee_data->designation_name }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">PT/Location</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail"
-                                                value=": {{ $employee_data->company_name }} / {{ $employee_data->office_area }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">NO SPPD</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail" value=": {{ $n->no_sppd }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">Requestor</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail" value=": {{ $n->nama }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">Start Date</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail" value=": {{ $n->mulai }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="col-6 col-sm-6">
-                                    <div class="form-group row">
-                                        <label for="staticEmail" class="py-0 col-sm-4 col-form-label">End Date</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="" class="py-1 form-control-plaintext"
-                                                id="staticEmail" value=": {{ $n->kembali }}">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
 
                             @php
                                 // Provide default empty arrays if caDetail or sections are not set
@@ -997,54 +969,5 @@
             $('#rejectReasonModal').modal('show');
         });
 
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const forms = document.querySelectorAll('.status-form');
-        //     forms.forEach(form => {
-        //         form.addEventListener('submit', function(e) {
-        //             e.preventDefault();
-        //             const action = this.querySelector('input[name="status_approval"]').value;
-        //             const confirmMessage = action === 'Declaration Rejected' ?
-        //                 'Are you sure you want to reject this?' :
-        //                 'Are you sure you want to confirm this?';
-
-        //             if (confirm(confirmMessage)) {
-        //                 const formData = new FormData(this);
-        //                 fetch(this.action, {
-        //                         method: 'POST',
-        //                         body: formData,
-        //                         headers: {
-        //                             'X-Requested-With': 'XMLHttpRequest'
-        //                         }
-        //                     })
-        //                     .then(response => response.json())
-        //                     .then(data => {
-        //                         if (data.success) {
-        //                             // Update the success modal content
-        //                             document.getElementById('successModalBody').textContent =
-        //                                 data.message;
-
-        //                             // Show the success modal
-        //                             var successModal = new bootstrap.Modal(document
-        //                                 .getElementById('successModal'));
-        //                             successModal.show();
-
-        //                             // Reload the page after modal is closed
-        //                             document.getElementById('successModal').addEventListener(
-        //                                 'hidden.bs.modal',
-        //                                 function() {
-        //                                     window.location.href = '/businessTrip/approval';
-        //                                 });
-        //                         } else {
-        //                             alert('An error occurred. Please try again.');
-        //                         }
-        //                     })
-        //                     .catch(error => {
-        //                         console.error('Error:', error);
-        //                         alert('An error occurred. Please try again.');
-        //                     });
-        //             }
-        //         });
-        //     });
-        // });
     </script>
 @endsection
