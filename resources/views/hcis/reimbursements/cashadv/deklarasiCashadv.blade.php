@@ -2,7 +2,12 @@
 
 @section('css')
     <!-- Sertakan CSS Bootstrap jika diperlukan -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
+    {{-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css"> --}}
+    <style>
+        th, td{
+            vertical-align: top !important;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -415,344 +420,335 @@
                                                         </div>
                                                     </div>
 
-                                                    <div id="relation-card-deklarasi" class="card-body mb-3 p-0">
-                                                        <div class="accordion" id="accordionRelation">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="headingRelationDec">
-                                                                    <button
-                                                                        class="accordion-button @if ($detailCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium"
-                                                                        type="button" data-bs-toggle="collapse"
-                                                                        data-bs-target="#collapseRelationDec"
-                                                                        aria-expanded="@if ($detailCA['relation_e'][0]['name'] !== null) true @else false @endif"
-                                                                        aria-controls="collapseRelationDec">
-                                                                        Relation Plan
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapseRelationDec"
-                                                                    class="accordion-collapse collapse @if ($detailCA['relation_e'][0]['name'] !== null) show @endif"
-                                                                    aria-labelledby="headingRelationDec">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-e-relation-deklarasi">
-                                                                            @foreach ($detailCA['relation_e'] as $relation)
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Relation
-                                                                                        Type</label>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            type="checkbox"
-                                                                                            name="accommodation_e_relation-deklarasi[]"
-                                                                                            id="accommodation_e_relation-deklarasi[]"
-                                                                                            value="accommodation"
-                                                                                            {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}
-                                                                                            disabled>
-                                                                                        <label class="form-check-label"
-                                                                                            for="accommodation_e_relation-deklarasi[]">Accommodation</label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            name="transport_e_relation_deklarasi[]"
-                                                                                            type="checkbox"
-                                                                                            id="transport_e_relation_deklarasi[]"
-                                                                                            value="transport"
-                                                                                            {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}
-                                                                                            disabled>
-                                                                                        <label class="form-check-label"
-                                                                                            for="transport_e_relation_deklarasi[]">Transport</label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            name="gift_e_relation_deklarasi[]"
-                                                                                            type="checkbox"
-                                                                                            id="gift_e_relation_deklarasi[]"
-                                                                                            value="gift"
-                                                                                            {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}
-                                                                                            disabled>
-                                                                                        <label class="form-check-label"
-                                                                                            for="gift_e_relation_deklarasi[]">Gift</label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            name="fund_e_relation_deklarasi[]"
-                                                                                            type="checkbox"
-                                                                                            id="fund_e_relation_deklarasi[]"
-                                                                                            value="fund"
-                                                                                            {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}
-                                                                                            disabled>
-                                                                                        <label class="form-check-label"
-                                                                                            for="fund_e_relation_deklarasi[]">Fund</label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            name="food_e_relation_deklarasi[]"
-                                                                                            type="checkbox"
-                                                                                            id="food_e_relation_deklarasi[]"
-                                                                                            value="food"
-                                                                                            {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}
-                                                                                            disabled>
-                                                                                        <label class="form-check-label"
-                                                                                            for="food_e_relation_deklarasi[]">Food/Beverages/Souvenir</label>
-                                                                                    </div>
+                                                <div id="relation-card-deklarasi" class="card-body mb-3 p-0">
+                                                    <div class="accordion" id="accordionRelation">
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="headingRelationDec">
+                                                                <button
+                                                                    class="accordion-button @if ($detailCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium"
+                                                                    type="button" data-bs-toggle="collapse"
+                                                                    data-bs-target="#collapseRelationDec"
+                                                                    aria-expanded="@if ($detailCA['relation_e'][0]['name'] !== null) true @else false @endif"
+                                                                    aria-controls="collapseRelationDec">
+                                                                    Relation Plan
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapseRelationDec"
+                                                                class="accordion-collapse collapse @if ($detailCA['relation_e'][0]['name'] !== null) show @endif"
+                                                                aria-labelledby="headingRelationDec">
+                                                                <div class="accordion-body">
+                                                                    <div id="form-container-e-relation-deklarasi">
+                                                                        @foreach ($detailCA['relation_e'] as $relation)
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Relation
+                                                                                    Type</label>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        type="checkbox"
+                                                                                        name="accommodation_e_relation-deklarasi[]"
+                                                                                        id="accommodation_e_relation-deklarasi[]"
+                                                                                        value="accommodation"
+                                                                                        {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}
+                                                                                        disabled>
+                                                                                    <label class="form-check-label"
+                                                                                        for="accommodation_e_relation-deklarasi[]">Accommodation</label>
                                                                                 </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label"
-                                                                                        for="start">Name</label>
-                                                                                    <input type="text"
-                                                                                        name="rname_e_relation_deklarasi[]"
-                                                                                        id="rname_e_relation_deklarasi[]"
-                                                                                        value="{{ $relation['name'] }}"
-                                                                                        class="form-control bg-light"
-                                                                                        readonly>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        name="transport_e_relation_deklarasi[]"
+                                                                                        type="checkbox"
+                                                                                        id="transport_e_relation_deklarasi[]"
+                                                                                        value="transport"
+                                                                                        {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}
+                                                                                        disabled>
+                                                                                    <label class="form-check-label"
+                                                                                        for="transport_e_relation_deklarasi[]">Transport</label>
                                                                                 </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label"
-                                                                                        for="start">Position</label>
-                                                                                    <input type="text"
-                                                                                        name="rposition_e_relation_deklarasi[]"
-                                                                                        id="rposition_e_relation_deklarasi[]"
-                                                                                        value="{{ $relation['position'] }}"
-                                                                                        class="form-control bg-light"
-                                                                                        readonly>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        name="gift_e_relation_deklarasi[]"
+                                                                                        type="checkbox"
+                                                                                        id="gift_e_relation_deklarasi[]"
+                                                                                        value="gift"
+                                                                                        {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}
+                                                                                        disabled>
+                                                                                    <label class="form-check-label"
+                                                                                        for="gift_e_relation_deklarasi[]">Gift</label>
                                                                                 </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label"
-                                                                                        for="start">Company</label>
-                                                                                    <input type="text"
-                                                                                        name="rcompany_e_relation_deklarasi[]"
-                                                                                        id="rcompany_e_relation_deklarasi[]"
-                                                                                        value="{{ $relation['company'] }}"
-                                                                                        class="form-control bg-light"
-                                                                                        readonly>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        name="fund_e_relation_deklarasi[]"
+                                                                                        type="checkbox"
+                                                                                        id="fund_e_relation_deklarasi[]"
+                                                                                        value="fund"
+                                                                                        {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}
+                                                                                        disabled>
+                                                                                    <label class="form-check-label"
+                                                                                        for="fund_e_relation_deklarasi[]">Fund</label>
                                                                                 </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label"
-                                                                                        for="start">Purpose</label>
-                                                                                    <input type="text"
-                                                                                        name="rpurpose_e_relation_deklarasi[]"
-                                                                                        id="rpurpose_e_relation_deklarasi[]"
-                                                                                        value="{{ $relation['purpose'] }}"
-                                                                                        class="form-control bg-light"
-                                                                                        readonly>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        name="food_e_relation_deklarasi[]"
+                                                                                        type="checkbox"
+                                                                                        id="food_e_relation_deklarasi[]"
+                                                                                        value="food"
+                                                                                        {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}
+                                                                                        disabled>
+                                                                                    <label class="form-check-label"
+                                                                                        for="food_e_relation_deklarasi[]">Food/Beverages/Souvenir</label>
                                                                                 </div>
-                                                                                <hr
-                                                                                    class="border border-primary border-1 opacity-50">
-                                                                            @endforeach
-                                                                        </div>
-                                                                        {{-- <button type="button" id="add-more-e-relation" class="btn btn-primary mb-3">Add More</button> --}}
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label"
+                                                                                    for="start">Name</label>
+                                                                                <input type="text"
+                                                                                    name="rname_e_relation_deklarasi[]"
+                                                                                    id="rname_e_relation_deklarasi[]"
+                                                                                    value="{{ $relation['name'] }}"
+                                                                                    class="form-control bg-light" readonly>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label"
+                                                                                    for="start">Position</label>
+                                                                                <input type="text"
+                                                                                    name="rposition_e_relation_deklarasi[]"
+                                                                                    id="rposition_e_relation_deklarasi[]"
+                                                                                    value="{{ $relation['position'] }}"
+                                                                                    class="form-control bg-light" readonly>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label"
+                                                                                    for="start">Company</label>
+                                                                                <input type="text"
+                                                                                    name="rcompany_e_relation_deklarasi[]"
+                                                                                    id="rcompany_e_relation_deklarasi[]"
+                                                                                    value="{{ $relation['company'] }}"
+                                                                                    class="form-control bg-light" readonly>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label"
+                                                                                    for="start">Purpose</label>
+                                                                                <input type="text"
+                                                                                    name="rpurpose_e_relation_deklarasi[]"
+                                                                                    id="rpurpose_e_relation_deklarasi[]"
+                                                                                    value="{{ $relation['purpose'] }}"
+                                                                                    class="form-control bg-light" readonly>
+                                                                            </div>
+                                                                            <hr
+                                                                                class="border border-primary border-1 opacity-50">
+                                                                        @endforeach
                                                                     </div>
+                                                                    {{-- <button type="button" id="add-more-e-relation" class="btn btn-primary mb-3">Add More</button> --}}
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated
-                                                    Entertainment Deklarasi</div>
-                                                <div class="card">
-                                                    <div id="entertain-card" class="card-body mb-3 p-0">
-                                                        <div class="accordion" id="accordionEntertain">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="headingEntertain">
-                                                                    <button
-                                                                        class="accordion-button @if ($declareCA['detail_e'][0]['type'] === null) collapsed @endif fw-medium"
-                                                                        type="button" data-bs-toggle="collapse"
-                                                                        data-bs-target="#collapseEntertain"
-                                                                        aria-expanded="@if ($declareCA['detail_e'][0]['type'] !== null) true @else false @endif"
-                                                                        aria-controls="collapseEntertain">
-                                                                        Declaration Detail Entertain
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapseEntertain"
-                                                                    class="accordion-collapse collapse @if ($declareCA['detail_e'][0]['type'] !== null) show @endif"
-                                                                    aria-labelledby="headingEntertain">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-e-detail">
-                                                                            @foreach ($declareCA['detail_e'] as $detail)
-                                                                                <div class="mb-2">
-                                                                                    <label
-                                                                                        class="form-label">Entertainment
-                                                                                        Type</label>
-                                                                                    <select name="enter_type_e_detail[]"
-                                                                                        id="enter_type_e_detail[]"
-                                                                                        class="form-select">
-                                                                                        <option value="">-</option>
-                                                                                        <option value="food"
-                                                                                            {{ $detail['type'] == 'food' ? 'selected' : '' }}>
-                                                                                            Food/Beverages/Souvenir</option>
-                                                                                        <option value="transport"
-                                                                                            {{ $detail['type'] == 'transport' ? 'selected' : '' }}>
-                                                                                            Transport</option>
-                                                                                        <option value="accommodation"
-                                                                                            {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>
-                                                                                            Accommodation</option>
-                                                                                        <option value="gift"
-                                                                                            {{ $detail['type'] == 'gift' ? 'selected' : '' }}>
-                                                                                            Gift</option>
-                                                                                        <option value="fund"
-                                                                                            {{ $detail['type'] == 'fund' ? 'selected' : '' }}>
-                                                                                            Fund</option>
-                                                                                    </select>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label
-                                                                                        class="form-label">Entertainment
-                                                                                        Fee Detail</label>
-                                                                                    <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control">{{ $detail['fee_detail'] }}<</textarea>
-                                                                                </div>
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-append">
-                                                                                        <span
-                                                                                            class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control"
-                                                                                        name="nominal_e_detail[]"
-                                                                                        id="nominal_e_detail[]"
-                                                                                        type="text" min="0"
-                                                                                        value="{{ number_format($detail['nominal'], 0, ',', '.') }}">
-                                                                                </div>
-                                                                                <hr
-                                                                                    class="border border-primary border-1 opacity-50">
-                                                                            @endforeach
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Total
-                                                                                Entertain</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated
+                                                Entertainment Deklarasi</div>
+                                            <div class="card">
+                                                <div id="entertain-card" class="card-body mb-3 p-0">
+                                                    <div class="accordion" id="accordionEntertain">
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="headingEntertain">
+                                                                <button
+                                                                    class="accordion-button @if ($declareCA['detail_e'][0]['type'] === null) collapsed @endif fw-medium"
+                                                                    type="button" data-bs-toggle="collapse"
+                                                                    data-bs-target="#collapseEntertain"
+                                                                    aria-expanded="@if ($declareCA['detail_e'][0]['type'] !== null) true @else false @endif"
+                                                                    aria-controls="collapseEntertain">
+                                                                    Declaration Detail Entertain
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapseEntertain"
+                                                                class="accordion-collapse collapse @if ($declareCA['detail_e'][0]['type'] !== null) show @endif"
+                                                                aria-labelledby="headingEntertain">
+                                                                <div class="accordion-body">
+                                                                    <div id="form-container-e-detail">
+                                                                        @foreach ($declareCA['detail_e'] as $detail)
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Entertainment
+                                                                                    Type</label>
+                                                                                <select name="enter_type_e_detail[]"
+                                                                                    id="enter_type_e_detail[]"
+                                                                                    class="form-select">
+                                                                                    <option value="">-</option>
+                                                                                    <option value="food"
+                                                                                        {{ $detail['type'] == 'food' ? 'selected' : '' }}>
+                                                                                        Food/Beverages/Souvenir</option>
+                                                                                    <option value="transport"
+                                                                                        {{ $detail['type'] == 'transport' ? 'selected' : '' }}>
+                                                                                        Transport</option>
+                                                                                    <option value="accommodation"
+                                                                                        {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>
+                                                                                        Accommodation</option>
+                                                                                    <option value="gift"
+                                                                                        {{ $detail['type'] == 'gift' ? 'selected' : '' }}>
+                                                                                        Gift</option>
+                                                                                    <option value="fund"
+                                                                                        {{ $detail['type'] == 'fund' ? 'selected' : '' }}>
+                                                                                        Fund</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Entertainment
+                                                                                    Fee Detail</label>
+                                                                                <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control">{{ $detail['fee_detail'] }}<</textarea>
+                                                                            </div>
                                                                             <div class="input-group">
                                                                                 <div class="input-group-append">
                                                                                     <span
                                                                                         class="input-group-text">Rp</span>
                                                                                 </div>
-                                                                                <input class="form-control bg-light"
-                                                                                    name="total_e_detail[]"
-                                                                                    id="total_e_detail[]" type="text"
-                                                                                    min="0" value="0"
-                                                                                    readonly>
+                                                                                <input class="form-control"
+                                                                                    name="nominal_e_detail[]"
+                                                                                    id="nominal_e_detail[]" type="text"
+                                                                                    min="0"
+                                                                                    value="{{ number_format($detail['nominal'], 0, ',', '.') }}">
                                                                             </div>
-                                                                        </div>
-                                                                        <button type="button" id="add-more-e-detail"
-                                                                            class="btn btn-primary mb-3">Add More</button>
+                                                                            <hr
+                                                                                class="border border-primary border-1 opacity-50">
+                                                                        @endforeach
                                                                     </div>
+                                                                    <div class="mb-2">
+                                                                        <label class="form-label">Total
+                                                                            Entertain</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-append">
+                                                                                <span class="input-group-text">Rp</span>
+                                                                            </div>
+                                                                            <input class="form-control bg-light"
+                                                                                name="total_e_detail[]"
+                                                                                id="total_e_detail[]" type="text"
+                                                                                min="0" value="0" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="button" id="add-more-e-detail"
+                                                                        class="btn btn-primary mb-3">Add More</button>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <div id="relation-card" class="card-body mb-3 p-0">
-                                                        <div class="accordion" id="accordionRelation">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="headingRelation">
-                                                                    <button
-                                                                        class="accordion-button @if ($declareCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium"
-                                                                        type="button" data-bs-toggle="collapse"
-                                                                        data-bs-target="#collapseRelation"
-                                                                        aria-expanded="@if ($declareCA['relation_e'][0]['name'] !== null) true @else false @endif"
-                                                                        aria-controls="collapseRelation">
-                                                                        Relation Plan
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="collapseRelation"
-                                                                    class="accordion-collapse collapse @if ($declareCA['relation_e'][0]['name'] !== null) show @endif"
-                                                                    aria-labelledby="headingRelation">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-e-relation">
-                                                                            @foreach ($declareCA['relation_e'] as $relation)
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label">Relation
-                                                                                        Type</label>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            type="checkbox"
-                                                                                            name="accommodation_e_relation[]"
-                                                                                            id="accommodation_e_relation[]"
-                                                                                            value="accommodation"
-                                                                                            {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
-                                                                                        <label class="form-check-label"
-                                                                                            for="accommodation_e_relation[]">Accommodation</label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            name="transport_e_relation[]"
-                                                                                            type="checkbox"
-                                                                                            id="transport_e_relation[]"
-                                                                                            value="transport"
-                                                                                            {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
-                                                                                        <label class="form-check-label"
-                                                                                            for="transport_e_relation[]">Transport</label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            name="gift_e_relation[]"
-                                                                                            type="checkbox"
-                                                                                            id="gift_e_relation[]"
-                                                                                            value="gift"
-                                                                                            {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
-                                                                                        <label class="form-check-label"
-                                                                                            for="gift_e_relation[]">Gift</label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            name="fund_e_relation[]"
-                                                                                            type="checkbox"
-                                                                                            id="fund_e_relation[]"
-                                                                                            value="fund"
-                                                                                            {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
-                                                                                        <label class="form-check-label"
-                                                                                            for="fund_e_relation[]">Fund</label>
-                                                                                    </div>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            name="food_e_relation[]"
-                                                                                            type="checkbox"
-                                                                                            id="food_e_relation[]"
-                                                                                            value="food"
-                                                                                            {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
-                                                                                        <label class="form-check-label"
-                                                                                            for="food_e_relation[]">Food/Beverages/Souvenir</label>
-                                                                                    </div>
+                                                <div id="relation-card" class="card-body mb-3 p-0">
+                                                    <div class="accordion" id="accordionRelation">
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="headingRelation">
+                                                                <button
+                                                                    class="accordion-button @if ($declareCA['relation_e'][0]['name'] === null) collapsed @endif fw-medium"
+                                                                    type="button" data-bs-toggle="collapse"
+                                                                    data-bs-target="#collapseRelation"
+                                                                    aria-expanded="@if ($declareCA['relation_e'][0]['name'] !== null) true @else false @endif"
+                                                                    aria-controls="collapseRelation">
+                                                                    Relation Plan
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapseRelation"
+                                                                class="accordion-collapse collapse @if ($declareCA['relation_e'][0]['name'] !== null) show @endif"
+                                                                aria-labelledby="headingRelation">
+                                                                <div class="accordion-body">
+                                                                    <div id="form-container-e-relation">
+                                                                        @foreach ($declareCA['relation_e'] as $relation)
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Relation
+                                                                                    Type</label>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        type="checkbox"
+                                                                                        name="accommodation_e_relation[]"
+                                                                                        id="accommodation_e_relation[]"
+                                                                                        value="accommodation"
+                                                                                        {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
+                                                                                    <label class="form-check-label"
+                                                                                        for="accommodation_e_relation[]">Accommodation</label>
                                                                                 </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label"
-                                                                                        for="start">Name</label>
-                                                                                    <input type="text"
-                                                                                        name="rname_e_relation[]"
-                                                                                        id="rname_e_relation[]"
-                                                                                        value="{{ $relation['name'] }}"
-                                                                                        class="form-control">
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        name="transport_e_relation[]"
+                                                                                        type="checkbox"
+                                                                                        id="transport_e_relation[]"
+                                                                                        value="transport"
+                                                                                        {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
+                                                                                    <label class="form-check-label"
+                                                                                        for="transport_e_relation[]">Transport</label>
                                                                                 </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label"
-                                                                                        for="start">Position</label>
-                                                                                    <input type="text"
-                                                                                        name="rposition_e_relation[]"
-                                                                                        id="rposition_e_relation[]"
-                                                                                        value="{{ $relation['position'] }}"
-                                                                                        class="form-control">
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        name="gift_e_relation[]"
+                                                                                        type="checkbox"
+                                                                                        id="gift_e_relation[]"
+                                                                                        value="gift"
+                                                                                        {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
+                                                                                    <label class="form-check-label"
+                                                                                        for="gift_e_relation[]">Gift</label>
                                                                                 </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label"
-                                                                                        for="start">Company</label>
-                                                                                    <input type="text"
-                                                                                        name="rcompany_e_relation[]"
-                                                                                        id="rcompany_e_relation[]"
-                                                                                        value="{{ $relation['company'] }}"
-                                                                                        class="form-control">
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        name="fund_e_relation[]"
+                                                                                        type="checkbox"
+                                                                                        id="fund_e_relation[]"
+                                                                                        value="fund"
+                                                                                        {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
+                                                                                    <label class="form-check-label"
+                                                                                        for="fund_e_relation[]">Fund</label>
                                                                                 </div>
-                                                                                <div class="mb-2">
-                                                                                    <label class="form-label"
-                                                                                        for="start">Purpose</label>
-                                                                                    <input type="text"
-                                                                                        name="rpurpose_e_relation[]"
-                                                                                        id="rpurpose_e_relation[]"
-                                                                                        value="{{ $relation['purpose'] }}"
-                                                                                        class="form-control">
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input"
+                                                                                        name="food_e_relation[]"
+                                                                                        type="checkbox"
+                                                                                        id="food_e_relation[]"
+                                                                                        value="food"
+                                                                                        {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
+                                                                                    <label class="form-check-label"
+                                                                                        for="food_e_relation[]">Food/Beverages/Souvenir</label>
                                                                                 </div>
-                                                                                <hr
-                                                                                    class="border border-primary border-1 opacity-50">
-                                                                            @endforeach
-                                                                        </div>
-                                                                        <button type="button" id="add-more-e-relation"
-                                                                            class="btn btn-primary mb-3">Add More</button>
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label"
+                                                                                    for="start">Name</label>
+                                                                                <input type="text"
+                                                                                    name="rname_e_relation[]"
+                                                                                    id="rname_e_relation[]"
+                                                                                    value="{{ $relation['name'] }}"
+                                                                                    class="form-control">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label"
+                                                                                    for="start">Position</label>
+                                                                                <input type="text"
+                                                                                    name="rposition_e_relation[]"
+                                                                                    id="rposition_e_relation[]"
+                                                                                    value="{{ $relation['position'] }}"
+                                                                                    class="form-control">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label"
+                                                                                    for="start">Company</label>
+                                                                                <input type="text"
+                                                                                    name="rcompany_e_relation[]"
+                                                                                    id="rcompany_e_relation[]"
+                                                                                    value="{{ $relation['company'] }}"
+                                                                                    class="form-control">
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label"
+                                                                                    for="start">Purpose</label>
+                                                                                <input type="text"
+                                                                                    name="rpurpose_e_relation[]"
+                                                                                    id="rpurpose_e_relation[]"
+                                                                                    value="{{ $relation['purpose'] }}"
+                                                                                    class="form-control">
+                                                                            </div>
+                                                                            <hr
+                                                                                class="border border-primary border-1 opacity-50">
+                                                                        @endforeach
                                                                     </div>
+                                                                    <button type="button" id="add-more-e-relation"
+                                                                        class="btn btn-primary mb-3">Add More</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -762,87 +758,95 @@
                                         </div>
                                     </div>
                                 </div>
-                            @endif
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 mb-2">
-                                <label for="prove_declare" class="form-label">Upload Document</label>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label for="prove_declare" class="form-label">Upload Document</label>
 
-                                <!-- Input file -->
-                                <input type="file" id="prove_declare" name="prove_declare"
-                                    accept="image/*, application/pdf" class="form-control" onchange="previewFile()"
-                                    required>
-                                <input type="hidden" name="existing_prove_declare"
-                                    value="{{ $transactions->prove_declare }}">
+                            <!-- Input file -->
+                            <input type="file" id="prove_declare" name="prove_declare"
+                                accept="image/*, application/pdf" class="form-control" onchange="previewFile()"
+                                required>
+                            <input type="hidden" name="existing_prove_declare"
+                                value="{{ $transactions->prove_declare }}">
 
-                                <!-- Show existing file -->
-                                <div id="existing-file-preview" class="mt-2" style="display:none">
-                                    @if ($transactions->prove_declare)
-                                        @php
-                                            $extension = pathinfo($transactions->prove_declare, PATHINFO_EXTENSION);
-                                        @endphp
+                            <!-- Show existing file -->
+                            <div id="existing-file-preview" class="mt-2" style="display:none">
+                                @if ($transactions->prove_declare)
+                                    @php
+                                        $extension = pathinfo($transactions->prove_declare, PATHINFO_EXTENSION);
+                                    @endphp
 
-                                            @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
-                                                <!-- Tampilkan gambar -->
-                                                <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" target="_blank">
-                                                    <img id="existing-image" src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" alt="Proof Image" style="max-width: 200px;">
-                                                </a>
-                                                <p>Click on the image to view the full size</p>
-                                            @elseif($extension == 'pdf')
-                                                <!-- Tampilkan tautan untuk PDF -->
-                                                <a id="existing-pdf" href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" target="_blank">
-                                                    <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File" style="max-width: 48px;">
-                                                    <p>Click to view PDF</p>
-                                                </a>
-                                            @else
-                                                <p>File type not supported.</p>
-                                            @endif
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label">Total Cash Advanced</label>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">Rp</span>
-                                        </div>
-                                        <input class="form-control bg-light" name="totalca" id="totalca_declarasi"
-                                            type="text" min="0" value="{{ number_format($transactions->total_ca, 0, ',', '.') }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label">Total Cash Advanced Deklarasi</label>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">Rp</span>
-                                        </div>
-                                        <input class="form-control bg-light" name="totalca_deklarasi" id="totalca"
-                                            type="text" min="0" value="{{ $transactions->total_cost }}" readonly>
-                                    </div>
-
+                                    @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
+                                        <!-- Tampilkan gambar -->
+                                        <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
+                                            target="_blank">
+                                            <img id="existing-image"
+                                                src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
+                                                alt="Proof Image" style="max-width: 200px;">
+                                        </a>
+                                        <p>Click on the image to view the full size</p>
+                                    @elseif($extension == 'pdf')
+                                        <!-- Tampilkan tautan untuk PDF -->
+                                        <a id="existing-pdf"
+                                            href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
+                                            target="_blank">
+                                            <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File"
+                                                style="max-width: 48px;">
+                                            <p>Click to view PDF</p>
+                                        </a>
+                                    @else
+                                        <p>File type not supported.</p>
+                                    @endif
+                                @endif
                             </div>
                         </div>
-                        <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
-                            class="form-control bg-light" readonly>
-                        <input type="hidden" name="no_ca" id="no_ca" value="{{ $transactions->no_ca }}"
-                            class="form-control bg-light" readonly>
-                        <input type="hidden" name="bisnis_numb" id="bisnis_numb"
-                            value="{{ $transactions->no_sppd }}" class="form-control bg-light" readonly>
-                        <br>
-                        <div class="row">
-                            <div class="p-4 col-md d-md-flex justify-content-end text-center">
-                                <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                                <a href="{{ route('cashadvanced') }}" type="button"
-                                    class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                                <button type="submit" name="action_ca_draft" value="Draft"
-                                    class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
-                                <button type="submit" name="action_ca_submit" value="Pending"
-                                    class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Total Cash Advanced</label>
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <input class="form-control bg-light" name="totalca" id="totalca_declarasi"
+                                    type="text" min="0"
+                                    value="{{ number_format($transactions->total_ca, 0, ',', '.') }}" readonly>
                             </div>
                         </div>
-                    </form>
-                </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Total Cash Advanced Deklarasi</label>
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <input class="form-control bg-light" name="totalca_deklarasi" id="totalca"
+                                    type="text" min="0" value="{{ $transactions->total_cost }}" readonly>
+                            </div>
+
+                        </div>
+                    </div>
+                    <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
+                        class="form-control bg-light" readonly>
+                    <input type="hidden" name="no_ca" id="no_ca" value="{{ $transactions->no_ca }}"
+                        class="form-control bg-light" readonly>
+                    <input type="hidden" name="bisnis_numb" id="bisnis_numb" value="{{ $transactions->no_sppd }}"
+                        class="form-control bg-light" readonly>
+                    <br>
+                    <div class="row">
+                        <div class="p-4 col-md d-md-flex justify-content-end text-center">
+                            <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
+                            <a href="{{ route('cashadvanced') }}" type="button"
+                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
+                            <button type="submit" name="action_ca_draft" value="Draft"
+                                class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
+                            <button type="submit" name="action_ca_submit" value="Pending"
+                                class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
     </div>
     </div>
 @endsection
@@ -900,7 +904,6 @@
             });
             document.querySelector('input[name="totalca"]').value = formatNumber(total);
         }
-
     </script>
 
     <script>
