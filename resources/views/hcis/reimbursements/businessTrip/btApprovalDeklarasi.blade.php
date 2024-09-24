@@ -153,10 +153,10 @@
                                     <h4 class="text-start text-primary mb-3">PERDIEM</h4>
                                     <div class="row mt-2" id="ca_div">
                                         <div class="col-md-6 mb-2">
+                                            <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
+                                                Perdiem Plan (Request):</h5>
                                             <div class="table-responsive table-container bg-white"
                                                 style="height: 300px; overflow-y: auto;">
-                                                <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
-                                                    Perdiem Plan (Request):</h5>
                                                 <table class="table table-hover table-sm nowrap"
                                                     id="{{ isset($caDetail['detail_perdiem']) && is_array($caDetail['detail_perdiem']) ? (array_sum(array_column($caDetail['detail_perdiem'], 'nominal')) > 0 ? 'perdiemTable' : '') : '' }}"
                                                     width="100%" cellspacing="0">
@@ -247,10 +247,10 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6">
+                                            <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
+                                                Perdiem Plan (Declaration):</h5>
                                             <div class="table-responsive table-container bg-white"
                                                 style="height: 300px; overflow-y: auto;">
-                                                <h5 class="bg-primary text-white text-center p-2"
-                                                style="margin-bottom: 0;">Perdiem Plan (Declaration):</h5>
                                                 <table class="table table-hover table-sm nowrap"
                                                     id="{{ isset($declareCa['detail_perdiem']) && is_array($declareCa['detail_perdiem']) ? (array_sum(array_column($declareCa['detail_perdiem'], 'nominal')) > 0 ? 'perdiemTableDec' : '') : '' }}"
                                                     width="100%" cellspacing="0">
@@ -348,10 +348,10 @@
                                     <h4 class="text-start text-primary mb-3">TRANSPORT</h4>
                                     <div class="row mb-2">
                                         <div class="col-md-6 mb-2">
+                                            <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
+                                                Transport Plan (Request):</h5>
                                             <div class="table-responsive table-container bg-white"
                                                 style="height: 300px; overflow-y: auto;">
-                                                <h5 class="bg-primary text-white text-center p-2"
-                                                    style="margin-bottom: 0;">Transport Plan (Request):</h5>
                                                 <table class="table table-hover table-sm nowrap"
                                                     id="{{ isset($caDetail['detail_transport']) && is_array($caDetail['detail_transport']) ? (array_sum(array_column($caDetail['detail_transport'], 'nominal')) > 0 ? 'transportTable' : '') : '' }}"
                                                     width="100%" cellspacing="0">
@@ -429,10 +429,10 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6">
+                                            <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
+                                                Transport Plan (Declaration):</h5>
                                             <div class="table-responsive table-container bg-white"
                                                 style="height: 300px; overflow-y: auto;">
-                                                <h5 class="bg-primary text-white text-center p-2"
-                                                    style="margin-bottom: 0;">Transport Plan (Declaration):</h5>
                                                 <table class="table table-hover table-sm nowrap"
                                                     id="{{ isset($declareCa['detail_transport']) && is_array($declareCa['detail_transport']) ? (array_sum(array_column($declareCa['detail_transport'], 'nominal')) > 0 ? 'transportTableDec' : '') : '' }}"
                                                     width="100%" cellspacing="0">
@@ -516,10 +516,10 @@
                                     <h4 class="text-start text-primary mb-3">ACCOMMODATION</h4>
                                     <div class="row mb-2">
                                         <div class="col-md-6 mb-2">
+                                            <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
+                                                Accommodation Plan (Request):</h5>
                                             <div class="table-responsive table-container bg-white"
                                                 style="height: 300px; overflow-y: auto;">
-                                                <h5 class="bg-primary text-white text-center p-2"
-                                                    style="margin-bottom: 0;">Accommodation Plan (Request):</h5>
                                                 <table class="table table-hover table-sm nowrap bg-white"
                                                     id="{{ isset($caDetail['detail_penginapan']) && is_array($caDetail['detail_penginapan']) ? (array_sum(array_column($caDetail['detail_penginapan'], 'nominal')) > 0 ? 'penginapanTable' : '') : '' }}"
                                                     width="100%" cellspacing="0">
@@ -595,10 +595,11 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-2">
+                                            <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
+                                                Accommodation Plan (Declaration):</h5>
                                             <div class="table-responsive table-container bg-white"
                                                 style="height: 300px; overflow-y: auto;">
-                                                <h5 class="bg-primary text-white text-center p-2"
-                                                    style="margin-bottom: 0;">Accommodation Plan (Declaration):</h5>
+
                                                 <table class="table table-hover table-sm nowrap"
                                                     id="{{ isset($declareCa['detail_penginapan']) && is_array($declareCa['detail_penginapan']) ? (array_sum(array_column($declareCa['detail_penginapan'], 'nominal')) > 0 ? 'penginapanTableDec' : '') : '' }}"
                                                     width="100%" cellspacing="0">
@@ -683,10 +684,10 @@
                                     <h4 class="text-start text-primary mb-3">OTHERS</h4>
                                     <div class="row mb-2">
                                         <div class="col-md-6 mb-2">
+                                            <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
+                                                Others Plan (Request):</h5>
                                             <div class="table-responsive table-container bg-white"
                                                 style="height: 300px; overflow-y: auto;">
-                                                <h5 class="bg-primary text-white text-center p-2"
-                                                    style="margin-bottom: 0;">Others Plan (Request):</h5>
                                                 <table class="table table-hover table-sm nowrap"
                                                     id="{{ isset($caDetail['detail_lainnya']) && is_array($caDetail['detail_lainnya']) ? (array_sum(array_column($caDetail['detail_lainnya'], 'nominal')) > 0 ? 'otherTable' : '') : '' }}"
                                                     width="100%" cellspacing="0">
@@ -749,10 +750,10 @@
                                         </div>
 
                                         <div class="col-md-6">
+                                            <h5 class="bg-primary text-white text-center p-2" style="margin-bottom: 0;">
+                                                Others Plan (Declaration):</h5>
                                             <div class="table-responsive table-container bg-white"
                                                 style="height: 300px; overflow-y: auto;">
-                                                <h5 class="bg-primary text-white text-center p-2"
-                                                    style="margin-bottom: 0;">Others Plan (Declaration):</h5>
                                                 <table class="table table-hover table-sm nowrap"
                                                     id="{{ isset($declareCa['detail_lainnya']) && is_array($declareCa['detail_lainnya']) ? (array_sum(array_column($declareCa['detail_lainnya'], 'nominal')) > 0 ? 'otherTableDec' : '') : '' }}"
                                                     width="100%" cellspacing="0">
