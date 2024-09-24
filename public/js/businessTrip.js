@@ -673,34 +673,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 const config = {
                     theme: "bootstrap-5",
                     width: "100%",
-                };
-
-                if ($select.find("option").length > 1) {
-                    config.minimumResultsForSearch = 10;
-                } else {
-                    config.minimumInputLength = 1;
-                    config.ajax = {
+                    minimumInputLength: 0,  // Allow searching without any input
+                    allowClear: true,       // Adds an "x" to clear the selection
+                    placeholder: "Please Select",  // Placeholder text
+                    ajax: {
                         url: "/search/name",
                         dataType: "json",
                         delay: 250,
                         data: function (params) {
                             return {
-                                searchTerm: params.term,
+                                searchTerm: params.term || '',  // Send empty string if no search term
+                                page: params.page || 1
                             };
                         },
-                        processResults: function (data) {
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
                             return {
-                                results: $.map(data, function (item) {
+                                results: data.map(function (item) {
                                     return {
                                         id: item.ktp,
-                                        text: item.fullname + " - " + item.ktp,
+                                        text: item.fullname + " - " + item.ktp
                                     };
                                 }),
+                                pagination: {
+                                    more: (params.page * 30) < data.total_count
+                                }
                             };
                         },
-                        cache: true,
-                    };
-                }
+                        cache: true
+                    }
+                };
 
                 $select.select2(config);
             }

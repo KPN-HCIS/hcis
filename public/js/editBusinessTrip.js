@@ -187,7 +187,7 @@ function validateStartEndDates() {
                 text: "End Date cannot be earlier than Start Date",
                 icon: "error",
                 confirmButtonColor: "#AB2F2B",
-                confirmButtonText: 'OK'
+                confirmButtonText: "OK",
             });
             endDateInput.value = ""; // Reset the end date if it's invalid
         }
@@ -230,7 +230,7 @@ function validateDates(index) {
                 text: "Return date cannot be earlier than the departure date.",
                 icon: "error",
                 confirmButtonColor: "#AB2F2B",
-                confirmButtonText: 'OK'
+                confirmButtonText: "OK",
             });
             returnDateInput.value = ""; // Reset the return date if it's invalid
             return; // Stop further validation
@@ -247,7 +247,7 @@ function validateDates(index) {
                     text: "Return time cannot be earlier than the departure time.",
                     icon: "error",
                     confirmButtonColor: "#AB2F2B",
-                    confirmButtonText: 'OK'
+                    confirmButtonText: "OK",
                 });
                 returnTimeInput.value = ""; // Reset the return time if it's invalid
             }
@@ -282,7 +282,7 @@ function calculateTotalDays(index) {
             text: "Check In date cannot be earlier than Start date.",
             icon: "error",
             confirmButtonColor: "#AB2F2B",
-            confirmButtonText: 'OK'
+            confirmButtonText: "OK",
         });
         checkInInput.value = ""; // Reset the Check In field
         totalDaysInput.value = ""; // Clear total days
@@ -294,7 +294,7 @@ function calculateTotalDays(index) {
             text: "Check In date cannot be more than End date.",
             icon: "error",
             confirmButtonColor: "#AB2F2B",
-            confirmButtonText: 'OK'
+            confirmButtonText: "OK",
         });
         checkInInput.value = ""; // Reset the Check In field
         totalDaysInput.value = ""; // Clear total days
@@ -308,7 +308,7 @@ function calculateTotalDays(index) {
             text: "Check Out date cannot be earlier than Check In date.",
             icon: "error",
             confirmButtonColor: "#AB2F2B",
-            confirmButtonText: 'OK'
+            confirmButtonText: "OK",
         });
         checkOutInput.value = ""; // Reset the Check Out field
         totalDaysInput.value = ""; // Clear total days
@@ -774,34 +774,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 const config = {
                     theme: "bootstrap-5",
                     width: "100%",
-                };
-
-                if ($select.find("option").length > 1) {
-                    config.minimumResultsForSearch = 10;
-                } else {
-                    config.minimumInputLength = 1;
-                    config.ajax = {
+                    minimumInputLength: 0, // Allow searching without any input
+                    allowClear: true, // Adds an "x" to clear the selection
+                    placeholder: "Please Select", // Placeholder text
+                    ajax: {
                         url: "/search/name",
                         dataType: "json",
                         delay: 250,
                         data: function (params) {
                             return {
-                                searchTerm: params.term,
+                                searchTerm: params.term || "", // Send empty string if no search term
+                                page: params.page || 1,
                             };
                         },
-                        processResults: function (data) {
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
                             return {
-                                results: $.map(data, function (item) {
+                                results: data.map(function (item) {
                                     return {
                                         id: item.ktp,
                                         text: item.fullname + " - " + item.ktp,
                                     };
                                 }),
+                                pagination: {
+                                    more: params.page * 30 < data.total_count,
+                                },
                             };
                         },
                         cache: true,
-                    };
-                }
+                    },
+                };
 
                 $select.select2(config);
             }
@@ -946,7 +948,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 text: "You have reached the maximum number of hotels (5).",
                 icon: "error",
                 confirmButtonColor: "#AB2F2B",
-                confirmButtonText: 'OK'
+                confirmButtonText: "OK",
             });
         }
     }
