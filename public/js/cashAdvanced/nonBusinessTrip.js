@@ -1,17 +1,22 @@
-var formCount = 1;
+var formCountNBT = 0;
 
-function addMoreFormNBT(event) {
+window.addEventListener("DOMContentLoaded", function () {
+    formCountNBT = document.querySelectorAll(
+        "#form-container-nonb > div"
+    ).length;
+});
+
+function addMoreFormNBTReq(event) {
     event.preventDefault();
-
-    // We can set a maximum number of forms
-    if (formCount < 3) {
-        formCount++;
-        // Create a new form div
-        const newForm = document.createElement("div");
-        newForm.id = `form-container-nbt-${formCount}`;
-        newForm.className = "card-body bg-light p-2 mb-3";
-        newForm.styleName = "border-radius: 1%;";
-        newForm.innerHTML = `
+    formCountNBT++;
+    const newForm = document.createElement("div");
+    newForm.id = `form-container-nbt-${formCountNBT}`;
+    newForm.className = "card-body p-2 mb-3";
+    newForm.style.backgroundColor = "#f8f8f8";
+    newForm.innerHTML = `
+            <p class="fs-4 text-primary" style="font-weight: bold; ">Non Bussiness Trip ${formCountNBT}</p>
+            <div class="card-body bg-light p-2 mb-3">
+                <p class="fs-5 text-primary" style="font-weight: bold; ">Non Bussiness Trip Request</p>
                 <div class="row">
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Date</label>
@@ -23,7 +28,10 @@ function addMoreFormNBT(event) {
                             <div class="input-group-append">
                                 <span class="input-group-text">Rp</span>
                             </div>
-                            <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_${formCount}" type="text" min="0" value="0" onfocus="this.value = this.value === '0' ? '' : this.value;" oninput="formatInput(this)" onblur="formatOnBlur(this)">
+                            <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_${formCountNBT}" type="text" min="0" value="0"
+                                onfocus="this.value = this.value === '0' ? '' : this.value;"
+                                oninput="formatInputNBT(this)"
+                                onblur="formatOnBlur(this)">
                         </div>
                     </div>
                     <div class="col-md-12 mb-2">
@@ -35,94 +43,160 @@ function addMoreFormNBT(event) {
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(${formCount}, event)">Clear</button>
-                        ${
-                            formCount > 1
-                                ? `<button class="btn btn-warning mr-2" onclick="removeFormNBT(${formCount}, event)">Remove</button>`
-                                : ""
-                        }
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(${formCountNBT}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormNBT(${formCountNBT}, event)">Delete</button>
                     </div>
                 </div>
-            `;
-        document.getElementById("form-container").appendChild(newForm);
-    }
+            </div>
+        `;
+    document.getElementById("form-container-nonb").appendChild(newForm);
+
+    // Hanya nominal field yang menggunakan event listener
+    document
+        .querySelector(`#nominal_nbt_${formCountNBT}`)
+        .addEventListener("input", function () {
+            formatInputNBT(this);
+            calculateTotalNominal();
+        });
+
+    calculateTotalNominal();
 }
+
+function addMoreFormNBTDec(event) {
+    event.preventDefault();
+    formCountNBT++;
+    const newForm = document.createElement("div");
+    newForm.id = `form-container-nbt-${formCountNBT}`;
+    newForm.className = "card-body p-2 mb-3";
+    newForm.style.backgroundColor = "#f8f8f8";
+    newForm.innerHTML = `
+            <p class="fs-4 text-primary" style="font-weight: bold; ">Non Bussiness Trip ${formCountNBT}</p>
+            <div class="card-body bg-light p-2 mb-3">
+                <p class="fs-5 text-primary" style="font-weight: bold; ">Non Bussiness Trip Declaration</p>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Amount</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Rp</span>
+                            </div>
+                            <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_${formCountNBT}" type="text" min="0" value="0"
+                                onfocus="this.value = this.value === '0' ? '' : this.value;"
+                                oninput="formatInputNBT(this)"
+                                onblur="formatOnBlur(this)">
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <div class="mb-2">
+                            <label class="form-label">Information</label>
+                            <textarea name="keterangan_nbt[]" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="d-flex justify-start w-100">
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(${formCountNBT}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormNBT(${formCountNBT}, event)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    document.getElementById("form-container-nonb").appendChild(newForm);
+
+    // Hanya nominal field yang menggunakan event listener
+    document
+        .querySelector(`#nominal_nbt_${formCountNBT}`)
+        .addEventListener("input", function () {
+            formatInputNBT(this);
+            calculateTotalNominal();
+        });
+
+    calculateTotalNominal();
+}
+
+$(".btn-warning").click(function (event) {
+    event.preventDefault();
+    var index = $(this).closest(".card-body").index() + 1;
+    removeFormNBT(index, event);
+});
 
 function removeFormNBT(index, event) {
     event.preventDefault();
-    if (formCount > 1) {
-        adjustTotalCA(index);
-        clearFormInputs(index);
-        document.getElementById(`form-container-nbt-${index}`).remove();
-        formCount--;
+    if (formCountNBT > 0) {
+        const formContainer = document.getElementById(
+            `form-container-nbt-${index}`
+        );
+        if (formContainer) {
+            const nominalInput = formContainer.querySelector(
+                `#nominal_nbt_${index}`
+            );
+            if (nominalInput) {
+                formContainer.querySelector(`#nominal_nbt_${index}`).value = 0;
+                calculateTotalNominal();
+            }
+            $(`#form-container-nbt-${index}`).remove();
+            formCountNBT--;
+        }
     }
 }
 
 function clearFormNBT(index, event) {
     event.preventDefault();
-    if (formCount > 0) {
-        adjustTotalCA(index);
-        clearFormInputs(index);
-        document.querySelector(`#nominal_nbt_${index}`).value = 0;
+    const formContainer = document.getElementById(
+        `form-container-nbt-${index}`
+    );
+    if (formContainer) {
+        formContainer
+            .querySelectorAll('input[type="text"], input[type="date"]')
+            .forEach((input) => {
+                input.value = "";
+            });
+
+        formContainer.querySelectorAll("textarea").forEach((textarea) => {
+            textarea.value = "";
+        });
+
+        // Reset nominal value to 0
+        formContainer.querySelector(`#nominal_nbt_${index}`).value = 0;
+        calculateTotalNominal(); // Recalculate total after clearing the form
     }
 }
 
-function adjustTotalCA(index) {
-    let nominalValue = cleanNumber(
-        document.querySelector(`#nominal_nbt_${index}`).value
-    );
-    let totalCA =
-        cleanNumber(document.querySelector('input[name="totalca"]').value) || 0;
-    totalCA -= nominalValue;
-    document.querySelector('input[name="totalca"]').value =
-        formatNumber(totalCA);
-}
-
-function clearFormInputs(index) {
-    let formContainer = document.getElementById(`form-container-nbt-${index}`);
-
-    formContainer
-        .querySelectorAll(
-            'input[type="text"], input[type="date"], input[type="number"]'
-        )
+function calculateTotalNominal() {
+    let total = 0;
+    document
+        .querySelectorAll('input[name="nominal_nbt[]"]')
         .forEach((input) => {
-            input.value = input.type === "number" ? 0 : "";
+            total += cleanNumber(input.value); // Pastikan hanya menghitung angka
         });
-
-    formContainer.querySelectorAll("select").forEach((select) => {
-        select.selectedIndex = 0;
-    });
-
-    formContainer.querySelectorAll("textarea").forEach((textarea) => {
-        textarea.value = "";
-    });
+    document.querySelector('input[name="totalca"]').value = formatNumber(total);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    function formatInput(input) {
-        let value = input.value.replace(/\./g, "");
-        let formattedValue = formatNumber(
-            isNaN(parseFloat(value)) ? 0 : Math.floor(parseFloat(value))
-        );
-        input.value = formattedValue;
-        calculateTotalNominal();
-    }
-
-    function calculateTotalNominal() {
-        let total = Array.from(
-            document.querySelectorAll('input[name="nominal_nbt[]"]')
-        ).reduce((acc, input) => acc + parseNumber(input.value), 0);
-        document.getElementById("totalca").value = formatNumber(total);
-    }
-
     // Attach input event to the existing nominal fields
     document
         .querySelectorAll('input[name="nominal_nbt[]"]')
         .forEach((input) => {
             input.addEventListener("input", function () {
-                formatInput(this);
+                formatInputNBT(this); // Hanya memformat dan menghitung input nominal
+                calculateTotalNominal();
             });
         });
 
-    calculateTotalNominal();
+    calculateTotalNominal(); // Kalkulasi total saat halaman pertama kali dimuat
 });
+
+function formatInputNBT(input) {
+    let value = input.value.replace(/\./g, "");
+    value = parseFloat(value);
+    if (!isNaN(value)) {
+        input.value = formatNumber(Math.floor(value));
+    } else {
+        input.value = formatNumber(0);
+    }
+    calculateTotalNominal();
+}

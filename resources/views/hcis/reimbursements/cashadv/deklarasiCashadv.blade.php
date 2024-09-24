@@ -222,101 +222,8 @@
                             @if ($transactions->type_ca == 'ndns')
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated
-                                                    Cash Advanced</div>
-                                                <div class="card">
-                                                    <div class="card-body p-0">
-                                                        <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="enter-headingOne">
-                                                                    <button class="accordion-button fw-medium"
-                                                                        type="button" data-bs-toggle="collapse"
-                                                                        data-bs-target="#enter-collapseOne"
-                                                                        aria-expanded="true"
-                                                                        aria-controls="enter-collapseOne">
-                                                                        Non Business Trip
-                                                                    </button>
-                                                                </h2>
-                                                                @foreach ($detailCA as $item)
-                                                                    <div id="enter-collapseOne"
-                                                                        class="accordion-collapse show"
-                                                                        aria-labelledby="enter-headingOne">
-                                                                        <div class="accordion-body">
-                                                                            <div id="form-container">
-                                                                                <div class="mb-2">
-                                                                                    <label
-                                                                                        class="form-label">Tanggal</label>
-                                                                                    <input type="date"
-                                                                                        name="tanggal_nbt_decla[]"
-                                                                                        class="form-control bg-light"
-                                                                                        value="{{ $item['tanggal_nbt'] }}"
-                                                                                        readonly>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label
-                                                                                        class="form-label">Keterangan</label>
-                                                                                    <textarea name="keterangan_nbt_decla[]" class="form-control bg-light" readonly>{{ $item['keterangan_nbt'] }}</textarea>
-                                                                                </div>
-                                                                                <div class="mb-2">
-                                                                                    <label
-                                                                                        class="form-label">Accommodation</label>
-                                                                                </div>
-                                                                                <div class="input-group mb-3">
-                                                                                    <div class="input-group-append">
-                                                                                        <span
-                                                                                            class="input-group-text">Rp</span>
-                                                                                    </div>
-                                                                                    <input class="form-control bg-light"
-                                                                                        name="nominal_nbt_decla[]"
-                                                                                        id="nominal_nbt" type="text"
-                                                                                        min="0"
-                                                                                        value="{{ number_format($item['nominal_nbt'], 0, ',', '.') }}"
-                                                                                        readonly>
-                                                                                </div>
-                                                                                <hr
-                                                                                    class="border border-primary border-1 opacity-50">
-                                                                            </div>
-                                                                            {{-- <button type="button" id="add-more" class="btn btn-primary mb-3">Add More</button> --}}
-                                                                        </div>
-                                                                    </div>
-                                                                @endforeach
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="text-bg-danger mb-3 p-2" style="text-align:center">Estimated
-                                                    Cash Advanced Deklarasi</div>
-                                                <div class="card">
-                                                    <div class="card-body p-0">
-                                                        <div class="accordion" id="accordionPanelsStayOpenExample">
-                                                            <div class="accordion-item">
-                                                                <h2 class="accordion-header" id="enter-headingOne">
-                                                                    <button class="accordion-button fw-medium"
-                                                                        type="button" data-bs-toggle="collapse"
-                                                                        data-bs-target="#enter-collapseOne"
-                                                                        aria-expanded="true"
-                                                                        aria-controls="enter-collapseOne">
-                                                                        Deklarasi Non Business Trip
-                                                                    </button>
-                                                                </h2>
-                                                                <div id="enter-collapseOne"
-                                                                    class="accordion-collapse show"
-                                                                    aria-labelledby="enter-headingOne">
-                                                                    <div class="accordion-body">
-                                                                        <div id="form-container-nbt"></div>
-                                                                        <button type="button" id="add-more"
-                                                                            class="btn btn-primary mb-3">Add More</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="d-flex flex-column gap-2">
+                                            @include('hcis.reimbursements.cashadv.form_dec.nbt')
                                         </div>
                                     </div>
                                 </div>
@@ -327,8 +234,6 @@
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment
-                                            </div>
                                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link active" id="pills-detail-tab"
@@ -362,7 +267,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12 mb-2">
+                        <div class="col-md-12 mb-2 mt-2">
                             <label for="prove_declare" class="form-label">Upload Document</label>
 
                             <!-- Input file -->

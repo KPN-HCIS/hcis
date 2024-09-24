@@ -3,7 +3,6 @@
 
     window.addEventListener('DOMContentLoaded', function() {
         formCountDetail = document.querySelectorAll('#form-container-detail > div').length;
-        console.log("Form ada",formCountDetail);
         updateCheckboxVisibility();
     });
 
@@ -15,6 +14,7 @@
         newForm.id = `form-container-e-detail-${formCountDetail}`;
         newForm.className = "card-body bg-light p-2 mb-3";
         newForm.innerHTML = `
+            <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment ${formCountDetail}</p>
             <div class="row">
                 <div class="col-md-6 mb-2">
                     <label class="form-label">Entertainment Type</label>
@@ -94,6 +94,24 @@
         }
     }
 
+    function removeFormDetailDec(index, event) {
+        event.preventDefault();
+        if (formCountDetail > 0) {
+            let nominalValue = cleanNumber(document.querySelector(`#nominal_e_detail_${index}`).value);
+            let totalCA = cleanNumber(document.querySelector('input[name="totalca"]').value) || 0;
+            totalCA -= nominalValue;
+            document.querySelector('input[name="total_e_detail"]').value = formatNumber(totalCA);
+            document.querySelector('input[name="totalca"]').value = formatNumber(totalCA);
+
+            // Hide the form to be removed
+            let formContainer = document.getElementById(`form-container-e-detail-dec-${index}`);
+            formContainer.remove();
+            formCountDetail--;
+
+            updateCheckboxVisibility();
+        }
+    }
+
     function clearFormDetail(index, event) {
         event.preventDefault();
         if (formCountDetail > 0) {
@@ -141,16 +159,25 @@
         const selectedOptions = Array.from(document.querySelectorAll('select[name="enter_type_e_detail[]"]'))
             .map(select => select.value)
             .filter(value => value !== "");
-        for (let i = 1; i <= formCountDetail; i++) {
-            const formContainerERelation = document.getElementById(`form-container-e-relation-${i}`);
-            if (!formContainerERelation) continue; // Skip if the form does not exist
 
-            formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
+        const formContainerERelation = document.querySelectorAll('[id^="form-container-e-relation-"]');
+        const formContainerERelationDec = document.querySelectorAll('[id^="form-container-e-relation-dec-"]');
+
+        formContainerERelation.forEach(container => {
+            container.querySelectorAll('.form-check').forEach(checkDiv => {
                 const checkbox = checkDiv.querySelector('input.form-check-input');
                 const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
                 checkDiv.style.display = selectedOptions.includes(checkboxValue) ? 'block' : 'none';
             });
-        }
+        });
+
+        formContainerERelationDec.forEach(container => {
+            container.querySelectorAll('.form-check').forEach(checkDiv => {
+                const checkbox = checkDiv.querySelector('input.form-check-input');
+                const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
+                checkDiv.style.display = selectedOptions.includes(checkboxValue) ? 'block' : 'none';
+            });
+        });
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -185,45 +212,129 @@
 @if (!empty($detailCA['detail_e']) && $detailCA['detail_e'][0]['type'] !== null)
     <div id="form-container-detail">
         @foreach ($detailCA['detail_e'] as $detail)
-            <div id="form-container-e-detail-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">Entertainment Type</label>
-                        <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
-                            <option value="">-</option>
-                            <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
-                            <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
-                            <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
-                            <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
-                            <option value="fund" {{ $detail['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">Amount</label>
-                        <div class="input-group">
-                            <div class="input-group-append">
-                                <span class="input-group-text">Rp</span>
-                            </div>
-                            <input class="form-control" name="nominal_e_detail[]"
-                                id="nominal_e_detail_{{ $loop->index + 1 }}"
-                                type="text" min="0" value="{{ number_format($detail['nominal'], 0, ',', '.') }}"
-                                onfocus="this.value = this.value === '0' ? '' : this.value;"
-                                oninput="formatInputENT(this)">
+            <div id="form-container-e-detail-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
+                <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment {{ $loop->index + 1 }}</p>
+                <div id="form-container-e-detail-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
+                    <p class="fs-5 text-primary" style="font-weight: bold;">Detail Entertainment Request</p>
+                    <div class="row">
+                        <!-- Company Code -->
+                        <div class="col-md-6">
+                            <table class="table" style="border: none; border-collapse: collapse; padding: 1%;">
+                                <tr>
+                                    <th class="label" style="border: none; width:40%;">Entertainment Type</th>
+                                    <td class="colon" style="border: none; width:1%;">:</td>
+                                    <td class="value" style="border: none;">
+                                        @php
+                                            $typeMap = [
+                                                'food' => 'Food/Beverages/Souvenir',
+                                                'transport' => 'Transport',
+                                                'accommodation' => 'Accommodation',
+                                                'gift' => 'Gift',
+                                                'fund' => 'Fund',
+                                            ];
+                                        @endphp
+                                        {{ $typeMap[$detail['type']] ?? $detail['type'] }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="label" style="border: none;">Amount</th>
+                                    <td class="colon" style="border: none;">:</td>
+                                    <td class="value" style="border: none;">{{ number_format($detail['nominal'], 0, ',', '.') }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="label" style="border: none;">Entertainment Fee Detail</th>
+                                    <td class="colon" style="border: none;">:</td>
+                                    <td class="value" style="border: none;">{{ $detail['fee_detail'] }}</td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Entertainment Fee Detail</label>
-                        <textarea name="enter_fee_e_detail[]" class="form-control">{{ $detail['fee_detail'] }}</textarea>
-                    </div>
                 </div>
-                <br>
-                <div class="row mt-3">
-                    <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail({{ $loop->index + 1 }}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormDetail({{ $loop->index + 1 }}, event)">Delete</button>
+                <div id="form-container-e-detail-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
+                    <p class="fs-5 text-primary" style="font-weight: bold;">Detail Entertainment Declaration</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Entertainment Type</label>
+                            <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
+                                <option value="">-</option>
+                                <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
+                                <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
+                                <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
+                                <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                <option value="fund" {{ $detail['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Amount</label>
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <input class="form-control" name="nominal_e_detail[]"
+                                    id="nominal_e_detail_{{ $loop->index + 1 }}"
+                                    type="text" min="0" value="{{ number_format($detail['nominal'], 0, ',', '.') }}"
+                                    onfocus="this.value = this.value === '0' ? '' : this.value;"
+                                    oninput="formatInputENT(this)">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Entertainment Fee Detail</label>
+                            <textarea name="enter_fee_e_detail[]" class="form-control">{{ $detail['fee_detail'] }}</textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row mt-3">
+                        <div class="d-flex justify-start w-100">
+                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-warning mr-2" onclick="removeFormDetailDec({{ $loop->index + 1 }}, event)">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
+        @endforeach
+        @foreach ($declareCA['detail_e'] as $index => $detail_dec)
+            @if (!isset($detailCA['detail_e'][$index]))
+                <div id="form-container-e-detail-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
+                    <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment {{ $loop->index + 1 }}</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Entertainment Type</label>
+                            <select name="enter_type_e_detail[]" id="enter_type_e_detail_{{ $loop->index + 1 }}" class="form-select">
+                                <option value="">-</option>
+                                <option value="food" {{ $detail_dec['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
+                                <option value="transport" {{ $detail_dec['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
+                                <option value="accommodation" {{ $detail_dec['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
+                                <option value="gift" {{ $detail_dec['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                <option value="fund" {{ $detail_dec['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Amount</label>
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <input class="form-control" name="nominal_e_detail[]"
+                                    id="nominal_e_detail_{{ $loop->index + 1 }}"
+                                    type="text" min="0" value="{{ number_format($detail_dec['nominal'], 0, ',', '.') }}"
+                                    onfocus="this.value = this.value === '0' ? '' : this.value;"
+                                    oninput="formatInputENT(this)">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Entertainment Fee Detail</label>
+                            <textarea name="enter_fee_e_detail[]" class="form-control">{{ $detail_dec['fee_detail'] }}</textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row mt-3">
+                        <div class="d-flex justify-start w-100">
+                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-warning mr-2" onclick="removeFormDetail({{ $loop->index + 1 }}, event)">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            @endif
         @endforeach
     </div>
 

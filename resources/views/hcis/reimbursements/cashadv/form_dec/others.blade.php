@@ -106,8 +106,8 @@
             <div id="form-container-bt-lainnya-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
                 <p class="fs-4 text-primary" style="font-weight: bold; ">Others {{ $loop->index + 1 }}</p>
                 <div id="form-container-bt-lainnya-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
+                    <p class="fs-5 text-primary" style="font-weight: bold;">Others Request</p>
                     <div class="row">
-                        <p class="fs-5 text-primary" style="font-weight: bold;">Others Request</p>
                         <div class="col-md-6">
                             <table width="100%">
                                 <tr>
