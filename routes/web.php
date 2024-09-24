@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SendbackController as AdminSendbackController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\ApprovalReimburseController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -52,6 +53,10 @@ Route::get('inactive-employees', [EmployeeController::class, 'EmployeeInactive']
 Route::get('updmenu-employees', [EmployeeController::class, 'updateEmployeeAccessMenu']);
 Route::get('daily-schedules', [ScheduleController::class, 'reminderDailySchedules']);
 Route::get('update-designtaion', [DesignationController::class, 'UpdateDesignation']);
+// Route::get('generate-weeklyoff-shift', [AttendanceController::class, 'GenerateWeeklyShiftOff']);
+// Route::get('backup-daily-attendance', [AttendanceController::class, 'BackupDailyAttendance']);
+// Route::get('add-backdated-attendance', [AttendanceController::class, 'AddBackdatedAttendance']);
+Route::get('update-bt-to-db', [AttendanceController::class, 'UpdateBTtoDB']);
 
 Route::get('/test-email', function () {
     $messages = '<p>This is a test message with <strong>bold</strong> text.</p>';

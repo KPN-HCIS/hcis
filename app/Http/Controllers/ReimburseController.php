@@ -129,13 +129,13 @@ class ReimburseController extends Controller
             ->where('end_date', '<=', $today)
             ->count();
 
-        // foreach ($ca_transactions as $transaction) {
-        //     $transaction->settName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
-        //     if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
-        //         //$transaction->approval_status = 'Done';
-        //     }
+        foreach ($ca_transactions as $transaction) {
+            $transaction->settName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
+            // if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
+            //     //$transaction->approval_status = 'Done';
+            // }
             
-        // }
+        }
 
         return view('hcis.reimbursements.cashadv.cashadv', [
             'deklarasiCACount' => $deklarasiCACount,

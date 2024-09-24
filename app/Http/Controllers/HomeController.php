@@ -34,7 +34,13 @@ class HomeController extends Controller
             return redirect('home');
 
 
-    return view($first .'.'. $second);
+        // Cek apakah view tersebut ada sebelum merendernya
+        if (view()->exists($first . '.' . $second)) {
+            return view($first . '.' . $second);
+        } else {
+            // Jika view tidak ditemukan, kembalikan ke halaman 404 atau error lain
+            return response()->view('errors.404', [], 404);
+        }
     }
 
     public function thirdLevel(Request $request, $first, $second, $third)
