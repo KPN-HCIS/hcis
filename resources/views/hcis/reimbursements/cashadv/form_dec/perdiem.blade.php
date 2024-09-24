@@ -342,7 +342,7 @@
 
 
 </script>
-@if ((!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null) || (!empty($declarelCA['detail_perdiem']) && $declarelCA['detail_perdiem'][0]['start_date'] !== null))
+@if (!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null)
     {{-- Form Edit --}}
     <div id="form-container-perdiem">
         @foreach ($detailCA['detail_perdiem'] as $index => $perdiem)
@@ -400,44 +400,44 @@
                 </div>
                 <div id="form-container-bt-perdiem-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
                     <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
-                    <div class="row">
-                        <!-- Company Code -->
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label" for="company_bt_perdiem{{ $loop->index + 1 }}">Company Code</label>
-                            <select class="form-control select2" id="company_bt_perdiem_{{ $loop->index + 1 }}" name="company_bt_perdiem[]">
-                                <option value="">Select Company...</option>
-                                @foreach($companies as $company)
-                                    <option value="{{ $company->contribution_level_code }}"
-                                        @if($company->contribution_level_code == $perdiem['company_code']) selected @endif>
-                                        {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                    <input type="hidden" value="{{$perdiem['location']}}" name="location_bt_perdiem[]">
+                    @if (isset($declareCA['detail_perdiem'][$index]))
+                        @php
+                            $perdiem_dec = $declareCA['detail_perdiem'][$index];
+                        @endphp
+                        <div class="row">
+                            <!-- Company Code -->
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label" for="company_bt_perdiem{{ $loop->index + 1 }}">Company Code</label>
+                                <select class="form-control select2" id="company_bt_perdiem_{{ $loop->index + 1 }}" name="company_bt_perdiem[]">
+                                    <option value="">Select Company...</option>
+                                    @foreach($companies as $company)
+                                        <option value="{{ $company->contribution_level_code }}"
+                                            @if($company->contribution_level_code == $perdiem_dec['company_code']) selected @endif>
+                                            {{ $company->contribution_level." (".$company->contribution_level_code.")" }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-                        <!-- Location Agency -->
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label" for="locationFilter">Location Agency</label>
-                            <select class="form-control select2" name="location_bt_perdiem[]" id="location_bt_perdiem_{{ $loop->index + 1 }}" onchange="toggleOtherLocation(this, {{ $loop->index + 1 }})">
-                                <option value="">Select location...</option>
-                                @foreach($locations as $location)
-                                    <option value="{{ $location->area }}" @if($location->area == $perdiem['location']) selected @endif>
-                                        {{ $location->area." (".$location->company_name.")" }}
-                                    </option>
-                                @endforeach
-                                <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
-                            </select>
-                            <div id="other-location-{{ $loop->index + 1 }}" class="mt-3" @if($perdiem['location'] != 'Others') style="display: none;" @endif>
-                                <input type="text" name="other_location_bt_perdiem[]" class="form-control" placeholder="Other Location" value="{{ $perdiem['other_location'] ?? '' }}">
+                            <!-- Location Agency -->
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label" for="locationFilter">Location Agency</label>
+                                <select class="form-control select2" name="location_bt_perdiem[]" id="location_bt_perdiem_{{ $loop->index + 1 }}" onchange="toggleOtherLocation(this, {{ $loop->index + 1 }})">
+                                    <option value="">Select location...</option>
+                                    @foreach($locations as $location)
+                                        <option value="{{ $location->area }}" @if($location->area == $perdiem_dec['location']) selected @endif>
+                                            {{ $location->area." (".$location->company_name.")" }}
+                                        </option>
+                                    @endforeach
+                                    <option value="Others" @if('Others' == $perdiem_dec['location']) selected @endif>Others</option>
+                                </select>
+                                <div id="other-location-{{ $loop->index + 1 }}" class="mt-3" @if($perdiem_dec['location'] != 'Others') style="display: none;" @endif>
+                                    <input type="text" name="other_location_bt_perdiem[]" class="form-control" placeholder="Other Location" value="{{ $perdiem_dec['other_location'] ?? '' }}">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <input type="hidden" value="{{$perdiem['location']}}" name="location_bt_perdiem[]">
-                        @if (isset($declareCA['detail_perdiem'][$index]))
-                            @php
-                                $perdiem_dec = $declareCA['detail_perdiem'][$index];
-                            @endphp
+                        <div class="row">
                             <!-- Start Perdiem -->
                             <div class="col-md-4 mb-2">
                                 <label class="form-label">Start Perdiem</label>
@@ -468,8 +468,8 @@
                                     <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text" value="{{ number_format($perdiem_dec['nominal'], 0, ',', '.') }}" onchange="onNominalChange()" readonly>
                                 </div>
                             </div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
@@ -571,6 +571,8 @@
             <input class="form-control form-control-sm bg-light" name="total_bt_perdiem" id="total_bt_perdiem" type="text" value="{{ number_format(array_sum(array_column($declareCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}" readonly>
         </div>
     </div>
+@elseif (!empty($declarelCA['detail_perdiem']) && $declarelCA['detail_perdiem'][0]['start_date'] !== null)
+<h1>Hi</h1>
 @else
     {{-- Form Add --}}
     <div id="form-container-perdiem">
@@ -664,3 +666,4 @@
         </div>
     </div>
 @endif
+
