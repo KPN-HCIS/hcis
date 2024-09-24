@@ -342,7 +342,7 @@
 
 
 </script>
-@if (!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null)
+@if ((!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null) || (!empty($declarelCA['detail_perdiem']) && $declarelCA['detail_perdiem'][0]['start_date'] !== null))
     {{-- Form Edit --}}
     <div id="form-container-perdiem">
         @foreach ($detailCA['detail_perdiem'] as $index => $perdiem)
@@ -568,10 +568,9 @@
             <div class="input-group-append">
                 <span class="input-group-text">Rp</span>
             </div>
-            <input class="form-control form-control-sm bg-light" name="total_bt_perdiem" id="total_bt_perdiem" type="text" value="{{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}" readonly>
+            <input class="form-control form-control-sm bg-light" name="total_bt_perdiem" id="total_bt_perdiem" type="text" value="{{ number_format(array_sum(array_column($declareCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}" readonly>
         </div>
     </div>
-
 @else
     {{-- Form Add --}}
     <div id="form-container-perdiem">

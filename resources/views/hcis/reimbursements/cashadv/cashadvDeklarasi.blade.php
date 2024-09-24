@@ -142,12 +142,12 @@
                                             <td>{{ \Carbon\Carbon::parse($ca_transaction->start_date)->format('d-M-y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($ca_transaction->end_date)->format('d-M-y') }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
-                                            <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
+                                            <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
                                             <td>
-                                                @if ($ca_transaction->total_cost < 0)
-                                                    <span class="text-danger">Rp. -{{ number_format(abs($ca_transaction->total_cost)) }}</span>
+                                                @if ($ca_transaction->total_real < 0)
+                                                    <span class="text-danger">Rp. {{ number_format($ca_transaction->total_real) }}</span>
                                                 @else
-                                                    <span class="text-success">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
+                                                    <span class="text-success">Rp. {{ number_format(abs($ca_transaction->total_real)) }}</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -302,12 +302,5 @@
                 });
             });
         });
-        // Periksa apakah ada pesan sukses
-        var successMessage = "{{ session('success') }}";
-
-        // Jika ada pesan sukses, tampilkan sebagai alert
-        if (successMessage) {
-            alert(successMessage);
-        }
     </script>
 @endpush

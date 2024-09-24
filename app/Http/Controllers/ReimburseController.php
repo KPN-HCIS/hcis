@@ -1503,14 +1503,16 @@ class ReimburseController extends Controller
             ];
             $model->declare_ca = json_encode($declare_ca);
         }
-        $model->total_ca = str_replace('.', '', $req->totalca);
-        $model->total_real = str_replace('.', '', $req->totalca_deklarasi);
-        $model->total_cost = $model->total_ca - $model->total_real;
+        $model->total_ca = str_replace('.', '', $req->totalca_deklarasi);
+        $model->total_cost = str_replace('.', '', $req->totalca);
+        $model->total_real = $model->total_ca - $model->total_cost;
         //tambah 1 status disini
 
 
         if ($req->input('action_ca_draft')) {
             $model->approval_sett = $req->input('action_ca_draft');
+            $model->save();
+            return redirect()->route('cashadvancedDeklarasi')->with('success', 'Transaction successfully Added in Draft.');
         }
         if ($req->input('action_ca_submit')) {
             $model->approval_sett = $req->input('action_ca_submit');
@@ -1613,8 +1615,7 @@ class ReimburseController extends Controller
         $model->declaration_at = Carbon::now();
         $model->save();
 
-        Alert::success('Success Update');
-        return redirect()->intended(route('cashadvancedDeklarasi', absolute: false));
+        return redirect()->route('cashadvancedDeklarasi')->with('success', 'Transaction successfully added waiting for Approval.');
     }
 
     public function hotel()
