@@ -141,16 +141,25 @@
         const selectedOptions = Array.from(document.querySelectorAll('select[name="enter_type_e_detail[]"]'))
             .map(select => select.value)
             .filter(value => value !== "");
-        for (let i = 1; i <= formCountDetail; i++) {
-            const formContainerERelation = document.getElementById(`form-container-e-relation-${i}`);
-            if (!formContainerERelation) continue; // Skip if the form does not exist
 
-            formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
+        const formContainerERelation = document.querySelectorAll('[id^="form-container-e-relation-"]');
+        const formContainerERelationDec = document.querySelectorAll('[id^="form-container-e-relation-dec-"]');
+
+        formContainerERelation.forEach(container => {
+            container.querySelectorAll('.form-check').forEach(checkDiv => {
                 const checkbox = checkDiv.querySelector('input.form-check-input');
                 const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
                 checkDiv.style.display = selectedOptions.includes(checkboxValue) ? 'block' : 'none';
             });
-        }
+        });
+
+        formContainerERelationDec.forEach(container => {
+            container.querySelectorAll('.form-check').forEach(checkDiv => {
+                const checkbox = checkDiv.querySelector('input.form-check-input');
+                const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
+                checkDiv.style.display = selectedOptions.includes(checkboxValue) ? 'block' : 'none';
+            });
+        });
     }
 
     document.addEventListener('DOMContentLoaded', function() {

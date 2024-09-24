@@ -364,6 +364,7 @@
             document.querySelector('input[name="totalca"]').value = formatNumber(total);
         }
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // ca_type ca_nbt ca_e
@@ -373,8 +374,6 @@
             var div_bisnis_numb = document.getElementById("div_bisnis_numb");
             var bisnis_numb = document.getElementById("bisnis_numb");
             var div_allowance = document.getElementById("div_allowance");
-            var others = document.getElementById("location_bt_perdiem[]");
-            var others_loc = document.getElementById("other_location_bt_perdiem[]");
 
             function toggleDivs() {
                 if (ca_type.value === "dns") {
@@ -383,19 +382,19 @@
                     ca_e.style.display = "none";
                     div_bisnis_numb.style.display = "block";
                     div_allowance.style.display = "block";
-                } else if (ca_type.value === "ndns"){
+                } else if (ca_type.value === "ndns") {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "block";
                     ca_e.style.display = "none";
                     div_bisnis_numb.style.display = "none";
                     bisnis_numb.style.value = "";
                     div_allowance.style.display = "none";
-                } else if (ca_type.value === "entr"){
+                } else if (ca_type.value === "entr") {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "block";
                     div_bisnis_numb.style.display = "block";
-                } else{
+                } else {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
@@ -409,7 +408,6 @@
         });
 
         function toggleOthers() {
-            // ca_type ca_nbt ca_e
             var locationFilter = document.getElementById("locationFilter");
             var others_location = document.getElementById("others_location");
 
@@ -420,6 +418,73 @@
                 others_location.value = "";
             }
         }
+
+        function validateInput(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+            const totalDaysInput = document.getElementById('totaldays');
+            const perdiemInput = document.getElementById('perdiem');
+            const allowanceInput = document.getElementById('allowance');
+            const othersLocationInput = document.getElementById('others_location');
+            const transportInput = document.getElementById('transport');
+            const accommodationInput = document.getElementById('accommodation');
+            const otherInput = document.getElementById('other');
+            const totalcaInput = document.getElementById('totalca');
+            const nominal_1Input = document.getElementById('nominal_1');
+            const nominal_2Input = document.getElementById('nominal_2');
+            const nominal_3Input = document.getElementById('nominal_3');
+            const nominal_4Input = document.getElementById('nominal_4');
+            const nominal_5Input = document.getElementById('nominal_5');
+            const caTypeInput = document.getElementById('ca_type');
+
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function calculateTotalDays() {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
+                    const timeDiff = endDate - startDate;
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    if (othersLocationInput.value.trim() !== '') {
+                        allowance *= 1; // allowance * 50%
+                    } else {
+                        allowance *= 0.5;
+                    }
+
+                    allowanceInput.value = formatNumber(Math.floor(allowance));
+                } else {
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
+                }
+                calculateTotalCA();
+            }
+
+            startDateInput.addEventListener('change', calculateTotalDays);
+            endDateInput.addEventListener('change', calculateTotalDays);
+            othersLocationInput.addEventListener('input', calculateTotalDays);
+            caTypeInput.addEventListener('change', calculateTotalDays);
+            [transportInput, accommodationInput, otherInput, allowanceInput, nominal_1, nominal_2, nominal_3,
+                nominal_4, nominal_5
+            ].forEach(input => {
+                input.addEventListener('input', () => formatInput(input));
+            });
+        });
 
         document.getElementById('end_date').addEventListener('change', function() {
             const endDate = new Date(this.value);
@@ -435,217 +500,78 @@
     </script>
 
     <script>
-        $(document).ready(function() {
-            $('.select2').select2({
-                theme: "bootstrap-5",
+        function previewFile() {
+            const fileInput = document.getElementById('prove_declare');
+            const file = fileInput.files[0];
+            const preview = document.getElementById('existing-file-preview');
+            preview.innerHTML = ''; // Kosongkan preview sebelumnya
 
+            if (file) {
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                    const img = document.createElement('img');
+                    img.style.maxWidth = '200px';
+                    img.src = URL.createObjectURL(file);
+                    preview.appendChild(img);
+                } else if (fileExtension === 'pdf') {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(file);
+                    link.target = '_blank';
+                    const icon = document.createElement('img');
+                    icon.src = "https://img.icons8.com/color/48/000000/pdf.png";
+                    icon.style.maxWidth = '48px';
+                    link.appendChild(icon);
+                    const text = document.createElement('p');
+                    text.textContent = "Click to view PDF";
+                    preview.appendChild(link);
+                    preview.appendChild(text);
+                } else {
+                    preview.textContent = 'File type not supported.';
+                }
+            }
+        }
+    </script>
+
+    <script>
+        document.getElementById('start_date').addEventListener('change', handleDateChange);
+        document.getElementById('end_date').addEventListener('change', handleDateChange);
+
+        function handleDateChange() {
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+
+            // Set the min attribute of the end_date input to the selected start_date
+            endDateInput.min = startDateInput.value;
+
+            // Validate dates
+            if (endDate < startDate) {
+                alert("End Date cannot be earlier than Start Date");
+                endDateInput.value = "";
+            }
+
+            // Update min and max values for all dynamic perdiem date fields
+            document.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
+                input.min = startDateInput.value;
+                input.max = endDateInput.value;
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var collapseTransport = document.getElementById('collapseTransport');
-            collapseTransport.addEventListener('show.bs.collapse', function() {
-                var inputsToReset = collapseTransport.querySelectorAll('[data-clear-on-collapse]');
-                inputsToReset.forEach(function(input) {
-                    if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
-                        input.value = '';
-                    } else if (input.tagName === 'SELECT') {
-                        input.selectedIndex = 0;
-                    }
-                });
+            document.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
+                input.min = startDateInput.value;
+                input.max = endDateInput.value;
             });
-        });
 
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const formContainerEDetail = document.getElementById('form-container-e-detail');
-        //     const formContainerERelation = document.getElementById('form-container-e-relation');
-
-        //     // Function to update checkboxes visibility based on selected options
-        //     function updateCheckboxVisibility() {
-        //         // Gather all selected options from enter_type_e_detail
-        //         const selectedOptions = Array.from(document.querySelectorAll('select[name="enter_type_e_detail[]"]'))
-        //             .map(select => select.value)
-        //             .filter(value => value !== "");
-
-        //         // Update visibility for each checkbox in enter_type_e_relation
-        //         formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
-        //             const checkbox = checkDiv.querySelector('input.form-check-input');
-        //             const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
-        //             if (selectedOptions.includes(checkboxValue)) {
-        //                 checkDiv.style.display = 'block';
-        //             } else {
-        //                 checkDiv.style.display = 'none';
-        //             }
-        //         });
-        //     }
-
-        //     // Function to format number with thousands separator
-        //     function formatNumber(num) {
-        //         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        //     }
-
-        //     // Function to parse number from formatted string
-        //     function parseNumber(value) {
-        //         return parseFloat(value.replace(/\./g, '')) || 0;
-        //     }
-
-        //     // Function to format input fields
-        //     function formatInput(input) {
-        //         let value = input.value.replace(/\./g, '');
-        //         value = parseFloat(value);
-        //         if (!isNaN(value)) {
-        //             input.value = formatNumber(Math.floor(value));
-        //         } else {
-        //             input.value = formatNumber(0);
-        //         }
-        //         calculateTotalNominalEDetail();
-        //     }
-
-        //     // Function to calculate the total nominal value for EDetail
-        //     function calculateTotalNominalEDetail() {
-        //         let total = 0;
-        //         document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
-        //             total += parseNumber(input.value);
-        //         });
-        //         document.querySelector('input[name="total_e_detail[]"]').value = formatNumber(total);
-        //         document.getElementById('totalca').value = formatNumber(total);
-        //     }
-
-        //     // Function to add new EDetail form
-        //     function addNewEDetailForm() {
-        //         const newFormEDetail = document.createElement('div');
-        //         newFormEDetail.classList.add('mb-2');
-
-        //         newFormEDetail.innerHTML = `
-        //             <div class="mb-2">
-        //                 <label class="form-label">Entertainment Type</label>
-        //                 <select name="enter_type_e_detail[]" class="form-select">
-        //                     <option value="">-</option>
-        //                     <option value="food">Food/Beverages/Souvenir</option>
-        //                     <option value="transport">Transport</option>
-        //                     <option value="accommodation">Accommodation</option>
-        //                     <option value="gift">Gift</option>
-        //                     <option value="fund">Fund</option>
-        //                 </select>
-        //             </div>
-        //             <div class="mb-2">
-        //                 <label class="form-label">Entertainment Fee Detail</label>
-        //                 <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
-        //             </div>
-        //             <div class="input-group mb-3">
-        //                 <div class="input-group-append">
-        //                     <span class="input-group-text">Rp</span>
-        //                 </div>
-        //                 <input class="form-control" name="nominal_e_detail[]" type="text" min="0" value="0">
-        //             </div>
-        //             <button type="button" class="btn btn-danger remove-form-e-detail">Remove</button>
-        //             <hr class="border border-primary border-1 opacity-50">
-        //         `;
-
-        //         formContainerEDetail.appendChild(newFormEDetail);
-
-        //         // Attach input event to the newly added nominal field
-        //         newFormEDetail.querySelector('input[name="nominal_e_detail[]"]').addEventListener('input', function() {
-        //             formatInput(this);
-        //         });
-
-        //         // Attach change event to update checkbox visibility
-        //         newFormEDetail.querySelector('select[name="enter_type_e_detail[]"]').addEventListener('change', updateCheckboxVisibility);
-
-        //         // Attach click event to the remove button
-        //         newFormEDetail.querySelector('.remove-form-e-detail').addEventListener('click', function() {
-        //             newFormEDetail.remove();
-        //             updateCheckboxVisibility();
-        //             calculateTotalNominalEDetail();
-        //         });
-        //     }
-
-        //     // Function to add new ERelation form
-        //     function addNewERelationForm() {
-        //         const newFormERelation = document.createElement('div');
-        //         newFormERelation.classList.add('mb-2');
-
-        //         newFormERelation.innerHTML = `
-        //             <div class="mb-2">
-        //                 <label class="form-label">Relation Type</label>
-        //                 <div class="form-check">
-        //                     <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="transport_e_relation[]" value="transport">
-        //                     <label class="form-check-label" for="transport_e_relation[]">Transport</label>
-        //                 </div>
-        //                 <div class="form-check">
-        //                     <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
-        //                     <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
-        //                 </div>
-        //                 <div class="form-check">
-        //                     <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation[]" value="gift">
-        //                     <label class="form-check-label" for="gift_e_relation[]">Gift</label>
-        //                 </div>
-        //                 <div class="form-check">
-        //                     <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
-        //                     <label class="form-check-label" for="fund_e_relation[]">Fund</label>
-        //                 </div>
-        //                 <div class="form-check">
-        //                     <input class="form-check-input" type="checkbox" id="food_e_relation[]" name="food_e_relation[]" value="food">
-        //                     <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
-        //                 </div>
-        //             </div>
-        //             <div class="mb-2">
-        //                 <label class="form-label">Name</label>
-        //                 <input type="text" name="rname_e_relation[]" class="form-control">
-        //             </div>
-        //             <div class="mb-2">
-        //                 <label class="form-label">Position</label>
-        //                 <input type="text" name="rposition_e_relation[]" class="form-control">
-        //             </div>
-        //             <div class="mb-2">
-        //                 <label class="form-label">Company</label>
-        //                 <input type="text" name="rcompany_e_relation[]" class="form-control">
-        //             </div>
-        //             <div class="mb-3">
-        //                 <label class="form-label">Purpose</label>
-        //                 <input type="text" name="rpurpose_e_relation[]" class="form-control">
-        //             </div>
-        //             <button type="button" class="btn btn-danger remove-form-e-relation">Remove</button>
-        //             <hr class="border border-primary border-1 opacity-50">
-        //         `;
-
-        //         formContainerERelation.appendChild(newFormERelation);
-
-        //         // Initial update of checkbox visibility
-        //         updateCheckboxVisibility();
-
-        //         // Attach click event to the remove button
-        //         newFormERelation.querySelector('.remove-form-e-relation').addEventListener('click', function() {
-        //             newFormERelation.remove();
-        //             updateCheckboxVisibility();
-        //         });
-        //     }
-
-        //     document.getElementById('add-more-e-detail').addEventListener('click', addNewEDetailForm);
-        //     document.getElementById('add-more-e-relation').addEventListener('click', addNewERelationForm);
-
-        //     // Attach input event to the existing nominal fields
-        //     document.querySelectorAll('input[name="nominal_e_detail[]"]').forEach(input => {
-        //         input.addEventListener('input', function() {
-        //             formatInput(this);
-        //         });
-        //     });
-
-        //     // Attach change event to existing select fields for checkbox visibility
-        //     document.querySelectorAll('select[name="enter_type_e_detail[]"]').forEach(select => {
-        //         select.addEventListener('change', updateCheckboxVisibility);
-        //     });
-
-        //     calculateTotalNominalEDetail();
-        //     updateCheckboxVisibility();
-        // });
-
-        document.querySelector("#test").addEventListener("click", ()=>{
-            Swal.fire("SweetAlert2 is working!");
-        });
-
+            document.querySelectorAll('input[name="total_days_bt_perdiem[]"]').forEach(function(input) {
+                calculateTotalDaysPerdiem(input);
+            });
+        }
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endpush
