@@ -20,9 +20,9 @@
             <a href="{{ route('cashadvancedDeklarasi') }}"
             class="btn {{ request()->routeIs('cashadvancedDeklarasi') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill shadow w-100 position-relative">
                 Declaration
-                {{-- @if ( $deklarasiCACount >= 1 )
+                @if ( $deklarasiCACount >= 1 )
                     <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $deklarasiCACount }}</span>
-                @endif --}}
+                @endif
             </a>
         </div>
     </div>

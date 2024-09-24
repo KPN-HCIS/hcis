@@ -122,11 +122,12 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
-            ->where('end_date', '<=', $today)
+            ->where('end_date', '<=', $today)->where('approval_status', 'Approved')
             ->count();
 
         foreach ($ca_transactions as $transaction) {
@@ -175,8 +176,9 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
+                    ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
@@ -302,7 +304,7 @@ class ReimburseController extends Controller
             ->get();
 
         $reason = ca_sett_approval::whereIn('ca_id', $ca_transactions->pluck('id'))
-            ->pluck('reject_reason', 'ca_id');
+            ->pluck('reject_info', 'ca_id');
 
         // dd($ca_transactions);
         foreach ($ca_transactions as $transaction) {
@@ -312,12 +314,13 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
+            ->where('approval_status', '!=', 'Rejected')
             ->count();
 
         return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
@@ -368,7 +371,7 @@ class ReimburseController extends Controller
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
@@ -414,11 +417,11 @@ class ReimburseController extends Controller
             ->pluck('fullname', 'employee_id');
 
         $reason = ca_approval::whereIn('ca_id', $ca_transactions->pluck('id'))
-            ->pluck('reject_reason', 'ca_id');
+            ->pluck('reject_info', 'ca_id');
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
-                $query->where('approval_sett', 'Waiting for Declaration')
+                $query->where('approval_sett', '')
                     ->orWhere('approval_sett', 'Declaration')
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
@@ -449,18 +452,37 @@ class ReimburseController extends Controller
             'reason' => $reason,
         ]);
     }
-    function cashadvancedCreate()
+    function cashadvancedCreate(Request $request)
     {
 
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
 
+        $formCount = $request->input('form_count', 1);  // Default to 1 if no form_count
+
+        // If "Add More" was clicked, increase the form count
+        if ($request->has('add_more')) {
+            $formCount++;
+        }
+
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = BusinessTrip::where('user_id', $userId)->where('status', '!=', 'Verified')->get();
+        $noSppdListDNS = CATransaction::whereNotNull('no_sppd')
+            ->where('user_id', $userId)
+            ->where('no_sppd', '!=', '')
+            ->where('type_ca', 'dns')
+            ->pluck('no_sppd');
+        $noSppdListENT = CATransaction::whereNotNull('no_sppd')
+            ->where('user_id', $userId)
+            ->where('no_sppd', '!=', '')
+            ->where('type_ca', 'dns')
+            ->pluck('no_sppd');
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where('status', '!=', 'Verified')
+            ->get();
 
         function findDepartmentHead($employee)
         {
@@ -515,9 +537,12 @@ class ReimburseController extends Controller
             'employee_data' => $employee_data,
             'perdiem' => $perdiem,
             'no_sppds' => $no_sppds,
+            'noSppdListDNS' => $noSppdListDNS,
+            'noSppdListENT' => $noSppdListENT,
             'managerL1' => $managerL1,
             'managerL2' => $managerL2,
             'director_id' => $director_id,
+            'formCount' => $formCount,
         ]);
     }
     public function cashadvancedSubmit(Request $req)
@@ -548,7 +573,6 @@ class ReimburseController extends Controller
         $model->id = $uuid;
         $model->type_ca = $req->ca_type;
         $model->no_ca = $newNoCa;
-        $model->no_sppd = $req->bisnis_numb;
         $model->user_id = $userId;
         $model->unit = $req->unit;
         $model->contribution_level_code = $req->companyFilter;
@@ -569,7 +593,6 @@ class ReimburseController extends Controller
 
             // Loop untuk Perdiem
             if ($req->has('start_bt_perdiem')) {
-                // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
                 foreach ($req->start_bt_perdiem as $key => $startDate) {
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
@@ -577,17 +600,19 @@ class ReimburseController extends Controller
                     $other_location = $req->other_location_bt_perdiem[$key];
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
-                    // $totalPerdiem = str_replace('.', '', $req->total_bt_perdiem[]);
 
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'location' => $location,
-                        'other_location' => $other_location,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    // Check for valid data before adding to detail array
+                    if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_perdiem[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'location' => $location,
+                            'other_location' => $other_location,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -598,12 +623,14 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_transport[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($keterangan) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_transport[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -616,14 +643,16 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_penginapan[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_penginapan[$key]);
 
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'hotel_name' => $hotelName,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_penginapan[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'hotel_name' => $hotelName,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -633,11 +662,13 @@ class ReimburseController extends Controller
                     $keterangan = $req->keterangan_bt_lainnya[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_lainnya[$key]);
 
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($keterangan) && !empty($nominal)) {
+                        $detail_lainnya[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -651,6 +682,7 @@ class ReimburseController extends Controller
 
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
+            $model->no_sppd = $req->bisnis_numb_dns;
         } else if ($req->ca_type == 'ndns') {
             $detail_ndns = [];
             if ($req->has('tanggal_nbt')) {
@@ -658,11 +690,13 @@ class ReimburseController extends Controller
                     $keterangan_nbt = $req->keterangan_nbt[$key];
                     $nominal_nbt = str_replace('.', '', $req->nominal_nbt[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
-                    $detail_ndns[] = [
-                        'tanggal_nbt' => $tanggal,
-                        'keterangan_nbt' => $keterangan_nbt,
-                        'nominal_nbt' => $nominal_nbt,
-                    ];
+                    if (!empty($tanggal) && !empty($keterangan_nbt) && !empty($nominal_nbt)) {
+                        $detail_ndns[] = [
+                            'tanggal_nbt' => $tanggal,
+                            'keterangan_nbt' => $keterangan_nbt,
+                            'nominal_nbt' => $nominal_nbt,
+                        ];
+                    }
                 }
             }
             $detail_ndns_json = json_encode($detail_ndns);
@@ -678,30 +712,39 @@ class ReimburseController extends Controller
                     $fee_detail = $req->enter_fee_e_detail[$key];
                     $nominal = str_replace('.', '', $req->nominal_e_detail[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
-                    $detail_e[] = [
-                        'type' => $type,
-                        'fee_detail' => $fee_detail,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($type) && !empty($fee_detail) && !empty($nominal)) {
+                        $detail_e[] = [
+                            'type' => $type,
+                            'fee_detail' => $fee_detail,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
             // Mengumpulkan detail relation
             if ($req->has('rname_e_relation')) {
                 foreach ($req->rname_e_relation as $key => $name) {
-                    $relation_e[] = [
-                        'name' => $name,
-                        'position' => $req->rposition_e_relation[$key],
-                        'company' => $req->rcompany_e_relation[$key],
-                        'purpose' => $req->rpurpose_e_relation[$key],
-                        'relation_type' => array_filter([
-                            'Food' => in_array('food', $req->food_e_relation ?? [$key]),
-                            'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                            'Accomsmodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
-                            'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
-                            'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
-                        ], fn($checked) => $checked),
-                    ];
+                    $position = $req->rposition_e_relation[$key];
+                    $company = $req->rcompany_e_relation[$key];
+                    $purpose = $req->rpurpose_e_relation[$key];
+
+                    // Memastikan semua data yang diperlukan untuk relation terisi
+                    if (!empty($name) && !empty($position) && !empty($company) && !empty($purpose)) {
+                        $relation_e[] = [
+                            'name' => $name,
+                            'position' => $position,
+                            'company' => $company,
+                            'purpose' => $purpose,
+                            'relation_type' => array_filter([
+                                'Food' => in_array('food', $req->food_e_relation ?? [$key]),
+                                'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
+                                'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
+                                'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
+                                'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
+                            ], fn($checked) => $checked),
+                        ];
+                    }
                 }
             }
 
@@ -712,6 +755,7 @@ class ReimburseController extends Controller
             ];
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
+            $model->no_sppd = $req->bisnis_numb_ent;
         }
 
         $model->total_ca = str_replace('.', '', $req->totalca);
@@ -720,6 +764,9 @@ class ReimburseController extends Controller
 
         if ($req->input('action_ca_draft')) {
             $model->approval_status = $req->input('action_ca_draft');
+            $model->created_by = $userId;
+            $model->save();
+            return redirect()->route('cashadvanced')->with('success', 'Transaction successfully Added in Draft.');
         }
         if ($req->input('action_ca_submit')) {
             $model->approval_status = $req->input('action_ca_submit');
@@ -822,8 +869,7 @@ class ReimburseController extends Controller
         $model->created_by = $userId;
         $model->save();
 
-        Alert::success('Success');
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
     }
     function cashadvancedEdit($key)
     {
@@ -835,7 +881,19 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
-        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $noSppdListDNS = CATransaction::whereNotNull('no_sppd')
+            ->where('user_id', $userId)
+            ->where('no_sppd', '!=', '')
+            ->where('type_ca', 'dns')
+            ->pluck('no_sppd');
+        $noSppdListENT = CATransaction::whereNotNull('no_sppd')
+            ->where('user_id', $userId)
+            ->where('no_sppd', '!=', '')
+            ->where('type_ca', 'dns')
+            ->pluck('no_sppd');
+        $no_sppds = BusinessTrip::where('user_id', $userId)
+            ->where('status', '!=', 'Verified')
+            ->get();
         // $transactions = CATransaction::find($key);
         $transactions = CATransaction::findByRouteKey($key);
         // dd($key);
@@ -847,6 +905,8 @@ class ReimburseController extends Controller
             'locations' => $locations,
             'employee_data' => $employee_data,
             'perdiem' => $perdiem,
+            'noSppdListENT' => $noSppdListENT,
+            'noSppdListDNS' => $noSppdListDNS,
             'no_sppds' => $no_sppds,
             'transactions' => $transactions,
         ]);
@@ -884,7 +944,7 @@ class ReimburseController extends Controller
                     $endDate = $req->end_bt_perdiem[$key];
                     $totalDays = $req->total_days_bt_perdiem[$key];
                     $location = $req->location_bt_perdiem[$key];
-                    $other_location = $req->other_location_bt_perdiem[$key];
+                    $other_location = $req->other_location_bt_perdiem[$key] ?? '';
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
 
@@ -904,7 +964,7 @@ class ReimburseController extends Controller
             if ($req->has('tanggal_bt_transport')) {
                 foreach ($req->tanggal_bt_transport as $key => $tanggal) {
                     $keterangan = $req->keterangan_bt_transport[$key];
-                    // $companyCode = $req->company_bt_transport[$key];
+                    $companyCode = $req->company_bt_transport[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
                     $detail_transport[] = [
@@ -1027,6 +1087,8 @@ class ReimburseController extends Controller
         $model->total_cost = str_replace('.', '', $req->totalca);
         if ($req->input('action_ca_draft')) {
             $model->approval_status = $req->input('action_ca_draft');
+            $model->save();
+            return redirect()->route('cashadvanced')->with('success', 'Transaction successfully Added in Draft.');
         }
         if ($req->input('action_ca_submit')) {
             $model->approval_status = $req->input('action_ca_submit');
@@ -1126,10 +1188,7 @@ class ReimburseController extends Controller
             }
         }
         $model->save();
-        // dd($model);
-
-        Alert::success('Success Update');
-        return redirect()->intended(route('cashadvanced', absolute: false));
+        return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
     }
     public function cashadvancedExtend(Request $req)
     {
@@ -1229,9 +1288,13 @@ class ReimburseController extends Controller
     function cashadvancedDelete($id)
     {
         $model = ca_transaction::find($id);
-        $model->delete();
-        // return redirect()->intended(route('cashadvanced.admin', absolute: false));
-        return redirect()->back()->with('success', 'Transaction successfully deleted.');
+
+        if ($model) {
+            $model->delete();
+            return redirect()->back()->with('success', 'Transaction successfully deleted.');
+        } else {
+            return redirect()->back()->with('error', 'Transaction not found.');
+        }
     }
     function cashadvancedDownload($key)
     {
@@ -1491,14 +1554,16 @@ class ReimburseController extends Controller
             ];
             $model->declare_ca = json_encode($declare_ca);
         }
-        $model->total_ca = str_replace('.', '', $req->totalca);
-        $model->total_real = str_replace('.', '', $req->totalca_deklarasi);
-        $model->total_cost = $model->total_ca - $model->total_real;
+        $model->total_ca = str_replace('.', '', $req->totalca_deklarasi);
+        $model->total_cost = str_replace('.', '', $req->totalca);
+        $model->total_real = $model->total_ca - $model->total_cost;
         //tambah 1 status disini
 
 
         if ($req->input('action_ca_draft')) {
             $model->approval_sett = $req->input('action_ca_draft');
+            $model->save();
+            return redirect()->route('cashadvancedDeklarasi')->with('success', 'Transaction successfully Added in Draft.');
         }
         if ($req->input('action_ca_submit')) {
             $model->approval_sett = $req->input('action_ca_submit');
@@ -1601,8 +1666,7 @@ class ReimburseController extends Controller
         $model->declaration_at = Carbon::now();
         $model->save();
 
-        Alert::success('Success Update');
-        return redirect()->intended(route('cashadvancedDeklarasi', absolute: false));
+        return redirect()->route('cashadvancedDeklarasi')->with('success', 'Transaction successfully added waiting for Approval.');
     }
 
     public function hotel()

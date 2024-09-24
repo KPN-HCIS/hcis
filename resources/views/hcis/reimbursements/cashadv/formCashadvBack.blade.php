@@ -24,9 +24,9 @@
         </div>
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
-                <div class="card-header d-flex bg-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Data</h4>
-                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a>
+                <div class="card-header d-flex bg-primary justify-content-between">
+                    <h4 class="modal-title text-white" id="viewFormEmployeeLabel">Add Data</h4>
+                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
@@ -70,7 +70,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="name">Destination</label>
+                                    <label class="form-label" for="locationFilter">Destination</label>
                                     <select class="form-control select2" id="locationFilter" name="locationFilter"
                                         onchange="toggleOthers()" required>
                                         <option value="">Select location...</option>
@@ -129,9 +129,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="type">CA Type</label>
-                                    <select name="ca_type" id="ca_type" class="form-select" onchange="toggleDivs()"
-                                        readonly>
+                                    <label class="form-label" for="ca_type">CA Type</label>
+                                    <select name="ca_type" id="ca_type" class="form-control" onchange="toggleDivs()">
                                         <option value="">-</option>
                                         <option value="dns">Business Trip</option>
                                         <option value="ndns">Non Business Trip</option>
@@ -139,13 +138,34 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row" id="div_bisnis_numb" style="display: none;">
+                            <div class="row" id="div_bisnis_numb_dns" style="display: none;">
                                 <div class="col-md-12 mb-2">
                                     <label class="form-label" for="name">Business Trip Number</label>
-                                    <select class="form-control select2" id="bisnis_numb" name="bisnis_numb">
+                                    <select class="form-control select2" id="bisnis_numb_dns" name="bisnis_numb_dns">
                                         <option value="">Select</option>
                                         @foreach ($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_sppd }}">{{ $no_sppd->no_sppd }}</option>
+                                            <option value="{{ $no_sppd->no_sppd }}"
+                                                @if ($noSppdListDNS->contains($no_sppd->no_sppd))
+                                                    disabled title="No. SPPD already has CA Business Trip. Please apply for an extension if you want to add CA."
+                                                @endif>
+                                                {{ $no_sppd->no_sppd }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row" id="div_bisnis_numb_ent" style="display: none;">
+                                <div class="col-md-12 mb-2">
+                                    <label class="form-label" for="name">Business Trip Number</label>
+                                    <select class="form-control select2" id="bisnis_numb_ent" name="bisnis_numb_ent">
+                                        <option value="">Select</option>
+                                        @foreach ($no_sppds as $no_sppd)
+                                            <option value="{{ $no_sppd->no_sppd }}"
+                                                @if ($noSppdListENT->contains($no_sppd->no_sppd))
+                                                    disabled title="No. SPPD already has CA Entertain. Please apply for an extension if you want to add CA."
+                                                @endif>
+                                                {{ $no_sppd->no_sppd }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -153,27 +173,44 @@
 
                             <br>
 
-                            {{-- Pls ini buat CA_NBT dia masih error --}}
                             <div class="row" id="ca_bt" style="display: none;">
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
                                             <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced</div>
                                             <div class="card">
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-perdiem" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Perdiem</button>
-                                                </div>
-                                                <div id="perdiem-card" class="card-body" style="display: none;">
+                                                <div id="perdiem-card" class="card-body">
                                                     <div class="accordion" id="accordionPerdiem">
                                                         <div class="accordion-item">
-                                                            <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
-                                                                    Rencana Perdiem
+                                                            <h2 class="accordion-header" id="headingPerdiem">
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePerdiem" aria-expanded="false" aria-controls="collapsePerdiem">
+                                                                    Perdiem Plan
                                                                 </button>
                                                             </h2>
-                                                            <div id="enter-collapseOne" class="accordion-collapse show" aria-labelledby="enter-headingOne">
+                                                            <div id="collapsePerdiem" class="accordion-collapse collapse" aria-labelledby="headingPerdiem">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-perdiem">
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="name">Company Code</label>
+                                                                            <select class="form-control select2" id="companyFilter_perdiem" name="company_bt_perdiem[]">
+                                                                                <option value="">Select Company...</option>
+                                                                                @foreach($companies as $company)
+                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="mb-2">
+                                                                            <label class="form-label" for="locationFilter_perdiem">Location Agency</label>
+                                                                            <select class="form-control location-select" id="locationFilter_perdiem" name="location_bt_perdiem[]">
+                                                                                <option value="">Select location...</option>
+                                                                                @foreach($locations as $location)
+                                                                                    <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                                                                                @endforeach
+                                                                                <option value="Others">Others</option>
+                                                                            </select>
+                                                                            <br>
+                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
+                                                                        </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label">Start Perdiem</label>
                                                                             <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy">
@@ -193,34 +230,13 @@
                                                                         </div>
                                                                         <!-- HTML -->
                                                                         <div class="mb-2">
-                                                                            <label class="form-label" for="name">Location Agency</label>
-                                                                            <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                                                                                <option value="">Select location...</option>
-                                                                                @foreach($locations as $location)
-                                                                                    <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
-                                                                                @endforeach
-                                                                                <option value="Others">Others</option>
-                                                                            </select>
-                                                                            <br>
-                                                                            <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_perdiem[]">
-                                                                                <option value="">Select Company...</option>
-                                                                                @foreach($companies as $company)
-                                                                                    <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="mb-2">
                                                                             <label class="form-label">Amount</label>
                                                                         </div>
                                                                         <div class="input-group mb-3">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
                                                                             </div>
-                                                                            <input class="form-control" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="0">
+                                                                            <input class="form-control bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem" type="text" min="0" value="0" readonly>
                                                                         </div>
                                                                         <hr class="border border-primary border-1 opacity-50">
                                                                     </div>
@@ -240,28 +256,24 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Button and Card for Transport -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-transport" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Transport</button>
-                                                </div>
-                                                <div id="transport-card" class="card-body" style="display: none;">
+                                                <div id="transport-card" class="card-body">
                                                     <div class="accordion" id="accordionTransport">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingTransport">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="true" aria-controls="collapseTransport">
-                                                                    Rencana Transport
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport" aria-expanded="false" aria-controls="collapseTransport">
+                                                                    Transport Plan
                                                                 </button>
                                                             </h2>
-                                                            <div id="collapseTransport" class="accordion-collapse collapse show" aria-labelledby="headingTransport">
+                                                            <div id="collapseTransport" class="accordion-collapse collapse" aria-labelledby="headingTransport">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-transport">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Tanggal Transport</label>
+                                                                            <label class="form-label">Transport Date</label>
                                                                             <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_transport[]">
+                                                                            <select class="form-control select2" id="companyFilter_transport" name="company_bt_transport[]">
                                                                                 <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -269,7 +281,7 @@
                                                                             </select>
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
+                                                                            <label class="form-label">Information</label>
                                                                             <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
@@ -299,27 +311,23 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Button and Card for Penginapan -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-penginapan" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Penginapan</button>
-                                                </div>
-                                                <div id="penginapan-card" class="card-body" style="display: none;">
+                                                <div id="penginapan-card" class="card-body">
                                                     <div class="accordion" id="accordionPenginapan">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingPenginapan">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="true" aria-controls="collapsePenginapan">
-                                                                    Rencana Penginapan
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenginapan" aria-expanded="false" aria-controls="collapsePenginapan">
+                                                                    Accommodation Plan
                                                                 </button>
                                                             </h2>
-                                                            <div id="collapsePenginapan" class="accordion-collapse collapse show" aria-labelledby="headingPenginapan">
+                                                            <div id="collapsePenginapan" class="accordion-collapse collapse" aria-labelledby="headingPenginapan">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-penginapan">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Start Penginapan</label>
+                                                                            <label class="form-label">Accommodation Start Plan</label>
                                                                             <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">End Penginapan</label>
+                                                                            <label class="form-label">Accommodation End Plan</label>
                                                                             <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
@@ -337,7 +345,7 @@
                                                                         </div>
                                                                         <div class="mb-2">
                                                                             <label class="form-label" for="name">Company Code</label>
-                                                                            <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
+                                                                            <select class="form-control select2" id="companyFilter_penginapan" name="company_bt_penginapan[]">
                                                                                 <option value="">Select Company...</option>
                                                                                 @foreach($companies as $company)
                                                                                     <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -356,7 +364,7 @@
                                                                         <hr class="border border-primary border-1 opacity-50">
                                                                     </div>
                                                                     <div class="mb-2">
-                                                                        <label class="form-label">Total Penginapan</label>
+                                                                        <label class="form-label">Accommodation Total</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
@@ -371,32 +379,27 @@
                                                     </div>
                                                 </div>
 
-
-                                                <!-- Button and Card for Lainnya -->
-                                                <div class="card-body text-center">
-                                                    <button type="button" style="width: 60%" id="toggle-bt-lainnya" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Lainnya</button>
-                                                </div>
-                                                <div id="lainnya-card" class="card-body" style="display: none;">
+                                                <div id="lainnya-card" class="card-body">
                                                     <div class="accordion" id="accordionLainnya">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="headingLainnya">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="true" aria-controls="collapseLainnya">
-                                                                    Rencana Lainnya
+                                                                <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLainnya" aria-expanded="false" aria-controls="collapseLainnya">
+                                                                    Other Plan
                                                                 </button>
                                                             </h2>
-                                                            <div id="collapseLainnya" class="accordion-collapse collapse show" aria-labelledby="headingLainnya">
+                                                            <div id="collapseLainnya" class="accordion-collapse collapse" aria-labelledby="headingLainnya">
                                                                 <div class="accordion-body">
                                                                     <div id="form-container-bt-lainnya">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Tanggal</label>
+                                                                            <label class="form-label">Date</label>
                                                                             <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
+                                                                            <label class="form-label">Information</label>
                                                                             <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
                                                                         </div>
-                                                                        <div class="mb-2">
-                                                                            <label class="form-label">Accommodation</label>
+                                                                        <div class="mb-1">
+                                                                            <label class="form-label">Amount</label>
                                                                         </div>
                                                                         <div class="input-group mb-3">
                                                                             <div class="input-group-append">
@@ -407,7 +410,7 @@
                                                                         <hr class="border border-primary border-1 opacity-50">
                                                                     </div>
                                                                     <div class="mb-2">
-                                                                        <label class="form-label">Total Lainnya</label>
+                                                                        <label class="form-label">Total Others</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-append">
                                                                                 <span class="input-group-text">Rp</span>
@@ -437,7 +440,7 @@
                                                     <div class="accordion" id="accordionPanelsStayOpenExample">
                                                         <div class="accordion-item">
                                                             <h2 class="accordion-header" id="enter-headingOne">
-                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="true" aria-controls="enter-collapseOne">
+                                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#enter-collapseOne" aria-expanded="false" aria-controls="enter-collapseOne">
                                                                     Non Business Trip
                                                                 </button>
                                                             </h2>
@@ -445,11 +448,11 @@
                                                                 <div class="accordion-body">
                                                                     <div id="form-container">
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Tanggal</label>
+                                                                            <label class="form-label">Date</label>
                                                                             <input type="date" name="tanggal_nbt[]" class="form-control" placeholder="mm/dd/yyyy">
                                                                         </div>
                                                                         <div class="mb-2">
-                                                                            <label class="form-label">Keterangan</label>
+                                                                            <label class="form-label">Information</label>
                                                                             <textarea name="keterangan_nbt[]" class="form-control"></textarea>
                                                                         </div>
                                                                         <div class="mb-2">
@@ -481,10 +484,7 @@
                                         <div class="d-flex flex-column gap-2">
                                             <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
                                                 <div class="card">
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
-                                                    </div>
-                                                    <div id="entertain-card" class="card-body" style="display: none;">
+                                                    <div id="entertain-card" class="card-body">
                                                         <div class="accordion" id="accordionEntertain">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingEntertain">
@@ -499,7 +499,7 @@
                                                                                 <label class="form-label">Entertainment Type</label>
                                                                                 <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
                                                                                     <option value="">-</option>
-                                                                                    <option value="foodcost">Food/Beverages/Souvenir</option>
+                                                                                    <option value="food">Food/Beverages/Souvenir</option>
                                                                                     <option value="transport">Transport</option>
                                                                                     <option value="accommodation">Accommodation</option>
                                                                                     <option value="gift">Gift</option>
@@ -509,6 +509,9 @@
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Entertainment Fee Detail</label>
                                                                                 <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control"></textarea>
+                                                                            </div>
+                                                                            <div class="mb-1">
+                                                                                <label class="form-label">Amount</label>
                                                                             </div>
                                                                             <div class="input-group">
                                                                                 <div class="input-group-append">
@@ -534,41 +537,38 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="card-body text-center">
-                                                        <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
-                                                    </div>
-                                                    <div id="relation-card" class="card-body" style="display: none;">
+                                                    <div id="relation-card" class="card-body">
                                                         <div class="accordion" id="accordionRelation">
                                                             <div class="accordion-item">
                                                                 <h2 class="accordion-header" id="headingRelation">
-                                                                    <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="true" aria-controls="collapseRelation">
+                                                                    <button class="accordion-button collapsed fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="false" aria-controls="collapseRelation">
                                                                         Rencana Relation
                                                                     </button>
                                                                 </h2>
-                                                                <div id="collapseRelation" class="accordion-collapse collapse show" aria-labelledby="headingRelation">
+                                                                <div id="collapseRelation" class="accordion-collapse collapse" aria-labelledby="headingRelation">
                                                                     <div class="accordion-body">
                                                                         <div id="form-container-e-relation">
                                                                             <div class="mb-2">
                                                                                 <label class="form-label">Relation Type</label>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="foodcost_e_relation[]" value="Food/Beverages/Souvenir">
-                                                                                    <label class="form-check-label" for="foodcost_e_relation[]">Food/Beverages/Souvenir</label>
-                                                                                </div>
-                                                                                <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="accommodation_e_relation[]" value="Accommodation">
+                                                                                    <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation[]" value="accommodation">
                                                                                     <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="transport_e_relation[]" value="Transport">
+                                                                                    <input class="form-check-input" name="transport_e_relation[]" type="checkbox" id="transport_e_relation[]" value="transport">
                                                                                     <label class="form-check-label" for="transport_e_relation[]">Transport</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="gift_e_relation[]" value="Gift">
+                                                                                    <input class="form-check-input" name="gift_e_relation[]" type="checkbox" id="gift_e_relation[]" value="gift">
                                                                                     <label class="form-check-label" for="gift_e_relation[]">Gift</label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input" type="checkbox" id="fund_e_relation[]" value="Fund">
+                                                                                    <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund">
                                                                                     <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" name="food_e_relation[]" type="checkbox" id="food_e_relation[]" value="food">
+                                                                                    <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="mb-2">
@@ -642,7 +642,8 @@
             var ca_type = document.getElementById("ca_type");
             var ca_nbt = document.getElementById("ca_nbt");
             var ca_e = document.getElementById("ca_e");
-            var div_bisnis_numb = document.getElementById("div_bisnis_numb");
+            var div_bisnis_numb_dns = document.getElementById("div_bisnis_numb_dns");
+            var div_bisnis_numb_ent = document.getElementById("div_bisnis_numb_ent");
             var bisnis_numb = document.getElementById("bisnis_numb");
             var div_allowance = document.getElementById("div_allowance");
 
@@ -650,25 +651,29 @@
                 ca_bt.style.display = "block";
                 ca_nbt.style.display = "none";
                 ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "block";
+                div_bisnis_numb_dns.style.display = "block";
+                div_bisnis_numb_ent.style.display = "none";
                 div_allowance.style.display = "block";
             } else if (ca_type.value === "ndns"){
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "block";
                 ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "none";
+                div_bisnis_numb_dns.style.display = "none";
+                div_bisnis_numb_ent.style.display = "none";
                 bisnis_numb.style.value = "";
                 div_allowance.style.display = "none";
             } else if (ca_type.value === "entr"){
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "none";
                 ca_e.style.display = "block";
-                div_bisnis_numb.style.display = "block";
+                div_bisnis_numb_dns.style.display = "none";
+                div_bisnis_numb_ent.style.display = "block";
             } else{
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "none";
                 ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "none";
+                div_bisnis_numb_dns.style.display = "none";
+                div_bisnis_numb_ent.style.display = "none";
                 bisnis_numb.style.value = "";
             }
         }
@@ -817,53 +822,6 @@
             });
         });
 
-        $(document).ready(function() {
-            function toggleCard(buttonId, cardId) {
-                var $button = $(buttonId);
-                var $card = $(cardId);
-                var isVisible = $card.is(':visible');
-
-                $card.slideToggle('fast', function() {
-                    if (isVisible) {
-                        $card.find('input[type="text"], input[type="date"], textarea').val('');
-                        $card.find('select').prop('selectedIndex', 0);
-                        $card.find('input[readonly]').val(0);
-                        $card.find('input[type="number"]').val(0);
-
-                        $button.html('<i class="bi bi-plus-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'false');
-                    } else {
-                        $button.html('<i class="bi bi-dash-circle"></i> ' + $button.text().split(' ')[1]);
-                        $button.data('state', 'true');
-                    }
-                });
-            }
-
-            $('#toggle-bt-perdiem').click(function() {
-                toggleCard('#toggle-bt-perdiem', '#perdiem-card');
-            });
-
-            $('#toggle-bt-transport').click(function() {
-                toggleCard('#toggle-bt-transport', '#transport-card');
-            });
-
-            $('#toggle-bt-penginapan').click(function() {
-                toggleCard('#toggle-bt-penginapan', '#penginapan-card');
-            });
-
-            $('#toggle-bt-lainnya').click(function() {
-                toggleCard('#toggle-bt-lainnya', '#lainnya-card');
-            });
-
-            $('#toggle-e-detail').click(function() {
-                toggleCard('#toggle-e-detail', '#entertain-card');
-            });
-
-            $('#toggle-e-relation').click(function() {
-                toggleCard('#toggle-e-relation', '#relation-card');
-            });
-        });
-
         document.addEventListener('DOMContentLoaded', function() {
             const formContainerBTPerdiem = document.getElementById('form-container-bt-perdiem');
             const formContainerBTTransport = document.getElementById('form-container-bt-transport');
@@ -890,12 +848,30 @@
                 });
             });
 
+            document.querySelectorAll('.location-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const startDateInput = this.closest('.accordion-body').querySelector('.start-perdiem');
+                    const endDateInput = this.closest('.accordion-body').querySelector('.end-perdiem');
+
+                    startDateInput.value = '';
+                    endDateInput.value = '';
+                });
+            });
+
             function formatNumber(num) {
                 return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
+            function formatNumberPerdiem(num) {
+                return num.toLocaleString('id-ID');
+            }
+
             function parseNumber(value) {
                 return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+
+            function parseNumberPerdiem(value) {
+                return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
             }
 
             function formatInput(input) {
@@ -916,10 +892,13 @@
             function calculateTotalNominalBTPerdiem() {
                 let total = 0;
                 document.querySelectorAll('input[name="nominal_bt_perdiem[]"]').forEach(input => {
-                    total += parseNumber(input.value);
+                    total += parseNumberPerdiem(input.value);
                 });
                 document.querySelector('input[name="total_bt_perdiem[]"]').value = formatNumber(total);
+
+                calculateTotalNominalBTTotal();
             }
+
 
             function calculateTotalNominalBTTransport() {
                 let total = 0;
@@ -964,15 +943,39 @@
 
             function calculateTotalDaysPerdiem(input) {
                 const formGroup = input.closest('.mb-2').parentElement;
-                const startDate = new Date(formGroup.querySelector('input[name="start_bt_perdiem[]"]').value);
-                const endDate = new Date(formGroup.querySelector('input[name="end_bt_perdiem[]"]').value);
+                const startDateInput = formGroup.querySelector('input[name="start_bt_perdiem[]"]');
+                const endDateInput = formGroup.querySelector('input[name="end_bt_perdiem[]"]');
+                const totalDaysInput = formGroup.querySelector('input[name="total_days_bt_perdiem[]"]');
+                const perdiemInput = document.getElementById('perdiem');
+                const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+                const locationSelect = formGroup.querySelector('select[name="location_bt_perdiem[]"]');
+                const otherLocationInput = formGroup.querySelector('input[name="other_location_bt_perdiem[]"]');
+
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
 
                 if (!isNaN(startDate) && !isNaN(endDate) && startDate <= endDate) {
                     const diffTime = Math.abs(endDate - startDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = diffDays;
+                    const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    totalDaysInput.value = totalDays;
+
+                    const perdiem = parseFloat(perdiemInput.value) || 0;
+                    let allowance = totalDays * perdiem;
+
+                    // Memeriksa lokasi untuk menentukan persentase allowance
+                    if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== '') {
+                        allowance *= 0.5; // allowance * 50%
+                        console.log("ini Others:", allowance); // Debugging
+                    } else {
+                        allowance *= 1; // allowance * 100%
+                        console.log("Ini Not Others:", allowance); // Debugging
+                    }
+
+                    allowanceInput.value = formatNumberPerdiem(allowance);
+                    calculateTotalNominalBTPerdiem();
                 } else {
-                    formGroup.querySelector('input[name="total_days_bt_perdiem[]"]').value = 0;
+                    totalDaysInput.value = 0;
+                    allowanceInput.value = 0;
                 }
             }
 
@@ -990,11 +993,35 @@
                 }
             }
 
+            let perdiemCounter = 0;
+
             function addNewPerdiemForm() {
+                perdiemCounter++;
                 const newFormBTPerdiem = document.createElement('div');
                 newFormBTPerdiem.classList.add('mb-2');
 
                 newFormBTPerdiem.innerHTML = `
+                    <div class="mb-2">
+                        <label class="form-label" for="companyFilter_perdiem">Company Code</label>
+                        <select class="form-control select2" id="companyFilter_perdiem" name="company_bt_perdiem[]">
+                            <option value="">Select Company...</option>
+                            @foreach($companies as $company)
+                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" for="name">Location Agency</label>
+                        <select class="form-control location-select" name="location_bt_perdiem[]">
+                            <option value="">Select location...</option>
+                            @foreach($locations as $location)
+                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
+                            @endforeach
+                            <option value="Others">Others</option>
+                        </select>
+                        <br>
+                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
+                    </div>
                     <div class="mb-2">
                         <label class="form-label">Start Perdiem</label>
                         <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" placeholder="mm/dd/yyyy" >
@@ -1013,34 +1040,13 @@
                         </div>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label" for="name">Location Agency</label>
-                        <select class="form-control select2 location-select" name="location_bt_perdiem[]">
-                            <option value="">Select location...</option>
-                            @foreach($locations as $location)
-                                <option value="{{ $location->area }}">{{ $location->area." (".$location->company_name.")" }}</option>
-                            @endforeach
-                            <option value="Others">Others</option>
-                        </select>
-                        <br>
-                        <input type="text" name="other_location_bt_perdiem[]" class="form-control other-location" placeholder="Other Location" value="" style="display: none;">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" name="company_bt_perdiem[]" >
-                            <option value="">Select Company...</option>
-                            @foreach($companies as $company)
-                                <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-2">
                         <label class="form-label">Amount</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">
                             <span class="input-group-text">Rp</span>
                         </div>
-                        <input class="form-control" name="nominal_bt_perdiem[]" type="text" min="0" value="0">
+                        <input class="form-control bg-light" name="nominal_bt_perdiem[]" type="text" min="0" value="0" readonly>
                     </div>
                     <button type="button" class="btn btn-danger remove-form">Remove</button>
                     <hr class="border border-primary border-1 opacity-50">
@@ -1097,7 +1103,7 @@
 
                 newFormBTTransport.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal Transport</label>
+                        <label class="form-label">Transport Date</label>
                         <input type="date" name="tanggal_bt_transport[]" class="form-control" placeholder="mm/dd/yyyy" >
                     </div>
                     <div class="mb-2">
@@ -1110,7 +1116,7 @@
                         </select>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                     </div>
                     <div class="mb-2">
@@ -1147,11 +1153,11 @@
 
                 newFormBTPenginapan.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Start Penginapan</label>
+                        <label class="form-label">Accommodation Start Plan</label>
                         <input type="date" name="start_bt_penginapan[]" class="form-control start-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">End Penginapan</label>
+                        <label class="form-label">Accommodation End Plan</label>
                         <input type="date" name="end_bt_penginapan[]" class="form-control end-penginapan" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
@@ -1169,7 +1175,7 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label" for="name">Company Code</label>
-                        <select class="form-control select2" id="companyFilter" name="company_bt_penginapan[]">
+                        <select class="form-control select2" id="companyFilter_penginapan" name="company_bt_penginapan[]">
                             <option value="">Select Company...</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->contribution_level_code }}">{{ $company->contribution_level." (".$company->contribution_level_code.")" }}</option>
@@ -1219,15 +1225,12 @@
 
                 newFormBTLainnya.innerHTML = `
                     <div class="mb-2">
-                        <label class="form-label">Tanggal</label>
+                        <label class="form-label">Date</label>
                         <input type="date" name="tanggal_bt_lainnya[]" class="form-control" placeholder="mm/dd/yyyy">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Keterangan</label>
+                        <label class="form-label">Information</label>
                         <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Accommodation</label>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-append">
@@ -1339,8 +1342,6 @@
                 });
             }
 
-
-
             // Attach click event to the remove button for existing forms
             document.querySelectorAll('.remove-form').forEach(button => {
                 button.addEventListener('click', function() {
@@ -1353,10 +1354,6 @@
                 });
             });
         });
-
-
-
-        //
 
         document.addEventListener('DOMContentLoaded', function() {
             const formContainer = document.getElementById('form-container');
@@ -1492,7 +1489,7 @@
                 // Update visibility for each checkbox in enter_type_e_relation
                 formContainerERelation.querySelectorAll('.form-check').forEach(checkDiv => {
                     const checkbox = checkDiv.querySelector('input.form-check-input');
-                    const checkboxValue = checkbox.value.toLowerCase();
+                    const checkboxValue = checkbox.value.toLowerCase().replace(/\s/g, "_");
                     if (selectedOptions.includes(checkboxValue)) {
                         checkDiv.style.display = 'block';
                     } else {
@@ -1543,7 +1540,7 @@
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" class="form-select">
                             <option value="">-</option>
-                            <option value="foodcost">Food/Beverages/Souvenir</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
                             <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
                             <option value="gift">Gift</option>
@@ -1582,8 +1579,11 @@
                 });
             }
 
+            let relationCounter = 0; // Counter untuk membuat ID unik
+
             // Function to add new ERelation form
             function addNewERelationForm() {
+                relationCounter++; // Increment counter setiap kali form baru ditambahkan
                 const newFormERelation = document.createElement('div');
                 newFormERelation.classList.add('mb-2');
 
@@ -1591,41 +1591,41 @@
                     <div class="mb-2">
                         <label class="form-label">Relation Type</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="foodcost_e_relation[]" value="foodcost">
-                            <label class="form-check-label" for="foodcost_e_relation[]">Food/Beverages/Souvenir</label>
+                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation_${relationCounter}" value="accommodation">
+                            <label class="form-check-label" for="accommodation_e_relation_${relationCounter}">Accommodation</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" value="transport">
-                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
+                            <input class="form-check-input" type="checkbox" name="transport_e_relation[]" id="transport_e_relation_${relationCounter}" value="transport">
+                            <label class="form-check-label" for="transport_e_relation_${relationCounter}">Transport</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" value="accommodation">
-                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
+                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" id="gift_e_relation_${relationCounter}" value="gift">
+                            <label class="form-check-label" for="gift_e_relation_${relationCounter}">Gift</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="gift_e_relation[]" value="gift">
-                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
+                            <input class="form-check-input" type="checkbox" name="fund_e_relation[]" id="fund_e_relation_${relationCounter}" value="fund">
+                            <label class="form-check-label" for="fund_e_relation_${relationCounter}">Fund</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="fund_e_relation[]" value="fund">
-                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                            <input class="form-check-input" type="checkbox" name="food_e_relation[]" id="food_e_relation_${relationCounter}" value="food">
+                            <label class="form-check-label" for="food_e_relation_${relationCounter}">Food/Beverages/Souvenir</label>
                         </div>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Name</label>
-                        <input type="text" name="rname_e_relation[]" class="form-control">
+                        <input type="text" name="rname_e_relation[]" class="form-control" id="rname_e_relation_${relationCounter}">
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Position</label>
-                        <input type="text" name="rposition_e_relation[]" class="form-control">
+                        <input type="text" name="rposition_e_relation[]" class="form-control" id="rposition_e_relation_${relationCounter}">
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Company</label>
-                        <input type="text" name="rcompany_e_relation[]" class="form-control">
+                        <input type="text" name="rcompany_e_relation[]" class="form-control" id="rcompany_e_relation_${relationCounter}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Purpose</label>
-                        <input type="text" name="rpurpose_e_relation[]" class="form-control">
+                        <input type="text" name="rpurpose_e_relation[]" class="form-control" id="rpurpose_e_relation_${relationCounter}">
                     </div>
                     <button type="button" class="btn btn-danger remove-form-e-relation">Remove</button>
                     <hr class="border border-primary border-1 opacity-50">
@@ -1661,7 +1661,6 @@
             calculateTotalNominalEDetail();
             updateCheckboxVisibility();
         });
-
 
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

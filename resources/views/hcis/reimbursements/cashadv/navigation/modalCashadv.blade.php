@@ -73,8 +73,8 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12 mb-2">
-                                <label class="form-label" for="reason">Reason</label>
-                                <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
+                                <label class="form-label" for="reason">Reasons</label>
+                                <textarea name="reject_info" id="reject_info" class="form-control" required></textarea>
                             </div>
                             <input type="hidden" name="reject_no_id" id="reject_no_id">
                         </div>
@@ -117,3 +117,48 @@
     </div>
 @endif
 
+@if (session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: "Success!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'Ok'
+            });
+        });
+    </script>
+@endif
+<script>
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const transactionId = button.getAttribute('data-id');
+            const form = document.getElementById(`delete-form-${transactionId}`);
+
+            Swal.fire({
+                title: "Do you want to delete this transaction?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#0c63e4",
+                cancelButtonColor: "#9a2a27",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    function showPendingAlert() {
+        Swal.fire({
+            title: 'Cannot Add Data!',
+            text: 'You still have 2 Pending CA.',
+            icon: 'warning',
+            confirmButtonColor: "#9a2a27",
+            confirmButtonText: 'Ok'
+        });
+    }
+</script>

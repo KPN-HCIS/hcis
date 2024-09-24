@@ -127,7 +127,7 @@
         <tr>
             <td class="label">Account Details</td>
             <td class="colon">:</td>
-            <td class="value">{{ $transactions->employee->bank_details }}</td>
+            <td class="value">{{ $transactions->employee->bank_name }} - {{ $transactions->employee->bank_account_number }} - {{ $transactions->employee->bank_account_name }}</td>
         </tr>
         <tr>
             <td class="label">Division/Dept</td>
@@ -149,7 +149,7 @@
             <td class="label">Costing Company</td>
             <td class="colon">:</td>
             <td class="value">
-                {{ $transactions->contribution_level_code }}
+                {{ $transactions->companies->contribution_level }}
             </td>
         </tr>
         <tr>

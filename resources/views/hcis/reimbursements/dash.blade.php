@@ -141,18 +141,22 @@ h5 {
 
         </div> <!-- end row -->
         <hr><br>
-        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 row-cols-xxl-8 text-center">
-            <div class="col-md-3">
-                <a href="{{ route('cashadvanced.admin') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="{{ asset('images/menu/report.png')}}" alt="logo">
-                            <h5 class="my-3">Cash Advanced (Admin)</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div> <!-- end col-->
-        </div>
+        @if(auth()->check())
+            @can('reportca_hcis')
+                <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 row-cols-xxl-8 text-center">
+                    <div class="col-md-3">
+                        <a href="{{ route('cashadvanced.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/report.png')}}" alt="logo">
+                                    <h5 class="my-3">Cash Advanced (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                </div>
+            @endcan
+        @endif
     </div>
 @endsection
 

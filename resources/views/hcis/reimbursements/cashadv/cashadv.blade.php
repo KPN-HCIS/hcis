@@ -95,8 +95,8 @@
             <!-- Add Data Button -->
             <div class="col-md-6 mt-4 text-end">
                 @if ($pendingCACount >= 2)
-                    <a href="" class="btn btn-outline-primary rounded-pill"
-                        onclick="alert('Cannot Add Data, you still have {{$pendingCACount}} Pending CA.'); return false; ">
+                    <a href="#" class="btn btn-outline-primary rounded-pill"
+                        onclick="showPendingAlert(); return false;">
                         <i class="bi bi-plus-circle"></i> Add Data
                     </a>
                 @else
@@ -181,10 +181,9 @@
                                                 @elseif ($ca_transaction->approval_status == 'Reject')
                                                 @elseif ($ca_transaction->approval_status == 'Draft')
                                                     <a href="{{ route('cashadvanced.edit', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                                    {{-- <a href="{{ route('cashadvanced.show', $ca_transaction->id) }}" class="btn btn-outline-info" title="Edit"><i class="bi bi-card-checklist"></i></a> --}}
-                                                    <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
+                                                    <form id="delete-form-{{ $ca_transaction->id }}" action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
                                                         @csrf
-                                                        <button onclick="return confirm('Do you want to delete this transaction?')" class="btn btn-outline-danger" title="Delete">
+                                                        <button type="button" class="btn btn-outline-danger delete-button" data-id="{{ $ca_transaction->id }}" title="Delete">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </form>
@@ -204,16 +203,10 @@
             </div>
         </div>
     </div>
+
+    @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
 @endsection
 
 @push('scripts')
-    <script>
-        // Periksa apakah ada pesan sukses
-        var successMessage = "{{ session('success') }}";
 
-        // Jika ada pesan sukses, tampilkan sebagai alert
-        if (successMessage) {
-            alert(successMessage);
-        }
-    </script>
 @endpush
