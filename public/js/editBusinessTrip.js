@@ -501,17 +501,19 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         function updateReturnFields() {
-            if (isRequired && typeSelect.value === "Round Trip") {
+            if (isRequired && typeSelect && typeSelect.value === "Round Trip") {
                 returnDateField.required = true;
                 returnTimeField.required = true;
             } else {
-                returnDateField.required = false;
-                returnTimeField.required = false;
+                if (returnDateField) returnDateField.required = false;
+                if (returnTimeField) returnTimeField.required = false;
             }
         }
 
-        typeSelect.addEventListener("change", updateReturnFields);
-        updateReturnFields(); // Initial call to set the correct state
+        if (typeSelect) {
+            typeSelect.addEventListener("change", updateReturnFields);
+            updateReturnFields(); // Initial call to set the correct state
+        }
     }
 
     function updateAllFormsRequiredState(isRequired) {
@@ -1050,26 +1052,44 @@ function handleTaksiForms() {
     // Function to toggle 'required' attribute
     function toggleRequired() {
         if (taksiDiv.style.display === "block") {
-            // If form is visible
+            // If form is visible, add 'required' attribute
             formFields.forEach(function (field) {
-                field.setAttribute("required", "required"); // Add 'required' attribute
+                field.setAttribute("required", "required");
             });
         } else {
+            // Remove 'required' attribute
             formFields.forEach(function (field) {
-                field.removeAttribute("required"); // Remove 'required' attribute
+                field.removeAttribute("required");
             });
         }
+    }
+
+    // Function to reset form values
+    function resetFormValues() {
+        formFields.forEach(function (field) {
+            field.value = ""; // Reset field value
+        });
     }
 
     // Handle checkbox change event
     taksiCheckbox.addEventListener("change", function () {
         if (this.checked) {
             taksiDiv.style.display = "block";
+            toggleRequired(); // Toggle required based on visibility
         } else {
             taksiDiv.style.display = "none";
+            resetFormValues(); // Reset values when checkbox is unchecked
+            toggleRequired(); // Toggle required based on visibility
         }
-        toggleRequired(); // Toggle required based on visibility
     });
+
+    // Initial setup to handle visibility and required attributes
+    if (taksiCheckbox.checked) {
+        taksiDiv.style.display = "block";
+    } else {
+        taksiDiv.style.display = "none";
+        resetFormValues(); // Reset values if checkbox is initially unchecked
+    }
     toggleRequired();
 }
 

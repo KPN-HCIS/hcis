@@ -393,6 +393,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 field.required = isRequired;
             }
         });
+
         const typeSelect = form.querySelector('select[name="type_tkt[]"]');
         const returnDateField = form.querySelector(
             'input[name="tgl_plg_tkt[]"]'
@@ -401,18 +402,21 @@ document.addEventListener("DOMContentLoaded", function () {
             'input[name="jam_plg_tkt[]"]'
         );
 
+        // Update the required attributes based on the "Round Trip" option
         function updateReturnFields() {
-            if (isRequired && typeSelect.value === "Round Trip") {
+            if (isRequired && typeSelect && typeSelect.value === "Round Trip") {
                 returnDateField.required = true;
                 returnTimeField.required = true;
             } else {
-                returnDateField.required = false;
-                returnTimeField.required = false;
+                if (returnDateField) returnDateField.required = false;
+                if (returnTimeField) returnTimeField.required = false;
             }
         }
 
-        typeSelect.addEventListener("change", updateReturnFields);
-        updateReturnFields(); // Initial call to set the correct state
+        if (typeSelect) {
+            typeSelect.addEventListener("change", updateReturnFields);
+            updateReturnFields(); // Initial call to set the correct state
+        }
     }
 
     function updateAllFormsRequiredState(isRequired) {
@@ -673,17 +677,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 const config = {
                     theme: "bootstrap-5",
                     width: "100%",
-                    minimumInputLength: 0,  // Allow searching without any input
-                    allowClear: true,       // Adds an "x" to clear the selection
-                    placeholder: "Please Select",  // Placeholder text
+                    minimumInputLength: 0, // Allow searching without any input
+                    allowClear: true, // Adds an "x" to clear the selection
+                    placeholder: "Please Select", // Placeholder text
                     ajax: {
                         url: "/search/name",
                         dataType: "json",
                         delay: 250,
                         data: function (params) {
                             return {
-                                searchTerm: params.term || '',  // Send empty string if no search term
-                                page: params.page || 1
+                                searchTerm: params.term || "", // Send empty string if no search term
+                                page: params.page || 1,
                             };
                         },
                         processResults: function (data, params) {
@@ -692,16 +696,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                 results: data.map(function (item) {
                                     return {
                                         id: item.ktp,
-                                        text: item.fullname + " - " + item.ktp
+                                        text: item.fullname + " - " + item.ktp,
                                     };
                                 }),
                                 pagination: {
-                                    more: (params.page * 30) < data.total_count
-                                }
+                                    more: params.page * 30 < data.total_count,
+                                },
                             };
                         },
-                        cache: true
-                    }
+                        cache: true,
+                    },
                 };
 
                 $select.select2(config);
@@ -945,16 +949,18 @@ function handleTaksiForms() {
     const taksiDiv = document.getElementById("taksi_div");
     const formFields = taksiDiv.querySelectorAll("input");
 
-    // Function to toggle 'required' attribute
-    function toggleRequired() {
+    // Function to toggle 'required' attribute and reset fields if unchecked
+    function toggleRequiredAndReset() {
         if (taksiDiv.style.display === "block") {
-            // If form is visible
+            // If form is visible, add 'required' attribute
             formFields.forEach(function (field) {
-                field.setAttribute("required", "required"); // Add 'required' attribute
+                field.setAttribute("required", "required");
             });
         } else {
+            // Remove 'required' attribute and reset values
             formFields.forEach(function (field) {
-                field.removeAttribute("required"); // Remove 'required' attribute
+                field.removeAttribute("required");
+                field.value = ""; // Reset field value
             });
         }
     }
@@ -965,10 +971,12 @@ function handleTaksiForms() {
             taksiDiv.style.display = "block";
         } else {
             taksiDiv.style.display = "none";
+            toggleRequiredAndReset(); // Reset values when checkbox is unchecked
         }
-        toggleRequired(); // Toggle required based on visibility
+        toggleRequiredAndReset(); // Toggle required based on visibility
     });
-    toggleRequired();
+
+    toggleRequiredAndReset();
 }
 
 //CA JS

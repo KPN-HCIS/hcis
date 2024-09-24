@@ -253,7 +253,7 @@
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
                                                             data-taksi="{{ json_encode([
-                                                                'No. Voucher Taxi' => $taksi[$n->no_sppd]->no_vt,
+                                                                'Total Voucher' => $taksi[$n->no_sppd]->no_vt . " Voucher",
                                                                 'No. SPPD' => $taksi[$n->no_sppd]->no_sppd,
                                                                 'Unit' => $taksi[$n->no_sppd]->unit,
                                                                 'Nominal' => 'Rp ' . number_format($taksi[$n->no_sppd]->nominal_vt, 0, ',', '.'),
