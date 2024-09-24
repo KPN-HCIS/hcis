@@ -1018,6 +1018,7 @@ class BusinessTripController extends Controller
         $ca->declaration_at = Carbon::now();
 
         $total_real = (int) str_replace('.', '', $request->totalca);
+        // dd($total_real);
         $total_ca = $ca->total_ca;
 
         if ($ca->detail_ca === null) {

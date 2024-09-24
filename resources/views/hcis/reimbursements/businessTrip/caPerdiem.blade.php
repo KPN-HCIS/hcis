@@ -124,40 +124,72 @@
         handleDateChange();
     }
 
+    // Function to initialize date inputs and set initial state
+    function initializeDateInputs() {
+        const startDateInput = document.getElementById('mulai');
+        const endDateInput = document.getElementById('kembali');
+
+        // If there are existing values, set the min attribute and handle initial validation
+        if (startDateInput.value) {
+            endDateInput.min = startDateInput.value;
+        }
+        handleDateChange(); // Initial call to update related fields
+    }
+
+    // Add change event listeners for the date inputs
     document.getElementById('mulai').addEventListener('change', handleDateChange);
     document.getElementById('kembali').addEventListener('change', handleDateChange);
 
+    // Function to handle date changes
     function handleDateChange() {
         const startDateInput = document.getElementById('mulai');
         const endDateInput = document.getElementById('kembali');
 
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(endDateInput.value);
+        // Create Date objects if inputs have values
+        const startDate = startDateInput.value ? new Date(startDateInput.value) : null;
+        const endDate = endDateInput.value ? new Date(endDateInput.value) : null;
 
-        // Set the min attribute of the end_date input to the selected start_date
-        endDateInput.min = startDateInput.value;
+        // Set the min attribute of the end date input based on the start date
+        if (startDate) {
+            endDateInput.min = startDateInput.value;
+        }
 
-        // Validate dates
-        if (endDate < startDate) {
-            alert("End Date cannot be earlier than Start Date");
-            endDateInput.value = "";
+        // Validate dates: only if both dates are set
+        if (endDate && startDate) {
+            if (endDate < startDate) {
+                Swal.fire({
+                    title: "Warning!",
+                    text: "End Date cannot be earlier than Start Date.",
+                    icon: "error",
+                    confirmButtonColor: "#AB2F2B",
+                    confirmButtonText: "OK",
+                });
+                endDateInput.value = ""; // Clear end date if invalid
+            }
         }
 
         // Update min and max values for all dynamic perdiem date fields
         document.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
-            input.min = startDateInput.value;
-            input.max = endDateInput.value;
+            input.min = startDateInput.value; // Set min to the start date
+            input.max = endDate ? endDateInput.value : ""; // Set max if end date exists
         });
 
         document.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
-            input.min = startDateInput.value;
-            input.max = endDateInput.value;
+            input.min = startDateInput.value; // Set min to the start date
+            input.max = endDate ? endDateInput.value : ""; // Set max if end date exists
         });
 
+        // Calculate total days only if both start and end dates are valid
         document.querySelectorAll('input[name="total_days_bt_perdiem[]"]').forEach(function(input) {
-            calculateTotalDaysPerdiem(input);
+            if (startDate && endDate) {
+                calculateTotalDaysPerdiem(input); // Call your function to calculate total days
+            }
         });
     }
+
+    // Call the initialize function on page load or when entering edit mode
+    document.addEventListener("DOMContentLoaded", initializeDateInputs);
+
 
     $('.btn-warning').click(function(event) {
         event.preventDefault();
@@ -422,7 +454,8 @@
                     </div>
                     <input class="form-control bg-light" name="nominal_bt_perdiem[]"
                         id="nominal_bt_perdiem_{{ $loop->index + 1 }}" type="text"
-                        value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" onchange="onNominalChange()" readonly>
+                        value="{{ number_format($perdiem['nominal'], 0, ',', '.') }}" onchange="onNominalChange()"
+                        readonly>
                 </div>
                 <br>
                 <div class="row mt-3">

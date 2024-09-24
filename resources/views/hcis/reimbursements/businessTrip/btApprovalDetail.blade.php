@@ -332,7 +332,7 @@
                         <div class="d-flex justify-content-end mt-3">
                             <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal"
                                 data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
-                                Decline
+                                Reject
                             </button>
 
                             <form method="POST" action="{{ route('confirm.status', ['id' => $n->id]) }}"
