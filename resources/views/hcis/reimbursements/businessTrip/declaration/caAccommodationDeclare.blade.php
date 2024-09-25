@@ -86,8 +86,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -180,8 +180,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -441,7 +441,7 @@
                     <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
                             {{-- <button class="btn btn-warning mr-2" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button> --}}
                         </div>
                     </div>
@@ -530,8 +530,8 @@
                     <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -641,8 +641,8 @@
                         <br>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
-                                <button class="btn btn-warning mr-2" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
+                                <button class="btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
+                                <button class="btn-outline-primary btn-sm" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -742,8 +742,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormPenginapan(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
