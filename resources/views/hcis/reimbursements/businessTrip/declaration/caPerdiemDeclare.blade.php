@@ -686,8 +686,8 @@
     <div class="mb-2">
         <button class="btn btn-primary" onclick="addMoreFormPerdiem(event)">Add More</button>
     </div>
-    <div class="row mt-2">
-        <div class="col-md-6">
+    <div class="row mt-2 mb-2">
+        <div class="col-md-12">
             <label class="form-label">Total Perdiem</label>
             <div class="input-group">
                 <div class="input-group-append">
@@ -700,7 +700,7 @@
             </div>
         </div>
         {{-- <div class="row mb-2"> --}}
-        <div class="col-md-6 mb-2">
+        {{-- <div class="col-md-6 mb-2">
             <label class="form-label">Total Cash Advanced</label>
             <div class="input-group">
                 <div class="input-group-append">
@@ -709,7 +709,7 @@
                 <input class="form-control bg-light" name="totalca_deklarasi" id="totalca_declarasi" type="text"
                     min="0" value="{{ number_format($ca->total_ca, 0, ',', '.') }}" readonly>
             </div>
-        </div>
+        </div> --}}
         {{-- <div class="col-md-4">
             <label class="form-label">Total Cash Advanced Deklarasi</label>
             <div class="input-group">
@@ -812,8 +812,8 @@
         <button class="btn btn-primary" onclick="addMoreFormPerdiem(event)">Add More</button>
     </div>
 
-    <div class="row mt-2">
-        <div class="col-md-6">
+    <div class="row mt-2 mb-2">
+        <div class="col-md-12">
             <label class="form-label">Total Perdiem</label>
             <div class="input-group">
                 <div class="input-group-append">
@@ -825,7 +825,7 @@
                     readonly>
             </div>
         </div>
-        <div class="col-md-6 mb-2">
+        {{-- <div class="col-md-6 mb-2">
             <label class="form-label">Total Cash Advanced</label>
             <div class="input-group">
                 <div class="input-group-append">
@@ -834,7 +834,7 @@
                 <input class="form-control bg-light" name="totalca_deklarasi" id="totalca_declarasi" type="text"
                     min="0" value="{{ number_format($ca->total_ca ?? 0, 0, ',', '.') }}" readonly>
             </div>
-        </div>
+        </div> --}}
 
     </div>
 @endif

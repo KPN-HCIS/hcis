@@ -157,7 +157,7 @@
                             </form>
 
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover nowrap" id="defaultTable" width="100%"
+                                <table class="table table-sm table-hover nowrap" id="scheduleTable" width="100%"
                                     cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>

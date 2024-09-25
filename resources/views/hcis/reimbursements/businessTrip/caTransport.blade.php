@@ -1,18 +1,19 @@
 <script>
-    var formCount = 0;
+    var formCountTransport = 0;
 
     window.addEventListener('DOMContentLoaded', function() {
-        formCount = document.querySelectorAll('#form-container-transport > div').length;
+        formCountTransport = document.querySelectorAll('#form-container-transport > div').length;
     });
 
     function addMoreFormTransport(event) {
         event.preventDefault();
-        formCount++;
+        formCountTransport++;
 
         const newForm = document.createElement("div");
-        newForm.id = `form-container-bt-transport-${formCount}`;
+        newForm.id = `form-container-bt-transport-${formCountTransport}`;
         newForm.className = "card-body bg-light p-2 mb-3";
         newForm.innerHTML = `
+            <p class="fs-4 text-primary" style="font-weight: bold; ">Transport ${formCountTransport}</p>
             <div class="row">
                 <!-- Transport Date -->
                 <div class="col-md-4 mb-2">
@@ -21,7 +22,7 @@
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label" for="name">Company Code</label>
-                    <select class="form-control select2" id="company_bt_transport_${formCount}" name="company_bt_transport[]">
+                    <select class="form-control select2" id="company_bt_transport_${formCountTransport}" name="company_bt_transport[]">
                         <option value="">Select Company...</option>
                         @foreach ($companies as $company)
                             <option value="{{ $company->contribution_level_code }}">
@@ -38,7 +39,7 @@
                         </div>
                         <input class="form-control"
                                 name="nominal_bt_transport[]"
-                                id="nominal_bt_transport_${formCount}"
+                                id="nominal_bt_transport_${formCountTransport}"
                                 type="text"
                                 min="0"
                                 value="0"
@@ -52,19 +53,22 @@
                 <div class="col-md-12 mb-2">
                     <div class="mb-2">
                         <label class="form-label">Information</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ..."></textarea>
+                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
-            <br>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(${formCount}, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormTransport(${formCount}, event)">Remove</button>
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(${formCountTransport}, event)">Reset</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormTransport(${formCountTransport}, event)">Delete</button>
                 </div>
             </div>
         `;
         document.getElementById("form-container-transport").appendChild(newForm);
+
+        $(`#company_bt_transport_${formCountTransport}`).select2({
+            theme: "bootstrap-5",
+        });
     }
 
     $('.btn-warning').click(function(event) {
@@ -75,7 +79,7 @@
 
     function removeFormTransport(index, event) {
         event.preventDefault();
-        if (formCount > 0) {
+        if (formCountTransport > 0) {
             const formContainer = document.getElementById(`form-container-bt-transport-${index}`);
             if (formContainer) {
                 const nominalInput = formContainer.querySelector(`#nominal_bt_transport_${index}`);
@@ -87,14 +91,33 @@
                     calculateTotalNominalBTTotal();
                 }
                 $(`#form-container-bt-transport-${index}`).remove();
-                formCount--;
+                formCountTransport--;
+            }
+        }
+    }
+
+    function removeFormTransportDec(index, event) {
+        event.preventDefault();
+        if (formCountTransport > 0) {
+            const formContainer = document.getElementById(`form-container-bt-transport-dec-${index}`);
+            if (formContainer) {
+                const nominalInput = formContainer.querySelector(`#nominal_bt_transport_${index}`);
+                if (nominalInput) {
+                    let nominalValue = cleanNumber(nominalInput.value);
+                    let total = cleanNumber(document.querySelector('input[name="total_bt_transport"]').value);
+                    total -= nominalValue;
+                    document.querySelector('input[name="total_bt_transport"]').value = formatNumber(total);
+                    calculateTotalNominalBTTotal();
+                }
+                $(`#form-container-bt-transport-dec-${index}`).remove();
+                formCountTransport--;
             }
         }
     }
 
     function clearFormTransport(index, event) {
         event.preventDefault();
-        if (formCount > 0) {
+        if (formCountTransport > 0) {
             let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_transport_${index}`).value);
 
             let total = cleanNumber(document.querySelector('input[name="total_bt_transport"]').value);
@@ -110,6 +133,13 @@
             formContainer.querySelectorAll('input[type="number"]').forEach(input => {
                 input.value = 0;
             });
+
+            const companyCodeSelect = formContainer.querySelector(`#company_bt_transport_${index}`);
+            if (companyCodeSelect) {
+                companyCodeSelect.selectedIndex = 0; // Reset the select element to the default option
+                var event = new Event('change');
+                companyCodeSelect.dispatchEvent(event); // Trigger the change event to update the select2 component
+            }
 
             formContainer.querySelectorAll('select').forEach(select => {
                 select.selectedIndex = 0;
@@ -181,15 +211,15 @@
                     <div class="col-md-12 mb-2">
                         <div class="mb-2">
                             <label class="form-label">Information</label>
-                            <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ...">{{$transport['keterangan']}}</textarea>
+                            <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport['keterangan']}}</textarea>
                         </div>
                     </div>
                 </div>
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport({{ $loop->index + 1 }}, event)">Clear</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormTransport({{ $loop->index + 1 }}, event)">Remove</button>
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormTransport({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -254,15 +284,15 @@
                 <div class="col-md-12 mb-2">
                     <div class="mb-2">
                         <label class="form-label">Information</label>
-                        <textarea name="keterangan_bt_transport[]" placeholder="Write your information ..." class="form-control"></textarea>
+                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
             <br>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(1, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormTransport(1, event)">Remove</button>
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(1, event)">Reset</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormTransport(1, event)">Delete</button>
                 </div>
             </div>
         </div>

@@ -322,7 +322,7 @@
                                                     @php
                                                         $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                     @endphp
-                                                    @if ($n->status != 'Pending L1' && $n->status != 'Pending L2' && $n->status != 'Rejected')
+                                                    @if ($n->status != 'Pending L1' && $n->status != 'Pending L2' && $n->status != 'Rejected' && $n->status != 'Verified')
                                                         <form method="GET"
                                                             action="/businessTrip/declaration/admin/{{ $n->id }}"
                                                             style="display: inline-block;">

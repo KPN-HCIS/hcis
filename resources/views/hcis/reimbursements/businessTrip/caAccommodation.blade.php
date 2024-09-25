@@ -1,16 +1,16 @@
 <script>
-    var formCount = 0;
+    var formCountPenginapan = 0;
 
     window.addEventListener('DOMContentLoaded', function() {
-        formCount = document.querySelectorAll('#form-container-penginapan > div').length;
+        formCountPenginapan = document.querySelectorAll('#form-container-penginapan > div').length;
     });
 
     function addMoreFormPenginapan(event) {
         event.preventDefault();
-        formCount++;
+        formCountPenginapan++;
 
         const newForm = document.createElement("div");
-        newForm.id = `form-container-bt-penginapan-${formCount}`;
+        newForm.id = `form-container-bt-penginapan-${formCountPenginapan}`;
         newForm.className = "card-body bg-light p-2 mb-3";
         newForm.innerHTML = `
             <div class="row">
@@ -18,23 +18,23 @@
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Accommodation Start Plan</label>
                     <input type="date" name="start_bt_penginapan[]"
-                        id="start_bt_penginapan_${formCount}"
+                        id="start_bt_penginapan_${formCountPenginapan}"
                         class="form-control start-penginapan"
-                        placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPenginapan(this, document.getElementById('end_bt_penginapan_${formCount}'), document.querySelector('#total_days_bt_penginapan_${formCount}'))">
+                        placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPenginapan(this, document.getElementById('end_bt_penginapan_${formCountPenginapan}'), document.querySelector('#total_days_bt_penginapan_${formCountPenginapan}'))">
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Accommodation End Plan</label>
                     <input type="date" name="end_bt_penginapan[]"
-                        id="end_bt_penginapan_${formCount}"
+                        id="end_bt_penginapan_${formCountPenginapan}"
                         class="form-control end-penginapan"
-                        placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPenginapan(document.getElementById('start_bt_penginapan_${formCount}'), this, document.querySelector('#total_days_bt_penginapan_${formCount}'))">
+                        placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPenginapan(document.getElementById('start_bt_penginapan_${formCountPenginapan}'), this, document.querySelector('#total_days_bt_penginapan_${formCountPenginapan}'))">
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Total Days</label>
                     <div class="input-group">
                         <input
                             class="form-control bg-light total-days-penginapan"
-                            id="total_days_bt_penginapan_${formCount}"
+                            id="total_days_bt_penginapan_${formCountPenginapan}"
                             name="total_days_bt_penginapan[]"
                             type="number" min="0"
                             value="0" readonly>
@@ -48,12 +48,12 @@
                     <label class="form-label">Hotel Name</label>
                     <input type="text"
                         name="hotel_name_bt_penginapan[]"
-                        class="form-control" placeholder="ex: Westin">
+                        class="form-control" placeholder="Hotel">
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Company Code</label>
                     <select class="form-control select2"
-                        id="company_bt_penginapan_${formCount}"
+                        id="company_bt_penginapan_${formCountPenginapan}"
                         name="company_bt_penginapan[]">
                         <option value="">Select Company...</option>
                         @foreach ($companies as $company)
@@ -71,7 +71,7 @@
                         </div>
                         <input class="form-control"
                             name="nominal_bt_penginapan[]"
-                            id="nominal_bt_penginapan_${formCount}" type="text"
+                            id="nominal_bt_penginapan_${formCountPenginapan}" type="text"
                             min="0" value="0"
                             onfocus="this.value = this.value === '0' ? '' : this.value;"
                             oninput="formatInput(this)"
@@ -82,12 +82,15 @@
             <br>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(${formCount}, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(${formCount}, event)">Remove</button>
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
                 </div>
             </div>
         `;
         document.getElementById("form-container-penginapan").appendChild(newForm);
+        $(`#company_bt_penginapan_${formCountPenginapan}`).select2({
+            theme: "bootstrap-5",
+        })
     }
 
     $('.btn-warning').click(function(event) {
@@ -98,7 +101,7 @@
 
     function removeFormPenginapan(index, event) {
         event.preventDefault();
-        if (formCount > 0) {
+        if (formCountPenginapan > 0) {
             const formContainer = document.getElementById(`form-container-bt-penginapan-${index}`);
             if (formContainer) {
                 const nominalInput = formContainer.querySelector(`#nominal_bt_penginapan_${index}`);
@@ -110,14 +113,14 @@
                     calculateTotalNominalBTTotal();
                 }
                 $(`#form-container-bt-penginapan-${index}`).remove();
-                formCount--;
+                formCountPenginapan--;
             }
         }
     }
 
     function clearFormPenginapan(index, event) {
         event.preventDefault();
-        let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_penginapan_${formCount}`).value);
+        let nominalValue = cleanNumber(document.querySelector(`#nominal_bt_penginapan_${formCountPenginapan}`).value);
         let total = cleanNumber(document.querySelector('input[name="total_bt_penginapan"]').value);
         total -= nominalValue;
         document.querySelector('input[name="total_bt_penginapan"]').value = formatNumber(total);
@@ -140,7 +143,7 @@
             textarea.value = '';
         });
 
-        document.querySelector(`#nominal_bt_penginapan_${formCount}`).value = 0;
+        document.querySelector(`#nominal_bt_penginapan_${formCountPenginapan}`).value = 0;
         calculateTotalNominalBTTotal();
     }
 
@@ -159,12 +162,17 @@
     function calculateTotalDaysPenginapan(startInput, endInput, totalDaysInput) {
         const startDate = new Date(startInput.value);
         const endDate = new Date(endInput.value);
+
+        // Set the minimum date for the endDate input
+        endInput.min = startInput.value;
+
         if(startDate && endDate && endDate >= startDate) {
             const timeDiff = endDate - startDate;
             const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Convert time to days
             totalDaysInput.value = daysDiff > 0 ? daysDiff : 0; // Ensure non-negative
         } else {
             totalDaysInput.value = 0; // Set to 0 if invalid dates
+            endInput.value = '';
         }
 
         if(endDate < startDate){
@@ -177,6 +185,7 @@
                 confirmButtonText: "OK",
             });
         }
+
     }
 </script>
 
@@ -262,8 +271,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Clear</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Remove</button>
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -324,7 +333,7 @@
                     <label class="form-label">Hotel Name</label>
                     <input type="text"
                         name="hotel_name_bt_penginapan[]"
-                        class="form-control" placeholder="ex: Westin" id="hotel_name_bt_penginapan_1">
+                        class="form-control" placeholder="Hotel" id="hotel_name_bt_penginapan_1">
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Company Code</label>
@@ -358,8 +367,8 @@
             <br>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(1, event)">Remove</button>
+                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>
+                    <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(1, event)">Delete</button>
                 </div>
             </div>
         </div>
