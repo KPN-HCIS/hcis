@@ -44,11 +44,6 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="mb-3">
-                    {{-- <a href="{{ url()->previous() }}" class="btn btn-outline-primary">
-                    <i class="bi bi-caret-left-fill"></i> Kembali
-                </a> --}}
-                </div>
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
                         <h4 class="mb-0">Edit Data - {{ $n->no_sppd }}</h4>
@@ -99,12 +94,12 @@
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control form-control-sm" id="mulai" name="mulai"
                                         placeholder="Tanggal Mulai" value="{{ $n->mulai }}" onchange="validateStartEndDates()">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control form-control-sm" id="kembali" name="kembali"
                                         placeholder="Tanggal Kembali" value="{{ $n->kembali }}" onchange="validateStartEndDates()">
@@ -145,7 +140,7 @@
                             </div>
 
                             <div class="row mb-2">
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-2">
                                     <label for="bb_perusahaan" class="form-label">
                                         Company Cost Expenses (PT Service Needs / Not PT Payroll)
                                     </label>

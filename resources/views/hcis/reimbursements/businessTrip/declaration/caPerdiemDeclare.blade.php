@@ -411,12 +411,17 @@
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", initializeDateInputs);
-  </script>
+</script>
 @if (
-    (!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null) ||
-        (!empty($declarelCA['detail_perdiem']) && $declarelCA['detail_perdiem'][0]['start_date'] !== null))
+    (isset($detailCA['detail_perdiem']) &&
+        !empty($detailCA['detail_perdiem']) &&
+        $detailCA['detail_perdiem'][0]['start_date'] !== null) ||
+        (isset($declareCA['detail_perdiem']) &&
+            !empty($declareCA['detail_perdiem']) &&
+            $declareCA['detail_perdiem'][0]['start_date'] !== null))
     {{-- Form Edit --}}
     <div id="form-container-perdiem">
+        @if (isset($detailCA['detail_perdiem']) && is_array($detailCA['detail_perdiem']) && !empty($detailCA['detail_perdiem']))
         @foreach ($detailCA['detail_perdiem'] as $index => $perdiem)
             <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3"
                 style="background-color: #f8f8f8">
@@ -579,6 +584,8 @@
                 </div>
             </div>
         @endforeach
+        @endif
+        @if (isset($declareCA['detail_perdiem']) && is_array($declareCA['detail_perdiem']) && !empty($declareCA['detail_perdiem']))
         @foreach ($declareCA['detail_perdiem'] as $index => $perdiem_dec)
             @if (!isset($detailCA['detail_perdiem'][$index]))
                 <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3"
@@ -594,7 +601,7 @@
                                 <option value="">Select Company...</option>
                                 @foreach ($companies as $company)
                                     <option value="{{ $company->contribution_level_code }}"
-                                        @if ($company->contribution_level_code == $perdiem['company_code']) selected @endif>
+                                        @if ($company->contribution_level_code == $perdiem_dec['company_code']) selected @endif>
                                         {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
                                     </option>
                                 @endforeach
@@ -610,7 +617,7 @@
                                 <option value="">Select location...</option>
                                 @foreach ($locations as $location)
                                     <option value="{{ $location->area }}"
-                                        @if ($location->area == $perdiem['location']) selected @endif>
+                                        @if ($location->area == $perdiem_dec['location']) selected @endif>
                                         {{ $location->area . ' (' . $location->company_name . ')' }}
                                     </option>
                                 @endforeach
@@ -673,6 +680,7 @@
                 </div>
             @endif
         @endforeach
+        @endif
     </div>
 
     <div class="mb-2">

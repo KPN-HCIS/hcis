@@ -44,8 +44,6 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="mb-3">
-                </div>
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
                         <h4 class="mb-0">Add Data</h4>
@@ -55,49 +53,49 @@
                         <form id="btFrom" action="/businessTrip/form/post" method="POST">
                             @csrf
                             <div class="row mb-2">
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-2">
                                     <label for="nama" class="form-label">Name</label>
                                     <input type="text" class="form-control form-control-sm bg-light" id="nama" name="nama"
                                         style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-2">
                                     <label for="divisi" class="form-label">Divison</label>
                                     <input type="text" class="form-control form-control-sm bg-light" id="divisi" name="divisi"
                                         style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="norek_krywn" class="form-label">Employee Account Number</label>
                                     <input type="number" class="form-control form-control-sm bg-light" id="norek_krywn" name="norek_krywn"
                                         value="{{ $employee_data->bank_account_number }}" readonly>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
                                     <input type="text" class="form-control form-control-sm bg-light" id="nama_pemilik_rek"
                                         name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="nama_bank" class="form-label">Bank Name</label>
                                     <input type="text" class="form-control form-control-sm bg-light" id="nama_bank" name="nama_bank"
                                         placeholder="ex. BCA" value="{{ $employee_data->bank_name }}" readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control form-control-sm" id="mulai" name="mulai"
                                         placeholder="Tanggal Mulai" onchange="validateStartEndDates()" required>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control form-control-sm" id="kembali" name="kembali"
                                         placeholder="Tanggal Kembali" onchange="validateStartEndDates()" required>
                                 </div>
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden"
                                     value="{{ $perdiem->amount }}" readonly>
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="tujuan" class="form-label">Destination</label>
                                     <select class="form-select form-select-sm select2" name="tujuan" id="tujuan"
                                         onchange="BTtoggleOthers()" required>
@@ -123,7 +121,7 @@
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-2">
                                     <label for="bb_perusahaan" class="form-label">Company Cost Expenses (PT Service Needs
                                         /
                                         Not
