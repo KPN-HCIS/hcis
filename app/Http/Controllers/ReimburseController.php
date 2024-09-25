@@ -320,7 +320,9 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
-            ->where('approval_status', '!=', 'Rejected')
+            ->where('ca_status', '!=', 'Done')
+            ->where('approval_status', '=', 'Approved')
+            ->where('approval_sett', '=', '')
             ->count();
 
         return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
@@ -377,6 +379,9 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
+            ->where('ca_status', '!=', 'Done')
+            ->where('approval_status', '=', 'Approved')
+            ->where('approval_sett', '=', '')
             ->count();
 
         foreach ($ca_transactions as $transaction) {
@@ -427,6 +432,9 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
+            ->where('ca_status', '!=', 'Done')
+            ->where('approval_status', '=', 'Approved')
+            ->where('approval_sett', '=', '')
             ->count();
 
         // foreach ($ca_transactions as $transaction) {
@@ -1311,7 +1319,7 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
         $approval = ca_approval::with('employee')
             ->where('ca_id', $key)
-            ->where('approval_status', 'Approved')
+            ->where('approval_status','!=', 'Rejected')
             ->orderBy('layer', 'asc')
             ->get();
 
