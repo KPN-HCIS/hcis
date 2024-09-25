@@ -335,7 +335,7 @@
                                                         @php
                                                             $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                         @endphp
-                                                        @if (($n->kembali < $today && $n->status == 'Approved') || $n->status == 'Declaration Draft')
+                                                        @if (($n->kembali < $today && $n->status == 'Approved') || $n->status == 'Declaration Draft' || $n->status == 'Declaration Rejected')
                                                             <form method="GET"
                                                                 action="/businessTrip/declaration/{{ $n->id }}"
                                                                 style="display: inline-block;">

@@ -232,7 +232,7 @@
                 </div>
                 <input class="form-control bg-light" name="total_bt_lainnya" id="total_bt_lainnya" type="text"
                     min="0"
-                    value="{{ number_format(array_sum(array_column($declareCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}"
+                    value="{{ number_format(array_sum(array_column($declareCA['detail_lainnya'] ?? [], 'nominal')), 0, ',', '.') }}"
                     readonly>
             </div>
         </div>
@@ -243,7 +243,7 @@
                     <span class="input-group-text">Rp</span>
                 </div>
                 <input class="form-control bg-light" name="totalca_deklarasi" id="totalca_declarasi" type="text"
-                    min="0" value="{{ number_format($ca->total_ca, 0, ',', '.') }}" readonly>
+                    min="0" value="{{ number_format($ca->total_ca ?? 0, 0, ',', '.') }}" readonly>
             </div>
         </div>
     </div>
@@ -309,7 +309,7 @@
                     <span class="input-group-text">Rp</span>
                 </div>
                 <input class="form-control bg-light" name="totalca_deklarasi" id="totalca_declarasi" type="text"
-                    min="0" value="{{ number_format($ca->total_ca, 0, ',', '.') }}" readonly>
+                    min="0" value="{{ number_format($ca->total_ca ?? 0, 0, ',', '.') }}" readonly>
             </div>
         </div>
     </div>

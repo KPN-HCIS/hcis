@@ -79,24 +79,9 @@
                                             <td> {{ $employee_data->job_level }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Costing Company</th>
+                                            <th>Designation</th>
                                             <td class="block">:</td>
-                                            <td> {{ $ca->contribution_level }}
-                                                ({{ $ca->contribution_level_code }})</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Destination</th>
-                                            <td class="block">:</td>
-                                            @if ($ca->others_location == null)
-                                                <td> {{ $ca->destination }}</td>
-                                            @else
-                                                <td> {{ $ca->others_location }}</td>
-                                            @endif
-                                        </tr>
-                                        <tr>
-                                            <th>CA Purposes</th>
-                                            <td class="block">:</td>
-                                            <td>{{ $ca->ca_needs }}</td>
+                                            <td> {{ $employee_data->designation_name }}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -113,30 +98,24 @@
                                             <td> {{ date('d M Y', strtotime($n->kembali)) }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Total Days</th>
+                                            <th>Costing Company</th>
                                             <td class="block">:</td>
-                                            <td> {{ $ca->total_days }} days</td>
+                                            <td> ({{ $n->bb_perusahaan }})</td>
                                         </tr>
                                         <tr>
-                                            <th>CA Date Required</th>
+                                            <th>Destination</th>
                                             <td class="block">:</td>
-                                            <td> {{ date('d M Y', strtotime($ca->date_required)) }}</td>
+                                            <td> {{ $n->tujuan }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Declaration Estimate</th>
+                                            <th>Purposes</th>
                                             <td class="block">:</td>
-                                            <td> {{ date('d M Y', strtotime($ca->declare_estimate)) }}</td>
+                                            <td>{{ $n->keperluan }}</td>
                                         </tr>
                                         <tr>
                                             <th>Cash Advance Type</th>
                                             <td class="block">:</td>
-                                            @if ($ca->type_ca == 'dns')
-                                                <td> Business Trip</td>
-                                            @elseif ($ca->type_ca == 'ndns')
-                                                <td> Non Business Trip</td>
-                                            @else
-                                                <td> Entertainment</td>
-                                            @endif
+                                            <td> Business Trip</td>
                                         </tr>
                                     </table>
                                 </div>
