@@ -6,52 +6,124 @@
         updateCheckboxVisibility();
     });
 
-    function addMoreFormDetail(event) {
+    function addMoreFormDetailDec(event) {
         event.preventDefault();
         formCountDetail++;
 
         const newForm = document.createElement("div");
         newForm.id = `form-container-e-detail-${formCountDetail}`;
-        newForm.className = "card-body bg-light p-2 mb-3";
+        newForm.className = "card-body p-2 mb-3";
+        newForm.style.backgroundColor = "#f8f8f8";
         newForm.innerHTML = `
             <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment ${formCountDetail}</p>
-            <div class="row">
-                <div class="col-md-6 mb-2">
-                    <label class="form-label">Entertainment Type</label>
-                    <select name="enter_type_e_detail[]" id="enter_type_e_detail_${formCountDetail}" class="form-select">
-                        <option value="">-</option>
-                        <option value="food">Food/Beverages/Souvenir</option>
-                        <option value="transport">Transport</option>
-                        <option value="accommodation">Accommodation</option>
-                        <option value="gift">Gift</option>
-                        <option value="fund">Fund</option>
-                    </select>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <label class="form-label">Amount</label>
-                    <div class="input-group">
-                        <div class="input-group-append">
-                            <span class="input-group-text">Rp</span>
+            <div class="card-body bg-light p-2 mb-3">
+                <p class="fs-5 text-primary" style="font-weight: bold;">Penginapan Declaration</p>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Entertainment Type</label>
+                        <select name="enter_type_e_detail[]" id="enter_type_e_detail_${formCountDetail}" class="form-select">
+                            <option value="">-</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
+                            <option value="transport">Transport</option>
+                            <option value="accommodation">Accommodation</option>
+                            <option value="gift">Gift</option>
+                            <option value="fund">Fund</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Amount</label>
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Rp</span>
+                            </div>
+                            <input class="form-control" name="nominal_e_detail[]"
+                                id="nominal_e_detail_${formCountDetail}"
+                                type="text" min="0" value="0"
+                                onfocus="this.value = this.value === '0' ? '' : this.value;"
+                                oninput="formatInputENT(this)">
                         </div>
-                        <input class="form-control" name="nominal_e_detail[]"
-                            id="nominal_e_detail_${formCountDetail}"
-                            type="text" min="0" value="0"
-                            onfocus="this.value = this.value === '0' ? '' : this.value;"
-                            oninput="formatInputENT(this)">
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Entertainment Fee Detail</label>
+                        <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
                     </div>
                 </div>
-                <div class="col-md-12 mb-2">
-                    <label class="form-label">Entertainment Fee Detail</label>
-                    <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
+                <br>
+                <div class="row mt-3">
+                    <div class="d-flex justify-start w-100">
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px"
+                            onclick="clearFormDetail(${formCountDetail}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2"
+                            onclick="removeFormDetail(${formCountDetail}, event)">Delete</button>
+                    </div>
                 </div>
             </div>
-            <br>
-            <div class="row mt-3">
-                <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px"
-                        onclick="clearFormDetail(${formCountDetail}, event)">Reset</button>
-                    <button class="btn btn-warning mr-2"
-                        onclick="removeFormDetail(${formCountDetail}, event)">Delete</button>
+        `;
+
+        document.getElementById("form-container-detail").appendChild(newForm);
+
+        // Menambahkan listener untuk select dan input baru
+        newForm.querySelector('select[name="enter_type_e_detail[]"]').addEventListener('change', updateCheckboxVisibility);
+
+        newForm.querySelector('input[name="nominal_e_detail[]"]').addEventListener('input', function() {
+            formatInputENT(this);
+            calculateTotalNominalEDetail();
+        });
+
+        calculateTotalNominalEDetail(); // Hitung total secara otomatis.
+        updateCheckboxVisibility(); // Memperbarui visibilitas checkbox.
+    }
+
+    function addMoreFormDetailReq(event) {
+        event.preventDefault();
+        formCountDetail++;
+
+        const newForm = document.createElement("div");
+        newForm.id = `form-container-e-detail-${formCountDetail}`;
+        newForm.className = "card-body p-2 mb-3";
+        newForm.style.backgroundColor = "#f8f8f8";
+        newForm.innerHTML = `
+            <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment ${formCountDetail}</p>
+            <div class="card-body bg-light p-2 mb-3">
+                <p class="fs-5 text-primary" style="font-weight: bold;">Penginapan Request</p>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Entertainment Type</label>
+                        <select name="enter_type_e_detail[]" id="enter_type_e_detail_${formCountDetail}" class="form-select">
+                            <option value="">-</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
+                            <option value="transport">Transport</option>
+                            <option value="accommodation">Accommodation</option>
+                            <option value="gift">Gift</option>
+                            <option value="fund">Fund</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Amount</label>
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Rp</span>
+                            </div>
+                            <input class="form-control" name="nominal_e_detail[]"
+                                id="nominal_e_detail_${formCountDetail}"
+                                type="text" min="0" value="0"
+                                onfocus="this.value = this.value === '0' ? '' : this.value;"
+                                oninput="formatInputENT(this)">
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Entertainment Fee Detail</label>
+                        <textarea name="enter_fee_e_detail[]" class="form-control"></textarea>
+                    </div>
+                </div>
+                <br>
+                <div class="row mt-3">
+                    <div class="d-flex justify-start w-100">
+                        <button class="btn btn-danger mr-2" style="margin-right: 10px"
+                            onclick="clearFormDetail(${formCountDetail}, event)">Reset</button>
+                        <button class="btn btn-warning mr-2"
+                            onclick="removeFormDetail(${formCountDetail}, event)">Delete</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -211,7 +283,7 @@
 
 @if (!empty($detailCA['detail_e']) && $detailCA['detail_e'][0]['type'] !== null)
     <div id="form-container-detail">
-        @foreach ($detailCA['detail_e'] as $detail)
+        @foreach ($detailCA['detail_e'] as $index => $detail)
             <div id="form-container-e-detail-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
                 <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment {{ $loop->index + 1 }}</p>
                 <div id="form-container-e-detail-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
@@ -252,36 +324,41 @@
                 </div>
                 <div id="form-container-e-detail-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
                     <p class="fs-5 text-primary" style="font-weight: bold;">Detail Entertainment Declaration</p>
-                    <div class="row">
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label">Entertainment Type</label>
-                            <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
-                                <option value="">-</option>
-                                <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
-                                <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
-                                <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
-                                <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
-                                <option value="fund" {{ $detail['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label">Amount</label>
-                            <div class="input-group">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">Rp</span>
+                    @if (isset($declareCA['detail_e'][$index]))
+                        @php
+                            $detail_dec = $declareCA['detail_e'][$index];
+                        @endphp
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label">Entertainment Type</label>
+                                <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
+                                    <option value="">-</option>
+                                    <option value="food" {{ $detail_dec['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
+                                    <option value="transport" {{ $detail_dec['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
+                                    <option value="accommodation" {{ $detail_dec['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
+                                    <option value="gift" {{ $detail_dec['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                    <option value="fund" {{ $detail_dec['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label">Amount</label>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Rp</span>
+                                    </div>
+                                    <input class="form-control" name="nominal_e_detail[]"
+                                        id="nominal_e_detail_{{ $loop->index + 1 }}"
+                                        type="text" min="0" value="{{ number_format($detail_dec['nominal'], 0, ',', '.') }}"
+                                        onfocus="this.value = this.value === '0' ? '' : this.value;"
+                                        oninput="formatInputENT(this)">
                                 </div>
-                                <input class="form-control" name="nominal_e_detail[]"
-                                    id="nominal_e_detail_{{ $loop->index + 1 }}"
-                                    type="text" min="0" value="{{ number_format($detail['nominal'], 0, ',', '.') }}"
-                                    onfocus="this.value = this.value === '0' ? '' : this.value;"
-                                    oninput="formatInputENT(this)">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Entertainment Fee Detail</label>
+                                <textarea name="enter_fee_e_detail[]" class="form-control">{{ $detail_dec['fee_detail'] }}</textarea>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Entertainment Fee Detail</label>
-                            <textarea name="enter_fee_e_detail[]" class="form-control">{{ $detail['fee_detail'] }}</textarea>
-                        </div>
-                    </div>
+                    @endif
                     <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
@@ -339,7 +416,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonDetail" onclick="addMoreFormDetail(event)">Add More</button>
+        <button class="btn btn-primary" id="addMoreButtonDetail" onclick="addMoreFormDetailDec(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -398,7 +475,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonDetail" onclick="addMoreFormDetail(event)">Add More</button>
+        <button class="btn btn-primary" id="addMoreButtonDetail" onclick="addMoreFormDetailDec(event)">Add More</button>
     </div>
 
     <div class="mt-2">
