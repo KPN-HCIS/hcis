@@ -202,7 +202,7 @@
                                                                         <td>{{ $perdiem['company_code'] ?? '-' }}</td>
                                                                         <td>{{ $perdiem['total_days'] ?? '-' }} Days</td>
                                                                         <td style="text-align: right">Rp.
-                                                                            {{ number_format($nominal, 0, ',', '.') }}</td>
+                                                                            {{ number_format($perdiem['nominal'] ?? '0', 0, ',', '.') }}</td>
                                                                     </tr>
                                                                 @endforeach
                                                             @endif
@@ -216,10 +216,10 @@
                                                     <tbody>
                                                         <tr>
                                                             <td colspan="{{ $hasData && !$allNominalZero ? 4 : 6 }}"
-                                                                class="text-right">Total</td>
-                                                            <td class="text-center">{{ $totalDays }} Days</td>
-                                                            <td style="text-align: right">Rp.
-                                                                {{ number_format($totalPerdiem, 0, ',', '.') }}</td>
+                                                                class="text-right"><b>Total</b></td>
+                                                            <td class="text-center"><b>{{ $totalDays }} Days</b></td>
+                                                            <td style="text-align: right"><b>Rp.
+                                                                {{ number_format($totalPerdiem, 0, ',', '.') }}</b></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -296,7 +296,7 @@
                                                                         <td>{{ $perdiem['company_code'] ?? '-' }}</td>
                                                                         <td>{{ $perdiem['total_days'] ?? '-' }} Days</td>
                                                                         <td style="text-align: right">Rp.
-                                                                            {{ number_format($nominal, 0, ',', '.') }}</td>
+                                                                            {{ number_format($perdiem['nominal'] ?? '0', 0, ',', '.') }}</td>
                                                                     </tr>
                                                                 @endforeach
                                                             @endif
@@ -310,10 +310,10 @@
                                                     <tbody>
                                                         <tr>
                                                             <td colspan="{{ $hasData && !$allNominalZero ? 4 : 6 }}"
-                                                                class="text-right">Total</td>
-                                                            <td class="text-center">{{ $totalDays }} Days</td>
-                                                            <td style="text-align: right">Rp.
-                                                                {{ number_format($totalPerdiem, 0, ',', '.') }}</td>
+                                                                class="text-right"><b>Total</b></td>
+                                                            <td class="text-center"><b>{{ $totalDays }} Days</b></td>
+                                                            <td style="text-align: right"><b>Rp.
+                                                                {{ number_format($totalPerdiem, 0, ',', '.') }}</b></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -564,10 +564,10 @@
                                                             </tr>
                                                         @endif
                                                     <tfoot>
-                                                        <td colspan="5" class="text-right">Total</td>
-                                                        <td class="text-center">{{ $totalDays }} Days</td>
-                                                        <td class="text-center">Rp.
-                                                            {{ number_format($totalPenginapan, 0, ',', '.') }}</td>
+                                                        <td colspan="5" class="text-right"><b>Total</b></td>
+                                                        <td class="text-center"><b>{{ $totalDays }} Days</b></td>
+                                                        <td class="text-center"><b>Rp.
+                                                            {{ number_format($totalPenginapan, 0, ',', '.') }}</b></td>
                                                     </tfoot>
                                                     </tbody>
                                                 </table>
@@ -646,10 +646,10 @@
                                                             </tr>
                                                         @endif
                                                     <tfoot>
-                                                        <td colspan="5" class="text-right">Total</td>
-                                                        <td class="text-center">{{ $totalDays }} Days</td>
-                                                        <td class="text-center">Rp.
-                                                            {{ number_format($totalPenginapan, 0, ',', '.') }}</td>
+                                                        <td colspan="5" class="text-right"><b>Total</b></td>
+                                                        <td class="text-center"><b>{{ $totalDays }} Days</b></td>
+                                                        <td class="text-center"><b>Rp.
+                                                            {{ number_format($totalPenginapan, 0, ',', '.') }}</b></td>
                                                     </tfoot>
                                                     </tbody>
                                                 </table>
@@ -719,9 +719,9 @@
                                                             </tr>
                                                         @endif
                                                     <tfoot>
-                                                        <td colspan="3" class="text-right">Total</td>
-                                                        <td style="text-align: right">Rp.
-                                                            {{ number_format($totalLainnya, 0, ',', '.') }}</td>
+                                                        <td colspan="3" class="text-right"><b>Total</b></td>
+                                                        <td style="text-align: right"><b>Rp.
+                                                            {{ number_format($totalLainnya, 0, ',', '.') }}</b></td>
                                                     </tfoot>
                                                     </tbody>
                                                 </table>
@@ -788,9 +788,9 @@
                                                             </tr>
                                                         @endif
                                                     <tfoot>
-                                                        <td colspan="3" class="text-right">Total</td>
-                                                        <td style="text-align: right">Rp.
-                                                            {{ number_format($totalLainnya, 0, ',', '.') }}
+                                                        <td colspan="3" class="text-right"><b>Total</b></td>
+                                                        <td style="text-align: right"><b>Rp.
+                                                            {{ number_format($totalLainnya, 0, ',', '.') }}</b>
                                                         </td>
                                                     </tfoot>
                                                     </tbody>
