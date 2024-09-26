@@ -127,72 +127,30 @@
                                         <div class="d-flex flex-column gap-2">
                                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                                 <li class="nav-item" role="presentation">
-                                                    <button
-                                                        class="nav-link
-                                                    {{ (!isset($detailCA['detail_transport'][0]['tanggal']) &&
-                                                        !isset($detailCA['detail_penginapan'][0]['start_date']) &&
-                                                        !isset($detailCA['detail_lainnya'][0]['tanggal'])) ||
-                                                    (isset($detailCA['detail_perdiem'][0]['start_date']) && $detailCA['detail_perdiem'][0]['start_date'])
-                                                        ? 'active'
-                                                        : '' }}"
-                                                        id="pills-perdiem-tab" data-bs-toggle="pill"
-                                                        data-bs-target="#pills-perdiem" type="button" role="tab"
-                                                        aria-controls="pills-perdiem"
-                                                        aria-selected="
-                                                    {{ (!isset($detailCA['detail_transport'][0]['tanggal']) &&
-                                                        !isset($detailCA['detail_penginapan'][0]['start_date']) &&
-                                                        !isset($detailCA['detail_lainnya'][0]['tanggal'])) ||
-                                                    (isset($detailCA['detail_perdiem'][0]['start_date']) && $detailCA['detail_perdiem'][0]['start_date'])
-                                                        ? 'true'
-                                                        : 'false' }}">Perdiem
-                                                        Plan</button>
+                                                    <button class="nav-link active" id="pills-perdiem-tab"
+                                                        data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
+                                                        role="tab" aria-controls="pills-perdiem"
+                                                        aria-selected="true">Perdiem Plan</button>
                                                 </li>
 
                                                 <li class="nav-item" role="presentation">
-                                                    <button
-                                                        class="nav-link
-                                                    {{ !isset($detailCA['detail_perdiem'][0]['start_date']) &&
-                                                    isset($detailCA['detail_transport'][0]['tanggal']) &&
-                                                    $detailCA['detail_transport'][0]['tanggal']
-                                                        ? 'active'
-                                                        : '' }}"
-                                                        id="pills-transport-tab" data-bs-toggle="pill"
+                                                    <button class="nav-link" id="pills-transport-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-transport" type="button" role="tab"
-                                                        aria-controls="pills-transport"
-                                                        aria-selected="{{ isset($detailCA['detail_transport'][0]['tanggal']) && $detailCA['detail_transport'][0]['tanggal'] ? 'true' : 'false' }}">Transport
+                                                        aria-controls="pills-transport" aria-selected="false">Transport
                                                         Plan</button>
                                                 </li>
 
                                                 <li class="nav-item" role="presentation">
-                                                    <button
-                                                        class="nav-link
-                                                    {{ !isset($detailCA['detail_perdiem'][0]['start_date']) &&
-                                                    !isset($detailCA['detail_transport'][0]['tanggal']) &&
-                                                    isset($detailCA['detail_penginapan'][0]['start_date']) &&
-                                                    $detailCA['detail_penginapan'][0]['start_date']
-                                                        ? 'active'
-                                                        : '' }}"
-                                                        id="pills-accomodation-tab" data-bs-toggle="pill"
-                                                        data-bs-target="#pills-accomodation" type="button" role="tab"
-                                                        aria-controls="pills-accomodation"
-                                                        aria-selected="{{ isset($detailCA['detail_penginapan'][0]['start_date']) && $detailCA['detail_penginapan'][0]['start_date'] ? 'true' : 'false' }}">Accommodation
-                                                        Plan</button>
+                                                    <button class="nav-link" id="pills-accomodation-tab"
+                                                        data-bs-toggle="pill" data-bs-target="#pills-accomodation"
+                                                        type="button" role="tab" aria-controls="pills-accomodation"
+                                                        aria-selected="false">Accommodation Plan</button>
                                                 </li>
 
                                                 <li class="nav-item" role="presentation">
-                                                    <button
-                                                        class="nav-link
-                                                    {{ !isset($detailCA['detail_perdiem'][0]['start_date']) &&
-                                                    !isset($detailCA['detail_transport'][0]['tanggal']) &&
-                                                    !isset($detailCA['detail_penginapan'][0]['start_date']) &&
-                                                    isset($detailCA['detail_lainnya'][0]['tanggal']) &&
-                                                    $detailCA['detail_lainnya'][0]['tanggal']
-                                                        ? 'active'
-                                                        : '' }}"
-                                                        id="pills-other-tab" data-bs-toggle="pill"
+                                                    <button class="nav-link" id="pills-other-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-other" type="button" role="tab"
-                                                        aria-controls="pills-other"
-                                                        aria-selected="{{ isset($detailCA['detail_lainnya'][0]['tanggal']) && $detailCA['detail_lainnya'][0]['tanggal'] ? 'true' : 'false' }}">Other
+                                                        aria-controls="pills-other" aria-selected="false">Other
                                                         Plan</button>
                                                 </li>
                                             </ul>
@@ -228,7 +186,8 @@
                                                     </div>
                                                     <input class="form-control bg-light" name="totalca_deklarasi"
                                                         id="totalca_declarasi" type="text" min="0"
-                                                        value="{{ number_format($ca->total_ca ?? '0', 0, ',', '.') }}" readonly>
+                                                        value="{{ number_format($ca->total_ca ?? '0', 0, ',', '.') }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mb-2">
@@ -270,9 +229,10 @@
                                             value="{{ $perdiem->amount ?? 0 }}" readonly>
 
                                         <div class="d-flex justify-content-end mt-3">
-                                            <button type="submit" class="btn btn-outline-primary rounded-pill me-2"
+                                            <button type="submit"
+                                                class="btn btn-outline-primary rounded-pill me-2 submit-button"
                                                 value="Declaration Draft" name="action_draft">Save as Draft</button>
-                                            <button type="submit" class="btn btn-primary rounded-pill"
+                                            <button type="submit" class="btn btn-primary rounded-pill submit-button"
                                                 name="action_submit" value="Declaration L1">Submit</button>
                                         </div>
                                         <div class="" style="visibility: hidden">
@@ -292,6 +252,60 @@
     </div>
 
     <script src="{{ asset('/js/businessTrip.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.submit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent immediate form submission
+
+                    const form = document.getElementById('btEditForm');
+
+                    // Check if the form is valid before proceeding
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // Show validation messages if invalid
+                        return; // Exit if the form is not valid
+                    }
+
+                    // Retrieve the values from the input fields
+                    const totalBtPerdiem = document.getElementById('total_bt_perdiem').value;
+                    const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
+                    const totalBtTransport = document.getElementById('total_bt_transport').value;
+                    const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+
+                    // Create a message with the input values, each on a new line with bold titles
+                    const inputSummary = `
+                        <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
+                        <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
+                        <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
+                        <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
+                    `;
+
+                    // Show SweetAlert confirmation with the input summary
+                    Swal.fire({
+                        title: "Do you want to submit this request?",
+                        html: `You won't be able to revert this!<br><br>${inputSummary}`, // Use 'html' instead of 'text'
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AB2F2B",
+                        cancelButtonColor: "#CCCCCC",
+                        confirmButtonText: "Yes, submit it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Create a hidden input field to hold the action value
+                            const input = document.createElement('input');
+                            input.type =
+                                'hidden'; // Hidden input so it doesn't show in the form
+                            input.name = button.name; // Use the button's name attribute
+                            input.value = button.value; // Use the button's value attribute
+
+                            form.appendChild(input); // Append the hidden input to the form
+                            form.submit(); // Submit the form only if confirmed
+                        }
+                    });
+                });
+            });
+        });
+    </script>
     <script>
         function cleanNumber(value) {
             return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;

@@ -64,45 +64,51 @@
                             <div class="row mb-2">
                                 <div class="col-md-6 mb-2">
                                     <label for="nama" class="form-label">Name</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama" name="nama"
-                                        style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama"
+                                        name="nama" style="cursor:not-allowed;" value="{{ $employee_data->fullname }}"
+                                        readonly>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="divisi" class="form-label">Divison</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="divisi" name="divisi"
-                                        style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="divisi"
+                                        name="divisi" style="cursor:not-allowed;" value="{{ $employee_data->unit }}"
+                                        readonly>
 
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-4 mb-2">
                                     <label for="norek_krywn" class="form-label">Employee Account Number</label>
-                                    <input type="number" class="form-control form-control-sm bg-light" id="norek_krywn" name="norek_krywn"
-                                        value="{{ $employee_data->bank_account_number }}" readonly>
+                                    <input type="number" class="form-control form-control-sm bg-light" id="norek_krywn"
+                                        name="norek_krywn" value="{{ $employee_data->bank_account_number }}" readonly>
                                 </div>
 
                                 <div class="col-md-4 mb-2">
                                     <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_pemilik_rek"
-                                        name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light"
+                                        id="nama_pemilik_rek" name="nama_pemilik_rek"
+                                        value="{{ $employee_data->bank_account_name }}" readonly>
                                 </div>
 
                                 <div class="col-md-4 mb-2">
                                     <label for="nama_bank" class="form-label">Bank Name</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_bank" name="nama_bank"
-                                        value="{{ $employee_data->bank_name }}" placeholder="ex. BCA" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_bank"
+                                        name="nama_bank" value="{{ $employee_data->bank_name }}" placeholder="ex. BCA"
+                                        readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-4 mb-2">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control form-control-sm" id="mulai" name="mulai"
-                                        placeholder="Tanggal Mulai" value="{{ $n->mulai }}" onchange="validateStartEndDates()">
+                                        placeholder="Tanggal Mulai" value="{{ $n->mulai }}"
+                                        onchange="validateStartEndDates()">
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control form-control-sm" id="kembali" name="kembali"
-                                        placeholder="Tanggal Kembali" value="{{ $n->kembali }}" onchange="validateStartEndDates()">
+                                        placeholder="Tanggal Kembali" value="{{ $n->kembali }}"
+                                        onchange="validateStartEndDates()">
                                 </div>
 
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden"
@@ -135,8 +141,8 @@
                             <div class="mb-3">
                                 <label for="keperluan" class="form-label">Need (To be filled in according to visit
                                     service)</label>
-                                <textarea class="form-control form-control-sm" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
-                                    required>{{ $n->keperluan }}</textarea>
+                                <textarea class="form-control form-control-sm" id="keperluan" name="keperluan" rows="3"
+                                    placeholder="Fill your need" required>{{ $n->keperluan }}</textarea>
                             </div>
 
                             <div class="row mb-2">
@@ -144,7 +150,8 @@
                                     <label for="bb_perusahaan" class="form-label">
                                         Company Cost Expenses (PT Service Needs / Not PT Payroll)
                                     </label>
-                                    <select class="form-select form-select-sm select2" id="bb_perusahaan" name="bb_perusahaan" required>
+                                    <select class="form-select form-select-sm select2" id="bb_perusahaan"
+                                        name="bb_perusahaan" required>
                                         <option value="">--- Choose PT ---</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}"
@@ -329,14 +336,14 @@
                                 </div>
 
                                 <input type="hidden" name="status" value="Pending L1" id="status">
-
+                                <input type="hidden" id="formActionType" name="formActionType" value="">
                                 <div class="d-flex justify-content-end mt-3">
-                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2"
-                                        name="action_draft" id="save-draft" value="Draft">Save as Draft</button>
-                                    <button type="submit" class="btn btn-primary rounded-pill" name="action_submit"
-                                        value="Pending L1">Submit</button>
+                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2 submit-button"
+                                        name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
+                                        Draft</button>
+                                    <button type="submit" class="btn btn-primary rounded-pill submit-button"
+                                        name="action_submit" value="Pending L1" id="submit-btn">Submit</button>
                                 </div>
-
                         </form>
                     </div>
                 </div>
@@ -348,7 +355,70 @@
     <script src="{{ asset('/js/editBusinessTrip.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.submit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent immediate form submission
 
+                    const form = document.getElementById('btEditForm');
+
+                    // Check if the form is valid before proceeding
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // Show validation messages if invalid
+                        return; // Exit if the form is not valid
+                    }
+
+                    // Retrieve the values from the input fields
+                    const totalBtPerdiem = document.getElementById('total_bt_perdiem').value;
+                    const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
+                    const totalBtTransport = document.getElementById('total_bt_transport').value;
+                    const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+
+                    const caChecked = document.getElementById('cashAdvancedCheckbox').checked ?
+                    'CA' : '';
+                    const ticketChecked = document.getElementById('ticketCheckbox').checked ?
+                        'Ticket' : '';
+                    const hotelChecked = document.getElementById('hotelCheckbox').checked ?
+                        'Hotel' : '';
+                    const taksiChecked = document.getElementById('taksiCheckbox').checked ?
+                        'Taxi Voucher' : '';
+
+                    // Create a message with the input values, each on a new line with bold titles
+                    const inputSummary = `
+                        <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
+                        <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
+                        <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
+                        <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
+                        <strong>Selected Options:</strong> ${[caChecked, ticketChecked, hotelChecked, taksiChecked].filter(Boolean).join(', ') || 'None'}
+                    `;
+
+                    // Show SweetAlert confirmation with the input summary
+                    Swal.fire({
+                        title: "Do you want to submit this request?",
+                        html: `You won't be able to revert this!<br><br>${inputSummary}`, // Use 'html' instead of 'text'
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AB2F2B",
+                        cancelButtonColor: "#CCCCCC",
+                        confirmButtonText: "Yes, submit it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Create a hidden input field to hold the action value
+                            const input = document.createElement('input');
+                            input.type =
+                                'hidden'; // Hidden input so it doesn't show in the form
+                            input.name = button.name; // Use the button's name attribute
+                            input.value = button.value; // Use the button's value attribute
+
+                            form.appendChild(input); // Append the hidden input to the form
+                            form.submit(); // Submit the form only if confirmed
+                        }
+                    });
+                });
+            });
+        });
+    </script>
     <script>
         //CA JS
         function toggleDivs() {

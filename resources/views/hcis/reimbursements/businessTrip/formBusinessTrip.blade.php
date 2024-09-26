@@ -55,31 +55,35 @@
                             <div class="row mb-2">
                                 <div class="col-md-6 mb-2">
                                     <label for="nama" class="form-label">Name</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama" name="nama"
-                                        style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama"
+                                        name="nama" style="cursor:not-allowed;" value="{{ $employee_data->fullname }}"
+                                        readonly>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="divisi" class="form-label">Divison</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="divisi" name="divisi"
-                                        style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="divisi"
+                                        name="divisi" style="cursor:not-allowed;" value="{{ $employee_data->unit }}"
+                                        readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-4 mb-2">
                                     <label for="norek_krywn" class="form-label">Employee Account Number</label>
-                                    <input type="number" class="form-control form-control-sm bg-light" id="norek_krywn" name="norek_krywn"
-                                        value="{{ $employee_data->bank_account_number }}" readonly>
+                                    <input type="number" class="form-control form-control-sm bg-light" id="norek_krywn"
+                                        name="norek_krywn" value="{{ $employee_data->bank_account_number }}" readonly>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_pemilik_rek"
-                                        name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light"
+                                        id="nama_pemilik_rek" name="nama_pemilik_rek"
+                                        value="{{ $employee_data->bank_account_name }}" readonly>
                                 </div>
 
                                 <div class="col-md-4 mb-2">
                                     <label for="nama_bank" class="form-label">Bank Name</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_bank" name="nama_bank"
-                                        placeholder="ex. BCA" value="{{ $employee_data->bank_name }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_bank"
+                                        name="nama_bank" placeholder="ex. BCA" value="{{ $employee_data->bank_name }}"
+                                        readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
@@ -108,7 +112,7 @@
                                         <option value="Others">Others</option>
                                     </select>
                                     <br><input type="text" name="others_location" id="others_location"
-                                        class="form-control form-control-sm" placeholder="Other Location" value=""
+                                        class="form-control form-control-sm mt-2" placeholder="Other Location" value=""
                                         style="display: none;">
                                 </div>
                             </div>
@@ -116,8 +120,8 @@
                                 <div class="col-md-12">
                                     <label for="keperluan" class="form-label">Need (To be filled in according to visit
                                         service)</label>
-                                    <textarea class="form-control form-control-sm" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
-                                        required></textarea>
+                                    <textarea class="form-control form-control-sm" id="keperluan" name="keperluan" rows="3"
+                                        placeholder="Fill your need" required></textarea>
                                 </div>
                             </div>
                             <div class="row mb-2">
@@ -126,7 +130,8 @@
                                         /
                                         Not
                                         PT Payroll)</label>
-                                    <select class="form-select form-select-sm select2" id="bb_perusahaan" name="bb_perusahaan" required>
+                                    <select class="form-select form-select-sm select2" id="bb_perusahaan"
+                                        name="bb_perusahaan" required>
                                         <option value="" disabled selected>--- Choose PT ---</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}">
@@ -251,12 +256,15 @@
                                 </div>
 
                                 <input type="hidden" name="status" value="Pending L1" id="status">
+                                <input type="hidden" id="formActionType" name="formActionType" value="">
+
 
                                 <div class="d-flex justify-content-end mt-3">
-                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2"
-                                        name="action_draft" id="save-draft" value="Draft">Save as Draft</button>
-                                    <button type="submit" class="btn btn-primary rounded-pill"
-                                        name="action_submit" value="Pending L1">Submit</button>
+                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2 submit-button"
+                                        name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
+                                        Draft</button>
+                                    <button type="submit" class="btn btn-primary rounded-pill submit-button"
+                                        name="action_submit" value="Pending L1" id="submit-btn">Submit</button>
                                 </div>
 
                         </form>
@@ -270,6 +278,71 @@
     <script src="{{ asset('/js/businessTrip.js') }}"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.submit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent immediate form submission
+
+                    const form = document.getElementById('btFrom');
+
+                    // Check if the form is valid before proceeding
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // Show validation messages if invalid
+                        return; // Exit if the form is not valid
+                    }
+
+                    // Retrieve the values from the input fields
+                    const totalBtPerdiem = document.getElementById('total_bt_perdiem').value;
+                    const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
+                    const totalBtTransport = document.getElementById('total_bt_transport').value;
+                    const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+
+                    const caChecked = document.getElementById('cashAdvancedCheckbox').checked ?
+                        'CA' : '';
+                    const ticketChecked = document.getElementById('ticketCheckbox').checked ?
+                        'Ticket' : '';
+                    const hotelChecked = document.getElementById('hotelCheckbox').checked ?
+                        'Hotel' : '';
+                    const taksiChecked = document.getElementById('taksiCheckbox').checked ?
+                        'Taxi Voucher' : '';
+
+                    // Create a message with the input values, each on a new line with bold titles
+                    const inputSummary = `
+                        <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
+                        <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
+                        <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
+                        <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
+                        <strong>Selected Options:</strong> ${[caChecked, ticketChecked, hotelChecked, taksiChecked].filter(Boolean).join(', ') || 'None'}
+                    `;
+
+                    // Show SweetAlert confirmation with the input summary
+                    Swal.fire({
+                        title: "Do you want to submit this request?",
+                        html: `You won't be able to revert this!<br><br>${inputSummary}`, // Use 'html' instead of 'text'
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AB2F2B",
+                        cancelButtonColor: "#CCCCCC",
+                        confirmButtonText: "Yes, submit it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Create a hidden input field to hold the action value
+                            const input = document.createElement('input');
+                            input.type =
+                                'hidden'; // Hidden input so it doesn't show in the form
+                            input.name = button.name; // Use the button's name attribute
+                            input.value = button.value; // Use the button's value attribute
+
+                            form.appendChild(input); // Append the hidden input to the form
+                            form.submit(); // Submit the form only if confirmed
+                        }
+                    });
+                });
+            });
+        });
+    </script>
     <script>
         //CA JS
         document.addEventListener('DOMContentLoaded', function() {

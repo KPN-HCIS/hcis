@@ -466,8 +466,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Ticket JS
 document.addEventListener("DOMContentLoaded", function () {
-    let formTicketCount =
-        document.querySelectorAll('[id^="ticket-form-"]').length || 1; // Count existing forms on page load
+    let formTicketCount = 1;
     const maxTicketForms = 5;
     const ticketFormsContainer = document.getElementById(
         "ticket_forms_container"
@@ -489,9 +488,14 @@ document.addEventListener("DOMContentLoaded", function () {
         fields.forEach((selector) => {
             const field = form.querySelector(selector);
             if (field) {
-                field.required = isRequired;
+                if (isRequired) {
+                    field.setAttribute("required", "");
+                } else {
+                    field.removeAttribute("required");
+                }
             }
         });
+
         const typeSelect = form.querySelector('select[name="type_tkt[]"]');
         const returnDateField = form.querySelector(
             'input[name="tgl_plg_tkt[]"]'
@@ -500,25 +504,50 @@ document.addEventListener("DOMContentLoaded", function () {
             'input[name="jam_plg_tkt[]"]'
         );
 
+        // Update the required attributes based on the "Round Trip" option
         function updateReturnFields() {
             if (isRequired && typeSelect && typeSelect.value === "Round Trip") {
-                returnDateField.required = true;
-                returnTimeField.required = true;
+                returnDateField.setAttribute("required", "");
+                returnTimeField.setAttribute("required", "");
             } else {
-                if (returnDateField) returnDateField.required = false;
-                if (returnTimeField) returnTimeField.required = false;
+                if (returnDateField)
+                    returnDateField.removeAttribute("required");
+                if (returnTimeField)
+                    returnTimeField.removeAttribute("required");
             }
         }
 
         if (typeSelect) {
             typeSelect.addEventListener("change", updateReturnFields);
-            updateReturnFields(); // Initial call to set the correct state
+            updateReturnFields();
         }
     }
 
     function updateAllFormsRequiredState(isRequired) {
         document.querySelectorAll('[id^="ticket-form-"]').forEach((form) => {
             toggleRequiredAttributes(form, isRequired);
+        });
+    }
+
+    function ensureAllFormsHaveRequiredState() {
+        const isRequired = ticketCheckbox.checked;
+        document.querySelectorAll('[id^="ticket-form-"]').forEach((form) => {
+            toggleRequiredAttributes(form, isRequired);
+        });
+    }
+
+    if (ticketCheckbox) {
+        ticketCheckbox.addEventListener("change", function () {
+            ticketFormsContainer.style.display = this.checked
+                ? "block"
+                : "none";
+
+            if (this.checked) {
+                ensureAllFormsHaveRequiredState();
+            } else {
+                updateAllFormsRequiredState(false);
+                resetAllTicketForms();
+            }
         });
     }
 
@@ -540,7 +569,6 @@ document.addEventListener("DOMContentLoaded", function () {
         formTicketCount = forms.length;
         updateRemoveButtons();
         updateAddButtonVisibility();
-        // initializeRoundTripOptions();
     }
 
     function updateAddButtonVisibility() {
@@ -586,7 +614,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const inputs = container.querySelectorAll(
             'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
         );
-        inputs.forEach((input) => (input.value = ""));
+        inputs.forEach((input) => {
+            input.value = "";
+            input.removeAttribute("required");
+        });
 
         const selects = container.querySelectorAll("select");
         selects.forEach((select) => {
@@ -597,8 +628,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     ? select.querySelector("option[selected]").value
                     : select.querySelector("option").value;
             }
+            select.removeAttribute("required");
         });
-
         const roundTripOptions = container.querySelector(".round-trip-options");
         if (roundTripOptions) {
             roundTripOptions.style.display = "none";
@@ -611,6 +642,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         forms.forEach((form, index) => {
             resetTicketFields(form);
+            toggleRequiredAttributes(form, false);
             if (index === 0) {
                 form.style.display = "block";
             } else {
@@ -664,18 +696,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-
-    if (ticketCheckbox) {
-        ticketCheckbox.addEventListener("change", function () {
-            ticketFormsContainer.style.display = this.checked
-                ? "block"
-                : "none";
-            updateAllFormsRequiredState(this.checked);
-            if (!this.checked) {
-                resetAllTicketForms();
-            }
-        });
-    }
 
     function createNewTicketForm(formNumber) {
         return `
@@ -815,10 +835,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial setup
     updateRemoveButtons();
     initializeAllSelect2();
-    updateAllFormsRequiredState(ticketCheckbox.checked);
+    if (ticketCheckbox.checked) {
+        ticketFormsContainer.style.display = "block";
+        ensureAllFormsHaveRequiredState();
+    } else {
+        ticketFormsContainer.style.display = "none";
+        updateAllFormsRequiredState(false);
+    }
 });
 
-//Hotel JS
 //Hotel JS
 document.addEventListener("DOMContentLoaded", function () {
     let formHotelCount = 1;
@@ -887,7 +912,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const inputs = container.querySelectorAll(
             'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
         );
-        inputs.forEach((input) => (input.value = ""));
+        inputs.forEach((input) => {
+            input.value = ""; // Reset input value
+            input.required = false; // Remove required attribute
+        });
 
         const selects = container.querySelectorAll("select");
         selects.forEach((select) => {
@@ -903,6 +931,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         forms.forEach((form, index) => {
             resetHotelFields(form);
+            toggleRequiredAttributes(form, false);
             if (index === 0) {
                 form.style.display = "block";
             } else {

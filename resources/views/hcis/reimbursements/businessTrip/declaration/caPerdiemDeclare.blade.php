@@ -320,9 +320,11 @@
         if (isDateUsed(startDateInput.value, endDateInput.value, formIndex)) {
             Swal.fire({
                 icon: 'error',
-                title: 'Tanggal telah digunakan',
-                text: 'Silakan pilih tanggal yang berbeda!',
-                timer: 2000
+                title: 'Date has been used',
+                text: 'Please choose another date!',
+                timer: 2000,
+                confirmButtonColor: "#AB2F2B",
+                confirmButtonText: "OK",
             });
             startDateInput.value = '';
             endDateInput.value = '';
