@@ -142,17 +142,17 @@
                                             <td>{{ \Carbon\Carbon::parse($ca_transaction->start_date)->format('d-M-y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($ca_transaction->end_date)->format('d-M-y') }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
-                                            <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
+                                            <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
                                             <td>
-                                                @if ($ca_transaction->total_real < 0)
-                                                    <span class="text-danger">Rp. {{ number_format($ca_transaction->total_real) }}</span>
+                                                @if ($ca_transaction->total_cost < 0)
+                                                    <span class="text-danger">Rp. -{{ number_format(abs($ca_transaction->total_cost)) }}</span>
                                                 @else
-                                                    <span class="text-success">Rp. {{ number_format(abs($ca_transaction->total_real)) }}</span>
+                                                    <span class="text-success">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 @if($ca_transaction->approval_extend == 'Pending')
-                                                    <p class="badge text-bg-warning style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_extend." - ".$ca_transaction->extName}}">
+                                                    <p class="badge text-bg-warning" style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_extend." - ".$ca_transaction->extName}}">
                                                         {{ "Extend : ".$ca_transaction->approval_extend }}
                                                     </p>
                                                 @elseif ($ca_transaction->approval_sett == 'Rejected')

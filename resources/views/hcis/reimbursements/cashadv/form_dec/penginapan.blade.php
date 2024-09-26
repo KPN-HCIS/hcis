@@ -310,7 +310,7 @@
 
 @if (!empty($detailCA['detail_penginapan']) && $detailCA['detail_penginapan'][0]['nominal'] !== null)
     <div id="form-container-penginapan">
-        @foreach($detailCA['detail_penginapan'] as $index =>$penginapan)
+        @foreach($detailCA['detail_penginapan'] as $index => $penginapan)
             <div id="form-container-bt-penginapan-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
                 <p class="fs-4 text-primary" style="font-weight: bold; ">Penginapan {{ $loop->index + 1 }}</p>
                 <div id="form-container-bt-penginapan-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">

@@ -31,8 +31,9 @@
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-white justify-content-between">
                     <p></p>
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Approval Deklarasi Cash Advance -
-                        <b>"{{ $transactions->no_ca }}"</b></h4>
+                    <h4 class="modal-title fs-5 fs-md-4 fs-lg-3" id="viewFormEmployeeLabel">
+                        Approval Deklarasi Cash Advance - <b>"{{ $transactions->no_ca }}"</b>
+                    </h4>
                     <a href="{{ route('approval.cashadvancedDeklarasi') }}" type="button" class="btn btn-close"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
@@ -154,14 +155,12 @@
                                 @if ($transactions->type_ca == 'dns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="d-flex flex-row gap-2">
+                                            <div class="row mb-3">
                                                 <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Perdiem :</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="perdiemTableDec" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="7" class="text-center text-white"><b>Perdiem Plan :</b></th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Start Date</th>
@@ -205,134 +204,12 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
-
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover table-sm nowrap" id="transportTableDec" width="100%" cellspacing="0">
-                                                            <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="5" class="text-center text-white">Transport Plan</th>
-                                                                </tr>
-                                                                <tr style="text-align-last: center;">
-                                                                    <th>No</th>
-                                                                    <th>Date</th>
-                                                                    <th>Information</th>
-                                                                    <th>Company Code</th>
-                                                                    <th>Amount</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <?php $totalTransport = 0; $totalDays = 0; ?>
-                                                                @foreach ($detailCA['detail_transport'] as $transport)
-                                                                    <tr class="text-center">
-                                                                        <td class="text-center">{{ $loop->index + 1 }}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
-                                                                        <td>
-                                                                            {{$transport['keterangan']}}
-                                                                        </td>
-                                                                        <td>{{ $transport['company_code'] }}</td>
-                                                                        <td style="text-align: right">Rp. {{ number_format($transport['nominal'], 0, ',', '.') }}</td>
-                                                                    </tr>
-                                                                    <?php
-                                                                        $totalTransport += $transport['nominal'];
-                                                                    ?>
-                                                                @endforeach
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td colspan="4" class="text-right">Total</td>
-                                                                        <td style="text-align: right"> Rp. {{ number_format($totalTransport, 0, ',', '.') }} </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover table-sm nowrap" id="penginapanTableDec" width="100%" cellspacing="0">
-                                                            <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="7" class="text-center text-white">Accommodation Plan</th>
-                                                                </tr>
-                                                                <tr style="text-align-last: center;">
-                                                                    <th>No</th>
-                                                                    <th>Start Date</th>
-                                                                    <th>End Date</th>
-                                                                    <th>Hotel Name</th>
-                                                                    <th>Company Code</th>
-                                                                    <th>Total Days</th>
-                                                                    <th>Amount</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <?php $totalPenginapan = 0; $totalDays = 0; ?>
-                                                                @foreach ($detailCA['detail_penginapan'] as $penginapan)
-                                                                    <tr style="text-align-last: center;">
-                                                                        <td>{{ $loop->index + 1 }}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($penginapan['start_date'])->format('d-M-y') }}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($penginapan['end_date'])->format('d-M-y') }}</td>
-                                                                        <td>{{$penginapan['hotel_name']}}</td>
-                                                                        <td>{{ $penginapan['company_code'] }}</td>
-                                                                        <td>{{$penginapan['total_days']}}</td>
-                                                                        <td>Rp. {{ number_format($penginapan['nominal'], 0, ',', '.') }}</td>
-                                                                    </tr>
-                                                                    <?php
-                                                                        $totalPenginapan += $penginapan['nominal'];
-                                                                        $totalDays += $penginapan['total_days'];
-                                                                    ?>
-                                                                @endforeach
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td colspan="5" class="text-right">Total</td>
-                                                                        <td class="text-center">{{ $totalDays }}</td>
-                                                                        <td class="text-center"> Rp. {{ number_format($totalPenginapan, 0, ',', '.') }} </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTableDec" width="100%" cellspacing="0">
-                                                            <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="4" class="text-center text-white">Others Plan</th>
-                                                                </tr>
-                                                                <tr style="text-align-last: center;">
-                                                                    <th>No</th>
-                                                                    <th>Date</th>
-                                                                    <th>Information</th>
-                                                                    <th>Amount</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <?php $totalLainnya = 0; $totalDays = 0; ?>
-                                                                @foreach ($detailCA['detail_lainnya'] as $lainnya)
-                                                                    <tr style="text-align-last: center;">
-                                                                        <td>{{ $loop->index + 1 }}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($lainnya['tanggal'])->format('d-M-y') }}</td>
-                                                                        <td>{{$lainnya['keterangan']}}</td>
-                                                                        <td style="text-align-last: right;">Rp. {{ number_format($lainnya['nominal'], 0, ',', '.') }}</td>
-                                                                    </tr>
-                                                                    <?php
-                                                                        $totalLainnya += $lainnya['nominal'];
-                                                                    ?>
-                                                                @endforeach
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td colspan="3" class="text-right">Total</td>
-                                                                        <td style="text-align: right"> Rp. {{ number_format($totalPenginapan, 0, ',', '.') }} </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
                                                 </div>
                                                 <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Perdiem Declaration :</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="perdiemTable" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="7" class="text-center text-white"><b>Perdiem Plan Declaration:</b></th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Start Date</th>
@@ -376,13 +253,53 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
-
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Transport :</div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="transportTableDec" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Date</th>
+                                                                    <th>Information</th>
+                                                                    <th>Company Code</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalTransport = 0; $totalDays = 0; ?>
+                                                                @foreach ($detailCA['detail_transport'] as $transport)
+                                                                    <tr class="text-center">
+                                                                        <td class="text-center">{{ $loop->index + 1 }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
+                                                                        <td>
+                                                                            {{$transport['keterangan']}}
+                                                                        </td>
+                                                                        <td>{{ $transport['company_code'] }}</td>
+                                                                        <td style="text-align: right">Rp. {{ number_format($transport['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalTransport += $transport['nominal'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="4" class="text-right">Total</td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalTransport, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Transport Declaration :</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="transportTable" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="5" class="text-center text-white">Transport Plan Declaration</th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Date</th>
@@ -416,13 +333,57 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
-
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Accommodation :</div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="penginapanTableDec" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Start Date</th>
+                                                                    <th>End Date</th>
+                                                                    <th>Hotel Name</th>
+                                                                    <th>Company Code</th>
+                                                                    <th>Total Days</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalPenginapan = 0; $totalDays = 0; ?>
+                                                                @foreach ($detailCA['detail_penginapan'] as $penginapan)
+                                                                    <tr style="text-align-last: center;">
+                                                                        <td>{{ $loop->index + 1 }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($penginapan['start_date'])->format('d-M-y') }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($penginapan['end_date'])->format('d-M-y') }}</td>
+                                                                        <td>{{$penginapan['hotel_name']}}</td>
+                                                                        <td>{{ $penginapan['company_code'] }}</td>
+                                                                        <td>{{$penginapan['total_days']}}</td>
+                                                                        <td>Rp. {{ number_format($penginapan['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalPenginapan += $penginapan['nominal'];
+                                                                        $totalDays += $penginapan['total_days'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="5" class="text-right">Total</td>
+                                                                        <td class="text-center">{{ $totalDays }}</td>
+                                                                        <td class="text-center"> Rp. {{ number_format($totalPenginapan, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Accommodation Declaration :</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="penginapanTable" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="7" class="text-center text-white">Accommodation Plan Declaration:</th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Start Date</th>
@@ -460,13 +421,14 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
-
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Others :</div>
                                                     <div class="table-responsive">
-                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTable" width="100%" cellspacing="0">
+                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTableDec" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="4" class="text-center text-white">Others Plan</th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Date</th>
@@ -490,7 +452,42 @@
                                                                 <tbody>
                                                                     <tr>
                                                                         <td colspan="3" class="text-right">Total</td>
-                                                                        <td style="text-align: right"> Rp. {{ number_format($totalPenginapan, 0, ',', '.') }} </td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalLainnya, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Others Declaration :</div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Date</th>
+                                                                    <th>Information</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalLainnya = 0; $totalDays = 0; ?>
+                                                                @foreach ($declareCA['detail_lainnya'] as $lainnya)
+                                                                    <tr style="text-align-last: center;">
+                                                                        <td>{{ $loop->index + 1 }}</td>
+                                                                        <td>{{ \Carbon\Carbon::parse($lainnya['tanggal'])->format('d-M-y') }}</td>
+                                                                        <td>{{$lainnya['keterangan']}}</td>
+                                                                        <td style="text-align-last: right;">Rp. {{ number_format($lainnya['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalLainnya += $lainnya['nominal'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-right">Total</td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalLainnya, 0, ',', '.') }} </td>
                                                                     </tr>
                                                                 </tbody>
                                                             </tbody>
@@ -506,14 +503,12 @@
                                 @if ($transactions->type_ca == 'ndns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="d-flex flex-row gap-2">
-                                                <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Non Bussiness Trip:</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="lainnyaTableDec" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="4" class="text-center text-white">Non Bussiness Plan</th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Date</th>
@@ -544,13 +539,11 @@
                                                         </table>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Non Bussiness Trip Declaration:</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="lainnyaTable" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="4" class="text-center text-white">Non Bussiness Plan</th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Date</th>
@@ -590,14 +583,12 @@
                                 @if ($transactions->type_ca == 'entr')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="d-flex flex-row gap-2">
+                                            <div class="row mb-3">
                                                 <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Detail Entertainment :</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="lainnyaTableDec" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="4" class="text-center text-white">Detail Entertainment Plan</th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Entertainment Type</th>
@@ -638,13 +629,60 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
-
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Detail Entertainment Declaration :</div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTable" width="100%" cellspacing="0">
+                                                            <thead class="thead-light">
+                                                                <tr style="text-align-last: center;">
+                                                                    <th>No</th>
+                                                                    <th>Entertainment Type</th>
+                                                                    <th>Entertainment Fee Detail</th>
+                                                                    <th>Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $totalDetail = 0; $totalDays = 0; ?>
+                                                                @foreach ($declareCA['detail_e'] as $detail)
+                                                                    <tr style="text-align-last: center;">
+                                                                        <td>{{ $loop->index + 1 }}</td>
+                                                                        <td>
+                                                                            @php
+                                                                                $typeMap = [
+                                                                                    'food' => 'Food/Beverages/Souvenir',
+                                                                                    'transport' => 'Transport',
+                                                                                    'accommodation' => 'Accommodation',
+                                                                                    'gift' => 'Gift',
+                                                                                    'fund' => 'Fund',
+                                                                                ];
+                                                                            @endphp
+                                                                            {{ $typeMap[$detail['type']] ?? $detail['type'] }}
+                                                                        </td>
+                                                                        <td>{{$detail['fee_detail']}}</td>
+                                                                        <td style="text-align-last: right;">Rp. {{ number_format($detail['nominal'], 0, ',', '.') }}</td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        $totalDetail += $detail['nominal'];
+                                                                    ?>
+                                                                @endforeach
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-right">Total</td>
+                                                                        <td style="text-align: right"> Rp. {{ number_format($totalDetail, 0, ',', '.') }} </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Relation Entertainment :</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="penginapanTableDec" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="6" class="text-center text-white">Relation Entertainment Plan</th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Relation Type</th>
@@ -697,59 +735,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover table-sm nowrap" id="lainnyaTable" width="100%" cellspacing="0">
-                                                            <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="4" class="text-center text-white">Detail Entertainment Plan Declaration</th>
-                                                                </tr>
-                                                                <tr style="text-align-last: center;">
-                                                                    <th>No</th>
-                                                                    <th>Entertainment Type</th>
-                                                                    <th>Entertainment Fee Detail</th>
-                                                                    <th>Amount</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <?php $totalDetail = 0; $totalDays = 0; ?>
-                                                                @foreach ($declareCA['detail_e'] as $detail)
-                                                                    <tr style="text-align-last: center;">
-                                                                        <td>{{ $loop->index + 1 }}</td>
-                                                                        <td>
-                                                                            @php
-                                                                                $typeMap = [
-                                                                                    'food' => 'Food/Beverages/Souvenir',
-                                                                                    'transport' => 'Transport',
-                                                                                    'accommodation' => 'Accommodation',
-                                                                                    'gift' => 'Gift',
-                                                                                    'fund' => 'Fund',
-                                                                                ];
-                                                                            @endphp
-                                                                            {{ $typeMap[$detail['type']] ?? $detail['type'] }}
-                                                                        </td>
-                                                                        <td>{{$detail['fee_detail']}}</td>
-                                                                        <td style="text-align-last: right;">Rp. {{ number_format($detail['nominal'], 0, ',', '.') }}</td>
-                                                                    </tr>
-                                                                    <?php
-                                                                        $totalDetail += $detail['nominal'];
-                                                                    ?>
-                                                                @endforeach
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td colspan="3" class="text-right">Total</td>
-                                                                        <td style="text-align: right"> Rp. {{ number_format($totalDetail, 0, ',', '.') }} </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
+                                                    <div class="text-bg-primary fw-bold p-1 text-center" style="margin-bottom:-20px">Relation Entertainment Declaration :</div>
                                                     <div class="table-responsive">
                                                         <table class="table table-hover table-sm nowrap" id="penginapanTable" width="100%" cellspacing="0">
                                                             <thead class="thead-light">
-                                                                <tr class="bg-primary">
-                                                                    <th colspan="6" class="text-center text-white">Relation Entertainment Plan Declaration</th>
-                                                                </tr>
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
                                                                     <th>Relation Type</th>
@@ -790,13 +779,6 @@
                                                                         <td>{{$relation['purpose']}}</td>
                                                                     </tr>
                                                                 @endforeach
-                                                                <tbody>
-                                                                    {{-- <tr>
-                                                                        <td colspan="5" class="text-right">Total</td>
-                                                                        <td class="text-center">{{ $totalDays }}</td>
-                                                                        <td class="text-center"> Rp. {{ number_format($totalDetail, 0, ',', '.') }} </td>
-                                                                    </tr> --}}
-                                                                </tbody>
                                                             </tbody>
                                                         </table>
                                                     </div>

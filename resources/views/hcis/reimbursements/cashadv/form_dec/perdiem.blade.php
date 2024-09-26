@@ -40,7 +40,7 @@
         newForm.style.backgroundColor = "#f8f8f8";
         newForm.innerHTML = `
             <p class="fs-4 text-primary" style="font-weight: bold;">Perdiem ${formCountPerdiem}</p>
-            <div class="card-body bg-light p-2 mb-3">
+            <div id="form-container-bt-perdiem-dec-${formCountPerdiem}" class="card-body bg-light p-2 mb-3">
                 <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
                 <div class="row">
                     <!-- Company Code -->
@@ -445,6 +445,52 @@
         });
     });
 
+    function initializeDateInputs() {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+
+        // If there are existing values, set the min attribute and handle initial validation
+        if (startDateInput.value) {
+            endDateInput.min = startDateInput.value;
+        }
+        handleDateChange(); // Initial call to update related fields
+    }
+
+    document.getElementById('start_date').addEventListener('change', handleDateChange);
+    document.getElementById('end_date').addEventListener('change', handleDateChange);
+
+    function handleDateChange() {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        // Set the min attribute of the end_date input to the selected start_date
+        endDateInput.min = startDateInput.value;
+
+        // Validate dates
+        if (endDate < startDate) {
+            alert("End Date cannot be earlier than Start Date");
+            endDateInput.value = "";
+        }
+
+        // Update min and max values for all dynamic perdiem date fields
+        document.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
+            input.min = startDateInput.value;
+            input.max = endDateInput.value;
+        });
+
+        document.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
+            input.min = startDateInput.value;
+            input.max = endDateInput.value;
+        });
+
+        document.querySelectorAll('input[name="total_days_bt_perdiem[]"]').forEach(function(input) {
+            calculateTotalDaysPerdiem(input);
+        });
+    }
+    document.addEventListener("DOMContentLoaded", initializeDateInputs);
 
 </script>
 @if (!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null)
@@ -781,7 +827,7 @@
     <div id="form-container-perdiem">
         <div id="form-container-bt-perdiem-1" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
             <p class="fs-4 text-primary" style="font-weight: bold; ">Perdiem 1</p>
-            <div class="card-body bg-light p-2 mb-3">
+            <div id="form-container-bt-perdiem-dec-1" class="card-body bg-light p-2 mb-3">
                 <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
                 <div class="row">
                     <!-- Company Code -->
@@ -800,17 +846,18 @@
                     <!-- Location Agency -->
                     <div class="col-md-6 mb-2">
                         <label class="form-label" for="locationFilter">Location Agency</label>
-                        <select class="form-control location-select" name="location_bt_perdiem[]" id="location_bt_perdiem_1">
-                            <option value="">Select Location...</option>
-                            @foreach ($locations as $location)
-                                <option value="{{ $location->area }}">
-                                    {{ $location->area . ' (' . $location->company_name . ')' }}
+                        <select class="form-control select2" name="location_bt_perdiem[]" id="location_bt_perdiem_1" onchange="toggleOtherLocation(this, 1)">
+                            <option value="">Select location...</option>
+                            @foreach($locations as $location)
+                                <option value="{{ $location->area }}" @if($location->area == $perdiem['location']) selected @endif>
+                                    {{ $location->area." (".$location->company_name.")" }}
                                 </option>
                             @endforeach
-                            <option value="Others">Others</option>
+                            <option value="Others" @if('Others' == $perdiem['location']) selected @endif>Others</option>
                         </select>
-                        <br>
-                        <input type="text" name="other_location_bt_perdiem[]" class="form-control form-control-sm other-location" placeholder="Other Location" value="" style="display: none;">
+                        <div id="other-location-1" class="mt-3" @if($perdiem['location'] != 'Others') style="display: none;" @endif>
+                            <input type="text" name="other_location_bt_perdiem[]" class="form-control" placeholder="Other Location" value="{{ $perdiem['other_location'] ?? '' }}">
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -874,3 +921,6 @@
     </div>
 @endif
 
+<script>
+    document.addEventListener("DOMContentLoaded", initializeDateInputs);
+</script>

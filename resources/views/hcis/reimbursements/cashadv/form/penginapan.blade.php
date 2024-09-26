@@ -88,6 +88,10 @@
             </div>
         `;
         document.getElementById("form-container-penginapan").appendChild(newForm);
+
+        $(`#company_bt_penginapan_${formCountPenginapan}`).select2({
+            theme: "bootstrap-5",
+        });
     }
 
     $('.btn-warning').click(function(event) {

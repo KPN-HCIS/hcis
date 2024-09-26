@@ -54,7 +54,6 @@ class ReimburseController extends Controller
             ->get();
         // dd($ca_transactions);
         //tambah where status<>done
-        $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
         $today = Carbon::today();
 
         // Mengambil data karyawan yang sedang login
@@ -66,8 +65,11 @@ class ReimburseController extends Controller
         // Mengambil fullname dari employee berdasarkan status_id
         // $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))->pluck('fullname', 'employee_id');
 
-        $pendingCACount = CATransaction::where('user_id', $userId)
-            ->where('approval_status', 'Pending')
+        $disableCACount = CATransaction::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Pending')
+                    ->orWhere('ca_status', 'Refund');
+            })
             ->count();
 
         $deklarasiCACount = CATransaction::where('user_id', $userId)
@@ -111,7 +113,7 @@ class ReimburseController extends Controller
 
         return view('hcis.reimbursements.cashadv.cashadv', [
             'deklarasiCACount' => $deklarasiCACount,
-            'pendingCACount' => $pendingCACount,
+            'disableCACount' => $disableCACount,
             'employee_data' => $employee_data,
             'link' => $link,
             'parentLink' => $parentLink,
@@ -269,7 +271,7 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
-            ->where('end_date', '<=', $today)
+            ->where('end_date', '<=', $today)->where('approval_status', 'Approved')
             ->count();
 
         return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
@@ -1505,8 +1507,8 @@ class ReimburseController extends Controller
             $model->declare_ca = json_encode($declare_ca);
         }
         $model->total_ca = str_replace('.', '', $req->totalca_deklarasi);
-        $model->total_cost = str_replace('.', '', $req->totalca);
-        $model->total_real = $model->total_ca - $model->total_cost;
+        $model->total_real = str_replace('.', '', $req->totalca);
+        $model->total_cost = $model->total_ca - $model->total_real;
         //tambah 1 status disini
 
 

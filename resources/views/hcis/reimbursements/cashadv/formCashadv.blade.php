@@ -144,12 +144,11 @@
                                     <select class="form-control select2" id="bisnis_numb_dns" name="bisnis_numb_dns">
                                         <option value="">Select</option>
                                         @foreach ($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_sppd }}"
-                                                @if ($noSppdListDNS->contains($no_sppd->no_sppd))
-                                                    disabled title="No. SPPD already has CA Business Trip. Please apply for an extension if you want to add CA."
-                                                @endif>
-                                                {{ $no_sppd->no_sppd }}
-                                            </option>
+                                            @if (!$noSppdListDNS->contains($no_sppd->no_sppd)) <!-- Hanya tampilkan jika tidak ada di $noSppdListENT -->
+                                                <option value="{{ $no_sppd->no_sppd }}">
+                                                    {{ $no_sppd->no_sppd }}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -160,12 +159,11 @@
                                     <select class="form-control select2" id="bisnis_numb_ent" name="bisnis_numb_ent">
                                         <option value="">Select</option>
                                         @foreach ($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_sppd }}"
-                                                @if ($noSppdListENT->contains($no_sppd->no_sppd))
-                                                    disabled title="No. SPPD already has CA Entertain. Please apply for an extension if you want to add CA."
-                                                @endif>
-                                                {{ $no_sppd->no_sppd }}
-                                            </option>
+                                            @if (!$noSppdListENT->contains($no_sppd->no_sppd)) <!-- Hanya tampilkan jika tidak ada di $noSppdListENT -->
+                                                <option value="{{ $no_sppd->no_sppd }}">
+                                                    {{ $no_sppd->no_sppd }}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -177,31 +175,29 @@
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced
-                                            </div>
                                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link active" id="pills-perdiem-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
                                                         role="tab" aria-controls="pills-perdiem"
-                                                        aria-selected="true">Perdiem Plan</button>
+                                                        aria-selected="true">Perdiem</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-transport-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-transport" type="button" role="tab"
                                                         aria-controls="pills-transport" aria-selected="false">Transport
-                                                        Plan</button>
+                                                    </button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-accomodation-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-accomodation"
                                                         type="button" role="tab" aria-controls="pills-accomodation"
-                                                        aria-selected="false">Accomodation Plan</button>
+                                                        aria-selected="false">Accomodation</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-other-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-other" type="button" role="tab"
-                                                        aria-controls="pills-other" aria-selected="false">Other Plan</button>
+                                                        aria-controls="pills-other" aria-selected="false">Other</button>
                                                 </li>
                                             </ul>
                                             <div class="tab-content" id="pills-tabContent">
@@ -230,8 +226,6 @@
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced Non Business Trip
-                                            </div>
                                             @include('hcis.reimbursements.cashadv.form.nbt')
                                             <button type="button" id="add-more" style="display: none"
                                                 class="btn btn-primary mt-3">Add More</button>
@@ -250,13 +244,13 @@
                                                     <button class="nav-link active" id="pills-detail-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-detail" type="button"
                                                         role="tab" aria-controls="pills-detail"
-                                                        aria-selected="true">Detail Entertain Plan</button>
+                                                        aria-selected="true">Detail Entertain</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-relation-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-relation" type="button" role="tab"
                                                         aria-controls="pills-relation" aria-selected="false">Relation Entertain
-                                                        Plan</button>
+                                                    </button>
                                                 </li>
                                             </ul>
                                             <div class="tab-content" id="pills-tabContent">
@@ -465,43 +459,6 @@
 
             document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
         });
-    </script>
-
-    <script>
-        document.getElementById('start_date').addEventListener('change', handleDateChange);
-        document.getElementById('end_date').addEventListener('change', handleDateChange);
-
-        function handleDateChange() {
-            const startDateInput = document.getElementById('start_date');
-            const endDateInput = document.getElementById('end_date');
-
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
-
-            // Set the min attribute of the end_date input to the selected start_date
-            endDateInput.min = startDateInput.value;
-
-            // Validate dates
-            if (endDate < startDate) {
-                alert("End Date cannot be earlier than Start Date");
-                endDateInput.value = "";
-            }
-
-            // Update min and max values for all dynamic perdiem date fields
-            document.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
-                input.min = startDateInput.value;
-                input.max = endDateInput.value;
-            });
-
-            document.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
-                input.min = startDateInput.value;
-                input.max = endDateInput.value;
-            });
-
-            document.querySelectorAll('input[name="total_days_bt_perdiem[]"]').forEach(function(input) {
-                calculateTotalDaysPerdiem(input);
-            });
-        }
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

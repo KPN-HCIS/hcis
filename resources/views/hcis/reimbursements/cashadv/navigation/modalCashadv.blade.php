@@ -155,7 +155,7 @@
     function showPendingAlert() {
         Swal.fire({
             title: 'Cannot Add Data!',
-            text: 'You still have 2 Pending CA.',
+            text: 'You still have 2 Pending CA or Some CA still Waiting for Refund',
             icon: 'warning',
             confirmButtonColor: "#9a2a27",
             confirmButtonText: 'Ok'
