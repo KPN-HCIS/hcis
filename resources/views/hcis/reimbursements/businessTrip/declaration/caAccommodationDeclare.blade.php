@@ -52,7 +52,7 @@
                         <label class="form-label">Hotel Name</label>
                         <input type="text"
                             name="hotel_name_bt_penginapan[]"
-                            class="form-control" placeholder="Hotel">
+                            class="form-control" placeholder="ex: Westin">
                     </div>
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Company Code</label>
@@ -146,7 +146,7 @@
                         <label class="form-label">Hotel Name</label>
                         <input type="text"
                             name="hotel_name_bt_penginapan[]"
-                            class="form-control" placeholder="Hotel">
+                            class="form-control" placeholder="ex: Westin">
                     </div>
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Company Code</label>
@@ -311,7 +311,7 @@
 @if (!empty($detailCA['detail_penginapan']) && $detailCA['detail_penginapan'][0]['nominal'] !== null)
     <div id="form-container-penginapan">
         @foreach($detailCA['detail_penginapan'] as $index =>$penginapan)
-            <div id="form-container-bt-penginapan-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
+            <div id="form-container-bt-penginapan-{{ $loop->index + 1 }}" class="p-2 mb-3 rounded-3" style="background-color: #f8f8f8">
                 <p class="fs-4 text-primary" style="font-weight: bold; ">Penginapan {{ $loop->index + 1 }}</p>
                 <div id="form-container-bt-penginapan-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
                     <div class="row">
@@ -402,7 +402,7 @@
                                 <label class="form-label">Hotel Name</label>
                                 <input type="text"
                                     name="hotel_name_bt_penginapan[]"
-                                    class="form-control" placeholder="Hotel"
+                                    class="form-control" placeholder="ex: Westin"
                                     id="hotel_name_bt_penginapan_{{ $loop->index + 1 }}"
                                     value="{{$penginapan_dec['hotel_name']}}">
                             </div>
@@ -492,7 +492,7 @@
                             <label class="form-label">Hotel Name</label>
                             <input type="text"
                                 name="hotel_name_bt_penginapan[]"
-                                class="form-control" placeholder="Hotel"
+                                class="form-control" placeholder="ex: Westin"
                                 id="hotel_name_bt_penginapan_{{ $loop->index + 1 }}"
                                 value="{{$penginapan_dec['hotel_name']}}">
                         </div>
@@ -540,7 +540,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButton" onclick="addMoreFormPenginapanDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButton" onclick="addMoreFormPenginapanDec(event)">Add More</button>
     </div>
 
     <div class="mt-2 mb-2">
@@ -559,7 +559,7 @@
     <div id="form-container-penginapan">
         @foreach ($declareCA['detail_penginapan'] as $index => $penginapan_dec)
             @if (!isset($detailCA['detail_penginapan'][$index]))
-                <div id="form-container-bt-penginapan-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
+                <div id="form-container-bt-penginapan-{{ $loop->index + 1 }}" class="p-2 mb-3 rounded-3" style="background-color: #f8f8f8">
                     <p class="fs-4 text-primary" style="font-weight: bold; ">Accommodation {{ $loop->index + 1 }}</p>
                     <div class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
                         <p class="fs-5 text-primary" style="font-weight: bold;">Accommodation Declaration</p>
@@ -603,7 +603,7 @@
                                 <label class="form-label">Hotel Name</label>
                                 <input type="text"
                                     name="hotel_name_bt_penginapan[]"
-                                    class="form-control" placeholder="Hotel"
+                                    class="form-control" placeholder="ex: Westin"
                                     id="hotel_name_bt_penginapan_{{ $loop->index + 1 }}"
                                     value="{{$penginapan_dec['hotel_name']}}">
                             </div>
@@ -651,8 +651,8 @@
         @endforeach
     </div>
 
-    <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButton" onclick="addMoreFormPenginapanDec(event)">Add More</button>
+    <div class="mt-1">
+        <button class="btn btn-primary btn-sm" id="addMoreButton" onclick="addMoreFormPenginapanDec(event)">Add More</button>
     </div>
 
     <div class="mt-2 mb-2">
@@ -708,7 +708,7 @@
                         <label class="form-label">Hotel Name</label>
                         <input type="text"
                             name="hotel_name_bt_penginapan[]"
-                            class="form-control" placeholder="Hotel" id="hotel_name_bt_penginapan_1">
+                            class="form-control" placeholder="ex: Westin" id="hotel_name_bt_penginapan_1">
                     </div>
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Company Code</label>
@@ -751,7 +751,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButton" onclick="addMoreFormPenginapanDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButton" onclick="addMoreFormPenginapanDec(event)">Add More</button>
     </div>
 
     <div class="mt-2 mb-2">

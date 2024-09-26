@@ -53,14 +53,14 @@
                 <div class="col-md-12 mb-2">
                     <div class="mb-2">
                         <label class="form-label">Information</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                        <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ..."></textarea>
                     </div>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(${formCountTransport}, event)">Reset</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormTransport(${formCountTransport}, event)">Delete</button>
+                    <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormTransport(${formCountTransport}, event)">Reset</button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="removeFormTransport(${formCountTransport}, event)">Delete</button>
                 </div>
             </div>
         `;
@@ -211,15 +211,15 @@
                     <div class="col-md-12 mb-2">
                         <div class="mb-2">
                             <label class="form-label">Information</label>
-                            <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport['keterangan']}}</textarea>
+                            <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ...">{{$transport['keterangan']}}</textarea>
                         </div>
                     </div>
                 </div>
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport({{ $loop->index + 1 }}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormTransport({{ $loop->index + 1 }}, event)">Delete</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormTransport({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormTransport({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -227,7 +227,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonTransport" onclick="addMoreFormTransport(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonTransport" onclick="addMoreFormTransport(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -284,22 +284,22 @@
                 <div class="col-md-12 mb-2">
                     <div class="mb-2">
                         <label class="form-label">Information</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                        <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ..."></textarea>
                     </div>
                 </div>
             </div>
             <br>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(1, event)">Reset</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormTransport(1, event)">Delete</button>
+                    <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormTransport(1, event)">Reset</button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="removeFormTransport(1, event)">Delete</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonTransport" onclick="addMoreFormTransport(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonTransport" onclick="addMoreFormTransport(event)">Add More</button>
     </div>
 
     <div class="mt-2">

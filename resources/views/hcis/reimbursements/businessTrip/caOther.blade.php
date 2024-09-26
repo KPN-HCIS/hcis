@@ -35,8 +35,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya(${formCount}, event)">Clear</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormLainnya(${formCount}, event)">Remove</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormLainnya(${formCount}, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormLainnya(${formCount}, event)">Remove</button>
                     </div>
                 </div>
             `;
@@ -138,7 +138,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonLainnya" onclick="addMoreFormLainnya(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonLainnya" onclick="addMoreFormLainnya(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -179,15 +179,15 @@
             </div>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya(1, event)">Clear</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormLainnya(1, event)">Remove</button>
+                    <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormLainnya(1, event)">Reset</button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="removeFormLainnya(1, event)">Remove</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButton" onclick="addMoreFormLainnya(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButton" onclick="addMoreFormLainnya(event)">Add More</button>
     </div>
 
     <div class="mt-2">

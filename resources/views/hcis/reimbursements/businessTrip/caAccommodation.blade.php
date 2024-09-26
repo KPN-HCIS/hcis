@@ -48,7 +48,7 @@
                     <label class="form-label">Hotel Name</label>
                     <input type="text"
                         name="hotel_name_bt_penginapan[]"
-                        class="form-control" placeholder="Hotel">
+                        class="form-control" placeholder="ex: Westin">
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Company Code</label>
@@ -82,8 +82,8 @@
             <br>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
+                    <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
                 </div>
             </div>
         `;
@@ -233,7 +233,7 @@
                         <label class="form-label">Hotel Name</label>
                         <input type="text"
                             name="hotel_name_bt_penginapan[]"
-                            class="form-control" placeholder="Hotel"
+                            class="form-control" placeholder="ex: Westin"
                             id="hotel_name_bt_penginapan_{{ $loop->index + 1 }}"
                             value="{{$penginapan['hotel_name']}}">
                     </div>
@@ -271,8 +271,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -280,7 +280,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButton" onclick="addMoreFormPenginapan(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButton" onclick="addMoreFormPenginapan(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -333,7 +333,7 @@
                     <label class="form-label">Hotel Name</label>
                     <input type="text"
                         name="hotel_name_bt_penginapan[]"
-                        class="form-control" placeholder="Hotel" id="hotel_name_bt_penginapan_1">
+                        class="form-control" placeholder="ex: Westin" id="hotel_name_bt_penginapan_1">
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Company Code</label>
@@ -367,15 +367,15 @@
             <br>
             <div class="row mt-3">
                 <div class="d-flex justify-start w-100">
-                    <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>
-                    <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(1, event)">Delete</button>
+                    <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="removeFormPenginapan(1, event)">Delete</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButton" onclick="addMoreFormPenginapan(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButton" onclick="addMoreFormPenginapan(event)">Add More</button>
     </div>
 
     <div class="mt-2">

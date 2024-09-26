@@ -58,7 +58,7 @@
                         <div class="col-md-12 mb-2">
                             <div class="mb-2">
                                 <label class="form-label">Information</label>
-                                <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -128,7 +128,7 @@
                         <div class="col-md-12 mb-2">
                             <div class="mb-2">
                                 <label class="form-label">Information</label>
-                                <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -280,7 +280,7 @@
 @if (!empty($detailCA['detail_transport']) && $detailCA['detail_transport'][0]['nominal'] !== null)
     <div id="form-container-transport">
         @foreach ($detailCA['detail_transport'] as $index => $transport)
-            <div id="form-container-bt-transport-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
+            <div id="form-container-bt-transport-{{ $loop->index + 1 }}" class="p-2 mb-3 rounded-3" style="background-color: #f8f8f8">
                 <p class="fs-4 text-primary" style="font-weight: bold; ">Transport {{ $loop->index + 1 }}</p>
                 <div id="form-container-bt-transport-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
                     <div class="row">
@@ -361,7 +361,7 @@
                             <div class="col-md-12 mb-2">
                                 <div class="mb-2">
                                     <label class="form-label">Information</label>
-                                    <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport_dec['keterangan']}}</textarea>
+                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ...">{{$transport_dec['keterangan']}}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -419,7 +419,7 @@
                         <div class="col-md-12 mb-2">
                             <div class="mb-2">
                                 <label class="form-label">Information</label>
-                                <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport_dec['keterangan']}}</textarea>
+                                <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ...">{{$transport_dec['keterangan']}}</textarea>
                             </div>
                         </div>
                     </div>
@@ -434,8 +434,8 @@
         @endforeach
     </div>
 
-    <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonTransport" onclick="addMoreFormTransportDec(event)">Add More</button>
+    <div class="mt-1">
+        <button class="btn btn-primary btn-sm" id="addMoreButtonTransport" onclick="addMoreFormTransportDec(event)">Add More</button>
     </div>
 
     <div class="mt-2 mb-2">
@@ -498,7 +498,7 @@
                             <div class="col-md-12 mb-2">
                                 <div class="mb-2">
                                     <label class="form-label">Information</label>
-                                    <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport_dec['keterangan']}}</textarea>
+                                    <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ...">{{$transport_dec['keterangan']}}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -575,7 +575,7 @@
                     <div class="col-md-12 mb-2">
                         <div class="mb-2">
                             <label class="form-label">Information</label>
-                            <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                            <textarea name="keterangan_bt_transport[]" class="form-control" placeholder="Write your information ..."></textarea>
                         </div>
                     </div>
                 </div>
