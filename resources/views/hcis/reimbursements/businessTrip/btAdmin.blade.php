@@ -158,7 +158,7 @@
                                 </button>
                             </form>
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover" id="defaultTable" width="100%" cellspacing="0">
+                                <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
@@ -322,7 +322,7 @@
                                                     @php
                                                         $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                     @endphp
-                                                    @if ($n->status != 'Pending L1' && $n->status != 'Pending L2' && $n->status != 'Rejected' && $n->status != 'Verified')
+                                                    @if ($n->status != 'Pending L1' && $n->status != 'Pending L2' && $n->status != 'Rejected' && $n->status != 'Verified' && $n->status != 'Declaration L1' && $n->status != 'Declaration L2' && $n->status != 'Declaration Rejected')
                                                         <form method="GET"
                                                             action="/businessTrip/declaration/admin/{{ $n->id }}"
                                                             style="display: inline-block;">

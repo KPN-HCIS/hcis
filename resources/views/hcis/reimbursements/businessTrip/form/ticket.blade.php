@@ -40,22 +40,6 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-2">
-                            <label class="form-label">Date</label>
-                            <div class="input-group">
-                                <input class="form-control form-control-sm" id="tgl_brkt_tkt_<?php echo $i; ?>"
-                                    name="tgl_brkt_tkt[]" type="date" onchange="validateDates(<?php echo $i; ?>)">
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label">Time</label>
-                            <div class="input-group">
-                                <input class="form-control form-control-sm" id="jam_brkt_tkt_<?php echo $i; ?>"
-                                    name="jam_brkt_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-2">
                             <label class="form-label" for="jenis_tkt_<?php echo $i; ?>">Transportation Type</label>
                             <div class="input-group">
                                 <select class="form-select form-select-sm" name="jenis_tkt[]"
@@ -79,10 +63,19 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12 mb-2">
-                            <label for="ket_tkt_<?php echo $i; ?>" class="form-label">Information</label>
-                            <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3"
-                                placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Date</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" id="tgl_brkt_tkt_<?php echo $i; ?>"
+                                    name="tgl_brkt_tkt[]" type="date" onchange="validateDates(<?php echo $i; ?>)">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Time</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" id="jam_brkt_tkt_<?php echo $i; ?>"
+                                    name="jam_brkt_tkt[]" type="time" onchange="validateDates(<?php echo $i; ?>)">
+                            </div>
                         </div>
                     </div>
                     <div class="round-trip-options" style="display: none;">
@@ -103,6 +96,13 @@
                                         onchange="validateDates(<?php echo $i; ?>)">
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label for="ket_tkt_<?php echo $i; ?>" class="form-label">Information</label>
+                            <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3"
+                                placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
                         </div>
                     </div>
                     <div class="mt-2">

@@ -48,24 +48,6 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-2">
-                        <label class="form-label">Date</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm bg-light" name="tgl_brkt_tkt[]" type="date"
-                                id="tgl_brkt_tkt_<?php echo $i; ?>" value="{{ $ticket['tgl_brkt_tkt'] ?? '' }}"
-                                onchange="validateDates(<?php echo $i; ?>)" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">Time</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm bg-light" name="jam_brkt_tkt[]" type="time"
-                                id="jam_brkt_tkt_<?php echo $i; ?>" value="{{ $ticket['jam_brkt_tkt'] ?? '' }}"
-                                onchange="validateDates(<?php echo $i; ?>)" readonly>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
                         <label class="form-label">Transportation Type</label>
                         <div class="input-group">
                             <select class="form-select form-select-sm bg-light" name="jenis_tkt[]" disabled>
@@ -77,8 +59,8 @@
                                 <option value="Airplane"
                                     {{ $ticket && $ticket['jenis_tkt'] == 'Airplane' ? 'selected' : '' }}>Airplane
                                 </option>
-                                <option value="Car"
-                                    {{ $ticket && $ticket['jenis_tkt'] == 'Car' ? 'selected' : '' }}>Car</option>
+                                <option value="Car" {{ $ticket && $ticket['jenis_tkt'] == 'Car' ? 'selected' : '' }}>
+                                    Car</option>
                                 <option value="Ferry"
                                     {{ $ticket && $ticket['jenis_tkt'] == 'Ferry' ? 'selected' : '' }}>Ferry</option>
                             </select>
@@ -96,9 +78,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 mb-2">
-                        <label class="form-label">Information</label>
-                        <textarea class="form-control" name="ket_tkt[]" rows="3" placeholder="Add ticket details" disabled>{{ $ticket['ket_tkt'] ?? '' }}</textarea>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Date</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm bg-light" name="tgl_brkt_tkt[]" type="date"
+                                id="tgl_brkt_tkt_<?php echo $i; ?>" value="{{ $ticket['tgl_brkt_tkt'] ?? '' }}"
+                                onchange="validateDates(<?php echo $i; ?>)" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Time</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm bg-light" name="jam_brkt_tkt[]" type="time"
+                                id="jam_brkt_tkt_<?php echo $i; ?>" value="{{ $ticket['jam_brkt_tkt'] ?? '' }}"
+                                onchange="validateDates(<?php echo $i; ?>)" readonly>
+                        </div>
                     </div>
                 </div>
                 <div class="round-trip-options"
@@ -121,6 +115,13 @@
                                     value="{{ $ticket['jam_plg_tkt'] ?? '' }}" readonly>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Information</label>
+                        <textarea class="form-control" name="ket_tkt[]" rows="3" placeholder="Add ticket details" disabled>{{ $ticket['ket_tkt'] ?? '' }}</textarea>
                     </div>
                 </div>
             </div>

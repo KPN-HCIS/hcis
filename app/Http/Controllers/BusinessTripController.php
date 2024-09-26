@@ -508,7 +508,7 @@ class BusinessTripController extends Controller
             $ca->ca_needs = $request->keperluan;
             $ca->start_date = $request->mulai;
             $ca->end_date = $request->kembali;
-            $ca->date_required = Carbon::parse($request->kembali)->addDays(3);
+            $ca->date_required = $request->date_required;
             $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
             $ca->total_days = Carbon::parse($request->mulai)->diffInDays(Carbon::parse($request->kembali));
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);
@@ -613,7 +613,7 @@ class BusinessTripController extends Controller
             $ca->declare_ca = json_encode($detail_ca);
             $ca->save();
 
-            if ($businessTripStatus !== 'Draft') {
+            if ($statusValue !== 'Draft') {
                 $model = $ca;
 
                 $model->status_id = $managerL1;
@@ -835,7 +835,7 @@ class BusinessTripController extends Controller
             $ca->end_date = $request->kembali;
             $ca->ca_needs = $request->keperluan;
             $ca->type_ca = 'dns';
-            $ca->date_required = Carbon::parse($request->kembali)->addDays(3);
+            $ca->date_required = null;
             $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
             $ca->total_days = Carbon::parse($request->mulai)->diffInDays(Carbon::parse($request->kembali));
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);
@@ -1914,7 +1914,7 @@ class BusinessTripController extends Controller
             $ca->ca_needs = $request->keperluan;
             $ca->start_date = $request->mulai;
             $ca->end_date = $request->kembali;
-            $ca->date_required = Carbon::parse($request->kembali)->addDays(3);
+            $ca->date_required = $request->date_required;
             $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
             $ca->total_days = Carbon::parse($request->mulai)->diffInDays(Carbon::parse($request->kembali));
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);

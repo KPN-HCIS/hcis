@@ -45,8 +45,6 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="mb-3">
-                </div>
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
                         <h4 class="mb-0">Detail Data - {{ $n->no_sppd }}</h4>

@@ -605,21 +605,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label">Date</label>
-                            <div class="input-group">
-                                <input class="form-control form-control-sm" id="tgl_brkt_tkt_${formNumber}" name="tgl_brkt_tkt[]" type="date" onchange="validateDates(${formNumber})">
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label">Time</label>
-                            <div class="input-group">
-                                <input class="form-control form-control-sm" id="jam_brkt_tkt_${formNumber}" name="jam_brkt_tkt[]" type="time" onchange="validateDates(${formNumber})">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
+                     <div class="row">
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Transportation Type</label>
                             <div class="input-group">
@@ -642,12 +628,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12 mb-2">
-                            <label class="form-label">Information</label>
-                            <textarea class="form-control" id="ket_tkt_${formNumber}" name="ket_tkt[]" rows="3" placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Date</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" id="tgl_brkt_tkt_${formNumber}" name="tgl_brkt_tkt[]" type="date" onchange="validateDates(${formNumber})">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Time</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" id="jam_brkt_tkt_${formNumber}" name="jam_brkt_tkt[]" type="time" onchange="validateDates(${formNumber})">
+                            </div>
                         </div>
                     </div>
-                    <div class="round-trip-options" style="display: none;">
+                      <div class="round-trip-options" style="display: none;">
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Return Date</label>
@@ -661,6 +655,12 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <input class="form-control form-control-sm" id="jam_plg_tkt_${formNumber}" name="jam_plg_tkt[]" type="time" onchange="validateDates(${formNumber})">
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label">Information</label>
+                            <textarea class="form-control" id="ket_tkt_${formNumber}" name="ket_tkt[]" rows="3" placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
                         </div>
                     </div>
                     <div class="mt-2">

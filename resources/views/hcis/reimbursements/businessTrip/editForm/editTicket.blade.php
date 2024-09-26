@@ -48,24 +48,6 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-2">
-                        <label class="form-label">Date</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm" name="tgl_brkt_tkt[]" type="date"
-                                id="tgl_brkt_tkt_<?php echo $i; ?>" value="{{ $ticket['tgl_brkt_tkt'] ?? '' }}"
-                                onchange="validateDates(<?php echo $i; ?>)">
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">Time</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm" name="jam_brkt_tkt[]" type="time"
-                                id="jam_brkt_tkt_<?php echo $i; ?>" value="{{ $ticket['jam_brkt_tkt'] ?? '' }}"
-                                onchange="validateDates(<?php echo $i; ?>)">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
                         <label class="form-label">Transportation Type</label>
                         <div class="input-group">
                             <select class="form-select form-select-sm" name="jenis_tkt[]">
@@ -96,9 +78,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 mb-2">
-                        <label class="form-label">Information</label>
-                        <textarea class="form-control" name="ket_tkt[]" rows="3" placeholder="Add ticket details">{{ $ticket['ket_tkt'] ?? '' }}</textarea>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Date</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="tgl_brkt_tkt[]" type="date"
+                                id="tgl_brkt_tkt_<?php echo $i; ?>" value="{{ $ticket['tgl_brkt_tkt'] ?? '' }}"
+                                onchange="validateDates(<?php echo $i; ?>)">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Time</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="jam_brkt_tkt[]" type="time"
+                                id="jam_brkt_tkt_<?php echo $i; ?>" value="{{ $ticket['jam_brkt_tkt'] ?? '' }}"
+                                onchange="validateDates(<?php echo $i; ?>)">
+                        </div>
                     </div>
                 </div>
                 <div class="round-trip-options"
@@ -122,11 +116,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Information</label>
+                        <textarea class="form-control" name="ket_tkt[]" rows="3" placeholder="Add ticket details">{{ $ticket['ket_tkt'] ?? '' }}</textarea>
+                    </div>
+                </div>
+
                 <div class="mt-2">
                     <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn"
                         id="remove-ticket-btn" data-form-id="<?php echo $i; ?>">Remove Data</button>
                 </div>
-
             </div>
         </div>
         <?php endfor; ?>

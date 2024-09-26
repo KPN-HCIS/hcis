@@ -1,6 +1,13 @@
 <div class="row" id="ca_bt" style="">
     <div class="col-md-12">
         <div class="table-responsive-sm">
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <label for="date_required" class="form-label">Date Required</label>
+                    <input type="date" class="form-control form-control-sm" id="date_required" name="date_required"
+                        placeholder="Date Required" onchange="">
+                </div>
+            </div>
             <div class="d-flex flex-column gap-2">
                 <ul class="nav mb-1" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
