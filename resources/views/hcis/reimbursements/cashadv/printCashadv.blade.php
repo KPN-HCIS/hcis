@@ -526,15 +526,19 @@
                     </tr>
                 </table>
             </td>
-            <td style="width: 5%;"></td>
-            <td style="width: 75%;">
+            <td style="width: 80%;"></td>
+        </tr>
+    </table>
+    <table border=0 style="width: 100%; font-size: 11px;">
+        <tr>
+            <td style="width: 100%;">
                 <table class="table-approve" style="text-align:center;">
                     <tr>
-                        <th colspan="{{ count($approval) }}">Verification</th>
+                        <th colspan="{{ count($approval) }}">Approval</th>
                     </tr>
                     <tr>
                         @foreach ($approval as $role)
-                            <td style="width: 25%;">{{ $role->role_name }}</td>
+                            <td style="width: 20%;">{{ $role->role_name }}</td>
                         @endforeach
                     </tr>
                     <tr>
@@ -564,7 +568,7 @@
             </td>
         </tr>
     </table>
-    <table border=0 style="width: 100%; font-size: 11px;">
+    {{-- <table border=0 style="width: 100%; font-size: 11px;">
         <tr>
             <td><table class="table-approve" style="width: 100%; text-align:center;">
                 <tr>
@@ -601,6 +605,6 @@
             </table></td>
         </tr>
         
-    </table>
+    </table> --}}
 </body>
 </html>

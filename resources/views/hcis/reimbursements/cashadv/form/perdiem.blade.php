@@ -245,6 +245,7 @@
         const totalDaysInput = formGroup.querySelector('input.total-days-perdiem');
         const perdiemInput = document.getElementById('perdiem');
         const allowanceInput = formGroup.querySelector('input[name="nominal_bt_perdiem[]"]');
+        // console.log(perdiemInput.value);
 
         const formIndex = formGroup.getAttribute('id').match(/\d+/)[0];
         // Cek apakah tanggal sudah digunakan di form lain
@@ -268,7 +269,7 @@
                 const diffTime = Math.abs(endDate - startDate);
                 const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 totalDaysInput.value = totalDays;
-
+                
                 const perdiem = parseFloat(perdiemInput.value) || 0;
                 let allowance = totalDays * perdiem;
 
@@ -280,7 +281,7 @@
                 } else {
                     allowance *= 0.5;
                 }
-
+                
                 allowanceInput.value = formatNumberPerdiem(allowance);
                 calculateTotalNominalBTPerdiem();
             } else {

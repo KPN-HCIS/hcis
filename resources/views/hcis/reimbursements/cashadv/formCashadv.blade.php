@@ -111,7 +111,7 @@
                                             <span class="input-group-text">days</span>
                                         </div>
                                     </div>
-                                    <input class="form-control" id="perdiem" name="perdiem" type="hidden" readonly>
+                                    <input class="form-control" id="perdiem" name="perdiem" type="hidden" value="{{ $perdiem->amount }}" readonly>
                                         {{-- value="{{ $perdiem->amount }}" readonly> --}}
                                 </div>
                             </div>

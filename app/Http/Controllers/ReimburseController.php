@@ -1355,7 +1355,6 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
         $approval = ca_sett_approval::with('employee')
             ->where('ca_id', $key)
-            ->where('approval_status', 'Approved')
             ->orderBy('layer', 'asc')
             ->get();
 
@@ -1564,8 +1563,8 @@ class ReimburseController extends Controller
             $model->declare_ca = json_encode($declare_ca);
         }
         $model->total_ca = str_replace('.', '', $req->totalca_deklarasi);
-        $model->total_cost = str_replace('.', '', $req->totalca);
-        $model->total_real = $model->total_ca - $model->total_cost;
+        $model->total_real = str_replace('.', '', $req->totalca);
+        $model->total_cost = $model->total_ca - $model->total_real;
         //tambah 1 status disini
 
 

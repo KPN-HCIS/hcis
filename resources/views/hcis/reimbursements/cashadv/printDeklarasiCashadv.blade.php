@@ -137,7 +137,7 @@
         <tr>
             <td class="label">PT/Location</td>
             <td class="colon">:</td>
-            <td class="value">{{ $transactions->employee->company_name }}</td>
+            <td class="value">{{ $transactions->employee->contribution_level_code }} / {{ $transactions->employee->office_area }}</td>
         </tr>
     </table>
 
@@ -149,7 +149,7 @@
             <td class="label">Costing Company</td>
             <td class="colon">:</td>
             <td class="value">
-                {{ $transactions->companies->contribution_level }}
+                {{ $transactions->companies->contribution_level }} ({{ $transactions->contribution_level_code }})
             </td>
         </tr>
         <tr>
@@ -162,9 +162,9 @@
         <tr>
             <td class="label">Start Date</td>
             <td class="colon">:</td>
-            <td class="value">{{ \Carbon\Carbon::parse($transactions->start_date)->format('d-M-y') }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($transactions->start_date)->format('d-M-y') }} to {{ \Carbon\Carbon::parse($transactions->end_date)->format('d-M-y') }} ({{ $transactions->total_days }} days)</td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td class="label">End Date</td>
             <td class="colon">:</td>
             <td class="value">{{ \Carbon\Carbon::parse($transactions->end_date)->format('d-M-y') }}</td>
@@ -173,25 +173,30 @@
             <td class="label">Total Days</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->total_days }} Hari</td>
-        </tr>
+        </tr> --}}
         <tr>
             <td class="label">Date CA Required</td>
             <td class="colon">:</td>
             <td class="value">{{ \Carbon\Carbon::parse($transactions->date_required)->format('d-M-y') }}</td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td class="label">Estimated Declaration</td>
             <td class="colon">:</td>
             <td class="value">{{ \Carbon\Carbon::parse($transactions->declare_estimate)->format('d-M-y') }}</td>
-        </tr>
+        </tr> --}}
         <tr>
             <td class="label">Purpose</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->ca_needs }}</td>
         </tr>
+        <tr>
+            <td class="label">Status</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $transactions->approval_sett }}</td>
+        </tr>
     </table>
 
-    @if ($approval && count($approval) > 0)
+    {{-- @if ($approval && count($approval) > 0)
         <table>
             <tr>
                 <td colspan="3"><b>Approved By:</b></td>
@@ -217,7 +222,7 @@
                 <td colspan="3"><b>Not submitted:</b></td>
             </tr>
         </table>
-    @endif
+    @endif --}}
 
     @php
         $detailCA = json_decode($transactions->detail_ca, true);
@@ -630,62 +635,84 @@
         </tr>
     </table>
 
-    @if ( $transactions->approval_sett == 'Approved' )
-        <div class="flex-container">
-            <table class="table-approve" style="width: 20%; margin-top:100px; text-align:center; margin-bottom:-220px">
-                <tr>
-                    <td>Submitted by</td>
-                </tr>
-                <tr>
-                    <td>User</td>
-                </tr>
-                <tr>
-                    <td><br><br><br><br></td>
-                </tr>
-                <tr>
-                    <td>{{ $transactions->employee->fullname }}</td>
-                </tr>
-                <tr>
-                    <td>Date...</td>
-                </tr>
-            </table>
-            @if ($approval && count($approval) > 0)
-                <table class="table-approve" style="margin-left:279px; margin-top:-160px; width: 60%; text-align:center;">
+    <table border=0 style="width: 100%; font-size: 11px;">
+        <tr>
+            <td style="width: 20%;">
+                <table class="table-approve" style="width: 100%; text-align:center;">
                     <tr>
-                        <td colspan="{{ count($approval) }}">Verifikasi</td>
+                        <td>Submitted by</td>
+                    </tr>
+                    <tr>
+                        <td>User</td>
+                    </tr>
+                    <tr>
+                        <td><br><br><br><br></td>
+                    </tr>
+                    <tr>
+                        <td>{{ $transactions->employee->fullname }}</td>
+                    </tr>
+                    <tr>
+                        <td>Date...</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 80%;"></td>
+        </tr>
+    </table>
+    <table border=0 style="width: 100%; font-size: 11px;">
+        <tr>
+            <td style="width: 100%;">
+                <table class="table-approve" style="text-align:center;">
+                    <tr>
+                        <td colspan="{{ count($approval) }}">Approval</td>
                     </tr>
                     <tr>
                         @foreach ($approval as $role)
-                            <td>{{ $role->role_name }}</td>
-                        @endforeach
-                    </tr>
-                    <tr>
-                        @foreach ($approval as $role)
-                            <td><br><br><br><br></td>
-                        @endforeach
-                    </tr>
-                    <tr>
-                        @foreach ($approval as $role)
-                            <td>{{ $role->employee ? $role->employee->fullname : 'Data tidak tersedia' }}</td>
+                            <td style="width: 20%;">{{ $role->role_name }}</td>
                         @endforeach
                     </tr>
                     <tr>
                         @foreach ($approval as $role)
                             <td>
-                                Date: <br> {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at)->format('d-M-y') : 'Data tidak tersedia' }}
+                                @if($role->approval_status =='Approved')
+                                    <img src="{{ public_path('images/approved_64.png')}}" alt="logo">
+                                @else
+                                    <br><br><br><br><br>
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        @foreach ($approval as $role)
+                            <td>{{ $role->employee ? $role->employee->fullname : '' }}</td>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        @foreach ($approval as $role)
+                            <td>
+                                Date: <br> {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at) : '' }}
                             </td>
                         @endforeach
                     </tr>
                 </table>
-            @else
+            </td>
+        </tr>
+    </table>
+
+    {{-- @if ( $transactions->approval_sett == 'Approved' ) --}}
+        {{-- <div class="flex-container"> --}}
+            
+            {{-- @if ($approval && count($approval) > 0) --}}
+                
+            {{-- @else
             <table>
                 <tr>
                     <td colspan="3">Tidak ada data approval.</td>
                 </tr>
             </table>
-            @endif
+            @endif --}}
 
-            @if ($approval && count($approval) > 0)
+            {{-- @if ($approval && count($approval) > 0)
             <table class="table-approve" style="width: 100%; text-align:center;">
                 <tr>
                     <td colspan="{{ count($approval) }}">Approval</td>
@@ -720,8 +747,8 @@
                 </tr>
             </table>
             @endif
-        </div>
-    @endif
+        </div> --}}
+    {{-- @endif --}}
 </body>
 
 </html>

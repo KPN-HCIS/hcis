@@ -84,7 +84,7 @@ h5 {
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            <div class="col">
+            {{-- <div class="col">
                 <a href="{{ route('medical') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -93,8 +93,8 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> <!-- end col-->
-            <div class="col">
+            </div> <!-- end col--> --}}
+            {{-- <div class="col">
                 <a href="{{ route('businessTrip') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -103,7 +103,7 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> <!-- end col-->
+            </div> <!-- end col--> --}}
             {{-- <div class="col-md-3">
                 <a href="{{ '' }}">
                     <div class="card" style="height: 215px">
@@ -115,7 +115,7 @@ h5 {
                 </a>
             </div><!-- end col--> --}}
 
-            <div class="col">
+            {{-- <div class="col">
                 <a href="{{ route('ticket') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -124,9 +124,9 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div>
+            </div> --}}
 
-            <div class="col">
+            {{-- <div class="col">
                 <a href="{{ route('hotel') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -135,7 +135,7 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div>
+            </div> --}}
 
             
 
