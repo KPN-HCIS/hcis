@@ -145,7 +145,7 @@
                                         Entertainment
                                     </option>
                                 </select>
-
+                                <input type="hidden" name="contribution_level_code" value="{{ $transactions->contribution_level_code }}">
                                 <input type="hidden" name="ca_type" value="{{ $transactions->type_ca }}">
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden" value="{{ $perdiem->amount }}" readonly>
                                 <input type="date" name="start_date" id="start_date" class="form-control"

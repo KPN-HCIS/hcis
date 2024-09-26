@@ -1355,6 +1355,13 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
         $approval = ca_sett_approval::with('employee')
             ->where('ca_id', $key)
+            // ->select(
+            //     'employee_id',
+            //     'role_name',
+            //     'layer',
+            //     DB::raw('MAX(created_at) as created_at') // You can also use MAX or another aggregate function
+            // )
+            // ->groupBy('employee_id', 'role_name','layer') // Group by both employee_id and role_name
             ->orderBy('layer', 'asc')
             ->get();
 
@@ -1638,7 +1645,7 @@ class ReimburseController extends Controller
                 }
             })
                 ->where('group_company', 'like', '%' . $employee_data->group_company . '%')
-                ->where('contribution_level_code', 'like', '%' . $req->companyFilter . '%')
+                ->where('contribution_level_code', 'like', '%' . $req->contribution_level_code . '%')
                 ->whereRaw(
                     '
             ? BETWEEN
@@ -1647,6 +1654,7 @@ class ReimburseController extends Controller
                     [$total_ca]
                 )
                 ->get();
+            // dd($req->contribution_level_code);
             foreach ($data_matrix_approvals as $data_matrix_approval) {
 
                 if ($data_matrix_approval->employee_id == "cek_L1") {
