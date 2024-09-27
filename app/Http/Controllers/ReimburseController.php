@@ -1352,7 +1352,8 @@ class ReimburseController extends Controller
             ->get();
         $locations = Location::orderBy('area')
             ->get();
-        $transactions = CATransaction::find($key);
+        // $transactions = CATransaction::find($key);
+        $transactions = CATransaction::with('companies')->find($key);
         $approval = ca_sett_approval::with('employee')
             ->where('ca_id', $key)
             // ->select(
@@ -1420,9 +1421,10 @@ class ReimburseController extends Controller
         if ($req->hasFile('prove_declare')) {
             $file = $req->file('prove_declare');
             $filename = time() . '_' . $file->getClientOriginalName();
-
+            
             $file->move(public_path('uploads/proofs'), $filename);
-
+            // $file->move('/home/hcis8257/public_html/apps/uploads/proofs', $filename);
+            
             $model->prove_declare = $filename;
         } else {
             $model->prove_declare = $req->existing_prove_declare;

@@ -629,10 +629,17 @@
             <td class="value">Rp. {{ number_format($transactions->total_real), 0, ',', '.' }}</td>
         </tr>
         <tr>
-            <td class="label"><b>Difference</b></td>
+            <td class="label"><b>Balance</b></td>
             <td class="colon">:</td>
             <td class="value">Rp. {{ number_format($transactions->total_cost), 0, ',', '.' }}</td>
         </tr>
+        @if($transactions->total_cost>0)
+        <tr>
+            <td class="label"><b>Transfer To</b></td>
+            <td class="colon">:</td>
+            <td class="value">{{ $transactions->companies->contribution_level }} / {{ $transactions->companies->account_number }}</td>
+        </tr>
+        @endif
     </table>
 
     <table border=0 style="width: 100%; font-size: 11px;">
