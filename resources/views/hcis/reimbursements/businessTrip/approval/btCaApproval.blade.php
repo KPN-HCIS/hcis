@@ -12,8 +12,8 @@
                     <input type="date" name="ca_decla" id="ca_decla" class="form-control form-control-sm bg-light" placeholder="mm/dd/yyyy" value="{{ $ca->declare_estimate ?? 0}}" readonly>
                 </div>
             </div>
-            <div class="d-flex flex-column gap-2">
-                <ul class="nav mb-1" id="pills-tab" role="tablist">
+            <div class="d-flex flex-column">
+                <ul class="nav mb-2" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-perdiem-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-perdiem" type="button" role="tab" aria-controls="pills-perdiem"

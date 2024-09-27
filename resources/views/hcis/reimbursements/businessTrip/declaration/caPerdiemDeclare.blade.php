@@ -328,7 +328,7 @@
         <button class="btn btn-primary" onclick="addMoreFormPerdiemDec(event)">Add More</button>
     </div>
 
-    <div class="mt-2">
+    <div class="mt-2 mb-2">
         <label class="form-label">Total Perdiem</label>
         <div class="input-group">
             <div class="input-group-append">

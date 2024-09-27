@@ -294,12 +294,24 @@
                     }
 
                     // Retrieve the values from the input fields
+                    const dateReq = document.getElementById('date_required').value;
                     const totalBtPerdiem = document.getElementById('total_bt_perdiem').value;
                     const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
                     const totalBtTransport = document.getElementById('total_bt_transport').value;
                     const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
                     const caCheckbox = document.getElementById('cashAdvancedCheckbox').checked;
 
+                    // console.log(caDeclaDate);
+                    if (caCheckbox && !dateReq) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Please select a Declaration Estimate date.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return;
+                    }
                     // Check if CA is checked and all fields are zero
                     if (caCheckbox && totalBtPerdiem == 0 && totalBtPenginapan == 0 &&
                         totalBtTransport == 0 && totalBtLainnya == 0) {
@@ -344,7 +356,7 @@
                             // Create a hidden input field to hold the action value
                             const input = document.createElement('input');
                             input.type =
-                            'hidden'; // Hidden input so it doesn't show in the form
+                                'hidden'; // Hidden input so it doesn't show in the form
                             input.name = button.name; // Use the button's name attribute
                             input.value = button.value; // Use the button's value attribute
 
@@ -356,7 +368,6 @@
             });
         });
     </script>
-
     <script>
         function cleanNumber(value) {
             return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;

@@ -370,11 +370,23 @@
                     }
 
                     // Retrieve the values from the input fields
+                    const dateReq = document.getElementById('date_required').value;
                     const totalBtPerdiem = document.getElementById('total_bt_perdiem').value;
                     const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
                     const totalBtTransport = document.getElementById('total_bt_transport').value;
                     const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
                     const caCheckbox = document.getElementById('cashAdvancedCheckbox').checked;
+
+                    if (caCheckbox && !dateReq) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Please select a Declaration Estimate date.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return;
+                    }
 
                     // Check if CA is checked and all fields are zero
                     if (caCheckbox && totalBtPerdiem == 0 && totalBtPenginapan == 0 &&
