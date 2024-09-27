@@ -30,7 +30,7 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced.submit') }}">@csrf
+                        <form id="cashadvancedForm" method="post" action="{{ route('cashadvanced.submit') }}">@csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="start">Employee ID</label>
@@ -81,7 +81,7 @@
                                         <option value="Others">Others</option>
                                     </select>
                                     <br><input type="text" name="others_location" id="others_location"
-                                        class="form-control" placeholder="Other Location" value=""
+                                        class="form-control mt-3" placeholder="Other Location" value=""
                                         style="display: none;">
                                 </div>
                             </div>
@@ -459,6 +459,43 @@
 
             document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
         });
+    </script>
+
+    <script>
+        document.getElementById('start_date').addEventListener('change', handleDateChange);
+        document.getElementById('end_date').addEventListener('change', handleDateChange);
+
+        function handleDateChange() {
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+
+            // Set the min attribute of the end_date input to the selected start_date
+            endDateInput.min = startDateInput.value;
+
+            // Validate dates
+            if (endDate < startDate) {
+                alert("End Date cannot be earlier than Start Date");
+                endDateInput.value = "";
+            }
+
+            // Update min and max values for all dynamic perdiem date fields
+            document.querySelectorAll('input[name="start_bt_perdiem[]"]').forEach(function(input) {
+                input.min = startDateInput.value;
+                input.max = endDateInput.value;
+            });
+
+            document.querySelectorAll('input[name="end_bt_perdiem[]"]').forEach(function(input) {
+                input.min = startDateInput.value;
+                input.max = endDateInput.value;
+            });
+
+            document.querySelectorAll('input[name="total_days_bt_perdiem[]"]').forEach(function(input) {
+                calculateTotalDaysPerdiem(input);
+            });
+        }
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
