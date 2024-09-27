@@ -269,8 +269,12 @@ function initializeDateInputs() {
     handleDateChange(); // Initial call to update related fields
 }
 
-document.getElementById("mulai").addEventListener("change", handleDateChange);
-document.getElementById("kembali").addEventListener("change", handleDateChange);
+document
+    .getElementById("mulai")
+    .addEventListener("change", handleDateChange);
+document
+    .getElementById("kembali")
+    .addEventListener("change", handleDateChange);
 
 function handleDateChange() {
     const startDateInput = document.getElementById("mulai");

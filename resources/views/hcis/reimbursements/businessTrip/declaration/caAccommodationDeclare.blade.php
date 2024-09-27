@@ -308,7 +308,7 @@
     }
 </script>
 
-@if (!empty($detailCA['detail_penginapan']) && $detailCA['detail_penginapan'][0]['nominal'] !== null)
+@if (!empty($detailCA['detail_penginapan']) && $detailCA['detail_penginapan'][0]['start_date'] !== null && $detailCA['detail_penginapan'][0]['end_date'] !== null)
     <div id="form-container-penginapan">
         @foreach($detailCA['detail_penginapan'] as $index =>$penginapan)
             <div id="form-container-bt-penginapan-{{ $loop->index + 1 }}" class="p-2 mb-3 rounded-3" style="background-color: #f8f8f8">
@@ -555,7 +555,7 @@
                 min="0" value="{{ number_format(array_sum(array_column($declareCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}" readonly>
         </div>
     </div>
-@elseif (!empty($declareCA['detail_penginapan']) && $declareCA['detail_penginapan'][0]['nominal'] !== null)
+@elseif (!empty($declareCA['detail_penginapan']) && $declareCA['detail_penginapan'][0]['start_date'] !== null && $declareCA['detail_penginapan'][0]['end_date'] !== null)
     <div id="form-container-penginapan">
         @foreach ($declareCA['detail_penginapan'] as $index => $penginapan_dec)
             @if (!isset($detailCA['detail_penginapan'][$index]))

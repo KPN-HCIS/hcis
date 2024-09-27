@@ -271,7 +271,7 @@
             <input class="form-control bg-light" name="total_bt_lainnya" id="total_bt_lainnya" type="text" min="0" value="{{ number_format(array_sum(array_column($declareCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}" readonly>
         </div>
     </div>
-@elseif (!empty($declareCA['detail_lainnya']) && $declareCA['detail_lainnya'][0]['nominal'] !== null)
+@elseif (!empty($declareCA['detail_lainnya']) && $declareCA['detail_lainnya'][0]['tanggal'] !== null)
     <div id="form-container-lainnya">
         @foreach ($declareCA['detail_lainnya'] as $index => $lainnya_dec)
             @if (!isset($detailCA['detail_lainnya'][$index]))

@@ -113,7 +113,9 @@
                                     $declareCA =
                                         isset($ca) && $ca->declare_ca ? json_decode($ca->declare_ca, true) : [];
 
-                                    // dd($declareCA)
+                                    // dd($detailCA);
+                                    // dd($declareCA);
+                                    // dd($declareCA['detail_transport']);
 
                                 @endphp
                                 <script>

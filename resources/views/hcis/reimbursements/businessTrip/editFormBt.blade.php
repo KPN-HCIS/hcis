@@ -374,9 +374,22 @@
                     const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
                     const totalBtTransport = document.getElementById('total_bt_transport').value;
                     const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+                    const caCheckbox = document.getElementById('cashAdvancedCheckbox').checked;
 
-                    const caChecked = document.getElementById('cashAdvancedCheckbox').checked ?
-                        'CA' : '';
+                    // Check if CA is checked and all fields are zero
+                    if (caCheckbox && totalBtPerdiem == 0 && totalBtPenginapan == 0 &&
+                        totalBtTransport == 0 && totalBtLainnya == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "All fields (Perdiem, Accommodation, Transport, Others) are 0. Please fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+
+                    const caChecked = caCheckbox ? 'CA' : '';
                     const ticketChecked = document.getElementById('ticketCheckbox').checked ?
                         'Ticket' : '';
                     const hotelChecked = document.getElementById('hotelCheckbox').checked ?
@@ -386,12 +399,12 @@
 
                     // Create a message with the input values, each on a new line with bold titles
                     const inputSummary = `
-                        <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
-                        <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
-                        <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
-                        <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
-                        <strong>Selected Options:</strong> ${[caChecked, ticketChecked, hotelChecked, taksiChecked].filter(Boolean).join(', ') || 'None'}
-                    `;
+                <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
+                <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
+                <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
+                <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
+                <strong>Selected Options:</strong> ${[caChecked, ticketChecked, hotelChecked, taksiChecked].filter(Boolean).join(', ') || 'None'}
+            `;
 
                     // Show SweetAlert confirmation with the input summary
                     Swal.fire({

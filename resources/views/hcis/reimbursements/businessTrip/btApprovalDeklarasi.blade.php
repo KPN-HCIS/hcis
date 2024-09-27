@@ -946,7 +946,6 @@
 
     <script>
         //JS TABLE
-
         $(document).ready(function() {
             var tableIds = [
                 '#transportTable',
