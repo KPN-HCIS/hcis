@@ -2,10 +2,10 @@
 
 @section('css')
     <style>
-        .breadcrumb-item+.breadcrumb-item::before {
-            font-size: 28px !important;
-            vertical-align: middle !important;
-        }
+        /* .breadcrumb-item+.breadcrumb-item::before {
+                font-size: 28px !important;
+                vertical-align: middle !important;
+            } */
 
         .table {
             border-collapse: separate;
@@ -64,14 +64,18 @@
             <!-- Breadcrumb Navigation -->
             <div class="col-md-6 mt-3">
                 <div class="page-title-box d-flex align-items-center">
-                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center;">
-                        <li class="breadcrumb-item">
-                            <a href="/reimbursements" style="font-size: 32px; text-decoration: none; color: #007bff;">
-                                <i class="bi bi-arrow-left" style="font-size: 32px;"></i>
+                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
+                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
+                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
+                                <i class="bi bi-arrow-left"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px;">{{ $parentLink }}</li>
-                        <li class="breadcrumb-item active" style="font-size: 24px;">{{ $link }}</li>
+                        <li class="breadcrumb-item">
+                            {{ $parentLink }}
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $link }}
+                        </li>
                     </ol>
                 </div>
             </div>
@@ -253,7 +257,7 @@
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
                                                             data-taksi="{{ json_encode([
-                                                                'Total Voucher' => $taksi[$n->no_sppd]->no_vt . " Voucher",
+                                                                'Total Voucher' => $taksi[$n->no_sppd]->no_vt . ' Voucher',
                                                                 'No. SPPD' => $taksi[$n->no_sppd]->no_sppd,
                                                                 'Unit' => $taksi[$n->no_sppd]->unit,
                                                                 'Nominal' => 'Rp ' . number_format($taksi[$n->no_sppd]->nominal_vt, 0, ',', '.'),
