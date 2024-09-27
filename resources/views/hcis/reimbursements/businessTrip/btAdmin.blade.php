@@ -3,16 +3,16 @@
 @section('css')
     <style>
         /* .breadcrumb-item+.breadcrumb-item::before {
-                font-size: 28px !important;
-                vertical-align: middle !important;
-            } */
+                        font-size: 28px !important;
+                        vertical-align: middle !important;
+                    } */
 
-        .table {
-            border-collapse: separate;
-            width: 100%;
-            position: relative;
-            overflow: auto;
-        }
+        /* .table {
+                    border-collapse: separate;
+                    width: 100%;
+                    position: relative;
+                    overflow: auto;
+                } */
 
         .table thead th {
             position: -webkit-sticky !important;
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Export Excel -->
-            <div class="col-md-6 mt-4 text-end">
+            <div class="col-md-6 mt-4 mb-2 text-end">
                 <a href="{{ route('export.excel', [
                     'start-date' => request()->query('start-date'),
                     'end-date' => request()->query('end-date'),
@@ -105,7 +105,7 @@
                         <input type="date" id="start-date" name="start-date" class="form-control"
                             value="{{ request()->query('start-date') }}">
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-5 mb-2">
                         <label for="end-date" class="mb-2">To:</label>
                         <input type="date" id="end-date" name="end-date" class="form-control"
                             value="{{ request()->query('end-date') }}">
@@ -136,39 +136,41 @@
                                 @php
                                     $currentFilter = request('filter', 'all');
                                 @endphp
-                                <button type="submit" name="filter" value="all"
-                                    class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    All
-                                </button>
-                                <button type="submit" name="filter" value="request"
-                                    class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Request
-                                </button>
-                                <button type="submit" name="filter" value="declaration"
-                                    class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Declaration
-                                </button>
-                                <button type="submit" name="filter" value="return_refund"
-                                    class="btn {{ $currentFilter === 'return_refund' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Return/Refund
-                                </button>
-                                <button type="submit" name="filter" value="done"
-                                    class="btn {{ $currentFilter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Done
-                                </button>
-                                <button type="submit" name="filter" value="rejected"
-                                    class="btn {{ $currentFilter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm mb-3">
-                                    Rejected
-                                </button>
+                                <div class="d-flex flex-wrap gap-2 mt-1 mb-2 justify-content-start">
+                                    <button type="submit" name="filter" value="all"
+                                        class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        All
+                                    </button>
+                                    <button type="submit" name="filter" value="request"
+                                        class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Request
+                                    </button>
+                                    <button type="submit" name="filter" value="declaration"
+                                        class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Declaration
+                                    </button>
+                                    <button type="submit" name="filter" value="return_refund"
+                                        class="btn {{ $currentFilter === 'return_refund' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Return/Refund
+                                    </button>
+                                    <button type="submit" name="filter" value="done"
+                                        class="btn {{ $currentFilter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Done
+                                    </button>
+                                    <button type="submit" name="filter" value="rejected"
+                                        class="btn {{ $currentFilter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Rejected
+                                    </button>
+                                </div>
                             </form>
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
+                                <table class="table table-sm table-hover" id="defaultTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
                                             <th class="sticky-col-header">No SPPD</th>
                                             <th>Name</th>
-                                            <th style="width: 100px">Destination</th>
+                                            <th>Destination</th>
                                             <th>Start</th>
                                             <th>End</th>
                                             <th>CA</th>
@@ -176,7 +178,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th style="width: 185px">Action</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>

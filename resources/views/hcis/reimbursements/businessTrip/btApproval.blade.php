@@ -92,7 +92,7 @@
                         <input type="date" id="start-date" name="start-date" class="form-control"
                             value="{{ request()->query('start-date') }}">
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-5 mb-2">
                         <label for="end-date" class="mb-2">To:</label>
                         <input type="date" id="end-date" name="end-date" class="form-control"
                             value="{{ request()->query('end-date') }}">

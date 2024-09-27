@@ -3,9 +3,9 @@
 @section('css')
     <style>
         /* .breadcrumb-item+.breadcrumb-item::before {
-            font-size: 28px !important;
-            vertical-align: middle !important;
-        } */
+                            font-size: 28px !important;
+                            vertical-align: middle !important;
+                        } */
 
         .table {
             border-collapse: separate;
@@ -60,7 +60,7 @@
 
 @section('content')
     <div class="container-fluid">
-         <div class="row">
+        <div class="row">
             <!-- Breadcrumb Navigation -->
             <div class="col-md-6 mt-3">
                 <div class="page-title-box d-flex align-items-center">
@@ -88,7 +88,7 @@
             </div>
         </div>
     </div>
-   @include('hcis.reimbursements.businessTrip.modal')
+    @include('hcis.reimbursements.businessTrip.modal')
 
     <div class="card">
         <div class="card-body">
@@ -134,34 +134,36 @@
                             @endphp
 
                             <form method="GET" action="{{ route('businessTrip') }}">
-                                <button type="submit" name="filter" value="all"
-                                    class="btn {{ $filter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    All
-                                </button>
-                                <button type="submit" name="filter" value="request"
-                                    class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Request
-                                </button>
-                                <button type="submit" name="filter" value="declaration"
-                                    class="btn {{ $filter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Declaration
-                                </button>
-                                <button type="submit" name="filter" value="done"
-                                    class="btn {{ $filter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Done
-                                </button>
-                                <button type="submit" name="filter" value="draft"
-                                    class="btn {{ $filter === 'draft' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Draft
-                                </button>
-                                <button type="submit" name="filter" value="rejected"
-                                    class="btn {{ $filter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                    Rejected
-                                </button>
+                                <div class="d-flex flex-wrap gap-2 mt-1 mb-2 justify-content-start">
+                                    <button type="submit" name="filter" value="all"
+                                        class="btn {{ $filter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        All
+                                    </button>
+                                    <button type="submit" name="filter" value="request"
+                                        class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Request
+                                    </button>
+                                    <button type="submit" name="filter" value="declaration"
+                                        class="btn {{ $filter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Declaration
+                                    </button>
+                                    <button type="submit" name="filter" value="done"
+                                        class="btn {{ $filter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Done
+                                    </button>
+                                    <button type="submit" name="filter" value="draft"
+                                        class="btn {{ $filter === 'draft' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Draft
+                                    </button>
+                                    <button type="submit" name="filter" value="rejected"
+                                        class="btn {{ $filter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        Rejected
+                                    </button>
+                                </div>
                             </form>
 
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover nowrap" id="scheduleTable" width="100%"
+                                <table class="table table-sm table-hover nowrap" id="defaultTable" width="100%"
                                     cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
@@ -175,7 +177,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th style="width: 165px;">Action</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -272,7 +274,7 @@
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
                                                             data-taksi="{{ json_encode([
-                                                                'Total Voucher' => $taksi[$n->no_sppd]->no_vt . " Voucher",
+                                                                'Total Voucher' => $taksi[$n->no_sppd]->no_vt . ' Voucher',
                                                                 'No. SPPD' => $taksi[$n->no_sppd]->no_sppd,
                                                                 'Unit' => $taksi[$n->no_sppd]->unit,
                                                                 'Nominal' => 'Rp ' . number_format($taksi[$n->no_sppd]->nominal_vt, 0, ',', '.'),
@@ -339,7 +341,10 @@
                                                         @php
                                                             $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                         @endphp
-                                                        @if (($n->kembali < $today && $n->status == 'Approved') || $n->status == 'Declaration Draft' || $n->status == 'Declaration Rejected')
+                                                        @if (
+                                                            ($n->kembali < $today && $n->status == 'Approved') ||
+                                                                $n->status == 'Declaration Draft' ||
+                                                                $n->status == 'Declaration Rejected')
                                                             <form method="GET"
                                                                 action="/businessTrip/declaration/{{ $n->id }}"
                                                                 style="display: inline-block;">
