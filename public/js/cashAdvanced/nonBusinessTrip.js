@@ -15,7 +15,7 @@ function addMoreFormNBTReq(event) {
     newForm.style.backgroundColor = "#f8f8f8";
     newForm.innerHTML = `
             <p class="fs-4 text-primary" style="font-weight: bold; ">Non Bussiness Trip ${formCountNBT}</p>
-            <div class="card-body bg-light p-2 mb-3">
+            <div id="form-container-nbt-req-${formCountNBT}" class="card-body bg-light p-2 mb-3">
                 <p class="fs-5 text-primary" style="font-weight: bold; ">Non Bussiness Trip Request</p>
                 <div class="row">
                     <div class="col-md-6 mb-2">
