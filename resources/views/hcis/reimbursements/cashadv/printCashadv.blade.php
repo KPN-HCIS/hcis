@@ -545,7 +545,7 @@
                         @foreach ($approval as $role)
                             <td>
                                 @if($role->approval_status =='Approved')
-                                    <img src="{{ public_path('images/approved_64.png')}}" alt="logo">
+                                    <img src="{{ asset('images/approved_64.png')}}" alt="logo">
                                 @else
                                     <br><br><br><br><br>
                                 @endif
