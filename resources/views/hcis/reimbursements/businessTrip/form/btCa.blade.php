@@ -2,10 +2,14 @@
     <div class="col-md-12">
         <div class="table-responsive-sm">
             <div class="row mb-2">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-2">
                     <label for="date_required" class="form-label">Date Required</label>
                     <input type="date" class="form-control form-control-sm" id="date_required" name="date_required"
                         placeholder="Date Required" onchange="">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="form-label" for="ca_decla">Declaration Estimate</label>
+                    <input type="date" name="ca_decla" id="ca_decla" class="form-control form-control-sm bg-light" placeholder="mm/dd/yyyy" readonly>
                 </div>
             </div>
             <div class="d-flex flex-column gap-2">
@@ -13,24 +17,22 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-perdiem-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-perdiem" type="button" role="tab" aria-controls="pills-perdiem"
-                            aria-selected="true">Perdiem Plan</button>
+                            aria-selected="true">Perdiem</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pills-transport-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-transport" type="button" role="tab"
-                            aria-controls="pills-transport" aria-selected="false">Transport
-                            Plan</button>
+                            aria-controls="pills-transport" aria-selected="false">Transport</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pills-accomodation-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-accomodation" type="button" role="tab"
-                            aria-controls="pills-accomodation" aria-selected="false">Accomodation
-                            Plan</button>
+                            aria-controls="pills-accomodation" aria-selected="false">Accomodation</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pills-other-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-other" type="button" role="tab" aria-controls="pills-other"
-                            aria-selected="false">Other Plan</button>
+                            aria-selected="false">Others</button>
                     </li>
                 </ul>
                 {{-- <div class="card"> --}}

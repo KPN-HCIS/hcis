@@ -509,7 +509,8 @@ class BusinessTripController extends Controller
             $ca->start_date = $request->mulai;
             $ca->end_date = $request->kembali;
             $ca->date_required = $request->date_required;
-            $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
+            // $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
+            $ca->declare_estimate = $request->ca_decla;
             $ca->total_days = Carbon::parse($request->mulai)->diffInDays(Carbon::parse($request->kembali));
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);
             $ca->total_real = '0';
@@ -1915,7 +1916,9 @@ class BusinessTripController extends Controller
             $ca->start_date = $request->mulai;
             $ca->end_date = $request->kembali;
             $ca->date_required = $request->date_required;
-            $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
+            // $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
+            $ca->declare_estimate = $request->ca_decla;
+            // dd($request->ca_decla);
             $ca->total_days = Carbon::parse($request->mulai)->diffInDays(Carbon::parse($request->kembali));
             $ca->total_ca = (int) str_replace('.', '', $request->totalca);
             $ca->total_real = '0';
