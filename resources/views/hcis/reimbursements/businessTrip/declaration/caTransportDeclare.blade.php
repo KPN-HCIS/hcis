@@ -450,7 +450,7 @@
                 min="0" value="{{ number_format(array_sum(array_column($declareCA['detail_transport'], 'nominal')), 0, ',', '.') }}" readonly>
         </div>
     </div>
-@elseif (!empty($declareCA['detail_transport']) && $declareCA['detail_transport'][0]['tanggal'] !== null && $declareCA['detail_transport'][0]['nominal'] !== 0)
+@elseif (!empty($declareCA['detail_transport']) && $declareCA['detail_transport'][0]['tanggal'] !== null && $declareCA['detail_transport'][0]['tanggal'] !== null)
     <div id="form-container-transport">
         @foreach ($declareCA['detail_transport'] as $index => $transport_dec)
             @if (!isset($detailCA['detail_transport'][$index]))
@@ -515,7 +515,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonTransport" onclick="addMoreFormTransportDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonTransport" onclick="addMoreFormTransportDec(event)">Add More</button>
     </div>
 
     <div class="mt-2 mb-2">
@@ -582,8 +582,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormTransport(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormTransport(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormTransport(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormTransport(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -591,7 +591,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonTransport" onclick="addMoreFormTransportDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonTransport" onclick="addMoreFormTransportDec(event)">Add More</button>
     </div>
 
     <div class="mt-2 mb-2">

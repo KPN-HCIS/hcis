@@ -536,15 +536,17 @@ class BusinessTripController extends Controller
                     $companyCode = $request->company_bt_perdiem[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
 
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'location' => $location,
-                        'other_location' => $other_location,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_perdiem[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'location' => $location,
+                            'other_location' => $other_location,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -555,12 +557,15 @@ class BusinessTripController extends Controller
                     $companyCode = $request->company_bt_transport[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
 
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+
+                    if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_transport[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -574,15 +579,18 @@ class BusinessTripController extends Controller
                     $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
                     $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'hotel_name' => $hotelName,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                        'totalPenginapan' => $totalPenginapan,
-                    ];
+
+                    if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_penginapan[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'hotel_name' => $hotelName,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                            'totalPenginapan' => $totalPenginapan,
+                        ];
+                    }
                 }
             }
 
@@ -593,12 +601,14 @@ class BusinessTripController extends Controller
                     $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
                     $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'nominal' => $nominal,
-                        'totalLainnya' => $totalLainnya,
-                    ];
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_lainnya[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                            'totalLainnya' => $totalLainnya,
+                        ];
+                    }
                 }
             }
 
@@ -890,54 +900,83 @@ class BusinessTripController extends Controller
             // Populate detail_perdiem
             if ($request->has('start_bt_perdiem')) {
                 foreach ($request->start_bt_perdiem as $key => $startDate) {
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $request->end_bt_perdiem[$key] ?? '',
-                        'total_days' => $request->total_days_bt_perdiem[$key] ?? '',
-                        'location' => $request->location_bt_perdiem[$key] ?? '',
-                        'other_location' => $request->other_location_bt_perdiem[$key] ?? '',
-                        'company_code' => $request->company_bt_perdiem[$key] ?? '',
-                        'nominal' => str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0'),
-                    ];
+                    $endDate = $request->end_bt_perdiem[$key] ?? '';
+                    $totalDays = $request->total_days_bt_perdiem[$key] ?? '';
+                    $location = $request->location_bt_perdiem[$key] ?? '';
+                    $other_location = $request->other_location_bt_perdiem[$key] ?? '';
+                    $companyCode = $request->company_bt_perdiem[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
+
+                    if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_perdiem[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'location' => $location,
+                            'other_location' => $other_location,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
             // Populate detail_transport
             if ($request->has('tanggal_bt_transport')) {
                 foreach ($request->tanggal_bt_transport as $key => $tanggal) {
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $request->keterangan_bt_transport[$key] ?? '',
-                        'company_code' => $request->company_bt_transport[$key] ?? '',
-                        'nominal' => str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0'),
-                    ];
+                    $keterangan = $request->keterangan_bt_transport[$key] ?? '';
+                    $companyCode = $request->company_bt_transport[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_transport[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
-
             // Populate detail_penginapan
             if ($request->has('start_bt_penginapan')) {
                 foreach ($request->start_bt_penginapan as $key => $startDate) {
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $request->end_bt_penginapan[$key] ?? '',
-                        'total_days' => $request->total_days_bt_penginapan[$key] ?? '',
-                        'hotel_name' => $request->hotel_name_bt_penginapan[$key] ?? '',
-                        'company_code' => $request->company_bt_penginapan[$key] ?? '',
-                        'nominal' => str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0'),
-                        'totalPenginapan' => str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0'),
-                    ];
+                    $endDate = $request->end_bt_penginapan[$key] ?? '';
+                    $totalDays = $request->total_days_bt_penginapan[$key] ?? '';
+                    $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
+                    $companyCode = $request->company_bt_penginapan[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
+                    $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
+
+                    if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_penginapan[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'hotel_name' => $hotelName,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                            'totalPenginapan' => $totalPenginapan,
+                        ];
+                    }
                 }
             }
 
             // Populate detail_lainnya
             if ($request->has('tanggal_bt_lainnya')) {
                 foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $request->keterangan_bt_lainnya[$key] ?? '',
-                        'nominal' => str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0'),
-                        'totalLainnya' => str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0'),
-                    ];
+                    $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
+                    $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_lainnya[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                            'totalLainnya' => $totalLainnya,
+                        ];
+                    }
                 }
             }
 
@@ -1054,15 +1093,24 @@ class BusinessTripController extends Controller
         // Populate detail_perdiem
         if ($request->has('start_bt_perdiem')) {
             foreach ($request->start_bt_perdiem as $key => $startDate) {
-                $detail_perdiem[] = [
-                    'start_date' => $startDate,
-                    'end_date' => $request->end_bt_perdiem[$key] ?? '',
-                    'total_days' => $request->total_days_bt_perdiem[$key] ?? '',
-                    'location' => $request->location_bt_perdiem[$key] ?? '',
-                    'other_location' => $request->other_location_bt_perdiem[$key] ?? '',
-                    'company_code' => $request->company_bt_perdiem[$key] ?? '',
-                    'nominal' => str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0'),
-                ];
+                $endDate = $request->end_bt_perdiem[$key] ?? '';
+                $totalDays = $request->total_days_bt_perdiem[$key] ?? '';
+                $location = $request->location_bt_perdiem[$key] ?? '';
+                $other_location = $request->other_location_bt_perdiem[$key] ?? '';
+                $companyCode = $request->company_bt_perdiem[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
+
+                if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                    $detail_perdiem[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'location' => $location,
+                        'other_location' => $other_location,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
             }
         }
         // dd($detail_perdiem);
@@ -1070,42 +1118,62 @@ class BusinessTripController extends Controller
         // Populate detail_transport
         if ($request->has('tanggal_bt_transport')) {
             foreach ($request->tanggal_bt_transport as $key => $tanggal) {
-                $detail_transport[] = [
-                    'tanggal' => $tanggal,
-                    'keterangan' => $request->keterangan_bt_transport[$key] ?? '',
-                    'company_code' => $request->company_bt_transport[$key] ?? '',
-                    'nominal' => str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0'),
-                ];
+                $keterangan = $request->keterangan_bt_transport[$key] ?? '';
+                $companyCode = $request->company_bt_transport[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
+
+                if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
+                    $detail_transport[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
             }
         }
 
         // Populate detail_penginapan
         if ($request->has('start_bt_penginapan')) {
             foreach ($request->start_bt_penginapan as $key => $startDate) {
-                $detail_penginapan[] = [
-                    'start_date' => $startDate,
-                    'end_date' => $request->end_bt_penginapan[$key] ?? '',
-                    'total_days' => $request->total_days_bt_penginapan[$key] ?? '',
-                    'hotel_name' => $request->hotel_name_bt_penginapan[$key] ?? '',
-                    'company_code' => $request->company_bt_penginapan[$key] ?? '',
-                    'nominal' => str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0'),
-                    'totalPenginapan' => str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0'),
-                ];
+                $endDate = $request->end_bt_penginapan[$key] ?? '';
+                $totalDays = $request->total_days_bt_penginapan[$key] ?? '';
+                $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
+                $companyCode = $request->company_bt_penginapan[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
+                $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
+
+                if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                    $detail_penginapan[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'hotel_name' => $hotelName,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                        'totalPenginapan' => $totalPenginapan,
+                    ];
+                }
             }
         }
 
         // Populate detail_lainnya
         if ($request->has('tanggal_bt_lainnya')) {
             foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
-                $detail_lainnya[] = [
-                    'tanggal' => $tanggal,
-                    'keterangan' => $request->keterangan_bt_lainnya[$key] ?? '',
-                    'nominal' => str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0'),
-                    'totalLainnya' => str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0'),
-                ];
+                $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
+                $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
+
+                if (!empty($tanggal) && !empty($nominal)) {
+                    $detail_lainnya[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'nominal' => $nominal,
+                        'totalLainnya' => $totalLainnya,
+                    ];
+                }
             }
         }
-
         // Save the details
         $declare_ca = [
             'detail_perdiem' => $detail_perdiem,
@@ -1944,15 +2012,17 @@ class BusinessTripController extends Controller
                     $companyCode = $request->company_bt_perdiem[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
 
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'location' => $location,
-                        'other_location' => $other_location,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_perdiem[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'location' => $location,
+                            'other_location' => $other_location,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -1963,12 +2033,14 @@ class BusinessTripController extends Controller
                     $companyCode = $request->company_bt_transport[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
 
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_transport[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -1982,15 +2054,17 @@ class BusinessTripController extends Controller
                     $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
                     $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'hotel_name' => $hotelName,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                        'totalPenginapan' => $totalPenginapan,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_penginapan[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'hotel_name' => $hotelName,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                            'totalPenginapan' => $totalPenginapan,
+                        ];
+                    }
                 }
             }
 
@@ -2001,12 +2075,14 @@ class BusinessTripController extends Controller
                     $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
                     $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'nominal' => $nominal,
-                        'totalLainnya' => $totalLainnya,
-                    ];
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_lainnya[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                            'totalLainnya' => $totalLainnya,
+                        ];
+                    }
                 }
             }
 
@@ -2132,7 +2208,7 @@ class BusinessTripController extends Controller
         if ($filter === 'request') {
             $query->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
         } elseif ($filter === 'declaration') {
-            $query->whereIn('status', ['Declaration Approved', 'Declaration L1', 'Declaration L2']);
+            $query->whereIn('status', ['Declaration Approved', 'Declaration L1', 'Declaration L2', 'Approved']);
         } elseif ($filter === 'done') {
             $query->whereIn('status', ['Doc Accepted', 'Verified']);
         } elseif ($filter === 'return_refund') {
@@ -2241,7 +2317,7 @@ class BusinessTripController extends Controller
     {
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
-        $employee_data = Employee::where('id', $userId)->first();
+        $employee_data = Employee::where('id', $n->user_id)->first();
 
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
@@ -2302,7 +2378,7 @@ class BusinessTripController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
 
         $parentLink = 'Business Trip Admin';
-        $link = 'Declaration Data';
+        $link = 'Declaration Business Trip (Admin)';
 
         return view('hcis.reimbursements.businessTrip.deklarasiAdmin', [
             'n' => $n,
@@ -2383,15 +2459,17 @@ class BusinessTripController extends Controller
                 $companyCode = $request->company_bt_perdiem[$key] ?? '';
                 $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
 
-                $detail_perdiem[] = [
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
-                    'total_days' => $totalDays,
-                    'location' => $location,
-                    'other_location' => $other_location,
-                    'company_code' => $companyCode,
-                    'nominal' => $nominal,
-                ];
+                if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                    $detail_perdiem[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'location' => $location,
+                        'other_location' => $other_location,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
             }
         }
 
@@ -2402,12 +2480,14 @@ class BusinessTripController extends Controller
                 $companyCode = $request->company_bt_transport[$key] ?? '';
                 $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
 
-                $detail_transport[] = [
-                    'tanggal' => $tanggal,
-                    'keterangan' => $keterangan,
-                    'company_code' => $companyCode,
-                    'nominal' => $nominal,
-                ];
+                if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
+                    $detail_transport[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                    ];
+                }
             }
         }
 
@@ -2421,15 +2501,17 @@ class BusinessTripController extends Controller
                 $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
                 $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
-                $detail_penginapan[] = [
-                    'start_date' => $startDate,
-                    'end_date' => $endDate,
-                    'total_days' => $totalDays,
-                    'hotel_name' => $hotelName,
-                    'company_code' => $companyCode,
-                    'nominal' => $nominal,
-                    'totalPenginapan' => $totalPenginapan,
-                ];
+                if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                    $detail_penginapan[] = [
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'total_days' => $totalDays,
+                        'hotel_name' => $hotelName,
+                        'company_code' => $companyCode,
+                        'nominal' => $nominal,
+                        'totalPenginapan' => $totalPenginapan,
+                    ];
+                }
             }
         }
 
@@ -2440,12 +2522,14 @@ class BusinessTripController extends Controller
                 $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
                 $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
-                $detail_lainnya[] = [
-                    'tanggal' => $tanggal,
-                    'keterangan' => $keterangan,
-                    'nominal' => $nominal,
-                    'totalLainnya' => $totalLainnya,
-                ];
+                if (!empty($tanggal) && !empty($nominal)) {
+                    $detail_lainnya[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'nominal' => $nominal,
+                        'totalLainnya' => $totalLainnya,
+                    ];
+                }
             }
         }
 
@@ -3226,6 +3310,28 @@ class BusinessTripController extends Controller
         // Order and retrieve the filtered results
         $sppd = $query->orderBy('created_at', 'desc')->get();
 
+        $requestCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->where('status', 'Pending L1');
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->where('status', 'Pending L2');
+            });
+        })->count();
+
+        // Count only "Declaration" status (Declaration L1 and L2)
+        $declarationCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->where('status', 'Declaration L1');
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->where('status', 'Declaration L2');
+            });
+        })->count();
+
+
         // Collect all SPPD numbers from the BusinessTrip instances
         $sppdNos = $sppd->pluck('no_sppd');
 
@@ -3239,7 +3345,7 @@ class BusinessTripController extends Controller
         $link = 'Business Trip';
         $showData = true;
 
-        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData', 'filter'));
+        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'showData', 'filter', 'requestCount', 'declarationCount'));
     }
 
 

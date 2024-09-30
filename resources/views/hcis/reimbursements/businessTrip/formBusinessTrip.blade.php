@@ -335,12 +335,34 @@
 
                     // Create a message with the input values, each on a new line with bold titles
                     const inputSummary = `
-                <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
-                <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
-                <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
-                <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
-                <strong>Selected Options:</strong> ${[caChecked, ticketChecked, hotelChecked, taksiChecked].filter(Boolean).join(', ') || 'None'}
-            `;
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                            <tr>
+                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Perdiem</th>
+                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
+                                <td style="width: 50%; padding: 8px; border-bottom: 1px solid #ddd;">${totalBtPerdiem}</td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Accommodation</th>
+                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtPenginapan}</td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Transport</th>
+                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtTransport}</td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Others</th>
+                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtLainnya}</td>
+                            </tr>
+                            <tr>
+                                <th style="width: 50%; text-align: left; padding: 8px;">Selected Options</th>
+                                <td style="text-align: center; padding: 8px;">:</td>
+                                <td style="padding: 8px;">${[caChecked, ticketChecked, hotelChecked, taksiChecked].filter(Boolean).join(', ') || 'None'}</td>
+                            </tr>
+                        </table>
+                        `;
 
                     // Show SweetAlert confirmation with the input summary
                     Swal.fire({

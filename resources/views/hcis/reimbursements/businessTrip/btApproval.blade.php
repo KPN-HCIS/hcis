@@ -87,17 +87,18 @@
             <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate.approval') }}">
                 <div class="row align-items-end">
                     <h3 class="card-title">SPPD Data</h3>
+
                     <div class="col-md-5">
                         <label for="start-date" class="mb-2">Departure Date:</label>
                         <input type="date" id="start-date" name="start-date" class="form-control"
                             value="{{ request()->query('start-date') }}">
                     </div>
-                    <div class="col-md-5 mb-2">
+                    <div class="col-md-5">
                         <label for="end-date" class="mb-2">To:</label>
                         <input type="date" id="end-date" name="end-date" class="form-control"
                             value="{{ request()->query('end-date') }}">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 mt-2">
                         <button type="submit" class="btn btn-primary rounded-pill w-100">Find</button>
                     </div>
                 </div>

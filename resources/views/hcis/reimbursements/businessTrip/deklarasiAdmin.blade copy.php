@@ -13,7 +13,8 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('businessTrip') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('businessTrip.admin') }}">{{ $parentLink }}</a>
+                            </li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -23,49 +24,64 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="card shadow-sm mb-3">
+                <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Declaration Data - {{ $n->no_sppd }}</h4>
-                        <a href="{{ route('businessTrip') }}" class="btn-close btn-close-white"></a>
+                        <h4 class="mb-0">Declaration Data</h4>
+                        <a href="{{ route('businessTrip.admin') }}" class="btn-close btn-close-white"></a>
                     </div>
                     <div class="card-body">
-                        <form action="/businessTrip/declaration/update/{{ $n->id }}" method="POST" id="btEditForm"
-                            enctype="multipart/form-data">
+                        <form action="/businessTrip/declaration/admin/status/{{ $n->id }}" method="POST"
+                            id="btEditForm" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             @include('hcis.reimbursements.businessTrip.modal')
-                            <div class="row">
+                            {{-- @if (session('error'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ session('error') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
+
+                            @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif --}}
+
+
+                            <input class="form-control" id="perdiem" name="perdiem" type="hidden"
+                                value="{{ $perdiem->amount }}" readonly>
+                            <!-- 1st Form -->
+                            <div class="row mt-2" id="">
                                 <div class="col-md-6">
                                     <table width="100%" class="">
                                         <tr>
                                             <th width="40%">Employee ID</th>
                                             <td class="block">:</td>
-                                            <td> {{ $employee_data->employee_id ?? '-' }}</td>
+                                            <td> {{ $employee_data->employee_id }}</td>
                                         </tr>
                                         <tr>
                                             <th>Employee Name</th>
                                             <td class="block">:</td>
-                                            <td> {{ $employee_data->fullname ?? '-' }}</td>
+                                            <td> {{ $employee_data->fullname }}</td>
                                         </tr>
                                         <tr>
                                             <th>Unit</th>
                                             <td class="block">:</td>
-                                            <td> {{ $employee_data->unit ?? '-' }}</td>
+                                            <td> {{ $employee_data->unit }}</td>
                                         </tr>
                                         <tr>
                                             <th>Job Level</th>
                                             <td class="block">:</td>
-                                            <td> {{ $employee_data->job_level ?? '-' }}</td>
+                                            <td> {{ $employee_data->job_level }}</td>
                                         </tr>
                                         <tr>
                                             <th>Designation</th>
                                             <td class="block">:</td>
-                                            <td> {{ $employee_data->designation_name ?? '-' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Cash Advance Type</th>
-                                            <td class="block">:</td>
-                                            <td> Business Trip</td>
+                                            <td> {{ $employee_data->designation_name }}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -74,54 +90,80 @@
                                         <tr>
                                             <th width="40%">Start Date</th>
                                             <td class="block">: </td>
-                                            <td width="60%"> {{ $n->mulai ? date('d M Y', strtotime($n->mulai)) : '-' }}
-                                            </td>
+                                            <td width="60%"> {{ date('d M Y', strtotime($n->mulai)) }}</td>
                                         </tr>
                                         <tr>
                                             <th>End Date</th>
                                             <td class="block">:</td>
-                                            <td> {{ $n->kembali ? date('d M Y', strtotime($n->kembali)) : '-' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Estimated Declaration</th>
-                                            <td class="block">:</td>
-                                            <td> {{ $ca->declare_estimate ? date('d M Y', strtotime($ca->declare_estimate)) : '-' }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Date Required</th>
-                                            <td class="block">:</td>
-                                            <td> {{ $ca->date_required ? date('d M Y', strtotime($ca->date_required)) : '-' }}
-                                            </td>
+                                            <td> {{ date('d M Y', strtotime($n->kembali)) }}</td>
                                         </tr>
                                         <tr>
                                             <th>Costing Company</th>
                                             <td class="block">:</td>
-                                            <td> ({{ $n->bb_perusahaan ?? '-' }})</td>
+                                            <td> ({{ $n->bb_perusahaan }})</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Destination</th>
+                                            <td class="block">:</td>
+                                            <td> {{ $n->tujuan }}</td>
                                         </tr>
                                         <tr>
                                             <th>Purposes</th>
                                             <td class="block">:</td>
-                                            <td>{{ $n->keperluan ?? '-' }}</td>
+                                            <td>{{ $n->keperluan }}</td>
                                         </tr>
-
                                         <tr>
-                                            <th>Destination</th>
+                                            <th>Cash Advance Type</th>
                                             <td class="block">:</td>
-                                            <td> {{ $n->tujuan ?? '-' }}</td>
+                                            <td> Business Trip</td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div class="">
-                                    <input type="hidden" class="form-control bg-light" id="divisi" name="divisi"
-                                        style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
-                                </div>
-                                <div class="">
-                                    <input type="hidden" class="form-control bg-light" id="tujuan" name="tujuan"
-                                        style="cursor:not-allowed;" value="{{ $n->tujuan }}" readonly>
-                                    <input type="hidden" class="form-control" id="keperluan" name="keperluan"
-                                        value="{{ $n->keperluan }}"></input>
-                                </div>
+                                @php
+                                    // Provide default empty arrays if caDetail or sections are not set
+                                    $detailPerdiem = $caDetail['detail_perdiem'] ?? [];
+                                    $detailTransport = $caDetail['detail_transport'] ?? [];
+                                    $detailPenginapan = $caDetail['detail_penginapan'] ?? [];
+                                    $detailLainnya = $caDetail['detail_lainnya'] ?? [];
+
+                                    // Calculate totals with default values
+                                    $totalPerdiem = array_reduce(
+                                        $detailPerdiem,
+                                        function ($carry, $item) {
+                                            return $carry + (int) ($item['nominal'] ?? 0);
+                                        },
+                                        0,
+                                    );
+
+                                    $totalTransport = array_reduce(
+                                        $detailTransport,
+                                        function ($carry, $item) {
+                                            return $carry + (int) ($item['nominal'] ?? 0);
+                                        },
+                                        0,
+                                    );
+
+                                    $totalPenginapan = array_reduce(
+                                        $detailPenginapan,
+                                        function ($carry, $item) {
+                                            return $carry + (int) ($item['nominal'] ?? 0);
+                                        },
+                                        0,
+                                    );
+
+                                    $totalLainnya = array_reduce(
+                                        $detailLainnya,
+                                        function ($carry, $item) {
+                                            return $carry + (int) ($item['nominal'] ?? 0);
+                                        },
+                                        0,
+                                    );
+
+                                    // Total Cash Advanced
+                                    $totalCashAdvanced =
+                                        $totalPerdiem + $totalTransport + $totalPenginapan + $totalLainnya;
+                                @endphp
+
                                 @php
                                     $detailCA = isset($ca) && $ca->detail_ca ? json_decode($ca->detail_ca, true) : [];
                                     $declareCA =
@@ -132,11 +174,17 @@
                                     // dd($declareCA['detail_transport']);
 
                                 @endphp
+
                                 <script>
                                     // Pass the PHP array into a JavaScript variable
                                     const initialDetailCA = @json($detailCA);
                                     const initialDeclareCA = @json($declareCA);
                                 </script>
+
+                                @php
+                                    use Illuminate\Support\Facades\Storage;
+                                @endphp
+
                                 <!-- 1st Form -->
                                 <div class="row mt-2" id="ca_div">
                                     <div class="col-md-12">
@@ -146,27 +194,28 @@
                                                     <button class="nav-link active" id="pills-perdiem-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
                                                         role="tab" aria-controls="pills-perdiem"
-                                                        aria-selected="true">Perdiem</button>
+                                                        aria-selected="true">Perdiem Plan</button>
                                                 </li>
 
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-transport-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-transport" type="button" role="tab"
-                                                        aria-controls="pills-transport"
-                                                        aria-selected="false">Transport</button>
+                                                        aria-controls="pills-transport" aria-selected="false">Transport
+                                                        Plan</button>
                                                 </li>
 
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-accomodation-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-accomodation"
                                                         type="button" role="tab" aria-controls="pills-accomodation"
-                                                        aria-selected="false">Accommodation</button>
+                                                        aria-selected="false">Accommodation Plan</button>
                                                 </li>
 
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-other-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-other" type="button" role="tab"
-                                                        aria-controls="pills-other" aria-selected="false">Other</button>
+                                                        aria-controls="pills-other" aria-selected="false">Other
+                                                        Plan</button>
                                                 </li>
                                             </ul>
                                             {{-- <div class="card"> --}}
@@ -218,47 +267,43 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
-                                            use Illuminate\Support\Facades\Storage;
-                                        @endphp
-
-                                        <div class="col-md-8 mt-2">
-                                            <label for="prove_declare" class="form-label">Upload Proof</label>
-                                            <div class="d-flex align-items-center">
-                                                <input type="file" id="prove_declare" name="prove_declare"
-                                                    accept="image/*,application/pdf" class="form-control me-2">
-
-                                                @if (isset($ca->prove_declare) && $ca->prove_declare)
-                                                    <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
-                                                        class="btn btn-primary rounded-pill">
-                                                        View
-                                                    </a>
-                                                @endif
-                                            </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Accept Status</label>
+                                            <select class="form-select" name="accept_status" id="accept-status" required>
+                                                <option value="" disabled
+                                                    {{ !in_array($n->status, ['Verified', 'Doc Accepted', 'Return/Refund']) ? 'selected' : '' }}>
+                                                    --- Choose Acceptance Status ---</option>
+                                                <option value="Verified"
+                                                    {{ old('accept_status', $n->status) == 'Verified' ? 'selected' : '' }}>
+                                                    Verified
+                                                </option>
+                                                <option value="Doc Accepted"
+                                                    {{ old('accept_status', $n->status) == 'Doc Accepted' ? 'selected' : '' }}>
+                                                    Doc
+                                                    Accepted</option>
+                                                <option value="Return/Refund"
+                                                    {{ old('accept_status', $n->status) == 'Return/Refund' ? 'selected' : '' }}>
+                                                    Return/Refund</option>
+                                            </select>
                                         </div>
 
+                                        {{-- <div class="mb-3" id="refund-amount-div" style="display: none;">
+                                <label for="refund-amount" class="form-label">Refund Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="text" name="refund_amount" id="refund-amount"
+                                        class="form-control bg-light" value="" readonly>
+                                </div>
+                            </div> --}}
                                         {{-- <input type="hidden" name="status" value="Declaration L1" id="status"> --}}
-                                        <input type="hidden" name="no_id" value="{{ $ca->id ?? 0 }}">
-                                        <input type="hidden" name="ca_id" value="{{ $ca->no_ca ?? 0 }}">
-                                        <input class="form-control" id="perdiem" name="perdiem" type="hidden"
-                                            value="{{ $perdiem->amount ?? 0 }}" readonly>
-
                                         <div class="d-flex justify-content-end mt-3">
-                                            <button type="submit"
-                                                class="btn btn-outline-primary rounded-pill me-2 submit-button"
-                                                value="Declaration Draft" name="action_draft">Save as Draft</button>
-                                            <button type="submit" class="btn btn-primary rounded-pill submit-button"
-                                                name="action_submit" value="Declaration L1">Submit</button>
+                                            @if (isset($ca->prove_declare) && $ca->prove_declare)
+                                                <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
+                                                    class="btn btn-outline-primary rounded-pill"
+                                                    style="margin-right: 20px;">View</a>
+                                            @endif
+                                            <button type="submit" class="btn btn-primary rounded-pill">Submit</button>
                                         </div>
-                                        <div class="" style="visibility: hidden">
-                                            <input class="form-select" id="bb_perusahaan" name="bb_perusahaan"
-                                                value="{{ $n->bb_perusahaan }}">
-                                            </input>
-                                        </div>
-                                        <input type="hidden" id="mulai" name="mulai"
-                                            value="{{ $n->mulai ?? 0 }}">
-                                        <input type="hidden" id="kembali" name="kembali"
-                                            value="{{ $n->kembali ?? 0 }}">
                         </form>
                     </div>
                 </div>
@@ -267,6 +312,27 @@
     </div>
 
     <script src="{{ asset('/js/businessTrip.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalca = document.getElementById('totalca');
+            const totalcaDeklarasi = document.getElementById('totalca_deklarasi');
+            const refundAmount = document.getElementById('refund-amount');
+
+            function calculateRefund() {
+                const total = parseFloat(totalca.value) || 0;
+                const declaration = parseFloat(totalcaDeklarasi.value) || 0;
+                const difference = declaration - total;
+                refundAmount.value = difference.toFixed(2);
+            }
+
+            // Calculate initially
+            calculateRefund();
+
+            // Recalculate on input
+            totalca.addEventListener('input', calculateRefund);
+            totalcaDeklarasi.addEventListener('input', calculateRefund);
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.submit-button').forEach(button => {
@@ -289,29 +355,11 @@
 
                     // Create a message with the input values, each on a new line with bold titles
                     const inputSummary = `
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Perdiem</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="width: 50%; padding: 8px; border-bottom: 1px solid #ddd;">${totalBtPerdiem}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Accommodation</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtPenginapan}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Transport</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtTransport}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Others</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtLainnya}</td>
-                            </tr>
-                        </table>
-                        `;
+                        <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
+                        <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
+                        <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
+                        <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
+                    `;
 
                     // Show SweetAlert confirmation with the input summary
                     Swal.fire({

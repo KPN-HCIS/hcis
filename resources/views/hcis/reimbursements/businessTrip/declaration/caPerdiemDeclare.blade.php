@@ -80,8 +80,8 @@
                 <!-- Action Buttons -->
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem(${formCountPerdiem}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPerdiem(${formCountPerdiem}, event)">Delete</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem(${formCountPerdiem}, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormPerdiem(${formCountPerdiem}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -236,7 +236,7 @@
                     @endif
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
                         </div>
                     </div>
                 </div>
@@ -314,8 +314,8 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
-                                <button class="btn btn-warning mr-2" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
+                                <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -325,7 +325,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" onclick="addMoreFormPerdiemDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" onclick="addMoreFormPerdiemDec(event)">Add More</button>
     </div>
 
     <div class="mt-2 mb-2">
@@ -422,10 +422,10 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" onclick="addMoreFormPerdiemDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" onclick="addMoreFormPerdiemDec(event)">Add More</button>
     </div>
 
-    <div class="mt-2">
+    <div class="mt-2 mb-2">
         <label class="form-label">Total Perdiem</label>
         <div class="input-group">
             <div class="input-group-append">
@@ -510,8 +510,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPerdiem(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="removeFormPerdiem(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -519,10 +519,10 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" onclick="addMoreFormPerdiemDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" onclick="addMoreFormPerdiemDec(event)">Add More</button>
     </div>
 
-    <div class="mt-2">
+    <div class="mt-2 mb-2">
         <label class="form-label">Total Perdiem</label>
         <div class="input-group">
             <div class="input-group-append">
