@@ -152,7 +152,7 @@
                                             </td>
                                             <td>
                                                 @if($ca_transaction->approval_extend == 'Pending')
-                                                    <p class="badge text-bg-warning style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_extend." - ".$ca_transaction->extName}}">
+                                                    <p class="badge text-bg-warning" style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_extend." - ".$ca_transaction->extName}}">
                                                         {{ "Extend : ".$ca_transaction->approval_extend }}
                                                     </p>
                                                 @elseif ($ca_transaction->approval_sett == 'Rejected')

@@ -120,6 +120,19 @@ class ReimburseController extends Controller
         // Mengambil data karyawan yang sedang login
         $employee_data = Employee::where('id', $userId)->first();
 
+        // Mendapatkan transaksi CA yang terkait dengan user yang sedang login
+        // $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
+
+        // Mengambil fullname dari employee berdasarkan status_id
+        // $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))->pluck('fullname', 'employee_id');
+
+        $disableCACount = CATransaction::where('user_id', $userId)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Pending')
+                    ->orWhere('ca_status', 'Refund');
+            })
+            ->count();
+
         $deklarasiCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
                 $query->where('approval_sett', '')
@@ -140,7 +153,7 @@ class ReimburseController extends Controller
 
         return view('hcis.reimbursements.cashadv.cashadv', [
             'deklarasiCACount' => $deklarasiCACount,
-            'pendingCACount' => $pendingCACount,
+            'disableCACount' => $disableCACount,
             'employee_data' => $employee_data,
             'link' => $link,
             'parentLink' => $parentLink,

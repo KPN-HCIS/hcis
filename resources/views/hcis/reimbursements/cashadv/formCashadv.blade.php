@@ -30,7 +30,7 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('cashadvanced.submit') }}">@csrf
+                        <form id="cashadvancedForm" method="post" action="{{ route('cashadvanced.submit') }}">@csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="start">Employee ID</label>
@@ -81,7 +81,7 @@
                                         <option value="Others">Others</option>
                                     </select>
                                     <br><input type="text" name="others_location" id="others_location"
-                                        class="form-control" placeholder="Other Location" value=""
+                                        class="form-control mt-3" placeholder="Other Location" value=""
                                         style="display: none;">
                                 </div>
                             </div>
@@ -144,12 +144,11 @@
                                     <select class="form-control select2" id="bisnis_numb_dns" name="bisnis_numb_dns">
                                         <option value="">Select</option>
                                         @foreach ($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_sppd }}"
-                                                @if ($noSppdListDNS->contains($no_sppd->no_sppd))
-                                                    disabled title="No. SPPD already has CA Business Trip. Please apply for an extension if you want to add CA."
-                                                @endif>
-                                                {{ $no_sppd->no_sppd }}
-                                            </option>
+                                            @if (!$noSppdListDNS->contains($no_sppd->no_sppd)) <!-- Hanya tampilkan jika tidak ada di $noSppdListENT -->
+                                                <option value="{{ $no_sppd->no_sppd }}">
+                                                    {{ $no_sppd->no_sppd }}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -160,12 +159,11 @@
                                     <select class="form-control select2" id="bisnis_numb_ent" name="bisnis_numb_ent">
                                         <option value="">Select</option>
                                         @foreach ($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_sppd }}"
-                                                @if ($noSppdListENT->contains($no_sppd->no_sppd))
-                                                    disabled title="No. SPPD already has CA Entertain. Please apply for an extension if you want to add CA."
-                                                @endif>
-                                                {{ $no_sppd->no_sppd }}
-                                            </option>
+                                            @if (!$noSppdListENT->contains($no_sppd->no_sppd)) <!-- Hanya tampilkan jika tidak ada di $noSppdListENT -->
+                                                <option value="{{ $no_sppd->no_sppd }}">
+                                                    {{ $no_sppd->no_sppd }}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -177,31 +175,29 @@
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced
-                                            </div>
                                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link active" id="pills-perdiem-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
                                                         role="tab" aria-controls="pills-perdiem"
-                                                        aria-selected="true">Perdiem Plan</button>
+                                                        aria-selected="true">Perdiem</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-transport-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-transport" type="button" role="tab"
                                                         aria-controls="pills-transport" aria-selected="false">Transport
-                                                        Plan</button>
+                                                    </button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-accomodation-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-accomodation"
                                                         type="button" role="tab" aria-controls="pills-accomodation"
-                                                        aria-selected="false">Accomodation Plan</button>
+                                                        aria-selected="false">Accomodation</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-other-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-other" type="button" role="tab"
-                                                        aria-controls="pills-other" aria-selected="false">Other Plan</button>
+                                                        aria-controls="pills-other" aria-selected="false">Other</button>
                                                 </li>
                                             </ul>
                                             <div class="tab-content" id="pills-tabContent">
@@ -230,8 +226,6 @@
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Cash Advanced Non Business Trip
-                                            </div>
                                             @include('hcis.reimbursements.cashadv.form.nbt')
                                             <button type="button" id="add-more" style="display: none"
                                                 class="btn btn-primary mt-3">Add More</button>
@@ -243,20 +237,18 @@
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
                                         <div class="d-flex flex-column gap-2">
-                                            <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment
-                                            </div>
                                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link active" id="pills-detail-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-detail" type="button"
                                                         role="tab" aria-controls="pills-detail"
-                                                        aria-selected="true">Detail Entertain Plan</button>
+                                                        aria-selected="true">Detail Entertain</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-relation-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-relation" type="button" role="tab"
                                                         aria-controls="pills-relation" aria-selected="false">Relation Entertain
-                                                        Plan</button>
+                                                    </button>
                                                 </li>
                                             </ul>
                                             <div class="tab-content" id="pills-tabContent">

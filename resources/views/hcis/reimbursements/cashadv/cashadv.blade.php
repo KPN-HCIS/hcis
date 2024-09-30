@@ -94,7 +94,7 @@
 
             <!-- Add Data Button -->
             <div class="col-md-6 mt-4 text-end">
-                @if ($pendingCACount >= 2)
+                @if ($disableCACount >= 2)
                     <a href="#" class="btn btn-outline-primary rounded-pill"
                         onclick="showPendingAlert(); return false;">
                         <i class="bi bi-plus-circle"></i> Add Data
@@ -104,9 +104,9 @@
                         <i class="bi bi-plus-circle"></i> Add Data
                     </a>
                 @endif
-                {{-- <a href="{{ $pendingCACount >= 2 ? '#' : route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill {{ $pendingCACount >= 2 ? 'disabled' : '' }}" style="font-size: 18px">
+                <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" >
                     <i class="bi bi-plus-circle"></i> Add Data
-                </a> --}}
+                </a>
             </div>
         </div>
         <!-- Content Row -->

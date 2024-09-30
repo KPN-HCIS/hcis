@@ -33,9 +33,10 @@
             </div>
         </div>
             <div class="card shadow-none">
-                <div class="card-header text-center">
-                    <h4>Cash Advance No <b>"{{ $transactions->no_ca }}"</b></h4>
-                    {{-- <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close"></a> --}}
+                <div class="card-header mb-2 d-flex bg-primary justify-content-between">
+                    <p></p>
+                    <h4 class="modal-title text-white" id="viewFormEmployeeLabel">Cash Advance No "<b>{{ $transactions->no_ca }}</b>"</h4>
+                    <a href="{{ route('cashadvanced') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body p-2">
                     <div class="row">
@@ -121,6 +122,17 @@
                                             Entertainment
                                         @else
                                             Non Business Trip
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="label" style="border: none;">No. SPPD</th>
+                                    <td class="colon" style="border: none;">:</td>
+                                    <td class="value" style="border: none;">
+                                        @if ($transactions->no_sppd == NULL)
+                                            -
+                                        @else
+                                            {{ $transactions->no_sppd }}
                                         @endif
                                     </td>
                                 </tr>
@@ -308,18 +320,18 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label">Total Cash Advanced</label>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Total Cash Advanced Request</label>
                             <div class="input-group">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
                                 </div>
-                                <input class="form-control bg-light" name="totalca_deklarasi" id="totalca_declarasi"
+                                <input class="form-control bg-light" name="totalca_deklarasi" id="totalca_deklarasi"
                                     type="text" min="0"
                                     value="{{ number_format($transactions->total_ca, 0, ',', '.') }}" readonly>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-4 mb-2">
                             <label class="form-label">Total Cash Advanced Deklarasi</label>
                             <div class="input-group">
                                 <div class="input-group-append">
@@ -329,7 +341,16 @@
                                     type="text" min="0"
                                     value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                             </div>
-
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Selisih Total</label>
+                            <div class="input-group">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+                                <input class="form-control bg-light" name="selisih_totalca" id="selisih_totalca"
+                                    type="text" readonly>
+                            </div>
                         </div>
                     </div>
                     <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
@@ -418,34 +439,26 @@
             var ca_type = document.getElementById("ca_type");
             var ca_nbt = document.getElementById("ca_nbt");
             var ca_e = document.getElementById("ca_e");
-            var div_bisnis_numb = document.getElementById("div_bisnis_numb");
             var bisnis_numb = document.getElementById("bisnis_numb");
-            var div_allowance = document.getElementById("div_allowance");
 
             function toggleDivs() {
                 if (ca_type.value === "dns") {
                     ca_bt.style.display = "block";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "block";
-                    div_allowance.style.display = "block";
                 } else if (ca_type.value === "ndns") {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "block";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "none";
                     bisnis_numb.style.value = "";
-                    div_allowance.style.display = "none";
                 } else if (ca_type.value === "entr") {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "block";
-                    div_bisnis_numb.style.display = "block";
                 } else {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "none";
                     bisnis_numb.style.value = "";
                 }
             }
@@ -474,64 +487,26 @@
             const startDateInput = document.getElementById('start_date');
             const endDateInput = document.getElementById('end_date');
             const totalDaysInput = document.getElementById('totaldays');
-            const perdiemInput = document.getElementById('perdiem');
-            const allowanceInput = document.getElementById('allowance');
-            const othersLocationInput = document.getElementById('others_location');
-            const transportInput = document.getElementById('transport');
-            const accommodationInput = document.getElementById('accommodation');
-            const otherInput = document.getElementById('other');
-            const totalcaInput = document.getElementById('totalca');
-            const nominal_1Input = document.getElementById('nominal_1');
-            const nominal_2Input = document.getElementById('nominal_2');
-            const nominal_3Input = document.getElementById('nominal_3');
-            const nominal_4Input = document.getElementById('nominal_4');
-            const nominal_5Input = document.getElementById('nominal_5');
-            const caTypeInput = document.getElementById('ca_type');
-
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
 
             function calculateTotalDays() {
                 const startDate = new Date(startDateInput.value);
                 const endDate = new Date(endDateInput.value);
+
+                // Memastikan kedua tanggal valid
                 if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
                     const timeDiff = endDate - startDate;
                     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
+                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0; // Menambahkan 1 untuk menghitung hari awal
                     totalDaysInput.value = totalDays;
-
-                    const perdiem = parseFloat(perdiemInput.value) || 0;
-                    let allowance = totalDays * perdiem;
-
-                    if (othersLocationInput.value.trim() !== '') {
-                        allowance *= 1; // allowance * 50%
-                    } else {
-                        allowance *= 0.5;
-                    }
-
-                    allowanceInput.value = formatNumber(Math.floor(allowance));
                 } else {
-                    totalDaysInput.value = 0;
-                    allowanceInput.value = 0;
+                    totalDaysInput.value = 0; // Mengatur ke 0 jika tidak valid
                 }
-                calculateTotalCA();
             }
 
+            // Menambahkan event listener untuk perubahan di input tanggal
             startDateInput.addEventListener('change', calculateTotalDays);
             endDateInput.addEventListener('change', calculateTotalDays);
-            othersLocationInput.addEventListener('input', calculateTotalDays);
-            caTypeInput.addEventListener('change', calculateTotalDays);
-            [transportInput, accommodationInput, otherInput, allowanceInput, nominal_1, nominal_2, nominal_3,
-                nominal_4, nominal_5
-            ].forEach(input => {
-                input.addEventListener('input', () => formatInput(input));
-            });
-        });
+        });;
 
         document.getElementById('end_date').addEventListener('change', function() {
             const endDate = new Date(this.value);
