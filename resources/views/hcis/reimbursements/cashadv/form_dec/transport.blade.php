@@ -72,7 +72,7 @@
     }
 </script>
 
-@if (!empty($detailCA['detail_transport']) && $detailCA['detail_transport'][0]['nominal'] !== null)
+@if (!empty($detailCA['detail_transport']) && $detailCA['detail_transport'][0]['tanggal'] !== null)
     <div id="form-container-transport">
         @foreach ($detailCA['detail_transport'] as $index => $transport)
             <div id="form-container-bt-transport-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
@@ -245,7 +245,7 @@
                 min="0" value="{{ number_format(array_sum(array_column($declareCA['detail_transport'], 'nominal')), 0, ',', '.') }}" readonly>
         </div>
     </div>
-@elseif (!empty($declareCA['detail_transport']) && $declareCA['detail_transport'][0]['nominal'] !== null)
+@elseif (!empty($declareCA['detail_transport']) && $declareCA['detail_transport'][0]['tanggal'] !== null)
     <div id="form-container-transport">
         @foreach ($declareCA['detail_transport'] as $index => $transport_dec)
             @if (!isset($detailCA['detail_transport'][$index]))
@@ -402,4 +402,3 @@
         </div>
     </div>
 @endif
-

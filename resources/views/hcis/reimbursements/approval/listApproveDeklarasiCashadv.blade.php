@@ -163,6 +163,7 @@
                                                             <thead class="thead-light">
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
+                                                                    <th>No</th>
                                                                     <th>Start Date</th>
                                                                     <th>End Date</th>
                                                                     <th>Location</th>
@@ -175,6 +176,7 @@
                                                                 <?php $totalPerdiem = 0; $totalDays = 0; ?>
                                                                 @foreach ($detailCA['detail_perdiem'] as $perdiem)
                                                                     <tr class="text-center">
+                                                                        <td></td>
                                                                         <td class="text-center">{{ $loop->index + 1 }}</td>
                                                                         <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
                                                                         <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
@@ -889,6 +891,41 @@
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
     <script>
+        var tableIdPerdiem = [
+            '#perdiemTable',
+            '#perdiemTableDec',
+        ];
+        tableIdPerdiem.forEach(function(id) {
+
+            $(id).DataTable({
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 'tr',
+                    },
+                },
+                columnDefs: [{
+                        className: 'control',
+                        orderable: false,
+                        targets: 0
+                    },
+                    {
+                        responsivePriority: 1,
+                        targets: 0,
+                        visible: true
+                    }, // Ensure the No column is visible
+                    {
+                        responsivePriority: 2,
+                        targets: -1
+                    }
+                ],
+                order: [1, 'asc'],
+                info: false,
+                paging: false,
+                searching: false,
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             // ca_type ca_nbt ca_e
             var ca_type = document.getElementById("ca_type");
@@ -947,8 +984,8 @@
 
         $(document).ready(function() {
             var tableIds = [
-                '#perdiemTable',
-                '#perdiemTableDec',
+                // '#perdiemTable',
+                // '#perdiemTableDec',
                 '#transportTable',
                 '#transportTableDec',
                 '#penginapanTable',

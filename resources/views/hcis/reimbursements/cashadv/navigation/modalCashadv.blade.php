@@ -117,6 +117,7 @@
     </div>
 @endif
 
+{{-- Table Deklarasi --}}
 @if (session('success'))
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -161,4 +162,60 @@
             confirmButtonText: 'Ok'
         });
     }
+</script>
+
+{{-- Form Add --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.submit-button').forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent immediate form submission
+
+                const form = document.getElementById('cashadvancedForm');
+
+                // Check if the form is valid before proceeding
+                if (!form.checkValidity()) {
+                    form.reportValidity(); // Show validation messages if invalid
+                    return; // Exit if the form is not valid
+                }
+
+                // Retrieve the values from the input fields
+                const totalBtPerdiem = document.getElementById('total_bt_perdiem').value;
+                const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
+                const totalBtTransport = document.getElementById('total_bt_transport').value;
+                const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+
+                // Create a message with the input values, each on a new line with bold titles
+                const inputSummary = `
+                    <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
+                    <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
+                    <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
+                    <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
+                `;
+
+                // Show SweetAlert confirmation with the input summary
+                Swal.fire({
+                    title: "Do you want to submit this request?",
+                    html: `You won't be able to revert this!<br><br>${inputSummary}`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#AB2F2B",
+                    cancelButtonColor: "#CCCCCC",
+                    confirmButtonText: "Yes, submit it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Create a hidden input field to hold the action value
+                        const input = document.createElement('input');
+                        input.type =
+                            'hidden'; // Hidden input so it doesn't show in the form
+                        input.name = button.name; // Use the button's name attribute
+                        input.value = button.value; // Use the button's value attribute
+
+                        form.appendChild(input); // Append the hidden input to the form
+                        form.submit(); // Submit the form only if confirmed
+                    }
+                });
+            });
+        });
+    });
 </script>

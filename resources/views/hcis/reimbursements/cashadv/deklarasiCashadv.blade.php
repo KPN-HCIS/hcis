@@ -168,6 +168,9 @@
                             @php
                                 $detailCA = json_decode($transactions->detail_ca, true) ?? [];
                                 $declareCA = json_decode($transactions->declare_ca, true) ?? [];
+
+                                // dd(empty($detailCA['detail_penginapan'][0]['start_date']));
+                                // dd($detailCA);
                             @endphp
                             <script>
                                 // Pass the PHP array into a JavaScript variable

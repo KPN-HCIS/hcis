@@ -155,8 +155,8 @@ function calculateTotalDaysPerdiem(input) {
     if (isDateUsed(startDateInput.value, endDateInput.value, formIndex)) {
         Swal.fire({
             icon: "error",
-            title: "Tanggal telah digunakan",
-            text: "Silakan pilih tanggal yang berbeda!",
+            title: "Date Already Used",
+            text: "Please Choose Another Date!",
             timer: 2000,
         });
         startDateInput.value = "";

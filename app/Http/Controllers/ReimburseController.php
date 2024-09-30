@@ -574,7 +574,7 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_transport[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
-                    if (!empty($tanggal) && !empty($keterangan) && !empty($companyCode) && !empty($nominal)) {
+                    if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
                         $detail_transport[] = [
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
@@ -613,7 +613,7 @@ class ReimburseController extends Controller
                     $keterangan = $req->keterangan_bt_lainnya[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_lainnya[$key]);
 
-                    if (!empty($tanggal) && !empty($keterangan) && !empty($nominal)) {
+                    if (!empty($tanggal) && !empty($nominal)) {
                         $detail_lainnya[] = [
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
@@ -899,15 +899,17 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
 
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'location' => $location,
-                        'other_location' => $other_location,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_perdiem[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'location' => $location,
+                            'other_location' => $other_location,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -918,12 +920,14 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_transport[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_transport[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -936,14 +940,16 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_penginapan[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_penginapan[$key]);
 
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'hotel_name' => $hotelName,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_penginapan[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'hotel_name' => $hotelName,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -953,11 +959,13 @@ class ReimburseController extends Controller
                     $keterangan = $req->keterangan_bt_lainnya[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_lainnya[$key]);
 
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_lainnya[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -1382,15 +1390,17 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_perdiem[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_perdiem[$key]);
 
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'location' => $location,
-                        'other_location' => $other_location,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_perdiem[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'location' => $location,
+                            'other_location' => $other_location,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -1400,12 +1410,14 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_transport[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_transport[$key]);
 
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_transport[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -1417,14 +1429,16 @@ class ReimburseController extends Controller
                     $companyCode = $req->company_bt_penginapan[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_penginapan[$key]);
 
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'hotel_name' => $hotelName,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_penginapan[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'hotel_name' => $hotelName,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -1433,11 +1447,13 @@ class ReimburseController extends Controller
                     $keterangan = $req->keterangan_bt_lainnya[$key];
                     $nominal = str_replace('.', '', $req->nominal_bt_lainnya[$key]);
 
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_lainnya[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
