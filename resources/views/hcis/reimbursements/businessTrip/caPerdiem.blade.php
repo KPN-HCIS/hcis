@@ -1,4 +1,4 @@
-<script src="{{ asset('/js/cashAdvanced/perdiem.js') }}"></script>
+<script src="{{ asset('/js/btCashAdvanced/perdiem.js') }}"></script>
 
 <script>
     function addMoreFormPerdiemReq(event) {

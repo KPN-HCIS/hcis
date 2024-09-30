@@ -104,7 +104,7 @@
     }
 </script>
 
-<script src="{{ asset('/js/cashAdvanced/perdiem.js') }}"></script>
+<script src="{{ asset('/js/btCashAdvanced/perdiem.js') }}"></script>
 
 @if (!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null)
     {{-- Form Edit --}}

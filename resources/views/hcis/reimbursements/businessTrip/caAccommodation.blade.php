@@ -1,4 +1,4 @@
-<script src="{{ asset('/js/cashAdvanced/penginapan.js') }}"></script>
+<script src="{{ asset('/js/btCashAdvanced/penginapan.js') }}"></script>
 
 <script>
     function addMoreFormPenginapanReq(event) {

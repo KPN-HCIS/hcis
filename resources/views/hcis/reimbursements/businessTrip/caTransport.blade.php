@@ -1,4 +1,4 @@
-<script src="{{ asset('/js/cashAdvanced/transport.js') }}"></script>
+<script src="{{ asset('/js/btCashAdvanced/transport.js') }}"></script>
 
 <script>
     function addMoreFormTransportReq(event) {

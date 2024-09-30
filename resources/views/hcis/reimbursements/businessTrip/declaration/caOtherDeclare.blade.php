@@ -1,3 +1,4 @@
+<script src="{{ asset('/js/btCashAdvanced/others.js') }}"></script>
 <script>
     var formCountOthers = 0;
 

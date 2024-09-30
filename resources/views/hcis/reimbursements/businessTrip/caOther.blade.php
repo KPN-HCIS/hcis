@@ -1,4 +1,4 @@
-<script src="{{ asset('/js/cashAdvanced/others.js') }}"></script>
+<script src="{{ asset('/js/btCashAdvanced/others.js') }}"></script>
 
 <script>
     function addMoreFormLainnyaReq(event) {

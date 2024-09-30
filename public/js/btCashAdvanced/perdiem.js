@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     calculateTotalNominalBTTotal(); // Calculate the total immediately when the page loads
 });
 
+
 function isDateInRange(date, startDate, endDate) {
     const targetDate = new Date(date).setHours(0, 0, 0, 0);
     const start = new Date(startDate).setHours(0, 0, 0, 0);

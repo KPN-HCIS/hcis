@@ -1,3 +1,4 @@
+<script src="{{ asset('/js/btCashAdvanced/transport.js') }}"></script>
 <script>
     var formCountTransport = 0;
 
