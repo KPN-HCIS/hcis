@@ -79,7 +79,7 @@
                             <div class="col-md-12 mb-2">
                                 <table class="table" style="border: none; border-collapse: collapse;">
                                     <tr>
-                                        <td colspan="3" style="border: none;"><h4>Business Trip Data:</h4></td>
+                                        <td colspan="3" style="border: none;"><h4>CA Detail:</h4></td>
                                     </tr>
                                     <tr>
                                         <th class="label" style="width: 20%; border: none;">Costing Company</th>
@@ -845,7 +845,7 @@
 
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label">Total Cash Advanced Real</label>
+                                    <label class="form-label">Balance Cash Advanced</label>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text">Rp</span>

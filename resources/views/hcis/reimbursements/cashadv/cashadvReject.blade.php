@@ -124,7 +124,7 @@
                                     <th>Balance</th>
                                     <th>Status</th>
                                     <th style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Reject Reason</th>
-                                    <th>Actions</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -190,30 +190,8 @@
                                         @endif
                                     </td>
                                     {{-- {{dd($reason)}} --}}
-                                    <td>{{ $reason[$ca_transaction->id] ?? 'Unknown Reason' }}</td>
-                                    <td class="text-center">
-                                        @if ($ca_transaction->approval_status == 'Approved')
-                                            <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                        @elseif ($ca_transaction->approval_status == 'Declaration')
-                                            <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                        @elseif ($ca_transaction->approval_status == 'Pending')
-                                            <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                                        @elseif ($ca_transaction->approval_status == 'Reject')
-                                        @elseif ($ca_transaction->approval_status == 'Draft')
-                                            <a href="{{ route('cashadvanced.edit', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                            {{-- <a href="{{ route('cashadvanced.show', $ca_transaction->id) }}" class="btn btn-outline-info" title="Edit"><i class="bi bi-card-checklist"></i></a> --}}
-                                            <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                <button onclick="return confirm('Apakah ingin Menghapus?')" class="btn btn-outline-danger" title="Delete">
-                                                    <i class="ri-delete-bin-line"></i>
-                                                </button>
-                                            </form>
-                                        @elseif ($ca_transaction->end_date == \Carbon\Carbon::today())
-                                            <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
-                                        @else
-
-                                        @endif
-                                    </td>
+                                    <td>{{ $reason[$ca_transaction->id] ?? '-' }}</td>
+                                    
                                 </tr>
                                 @endforeach
                             </tbody>

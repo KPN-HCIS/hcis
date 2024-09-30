@@ -118,7 +118,7 @@
                 </a>
             </li>
 
-            {{-- @if(auth()->check())
+            @if(auth()->check())
             @can('adminmenu')
             <li class="side-nav-title">Admin</li>
 
@@ -172,7 +172,7 @@
             </li>
 
             @endcan
-            @endif --}}
+            @endif
 
         </ul>
         <!--- End Sidemenu -->

@@ -145,9 +145,9 @@
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
                                             <td>
                                                 @if ($ca_transaction->total_cost < 0)
-                                                    <span class="text-danger">Rp. -{{ number_format(abs($ca_transaction->total_cost)) }}</span>
+                                                    <span class="text-danger">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
                                                 @else
-                                                    <span class="text-success">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
+                                                    <span class="text-success">Rp. {{ number_format(abs($ca_transaction->total_cost)) }}</span>
                                                 @endif
                                             </td>
                                             <td>

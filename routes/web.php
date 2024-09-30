@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SendbackController as AdminSendbackController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\ApprovalReimburseController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -52,6 +53,10 @@ Route::get('inactive-employees', [EmployeeController::class, 'EmployeeInactive']
 Route::get('updmenu-employees', [EmployeeController::class, 'updateEmployeeAccessMenu']);
 Route::get('daily-schedules', [ScheduleController::class, 'reminderDailySchedules']);
 Route::get('update-designtaion', [DesignationController::class, 'UpdateDesignation']);
+// Route::get('generate-weeklyoff-shift', [AttendanceController::class, 'GenerateWeeklyShiftOff']);
+// Route::get('backup-daily-attendance', [AttendanceController::class, 'BackupDailyAttendance']);
+// Route::get('add-backdated-attendance', [AttendanceController::class, 'AddBackdatedAttendance']);
+Route::get('update-bt-to-db', [AttendanceController::class, 'UpdateBTtoDB']);
 
 Route::get('/test-email', function () {
     $messages = '<p>This is a test message with <strong>bold</strong> text.</p>';
@@ -113,10 +118,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
 
     // My Cash Advanced
-    Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+    
     Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
     Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
-    Route::post('/cashadvanced/adupdate/{id}', [ReimburseController::class, 'cashadvancedAdminUpdate'])->name('cashadvanced.adupdate');
+    
+    Route::middleware(['permission:reportca_hcis'])->group(function () {
+        Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+        Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+        Route::post('/cashadvanced/adupdate/{id}', [ReimburseController::class, 'cashadvancedAdminUpdate'])->name('cashadvanced.adupdate');
+    });
 
     // Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
     // Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
@@ -138,7 +148,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/extend', [ReimburseController::class, 'cashadvancedExtend'])->name('cashadvanced.extend');
 
     // My Cash Advanced
-    Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
     Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
     Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
     Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
@@ -304,6 +313,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/guides-delete/{id}', [GuideController::class, 'destroy'])->name('delete.guide');
 
     // ============================ Administrator ===================================
+    
 
     Route::middleware(['permission:viewschedule'])->group(function () {
         // Schedule
@@ -348,7 +358,7 @@ Route::middleware('auth')->group(function () {
         // Sendback
         Route::post('/admin/sendback/goal', [AdminSendbackController::class, 'store'])->name('admin.sendback.goal');
     });
-
+    
     Route::middleware(['permission:viewreport'])->group(function () {
 
         Route::get('/reports-admin', [AdminReportController::class, 'index'])->name('admin.reports');

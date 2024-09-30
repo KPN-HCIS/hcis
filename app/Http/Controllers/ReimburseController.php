@@ -30,7 +30,62 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CashAdvancedExport;
 
 class ReimburseController extends Controller
-{
+{   
+    protected $groupCompanies;
+    protected $companies;
+    protected $locations;
+    protected $permissionGroupCompanies;
+    protected $permissionCompanies;
+    protected $permissionLocations;
+    protected $roles;
+
+    public function __construct()
+    {
+        // $this->category = 'Goals';
+        $this->roles = Auth()->user()->roles;
+        
+        $restrictionData = [];
+        if(!is_null($this->roles) && $this->roles->isNotEmpty()){
+            $restrictionData = json_decode($this->roles->first()->restriction, true);
+        }
+        
+        $this->permissionGroupCompanies = $restrictionData['group_company'] ?? [];
+        $this->permissionCompanies = $restrictionData['contribution_level_code'] ?? [];
+        $this->permissionLocations = $restrictionData['work_area_code'] ?? [];
+
+        $groupCompanyCodes = $restrictionData['group_company'] ?? [];
+
+        $this->groupCompanies = Location::select('company_name')
+            ->when(!empty($groupCompanyCodes), function ($query) use ($groupCompanyCodes) {
+                return $query->whereIn('company_name', $groupCompanyCodes);
+            })
+            ->orderBy('company_name')->distinct()->pluck('company_name');
+
+        $workAreaCodes = $restrictionData['work_area_code'] ?? [];
+
+        $this->locations = Location::select('company_name', 'area', 'work_area')
+            ->when(!empty($workAreaCodes) || !empty($groupCompanyCodes), function ($query) use ($workAreaCodes, $groupCompanyCodes) {
+                return $query->where(function ($query) use ($workAreaCodes, $groupCompanyCodes) {
+                    if (!empty($workAreaCodes)) {
+                        $query->whereIn('work_area', $workAreaCodes);
+                    }
+                    if (!empty($groupCompanyCodes)) {
+                        $query->orWhereIn('company_name', $groupCompanyCodes);
+                    }
+                });
+            })
+            ->orderBy('area')
+            ->get();
+
+        $companyCodes = $restrictionData['contribution_level_code'] ?? [];
+
+        $this->companies = Company::select('contribution_level', 'contribution_level_code')
+            ->when(!empty($companyCodes), function ($query) use ($companyCodes) {
+                return $query->whereIn('contribution_level_code', $companyCodes);
+            })
+            ->orderBy('contribution_level_code')->get();
+    }
+
     function reimbursements()
     {
 
@@ -54,6 +109,12 @@ class ReimburseController extends Controller
             ->get();
         // dd($ca_transactions);
         //tambah where status<>done
+        // $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
+        $pendingCACount = CATransaction::where('user_id', $userId)
+        ->where('approval_status', '!=', 'Rejected')
+        ->where('ca_status', '!=', 'Done')
+        ->count();
+        // dd($pendingCACount);
         $today = Carbon::today();
 
         // Mengambil data karyawan yang sedang login
@@ -84,31 +145,10 @@ class ReimburseController extends Controller
 
         foreach ($ca_transactions as $transaction) {
             $transaction->settName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
-            if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
-                //$transaction->approval_status = 'Done';
-            }
-            // if ($transaction->approval_status == 'Approved') {
-            //     $transaction->approval_sett = 'On Progress';
+            // if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
+            //     //$transaction->approval_status = 'Done';
             // }
-            // if ($transaction->end_date <= $today && $transaction->approval_status == 'Approved' && $transaction->approval_sett == 'On Progress') {
-            //     $transaction->approval_sett = 'Waiting for Declaration';
-            // }
-            // if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
-            //     $transaction->approval_sett = 'Declaration';
-            // }
-            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
-            // if ($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved') {
-            //     $transaction->approval_status = 'Declaration';
-            // }
-            // if (is_null($transaction->declare_estimate <= $today && $transaction->approval_status == 'Approved')) {
-            //     $transaction->approval_sett = 'Waiting for Declaration';
-            // }
-            // Jika declare_estimate sama dengan atau kurang dari hari ini, set menjadi 'Declaration'
-            // if ($transaction->declare_estimate <= $today  && $transaction->approval_status == 'Approved') {
-            //     $transaction->approval_sett = 'Declaration';
-            // }
-            // Simpan perubahan
-            // $transaction->save();
+            
         }
 
         return view('hcis.reimbursements.cashadv.cashadv', [
@@ -179,11 +219,32 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Report CA';
-        $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
+        $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee'])->orderBy('created_at', 'desc');
 
         $startDate = date('Y-m-d');
         $endDate = date('Y-m-d');
         //dd($startDate);
+
+        $permissionLocations = $this->permissionLocations; 
+        $permissionCompanies = $this->permissionCompanies; 
+        $permissionGroupCompanies = $this->permissionGroupCompanies; 
+
+        if (!empty($permissionLocations)) {
+            $query->whereHas('employee', function($query) use ($permissionLocations) {
+                $query->whereIn('work_area_code', $permissionLocations);
+            });
+        }
+        
+        if (!empty($permissionCompanies)) {
+            $query->whereIn('contribution_level_code', $permissionCompanies);
+        }
+        
+        if (!empty($permissionGroupCompanies)) {
+            $query->whereHas('employee', function($query) use ($permissionGroupCompanies) {
+                $query->whereIn('group_company', $permissionGroupCompanies);
+            });
+        }
+        //dd($permissionGroupCompanies);
 
         // Cek apakah ada nilai start_date dan end_date dalam request
         if ($request->has(['start_date', 'end_date'])) {
@@ -244,8 +305,8 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Cash Advanced';
-        $today = Carbon::today();
-
+        $today = Carbon::today()->format('Y-m-d');
+        // dd($today);
         $ca_transactions = CATransaction::with(['employee', 'statusSettEmployee', 'statusExtendEmployee'])
             ->where('user_id', $userId)
             ->where(function ($query) {
@@ -271,7 +332,10 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
-            ->where('end_date', '<=', $today)->where('approval_status', 'Approved')
+            ->where('end_date', '<=', $today)
+            ->where('ca_status', '!=', 'Done')
+            ->where('approval_status', '=', 'Approved')
+            ->where('approval_sett', '=', '')
             ->count();
 
         return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
@@ -328,6 +392,9 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
+            ->where('ca_status', '!=', 'Done')
+            ->where('approval_status', '=', 'Approved')
+            ->where('approval_sett', '=', '')
             ->count();
 
         foreach ($ca_transactions as $transaction) {
@@ -378,6 +445,9 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
+            ->where('ca_status', '!=', 'Done')
+            ->where('approval_status', '=', 'Approved')
+            ->where('approval_sett', '=', '')
             ->count();
 
         // foreach ($ca_transactions as $transaction) {
@@ -760,7 +830,7 @@ class ReimburseController extends Controller
                 ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
                 ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
                 ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
+                ->where('dsg2.director_flag', '=', 'T')
                 ->get();
 
             $director_id = "";
@@ -1093,7 +1163,7 @@ class ReimburseController extends Controller
                 ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
                 ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
                 ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
+                ->where('dsg2.director_flag', '=', 'T')
                 ->get();
 
             $director_id = "";
@@ -1197,7 +1267,7 @@ class ReimburseController extends Controller
                 ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
                 ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
                 ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
+                ->where('dsg2.director_flag', '=', 'T')
                 ->get();
 
             $director_id = "";
@@ -1270,7 +1340,7 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
         $approval = ca_approval::with('employee')
             ->where('ca_id', $key)
-            ->where('approval_status', 'Approved')
+            ->where('approval_status','!=', 'Rejected')
             ->orderBy('layer', 'asc')
             ->get();
 
@@ -1303,10 +1373,17 @@ class ReimburseController extends Controller
             ->get();
         $locations = Location::orderBy('area')
             ->get();
-        $transactions = CATransaction::find($key);
+        // $transactions = CATransaction::find($key);
+        $transactions = CATransaction::with('companies')->find($key);
         $approval = ca_sett_approval::with('employee')
             ->where('ca_id', $key)
-            ->where('approval_status', 'Approved')
+            // ->select(
+            //     'employee_id',
+            //     'role_name',
+            //     'layer',
+            //     DB::raw('MAX(created_at) as created_at') // You can also use MAX or another aggregate function
+            // )
+            // ->groupBy('employee_id', 'role_name','layer') // Group by both employee_id and role_name
             ->orderBy('layer', 'asc')
             ->get();
 
@@ -1365,9 +1442,10 @@ class ReimburseController extends Controller
         if ($req->hasFile('prove_declare')) {
             $file = $req->file('prove_declare');
             $filename = time() . '_' . $file->getClientOriginalName();
-
+            
             $file->move(public_path('uploads/proofs'), $filename);
-
+            // $file->move('/home/hcis8257/public_html/apps/uploads/proofs', $filename);
+            
             $model->prove_declare = $filename;
         } else {
             $model->prove_declare = $req->existing_prove_declare;
@@ -1579,7 +1657,7 @@ class ReimburseController extends Controller
                 ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
                 ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
                 ->where('employees.designation_code', '=', $employee_data->designation_code)
-                ->where('dsg2.director_flag', '=', 'F')
+                ->where('dsg2.director_flag', '=', 'T')
                 ->get();
 
             $director_id = "";
@@ -1598,7 +1676,7 @@ class ReimburseController extends Controller
                 }
             })
                 ->where('group_company', 'like', '%' . $employee_data->group_company . '%')
-                ->where('contribution_level_code', 'like', '%' . $req->companyFilter . '%')
+                ->where('contribution_level_code', 'like', '%' . $req->contribution_level_code . '%')
                 ->whereRaw(
                     '
             ? BETWEEN
@@ -1607,6 +1685,7 @@ class ReimburseController extends Controller
                     [$total_ca]
                 )
                 ->get();
+            // dd($req->contribution_level_code);
             foreach ($data_matrix_approvals as $data_matrix_approval) {
 
                 if ($data_matrix_approval->employee_id == "cek_L1") {
