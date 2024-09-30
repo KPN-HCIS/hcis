@@ -31,7 +31,7 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post"
+                        <form id="cashadvancedForm" method="post"
                             action="{{ route('cashadvanced.update', encrypt($transactions->id)) }}">@csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
@@ -136,7 +136,7 @@
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="type">CA Type</label>
-                                    <select name="ca_type_disabled" id="ca_type" class="form-control bg-light" disabled>
+                                    <select name="ca_type_disabled" id="ca_type_disabled" class="form-control bg-light" disabled>
                                         <option value="">-</option>
                                         <option value="dns" {{ $transactions->type_ca == 'dns' ? 'selected' : '' }}>
                                             Business Trip
@@ -148,7 +148,7 @@
                                             Entertainment
                                         </option>
                                     </select>
-                                    <input type="hidden" name="ca_type" value="{{ $transactions->type_ca }}">
+                                    <input type="hidden" name="ca_type" id="ca_type" value="{{ $transactions->type_ca }}">
                                 </div>
                                 <div class="col-md-12 mb-2">
                                     <div class="mb-2">
@@ -291,10 +291,9 @@
                     <div class="row">
                         <div class="p-4 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('cashadvanced') }}" type="button"
-                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_draft" value="Draft" class="btn btn-secondary btn-pill px-4 me-2">Draft</button>
-                            <button type="submit" name="action_ca_submit" value="Pending" class="btn btn-primary btn-pill px-4 me-2">Submit</button>
+                            <a href="{{ route('cashadvanced') }}" type="button" class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
+                            <button type="submit" name="action_ca_draft" value="Draft" class="btn mb-2 btn-secondary btn-pill px-4 me-2 submit-button">Draft</button>
+                            <button type="submit" name="action_ca_submit" value="Pending" class="btn mb-2 btn-primary btn-pill px-4 me-2 submit-button">Submit</button>
                         </div>
                     </div>
                     </form>
@@ -303,6 +302,8 @@
         </div>
     </div>
     </div>
+
+    @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
@@ -366,34 +367,26 @@
             var ca_type = document.getElementById("ca_type");
             var ca_nbt = document.getElementById("ca_nbt");
             var ca_e = document.getElementById("ca_e");
-            var div_bisnis_numb = document.getElementById("div_bisnis_numb");
             var bisnis_numb = document.getElementById("bisnis_numb");
-            var div_allowance = document.getElementById("div_allowance");
 
             function toggleDivs() {
                 if (ca_type.value === "dns") {
                     ca_bt.style.display = "block";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "block";
-                    div_allowance.style.display = "block";
                 } else if (ca_type.value === "ndns") {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "block";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "none";
                     bisnis_numb.style.value = "";
-                    div_allowance.style.display = "none";
                 } else if (ca_type.value === "entr") {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "block";
-                    div_bisnis_numb.style.display = "block";
                 } else {
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "none";
                     bisnis_numb.style.value = "";
                 }
             }
@@ -422,63 +415,25 @@
             const startDateInput = document.getElementById('start_date');
             const endDateInput = document.getElementById('end_date');
             const totalDaysInput = document.getElementById('totaldays');
-            const perdiemInput = document.getElementById('perdiem');
-            const allowanceInput = document.getElementById('allowance');
-            const othersLocationInput = document.getElementById('others_location');
-            const transportInput = document.getElementById('transport');
-            const accommodationInput = document.getElementById('accommodation');
-            const otherInput = document.getElementById('other');
-            const totalcaInput = document.getElementById('totalca');
-            const nominal_1Input = document.getElementById('nominal_1');
-            const nominal_2Input = document.getElementById('nominal_2');
-            const nominal_3Input = document.getElementById('nominal_3');
-            const nominal_4Input = document.getElementById('nominal_4');
-            const nominal_5Input = document.getElementById('nominal_5');
-            const caTypeInput = document.getElementById('ca_type');
-
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-            function parseNumber(value) {
-                return parseFloat(value.replace(/\./g, '')) || 0;
-            }
 
             function calculateTotalDays() {
                 const startDate = new Date(startDateInput.value);
                 const endDate = new Date(endDateInput.value);
+
+                // Memastikan kedua tanggal valid
                 if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
                     const timeDiff = endDate - startDate;
                     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0 + 1;
+                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0; // Menambahkan 1 untuk menghitung hari awal
                     totalDaysInput.value = totalDays;
-
-                    const perdiem = parseFloat(perdiemInput.value) || 0;
-                    let allowance = totalDays * perdiem;
-
-                    if (othersLocationInput.value.trim() !== '') {
-                        allowance *= 1; // allowance * 50%
-                    } else {
-                        allowance *= 0.5;
-                    }
-
-                    allowanceInput.value = formatNumber(Math.floor(allowance));
                 } else {
-                    totalDaysInput.value = 0;
-                    allowanceInput.value = 0;
+                    totalDaysInput.value = 0; // Mengatur ke 0 jika tidak valid
                 }
-                calculateTotalCA();
             }
 
+            // Menambahkan event listener untuk perubahan di input tanggal
             startDateInput.addEventListener('change', calculateTotalDays);
             endDateInput.addEventListener('change', calculateTotalDays);
-            othersLocationInput.addEventListener('input', calculateTotalDays);
-            caTypeInput.addEventListener('change', calculateTotalDays);
-            [transportInput, accommodationInput, otherInput, allowanceInput, nominal_1, nominal_2, nominal_3,
-                nominal_4, nominal_5
-            ].forEach(input => {
-                input.addEventListener('input', () => formatInput(input));
-            });
         });
 
         document.getElementById('end_date').addEventListener('change', function() {

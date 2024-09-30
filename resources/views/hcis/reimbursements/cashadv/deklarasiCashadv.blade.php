@@ -139,7 +139,7 @@
                             </table>
                         </div>
                     </div>
-                    <form enctype="multipart/form-data" id="scheduleForm" method="post"
+                    <form enctype="multipart/form-data" id="cashadvancedForm" method="post"
                         action="{{ route('cashadvanced.declare', encrypt($transactions->id)) }}">
                         @csrf
                         <div class="row">
@@ -168,9 +168,6 @@
                             @php
                                 $detailCA = json_decode($transactions->detail_ca, true) ?? [];
                                 $declareCA = json_decode($transactions->declare_ca, true) ?? [];
-
-                                // dd(empty($detailCA['detail_penginapan'][0]['start_date']));
-                                // dd($detailCA);
                             @endphp
                             <script>
                                 // Pass the PHP array into a JavaScript variable
@@ -367,11 +364,11 @@
                         <div class="p-4 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('cashadvanced') }}" type="button"
-                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
+                                class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
                             <button type="submit" name="action_ca_draft" value="Draft"
-                                class=" btn btn-secondary btn-pill px-4 me-2">Draft</button>
+                                class=" btn mb-2 btn-secondary btn-pill px-4 me-2 declaration-button">Draft</button>
                             <button type="submit" name="action_ca_submit" value="Pending"
-                                class=" btn btn-primary btn-pill px-4 me-2">Submit</button>
+                                class=" btn mb-2 btn-primary btn-pill px-4 me-2 declaration-button">Submit</button>
                         </div>
                     </div>
                 </form>
@@ -379,6 +376,8 @@
         </div>
     </div>
     </div>
+
+    @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')

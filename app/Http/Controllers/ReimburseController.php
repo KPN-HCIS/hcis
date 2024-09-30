@@ -30,7 +30,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CashAdvancedExport;
 
 class ReimburseController extends Controller
-{   
+{
     protected $groupCompanies;
     protected $companies;
     protected $locations;
@@ -43,12 +43,12 @@ class ReimburseController extends Controller
     {
         // $this->category = 'Goals';
         $this->roles = Auth()->user()->roles;
-        
+
         $restrictionData = [];
-        if(!is_null($this->roles) && $this->roles->isNotEmpty()){
+        if (!is_null($this->roles) && $this->roles->isNotEmpty()) {
             $restrictionData = json_decode($this->roles->first()->restriction, true);
         }
-        
+
         $this->permissionGroupCompanies = $restrictionData['group_company'] ?? [];
         $this->permissionCompanies = $restrictionData['contribution_level_code'] ?? [];
         $this->permissionLocations = $restrictionData['work_area_code'] ?? [];
@@ -111,9 +111,9 @@ class ReimburseController extends Controller
         //tambah where status<>done
         // $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
         $pendingCACount = CATransaction::where('user_id', $userId)
-        ->where('approval_status', '!=', 'Rejected')
-        ->where('ca_status', '!=', 'Done')
-        ->count();
+            ->where('approval_status', '!=', 'Rejected')
+            ->where('ca_status', '!=', 'Done')
+            ->count();
         // dd($pendingCACount);
         $today = Carbon::today();
 
@@ -148,7 +148,7 @@ class ReimburseController extends Controller
             // if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
             //     //$transaction->approval_status = 'Done';
             // }
-            
+
         }
 
         return view('hcis.reimbursements.cashadv.cashadv', [
@@ -195,6 +195,9 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
+            ->where('ca_status', '!=', 'Done')
+            ->where('approval_status', '=', 'Approved')
+            ->where('approval_sett', '=', '')
             ->count();
 
         foreach ($ca_transactions as $transaction) {
@@ -225,22 +228,22 @@ class ReimburseController extends Controller
         $endDate = date('Y-m-d');
         //dd($startDate);
 
-        $permissionLocations = $this->permissionLocations; 
-        $permissionCompanies = $this->permissionCompanies; 
-        $permissionGroupCompanies = $this->permissionGroupCompanies; 
+        $permissionLocations = $this->permissionLocations;
+        $permissionCompanies = $this->permissionCompanies;
+        $permissionGroupCompanies = $this->permissionGroupCompanies;
 
         if (!empty($permissionLocations)) {
-            $query->whereHas('employee', function($query) use ($permissionLocations) {
+            $query->whereHas('employee', function ($query) use ($permissionLocations) {
                 $query->whereIn('work_area_code', $permissionLocations);
             });
         }
-        
+
         if (!empty($permissionCompanies)) {
             $query->whereIn('contribution_level_code', $permissionCompanies);
         }
-        
+
         if (!empty($permissionGroupCompanies)) {
-            $query->whereHas('employee', function($query) use ($permissionGroupCompanies) {
+            $query->whereHas('employee', function ($query) use ($permissionGroupCompanies) {
                 $query->whereIn('group_company', $permissionGroupCompanies);
             });
         }
@@ -711,7 +714,7 @@ class ReimburseController extends Controller
                     $keterangan_nbt = $req->keterangan_nbt[$key];
                     $nominal_nbt = str_replace('.', '', $req->nominal_nbt[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
-                    if (!empty($tanggal) && !empty($keterangan_nbt) && !empty($nominal_nbt)) {
+                    if (!empty($tanggal) && !empty($nominal_nbt)) {
                         $detail_ndns[] = [
                             'tanggal_nbt' => $tanggal,
                             'keterangan_nbt' => $keterangan_nbt,
@@ -733,7 +736,7 @@ class ReimburseController extends Controller
                     $fee_detail = $req->enter_fee_e_detail[$key];
                     $nominal = str_replace('.', '', $req->nominal_e_detail[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
-                    if (!empty($type) && !empty($fee_detail) && !empty($nominal)) {
+                    if (!empty($type) && !empty($nominal)) {
                         $detail_e[] = [
                             'type' => $type,
                             'fee_detail' => $fee_detail,
@@ -1056,11 +1059,13 @@ class ReimburseController extends Controller
                     $keterangan_nbt = $req->keterangan_nbt[$key];
                     $nominal_nbt = str_replace('.', '', $req->nominal_nbt[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
-                    $detail_ndns[] = [
-                        'tanggal_nbt' => $tanggal,
-                        'keterangan_nbt' => $keterangan_nbt,
-                        'nominal_nbt' => $nominal_nbt,
-                    ];
+                    if (!empty($tanggal) && !empty($nominal_nbt)) {
+                        $detail_ndns[] = [
+                            'tanggal_nbt' => $tanggal,
+                            'keterangan_nbt' => $keterangan_nbt,
+                            'nominal_nbt' => $nominal_nbt,
+                        ];
+                    }
                 }
             }
             $detail_ndns_json = json_encode($detail_ndns);
@@ -1076,11 +1081,13 @@ class ReimburseController extends Controller
                     $fee_detail = $req->enter_fee_e_detail[$key];
                     $nominal = str_replace('.', '', $req->nominal_e_detail[$key]); // Menghapus titik dari nominal sebelum menyimpannya
 
-                    $detail_e[] = [
-                        'type' => $type,
-                        'fee_detail' => $fee_detail,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($type) && !empty($nominal)) {
+                        $detail_e[] = [
+                            'type' => $type,
+                            'fee_detail' => $fee_detail,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 
@@ -1340,7 +1347,7 @@ class ReimburseController extends Controller
         $transactions = CATransaction::find($key);
         $approval = ca_approval::with('employee')
             ->where('ca_id', $key)
-            ->where('approval_status','!=', 'Rejected')
+            ->where('approval_status', '!=', 'Rejected')
             ->orderBy('layer', 'asc')
             ->get();
 
@@ -1442,10 +1449,10 @@ class ReimburseController extends Controller
         if ($req->hasFile('prove_declare')) {
             $file = $req->file('prove_declare');
             $filename = time() . '_' . $file->getClientOriginalName();
-            
+
             $file->move(public_path('uploads/proofs'), $filename);
             // $file->move('/home/hcis8257/public_html/apps/uploads/proofs', $filename);
-            
+
             $model->prove_declare = $filename;
         } else {
             $model->prove_declare = $req->existing_prove_declare;
@@ -1550,11 +1557,13 @@ class ReimburseController extends Controller
                     $keterangan_nbt = $req->keterangan_nbt[$key];
                     $nominal_nbt = str_replace('.', '', $req->nominal_nbt[$key]);
 
-                    $detail_ndns[] = [
-                        'tanggal_nbt' => $tanggal,
-                        'keterangan_nbt' => $keterangan_nbt,
-                        'nominal_nbt' => $nominal_nbt,
-                    ];
+                    if (!empty($tanggal) && !empty($nominal_nbt)) {
+                        $detail_ndns[] = [
+                            'tanggal_nbt' => $tanggal,
+                            'keterangan_nbt' => $keterangan_nbt,
+                            'nominal_nbt' => $nominal_nbt,
+                        ];
+                    }
                 }
             }
             $detail_ndns_json = json_encode($detail_ndns);
@@ -1568,11 +1577,13 @@ class ReimburseController extends Controller
                     $fee_detail = $req->enter_fee_e_detail[$key];
                     $nominal = str_replace('.', '', $req->nominal_e_detail[$key]);
 
-                    $detail_e[] = [
-                        'type' => $type,
-                        'fee_detail' => $fee_detail,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($type) && !empty($nominal)) {
+                        $detail_e[] = [
+                            'type' => $type,
+                            'fee_detail' => $fee_detail,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
 

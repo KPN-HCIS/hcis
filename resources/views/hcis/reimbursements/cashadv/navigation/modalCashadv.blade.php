@@ -156,7 +156,7 @@
     function showPendingAlert() {
         Swal.fire({
             title: 'Cannot Add Data!',
-            text: 'You still have 2 Pending CA or Some CA still Waiting for Refund',
+            text: 'You still have 2 Outstanding CA Please Check Your Request or Declaration',
             icon: 'warning',
             confirmButtonColor: "#9a2a27",
             confirmButtonText: 'Ok'
@@ -164,14 +164,15 @@
     }
 </script>
 
-{{-- Form Add --}}
+{{-- Form Deklarasi --}}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.submit-button').forEach(button => {
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.declaration-button').forEach(button => {
             button.addEventListener('click', (event) => {
                 event.preventDefault(); // Prevent immediate form submission
 
                 const form = document.getElementById('cashadvancedForm');
+                const caType = document.getElementById('ca_type').value; // Get the value from the hidden input
 
                 // Check if the form is valid before proceeding
                 if (!form.checkValidity()) {
@@ -179,19 +180,136 @@
                     return; // Exit if the form is not valid
                 }
 
-                // Retrieve the values from the input fields
-                const totalBtPerdiem = document.getElementById('total_bt_perdiem').value;
-                const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
-                const totalBtTransport = document.getElementById('total_bt_transport').value;
-                const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+                const totalCA = document.getElementById('totalca').value || '0';
 
-                // Create a message with the input values, each on a new line with bold titles
-                const inputSummary = `
-                    <strong>Total BT Perdiem:</strong> ${totalBtPerdiem}<br>
-                    <strong>Total BT Penginapan:</strong> ${totalBtPenginapan}<br>
-                    <strong>Total BT Transport:</strong> ${totalBtTransport}<br>
-                    <strong>Total BT Lainnya:</strong> ${totalBtLainnya}<br>
-                `;
+                let inputSummary = '';
+
+                if (caType === "dns") {
+                    const totalBtPerdiem = document.getElementById('total_bt_perdiem').value || '0';
+                    const totalBtPenginapan = document.getElementById('total_bt_penginapan').value || '0';
+                    const totalBtTransport = document.getElementById('total_bt_transport').value || '0';
+                    const totalBtLainnya = document.getElementById('total_bt_lainnya').value || '0';
+
+                    // Summary for Business Trip
+                    inputSummary = `
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Perdiem</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalBtPerdiem}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Transport</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalBtTransport}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Accommodation</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalBtPenginapan}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Others</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalBtLainnya}</td>
+                            </tr>
+                        </table>
+
+                        <hr>
+
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Declaration</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                        </table>
+                    `;
+
+                    if ( totalBtPerdiem == 0 && totalBtPenginapan == 0 && totalBtTransport == 0 && totalBtLainnya == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "All fields (Perdiem, Accommodation, Transport, Others) are 0. Please fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                } else if (caType === "ndns") {
+                    // Summary for Non Business Trip
+                    inputSummary = `
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Non Bussiness Trip</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                        </table>
+
+                        <hr>
+
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Declaration</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                        </table>
+                    `;
+
+                    if ( totalCA == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Fields are 0. Please fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                } else if (caType === "entr") {
+                    const totalEntDetail = document.getElementById('total_e_detail').value || '0';
+                    // Summary for Entertainment
+                    inputSummary = `
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Entertainment Detail</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalEntDetail}</td>
+                            </tr>
+                        </table>
+
+                        <hr>
+
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Declaration</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                        </table>
+                    `;
+
+                    if ( totalEntDetail == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Fields are 0. Please fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                } else {
+                    // Default message if no valid option is selected
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please select a valid CA Type!'
+                    });
+                    return; // Exit if no valid option is selected
+                }
 
                 // Show SweetAlert confirmation with the input summary
                 Swal.fire({
@@ -206,13 +324,211 @@
                     if (result.isConfirmed) {
                         // Create a hidden input field to hold the action value
                         const input = document.createElement('input');
-                        input.type =
-                            'hidden'; // Hidden input so it doesn't show in the form
+                        input.type = 'hidden'; // Hidden input so it doesn't show in the form
                         input.name = button.name; // Use the button's name attribute
                         input.value = button.value; // Use the button's value attribute
 
                         form.appendChild(input); // Append the hidden input to the form
                         form.submit(); // Submit the form only if confirmed
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+{{-- Form Add --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.submit-button').forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent immediate form submission
+
+                const form = document.getElementById('cashadvancedForm');
+                const caType = document.getElementById('ca_type').value; // Get the value from the hidden input
+
+                // Check if the form is valid before proceeding
+                if (!form.checkValidity()) {
+                    form.reportValidity(); // Show validation messages if invalid
+                    return; // Exit if the form is not valid
+                }
+
+                const totalCA = document.getElementById('totalca').value || '0';
+
+                let inputSummary = '';
+
+                if (caType === "dns") {
+                    const totalBtPerdiem = document.getElementById('total_bt_perdiem').value || '0';
+                    const totalBtPenginapan = document.getElementById('total_bt_penginapan').value || '0';
+                    const totalBtTransport = document.getElementById('total_bt_transport').value || '0';
+                    const totalBtLainnya = document.getElementById('total_bt_lainnya').value || '0';
+
+                    // Summary for Business Trip
+                    inputSummary = `
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Perdiem</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalBtPerdiem}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Transport</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalBtTransport}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Accommodation</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalBtPenginapan}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Others</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalBtLainnya}</td>
+                            </tr>
+                        </table>
+
+                        <hr>
+
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Request</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                        </table>
+                    `;
+
+                    if ( totalBtPerdiem == 0 && totalBtPenginapan == 0 && totalBtTransport == 0 && totalBtLainnya == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "All fields (Perdiem, Accommodation, Transport, Others) are 0. Please fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                } else if (caType === "ndns") {
+                    // Summary for Non Business Trip
+                    inputSummary = `
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Non Bussiness Trip</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                        </table>
+
+                        <hr>
+
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Request</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                        </table>
+                    `;
+
+                    if ( totalCA == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Fields are 0. Please fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                } else if (caType === "entr") {
+                    const totalEntDetail = document.getElementById('total_e_detail').value || '0';
+                    // Summary for Entertainment
+                    inputSummary = `
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Entertainment Detail</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalEntDetail}</td>
+                            </tr>
+                        </table>
+
+                        <hr>
+
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 60%"><strong>Total Request</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                        </table>
+                    `;
+
+                    if ( totalEntDetail == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Fields are 0. Please fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                } else {
+                    // Default message if no valid option is selected
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please select a valid CA Type!'
+                    });
+                    return; // Exit if no valid option is selected
+                }
+
+                // Show SweetAlert confirmation with the input summary
+                Swal.fire({
+                    title: "Do you want to submit this request?",
+                    html: `You won't be able to revert this!<br><br>${inputSummary}`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#AB2F2B",
+                    cancelButtonColor: "#CCCCCC",
+                    confirmButtonText: "Yes, submit it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Create a hidden input field to hold the action value
+                        const input = document.createElement('input');
+                        input.type = 'hidden'; // Hidden input so it doesn't show in the form
+                        input.name = button.name; // Use the button's name attribute
+                        input.value = button.value; // Use the button's value attribute
+
+                        form.appendChild(input); // Append the hidden input to the form
+                        form.submit(); // Submit the form only if confirmed
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+{{-- Approval --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.approve-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const transactionId = button.getAttribute('data-id');
+                const form = document.getElementById(approve-form-${transactionId});
+
+                Swal.fire({
+                    title: "Do you want to approve this request?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#4BB543", // Primary color
+                    cancelButtonColor: "#CCCCC", // Darker shade for cancel button
+                    confirmButtonText: "Yes, Approve it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
                     }
                 });
             });

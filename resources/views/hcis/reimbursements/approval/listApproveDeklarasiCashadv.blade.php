@@ -163,7 +163,6 @@
                                                             <thead class="thead-light">
                                                                 <tr style="text-align-last: center;">
                                                                     <th>No</th>
-                                                                    <th>No</th>
                                                                     <th>Start Date</th>
                                                                     <th>End Date</th>
                                                                     <th>Location</th>
@@ -176,7 +175,6 @@
                                                                 <?php $totalPerdiem = 0; $totalDays = 0; ?>
                                                                 @foreach ($detailCA['detail_perdiem'] as $perdiem)
                                                                     <tr class="text-center">
-                                                                        <td></td>
                                                                         <td class="text-center">{{ $loop->index + 1 }}</td>
                                                                         <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
                                                                         <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>

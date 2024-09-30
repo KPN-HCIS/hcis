@@ -120,7 +120,7 @@
                                 </table>
                             </div>
                         </div>
-                        <form enctype="multipart/form-data" id="scheduleForm" method="post" action="{{ route('approval.cashadvancedApproved',$transactions->id) }}">
+                        <form enctype="multipart/form-data" id="approveForm" method="post" action="{{ route('approval.cashadvancedApproved',$transactions->id) }}">
                             @csrf
                             <div class="row" style="display: none">
                                 <div class="col-md-6 mb-2">
@@ -540,16 +540,16 @@
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('approval.cashadvanced') }}" type="button"
                                 class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                                {{-- <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button> --}}
-                                <button type="button" class="btn btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalReject"
-                                        data-no-id="{{ $transactions->id }}"
-                                        data-no-ca="{{ $transactions->no_ca }}"
-                                        data-start-date="{{ $transactions->start_date }}"
-                                        data-end-date="{{ $transactions->end_date }}"
-                                        data-total-days="{{ $transactions->total_days }}">
-                                        Reject
-                                </button>
-                                <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
+                            {{-- <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button> --}}
+                            <button type="button" class="btn btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalReject"
+                                    data-no-id="{{ $transactions->id }}"
+                                    data-no-ca="{{ $transactions->no_ca }}"
+                                    data-start-date="{{ $transactions->start_date }}"
+                                    data-end-date="{{ $transactions->end_date }}"
+                                    data-total-days="{{ $transactions->total_days }}">
+                                    Reject
+                            </button>
+                            <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
                         </div>
                     </div>
                     </form>

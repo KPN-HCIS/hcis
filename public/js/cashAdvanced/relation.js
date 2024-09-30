@@ -2,7 +2,6 @@ var formCountRelation = 0;
 
     window.addEventListener('DOMContentLoaded', function() {
         formCountRelation = document.querySelectorAll('#form-container-relation > div').length;
-        console.log("Form ada",formCountRelation);
     });
 
     function addMoreFormRelationDec(event) {
