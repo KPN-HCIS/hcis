@@ -2,11 +2,6 @@
 
 @section('css')
     <style>
-        /* .breadcrumb-item+.breadcrumb-item::before {
-                            font-size: 28px !important;
-                            vertical-align: middle !important;
-                        } */
-
         .table {
             border-collapse: separate;
             width: 100%;
@@ -485,7 +480,7 @@
 
                         // Add event listener for modal hidden event
                         document.getElementById('rejectReasonModal').addEventListener('hidden.bs.modal', function() {
-                            console.log('Modal closed');
+                            // console.log('Modal closed');
                         });
                     });
 
@@ -510,7 +505,7 @@
 
                         // Correct date format for input fields
                         var formattedToday = yyyy + '-' + mm + '-' + dd;
-                        console.log(formattedToday);
+                        // console.log(formattedToday);
 
                         var startDateElement = document.getElementById("start-date");
                         var endDateElement = document.getElementById("end-date");

@@ -411,8 +411,8 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
-                                <button class="btn btn-warning mr-2" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
+                                <button class="btn btn-outline-warning btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
                             </div>
                         </div>
                     </div>

@@ -376,6 +376,7 @@
                     const totalBtTransport = document.getElementById('total_bt_transport').value;
                     const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
                     const caCheckbox = document.getElementById('cashAdvancedCheckbox').checked;
+                    const totalCa = document.getElementById('totalca').value;
 
                     if (caCheckbox && !dateReq) {
                         Swal.fire({
@@ -411,33 +412,36 @@
 
                     // Create a message with the input values, each on a new line with bold titles
                     const inputSummary = `
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Perdiem</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="width: 50%; padding: 8px; border-bottom: 1px solid #ddd;">${totalBtPerdiem}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Accommodation</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtPenginapan}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Transport</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtTransport}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Others</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtLainnya}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px;">Selected Options</th>
-                                <td style="text-align: center; padding: 8px;">:</td>
-                                <td style="padding: 8px;">${[caChecked, ticketChecked, hotelChecked, taksiChecked].filter(Boolean).join(', ') || 'None'}</td>
-                            </tr>
-                        </table>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <th style="width: 40%; text-align: left; padding: 8px;">Total Perdiem</th>
+                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtPerdiem}</strong></td>
+                    </tr>
+                    <tr>
+                        <th style="width: 40%; text-align: left; padding: 8px;">Total Accommodation</th>
+                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtPenginapan}</strong></td>
+                    </tr>
+                    <tr>
+                        <th style="width: 40%; text-align: left; padding: 8px;">Total Transport</th>
+                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtTransport}</strong></td>
+                    </tr>
+                    <tr>
+                        <th style="width: 40%; text-align: left; padding: 8px;">Total Others</th>
+                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtLainnya}</strong></td>
+                    </tr>
+                </table>
+                <hr style="margin: 20px 0;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                     <tr>
+                        <th style="width: 40%; text-align: left; padding: 8px;">Total Cash Advanced</th>
+                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCa}</strong></td>
+                    </tr>
+                </table>
                         `;
 
                     // Show SweetAlert confirmation with the input summary

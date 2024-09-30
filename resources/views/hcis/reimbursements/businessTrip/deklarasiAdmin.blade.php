@@ -254,7 +254,8 @@
                                                     class="btn btn-outline-primary rounded-pill"
                                                     style="margin-right: 20px;">View</a>
                                             @endif
-                                            <button type="submit" class="btn btn-primary rounded-pill submit-button">Submit</button>
+                                            <button type="submit"
+                                                class="btn btn-primary rounded-pill submit-button">Submit</button>
                                         </div>
                                         <div class="" style="visibility: hidden">
                                             <input class="form-select" id="bb_perusahaan" name="bb_perusahaan"
@@ -293,37 +294,46 @@
                     const totalBtTransport = document.getElementById('total_bt_transport').value;
                     const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
                     const accStatus = document.getElementById('accept-status').value;
+                    const totalCa = document.getElementById('totalca').value;
 
                     // Create a message with the input values, each on a new line with bold titles
                     const inputSummary = `
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Perdiem</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="width: 50%; padding: 8px; border-bottom: 1px solid #ddd;">${totalBtPerdiem}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Accommodation</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtPenginapan}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Transport</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtTransport}</td>
-                            </tr>
-                            <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Total BT Others</th>
-                                <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ddd;">:</td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${totalBtLainnya}</td>
-                            </tr>
-                             <tr>
-                                <th style="width: 50%; text-align: left; padding: 8px;">Status</th>
-                                <td style="text-align: center; padding: 8px;">:</td>
-                                <td style="padding: 8px;"><b>${accStatus}</b></td>
-                            </tr>
-                        </table>
-                        `;
+                        <tr>
+                            <th style="width: 40%; text-align: left; padding: 8px;">Total Perdiem</th>
+                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtPerdiem}</strong></td>
+                        </tr>
+                        <tr>
+                            <th style="width: 40%; text-align: left; padding: 8px;">Total Accommodation</th>
+                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtPenginapan}</strong></td>
+                        </tr>
+                        <tr>
+                            <th style="width: 40%; text-align: left; padding: 8px;">Total Transport</th>
+                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtTransport}</strong></td>
+                        </tr>
+                        <tr>
+                            <th style="width: 40%; text-align: left; padding: 8px;">Total Others</th>
+                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtLainnya}</strong></td>
+                        </tr>
+                    </table>
+                    <hr style="margin: 20px 0;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr>
+                            <th style="width: 40%; text-align: left; padding: 8px;">Total Declaration</th>
+                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCa}</strong></td>
+                        </tr>
+                        <tr>
+                            <th style="width: 40%; text-align: left; padding: 8px;">Status</th>
+                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                            <td style="width: 50%; text-align: left; padding: 8px;"><strong>${accStatus}</strong></td>
+                        </tr>
+                    </table>
+                            `;
 
                     // Show SweetAlert confirmation with the input summary
                     Swal.fire({

@@ -7,6 +7,36 @@ window.addEventListener("DOMContentLoaded", function () {
     ).length;
 });
 
+function calculateTotalNominalBTTotal() {
+    let total = 0;
+    document
+        .querySelectorAll('input[name="total_bt_perdiem"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_transport"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_penginapan"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_lainnya"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document.querySelector('input[name="totalca"]').value = formatNumber(total);
+}
+
+// Run the function on page load
+document.addEventListener("DOMContentLoaded", function () {
+    calculateTotalNominalBTTotal(); // Calculate the total immediately when the page loads
+});
+
 function isDateInRange(date, startDate, endDate) {
     const targetDate = new Date(date).setHours(0, 0, 0, 0);
     const start = new Date(startDate).setHours(0, 0, 0, 0);
@@ -269,12 +299,8 @@ function initializeDateInputs() {
     handleDateChange(); // Initial call to update related fields
 }
 
-document
-    .getElementById("mulai")
-    .addEventListener("change", handleDateChange);
-document
-    .getElementById("kembali")
-    .addEventListener("change", handleDateChange);
+document.getElementById("mulai").addEventListener("change", handleDateChange);
+document.getElementById("kembali").addEventListener("change", handleDateChange);
 
 function handleDateChange() {
     const startDateInput = document.getElementById("mulai");
