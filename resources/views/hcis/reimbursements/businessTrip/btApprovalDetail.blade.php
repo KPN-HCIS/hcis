@@ -327,6 +327,7 @@
                                     </div>
                                 </div>
                         </form>
+                        <input type="hidden" id="no_sppd" value="{{ $n->no_sppd }}">
                         <div class="d-flex justify-content-end mt-3">
                             <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal"
                                 data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">

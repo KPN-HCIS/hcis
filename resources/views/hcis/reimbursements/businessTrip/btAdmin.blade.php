@@ -312,7 +312,7 @@
                                                         style="display: inline-block;">
                                                         @csrf
                                                         @method('DELETE')
-
+                                                        <input type="hidden" id="no_sppd_{{ $n->id }}" value="{{ $n->no_sppd }}">
                                                         <button type="button"
                                                             class="btn btn-outline-danger rounded-pill mb-1 delete-button"
                                                             data-id="{{ $n->id }}"

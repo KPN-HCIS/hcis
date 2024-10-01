@@ -1,3 +1,4 @@
+<script src="{{ asset('/js/btCashAdvanced/penginapan.js') }}"></script>
 <script>
     var formCountPenginapan = 0;
 

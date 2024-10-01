@@ -846,6 +846,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" id="no_sppd" value="{{ $n->no_sppd }}">
                             @php
                                 $detailPerdiem2 = $declareCa['detail_perdiem'] ?? [];
                                 $detailTransport2 = $declareCa['detail_transport'] ?? [];

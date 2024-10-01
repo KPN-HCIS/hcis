@@ -319,7 +319,7 @@
                                                             style="display: inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-
+                                                            <input type="hidden" id="no_sppd_{{ $n->id }}" value="{{ $n->no_sppd }}">
                                                             <button type="button"
                                                                 class="btn btn-outline-danger rounded-pill delete-button"
                                                                 data-id="{{ $n->id }}"
@@ -556,11 +556,11 @@
                         getDate();
                     });
 
-                    function confirmDelete(id) {
-                        if (confirm("Are you sure you want to delete this item?")) {
-                            document.getElementById('deleteForm_' + id).submit();
-                        }
-                    }
+                    // function confirmDelete(id) {
+                    //     if (confirm("Are you sure you want to delete this item?")) {
+                    //         document.getElementById('deleteForm_' + id).submit();
+                    //     }
+                    // }
 
                     $(document).ready(function() {
                         $('.btn-detail').click(function() {
@@ -664,7 +664,7 @@
                     });
 
 
-
+                    //page settings
                     $(document).ready(function() {
                         var table = $('#yourTableId').DataTable({
                             "pageLength": 10 // Set default page length
