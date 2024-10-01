@@ -153,13 +153,13 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            Alert::success('Success', 'All approvals rejected successfully.');
-            return redirect()->route('approval.cashadvanced');
+            return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
 
         // Cek jika tombol approve ditekan
         if ($req->input('action_ca_approve')) {
             $nextApproval = null;
+
 
             // Mencari layer berikutnya yang lebih tinggi
             foreach ($approvals as $approval) {
@@ -198,8 +198,7 @@ class ApprovalReimburseController extends Controller
             }
         }
 
-        Alert::success('Success', 'Approval updated successfully.');
-        return redirect()->route('approval.cashadvanced');
+        return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Approved, Thanks for Approving.');
     }
 
     public function cashadvancedDeklarasi()
@@ -296,8 +295,7 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            Alert::success('Success', 'All approvals rejected successfully.');
-            return redirect()->route('approval.cashadvanced');
+            return redirect()->route('approval.cashadvancedDeklarasi')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
 
         // Cek jika tombol approve ditekan
@@ -340,8 +338,7 @@ class ApprovalReimburseController extends Controller
             }
         }
 
-        Alert::success('Success', 'Approval updated successfully.');
-        return redirect()->route('approval.cashadvancedDeklarasi');
+        return redirect()->route('approval.cashadvancedDeklarasi')->with('success', 'Transaction Approved, Thanks for Approving.');
     }
 
     public function cashadvancedExtend()
@@ -411,8 +408,7 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            Alert::success('Success', 'All approvals rejected successfully.');
-            return redirect()->route('approval.cashadvancedExtend');
+            return redirect()->route('approval.cashadvancedExtend')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
 
         // Cek jika tombol approve ditekan
@@ -459,7 +455,7 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->save();
                 }
 
-                return redirect()->route('approval.cashadvancedExtend');
+                return redirect()->route('approval.cashadvancedExtend')->with('success', 'Extend Approved, Thanks for Approving.');
             }
         }
     }

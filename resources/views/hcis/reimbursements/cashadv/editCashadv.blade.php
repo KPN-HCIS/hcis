@@ -439,7 +439,16 @@
         document.getElementById('end_date').addEventListener('change', function() {
             const endDate = new Date(this.value);
             const declarationEstimateDate = new Date(endDate);
-            declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+            // Menambahkan 3 hari kerja
+            let daysToAdd = 0;
+            while (daysToAdd < 3) {
+                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1);
+                // Jika bukan Sabtu (6) dan bukan Minggu (0), kita tambahkan hari
+                if (declarationEstimateDate.getDay() !== 6 && declarationEstimateDate.getDay() !== 0) {
+                    daysToAdd++;
+                }
+            }
 
             const year = declarationEstimateDate.getFullYear();
             const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');

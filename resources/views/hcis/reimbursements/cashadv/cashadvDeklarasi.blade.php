@@ -276,6 +276,10 @@
             });
 
             extEndDateInput.addEventListener('change', function() {
+                if (new Date(extEndDateInput.value) < new Date(extStartDateInput.value)) {
+                    alert("End Date cannot be earlier than Start Date.");
+                    extEndDateInput.value = ""; // Reset jika salah
+                }
                 calculateExtTotalDays();
             });
 

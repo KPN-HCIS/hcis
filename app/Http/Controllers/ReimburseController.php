@@ -1318,7 +1318,7 @@ class ReimburseController extends Controller
 
             $model->save();
 
-            return redirect()->intended(route('cashadvancedDeklarasi', absolute: false));
+            return redirect()->route('cashadvancedDeklarasi')->with('success', 'Transaction asking for Extend, Please wait for Approval.');
         }
     }
     function cashadvancedDelete($id)

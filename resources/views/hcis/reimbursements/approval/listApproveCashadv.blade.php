@@ -120,7 +120,7 @@
                                 </table>
                             </div>
                         </div>
-                        <form enctype="multipart/form-data" id="approveForm" method="post" action="{{ route('approval.cashadvancedApproved',$transactions->id) }}">
+                        <form enctype="multipart/form-data" id="approveForm" method="post" action="{{ route('approval.cashadvancedApproved', $transactions->id) }}">
                             @csrf
                             <div class="row" style="display: none">
                                 <div class="col-md-6 mb-2">
@@ -527,32 +527,37 @@
                                 </div>
                                 {{-- {{ dd($transactions) }} --}}
                             </div>
-                    </div>
-                    <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
-                        class="form-control bg-light" readonly>
-                    <input type="hidden" name="no_ca" id="no_ca" value="{{ $transactions->no_ca }}"
-                        class="form-control bg-light" readonly>
-                    <input type="hidden" name="bisnis_numb" id="bisnis_numb" value="{{ $transactions->no_sppd }}"
-                        class="form-control bg-light" readonly>
-                    <br>
-                    <div class="row">
-                        <div class="p-4 col-md d-md-flex justify-content-end text-center">
-                            <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('approval.cashadvanced') }}" type="button"
-                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                            {{-- <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button> --}}
-                            <button type="button" class="btn btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalReject"
-                                    data-no-id="{{ $transactions->id }}"
-                                    data-no-ca="{{ $transactions->no_ca }}"
-                                    data-start-date="{{ $transactions->start_date }}"
-                                    data-end-date="{{ $transactions->end_date }}"
-                                    data-total-days="{{ $transactions->total_days }}">
-                                    Reject
-                            </button>
-                            <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
-                        </div>
-                    </div>
-                    </form>
+                            </div>
+                            <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
+                                class="form-control bg-light" readonly>
+                            <input type="hidden" name="no_ca" id="no_ca" value="{{ $transactions->no_ca }}"
+                                class="form-control bg-light" readonly>
+                            <input type="hidden" name="bisnis_numb" id="bisnis_numb" value="{{ $transactions->no_sppd }}"
+                                class="form-control bg-light" readonly>
+                            <br>
+                            <div class="row">
+                                <div class="p-4 col-md d-md-flex justify-content-end text-center">
+                                    <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
+                                    <a href="{{ route('approval.cashadvanced') }}" type="button"
+                                        class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
+                                    <button type="button" class="btn mb-2 btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalReject"
+                                            data-no-id="{{ $transactions->id }}"
+                                            data-no-ca="{{ $transactions->no_ca }}"
+                                            data-start-date="{{ $transactions->start_date }}"
+                                            data-end-date="{{ $transactions->end_date }}"
+                                            data-total-days="{{ $transactions->total_days }}">
+                                            Reject
+                                    </button>
+
+                                    <button type="submit" name="action_ca_approve" value="Approve"
+                                        class="btn mb-2 btn-success btn-pill px-4 me-2 approve-button"
+                                        data-no-id="{{ $transactions->id }}"
+                                        data-no-ca="{{ $transactions->no_ca }}">
+                                        Approve
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                 </div>
             </div>
         </div>
@@ -568,35 +573,24 @@
             var ca_type = document.getElementById("ca_type");
             var ca_nbt = document.getElementById("ca_nbt");
             var ca_e = document.getElementById("ca_e");
-            var div_bisnis_numb = document.getElementById("div_bisnis_numb");
-            var bisnis_numb = document.getElementById("bisnis_numb");
-            var div_allowance = document.getElementById("div_allowance");
 
             function toggleDivs() {
                 if (ca_type.value === "dns") {
                     ca_bt.style.display = "block";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "block";
-                    div_allowance.style.display = "block";
                 } else if (ca_type.value === "ndns"){
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "block";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "none";
-                    bisnis_numb.style.value = "";
-                    div_allowance.style.display = "none";
                 } else if (ca_type.value === "entr"){
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "block";
-                    div_bisnis_numb.style.display = "block";
                 } else{
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
-                    div_bisnis_numb.style.display = "none";
-                    bisnis_numb.style.value = "";
                 }
             }
 

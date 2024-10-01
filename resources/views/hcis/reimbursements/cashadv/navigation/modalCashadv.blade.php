@@ -512,23 +512,33 @@
 
 {{-- Approval --}}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.approve-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const transactionId = button.getAttribute('data-id');
-                const form = document.getElementById(approve-form-${transactionId});
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Mencegah submit form secara langsung
+                const transactionCA = button.getAttribute('data-no-ca');
+                const form = document.getElementById('approveForm');
 
                 Swal.fire({
-                    title: "Do you want to approve this request?",
+                    title: `Do you want to approve transaction "${transactionCA}"?`,
                     text: "You won't be able to revert this!",
-                    icon: "warning",
+                    icon: "question",
                     showCancelButton: true,
-                    confirmButtonColor: "#4BB543", // Primary color
-                    cancelButtonColor: "#CCCCC", // Darker shade for cancel button
-                    confirmButtonText: "Yes, Approve it!"
+                    confirmButtonColor: "#0c63e4",
+                    cancelButtonColor: "#9a2a27",
+                    confirmButtonText: "Yes, approve it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        form.submit();
+                        // Buat input baru untuk action_ca_approve
+                        const input = document.createElement('input');
+                        input.type = 'hidden'; // Set input sebagai hidden
+                        input.name = 'action_ca_approve'; // Set nama input
+                        input.value = 'Approve'; // Set nilai input
+
+                        // Tambahkan input ke form
+                        form.appendChild(input);
+
+                        form.submit(); // Kirim form
                     }
                 });
             });

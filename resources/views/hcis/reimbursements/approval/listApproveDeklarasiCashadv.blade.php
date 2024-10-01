@@ -121,7 +121,7 @@
                                 </table>
                             </div>
                         </div>
-                        <form enctype="multipart/form-data" id="scheduleForm" method="post" action="{{ route('approval.cashadvancedDeclare',$transactions->id) }}">
+                        <form enctype="multipart/form-data" id="approveForm" method="post" action="{{ route('approval.cashadvancedDeclare',$transactions->id) }}">
                             @csrf
                             <div class="row" style="display: none">
                                 <div class="col-md-6 mb-2">
@@ -854,31 +854,37 @@
 
                                 </div>
                             </div>
-                    </div>
-                    <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
-                        class="form-control bg-light" readonly>
-                    <input type="hidden" name="no_ca" id="no_ca" value="{{ $transactions->no_ca }}"
-                        class="form-control bg-light" readonly>
-                    <input type="hidden" name="bisnis_numb" id="bisnis_numb" value="{{ $transactions->no_sppd }}"
-                        class="form-control bg-light" readonly>
-                    <br>
-                    <div class="row">
-                        <div class="p-4 col-md d-md-flex justify-content-end text-center">
-                            <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                            <a href="{{ route('approval.cashadvancedDeklarasi') }}" type="button"
-                                class="btn btn-outline-secondary px-4 me-2">Cancel</a>
-                                <button type="button" class="btn btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalRejectDec"
+                            </div>
+                            <input type="hidden" name="no_id" id="no_id" value="{{ $transactions->id }}"
+                                class="form-control bg-light" readonly>
+                            <input type="hidden" name="no_ca" id="no_ca" value="{{ $transactions->no_ca }}"
+                                class="form-control bg-light" readonly>
+                            <input type="hidden" name="bisnis_numb" id="bisnis_numb" value="{{ $transactions->no_sppd }}"
+                                class="form-control bg-light" readonly>
+                            <br>
+                            <div class="row">
+                                <div class="p-4 col-md d-md-flex justify-content-end text-center">
+                                    <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
+                                    <a href="{{ route('approval.cashadvancedDeklarasi') }}" type="button"
+                                        class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
+                                    <button type="button" class="btn mb-2 btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalRejectDec"
+                                            data-no-id="{{ $transactions->id }}"
+                                            data-no-ca="{{ $transactions->no_ca }}"
+                                            data-start-date="{{ $transactions->start_date }}"
+                                            data-end-date="{{ $transactions->end_date }}"
+                                            data-total-days="{{ $transactions->total_days }}">
+                                            Reject
+                                    </button>
+
+                                    <button type="submit" name="action_ca_approve" value="Approve"
+                                        class="btn mb-2 btn-success btn-pill px-4 me-2 approve-button"
                                         data-no-id="{{ $transactions->id }}"
-                                        data-no-ca="{{ $transactions->no_ca }}"
-                                        data-start-date="{{ $transactions->start_date }}"
-                                        data-end-date="{{ $transactions->end_date }}"
-                                        data-total-days="{{ $transactions->total_days }}">
-                                        Reject
-                                </button>
-                                <button type="submit" name="action_ca_approve" value="Approve" class=" btn btn-success btn-pill px-4 me-2">Approve</button>
-                        </div>
-                    </div>
-                    </form>
+                                        data-no-ca="{{ $transactions->no_ca }}">
+                                        Approve
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                 </div>
             </div>
         </div>

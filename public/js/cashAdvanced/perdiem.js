@@ -192,7 +192,7 @@ function calculateTotalDaysPerdiem(input) {
                 allowance *= 0.5;
             }
 
-            allowanceInput.value = formatNumberPerdiem(allowance);
+            allowanceInput.value = formatNumber(allowance);
             calculateTotalNominalBTPerdiem();
         } else {
             totalDaysInput.value = 0;
