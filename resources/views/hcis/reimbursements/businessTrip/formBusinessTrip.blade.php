@@ -531,14 +531,15 @@
         document.getElementById('kembali').addEventListener('change', function() {
             const endDate = new Date(this.value);
             const declarationEstimateDate = new Date(endDate);
-            declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
 
             // Check if the new date falls on a weekend
-            let dayOfWeek = declarationEstimateDate.getDay();
-            if (dayOfWeek === 6) { // Saturday
-                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 2); // Move to Monday
-            } else if (dayOfWeek === 0) { // Sunday
-                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1); // Move to Monday
+            let daysToAdd = 0;
+            while (daysToAdd < 3) {
+                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1);
+                // Jika bukan Sabtu (6) dan bukan Minggu (0), kita tambahkan hari
+                if (declarationEstimateDate.getDay() !== 6 && declarationEstimateDate.getDay() !== 0) {
+                    daysToAdd++;
+                }
             }
 
             // Format the date into YYYY-MM-DD

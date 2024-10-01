@@ -78,7 +78,7 @@
             <!-- Add Data Button -->
             <div class="col-md-6 mt-4 mb-2 text-end">
                 <a href="{{ route('businessTrip.add') }}" class="btn btn-primary rounded-pill">
-                    Add Data
+                    <i class="bi bi-plus-circle"></i> Add Data
                 </a>
             </div>
         </div>
