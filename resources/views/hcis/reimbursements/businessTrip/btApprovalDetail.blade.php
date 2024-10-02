@@ -59,32 +59,36 @@
                             <div class="row mb-2">
                                 <div class="col-md-6 mb-2">
                                     <label for="nama" class="form-label">Name</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama" name="nama"
-                                        style="cursor:not-allowed;" value="{{ $employee_data->fullname }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama"
+                                        name="nama" style="cursor:not-allowed;" value="{{ $employee_data->fullname }}"
+                                        readonly>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="divisi" class="form-label">Divison</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="divisi" name="divisi"
-                                        style="cursor:not-allowed;" value="{{ $employee_data->unit }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="divisi"
+                                        name="divisi" style="cursor:not-allowed;" value="{{ $employee_data->unit }}"
+                                        readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-4 mb-2">
                                     <label for="norek_krywn" class="form-label">Employee Account Number</label>
-                                    <input type="number" class="form-control form-control-sm bg-light" id="norek_krywn" name="norek_krywn"
-                                        value="{{ $employee_data->bank_account_number }}" readonly>
+                                    <input type="number" class="form-control form-control-sm bg-light" id="norek_krywn"
+                                        name="norek_krywn" value="{{ $employee_data->bank_account_number }}" readonly>
                                 </div>
 
                                 <div class="col-md-4 mb-2">
                                     <label for="nama_pemilik_rek" class="form-label">Name of Account Owner</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_pemilik_rek"
-                                        name="nama_pemilik_rek" value="{{ $employee_data->bank_account_name }}" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light"
+                                        id="nama_pemilik_rek" name="nama_pemilik_rek"
+                                        value="{{ $employee_data->bank_account_name }}" readonly>
                                 </div>
 
                                 <div class="col-md-4 mb-2">
                                     <label for="nama_bank" class="form-label">Bank Name</label>
-                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_bank" name="nama_bank"
-                                        value="{{ $employee_data->bank_name }}" placeholder="ex. BCA" readonly>
+                                    <input type="text" class="form-control form-control-sm bg-light" id="nama_bank"
+                                        name="nama_bank" value="{{ $employee_data->bank_name }}" placeholder="ex. BCA"
+                                        readonly>
                                 </div>
                             </div>
                             <div class="row mb-2">
@@ -104,8 +108,8 @@
 
                                 <div class="col-md-4 mb-2">
                                     <label for="tujuan" class="form-label">Destination</label>
-                                    <select class="form-select form-select-sm select2 bg-light" name="tujuan" id="tujuan"
-                                        onchange="BTtoggleOthers()" disabled>
+                                    <select class="form-select form-select-sm select2 bg-light" name="tujuan"
+                                        id="tujuan" onchange="BTtoggleOthers()" disabled>
                                         <option value="">--- Choose Destination ---</option>
                                         @foreach ($locations as $location)
                                             <option value="{{ $location->area }}"
@@ -130,8 +134,8 @@
                             <div class="mb-3">
                                 <label for="keperluan" class="form-label">Need (To be filled in according to visit
                                     service)</label>
-                                <textarea class="form-control form-control-sm" id="keperluan" name="keperluan" rows="3" placeholder="Fill your need"
-                                    disabled>{{ $n->keperluan }}</textarea>
+                                <textarea class="form-control form-control-sm" id="keperluan" name="keperluan" rows="3"
+                                    placeholder="Fill your need" disabled>{{ $n->keperluan }}</textarea>
                             </div>
 
                             <div class="row mb-2">
@@ -139,8 +143,8 @@
                                     <label for="bb_perusahaan" class="form-label">
                                         Company Cost Expenses (PT Service Needs / Not PT Payroll)
                                     </label>
-                                    <select class="form-select form-select-sm bg-light" id="bb_perusahaan" name="bb_perusahaan"
-                                        disabled>
+                                    <select class="form-select form-select-sm bg-light" id="bb_perusahaan"
+                                        name="bb_perusahaan" disabled>
                                         <option value="">--- Choose PT ---</option>
                                         @foreach ($companies as $company)
                                             <option value="{{ $company->contribution_level_code }}"
@@ -207,23 +211,49 @@
                                 // Total Cash Advanced
                                 $totalCashAdvanced = $totalPerdiem + $totalTransport + $totalPenginapan + $totalLainnya;
                             @endphp
+
+                            @php
+                                $detailCA = isset($ca) && $ca->detail_ca ? json_decode($ca->detail_ca, true) : [];
+
+                                $showPerdiem = !empty($detailCA['detail_perdiem']);
+
+                                // Check if any of Transport, Penginapan, or Lainnya has data
+                                $showCashAdvanced =
+                                    !empty($detailCA['detail_transport']) ||
+                                    !empty($detailCA['detail_penginapan']) ||
+                                    !empty($detailCA['detail_lainnya']);
+
+                            @endphp
+                            <script>
+                                // Pass the PHP array into a JavaScript variable
+                                const initialDetailCA = @json($detailCA);
+                            </script>
+
                             <div id="additional-fields" class="row mb-3" style="display: none;">
                                 <div class="col-md-12">
                                     <label for="additional-fields-title" class="mb-3">Business Trip Needs</label>
                                     <div class="row">
+                                        <div class="col-md-2">
+                                            <div class="form-check">
+                                                <input type="hidden" name="ca" id="caHidden"
+                                                    value="{{ $showPerdiem || $showCashAdvanced ? 'Ya' : 'Tidak' }}">
+                                                <input class="form-check-input" type="checkbox" id="perdiemCheckbox"
+                                                    value="Ya" onchange="updateCAValue()" @checked($showPerdiem)
+                                                    disabled>
+                                                <label class="form-check-label" for="perdiemCheckbox">Perdiem</label>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-check">
-                                                <input type="hidden" name="ca" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="cashAdvancedCheckbox"
-                                                    name="ca" value="Ya" <?= $n->ca == 'Ya' ? 'checked' : '' ?>
+                                                    value="Ya" onchange="updateCAValue()" @checked($showCashAdvanced)
                                                     disabled>
-                                                <label class="form-check-label" for="cashAdvancedCheckbox">
-                                                    Cash Advanced
-                                                </label>
+                                                <label class="form-check-label" for="cashAdvancedCheckbox">Cash
+                                                    Advanced</label>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-check">
                                                 <input type="hidden" name="tiket" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="ticketCheckbox"
@@ -235,7 +265,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-check">
                                                 <input type="hidden" name="hotel" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="hotelCheckbox"
@@ -263,8 +293,15 @@
                                     <div class="row mt-3">
                                         <div class="col-md-12">
                                             <ul class="nav nav-tabs nav-pills mb-2" id="pills-tab" role="tablist">
+                                                <li class="nav-item" role="presentation" id="nav-perdiem"
+                                                    style="display: {{ $showPerdiem ? 'block' : 'none' }};">
+                                                    <button class="nav-link" id="pills-perdiem-tab" data-bs-toggle="pill"
+                                                        data-bs-target="#pills-perdiem" type="button" role="tab"
+                                                        aria-controls="pills-perdiem"
+                                                        aria-selected="false">Perdiem</button>
+                                                </li>
                                                 <li class="nav-item" role="presentation" id="nav-cashAdvanced"
-                                                    style="display: <?= $n->ca == 'Ya' ? 'block' : 'none' ?>;">
+                                                    style="display: {{ $showCashAdvanced ? 'block' : 'none' }};">
                                                     <button class="nav-link" id="pills-cashAdvanced-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-cashAdvanced"
                                                         type="button" role="tab" aria-controls="pills-cashAdvanced"
@@ -289,19 +326,32 @@
                                                         aria-controls="pills-taksi" aria-selected="false">Taxi</button>
                                                 </li>
                                             </ul>
-                                            @php
-                                                $detailCA =
-                                                    isset($ca) && $ca->detail_ca
-                                                        ? json_decode($ca->detail_ca, true)
-                                                        : [];
-                                            @endphp
-
-                                            <script>
-                                                // Pass the PHP array into a JavaScript variable
-                                                const initialDetailCA = @json($detailCA);
-                                            </script>
 
                                             <div class="tab-content" id="pills-tabContent">
+                                                <div class="tab-pane fade" id="pills-perdiem" role="tabpanel"
+                                                    aria-labelledby="pills-perdiem-tab">
+                                                    {{-- ca perdiem content --}}
+                                                    <div class="row mb-2">
+                                                        <div class="col-md-6 mb-2">
+                                                            <label for="date_required" class="form-label">Date
+                                                                Required</label>
+                                                            <input type="date" class="form-control form-control-sm bg-light"
+                                                                id="date_required_1" name="date_required"
+                                                                placeholder="Date Required"
+                                                                onchange="syncDateRequired(this)"
+                                                                value="{{ $ca->date_required ?? 0 }}" readonly>
+                                                        </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="form-label" for="ca_decla">Declaration
+                                                                Estimate</label>
+                                                            <input type="date" name="ca_decla" id="ca_decla_1"
+                                                                class="form-control form-control-sm bg-light"
+                                                                placeholder="mm/dd/yyyy"
+                                                                value="{{ $ca->declare_estimate ?? 0 }}" readonly>
+                                                        </div>
+                                                    </div>
+                                                    @include('hcis.reimbursements.businessTrip.approval.caPerdiemApproval')
+                                                </div>
                                                 <div class="tab-pane fade" id="pills-cashAdvanced" role="tabpanel"
                                                     aria-labelledby="pills-cashAdvanced-tab">
                                                     {{-- Cash Advanced content --}}
@@ -335,7 +385,8 @@
                             </button>
 
                             <form method="POST" action="{{ route('confirm.status', ['id' => $n->id]) }}"
-                                style="display: inline-block; margin-right: 5px;" class="status-form" id="approve-form-{{ $n->id }}">
+                                style="display: inline-block; margin-right: 5px;" class="status-form"
+                                id="approve-form-{{ $n->id }}">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="status_approval"

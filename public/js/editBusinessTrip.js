@@ -62,6 +62,9 @@ function setupCheckboxListeners() {
 
 document.addEventListener("DOMContentLoaded", function () {
     // Check if any checkbox is already checked and activate its tab
+    if (document.getElementById("perdiemCheckbox").checked) {
+        activateTab("pills-perdiem-tab");
+    }
     if (document.getElementById("cashAdvancedCheckbox").checked) {
         activateTab("pills-cashAdvanced-tab");
     }
@@ -170,6 +173,33 @@ function formatCurrency(input) {
 //             this.closest("form").submit();
 //         });
 // });
+
+function syncDateRequired(changedInput) {
+    // Get the value of the changed date_required field
+    const newValue = changedInput.value;
+
+    // Get both date_required fields
+    const dateRequired1 = document.getElementById("date_required_1");
+    const dateRequired2 = document.getElementById("date_required_2");
+
+    // Set both fields to the new value
+    dateRequired1.value = newValue;
+    dateRequired2.value = newValue;
+}
+
+function updateCAValue() {
+    const perdiemChecked = document.getElementById("perdiemCheckbox").checked;
+    const cashAdvancedChecked = document.getElementById(
+        "cashAdvancedCheckbox"
+    ).checked;
+    const caField = document.getElementById("caHidden");
+
+    if (perdiemChecked || cashAdvancedChecked) {
+        caField.value = "Ya";
+    } else {
+        caField.value = "Tidak";
+    }
+}
 
 // VALIDATION DATE JS SECTIONS
 //BT Validation Date
@@ -347,6 +377,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var additionalFields = document.getElementById("additional-fields");
 
     var checkboxes = [
+        "perdiemCheckbox",
         "cashAdvancedCheckbox",
         "ticketCheckbox",
         "hotelCheckbox",
@@ -355,6 +386,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Corresponding section divs to hide/reset
     var sections = [
+        "nav-perdiem",
         "nav-cash-advanced",
         "nav-ticket",
         "nav-hotel",
@@ -399,6 +431,7 @@ function toggleSection(checkboxId, navId, tabId) {
 }
 
 // Initialize toggling for each checkbox and tab
+toggleSection("perdiemCheckbox", "nav-perdiem", "pills-perdiem-tab");
 toggleSection(
     "cashAdvancedCheckbox",
     "nav-cash-advanced",
@@ -1126,28 +1159,109 @@ function handleTaksiForms() {
 //CA JS
 function handleCaForms() {
     const caCheckbox = document.getElementById("cashAdvancedCheckbox");
-    const caDiv = document.getElementById("ca_div");
+    const caDiv = document.getElementById("ca_bt");
 
     caCheckbox.addEventListener("change", function () {
         if (this.checked) {
+            // Show form when checked
             caDiv.style.display = "block";
         } else {
+            // Hide form and reset all fields when unchecked
             caDiv.style.display = "none";
+            resetFields("ca_bt"); // Pass the container ID to reset the fields
         }
     });
 }
 
-function handleCaForms() {
-    const caCheckbox = document.getElementById("caCheckbox");
-    const caDiv = document.getElementById("ca_div");
+function resetFields() {
+    // Transport-related fields
+    const transportDateFields = document.getElementsByName(
+        "tanggal_bt_transport[]"
+    );
+    const companyCodeFields = document.getElementsByName(
+        "company_bt_transport[]"
+    );
+    const nominalFields = document.getElementsByName("nominal_bt_transport[]");
+    const informationFields = document.getElementsByName(
+        "keterangan_bt_transport[]"
+    );
+    const totalBtTrans = document.getElementsByName("total_bt_transport");
 
-    caCheckbox.addEventListener("change", function () {
-        if (this.checked) {
-            caDiv.style.display = "block";
-        } else {
-            caDiv.style.display = "none";
-        }
+    // Accommodation-related fields
+    const startDateFields = document.getElementsByName("start_bt_penginapan[]");
+    const endDateFields = document.getElementsByName("end_bt_penginapan[]");
+    const totalDaysFields = document.getElementsByName(
+        "total_days_bt_penginapan[]"
+    );
+    const hotelNameFields = document.getElementsByName(
+        "hotel_name_bt_penginapan[]"
+    );
+    const companyPenginapanFields = document.getElementsByName(
+        "company_bt_penginapan[]"
+    );
+    const nominalPenginapanFields = document.getElementsByName(
+        "nominal_bt_penginapan[]"
+    );
+    const totalPenginapan = document.getElementsByName("total_bt_penginapan");
+
+    // Others-related fields
+    const tanggalBtLainnya = document.getElementsByName("tanggal_bt_lainnya[]");
+    const nominalBtLainnya = document.getElementsByName("nominal_bt_lainnya[]");
+    const keteranganBtLainnya = document.getElementsByName(
+        "keterangan_bt_lainnya[]"
+    );
+    const totalBtLainnya = document.getElementsByName("total_bt_lainnya");
+
+    // Reset transport date fields
+    transportDateFields.forEach((field) => {
+        field.value = ""; // Reset to empty
     });
+
+    // Reset company code fields (set to default "Select Company...")
+    companyCodeFields.forEach((field) => {
+        field.selectedIndex = 0; // Set to first option (assuming it's the "Select Company..." option)
+    });
+
+    // Reset nominal fields
+    nominalFields.forEach((field) => {
+        field.value = ""; // Reset to empty
+    });
+
+    // Reset information fields
+    informationFields.forEach((field) => {
+        field.value = ""; // Reset to empty
+    });
+
+    // Reset total fields for transport
+    totalBtTrans.forEach((field) => {
+        field.value = 0; // Reset to 0
+    });
+
+    // Reset accommodation-related fields
+    startDateFields.forEach((field) => (field.value = ""));
+    endDateFields.forEach((field) => (field.value = ""));
+    totalDaysFields.forEach((field) => (field.value = "")); // Reset total days to empty or 0
+    hotelNameFields.forEach((field) => (field.value = ""));
+    companyPenginapanFields.forEach((field) => (field.selectedIndex = 0)); // Set to "Select Company..."
+    nominalPenginapanFields.forEach((field) => (field.value = 0)); // Reset amount
+    totalPenginapan.forEach((field) => (field.value = 0)); // Reset amount
+
+    // Reset others-related fields
+    tanggalBtLainnya.forEach((field) => {
+        field.value = ""; // Reset to empty
+    });
+    nominalBtLainnya.forEach((field) => {
+        field.value = ""; // Reset to empty
+    });
+    keteranganBtLainnya.forEach((field) => {
+        field.value = ""; // Reset to empty
+    });
+    totalBtLainnya.forEach((field) => {
+        field.value = 0; // Reset to 0
+    });
+
+    // Recalculate the total CA after reset
+    calculateTotalNominalBTTotal();
 }
 
 function cleanNumber(value) {

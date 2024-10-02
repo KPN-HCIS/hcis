@@ -99,7 +99,10 @@ class BusinessTripController extends Controller
         $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
         $employeeName = Employee::pluck('fullname', 'employee_id');
         // Fetch related data
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
+            ->whereNull('deleted_at')
+            ->get()
+            ->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
@@ -118,18 +121,59 @@ class BusinessTripController extends Controller
 
     public function delete($id)
     {
-        $n = BusinessTrip::findOrFail($id);
-        if ($n) {
-            $n->delete(); // Perform soft delete
+        // Find the business trip by ID
+        $businessTrip = BusinessTrip::findOrFail($id);
+
+        // Check if the business trip exists
+        if ($businessTrip) {
+            // Get the sppd for the business trip
+            $sppd = $businessTrip->no_sppd; // Assuming 'sppd' is a property of the BusinessTrip model
+
+            // Soft delete related CA transactions
+            CATransaction::where('no_sppd', $sppd)->delete();
+
+            // Soft delete related Tiket records
+            Tiket::where('no_sppd', $sppd)->delete();
+
+            // Soft delete related Hotel records
+            Hotel::where('no_sppd', $sppd)->delete();
+
+            // Soft delete related Taksi records
+            Taksi::where('no_sppd', $sppd)->delete();
+
+            // Perform soft delete on the business trip
+            $businessTrip->delete();
         }
-        return redirect()->route('businessTrip')->with('success', 'Business Trip marked as deleted.');
+
+        // Redirect back with a success message
+        return redirect()->route('businessTrip')->with('success', 'Business Trip marked as deleted along with related records.');
     }
+
     public function deleteAdmin($id)
     {
-        $n = BusinessTrip::findOrFail($id);
-        if ($n) {
-            $n->delete(); // Perform soft delete
+        $businessTrip = BusinessTrip::findOrFail($id);
+
+        // Check if the business trip exists
+        if ($businessTrip) {
+            // Get the sppd for the business trip
+            $sppd = $businessTrip->no_sppd; // Assuming 'sppd' is a property of the BusinessTrip model
+
+            // Soft delete related CA transactions
+            CATransaction::where('no_sppd', $sppd)->delete();
+
+            // Soft delete related Tiket records
+            Tiket::where('no_sppd', $sppd)->delete();
+
+            // Soft delete related Hotel records
+            Hotel::where('no_sppd', $sppd)->delete();
+
+            // Soft delete related Taksi records
+            Taksi::where('no_sppd', $sppd)->delete();
+
+            // Perform soft delete on the business trip
+            $businessTrip->delete();
         }
+
         return redirect()->route('businessTrip.admin')->with('success', 'Business Trip marked as deleted.');
     }
 
@@ -1311,15 +1355,18 @@ class BusinessTripController extends Controller
         $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
         $employeeName = Employee::pluck('fullname', 'employee_id');
         // Fetch related data
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
+            ->whereNull('deleted_at')
+            ->get()
+            ->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
-        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
-        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
-        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        // $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        // $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        // $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        // $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
         $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
         $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
@@ -2171,31 +2218,29 @@ class BusinessTripController extends Controller
         return redirect()->route('businessTrip')->with('success', 'Request Successfully Added');
     }
 
-    public function saveDraft(Request $request)
-    {
-        // Create a new BusinessTrip instance
-        $bt = new BusinessTrip();
-        $bt->id = (string) Str::uuid();
-        $userId = Auth::id();
-        $noSppd = $this->generateNoSppd();
+    // public function saveDraft(Request $request)
+    // {
+    //     // Create a new BusinessTrip instance
+    //     $bt = new BusinessTrip();
+    //     $bt->id = (string) Str::uuid();
+    //     $userId = Auth::id();
+    //     $noSppd = $this->generateNoSppd();
 
-        // Extract all input data
-        $draftData = $request->all();
-        $draftData['id'] = $bt->id;
-        $draftData['user_id'] = $userId;
-        $draftData['no_sppd'] = $noSppd;
-        $draftData['status'] = 'Draft'; // Ensure status is set to 'Draft'
+    //     // Extract all input data
+    //     $draftData = $request->all();
+    //     $draftData['id'] = $bt->id;
+    //     $draftData['user_id'] = $userId;
+    //     $draftData['no_sppd'] = $noSppd;
+    //     $draftData['status'] = 'Draft'; // Ensure status is set to 'Draft'
 
-        // Create the BusinessTrip record
-        BusinessTrip::create($draftData);
+    //     // Create the BusinessTrip record
+    //     BusinessTrip::create($draftData);
 
-        // Handle related models if needed (Taksi, Hotel, Tiket, ca_transaction)
+    //     // Handle related models if needed (Taksi, Hotel, Tiket, ca_transaction)
 
-        // Respond with JSON
-        return response()->json(['success' => true]);
-    }
-
-
+    //     // Respond with JSON
+    //     return response()->json(['success' => true]);
+    // }
     public function admin(Request $request)
     {
         $user = Auth::user();
@@ -2240,7 +2285,10 @@ class BusinessTripController extends Controller
         $employeeName = Employee::pluck('fullname', 'employee_id');
 
         // Related data
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
+            ->whereNull('deleted_at')
+            ->get()
+            ->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
@@ -2300,7 +2348,10 @@ class BusinessTripController extends Controller
         }
 
         // Fetch related data based on the filtered SPPD numbers
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
+            ->whereNull('deleted_at')
+            ->get()
+            ->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
@@ -2647,7 +2698,10 @@ class BusinessTripController extends Controller
         $sppdNos = $sppd->pluck('no_sppd');
 
         // Retrieve related data based on the collected SPPD numbers
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
+            ->whereNull('deleted_at')
+            ->get()
+            ->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
@@ -3336,7 +3390,10 @@ class BusinessTripController extends Controller
         $sppdNos = $sppd->pluck('no_sppd');
 
         // Retrieve related data based on the collected SPPD numbers
-        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
+            ->whereNull('deleted_at')
+            ->get()
+            ->keyBy('no_sppd');
         $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
@@ -3355,36 +3412,39 @@ class BusinessTripController extends Controller
         $currentMonth = date('n');
         $romanMonth = $this->getRomanMonth($currentMonth);
 
-        // Assuming you want to generate no_sppd similarly to no_ca
+        // Get the last transaction for the current year, including deleted ones
         $lastTransaction = BusinessTrip::whereYear('created_at', $currentYear)
-            ->whereMonth('created_at', $currentMonth)
             ->orderBy('no_sppd', 'desc')
+            ->withTrashed()
             ->first();
 
-        if ($lastTransaction && preg_match('/(\d{3})\/SPPD-HC\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/SPPD-HC\/([IVX]+)\/\d{4}/', $lastTransaction->no_sppd, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
         }
+        // dd($lastNumber);
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         $newNoSppd = "$newNumber/SPPD-HC/$romanMonth/$currentYear";
+        // dd($newNoSppd);
 
         return $newNoSppd;
     }
+
     private function generateNoSppdHtl()
     {
         $currentYear = date('Y');
         $currentMonth = date('n');
         $romanMonth = $this->getRomanMonth($currentMonth);
 
-        // Assuming you want to generate no_sppd similarly to no_ca
+        // Get the last transaction for the current year, including deleted ones
         $lastTransaction = Hotel::whereYear('created_at', $currentYear)
-            ->whereMonth('created_at', $currentMonth)
             ->orderBy('no_htl', 'desc')
+            ->withTrashed()
             ->first();
 
-        if ($lastTransaction && preg_match('/(\d{3})\/HTLD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_htl, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/HTLD-HRD\/([IVX]+)\/\d{4}/', $lastTransaction->no_htl, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
@@ -3392,6 +3452,7 @@ class BusinessTripController extends Controller
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         $newNoSppd = "$newNumber/HTLD-HRD/$romanMonth/$currentYear";
+        // dd($newNoSppd);
 
         return $newNoSppd;
     }
@@ -3401,15 +3462,14 @@ class BusinessTripController extends Controller
         $currentMonth = date('n');
         $romanMonth = $this->getRomanMonth($currentMonth);
 
-        // Assuming you want to generate no_sppd similarly to no_ca
+        // Get the last transaction for the current year, including deleted ones
         $lastTransaction = Tiket::whereYear('created_at', $currentYear)
-            ->whereMonth('created_at', $currentMonth)
-            ->where('no_tkt', 'like', '%TKTD-HRD%')  // Filter for 'TKTD-HRD'
+            ->where('no_tkt', 'like', '%TKTD-HRD%')  // Keep the filter for 'TKTD-HRD'
             ->orderBy('no_tkt', 'desc')
+            ->withTrashed()
             ->first();
-        // dd($lastTransaction);
 
-        if ($lastTransaction && preg_match('/(\d{3})\/TKTD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/TKTD-HRD\/([IVX]+)\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
@@ -3417,6 +3477,8 @@ class BusinessTripController extends Controller
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         $newNoSppd = "$newNumber/TKTD-HRD/$romanMonth/$currentYear";
+
+        // dd($newNoSppd);
 
         return $newNoSppd;
     }

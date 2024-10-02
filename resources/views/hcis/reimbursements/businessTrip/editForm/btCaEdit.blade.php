@@ -4,23 +4,23 @@
             <div class="row mb-2">
                 <div class="col-md-6">
                     <label for="date_required" class="form-label">Date Required</label>
-                    <input type="date" class="form-control form-control-sm" id="date_required" name="date_required"
-                        placeholder="Date Required" onchange="" value="{{ $ca->date_required ?? 0 }}">
+                    <input type="date" class="form-control form-control-sm" id="date_required_2" name="date_required"
+                        placeholder="Date Required" onchange="syncDateRequired(this)" value="{{ $ca->date_required ?? 0 }}">
                 </div>
                 <div class="col-md-6 mb-2">
                     <label class="form-label" for="ca_decla">Declaration Estimate</label>
-                    <input type="date" name="ca_decla" id="ca_decla" class="form-control form-control-sm bg-light" placeholder="mm/dd/yyyy" value="{{ $ca->declare_estimate ?? 0}}" readonly>
+                    <input type="date" name="ca_decla" id="ca_decla_2" class="form-control form-control-sm bg-light" placeholder="mm/dd/yyyy" value="{{ $ca->declare_estimate ?? 0}}" readonly>
                 </div>
             </div>
             <div class="d-flex flex-column">
                 <ul class="nav mb-2" id="pills-tab" role="tablist">
-                    <li class="nav-item" role="presentation">
+                    {{-- <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-perdiem-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-perdiem" type="button" role="tab" aria-controls="pills-perdiem"
                             aria-selected="true">Perdiem</button>
-                    </li>
+                    </li> --}}
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-transport-tab" data-bs-toggle="pill"
+                        <button class="nav-link active" id="pills-transport-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-transport" type="button" role="tab"
                             aria-controls="pills-transport" aria-selected="false">Transport</button>
                     </li>
@@ -38,12 +38,8 @@
                 </ul>
                 {{-- <div class="card"> --}}
                 <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="pills-perdiem" role="tabpanel"
-                        aria-labelledby="pills-perdiem-tab">
-                        {{-- ca perdiem content --}}
-                        @include('hcis.reimbursements.businessTrip.caPerdiem')
-                    </div>
-                    <div class="tab-pane fade" id="pills-transport" role="tabpanel"
+
+                    <div class="tab-pane fade show active" id="pills-transport" role="tabpanel"
                         aria-labelledby="pills-transport-tab">
                         {{-- ca transport content --}}
                         @include('hcis.reimbursements.businessTrip.caTransport')
