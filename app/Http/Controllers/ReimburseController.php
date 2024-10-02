@@ -140,7 +140,9 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Rejected')
                     ->orWhere('approval_sett', 'Draft');
             })
-            ->where('end_date', '<=', $today)->where('approval_status', 'Approved')
+            ->where('end_date', '<=', $today)
+            ->where('approval_status', 'Approved')
+            // ->where('approval_extend', '!=', 'Pending')
             ->count();
 
         foreach ($ca_transactions as $transaction) {
@@ -258,6 +260,17 @@ class ReimburseController extends Controller
             $query->whereBetween('start_date', [$startDate, $endDate]);
         }
 
+        if (request()->get('stat') == '-') {
+            // Jika status adalah '-', tidak perlu melakukan filter.
+        } else {
+            // Periksa apakah ada parameter status yang diberikan
+            if ($request->has('stat') && $request->input('stat') !== '') {
+                $status = $request->input('stat');
+                // Tambahkan kondisi where untuk status jika ada status yang valid
+                $query->where('ca_status', $status);
+            }
+        }
+
         // Eksekusi query untuk mendapatkan data yang difilter
         $ca_transactions = $query->get();
 
@@ -336,9 +349,8 @@ class ReimburseController extends Controller
                     ->orWhere('approval_sett', 'Draft');
             })
             ->where('end_date', '<=', $today)
-            ->where('ca_status', '!=', 'Done')
-            ->where('approval_status', '=', 'Approved')
-            ->where('approval_sett', '=', '')
+            ->where('approval_status', 'Approved')
+            // ->where('approval_extend', '<>', 'Pending')
             ->count();
 
         return view('hcis.reimbursements.cashadv.cashadvDeklarasi', [
@@ -1384,13 +1396,7 @@ class ReimburseController extends Controller
         $transactions = CATransaction::with('companies')->find($key);
         $approval = ca_sett_approval::with('employee')
             ->where('ca_id', $key)
-            // ->select(
-            //     'employee_id',
-            //     'role_name',
-            //     'layer',
-            //     DB::raw('MAX(created_at) as created_at') // You can also use MAX or another aggregate function
-            // )
-            // ->groupBy('employee_id', 'role_name','layer') // Group by both employee_id and role_name
+            ->where('approval_status', '<>', 'Rejected')
             ->orderBy('layer', 'asc')
             ->get();
 

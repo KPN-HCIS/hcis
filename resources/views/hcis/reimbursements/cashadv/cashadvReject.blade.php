@@ -123,8 +123,8 @@
                                     <th>Total Settlement</th>
                                     <th>Balance</th>
                                     <th>Status</th>
-                                    <th style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Reject Reason</th>
-                                    
+                                    <th style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Reason</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -191,7 +191,7 @@
                                     </td>
                                     {{-- {{dd($reason)}} --}}
                                     <td>{{ $reason[$ca_transaction->id] ?? '-' }}</td>
-                                    
+
                                 </tr>
                                 @endforeach
                             </tbody>

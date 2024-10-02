@@ -3,7 +3,7 @@
 @section('css')
     @vite([
         'node_modules/select2/dist/css/select2.min.css',
-        'node_modules/daterangepicker/daterangepicker.css', 
+        'node_modules/daterangepicker/daterangepicker.css',
         'node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.css',
         'node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
         'node_modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
@@ -90,6 +90,12 @@
                                 <input type="date" class="form-control mx-2" id="start_date" name="start_date" placeholder="Start Date" title="Start Date" value="{{ $startDate }}">
                                 <label class="col-form-label"> - </label>
                                 <input type="date" class="form-control mx-2" id="end_date" name="end_date" placeholder="End Date" title="End Date" value="{{ $endDate }}">
+                                <select class="form-select mx-2" aria-label="Status" id="stat" name="stat">
+                                    <option value="-" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All Status</option>
+                                    <option value="Refund" {{ request()->get('stat') == 'Refund' ? 'selected' : '' }}>Refund</option>
+                                    <option value="Done" {{ request()->get('stat') == 'Done' ? 'selected' : '' }}>Done</option>
+                                    <option value="On Progress" {{ request()->get('stat') == 'On Progress' ? 'selected' : '' }}>On Progress</option>
+                                </select>
                                 <div class="input-group-append mx-2">
                                     <button class="btn btn-primary" type="submit">Filter</button>
                                 </div>
@@ -100,7 +106,7 @@
                                 </div>
                             </div>
                         </form>
-                    </div>     
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,7 +158,7 @@
                                             @elseif($ca_transaction->type_ca == 'entr')
                                                 <td>Entertainment</td>
                                             @endif
-                                            
+
                                             <td>{{ $ca_transaction->employee->fullname }}</td>
                                             <td>{{ $ca_transaction->contribution_level_code }}</td>
                                             <td>{{ date('j M Y', strtotime($ca_transaction->formatted_start_date)) }}</td>
@@ -171,8 +177,8 @@
                                                 </p>
                                             </td>
                                             <td>
-                                                <p class="badge text-bg-{{ $ca_transaction->ca_status == 'Done' ? 'success' : 
-                                                ($ca_transaction->ca_status == 'Refund' ? 'danger' : 
+                                                <p class="badge text-bg-{{ $ca_transaction->ca_status == 'Done' ? 'success' :
+                                                ($ca_transaction->ca_status == 'Refund' ? 'danger' :
                                                 ($ca_transaction->ca_status == 'On Progress' ? 'secondary' : 'default')) }}">
                                                     {{ $ca_transaction->ca_status }}
                                                 </p>
@@ -182,7 +188,7 @@
                                                 @if($ca_transaction->approval_sett=='Approved')
                                                 <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"  data-bs-target="#exampleModal" data-id="{{ $ca_transaction->id }}" data-status="{{ $ca_transaction->ca_status }}" title="Status Update"><i class="ri-file-edit-line"></i></button>
                                                 @endif
-                                                
+
                                             </td>
                                             <td class="text-center">
                                                 <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
@@ -256,7 +262,7 @@
 
             const startDate = document.getElementById('start_date').value;
             const endDate = document.getElementById('end_date').value;
-            
+
             // Create a form element
             const form = document.createElement('form');
             form.method = 'GET';
@@ -284,7 +290,7 @@
         $('#singledaterange').on('apply.daterangepicker', function(ev, picker) {
             var startDate = picker.startDate.format('YYYY-MM-DD');
             var endDate = picker.endDate.format('YYYY-MM-DD');
-            
+
             // Panggil fungsi untuk mendapatkan data yang difilter
             filterTableByDateRange(startDate, endDate);
         });
