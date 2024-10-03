@@ -39,31 +39,29 @@
                                 <div class="mb-2">
                                     <label class="form-label" for="name">Name</label>
                                     <input type="text" name="name" id="name"
-                                        value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
+                                        value="{{ $employee_data->fullname }}" class="form-control bg-light form-control-sm" readonly>
                                 </div>
                             </div>
                             <div class="col-md-5">
                                 <div class="mb-2">
                                     <label class="form-label" for="unit">Unit</label>
                                     <input type="text" name="unit" id="unit" value="{{ $employee_data->unit }}"
-                                        class="form-control bg-light" readonly>
+                                        class="form-control bg-light form-control-sm" readonly>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="mb-2">
                                     <label class="form-label" for="grade">Grade</label>
                                     <input type="text" name="grade" id="grade"
-                                        value="{{ $employee_data->job_level }}" class="form-control bg-light" readonly>
+                                        value="{{ $employee_data->job_level }}" class="form-control bg-light form-control-sm" readonly>
                                 </div>
                             </div>
                         </div>
 
-                        <hr>
-
                         <!-- Business Trip Info -->
-                        <div class="mb-2">
+                        <div class="mb-3">
                             <label class="form-label" for="bisnis_numb">Business Trip Number</label>
-                            <select class="form-control select2" id="bisnis_numb" name="bisnis_numb">
+                            <select class="form-select select2 form-select-sm" id="bisnis_numb" name="bisnis_numb">
                                 <option value="-" {{ $hotel->no_sppd === '-' ? 'selected' : '' }}>No
                                     Business
                                     Trip</option>
@@ -75,7 +73,6 @@
                                 @endforeach
                             </select>
                         </div>
-
                         <!-- Dynamic Hotel Forms Start -->
                         <div id="hotel_div">
                             <div class="d-flex flex-column gap-1" id="hotel_forms_container">
@@ -182,7 +179,7 @@
                                 </div>
                                 <?php endfor; ?>
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn">Add Hotel
+                            <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn mb-2">Add Hotel
                                 Data</button>
                         </div>
 
@@ -194,7 +191,7 @@
                         <input type="hidden" id="formActionType" name="formActionType" value="">
 
 
-                        <div class="d-flex justify-content-end mt-3">
+                        <div class="d-flex justify-content-end mt-4">
                             <button type="submit" class="btn btn-outline-primary rounded-pill me-2 submit-button"
                                 name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
                                 Draft</button>

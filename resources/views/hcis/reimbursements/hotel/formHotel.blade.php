@@ -36,29 +36,31 @@
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
                                         <input type="text" name="name" id="name"
-                                            value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
+                                            value="{{ $employee_data->fullname }}"
+                                            class="form-control bg-light form-control-sm" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Unit</label>
                                         <input type="text" name="unit" id="unit"
-                                            value="{{ $employee_data->unit }}" class="form-control bg-light" readonly>
+                                            value="{{ $employee_data->unit }}" class="form-control bg-light form-control-sm"
+                                            readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Grade</label>
                                         <input type="text" name="grade" id="grade"
-                                            value="{{ $employee_data->job_level }}" class="form-control bg-light" readonly>
+                                            value="{{ $employee_data->job_level }}"
+                                            class="form-control bg-light form-control-sm" readonly>
                                     </div>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
                                 <div class="mb-2">
                                     <label class="form-label" for="name">Business Trip Number</label>
-                                    <select class="form-control select2" id="bisnis_numb" name="bisnis_numb">
+                                    <select class="form-select select2 form-select-sm" id="bisnis_numb" name="bisnis_numb">
                                         <option value="-">No Business Trip</option>
                                         @foreach ($no_sppds as $no_sppd)
                                             <option value="{{ $no_sppd->no_sppd }}">{{ $no_sppd->no_sppd }}</option>
@@ -143,7 +145,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn">Add Hotel
+                                <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn mb-2">Add Hotel
                                     Data</button>
                             </div>
                             <!-- Dynamic Hotel Forms End -->
@@ -152,7 +154,7 @@
                             <input type="hidden" id="formActionType" name="formActionType" value="">
 
 
-                            <div class="d-flex justify-content-end mt-3">
+                            <div class="d-flex justify-content-end mt-4">
                                 <button type="submit" class="btn btn-outline-primary rounded-pill me-2 submit-button"
                                     name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
                                     Draft</button>
