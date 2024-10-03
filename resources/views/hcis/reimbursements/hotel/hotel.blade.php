@@ -36,12 +36,13 @@
             </div>
             <div class="col">
                 <div class="mb-2 text-end">
-                    <a href="{{ route('hotel.form') }}" class="btn btn-primary rounded-pill shadow">Add Hotel</a>
+                    <a href="{{ route('hotel.form') }}" class="btn btn-primary rounded-pill shadow"><i
+                            class="bi bi-plus-circle"></i> Add Hotel</a>
                 </div>
             </div>
         </div>
-        <!-- Content Row -->
         @include('hcis.reimbursements.businessTrip.modal')
+        <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow mb-4">

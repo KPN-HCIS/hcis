@@ -26,7 +26,7 @@
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data Hotel</h4>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data Hotel - {{ $hotel->no_htl }}</h4>
                     <a href="{{ route('hotel') }}" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" style="overflow-y: auto;">
@@ -34,7 +34,7 @@
                         @csrf
                         @method('PUT')
                         <!-- Employee Info -->
-                        <div class="row my-2">
+                        <div class="row">
                             <div class="col-md-5">
                                 <div class="mb-2">
                                     <label class="form-label" for="name">Name</label>

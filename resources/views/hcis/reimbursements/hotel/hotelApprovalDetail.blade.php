@@ -22,11 +22,12 @@
                 </div>
             </div>
         </div>
+        @include('hcis.reimbursements.businessTrip.modal')
 
         <div class="d-sm-flex align-items-center justify-content-center">
-            <div class="card col-md-8">
+            <div class="card col-md-12">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Detail Hotel</h4>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Detail Hotel Request - {{ $hotel->no_htl }}</h4>
                     <a href="{{ route('hotel.approval') }}" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" style="overflow-y: auto;">
@@ -34,7 +35,7 @@
                         @csrf
                         @method('PUT')
                         <!-- Employee Info -->
-                        <div class="row my-2">
+                        <div class="row">
                             <div class="col-md-5">
                                 <div class="mb-2">
                                     <label class="form-label" for="name">Name</label>
@@ -77,159 +78,114 @@
                         </div>
 
                         <!-- Dynamic Hotel Forms Start -->
-                        <div class="d-flex flex-column gap-2" id="hotel_forms_container"
-                            style="display: {{ count($hotelData) > 0 ? 'block' : 'none' }};">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <div class="hotel-form" id="hotel-form-{{ $i }}"
-                                    style="display: {{ isset($hotelData[$i - 1]) ? 'block' : 'none' }};">
-                                    <div class="text-bg-primary p-2 mb-1" style="text-align:center; border-radius:4px;">
-                                        Hotel {{ $i }}
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="row my-2">
-                                                <div class="col-md-12">
-                                                    <div class="mb-2">
-                                                        <label class="form-label" for="nama_htl_{{ $i }}">Hotel
-                                                            Name</label>
-                                                        <input type="text" name="nama_htl[]"
-                                                            id="nama_htl_{{ $i }}" class="form-control"
-                                                            placeholder="Hotel Name"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['nama_htl'] : '' }}"
-                                                            disabled>
-                                                    </div>
-                                                    <input type="hidden" name="hotel_ids[]"
-                                                        value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['id'] : '' }}">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="lokasi_htl_{{ $i }}">Location</label>
-                                                        <input type="text" name="lokasi_htl[]"
-                                                            id="lokasi_htl_{{ $i }}" class="form-control"
-                                                            placeholder="Location"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['lokasi_htl'] : '' }}"
-                                                            disabled>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="jmlkmr_htl_{{ $i }}">Rooms</label>
-                                                        <input type="number" name="jmlkmr_htl[]"
-                                                            id="jmlkmr_htl_{{ $i }}" class="form-control"
-                                                            placeholder="Number of Rooms"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['jmlkmr_htl'] : '' }}"
-                                                            disabled>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="mb-2">
-                                                        <label class="form-label" for="bed_htl_{{ $i }}">Bed
-                                                            Type</label>
-                                                        <select class="form-control" name="bed_htl[]"
-                                                            id="bed_htl_{{ $i }}" disabled>
-                                                            <option value="" disabled
-                                                                {{ !isset($hotelData[$i - 1]) ? 'selected' : '' }}>-
-                                                            </option>
-                                                            <option value="Single Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Single Bed' ? 'selected' : '' }}>
-                                                                Single Bed</option>
-                                                            <option value="Twin Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Twin Bed' ? 'selected' : '' }}>
-                                                                Twin Bed</option>
-                                                            <option value="King Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'King Bed' ? 'selected' : '' }}>
-                                                                King Bed</option>
-                                                            <option value="Super King Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Super King Bed' ? 'selected' : '' }}>
-                                                                Super King Bed</option>
-                                                            <option value="Extra Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Extra Bed' ? 'selected' : '' }}>
-                                                                Extra Bed</option>
-                                                            <option value="Baby Cot"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Baby Cot' ? 'selected' : '' }}>
-                                                                Baby Cot</option>
-                                                            <option value="Sofa Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Sofa Bed' ? 'selected' : '' }}>
-                                                                Sofa Bed</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
+                        <!-- Dynamic Hotel Forms Start -->
+                        <div id="hotel_div">
+                            <div class="d-flex flex-column gap-1" id="hotel_forms_container">
+                                <?php
+                            $maxForms = 5;
+                            $hotelCount = count($hotelData); // Assuming $hotelData contains hotel data from the controller
 
-                                            <div class="row my-2">
-                                                <div class="col-md-5">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="tgl_masuk_htl_{{ $i }}">Start Date</label>
-                                                        <input type="date" name="tgl_masuk_htl[]"
-                                                            id="tgl_masuk_htl_{{ $i }}" class="form-control"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['tgl_masuk_htl'] : '' }}"
-                                                            onchange="calculateDays({{ $i }})" disabled>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="tgl_keluar_htl_{{ $i }}">End Date</label>
-                                                        <input type="date" name="tgl_keluar_htl[]"
-                                                            id="tgl_keluar_htl_{{ $i }}" class="form-control"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['tgl_keluar_htl'] : '' }}"
-                                                            onchange="calculateDays({{ $i }})" disabled>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="totaldays_{{ $i }}">Total Days</label>
-                                                        <div class="input-group">
-                                                            <input class="form-control bg-light"
-                                                                id="totaldays_{{ $i }}" name="totaldays[]"
-                                                                type="text" min="0"
-                                                                value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['total_hari'] : '' }}"
-                                                                readonly>
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text">days</span>
-                                                            </div>
-                                                        </div>
-                                                        {{-- <input class="form-control" id="perdiem_{{ $i }}"
-                                                            name="perdiem[]" type="hidden"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['perdiem'] : '' }}"> --}}
-                                                    </div>
-                                                </div>
-                                            </div>
+                            // Ensure at least one form is shown if no data exists
+                            if ($hotelCount === 0) {
+                                $hotelCount = 1;
+                                $hotelData = [null]; // Set an empty form data
+                            }
 
-                                            {{-- @if ($i < 5)
-                                                <div class="mt-3">
-                                                    <label class="form-label">Add more hotels</label>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio"
-                                                            id="more_htl_no_{{ $i }}"
-                                                            name="more_htl_{{ $i }}" value="No"
-                                                            {{ ($hotelData[$i - 1]['more_htl'] ?? 'Tidak') == 'Tidak' ? 'checked' : '' }}>
-                                                        <label class="form-check-label"
-                                                            for="more_htl_no_{{ $i }}">No</label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio"
-                                                            id="more_htl_yes_{{ $i }}"
-                                                            name="more_htl_{{ $i }}" value="Yes"
-                                                            {{ ($hotelData[$i - 1]['more_htl'] ?? 'Tidak') == 'Ya' ? 'checked' : '' }}
-                                                            onchange="toggleNextHotelForm({{ $i }})">
-                                                        <label class="form-check-label"
-                                                            for="more_htl_yes_{{ $i }}">Yes</label>
-                                                    </div>
-                                                </div>
-                                            @endif --}}
+                            for ($i = 1; $i <= $hotelCount; $i++) :
+                                $hotel = $hotelData[$i - 1] ?? null;
+                            ?>
+                                <div class="card bg-light shadow-none" id="hotel-form-<?php echo $i; ?>"
+                                    style="display: <?php echo $i <= $hotelCount ? 'block' : 'none'; ?>;">
+                                    <div class="card-body">
+                                        <div class="h5 text-uppercase">
+                                            <b>Hotel <?php echo $i; ?></b>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Hotel Name</label>
+                                                <div class="input-group">
+                                                    <input class="form-control form-control-sm bg-light" name="nama_htl[]"
+                                                        type="text" placeholder="ex: Hyatt"
+                                                        value="{{ $hotel['nama_htl'] ?? '' }}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Hotel Location</label>
+                                                <div class="input-group">
+                                                    <input class="form-control form-control-sm bg-light" name="lokasi_htl[]"
+                                                        type="text" placeholder="ex: Jakarta"
+                                                        value="{{ $hotel['lokasi_htl'] ?? '' }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 mb-2">
+                                                <label class="form-label">Bed Size</label>
+                                                <select class="form-select form-select-sm select2" name="bed_htl[]"
+                                                    disabled>
+                                                    <option value="Single Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Single Bed' ? 'selected' : '' }}>
+                                                        Single Bed</option>
+                                                    <option value="Twin Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Twin Bed' ? 'selected' : '' }}>
+                                                        Twin Bed</option>
+                                                    <option value="King Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'King Bed' ? 'selected' : '' }}>
+                                                        King Bed</option>
+                                                    <option value="Super King Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Super King Bed' ? 'selected' : '' }}>
+                                                        Super King Bed</option>
+                                                    <option value="Extra Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Extra Bed' ? 'selected' : '' }}>
+                                                        Extra Bed</option>
+                                                    <option value="Baby Cot"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Baby Cot' ? 'selected' : '' }}>
+                                                        Baby Cot</option>
+                                                    <option value="Sofa Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Sofa Bed' ? 'selected' : '' }}>
+                                                        Sofa Bed</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 mb-2">
+                                                <label class="form-label">Total Room</label>
+                                                <div class="input-group">
+                                                    <input class="form-control form-control-sm bg-light"
+                                                        name="jmlkmr_htl[]" type="number" min="1"
+                                                        placeholder="ex: 1" value="{{ $hotel['jmlkmr_htl'] ?? '' }}"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Check In Date</label>
+                                                <input type="date" class="form-control form-control-sm bg-light"
+                                                    name="tgl_masuk_htl[]" id="check-in-<?php echo $i; ?>"
+                                                    value="{{ $hotel['tgl_masuk_htl'] ?? '' }}"
+                                                    onchange="calculateTotalDays(<?php echo $i; ?>)" readonly>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Check Out Date</label>
+                                                <input type="date" class="form-control form-control-sm bg-light"
+                                                    name="tgl_keluar_htl[]" id="check-out-<?php echo $i; ?>"
+                                                    value="{{ $hotel['tgl_keluar_htl'] ?? '' }}"
+                                                    onchange="calculateTotalDays(<?php echo $i; ?>)" readonly>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Total Days</label>
+                                                <input type="number" class="form-control form-control-sm bg-light"
+                                                    name="total_hari[]" id="total-days-<?php echo $i; ?>" readonly
+                                                    value="{{ $hotel['total_hari'] ?? '' }}">
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="hotel_ids[]" value="{{ $hotel['id'] ?? '' }}">
                                     </div>
                                 </div>
-                            @endfor
+                                <?php endfor; ?>
+                            </div>
                         </div>
-                        <br>
                     </form>
                     <!-- Buttons -->
+                    <input type="hidden" id="no_sppd" value="{{ $hotel['no_htl'] }}">
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal"
                             data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
@@ -237,14 +193,14 @@
                         </button>
 
                         <!-- Approve Form -->
-                        <form method="POST" action="{{ route('change.status.hotel', ['id' => $hotel->id]) }}"
-                            style="display: inline-block; margin-right: 5px;" class="status-form">
+                        <form method="POST" action="{{ route('change.status.hotel', ['id' => $hotel['id']]) }}"
+                            style="display: inline-block; margin-right: 5px;" class="status-form" id="approve-form-{{ $hotel['id'] }}">
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="status_approval"
                                 value="{{ Auth::user()->id == $hotelOwnerEmployee->manager_l1_id ? 'Pending L2' : 'Approved' }}">
-                            <button type="submit" class="btn btn-success rounded-pill" style="padding: 0.5rem 1rem;"
-                                onclick="confirmSubmission(event)">
+                            <button type="button" class="btn btn-success rounded-pill approve-button" style="padding: 0.5rem 1rem;"
+                            data-id="{{ $hotel['id']}}" >
                                 Approve
                             </button>
                         </form>
@@ -266,7 +222,7 @@
                 </div>
                 <div class="modal-body p-4">
                     <form id="rejectReasonForm" method="POST"
-                        action="{{ route('change.status.hotel', ['id' => $hotel->id]) }}">
+                        action="{{ route('change.status.hotel', ['id' => $hotel['id']]) }}">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="status_approval" value="Rejected">
@@ -312,20 +268,6 @@
 
 
     <script>
-        function confirmSubmission(event) {
-            event.preventDefault(); // Stop the form from submitting immediately
-
-            // Display a confirmation alert
-            const userConfirmed = confirm("Are you sure you want to approve this request?");
-
-            if (userConfirmed) {
-                // If the user confirms, submit the form
-                event.target.closest('form').submit();
-            } else {
-                // If the user cancels, do nothing
-                alert("Approval cancelled.");
-            }
-        }
         // Add event listener for form submission
         document.getElementById('rejectReasonForm').addEventListener('submit', function(event) {
             const reason = document.getElementById('reject_info').value.trim();
@@ -341,80 +283,80 @@
         });
 
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const forms = document.querySelectorAll('.status-form');
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const forms = document.querySelectorAll('.status-form');
 
-            forms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
+        //     forms.forEach(form => {
+        //         form.addEventListener('submit', function(e) {
+        //             e.preventDefault();
 
-                    const action = this.querySelector('input[name="status_approval"]').value;
-                    const confirmMessage = action === 'Rejected' ?
-                        'Are you sure you want to reject this?' :
-                        'Are you sure you want to approve this?';
+        //             const action = this.querySelector('input[name="status_approval"]').value;
+        //             const confirmMessage = action === 'Rejected' ?
+        //                 'Are you sure you want to reject this?' :
+        //                 'Are you sure you want to approve this?';
 
-                    if (action === 'Approved') {
-                        // Show the approval confirmation modal
-                        document.getElementById('confirmationMessage').textContent = confirmMessage;
-                        var approvalConfirmationModal = new bootstrap.Modal(document.getElementById(
-                            'approvalConfirmationModal'));
-                        approvalConfirmationModal.show();
+        //             if (action === 'Approved') {
+        //                 // Show the approval confirmation modal
+        //                 document.getElementById('confirmationMessage').textContent = confirmMessage;
+        //                 var approvalConfirmationModal = new bootstrap.Modal(document.getElementById(
+        //                     'approvalConfirmationModal'));
+        //                 approvalConfirmationModal.show();
 
-                        // Handle confirmation
-                        document.getElementById('confirmApproveButton').addEventListener('click',
-                            () => {
-                                const formData = new FormData(this);
-                                fetch(this.action, {
-                                        method: 'POST',
-                                        body: formData,
-                                        headers: {
-                                            'X-Requested-With': 'XMLHttpRequest'
-                                        }
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            // Redirect after successful approval
-                                            window.location.href = '/hotel/approval';
-                                        } else {
-                                            alert('An error occurred. Please try again.');
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        alert('An error occurred. Please try again.');
-                                    });
-                            });
+        //                 // Handle confirmation
+        //                 document.getElementById('confirmApproveButton').addEventListener('click',
+        //                     () => {
+        //                         const formData = new FormData(this);
+        //                         fetch(this.action, {
+        //                                 method: 'POST',
+        //                                 body: formData,
+        //                                 headers: {
+        //                                     'X-Requested-With': 'XMLHttpRequest'
+        //                                 }
+        //                             })
+        //                             .then(response => response.json())
+        //                             .then(data => {
+        //                                 if (data.success) {
+        //                                     // Redirect after successful approval
+        //                                     window.location.href = '/hotel/approval';
+        //                                 } else {
+        //                                     alert('An error occurred. Please try again.');
+        //                                 }
+        //                             })
+        //                             .catch(error => {
+        //                                 console.error('Error:', error);
+        //                                 alert('An error occurred. Please try again.');
+        //                             });
+        //                     });
 
-                    } else if (action === 'Rejected') {
-                        // Handle rejection directly
-                        if (confirm(confirmMessage)) {
-                            const formData = new FormData(this);
-                            fetch(this.action, {
-                                    method: 'POST',
-                                    body: formData,
-                                    headers: {
-                                        'X-Requested-With': 'XMLHttpRequest'
-                                    }
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        alert('The request has been successfully Rejected.');
-                                        window.location.href = '/hotel/approval';
-                                    } else {
-                                        alert('An error occurred. Please try again.');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    alert('An error occurred. Please try again.');
-                                });
-                        }
-                    }
-                });
-            });
-        });
+        //             } else if (action === 'Rejected') {
+        //                 // Handle rejection directly
+        //                 if (confirm(confirmMessage)) {
+        //                     const formData = new FormData(this);
+        //                     fetch(this.action, {
+        //                             method: 'POST',
+        //                             body: formData,
+        //                             headers: {
+        //                                 'X-Requested-With': 'XMLHttpRequest'
+        //                             }
+        //                         })
+        //                         .then(response => response.json())
+        //                         .then(data => {
+        //                             if (data.success) {
+        //                                 alert('The request has been successfully Rejected.');
+        //                                 window.location.href = '/hotel/approval';
+        //                             } else {
+        //                                 alert('An error occurred. Please try again.');
+        //                             }
+        //                         })
+        //                         .catch(error => {
+        //                             console.error('Error:', error);
+        //                             alert('An error occurred. Please try again.');
+        //                         });
+        //                 }
+        //             }
+        //         });
+        //     });
+        // });
 
 
 

@@ -1148,6 +1148,7 @@ class ReimburseController extends Controller
         foreach ($hotels as $index => $hotel) {
             $hotelData[] = [
                 'id' => $hotel->id, // Include ID for updating
+                'no_htl' => $hotel->no_htl,
                 'nama_htl' => $hotel->nama_htl,
                 'lokasi_htl' => $hotel->lokasi_htl,
                 'jmlkmr_htl' => $hotel->jmlkmr_htl,
@@ -1216,18 +1217,7 @@ class ReimburseController extends Controller
                 $rejection->save();
             }
 
-            // Return a rejection message
-            $message = 'The request has been successfully Rejected.';
-
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => $message
-                ]);
-            }
-
-            // Redirect to the hotel approval page instead of back to the same page
-            return redirect('/hotel/approval')->with('success', $message);
+            return redirect('/hotel/approval')->with('success', 'Request approved successfully');
         }
 
         // Handle approval scenarios
@@ -1252,21 +1242,8 @@ class ReimburseController extends Controller
             $approval->save();
         }
 
-        // Set success message based on new status
-        $message = ($hotel->approval_status == 'Approved')
-            ? 'The request has been successfully Approved.'
-            : 'The request has been successfully moved to Pending L2.';
-
-        // Return success message
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => $message
-            ]);
-        }
-
         // Redirect to the hotel approval page
-        return redirect('/hotel/approval')->with('success', $message);
+        return redirect('/hotel/approval')->with('success', 'Request approved successfully');
     }
 
 

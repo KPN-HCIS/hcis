@@ -430,7 +430,7 @@
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
-                <script src="{{ asset('public/js/ca.js') }}"></script>
+                {{-- <script src="{{ asset('public/js/ca.js') }}"></script> --}}
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {
