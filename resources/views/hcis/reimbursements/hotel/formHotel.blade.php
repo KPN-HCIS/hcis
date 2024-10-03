@@ -23,9 +23,9 @@
             </div>
         </div>
         <div class="d-sm-flex align-items-center justify-content-center">
-            <div class="card col-md-8">
+            <div class="card col-md-12">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Data</h4>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Hotel Data</h4>
                     <a href="{{ route('hotel') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
@@ -68,134 +68,95 @@
                             </div>
 
                             <!-- Dynamic Hotel Forms Start -->
-                            <div class="d-flex flex-column gap-2" id="hotel_forms_container">
-                                <?php for ($i = 1; $i <= 5; $i++) : ?>
-                                <div class="hotel-form" id="hotel-form-<?php echo $i; ?>"
-                                    style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
-                                    <div class="text-bg-primary p-2 mb-1" style="text-align:center; border-radius:4px;">
-                                        Hotel Data <?php echo $i; ?></div>
-                                    <div class="card">
+                            <div id="hotel_div">
+                                <div class="d-flex flex-column gap-1" id="hotel_forms_container">
+                                    <?php
+                                    $i = 1;
+                                    // for ($i = 1; $i <= 5; $i++) :
+                                    ?>
+                                    <div class="card bg-light shadow-none" id="hotel-form-<?php echo $i; ?>"
+                                        style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
                                         <div class="card-body">
-                                            <div class="row my-2">
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label class="form-label" for="nama_htl_<?php echo $i; ?>">Hotel
-                                                            Name</label>
-                                                        <input type="text" name="nama_htl[]"
-                                                            id="nama_htl_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="ex: Westin">
+                                            <div class="h5 text-uppercase">
+                                                <b>Hotel <?php echo $i; ?></b>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label">Hotel Name</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="nama_htl[]"
+                                                            type="text" placeholder="ex: Hyatt">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="lokasi_htl_<?php echo $i; ?>">Location</label>
-                                                        <input type="text" name="lokasi_htl[]"
-                                                            id="lokasi_htl_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="ex: Jakarta">
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label">Hotel Location</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="lokasi_htl[]"
+                                                            type="text" placeholder="ex: Jakarta">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="jmlkmr_htl_<?php echo $i; ?>">Rooms</label>
-                                                        <input type="number" name="jmlkmr_htl[]"
-                                                            id="jmlkmr_htl_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="ex: 1">
-                                                    </div>
+                                                <div class="col-md-2 mb-2">
+                                                    <label class="form-label">Bed Size</label>
+                                                    <select class="form-select form-select-sm select2" name="bed_htl[]">
+                                                        <option value="Single Bed">Single Bed</option>
+                                                        <option value="Twin Bed">Twin Bed</option>
+                                                        <option value="King Bed">King Bed</option>
+                                                        <option value="Super King Bed">Super King Bed</option>
+                                                        <option value="Extra Bed">Extra Bed</option>
+                                                        <option value="Baby Cot">Baby Cot</option>
+                                                        <option value="Sofa Bed">Sofa Bed</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label class="form-label" for="bed_htl_<?php echo $i; ?>">Bed
-                                                            Type</label>
-                                                        <select class="form-control" name="bed_htl[]">
-                                                            <option value="" selected disabled>--- Select Bed Type
-                                                                ---</option>
-                                                            <option value="Single Bed">Single Bed</option>
-                                                            <option value="Twin Bed">Twin Bed</option>
-                                                            <option value="King Bed">King Bed</option>
-                                                            <option value="Super King Bed">Super King Bed</option>
-                                                            <option value="Extra Bed">Extra Bed</option>
-                                                            <option value="Baby Cot">Baby Cot</option>
-                                                            <option value="Sofa Bed">Sofa Bed</option>
-                                                        </select>
+                                                <div class="col-md-2 mb-2">
+                                                    <label class="form-label">Total Room</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="jmlkmr_htl[]"
+                                                            type="number" min="1" placeholder="ex: 1">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row my-2">
-                                                <div class="col-md-5">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="tgl_masuk_htl_<?php echo $i; ?>">Start Date</label>
-                                                        <input type="date" name="tgl_masuk_htl[]"
-                                                            id="tgl_masuk_htl_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="mm/dd/yyyy"
-                                                            onchange="calculateDays(<?php echo $i; ?>)">
-                                                    </div>
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label">Check In Date</label>
+                                                    <input type="date" class="form-control form-control-sm"
+                                                        name="tgl_masuk_htl[]" id="check-in-<?php echo $i; ?>"
+                                                        onchange="calculateTotalDays(<?php echo $i; ?>)">
                                                 </div>
-                                                <div class="col-md-5">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="tgl_keluar_htl_<?php echo $i; ?>">End Date</label>
-                                                        <input type="date" name="tgl_keluar_htl[]"
-                                                            id="tgl_keluar_htl_<?php echo $i; ?>" class="form-control"
-                                                            placeholder="mm/dd/yyyy"
-                                                            onchange="calculateDays(<?php echo $i; ?>)">
-                                                    </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label">Check Out Date</label>
+                                                    <input type="date" class="form-control form-control-sm"
+                                                        name="tgl_keluar_htl[]" id="check-out-<?php echo $i; ?>"
+                                                        onchange="calculateTotalDays(<?php echo $i; ?>)">
                                                 </div>
-                                                <div class="col-md-2">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="total_hari_<?php echo $i; ?>">Total Days</label>
-                                                        <div class="input-group">
-                                                            <input class="form-control bg-light"
-                                                                id="total_hari_<?php echo $i; ?>" name="total_hari[]"
-                                                                type="text" min="0" value="0" readonly>
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text">days</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label">Total Days</label>
+                                                    <input type="number" class="form-control form-control-sm bg-light"
+                                                        name="total_hari[]" id="total-days-<?php echo $i; ?>" readonly>
                                                 </div>
                                             </div>
-
-                                            <?php if ($i < 5) : ?>
-                                            <div class="mt-3">
-                                                <label class="form-label">Add more hotel data</label>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio"
-                                                        id="more_htl_no_<?php echo $i; ?>"
-                                                        name="more_htl_<?php echo $i; ?>" value="Tidak" checked>
-                                                    <label class="form-check-label"
-                                                        for="more_htl_no_<?php echo $i; ?>">Tidak</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio"
-                                                        id="more_htl_yes_<?php echo $i; ?>"
-                                                        name="more_htl_<?php echo $i; ?>" value="Ya"
-                                                        onchange="toggleNextForm(<?php echo $i; ?>)">
-                                                    <label class="form-check-label"
-                                                        for="more_htl_yes_<?php echo $i; ?>">Ya</label>
-                                                </div>
+                                            <div class="mt-2">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-danger remove-hotel-btn">Remove
+                                                    Data</button>
                                             </div>
-                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
-                                <?php endfor; ?>
+                                <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn">Add Hotel
+                                    Data</button>
                             </div>
                             <!-- Dynamic Hotel Forms End -->
 
-                            <br>
-                            <div class="row">
-                                <input type="hidden" name="status" value="Pending L1" id="status">
-                                <div class="col-md d-md-flex justify-content-end text-center">
-                                    <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                                    <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                                        name="action_ca_draft" id="save-draft">Save as Draft</button>
-                                    <button type="submit"
-                                        class="btn btn-primary rounded-pill shadow px-4">Submit</button>
-                                </div>
+                            <input type="hidden" name="status" value="Pending L1" id="status">
+                            <input type="hidden" id="formActionType" name="formActionType" value="">
+
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="submit" class="btn btn-outline-primary rounded-pill me-2 submit-button"
+                                    name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
+                                    Draft</button>
+                                <button type="submit" class="btn btn-primary rounded-pill submit-button"
+                                    name="action_submit" value="Pending L1" id="submit-btn">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -203,210 +164,243 @@
             </div>
         </div>
     </div>
-
-
     <script>
-        function calculateDays(index) {
-            // Get the start and end date input fields
-            const startDateInput = document.getElementById('tgl_masuk_htl_' + index);
-            const endDateInput = document.getElementById('tgl_keluar_htl_' + index);
-            const totalDaysInput = document.getElementById('total_hari_' + index);
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.submit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent immediate form submission
 
-            // Get the values of the start and end dates
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
+                    const form = document.getElementById('btEditForm');
 
-            // Ensure the end date is not earlier than the start date
-            if (endDate < startDate) {
-                alert("End date cannot be earlier than start date.");
-                endDateInput.value = ''; // Reset the end date
-                totalDaysInput.value = '0'; // Reset the total days
+                    // Check if the form is valid before proceeding
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // Show validation messages if invalid
+                        return; // Exit if the form is not valid
+                    }
+
+                    // Show SweetAlert confirmation with the input summary
+                    Swal.fire({
+                        title: "Do you want to submit this request?",
+                        html: `You won't be able to revert this!`, // Use 'html' instead of 'text'
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AB2F2B",
+                        cancelButtonColor: "#CCCCCC",
+                        confirmButtonText: "Yes, submit it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const input = document.createElement('input');
+                            input.type =
+                                'hidden'; // Hidden input so it doesn't show in the form
+                            input.name = button.name; // Use the button's name attribute
+                            input.value = button.value; // Use the button's value attribute
+
+                            form.appendChild(input); // Append the hidden input to the form
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        //Hotel Validation Date
+        function calculateTotalDays(index) {
+            const checkInInput = document.getElementById(`check-in-${index}`);
+            const checkOutInput = document.getElementById(`check-out-${index}`);
+            const totalDaysInput = document.getElementById(`total-days-${index}`);
+
+            if (!checkInInput || !checkOutInput) {
+                return; // Ensure elements are present before proceeding
+            }
+
+            // Parse the dates
+            const checkInDate = new Date(checkInInput.value);
+            const checkOutDate = new Date(checkOutInput.value);
+            console.log(checkInDate);
+            console.log(checkOutDate);
+
+
+            // Validate Check In Date
+            // Ensure Check Out Date is not earlier than Check In Date
+            if (checkOutDate < checkInDate) {
+                Swal.fire({
+                    title: "Warning!",
+                    text: "Check Out date cannot be earlier than Check In date.",
+                    icon: "error",
+                    confirmButtonColor: "#AB2F2B",
+                    confirmButtonText: "OK",
+                });
+                checkOutInput.value = ""; // Reset the Check Out field
+                totalDaysInput.value = ""; // Clear total days
                 return;
             }
 
-            // Calculate the difference in days
-            const timeDiff = endDate.getTime() - startDate.getTime();
-            const totalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Convert milliseconds to days
-
-            // Update the total days field
-            totalDaysInput.value = totalDays > 0 ? totalDays : 0;
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // Hotel form handling
-            for (let i = 1; i <= 4; i++) {
-                const yesRadio = document.getElementById(`more_htl_yes_${i}`);
-                const noRadio = document.getElementById(`more_htl_no_${i}`);
-                const nextForm = document.getElementById(`hotel-form-${i + 1}`);
-
-                yesRadio.addEventListener('change', function() {
-                    if (this.checked) {
-                        nextForm.style.display = 'block';
-                    }
-                });
-
-                noRadio.addEventListener('change', function() {
-                    if (this.checked) {
-                        nextForm.style.display = 'none';
-                        // Hide all subsequent forms
-                        for (let j = i + 1; j <= 5; j++) {
-                            const form = document.getElementById(`hotel-form-${j}`);
-                            if (form) {
-                                form.style.display = 'none';
-                                // Reset the form when it is hidden
-                                resetHotelFields(form);
-                            }
-                        }
-                        // Reset radio buttons for subsequent forms
-                        for (let j = i + 1; j <= 4; j++) {
-                            const noRadioButton = document.getElementById(`more_htl_no_${j}`);
-                            if (noRadioButton) {
-                                noRadioButton.checked = true;
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Function to reset hotel fields
-            function resetHotelFields(container) {
-                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
-                inputs.forEach(input => {
-                    input.value = '';
-                });
-                const selects = container.querySelectorAll('select');
-                selects.forEach(select => {
-                    select.selectedIndex = 0;
-                });
-            }
-
-            // Calculate total days for each hotel form
-            function calculateTotalDays(index) {
-                const checkIn = document.querySelector(`#hotel-form-${index} input[name="tgl_masuk_htl[]"]`);
-                const checkOut = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
-                const totalDays = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
-
-                if (checkIn && checkOut && totalDays) {
-                    const start = new Date(checkIn.value);
-                    const end = new Date(checkOut.value);
-
-                    if (checkIn.value && checkOut.value) {
-                        // Calculate difference in milliseconds and convert to days, excluding the same day
-                        const difference = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-                        if (difference < 0) {
-                            alert("Check out date cannot be earlier than check in date.");
-                            checkOut.value = ''; // Clear the check-out date if invalid
-                            totalDays.value = ''; // Clear the total days if check-out date is reset
-                        } else {
-                            totalDays.value = difference >= 0 ? difference : 0;
-                        }
-                    } else {
-                        totalDays.value = ''; // Clear total days if dates are not set
-                    }
-                } else {
-                    console.error("Elements not found. Check selectors.");
-                }
-            }
-
-            // Add event listeners for date inputs
-            for (let i = 1; i <= 5; i++) {
-                const checkIn = document.querySelector(`#hotel-form-${i} input[name="tgl_masuk_htl[]"]`);
-                const checkOut = document.querySelector(`#hotel-form-${i} input[name="tgl_keluar_htl[]"]`);
-
-                if (checkIn && checkOut) {
-                    checkIn.addEventListener('change', () => calculateTotalDays(i));
-                    checkOut.addEventListener('change', () => calculateTotalDays(i));
-                }
-            }
-
-            // Handle date validation for the return date
-            document.getElementById('kembali').addEventListener('change', function() {
-                var mulaiDate = document.getElementById('mulai').value;
-                var kembaliDate = this.value;
-
-                if (kembaliDate < mulaiDate) {
-                    alert('Return date cannot be earlier than Start date.');
-                    this.value = ''; // Reset the kembali field
-                }
-            });
-        });
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('save-draft').addEventListener('click', function(event) {
-                event.preventDefault();
-
-                // Remove the existing status input
-                const existingStatus = document.getElementById('status');
-                if (existingStatus) {
-                    existingStatus.remove();
-                }
-
-                // Create a new hidden input for "Draft"
-                const draftInput = document.createElement('input');
-                draftInput.type = 'hidden';
-                draftInput.name = 'status';
-                draftInput.value = 'Draft';
-                draftInput.id = 'status';
-
-                // Append the draft input to the form
-                this.closest('form').appendChild(draftInput);
-
-                // Submit the form
-                this.closest('form').submit();
-            });
-        });
-
-        document.getElementById('tgl_keluar_htl').addEventListener('change', function() {
-            var startDate = document.getElementById('tgl_masuk_htl').value;
-            var endDate = this.value;
-
-            if (startDate && endDate && endDate < startDate) {
-                alert('End Date cannot be earlier than Start Date.');
-                this.value = '';
-            }
-        });
-
-        function toggleDivs() {
-            // ca_type ca_nbt ca_e
-            var ca_type = document.getElementById("ca_type");
-            var ca_nbt = document.getElementById("ca_nbt");
-            var ca_e = document.getElementById("ca_e");
-            var div_bisnis_numb = document.getElementById("div_bisnis_numb");
-            var bisnis_numb = document.getElementById("bisnis_numb");
-            var div_allowance = document.getElementById("div_allowance");
-
-            if (ca_type.value === "dns") {
-                ca_nbt.style.display = "block";
-                ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "block";
-                div_allowance.style.display = "block";
-            } else if (ca_type.value === "ndns") {
-                ca_nbt.style.display = "block";
-                ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "none";
-                bisnis_numb.style.value = "";
-                div_allowance.style.display = "none";
-            } else if (ca_type.value === "entr") {
-                ca_nbt.style.display = "none";
-                ca_e.style.display = "block";
-                div_bisnis_numb.style.display = "block";
+            // Calculate the total days if all validations pass
+            if (checkInDate && checkOutDate) {
+                const diffTime = Math.abs(checkOutDate - checkInDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                totalDaysInput.value = diffDays;
             } else {
-                ca_nbt.style.display = "none";
-                ca_e.style.display = "none";
-                div_bisnis_numb.style.display = "none";
-                bisnis_numb.style.value = "";
+                totalDaysInput.value = "";
             }
         }
 
-        function validateInput(input) {
-            //input.value = input.value.replace(/[^0-9,]/g, '');
-            input.value = input.value.replace(/[^0-9]/g, '');
-        }
+        // Attach event listeners to the hotel forms
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".hotel-form").forEach((form, index) => {
+                const i = index + 1; // Adjust for 1-based index
 
+                form.querySelector('input[name="tgl_masuk_htl[]"]').addEventListener(
+                    "change",
+                    () => calculateTotalDays(i)
+                );
+                form.querySelector('input[name="tgl_keluar_htl[]"]').addEventListener(
+                    "change",
+                    () => calculateTotalDays(i)
+                );
+            });
+        });
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
+    <script>
+        //Hotel JS
+        document.addEventListener("DOMContentLoaded", function() {
+            let formHotelCount = 1;
+            const maxHotelForms = 5;
+            const hotelFormsContainer = document.getElementById("hotel_forms_container");
+            const addHotelButton = document.querySelector(".add-hotel-btn");
+
+            function updateFormNumbers() {
+                const forms = hotelFormsContainer.querySelectorAll('[id^="hotel-form-"]');
+                forms.forEach((form, index) => {
+                    const formNumber = index + 1;
+                    form.querySelector(".h5.text-uppercase b").textContent = `Hotel ${formNumber}`;
+                    form.id = `hotel-form-${formNumber}`;
+                    form.querySelector(".remove-hotel-btn").dataset.formId = formNumber;
+
+                    updateFormElementIds(form, formNumber);
+                });
+                formHotelCount = forms.length;
+                updateButtonVisibility();
+            }
+
+            function updateFormElementIds(form, formNumber) {
+                const elements = form.querySelectorAll("[id],[name],[onchange]");
+                elements.forEach((element) => {
+                    // Update IDs
+                    if (element.id) {
+                        element.id = element.id.replace(/\d+$/, formNumber);
+                    }
+                    // Update names
+                    if (element.name) {
+                        element.name = element.name.replace(/\[\d*\]/, `[${formNumber}]`);
+                    }
+                    // Update onchange attributes
+                    if (element.hasAttribute("onchange")) {
+                        const onchangeValue = element.getAttribute("onchange");
+                        const updatedOnchangeValue = onchangeValue.replace(/\d+/, formNumber);
+                        element.setAttribute("onchange", updatedOnchangeValue);
+                    }
+                });
+            }
+
+            function updateButtonVisibility() {
+                addHotelButton.style.display = formHotelCount < maxHotelForms ? "inline-block" : "none";
+                const removeButtons = hotelFormsContainer.querySelectorAll(".remove-hotel-btn");
+                removeButtons.forEach((button) => {
+                    button.style.display = formHotelCount > 1 ? "inline-block" : "none";
+                });
+            }
+
+            function addNewHotelForm() {
+                if (formHotelCount < maxHotelForms) {
+                    formHotelCount++;
+                    const newHotelForm = createNewHotelForm(formHotelCount);
+                    hotelFormsContainer.insertAdjacentHTML("beforeend", newHotelForm);
+                    updateFormNumbers();
+                } else {
+                    Swal.fire({
+                        title: "Warning!",
+                        text: "You have reached the maximum number of hotels (5).",
+                        icon: "error",
+                        confirmButtonColor: "#AB2F2B",
+                        confirmButtonText: "OK",
+                    });
+                }
+            }
+
+            addHotelButton.addEventListener("click", addNewHotelForm);
+
+            hotelFormsContainer.addEventListener("click", function(e) {
+                if (e.target.classList.contains("remove-hotel-btn")) {
+                    const formId = e.target.dataset.formId;
+                    document.getElementById(`hotel-form-${formId}`).remove();
+                    updateFormNumbers();
+                }
+            });
+
+            function createNewHotelForm(formNumber) {
+                return `
+                <div class="card bg-light shadow-none" id="hotel-form-${formNumber}" style="display: block;">
+                    <div class="card-body">
+                        <div class="h5 text-uppercase">
+                            <b>Hotel ${formNumber}</b>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Hotel Name</label>
+                                <div class="input-group">
+                                    <input class="form-control form-control-sm" name="nama_htl[]" type="text" placeholder="ex: Hyatt">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Hotel Location</label>
+                                <div class="input-group">
+                                    <input class="form-control form-control-sm" name="lokasi_htl[]" type="text" placeholder="ex: Jakarta">
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Bed Size</label>
+                                <select class="form-select form-select-sm" name="bed_htl[]">
+                                    <option value="Single Bed">Single Bed</option>
+                                    <option value="Twin Bed">Twin Bed</option>
+                                    <option value="King Bed">King Bed</option>
+                                    <option value="Super King Bed">Super King Bed</option>
+                                    <option value="Extra Bed">Extra Bed</option>
+                                    <option value="Baby Cot">Baby Cot</option>
+                                    <option value="Sofa Bed">Sofa Bed</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Total Room</label>
+                                <div class="input-group">
+                                    <input class="form-control form-control-sm" name="jmlkmr_htl[]" type="number" min="1" placeholder="ex: 1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Check In Date</label>
+                                <input type="date" class="form-control form-control-sm" id="check-in-${formNumber}" name="tgl_masuk_htl[]" onchange="calculateTotalDays(${formNumber})">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Check Out Date</label>
+                                <input type="date" class="form-control form-control-sm" id="check-out-${formNumber}" name="tgl_keluar_htl[]" onchange="calculateTotalDays(${formNumber})">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Total Days</label>
+                                <input type="number" class="form-control form-control-sm bg-light" id="total-days-${formNumber}" name="total_hari[]" readonly>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn" data-form-id="${formNumber}">Remove Data</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // Initial setup
+            updateButtonVisibility();
+        });
+    </script>
 @endsection

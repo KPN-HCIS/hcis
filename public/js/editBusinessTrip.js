@@ -499,7 +499,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Ticket JS
 document.addEventListener("DOMContentLoaded", function () {
-    let formTicketCount = 1;
+    let formTicketCount =
+        document.querySelectorAll('[id^="ticket-form-"]').length || 1;
     const maxTicketForms = 5;
     const ticketFormsContainer = document.getElementById(
         "ticket_forms_container"
@@ -537,16 +538,14 @@ document.addEventListener("DOMContentLoaded", function () {
             'input[name="jam_plg_tkt[]"]'
         );
 
-        // Update the required attributes based on the "Round Trip" option
+        // Update required fields for round trip option
         function updateReturnFields() {
             if (isRequired && typeSelect && typeSelect.value === "Round Trip") {
                 returnDateField.setAttribute("required", "");
                 returnTimeField.setAttribute("required", "");
             } else {
-                if (returnDateField)
-                    returnDateField.removeAttribute("required");
-                if (returnTimeField)
-                    returnTimeField.removeAttribute("required");
+                returnDateField && returnDateField.removeAttribute("required");
+                returnTimeField && returnTimeField.removeAttribute("required");
             }
         }
 
@@ -663,6 +662,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             select.removeAttribute("required");
         });
+
         const roundTripOptions = container.querySelector(".round-trip-options");
         if (roundTripOptions) {
             roundTripOptions.style.display = "none";
@@ -879,13 +879,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Hotel JS
 document.addEventListener("DOMContentLoaded", function () {
-    let formHotelCount = 1;
+    let formHotelCount = 0; // Initialize with 0 to count existing forms
     const maxHotelForms = 5;
     const hotelFormsContainer = document.getElementById(
         "hotel_forms_container"
     );
     const hotelCheckbox = document.getElementById("hotelCheckbox");
     const addHotelButton = document.querySelector(".add-hotel-btn");
+
+    // Initialize formHotelCount based on existing forms
+    const existingForms = hotelFormsContainer.querySelectorAll(
+        '[id^="hotel-form-"]'
+    );
+    formHotelCount = existingForms.length;
 
     function updateFormNumbers() {
         const forms = hotelFormsContainer.querySelectorAll(
@@ -932,6 +938,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateButtonVisibility() {
+        // Show or hide the add button based on current form count
         addHotelButton.style.display =
             formHotelCount < maxHotelForms ? "inline-block" : "none";
         const removeButtons =
@@ -971,7 +978,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 form.remove();
             }
         });
-        formHotelCount = 1;
+        formHotelCount = 1; // Reset count to 1 as we keep the first form
         updateButtonVisibility();
     }
 

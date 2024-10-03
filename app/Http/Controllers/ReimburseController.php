@@ -744,47 +744,42 @@ class ReimburseController extends Controller
             'no_sppds' => $no_sppds,
         ]);
     }
-    public function hotelSubmit(Request $req)
-    {
-        function getRomanMonth_htl($month)
-        {
-            $romanMonths = [
-                1 => 'I',
-                2 => 'II',
-                3 => 'III',
-                4 => 'IV',
-                5 => 'V',
-                6 => 'VI',
-                7 => 'VII',
-                8 => 'VIII',
-                9 => 'IX',
-                10 => 'X',
-                11 => 'XI',
-                12 => 'XII'
-            ];
-            return $romanMonths[$month];
-        }
 
-        $userId = Auth::id();
+    private function generateNoSppdHtl()
+    {
         $currentYear = date('Y');
         $currentMonth = date('n');
-        $romanMonth = getRomanMonth_htl($currentMonth);
+        $romanMonth = $this->getRomanMonth($currentMonth);
 
-        // Get the last transaction of the current year and month
+        // Get the last transaction for the current year, including deleted ones
         $lastTransaction = Hotel::whereYear('created_at', $currentYear)
-            ->whereMonth('created_at', $currentMonth)
             ->orderBy('no_htl', 'desc')
+            ->withTrashed()
             ->first();
 
-        if ($lastTransaction && preg_match('/(\d{3})\/HTLD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_htl, $matches)) {
+        if ($lastTransaction && preg_match('/(\d{3})\/HTLD-HRD\/([IVX]+)\/\d{4}/', $lastTransaction->no_htl, $matches)) {
             $lastNumber = intval($matches[1]);
         } else {
             $lastNumber = 0;
         }
 
         $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        $newNoHtl = "$newNumber/HTLD-HRD/$romanMonth/$currentYear";
+        $newNoSppd = "$newNumber/HTLD-HRD/$romanMonth/$currentYear";
+        // dd($newNoSppd);
 
+        return $newNoSppd;
+    }
+
+    public function hotelSubmit(Request $req)
+    {
+        $userId = Auth::id();
+        $noSppdHtl = $this->generateNoSppdHtl();
+
+        if ($req->has('action_draft')) {
+            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+        } elseif ($req->has('action_submit')) {
+            $statusValue = 'Pending L1';  // When "Submit" is clicked
+        }
         // Prepare the hotel data arrays
         $hotelData = [
             'nama_htl' => $req->nama_htl,
@@ -794,7 +789,7 @@ class ReimburseController extends Controller
             'tgl_masuk_htl' => $req->tgl_masuk_htl,
             'tgl_keluar_htl' => $req->tgl_keluar_htl,
             'total_hari' => $req->total_hari,
-            'approval_status' => $req->status,
+            'approval_status' => $statusValue,
         ];
 
         foreach ($hotelData['nama_htl'] as $key => $value) {
@@ -802,7 +797,7 @@ class ReimburseController extends Controller
             if (!empty($hotelData['nama_htl'][$key]) && !empty($hotelData['lokasi_htl'][$key]) && !empty($hotelData['tgl_masuk_htl'][$key])) {
                 $model = new Hotel();
                 $model->id = (string) Str::uuid();
-                $model->no_htl = $newNoHtl; // Use the pre-generated hotel number
+                $model->no_htl = $noSppdHtl; // Use the pre-generated hotel number
                 $model->no_sppd = $req->bisnis_numb;
                 $model->user_id = $userId;
                 $model->unit = $req->unit;
@@ -814,10 +809,10 @@ class ReimburseController extends Controller
                 $model->tgl_keluar_htl = $hotelData['tgl_keluar_htl'][$key] ?? null;
                 $model->total_hari = $hotelData['total_hari'][$key] ?? null;
                 $model->created_by = $userId;
-                $model->approval_status = $req->status;
+                $model->approval_status = $statusValue;
                 $model->hotel_only = 'Y';
                 $model->created_by = $userId;
-                // dd($model);
+                // dd($statusValue);
                 $model->save();
             }
         }
@@ -829,10 +824,7 @@ class ReimburseController extends Controller
             $bt->hotel = 'Ya';
             $bt->save();
         }
-
-        Alert::success('Success');
-        session()->flash('message', 'Berhasil di Tambahkan');
-        return redirect()->intended(route('hotel', absolute: false));
+        return redirect('/hotel')->with('success', 'Hotel request input successfully');
     }
 
     public function hotelEdit($key)
@@ -903,72 +895,45 @@ class ReimburseController extends Controller
 
     public function hotelUpdate(Request $req, $key)
     {
-        // Function to generate hotel number
-        function generateHotelNumber()
-        {
-            function getRomanMonth_htl($month)
-            {
-                $romanMonths = [
-                    1 => 'I',
-                    2 => 'II',
-                    3 => 'III',
-                    4 => 'IV',
-                    5 => 'V',
-                    6 => 'VI',
-                    7 => 'VII',
-                    8 => 'VIII',
-                    9 => 'IX',
-                    10 => 'X',
-                    11 => 'XI',
-                    12 => 'XII'
-                ];
-                return $romanMonths[$month];
-            }
-
-            $currentYear = date('Y');
-            $currentMonth = date('n');
-            $romanMonth = getRomanMonth_htl($currentMonth);
-
-            // Get the last hotel transaction
-            $lastTransaction = Hotel::whereYear('created_at', $currentYear)
-                ->whereMonth('created_at', $currentMonth)
-                ->orderBy('no_htl', 'desc')
-                ->first();
-
-            $lastNumber = $lastTransaction && preg_match('/(\d{3})\/HTLD-HRD\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_htl, $matches)
-                ? intval($matches[1])
-                : 0;
-
-            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-            return "$newNumber/HTLD-HRD/$romanMonth/$currentYear";
-        }
-
-        $hotelIds = $req->input('hotel_ids', []);
-        $existingHotels = Hotel::whereIn('id', $hotelIds)->get()->keyBy('id');
+        $hotelIds = $req->input('hotel_ids', []); // Get the array of existing hotel IDs
+        $existingHotels = Hotel::whereIn('id', $hotelIds)->get()->keyBy('id'); // Load existing hotels into a collection
 
         $processedHotelIds = [];
-        $newNoHtl = null;
         $updateBusinessTrip = false;
+
+        // Determine approval status based on the action
+        if ($req->has('action_draft')) {
+            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+        } elseif ($req->has('action_submit')) {
+            $statusValue = 'Pending L1';  // When "Submit" is clicked
+        }
+
+        // Get the no_htl from the first existing hotel record
+        $existingNoHtl = $existingHotels->first()->no_htl ?? null;
+        // dd($existingNoHtl);
 
         // Loop through hotel data
         foreach ($req->nama_htl as $index => $value) {
             if (!empty($value)) {
+                // Get hotel ID for this index
                 $hotelId = $req->hotel_ids[$index] ?? null;
 
+                // Prepare hotel data array
                 $hotelData = [
                     'unit' => $req->unit,
                     'no_sppd' => $req->bisnis_numb,
-                    'nama_htl' => $req->nama_htl[$index] ?? null,
-                    'lokasi_htl' => $req->lokasi_htl[$index] ?? null,
-                    'jmlkmr_htl' => $req->jmlkmr_htl[$index] ?? null,
-                    'bed_htl' => $req->bed_htl[$index] ?? null,
-                    'tgl_masuk_htl' => $req->tgl_masuk_htl[$index] ?? null,
-                    'tgl_keluar_htl' => $req->tgl_keluar_htl[$index] ?? null,
-                    'total_hari' => $req->totaldays[$index] ?? null,
-                    'approval_status' => $req->status,
+                    'nama_htl' => $req->nama_htl[$index],
+                    'lokasi_htl' => $req->lokasi_htl[$index],
+                    'jmlkmr_htl' => $req->jmlkmr_htl[$index],
+                    'bed_htl' => $req->bed_htl[$index],
+                    'tgl_masuk_htl' => $req->tgl_masuk_htl[$index],
+                    'tgl_keluar_htl' => $req->tgl_keluar_htl[$index],
+                    'total_hari' => $req->total_hari[$index],
+                    'approval_status' => $statusValue,
                     'jns_dinas_htl' => $req->jns_dinas_htl,
                 ];
 
+                // Check if hotel ID exists to decide if it's an update or a new entry
                 if ($hotelId && isset($existingHotels[$hotelId])) {
                     $existingHotel = $existingHotels[$hotelId];
                     $hotelData['user_id'] = $existingHotel->user_id;
@@ -978,25 +943,24 @@ class ReimburseController extends Controller
                         $updateBusinessTrip = true;
                     }
 
+                    // Update existing hotel record
                     $existingHotel->update($hotelData);
-                    $processedHotelIds[] = $hotelId;
+                    $processedHotelIds[] = $hotelId; // Keep track of processed hotel IDs
                 } else {
-                    if (is_null($newNoHtl)) {
-                        $newNoHtl = $existingHotels->isNotEmpty()
-                            ? $existingHotels->first()->no_htl
-                            : generateHotelNumber();
-                    }
-
+                    // If hotel ID doesn't exist, create a new hotel record
+                    // Use the existing no_htl from the first hotel
                     $newHotel = Hotel::create(array_merge($hotelData, [
-                        'id' => (string) Str::uuid(),
-                        'no_htl' => $newNoHtl,
+                        'id' => (string) Str::uuid(), // Auto-generated UUID
+                        'no_htl' => $existingNoHtl, // Use the existing no_htl
                         'user_id' => Auth::id(),
                         'created_by' => Auth::id(),
                         'hotel_only' => 'Y',
                     ]));
-                    $processedHotelIds[] = $newHotel->id;
 
-                    // If a new hotel is created with "Pending L1" status
+                    // dd($newHotel);
+                    $processedHotelIds[] = $newHotel->id; // Keep track of processed hotel IDs
+
+                    // Check if the new hotel is created with "Pending L1" status
                     if ($hotelData['approval_status'] == 'Pending L1') {
                         $updateBusinessTrip = true;
                     }
@@ -1012,28 +976,41 @@ class ReimburseController extends Controller
                 $bt->save();
             }
         }
-
-        // Delete hotels that were not processed (i.e., removed from the form)
-        Hotel::whereIn('id', $hotelIds)
+        // dd([$hotelIds, $processedHotelIds]);
+        // Delete hotels with the same no_htl but not in the processedHotelIds
+        Hotel::where('no_htl', $existingNoHtl)
             ->whereNotIn('id', $processedHotelIds)
             ->delete();
 
-        if (count($processedHotelIds) > 0) {
-            Alert::success('Success', "Hotels updated successfully");
-        } else {
-            Alert::warning('Warning', "No hotels were updated.");
+        // Show success or warning message
+        // if (count($processedHotelIds) > 0) {
+        //     Alert::success('Success', "Hotels updated successfully");
+        // } else {
+        //     Alert::warning('Warning', "No hotels were updated.");
+        // }
+
+        return redirect('/hotel')->with('success', 'Hotel request updated successfully');
+    }
+
+
+
+    public function hotelDelete($key)
+    {
+        // Find the hotel record by its primary key
+        $model = Hotel::findByRouteKey($key);
+
+        if ($model) {
+            // Retrieve the no_htl value of the hotel to delete all hotels with the same no_htl
+            $noHtl = $model->no_htl;
+
+            // Delete all hotels with the same no_htl
+            Hotel::where('no_htl', $noHtl)->delete();
         }
 
-        return redirect()->route('hotel');
+        // Redirect after deletion
+        return redirect()->intended(route('hotel', absolute: false))->with('success', 'All related hotels deleted successfully');
     }
 
-
-    function hotelDelete($key)
-    {
-        $model = Hotel::findByRouteKey($key);
-        $model->delete();
-        return redirect()->intended(route('hotel', absolute: false));
-    }
 
     public function hotelExport($id)
     {
@@ -2031,6 +2008,25 @@ class ReimburseController extends Controller
 
         // Redirect to the ticket approval page
         return redirect('/ticket/approval')->with('success', $message);
+    }
+
+    private function getRomanMonth($month)
+    {
+        $romanMonths = [
+            1 => 'I',
+            2 => 'II',
+            3 => 'III',
+            4 => 'IV',
+            5 => 'V',
+            6 => 'VI',
+            7 => 'VII',
+            8 => 'VIII',
+            9 => 'IX',
+            10 => 'X',
+            11 => 'XI',
+            12 => 'XII'
+        ];
+        return $romanMonths[$month];
     }
 
 }

@@ -29,7 +29,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.delete-button').forEach(button => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent form from submitting immediately
+
                 const transactionId = button.getAttribute('data-id');
                 const form = document.getElementById(`deleteForm_${transactionId}`);
                 const noSppd = document.getElementById(`no_sppd_${transactionId}`).value;
@@ -39,12 +41,12 @@
                     text: "You won't be able to revert this!",
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#AB2F2B", // Primary color
-                    cancelButtonColor: "#CCCCC", // Darker shade for cancel button
+                    confirmButtonColor: "#AB2F2B", // Confirm button color
+                    cancelButtonColor: "#CCCCCC", // Cancel button color
                     confirmButtonText: "Yes, delete it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        form.submit();
+                        form.submit(); // Only submit the form if the user confirms
                     }
                 });
             });

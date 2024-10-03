@@ -41,6 +41,7 @@
             </div>
         </div>
         <!-- Content Row -->
+        @include('hcis.reimbursements.businessTrip.modal')
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow mb-4">
@@ -154,12 +155,17 @@
                                                     <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}"
                                                         class="btn btn-sm rounded-pill btn-outline-warning"
                                                         title="Edit"><i class="ri-edit-box-line"></i></a>
+
                                                     <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}"
-                                                        method="POST" style="display:inline;">
+                                                        method="POST" style="display:inline;"
+                                                        id="deleteForm_{{ $transaction->no_htl }}">
                                                         @csrf
-                                                        <button onclick="return confirm('Do you want to delete this data?')"
-                                                            class="btn btn-sm rounded-pill btn-outline-danger"
-                                                            title="Delete">
+                                                        {{-- Hidden input to store `no_htl` --}}
+                                                        <input type="hidden" id="no_sppd_{{ $transaction->no_htl }}"
+                                                            value="{{ $transaction->no_htl }}">
+                                                        <button
+                                                            class="btn btn-sm rounded-pill btn-outline-danger delete-button"
+                                                            title="Delete" data-id="{{ $transaction->no_htl }}">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </form>
@@ -173,11 +179,6 @@
                                     </tr>
                                     @endforeach
                                 </tbody>
-                                @if (session('message'))
-                                    <script>
-                                        alert('{{ session('message') }}');
-                                    </script>
-                                @endif
                             </table>
                         </div>
                     </div>
@@ -404,12 +405,5 @@
                 $('.modal-backdrop').remove();
             });
         });
-        // Periksa apakah ada pesan sukses
-        var successMessage = "{{ session('success') }}";
-
-        // Jika ada pesan sukses, tampilkan sebagai alert
-        if (successMessage) {
-            alert(successMessage);
-        }
     </script>
 @endsection

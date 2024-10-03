@@ -24,7 +24,7 @@
         </div>
 
         <div class="d-sm-flex align-items-center justify-content-center">
-            <div class="card col-md-8">
+            <div class="card col-md-12">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Data Hotel</h4>
                     <a href="{{ route('hotel') }}" class="btn btn-close btn-close-white"></a>
@@ -77,166 +77,129 @@
                         </div>
 
                         <!-- Dynamic Hotel Forms Start -->
-                        <div class="d-flex flex-column gap-2" id="hotel_forms_container"
-                            style="display: {{ count($hotelData) > 0 ? 'block' : 'none' }};">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <div class="hotel-form" id="hotel-form-{{ $i }}"
-                                    style="display: {{ isset($hotelData[$i - 1]) ? 'block' : 'none' }};">
-                                    <div class="text-bg-primary p-2 mb-1" style="text-align:center; border-radius:4px;">
-                                        Hotel {{ $i }}
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="row my-2">
-                                                <div class="col-md-12">
-                                                    <div class="mb-2">
-                                                        <label class="form-label" for="nama_htl_{{ $i }}">Hotel
-                                                            Name</label>
-                                                        <input type="text" name="nama_htl[]"
-                                                            id="nama_htl_{{ $i }}" class="form-control"
-                                                            placeholder="Hotel Name"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['nama_htl'] : '' }}">
-                                                    </div>
-                                                    <input type="hidden" name="hotel_ids[]"
-                                                        value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['id'] : '' }}">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="lokasi_htl_{{ $i }}">Location</label>
-                                                        <input type="text" name="lokasi_htl[]"
-                                                            id="lokasi_htl_{{ $i }}" class="form-control"
-                                                            placeholder="Location"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['lokasi_htl'] : '' }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="jmlkmr_htl_{{ $i }}">Rooms</label>
-                                                        <input type="number" name="jmlkmr_htl[]"
-                                                            id="jmlkmr_htl_{{ $i }}" class="form-control"
-                                                            placeholder="Number of Rooms"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['jmlkmr_htl'] : '' }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="mb-2">
-                                                        <label class="form-label" for="bed_htl_{{ $i }}">Bed
-                                                            Type</label>
-                                                        <select class="form-control" name="bed_htl[]"
-                                                            id="bed_htl_{{ $i }}">
-                                                            <option value="" disabled
-                                                                {{ !isset($hotelData[$i - 1]) ? 'selected' : '' }}>-
-                                                            </option>
-                                                            <option value="Single Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Single Bed' ? 'selected' : '' }}>
-                                                                Single Bed</option>
-                                                            <option value="Twin Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Twin Bed' ? 'selected' : '' }}>
-                                                                Twin Bed</option>
-                                                            <option value="King Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'King Bed' ? 'selected' : '' }}>
-                                                                King Bed</option>
-                                                            <option value="Super King Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Super King Bed' ? 'selected' : '' }}>
-                                                                Super King Bed</option>
-                                                            <option value="Extra Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Extra Bed' ? 'selected' : '' }}>
-                                                                Extra Bed</option>
-                                                            <option value="Baby Cot"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Baby Cot' ? 'selected' : '' }}>
-                                                                Baby Cot</option>
-                                                            <option value="Sofa Bed"
-                                                                {{ isset($hotelData[$i - 1]) && $hotelData[$i - 1]['bed_htl'] == 'Sofa Bed' ? 'selected' : '' }}>
-                                                                Sofa Bed</option>
-                                                        </select>
-                                                    </div>
+                        <div id="hotel_div">
+                            <div class="d-flex flex-column gap-1" id="hotel_forms_container">
+                                <?php
+                                $maxForms = 5;
+                                $hotelCount = count($hotelData); // Assuming $hotelData contains hotel data from the controller
+
+                                // Ensure at least one form is shown if no data exists
+                                if ($hotelCount === 0) {
+                                    $hotelCount = 1;
+                                    $hotelData = [null]; // Set an empty form data
+                                }
+
+                                for ($i = 1; $i <= $hotelCount; $i++) :
+                                    $hotel = $hotelData[$i - 1] ?? null;
+                                ?>
+                                <div class="card bg-light shadow-none" id="hotel-form-<?php echo $i; ?>"
+                                    style="display: <?php echo $i <= $hotelCount ? 'block' : 'none'; ?>;">
+                                    <div class="card-body">
+                                        <div class="h5 text-uppercase">
+                                            <b>Hotel <?php echo $i; ?></b>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Hotel Name</label>
+                                                <div class="input-group">
+                                                    <input class="form-control form-control-sm" name="nama_htl[]"
+                                                        type="text" placeholder="ex: Hyatt"
+                                                        value="{{ $hotel['nama_htl'] ?? '' }}">
                                                 </div>
                                             </div>
 
-                                            <div class="row my-2">
-                                                <div class="col-md-5">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="tgl_masuk_htl_{{ $i }}">Start Date</label>
-                                                        <input type="date" name="tgl_masuk_htl[]"
-                                                            id="tgl_masuk_htl_{{ $i }}" class="form-control"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['tgl_masuk_htl'] : '' }}"
-                                                            onchange="calculateDays({{ $i }})">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="tgl_keluar_htl_{{ $i }}">End Date</label>
-                                                        <input type="date" name="tgl_keluar_htl[]"
-                                                            id="tgl_keluar_htl_{{ $i }}" class="form-control"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['tgl_keluar_htl'] : '' }}"
-                                                            onchange="calculateDays({{ $i }})">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <div class="mb-2">
-                                                        <label class="form-label"
-                                                            for="totaldays_{{ $i }}">Total Days</label>
-                                                        <div class="input-group">
-                                                            <input class="form-control bg-light"
-                                                                id="totaldays_{{ $i }}" name="totaldays[]"
-                                                                type="text" min="0"
-                                                                value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['total_hari'] : '' }}"
-                                                                readonly>
-                                                            <div class="input-group-append">
-                                                                <span class="input-group-text">days</span>
-                                                            </div>
-                                                        </div>
-                                                        {{-- <input class="form-control" id="perdiem_{{ $i }}"
-                                                            name="perdiem[]" type="hidden"
-                                                            value="{{ isset($hotelData[$i - 1]) ? $hotelData[$i - 1]['perdiem'] : '' }}"> --}}
-                                                    </div>
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Hotel Location</label>
+                                                <div class="input-group">
+                                                    <input class="form-control form-control-sm" name="lokasi_htl[]"
+                                                        type="text" placeholder="ex: Jakarta"
+                                                        value="{{ $hotel['lokasi_htl'] ?? '' }}">
                                                 </div>
                                             </div>
-
-                                            @if ($i < 5)
-                                                <div class="mt-3">
-                                                    <label class="form-label">Add more hotels</label>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio"
-                                                            id="more_htl_no_{{ $i }}"
-                                                            name="more_htl_{{ $i }}" value="No"
-                                                            {{ ($hotelData[$i - 1]['more_htl'] ?? 'Tidak') == 'Tidak' ? 'checked' : '' }}>
-                                                        <label class="form-check-label"
-                                                            for="more_htl_no_{{ $i }}">No</label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio"
-                                                            id="more_htl_yes_{{ $i }}"
-                                                            name="more_htl_{{ $i }}" value="Yes"
-                                                            {{ ($hotelData[$i - 1]['more_htl'] ?? 'Tidak') == 'Ya' ? 'checked' : '' }}
-                                                            onchange="toggleNextHotelForm({{ $i }})">
-                                                        <label class="form-check-label"
-                                                            for="more_htl_yes_{{ $i }}">Yes</label>
-                                                    </div>
+                                            <div class="col-md-2 mb-2">
+                                                <label class="form-label">Bed Size</label>
+                                                <select class="form-select form-select-sm select2" name="bed_htl[]">
+                                                    <option value="Single Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Single Bed' ? 'selected' : '' }}>
+                                                        Single Bed</option>
+                                                    <option value="Twin Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Twin Bed' ? 'selected' : '' }}>
+                                                        Twin Bed</option>
+                                                    <option value="King Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'King Bed' ? 'selected' : '' }}>
+                                                        King Bed</option>
+                                                    <option value="Super King Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Super King Bed' ? 'selected' : '' }}>
+                                                        Super King Bed</option>
+                                                    <option value="Extra Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Extra Bed' ? 'selected' : '' }}>
+                                                        Extra Bed</option>
+                                                    <option value="Baby Cot"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Baby Cot' ? 'selected' : '' }}>
+                                                        Baby Cot</option>
+                                                    <option value="Sofa Bed"
+                                                        {{ isset($hotel['bed_htl']) && $hotel['bed_htl'] === 'Sofa Bed' ? 'selected' : '' }}>
+                                                        Sofa Bed</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 mb-2">
+                                                <label class="form-label">Total Room</label>
+                                                <div class="input-group">
+                                                    <input class="form-control form-control-sm" name="jmlkmr_htl[]"
+                                                        type="number" min="1" placeholder="ex: 1"
+                                                        value="{{ $hotel['jmlkmr_htl'] ?? '' }}">
                                                 </div>
-                                            @endif
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Check In Date</label>
+                                                <input type="date" class="form-control form-control-sm"
+                                                    name="tgl_masuk_htl[]" id="check-in-<?php echo $i; ?>"
+                                                    value="{{ $hotel['tgl_masuk_htl'] ?? '' }}"
+                                                    onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Check Out Date</label>
+                                                <input type="date" class="form-control form-control-sm"
+                                                    name="tgl_keluar_htl[]" id="check-out-<?php echo $i; ?>"
+                                                    value="{{ $hotel['tgl_keluar_htl'] ?? '' }}"
+                                                    onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Total Days</label>
+                                                <input type="number" class="form-control form-control-sm bg-light"
+                                                    name="total_hari[]" id="total-days-<?php echo $i; ?>" readonly
+                                                    value="{{ $hotel['total_hari'] ?? '' }}">
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="hotel_ids[]" value="{{ $hotel['id'] ?? '' }}">
+                                        <div class="mt-2">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn"
+                                                data-form-id="<?php echo $i; ?>">Remove Data</button>
                                         </div>
                                     </div>
                                 </div>
-                            @endfor
+                                <?php endfor; ?>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary add-hotel-btn">Add Hotel
+                                Data</button>
                         </div>
 
 
                         <br>
 
                         <!-- Buttons -->
-                        <div class="row">
-                            <input type="hidden" name="status" value="Pending L1" id="status">
-                            <div class="col-md d-md-flex justify-content-end text-center">
-                                <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                                <button type="button" class="btn btn-outline-primary rounded-pill me-2"
-                                    name="action_ca_draft" id="save-draft">Save as Draft</button>
-                                <button type="submit" class="btn btn-primary rounded-pill shadow px-4">Submit</button>
-                            </div>
+                        <input type="hidden" name="status" value="Pending L1" id="status">
+                        <input type="hidden" id="formActionType" name="formActionType" value="">
+
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="submit" class="btn btn-outline-primary rounded-pill me-2 submit-button"
+                                name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
+                                Draft</button>
+                            <button type="submit" class="btn btn-primary rounded-pill submit-button"
+                                name="action_submit" value="Pending L1" id="submit-btn">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -248,174 +211,294 @@
 
     <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
     <script>
-        function calculateDays(index) {
-            // Get the start and end date input fields
-            const startDateInput = document.getElementById('tgl_masuk_htl_' + index);
-            const endDateInput = document.getElementById('tgl_keluar_htl_' + index);
-            const totalDaysInput = document.getElementById('totaldays_' + index);
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.submit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent immediate form submission
 
-            // Get the values of the start and end dates
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
+                    const form = document.getElementById('btEditForm');
 
-            // Ensure the end date is not earlier than the start date
-            if (endDate < startDate) {
-                alert("End date cannot be earlier than start date.");
-                endDateInput.value = ''; // Reset the end date
-                totalDaysInput.value = '0'; // Reset the total days
+                    // Check if the form is valid before proceeding
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // Show validation messages if invalid
+                        return; // Exit if the form is not valid
+                    }
+
+                    // Show SweetAlert confirmation with the input summary
+                    Swal.fire({
+                        title: "Do you want to submit this request?",
+                        html: `You won't be able to revert this!`, // Use 'html' instead of 'text'
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AB2F2B",
+                        cancelButtonColor: "#CCCCCC",
+                        confirmButtonText: "Yes, submit it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const input = document.createElement('input');
+                            input.type =
+                                'hidden'; // Hidden input so it doesn't show in the form
+                            input.name = button.name; // Use the button's name attribute
+                            input.value = button.value; // Use the button's value attribute
+
+                            form.appendChild(input); // Append the hidden input to the form
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        //Hotel Validation Date
+        function calculateTotalDays(index) {
+            const checkInInput = document.getElementById(`check-in-${index}`);
+            const checkOutInput = document.getElementById(`check-out-${index}`);
+            const totalDaysInput = document.getElementById(`total-days-${index}`);
+
+            if (!checkInInput || !checkOutInput) {
+                return; // Ensure elements are present before proceeding
+            }
+
+            // Parse the dates
+            const checkInDate = new Date(checkInInput.value);
+            const checkOutDate = new Date(checkOutInput.value);
+            console.log(checkInDate);
+            console.log(checkOutDate);
+
+
+            // Validate Check In Date
+            // Ensure Check Out Date is not earlier than Check In Date
+            if (checkOutDate < checkInDate) {
+                Swal.fire({
+                    title: "Warning!",
+                    text: "Check Out date cannot be earlier than Check In date.",
+                    icon: "error",
+                    confirmButtonColor: "#AB2F2B",
+                    confirmButtonText: "OK",
+                });
+                checkOutInput.value = ""; // Reset the Check Out field
+                totalDaysInput.value = ""; // Clear total days
                 return;
             }
 
-            // Calculate the difference in days
-            const timeDiff = endDate.getTime() - startDate.getTime();
-            const totalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Convert milliseconds to days
-
-            // Update the total days field
-            totalDaysInput.value = totalDays > 0 ? totalDays : 0;
+            // Calculate the total days if all validations pass
+            if (checkInDate && checkOutDate) {
+                const diffTime = Math.abs(checkOutDate - checkInDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                totalDaysInput.value = diffDays;
+            } else {
+                totalDaysInput.value = "";
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        // Attach event listeners to the hotel forms
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".hotel-form").forEach((form, index) => {
+                const i = index + 1; // Adjust for 1-based index
 
-            // Hotel form handling
-            for (let i = 1; i <= 4; i++) {
-                const yesRadio = document.getElementById(`more_htl_yes_${i}`);
-                const noRadio = document.getElementById(`more_htl_no_${i}`);
-                const nextForm = document.getElementById(`hotel-form-${i + 1}`);
-
-                yesRadio.addEventListener('change', function() {
-                    if (this.checked) {
-                        nextForm.style.display = 'block';
-                    }
-                });
-
-                noRadio.addEventListener('change', function() {
-                    if (this.checked) {
-                        nextForm.style.display = 'none';
-                        // Hide all subsequent forms
-                        for (let j = i + 1; j <= 5; j++) {
-                            const form = document.getElementById(`hotel-form-${j}`);
-                            if (form) {
-                                form.style.display = 'none';
-                                // Reset the form when it is hidden
-                                resetHotelFields(form);
-                            }
-                        }
-                        // Reset radio buttons for subsequent forms
-                        for (let j = i + 1; j <= 4; j++) {
-                            const noRadioButton = document.getElementById(`more_htl_no_${j}`);
-                            if (noRadioButton) {
-                                noRadioButton.checked = true;
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Function to reset hotel fields
-            function resetHotelFields(container) {
-                const inputs = container.querySelectorAll('input[type="text"], input[type="number"], textarea');
-                inputs.forEach(input => {
-                    input.value = '';
-                });
-                const selects = container.querySelectorAll('select');
-                selects.forEach(select => {
-                    select.selectedIndex = 0;
-                });
-            }
-
-            // Calculate total days for each hotel form
-            function calculateTotalDays(index) {
-                const checkIn = document.querySelector(`#hotel-form-${index} input[name="tgl_masuk_htl[]"]`);
-                const checkOut = document.querySelector(`#hotel-form-${index} input[name="tgl_keluar_htl[]"]`);
-                const totalDays = document.querySelector(`#hotel-form-${index} input[name="total_hari[]"]`);
-
-                if (checkIn && checkOut && totalDays) {
-                    const start = new Date(checkIn.value);
-                    const end = new Date(checkOut.value);
-
-                    if (checkIn.value && checkOut.value) {
-                        // Calculate difference in milliseconds and convert to days, excluding the same day
-                        const difference = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-                        if (difference < 0) {
-                            alert("Check out date cannot be earlier than check in date.");
-                            checkOut.value = ''; // Clear the check-out date if invalid
-                            totalDays.value = ''; // Clear the total days if check-out date is reset
-                        } else {
-                            totalDays.value = difference >= 0 ? difference : 0;
-                        }
-                    } else {
-                        totalDays.value = ''; // Clear total days if dates are not set
-                    }
-                } else {
-                    console.error("Elements not found. Check selectors.");
-                }
-            }
-
-            // Add event listeners for date inputs
-            for (let i = 1; i <= 5; i++) {
-                const checkIn = document.querySelector(`#hotel-form-${i} input[name="tgl_masuk_htl[]"]`);
-                const checkOut = document.querySelector(`#hotel-form-${i} input[name="tgl_keluar_htl[]"]`);
-
-                if (checkIn && checkOut) {
-                    checkIn.addEventListener('change', () => calculateTotalDays(i));
-                    checkOut.addEventListener('change', () => calculateTotalDays(i));
-                }
-            }
-
-            // Handle date validation for the return date
-            document.getElementById('kembali').addEventListener('change', function() {
-                var mulaiDate = document.getElementById('mulai').value;
-                var kembaliDate = this.value;
-
-                if (kembaliDate < mulaiDate) {
-                    alert('Return date cannot be earlier than Start date.');
-                    this.value = ''; // Reset the kembali field
-                }
+                form.querySelector('input[name="tgl_masuk_htl[]"]').addEventListener(
+                    "change",
+                    () => calculateTotalDays(i)
+                );
+                form.querySelector('input[name="tgl_keluar_htl[]"]').addEventListener(
+                    "change",
+                    () => calculateTotalDays(i)
+                );
             });
         });
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('save-draft').addEventListener('click', function(event) {
-                event.preventDefault();
-
-                // Remove the existing status input
-                const existingStatus = document.getElementById('status');
-                if (existingStatus) {
-                    existingStatus.remove();
-                }
-
-                // Create a new hidden input for "Draft"
-                const draftInput = document.createElement('input');
-                draftInput.type = 'hidden';
-                draftInput.name = 'status';
-                draftInput.value = 'Draft';
-                draftInput.id = 'status';
-
-                // Append the draft input to the form
-                this.closest('form').appendChild(draftInput);
-
-                // Submit the form
-                this.closest('form').submit();
-            });
-        });
-
-        document.getElementById('tgl_keluar_htl').addEventListener('change', function() {
-            var startDate = document.getElementById('tgl_masuk_htl').value;
-            var endDate = this.value;
-
-            if (startDate && endDate && endDate < startDate) {
-                alert('End Date cannot be earlier than Start Date.');
-                this.value = '';
-            }
-        });
-
-        function validateInput(input) {
-            //input.value = input.value.replace(/[^0-9,]/g, '');
-            input.value = input.value.replace(/[^0-9]/g, '');
-        }
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize formHotelCount based on existing forms
+            let formHotelCount = document.querySelectorAll('[id^="hotel-form-"]').length || 1;
+            const maxHotelForms = 5;
+            const hotelFormsContainer = document.getElementById("hotel_forms_container");
+            const addHotelButton = document.querySelector(".add-hotel-btn");
+
+            function updateFormNumbers() {
+                const forms = hotelFormsContainer.querySelectorAll('[id^="hotel-form-"]');
+                forms.forEach((form, index) => {
+                    const formNumber = index + 1;
+                    form.querySelector(".h5.text-uppercase b").textContent = `Hotel ${formNumber}`;
+                    form.id = `hotel-form-${formNumber}`;
+                    form.querySelector(".remove-hotel-btn").dataset.formId = formNumber;
+
+                    updateFormElementIds(form, formNumber);
+                });
+                formHotelCount = forms.length;
+                updateButtonVisibility();
+            }
+
+            function updateFormElementIds(form, formNumber) {
+                const elements = form.querySelectorAll("[id],[name],[onchange]");
+                elements.forEach((element) => {
+                    // Update IDs
+                    if (element.id) {
+                        element.id = element.id.replace(/\d+$/, formNumber);
+                    }
+                    // Update names
+                    if (element.name) {
+                        element.name = element.name.replace(/\[\d*\]/, `[${formNumber}]`);
+                    }
+                    // Update onchange attributes
+                    if (element.hasAttribute("onchange")) {
+                        const onchangeValue = element.getAttribute("onchange");
+                        const updatedOnchangeValue = onchangeValue.replace(/\d+/, formNumber);
+                        element.setAttribute("onchange", updatedOnchangeValue);
+                    }
+                });
+            }
+
+            function updateButtonVisibility() {
+                addHotelButton.style.display = formHotelCount < maxHotelForms ? "inline-block" : "none";
+                const removeButtons = hotelFormsContainer.querySelectorAll(".remove-hotel-btn");
+                removeButtons.forEach((button) => {
+                    button.style.display = formHotelCount > 1 ? "inline-block" : "none";
+                });
+            }
+
+            function resetHotelFields(container) {
+                const inputs = container.querySelectorAll(
+                    'input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea'
+                );
+                inputs.forEach((input) => {
+                    input.value = ""; // Reset input value
+                    input.required = false; // Remove required attribute
+                });
+
+                const selects = container.querySelectorAll("select");
+                selects.forEach((select) => {
+                    select.value = select.querySelector("option[selected]") ? select.querySelector(
+                        "option[selected]").value : select.querySelector("option").value;
+                });
+            }
+
+            function resetAllHotelForms() {
+                const forms = hotelFormsContainer.querySelectorAll('[id^="hotel-form-"]');
+                forms.forEach((form, index) => {
+                    resetHotelFields(form);
+                    toggleRequiredAttributes(form, false);
+                    if (index === 0) {
+                        form.style.display = "block";
+                    } else {
+                        form.remove();
+                    }
+                });
+                formHotelCount = 1;
+                updateButtonVisibility();
+            }
+
+            function toggleRequiredAttributes(form, isRequired) {
+                const fields = [
+                    'input[name="nama_htl[]"]',
+                    'input[name="lokasi_htl[]"]',
+                    'select[name="bed_htl[]"]',
+                    'input[name="jmlkmr_htl[]"]',
+                    'input[name="tgl_masuk_htl[]"]',
+                    'input[name="tgl_keluar_htl[]"]',
+                ];
+
+                fields.forEach((selector) => {
+                    const field = form.querySelector(selector);
+                    if (field) {
+                        field.required = isRequired;
+                    }
+                });
+            }
+
+            function addNewHotelForm() {
+                if (formHotelCount < maxHotelForms) {
+                    formHotelCount++;
+                    const newHotelForm = createNewHotelForm(formHotelCount);
+                    hotelFormsContainer.insertAdjacentHTML("beforeend", newHotelForm);
+                    const addedForm = hotelFormsContainer.lastElementChild;
+                    toggleRequiredAttributes(addedForm, true); // Assuming new forms are required
+                    updateFormNumbers();
+                    console.log(formHotelCount);
+                } else {
+                    Swal.fire({
+                        title: "Warning!",
+                        text: "You have reached the maximum number of hotels (5).",
+                        icon: "error",
+                        confirmButtonColor: "#AB2F2B",
+                        confirmButtonText: "OK",
+                    });
+                }
+            }
+
+            addHotelButton.addEventListener("click", addNewHotelForm);
+
+            hotelFormsContainer.addEventListener("click", function(e) {
+                if (e.target.classList.contains("remove-hotel-btn")) {
+                    const formId = e.target.dataset.formId;
+                    document.getElementById(`hotel-form-${formId}`).remove();
+                    updateFormNumbers();
+                }
+            });
+
+            function createNewHotelForm(formNumber) {
+                return `
+            <div class="card bg-light shadow-none" id="hotel-form-${formNumber}" style="display: block;">
+                <div class="card-body">
+                    <div class="h5 text-uppercase">
+                        <b>Hotel ${formNumber}</b>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Hotel Name</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" name="nama_htl[]" type="text" placeholder="ex: Hyatt">
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Hotel Location</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" name="lokasi_htl[]" type="text" placeholder="ex: Jakarta">
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label class="form-label">Bed Size</label>
+                            <select class="form-select form-select-sm" name="bed_htl[]">
+                                <option value="Single Bed">Single Bed</option>
+                                <option value="Twin Bed">Twin Bed</option>
+                                <option value="King Bed">King Bed</option>
+                                <option value="Super King Bed">Super King Bed</option>
+                                <option value="Extra Bed">Extra Bed</option>
+                                <option value="Baby Cot">Baby Cot</option>
+                                <option value="Sofa Bed">Sofa Bed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label class="form-label">Total Room</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" name="jmlkmr_htl[]" type="number" min="1" placeholder="ex: 1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Check In Date</label>
+                            <input type="date" class="form-control form-control-sm" id="check-in-${formNumber}" name="tgl_masuk_htl[]" onchange="calculateTotalDays(${formNumber})">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Check Out Date</label>
+                            <input type="date" class="form-control form-control-sm" id="check-out-${formNumber}" name="tgl_keluar_htl[]" onchange="calculateTotalDays(${formNumber})">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Total Days</label>
+                            <input type="number" class="form-control form-control-sm bg-light" id="total-days-${formNumber}" name="total_hari[]" readonly>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-hotel-btn" data-form-id="${formNumber}">Remove Data</button>
+                    </div>
+                </div>
+            </div>`;
+            }
+
+            // Initial setup
+            updateFormNumbers(); // Ensure the count is accurate on load
+        });
+    </script>
 @endsection
