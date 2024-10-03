@@ -1159,7 +1159,9 @@ function handleTaksiForms() {
 //CA JS
 function handleCaForms() {
     const caCheckbox = document.getElementById("cashAdvancedCheckbox");
+    const perdiemCheckbox = document.getElementById("perdiemCheckbox");
     const caDiv = document.getElementById("ca_bt");
+    const caPerdiem = document.getElementById("ca_perdiem");
 
     caCheckbox.addEventListener("change", function () {
         if (this.checked) {
@@ -1171,6 +1173,55 @@ function handleCaForms() {
             resetFields("ca_bt"); // Pass the container ID to reset the fields
         }
     });
+    perdiemCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+            // Show form when checked
+            caPerdiem.style.display = "block";
+        } else {
+            // Hide form and reset all fields when unchecked
+            caPerdiem.style.display = "none";
+            resetFieldsPerdiem("ca_perdiem"); // Pass the container ID to reset the fields
+        }
+    });
+}
+
+function resetFieldsPerdiem() {
+    // Per Diem-related fields
+    const companyBtPerdiemFields = document.getElementsByName(
+        "company_bt_perdiem[]"
+    );
+    const locationBtPerdiemFields = document.getElementsByName(
+        "location_bt_perdiem[]"
+    );
+    const nominalBtPerdiemFields = document.getElementsByName(
+        "nominal_bt_perdiem[]"
+    );
+    const otherLocationBtPerdiemFields = document.getElementsByName(
+        "other_location_bt_perdiem[]"
+    );
+    const startBtPerdiemFields =
+        document.getElementsByName("start_bt_perdiem[]");
+    const endBtPerdiemFields = document.getElementsByName("end_bt_perdiem[]");
+    const totalDaysBtPerdiemFields = document.getElementsByName(
+        "total_days_bt_perdiem[]"
+    );
+    const totalBtPerdiem = document.getElementsByName("total_bt_perdiem");
+
+    // Reset values to empty or default
+    companyBtPerdiemFields.forEach((field) => {
+        field.selectedIndex = 0; // Set to first option (assuming it's the "Select Company..." option)
+    });
+    locationBtPerdiemFields.forEach((field) => {
+        field.selectedIndex = 0; // Set to first option (assuming it's the "Select Company..." option)
+    });
+    nominalBtPerdiemFields.forEach((field) => (field.value = 0));
+    otherLocationBtPerdiemFields.forEach((field) => (field.value = ""));
+    startBtPerdiemFields.forEach((field) => (field.value = ""));
+    endBtPerdiemFields.forEach((field) => (field.value = ""));
+    totalDaysBtPerdiemFields.forEach((field) => (field.value = 0));
+    totalBtPerdiem.forEach((field) => (field.value = 0));
+
+    calculateTotalNominalBTTotal();
 }
 
 function resetFields() {
@@ -1224,7 +1275,7 @@ function resetFields() {
 
     // Reset nominal fields
     nominalFields.forEach((field) => {
-        field.value = ""; // Reset to empty
+        field.value = 0; // Reset to empty
     });
 
     // Reset information fields
@@ -1251,7 +1302,7 @@ function resetFields() {
         field.value = ""; // Reset to empty
     });
     nominalBtLainnya.forEach((field) => {
-        field.value = ""; // Reset to empty
+        field.value = 0; // Reset to empty
     });
     keteranganBtLainnya.forEach((field) => {
         field.value = ""; // Reset to empty
