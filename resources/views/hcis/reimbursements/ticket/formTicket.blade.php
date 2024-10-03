@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="d-sm-flex align-items-center justify-content-center">
-            <div class="card col-md-8">
+            <div class="card col-md-12">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
                     <h4 class="modal-title" id="viewFormEmployeeLabel">Add Ticket</h4>
                     <a href="{{ route('ticket') }}" type="button" class="btn btn-close btn-close-white"></a>
@@ -31,7 +31,7 @@
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
                         <form id="scheduleForm" method="post" action="{{ route('ticket.submit') }}">@csrf
-                            <div class="row my-2">
+                            <div class="row">
                                 <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
@@ -54,7 +54,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr>
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="mb-2">
@@ -88,7 +87,7 @@
                                         Ticket <?php echo $i; ?></div>
                                     <div class="card">
                                         <div class="card-body">
-                                            <div class="row my-2">
+                                            <div class="row">
                                                 <label class="form-label" for="jk_tkt">Passengers Name (No KTP)</label>
                                                 <div class="col-md-2">
                                                     <div class="mb-2 mr-0">

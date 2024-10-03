@@ -716,8 +716,8 @@ class ReimburseController extends Controller
     {
 
         $userId = Auth::id();
-        $parentLink = 'Reimbursement';
-        $link = 'Hotel';
+        $parentLink = 'Hotel';
+        $link = 'Add Hotel Data';
 
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
@@ -832,8 +832,8 @@ class ReimburseController extends Controller
         $userId = Auth::id();
 
         // Define links for navigation
-        $parentLink = 'Reimbursement';
-        $link = 'Hotel';
+        $parentLink = 'Hotel';
+        $link = 'Hotel Edit';
 
         // Fetch the specific hotel transaction by key
         $hotel = Hotel::findByRouteKey($key);
@@ -1111,8 +1111,8 @@ class ReimburseController extends Controller
     public function hotelApprovalDetail($key)
     {
         // Define links for navigation
-        $parentLink = 'Reimbursement';
-        $link = 'Hotel Approval';
+        $parentLink = 'Hotel Approval';
+        $link = 'Request Detail';
 
         $hotel = Hotel::findByRouteKey($key);
 

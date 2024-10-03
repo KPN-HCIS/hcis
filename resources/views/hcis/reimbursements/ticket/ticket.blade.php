@@ -36,7 +36,8 @@
             </div>
             <div class="col">
                 <div class="mb-2 text-end">
-                    <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow">Add Ticket</a>
+                    <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow"><i
+                        class="bi bi-plus-circle"></i> Add Ticket</a>
                 </div>
             </div>
         </div>
