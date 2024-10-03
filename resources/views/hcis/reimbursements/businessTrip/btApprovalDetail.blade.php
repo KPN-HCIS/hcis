@@ -92,12 +92,12 @@
                                 </div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="mulai" class="form-label">Start Date</label>
                                     <input type="date" class="form-control form-control-sm bg-light" id="mulai"
                                         name="mulai" placeholder="Tanggal Mulai" value="{{ $n->mulai }}" readonly>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <label for="kembali" class="form-label">End Date</label>
                                     <input type="date" class="form-control form-control-sm bg-light" id="kembali"
                                         name="kembali" placeholder="Tanggal Kembali" value="{{ $n->kembali }}" readonly>
@@ -139,7 +139,7 @@
                             </div>
 
                             <div class="row mb-2">
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-2">
                                     <label for="bb_perusahaan" class="form-label">
                                         Company Cost Expenses (PT Service Needs / Not PT Payroll)
                                     </label>

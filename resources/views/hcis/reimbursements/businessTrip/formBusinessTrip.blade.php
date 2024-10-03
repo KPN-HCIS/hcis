@@ -361,11 +361,21 @@
                         return;
                     }
                     // Check if CA is checked and all fields are zero
-                    if (caCheckbox && totalBtPerdiem == 0 && totalBtPenginapan == 0 &&
+                    if (caCheckbox && totalBtPenginapan == 0 &&
                         totalBtTransport == 0 && totalBtLainnya == 0) {
                         Swal.fire({
                             title: "Warning!",
-                            text: "All fields (Perdiem, Accommodation, Transport, Others) are 0. Please fill in the values.",
+                            text: "Cash Advanced fields (Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                    if (perdiemCheckbox && totalBtPerdiem == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Total Perdiem is 0. Please fill in the values.",
                             icon: "warning",
                             confirmButtonColor: "#AB2F2B",
                             confirmButtonText: "OK",

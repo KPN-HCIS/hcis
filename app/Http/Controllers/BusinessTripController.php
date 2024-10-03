@@ -2723,6 +2723,7 @@ class BusinessTripController extends Controller
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
         // Initialize caDetail with an empty array if it's null
         $caDetail = $ca ? json_decode($ca->detail_ca, true) : [];
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
 
         // Safely access nominalPerdiem with default '0' if caDetail is empty
         $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
@@ -2789,6 +2790,7 @@ class BusinessTripController extends Controller
             'employees' => $employees,
             'parentLink' => $parentLink,
             'link' => $link,
+            'perdiem' => $perdiem,
         ]);
     }
     public function updateStatus($id, Request $request)

@@ -2,7 +2,7 @@
     <div class="col-md-12">
         <div class="table-responsive-sm">
             <div class="row mb-2">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-2">
                     <label for="date_required" class="form-label">Date Required</label>
                     <input type="date" class="form-control form-control-sm bg-light" id="date_required_2" name="date_required"
                         placeholder="Date Required" onchange="syncDateRequired(this)" value="{{ $ca->date_required ?? 0 }}" readonly>
