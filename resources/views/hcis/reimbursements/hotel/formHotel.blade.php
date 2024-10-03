@@ -31,7 +31,7 @@
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
                         <form id="btEditForm" method="post" action="{{ route('hotel.submit') }}">@csrf
-                            <div class="row my-2">
+                            <div class="row">
                                 <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
@@ -85,19 +85,20 @@
                                                     <label class="form-label">Hotel Name</label>
                                                     <div class="input-group">
                                                         <input class="form-control form-control-sm" name="nama_htl[]"
-                                                            type="text" placeholder="ex: Hyatt">
+                                                            type="text" placeholder="ex: Hyatt" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <label class="form-label">Hotel Location</label>
                                                     <div class="input-group">
                                                         <input class="form-control form-control-sm" name="lokasi_htl[]"
-                                                            type="text" placeholder="ex: Jakarta">
+                                                            type="text" placeholder="ex: Jakarta" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 mb-2">
                                                     <label class="form-label">Bed Size</label>
-                                                    <select class="form-select form-select-sm select2" name="bed_htl[]">
+                                                    <select class="form-select form-select-sm select2" name="bed_htl[]"
+                                                        required>
                                                         <option value="Single Bed">Single Bed</option>
                                                         <option value="Twin Bed">Twin Bed</option>
                                                         <option value="King Bed">King Bed</option>
@@ -111,7 +112,7 @@
                                                     <label class="form-label">Total Room</label>
                                                     <div class="input-group">
                                                         <input class="form-control form-control-sm" name="jmlkmr_htl[]"
-                                                            type="number" min="1" placeholder="ex: 1">
+                                                            type="number" min="1" placeholder="ex: 1" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -120,13 +121,13 @@
                                                     <label class="form-label">Check In Date</label>
                                                     <input type="date" class="form-control form-control-sm"
                                                         name="tgl_masuk_htl[]" id="check-in-<?php echo $i; ?>"
-                                                        onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                                        onchange="calculateTotalDays(<?php echo $i; ?>)" required>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <label class="form-label">Check Out Date</label>
                                                     <input type="date" class="form-control form-control-sm"
                                                         name="tgl_keluar_htl[]" id="check-out-<?php echo $i; ?>"
-                                                        onchange="calculateTotalDays(<?php echo $i; ?>)">
+                                                        onchange="calculateTotalDays(<?php echo $i; ?>)" required>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <label class="form-label">Total Days</label>
@@ -304,6 +305,36 @@
                 });
             }
 
+            function toggleRequiredAttributes(form, isRequired) {
+                const fields = [
+                    'input[name="nama_htl[]"]',
+                    'input[name="lokasi_htl[]"]',
+                    'select[name="bed_htl[]"]',
+                    'input[name="jmlkmr_htl[]"]',
+                    'input[name="tgl_masuk_htl[]"]',
+                    'input[name="tgl_keluar_htl[]"]',
+                ];
+
+                fields.forEach((selector) => {
+                    const field = form.querySelector(selector);
+                    if (field) {
+                        field.required = isRequired;
+                    }
+                });
+            }
+
+            function toggleRequiredAttributes(form, isRequired = true) {
+                // Loop through each input field in the form
+                form.querySelectorAll('input, select, textarea').forEach((input) => {
+                    if (isRequired) {
+                        input.setAttribute('required', 'required'); // Add required attribute
+                    } else {
+                        input.removeAttribute('required'); // Remove required attribute
+                    }
+                });
+            }
+
+
             function updateButtonVisibility() {
                 addHotelButton.style.display = formHotelCount < maxHotelForms ? "inline-block" : "none";
                 const removeButtons = hotelFormsContainer.querySelectorAll(".remove-hotel-btn");
@@ -317,7 +348,14 @@
                     formHotelCount++;
                     const newHotelForm = createNewHotelForm(formHotelCount);
                     hotelFormsContainer.insertAdjacentHTML("beforeend", newHotelForm);
-                    updateFormNumbers();
+                    const addedForm = hotelFormsContainer.lastElementChild;
+
+                    // Make the new form fields required
+                    toggleRequiredAttributes(addedForm, true);
+
+                    updateFormNumbers(); // Update form numbering if applicable
+                    updateButtonVisibility(); // Adjust visibility of buttons
+
                 } else {
                     Swal.fire({
                         title: "Warning!",

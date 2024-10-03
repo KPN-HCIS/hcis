@@ -407,15 +407,26 @@
                 });
             }
 
+            function toggleRequiredAttributes(form, isRequired = true) {
+                // Loop through each input field in the form
+                form.querySelectorAll('input, select, textarea').forEach((input) => {
+                    if (isRequired) {
+                        input.setAttribute('required', 'required'); // Add required attribute
+                    } else {
+                        input.removeAttribute('required'); // Remove required attribute
+                    }
+                });
+            }
+
             function addNewHotelForm() {
                 if (formHotelCount < maxHotelForms) {
                     formHotelCount++;
                     const newHotelForm = createNewHotelForm(formHotelCount);
                     hotelFormsContainer.insertAdjacentHTML("beforeend", newHotelForm);
                     const addedForm = hotelFormsContainer.lastElementChild;
+
                     toggleRequiredAttributes(addedForm, true); // Assuming new forms are required
                     updateFormNumbers();
-                    console.log(formHotelCount);
                 } else {
                     Swal.fire({
                         title: "Warning!",
