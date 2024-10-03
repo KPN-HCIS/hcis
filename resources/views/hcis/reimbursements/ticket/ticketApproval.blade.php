@@ -165,11 +165,10 @@
         aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-white" id="detailModalLabel">Detail Information</h5>
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close"
                         style="border: 0px; border-radius:4px;">
-                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
