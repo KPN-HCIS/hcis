@@ -56,7 +56,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.approve-button').forEach(button => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent form from submitting immediately
+
                 const transactionId = button.getAttribute('data-id');
                 const form = document.getElementById(`approve-form-${transactionId}`);
                 const noSppd = document.getElementById('no_sppd').value;

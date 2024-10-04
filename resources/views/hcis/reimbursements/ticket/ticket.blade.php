@@ -37,7 +37,7 @@
             <div class="col">
                 <div class="mb-2 text-end">
                     <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow"><i
-                        class="bi bi-plus-circle"></i> Add Ticket</a>
+                            class="bi bi-plus-circle"></i> Add Ticket</a>
                 </div>
             </div>
         </div>
@@ -171,11 +171,14 @@
                                                         <i class="ri-edit-box-line"></i>
                                                     </a>
                                                     <form action="{{ route('ticket.delete', encrypt($transaction->id)) }}"
-                                                        method="POST" style="display:inline;">
+                                                        method="POST" style="display:inline;"
+                                                        id="deleteForm_{{ $transaction->no_tkt }}">
                                                         @csrf
-                                                        <button onclick="return confirm('Do you want to delete this data?')"
-                                                            class="btn btn-sm rounded-pill btn-outline-danger"
-                                                            title="Delete">
+                                                        <input type="hidden" id="no_sppd_{{ $transaction->no_tkt }}"
+                                                            value="{{ $transaction->no_tkt }}">
+                                                        <button
+                                                            class="btn btn-sm rounded-pill btn-outline-danger delete-button"
+                                                            title="Delete" data-id="{{ $transaction->no_tkt }}">
                                                             <i class="ri-delete-bin-line"></i>
                                                         </button>
                                                     </form>
@@ -209,7 +212,8 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-white" id="rejectReasonModalLabel">Rejection Information</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">

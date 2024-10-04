@@ -931,6 +931,7 @@ class ReimburseController extends Controller
                     'total_hari' => $req->total_hari[$index],
                     'approval_status' => $statusValue,
                     'jns_dinas_htl' => $req->jns_dinas_htl,
+                    'hotel_only' => 'Y',
                 ];
 
                 // Check if hotel ID exists to decide if it's an update or a new entry
@@ -1358,8 +1359,8 @@ class ReimburseController extends Controller
     {
 
         $userId = Auth::id();
-        $parentLink = 'Reimbursement';
-        $link = 'Ticket';
+        $parentLink = 'Ticket';
+        $link = 'Add Ticket Data';
 
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
@@ -1476,6 +1477,7 @@ class ReimburseController extends Controller
             'type_tkt' => $req->type_tkt,
             'ket_tkt' => $req->ket_tkt,
             'approval_status' => $statusValue,
+            'tkt_only' => 'Y',
         ];
 
         foreach ($ticketData['noktp_tkt'] as $key => $value) {
@@ -1528,10 +1530,11 @@ class ReimburseController extends Controller
         $userId = Auth::id();
 
         // Define links for navigation
-        $parentLink = 'Reimbursement';
-        $link = 'Ticket';
+        $parentLink = 'Ticket';
+        $link = 'Edit Ticket';
 
         $ticket = Tiket::findByRouteKey($key);
+        // dd($ticket);
 
         // Check if the ticket exists, if not redirect with an error message
         if (!$ticket) {
@@ -1560,6 +1563,7 @@ class ReimburseController extends Controller
         $ticketCount = $tickets->count();
         foreach ($tickets as $index => $ticket) {
             $ticketData[] = [
+                'id' => $ticket->id,
                 'noktp_tkt' => $ticket->noktp_tkt,
                 'tlp_tkt' => $ticket->tlp_tkt,
                 'jk_tkt' => $ticket->jk_tkt,
@@ -1597,7 +1601,8 @@ class ReimburseController extends Controller
     public function ticketUpdate(Request $req)
     {
         // Get all existing tickets for this business trip
-        $existingTickets = Tiket::where('no_tkt', $req->no_tkt)->get()->keyBy('noktp_tkt');
+        $ticketIds = $req->input('ticket_ids', []);
+        $existingTickets = Tiket::where('id', $ticketIds)->get()->keyBy('id');
         // dd($req->all());
         // dd($existingTickets);
 
@@ -1609,19 +1614,12 @@ class ReimburseController extends Controller
         } elseif ($req->has('action_submit')) {
             $statusValue = 'Pending L1';  // When "Submit" is clicked
         }
+
+        $existingNoTkt = $existingTickets->first()->no_tkt ?? null;
+        // dd($existingNoTkt);
         // dd($req->noktp_tkt);
         foreach ($req->noktp_tkt as $key => $value) {
             if (!empty($value)) {
-                // $gender = $req->jk_tkt[$key] ?? null;
-                // dd([
-                //     'submitted_gender_array' => $req->jk_tkt,
-                //     'key' => $key,
-                //     'selected_gender' => $gender,
-                //     'existing_gender' => $existingTickets[$value]->jk_tkt ?? 'none',
-                //     'full_request' => $req->all()
-                // ]);
-                // Prepare ticket data
-                // dd($key);
                 $ticketData = [
                     'no_sppd' => $req->bisnis_numb,
                     'user_id' => Auth::id(),
@@ -1640,20 +1638,15 @@ class ReimburseController extends Controller
                     'tlp_tkt' => $req->tlp_tkt[$key] ?? null,
                     'approval_status' => $statusValue,
                     'jns_dinas_tkt' => $req->jns_dinas_tkt,
+                    'tkt_only' => 'Y',
                 ];
-                // dd([$ticketData]);
-                // dd([$req->jk_tkt[$key], $key]);
-                // dd($req->jk_tkt[$key]);
+
 
                 if (isset($existingTickets[$value])) {
-                    // dd($existingTickets[$value]);
-                    // dd($ticketData);
-
                     $existingTicket = $existingTickets[$value];
                     // dd($ticketData);
                     $existingTicket->update($ticketData);
                 } else {
-                    // If firstNoTkt is not set, get it from the first existing ticket
                     if (is_null($firstNoTkt) && $existingTickets->isNotEmpty()) {
                         $firstNoTkt = $existingTickets->first()->no_tkt;
                     }
@@ -1664,21 +1657,24 @@ class ReimburseController extends Controller
                     }
 
                     // Create a new ticket entry
-                    Tiket::create(array_merge($ticketData, [
+                    $newTiket = Tiket::create(array_merge($ticketData, [
                         'id' => (string) Str::uuid(),
                         'no_tkt' => $firstNoTkt,
                         'noktp_tkt' => $value,
+                        'tkt_only' => 'Y',
                     ]));
                 }
 
                 // Track the processed ticket IDs
-                $processedTicketIds[] = $value;
+                $processedTicketIds[] = $newTiket->id;
+                // dd($processedTicketIds);
             }
         }
+        // dd([$existingNoTkt, $processedTicketIds]);
 
         // Soft delete tickets that are no longer in the request
-        Tiket::where('no_sppd', $req->bisnis_numb)
-            ->whereNotIn('noktp_tkt', $processedTicketIds)
+        Tiket::where('no_tkt', $existingNoTkt)
+            ->whereNotIn('id', $processedTicketIds)
             ->delete();
 
         $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
@@ -1687,11 +1683,6 @@ class ReimburseController extends Controller
             $bt->save();
         }
 
-        if (count($processedTicketIds) > 0) {
-            Alert::success('Success', "Tickets updated successfully");
-        } else {
-            Alert::warning('Warning', "No tickets were updated.");
-        }
 
         return redirect()->route('ticket')->with('success', 'The ticket request has been updated successfully.');
     }
@@ -1699,8 +1690,10 @@ class ReimburseController extends Controller
     public function ticketDelete($key)
     {
         $model = Tiket::findByRouteKey($key);
-        $model->delete();
-        return redirect()->intended(route('ticket', absolute: false));
+        Tiket::where('no_tkt', $model->no_tkt)->delete();
+
+        // Redirect to the ticket page with a success message
+        return redirect()->route('ticket')->with('success', 'Tickets has been deleted');
     }
     public function ticketExport($id)
     {
@@ -1813,8 +1806,8 @@ class ReimburseController extends Controller
     public function ticketApprovalDetail($key)
     {
         // Define links for navigation
-        $parentLink = 'Reimbursement';
-        $link = 'Ticket';
+        $parentLink = 'Ticket Approval';
+        $link = 'Approval Detail';
 
         $ticket = Tiket::findByRouteKey($key);
 
@@ -1850,6 +1843,7 @@ class ReimburseController extends Controller
         foreach ($tickets as $index => $ticket) {
             $ticketData[] = [
                 'id' => $ticket->id,
+                'no_tkt' => $ticket->no_tkt,
                 'noktp_tkt' => $ticket->noktp_tkt,
                 'tlp_tkt' => $ticket->tlp_tkt,
                 'jk_tkt' => $ticket->jk_tkt,
@@ -1929,20 +1923,11 @@ class ReimburseController extends Controller
                 $rejection->save();
             }
 
-            // Return a rejection message
-            $message = 'The request has been successfully Rejected.';
-
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => $message
-                ]);
-            }
-
             // Redirect to the ticket approval page instead of back to the same page
-            return redirect('/ticket/approval')->with('success', $message);
+            return redirect('/ticket/approval')->with('success', 'Request rejected successfully');
         }
 
+        // dd($ticket->approval_status);
         // If not rejected, proceed with normal approval process
         if ($ticket->approval_status == 'Pending L1') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
@@ -1965,21 +1950,7 @@ class ReimburseController extends Controller
             $approval->save();
         }
 
-        // Set success message based on new status
-        $message = ($ticket->approval_status == 'Approved')
-            ? 'The request has been successfully Approved.'
-            : 'The request has been successfully moved to Pending L2.';
-
-        // Return success message
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => $message
-            ]);
-        }
-
-        // Redirect to the ticket approval page
-        return redirect('/ticket/approval')->with('success', $message);
+        return redirect('/ticket/approval')->with('success', 'Request approved successfully');
     }
 
     private function getRomanMonth($month)

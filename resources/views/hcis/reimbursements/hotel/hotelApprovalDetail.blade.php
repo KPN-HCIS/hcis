@@ -197,7 +197,7 @@
                             <input type="hidden" name="status_approval"
                                 value="{{ Auth::user()->id == $hotelOwnerEmployee->manager_l1_id ? 'Pending L2' : 'Approved' }}">
                             <button type="button" class="btn btn-success rounded-pill approve-button" style="padding: 0.5rem 1rem;"
-                            data-id="{{ $hotel['id']}}" >
+                            data-id="{{ $hotel['id']}}">
                                 Approve
                             </button>
                         </form>

@@ -129,7 +129,8 @@
                                                         <input type="number" name="noktp_tkt[]"
                                                             id="noktp_tkt_<?php echo $i; ?>"
                                                             class="form-control form-control-sm" required
-                                                            placeholder="No KTP">
+                                                            placeholder="No KTP"
+                                                            oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
                                                     </div>
                                                 </div>
                                             </div>
