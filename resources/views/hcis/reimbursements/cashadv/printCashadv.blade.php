@@ -356,14 +356,6 @@
     @endif
 
     <br>
-    {{-- <table>
-        <tr>
-            <td class="label"><b>Total Cash Advanced</b></td>
-            <td class="colon">:</td>
-            <td class="value">Rp. {{ number_format($transactions->total_ca), 0, ',', '.' }}</td>
-        </tr>
-    </table> --}}
-    {{-- <div style="page-break-after: always;"></div> --}}
     <div style="page-break-after:always;">
         <table border=0 style="width: 100%; font-size: 11px;">
             <tr>
@@ -446,7 +438,7 @@
                         </tr>
                         <tr>
                             @foreach ($approval as $role)
-                                <td style="text-align:left;">
+                                <td style="text-align:center;">
                                     {{ $role->approved_at ? \Carbon\Carbon::parse($role->approved_at) : 'Date : ' }}
                                 </td>
                             @endforeach
@@ -703,10 +695,40 @@
                 </table>
             @endif
         @endif
+
+        <table>
+            <tr>
+                <td class="label"><b>Total Plan Cash Advanced</b></td>
+                <td class="colon">:</td>
+                <td class="value">Rp. {{ number_format($transactions->total_ca), 0, ',', '.' }}</td>
+            </tr>
+            <tr>
+                <td class="label"><b>Balance</b></td>
+                <td class="colon">:</td>
+                <td class="value">Rp. {{ number_format($transactions->total_cost), 0, ',', '.' }}</td>
+            </tr>
+        </table>
     </div>
 
     <footer>
-        Cash Advanced No. {{ $transactions->no_ca }}
+        <script type="text/php">
+            if (isset($pdf)) {
+                $x = 400;
+                $y = 810;
+                $text = "Page {PAGE_NUM} of {PAGE_COUNT} Cash Advanced No. {{ $transactions->no_ca }}";
+                $font = null;
+                $size = 8;
+                $color = array(0, 0, 0);
+                $word_space = 0.0;
+                $char_space = 0.0;
+                $angle = 0.0;
+
+                // Tambahkan pengecekan PAGE_COUNT
+                if ($pdf->get_page_count() > 2) {
+                    $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
+                }
+            }
+        </script>
     </footer>
 </body>
 </html>

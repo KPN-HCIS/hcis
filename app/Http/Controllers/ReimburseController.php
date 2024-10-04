@@ -1376,7 +1376,7 @@ class ReimburseController extends Controller
             'transactions' => $transactions,
             'transactions' => $transactions,
             'approval' => $approval,
-        ]);
+        ])->setPaper('a4', 'potrait')->set_option("enable_php", true);
 
         return $pdf->stream('Cash Advanced ' . $key . '.pdf');
     }
@@ -1410,7 +1410,7 @@ class ReimburseController extends Controller
             'employee_data' => $employee_data,
             'transactions' => $transactions,
             'approval' => $approval,
-        ]);
+        ])->setPaper('a4', 'potrait')->set_option("enable_php", true);
 
         return $pdf->stream('Cash Advanced ' . $key . '.pdf');
     }
