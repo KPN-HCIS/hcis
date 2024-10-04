@@ -203,41 +203,42 @@
     @endphp
 
     @if ( $transactions->type_ca == 'dns' )
-        <table class="table-approve">
-            <tr>
-                <th colspan="5"><b>Perdiem Plan :</b></th>
-            </tr>
-            <tr class="head-row">
-                <td>Start Date</td>
-                <td>End Date</td>
-                <td>Office Location</td>
-                <td>Company Code</td>
-                <td>Total Days</td>
-            </tr>
+        @if (count($detailCA['detail_perdiem']) > 0 && !empty($detailCA['detail_perdiem'][0]['company_code']))
+            <table class="table-approve">
+                <tr>
+                    <th colspan="5"><b>Perdiem Plan :</b></th>
+                </tr>
+                <tr class="head-row">
+                    <td>Start Date</td>
+                    <td>End Date</td>
+                    <td>Office Location</td>
+                    <td>Company Code</td>
+                    <td>Total Days</td>
+                </tr>
 
-            @foreach($detailCA['detail_perdiem'] as $perdiem)
-            <tr style="text-align: center">
-                <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
-                <td>
-                    @if ($perdiem['location'] == 'Others')
-                        Other ({{$perdiem['other_location']}})
-                    @else
-                        {{$perdiem['location']}}
-                    @endif
-                </td>
-                <td>{{ $perdiem['company_code'] }}</td>
-                <td>{{ $perdiem['total_days'] }} Hari</td>
-            </tr>
-            @endforeach
-            <tr class="total-row">
-                <td colspan="4" class="head-row">Total</td>
-                <td>
-                    {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
-                </td>
-            </tr>
-        </table>
-
+                @foreach($detailCA['detail_perdiem'] as $perdiem)
+                <tr style="text-align: center">
+                    <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
+                    <td>
+                        @if ($perdiem['location'] == 'Others')
+                            Other ({{$perdiem['other_location']}})
+                        @else
+                            {{$perdiem['location']}}
+                        @endif
+                    </td>
+                    <td>{{ $perdiem['company_code'] }}</td>
+                    <td>{{ $perdiem['total_days'] }} Hari</td>
+                </tr>
+                @endforeach
+                <tr class="total-row">
+                    <td colspan="4" class="head-row">Total</td>
+                    <td>
+                        {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
+                    </td>
+                </tr>
+            </table>
+        @endif
         <table class="table-approve" style="width: 70%;">
             <tr>
                 <th colspan="3"><b>Detail Cash Advanced :</b></th>

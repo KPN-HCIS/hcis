@@ -85,7 +85,7 @@
                                         <option value="Others"
                                             {{ $transactions->destination == 'Others' ? 'selected' : '' }}>Others</option>
                                     </select>
-                                    <br><input type="text" name="others_location" id="others_location"
+                                    <br><br><input type="text" name="others_location" id="others_location"
                                         class="form-control" placeholder="Other Location"
                                         value="{{ $transactions->others_location }}"
                                         style="{{ $transactions->destination == 'Others' ? 'display: block;' : 'display: none;' }}">
