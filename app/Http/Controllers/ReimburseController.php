@@ -1365,6 +1365,7 @@ class ReimburseController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $employees = Employee::orderBy('ktp')->get();
         $no_sppds = BusinessTrip::where('user_id', $userId)
             ->where(function ($query) {
                 $query->where('status', '!=', 'Verified')
@@ -1384,10 +1385,12 @@ class ReimburseController extends Controller
             'employee_data' => $employee_data,
             'perdiem' => $perdiem,
             'no_sppds' => $no_sppds,
+            'employees' => $employees,
         ]);
     }
     public function ticketSubmit(Request $req)
     {
+        $userId = Auth::id();
         function getRomanMonth_tkt($month)
         {
             $romanMonths = [
@@ -1409,7 +1412,7 @@ class ReimburseController extends Controller
 
         function generateTicketNumber($type)
         {
-            $userId = Auth::id();
+
             $currentYear = date('Y');
             $currentMonth = date('n');
             $romanMonth = getRomanMonth_tkt($currentMonth);
@@ -1426,20 +1429,22 @@ class ReimburseController extends Controller
 
             // Get the last transaction of the current year and month for the specific type
             $lastTransaction = Tiket::whereYear('created_at', $currentYear)
-                ->whereMonth('created_at', $currentMonth)
-                ->where('no_tkt', 'like', "%/$prefix/$romanMonth/$currentYear")
+                ->where('no_tkt', 'like', "%/$prefix/%/$currentYear")
                 ->orderBy('no_tkt', 'desc')
+                ->withTrashed()
                 ->first();
-
+            // dd($lastTransaction);
             // Determine the new ticket number
-            if ($lastTransaction && preg_match('/(\d{3})\/' . $prefix . '\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)) {
+            if ($lastTransaction && preg_match('/(\d{3})\/' . preg_quote($prefix, '/') . '\/[^\/]+\/' . $currentYear . '/', $lastTransaction->no_tkt, $matches)) {
                 $lastNumber = intval($matches[1]);
             } else {
                 $lastNumber = 0;
             }
+            // dd($lastNumber);
 
             $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
             $newNoTkt = "$newNumber/$prefix/$romanMonth/$currentYear";
+            // dd($newNoTkt);
 
             return $newNoTkt;
         }
@@ -1448,6 +1453,12 @@ class ReimburseController extends Controller
         $ticketType = $req->jns_dinas_tkt == 'Dinas' ? 'Dinas' : 'Cuti';
         // Generate the ticket number for the entire submission
         $newNoTkt = generateTicketNumber($ticketType);
+
+        if ($req->has('action_draft')) {
+            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+        } elseif ($req->has('action_submit')) {
+            $statusValue = 'Pending L1';  // When "Submit" is clicked
+        }
 
         // Prepare the ticket data arrays
         $ticketData = [
@@ -1464,7 +1475,7 @@ class ReimburseController extends Controller
             'jenis_tkt' => $req->jenis_tkt,
             'type_tkt' => $req->type_tkt,
             'ket_tkt' => $req->ket_tkt,
-            'approval_status' => $req->status,
+            'approval_status' => $statusValue,
         ];
 
         foreach ($ticketData['noktp_tkt'] as $key => $value) {
@@ -1493,7 +1504,7 @@ class ReimburseController extends Controller
                 $tiket->jenis_tkt = $ticketData['jenis_tkt'][$key] ?? null;
                 $tiket->type_tkt = $ticketData['type_tkt'][$key] ?? null;
                 $tiket->ket_tkt = $ticketData['ket_tkt'][$key] ?? null;
-                $tiket->approval_status = $req->status;
+                $tiket->approval_status = $statusValue;
                 $tiket->jns_dinas_tkt = $req->jns_dinas_tkt;
                 $tiket->tkt_only = 'Y';
                 // dd($req->all());
@@ -1508,9 +1519,7 @@ class ReimburseController extends Controller
             $bt->save();
         }
 
-        Alert::success('Success');
-        session()->flash('message', 'Berhasil di Tambahkan');
-        return redirect()->route('ticket');
+        return redirect()->route('ticket')->with('success', 'The ticket request has been input successfully.');
     }
 
 
@@ -1536,6 +1545,7 @@ class ReimburseController extends Controller
         $employee_data = Employee::where('id', $userId)->first();
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
+        $employees = Employee::orderBy('ktp')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
         $no_sppds = BusinessTrip::where('user_id', $userId)
             ->where(function ($query) {
@@ -1580,62 +1590,38 @@ class ReimburseController extends Controller
             'transactions' => $transactions,
             'ticket' => $ticket,
             'ticketData' => $ticketData,
+            'employees' => $employees,
         ]);
     }
 
     public function ticketUpdate(Request $req)
     {
-        function getRomanMonth_tkt($month)
-        {
-            $romanMonths = [
-                1 => 'I',
-                2 => 'II',
-                3 => 'III',
-                4 => 'IV',
-                5 => 'V',
-                6 => 'VI',
-                7 => 'VII',
-                8 => 'VIII',
-                9 => 'IX',
-                10 => 'X',
-                11 => 'XI',
-                12 => 'XII'
-            ];
-            return $romanMonths[$month];
-        }
-
-        function generateTicketNumber($type)
-        {
-            $currentYear = date('Y');
-            $currentMonth = date('n');
-            $romanMonth = getRomanMonth_tkt($currentMonth);
-
-            $prefix = ($type === 'Dinas') ? 'TKTD-HRD' : (($type === 'Cuti') ? 'TKTC-HRD' : throw new Exception('Invalid ticket type'));
-
-            $lastTransaction = Tiket::whereYear('created_at', $currentYear)
-                ->whereMonth('created_at', $currentMonth)
-                ->where('no_tkt', 'like', "%/$prefix/$romanMonth/$currentYear")
-                ->orderBy('no_tkt', 'desc')
-                ->first();
-
-            $lastNumber = $lastTransaction && preg_match('/(\d{3})\/' . $prefix . '\/' . $romanMonth . '\/\d{4}/', $lastTransaction->no_tkt, $matches)
-                ? intval($matches[1]) : 0;
-
-            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-            return "$newNumber/$prefix/$romanMonth/$currentYear";
-        }
-
-        $ticketType = $req->jns_dinas_tkt == 'Dinas' ? 'Dinas' : 'Cuti';
-
         // Get all existing tickets for this business trip
-        $existingTickets = Tiket::where('no_sppd', $req->bisnis_numb)->get()->keyBy('noktp_tkt');
+        $existingTickets = Tiket::where('no_tkt', $req->no_tkt)->get()->keyBy('noktp_tkt');
+        // dd($req->all());
+        // dd($existingTickets);
 
         $processedTicketIds = [];
-        $newNoTkt = null;
+        $firstNoTkt = null;
 
+        if ($req->has('action_draft')) {
+            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+        } elseif ($req->has('action_submit')) {
+            $statusValue = 'Pending L1';  // When "Submit" is clicked
+        }
+        // dd($req->noktp_tkt);
         foreach ($req->noktp_tkt as $key => $value) {
             if (!empty($value)) {
+                // $gender = $req->jk_tkt[$key] ?? null;
+                // dd([
+                //     'submitted_gender_array' => $req->jk_tkt,
+                //     'key' => $key,
+                //     'selected_gender' => $gender,
+                //     'existing_gender' => $existingTickets[$value]->jk_tkt ?? 'none',
+                //     'full_request' => $req->all()
+                // ]);
                 // Prepare ticket data
+                // dd($key);
                 $ticketData = [
                     'no_sppd' => $req->bisnis_numb,
                     'user_id' => Auth::id(),
@@ -1652,26 +1638,35 @@ class ReimburseController extends Controller
                     'jk_tkt' => $req->jk_tkt[$key] ?? null,
                     'np_tkt' => $req->np_tkt[$key] ?? null,
                     'tlp_tkt' => $req->tlp_tkt[$key] ?? null,
-                    'approval_status' => $req->status,
+                    'approval_status' => $statusValue,
                     'jns_dinas_tkt' => $req->jns_dinas_tkt,
                 ];
+                // dd([$ticketData]);
+                // dd([$req->jk_tkt[$key], $key]);
+                // dd($req->jk_tkt[$key]);
 
                 if (isset($existingTickets[$value])) {
-                    // Update existing ticket
+                    // dd($existingTickets[$value]);
+                    // dd($ticketData);
+
                     $existingTicket = $existingTickets[$value];
+                    // dd($ticketData);
                     $existingTicket->update($ticketData);
                 } else {
-                    // Determine no_tkt for new ticket
-                    if (is_null($newNoTkt)) {
-                        $newNoTkt = $existingTickets->isNotEmpty()
-                            ? $existingTickets->first()->no_tkt
-                            : generateTicketNumber($ticketType);
+                    // If firstNoTkt is not set, get it from the first existing ticket
+                    if (is_null($firstNoTkt) && $existingTickets->isNotEmpty()) {
+                        $firstNoTkt = $existingTickets->first()->no_tkt;
+                    }
+
+                    // If there's still no firstNoTkt, generate a new one
+                    if (is_null($firstNoTkt)) {
+                        $firstNoTkt = generateTicketNumber($req->jns_dinas_tkt);
                     }
 
                     // Create a new ticket entry
                     Tiket::create(array_merge($ticketData, [
                         'id' => (string) Str::uuid(),
-                        'no_tkt' => $newNoTkt,
+                        'no_tkt' => $firstNoTkt,
                         'noktp_tkt' => $value,
                     ]));
                 }
@@ -1681,7 +1676,7 @@ class ReimburseController extends Controller
             }
         }
 
-        // Soft delete tickets that are no longer in the request or marked as 'tidak'
+        // Soft delete tickets that are no longer in the request
         Tiket::where('no_sppd', $req->bisnis_numb)
             ->whereNotIn('noktp_tkt', $processedTicketIds)
             ->delete();
@@ -1698,7 +1693,7 @@ class ReimburseController extends Controller
             Alert::warning('Warning', "No tickets were updated.");
         }
 
-        return redirect()->route('ticket');
+        return redirect()->route('ticket')->with('success', 'The ticket request has been updated successfully.');
     }
 
     public function ticketDelete($key)

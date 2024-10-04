@@ -41,6 +41,7 @@
                 </div>
             </div>
         </div>
+        @include('hcis.reimbursements.businessTrip.modal')
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
@@ -420,14 +421,5 @@
             // Trigger the change event to apply the selected value
             $('#dt-length-0').trigger('change');
         });
-
-        // Periksa apakah ada pesan sukses
-        var successMessage = "{{ session('success') }}";
-
-        // Jika ada pesan sukses, tampilkan sebagai alert
-        if (successMessage) {
-            alert(successMessage);
-        }
     </script>
-    {{-- @endpush --}}
 @endsection

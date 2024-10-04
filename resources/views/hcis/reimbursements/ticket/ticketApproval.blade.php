@@ -20,6 +20,7 @@
                 </div>
             </div>
         </div>
+        @include('hcis.reimbursements.businessTrip.modal')
 
         <div class="row">
             <div class="col-md-auto">
