@@ -388,7 +388,7 @@
                                 <input type="hidden" name="status" value="Pending L1" id="status">
                                 <input type="hidden" id="formActionType" name="formActionType" value="">
                                 <div class="d-flex justify-content-end mt-3">
-                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2 submit-button"
+                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2"
                                         name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
                                         Draft</button>
                                     <button type="submit" class="btn btn-primary rounded-pill submit-button"

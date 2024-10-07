@@ -298,7 +298,7 @@
 
 
                             <div class="d-flex justify-content-end mt-4">
-                                <button type="submit" class="btn btn-outline-primary rounded-pill me-2 submit-button"
+                                <button type="submit" class="btn btn-outline-primary rounded-pill me-2"
                                     name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
                                     Draft</button>
                                 <button type="submit" class="btn btn-primary rounded-pill submit-button"

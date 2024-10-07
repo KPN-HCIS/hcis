@@ -245,7 +245,7 @@
 
                                         <div class="d-flex justify-content-end mt-3">
                                             <button type="submit"
-                                                class="btn btn-outline-primary rounded-pill me-2 submit-button"
+                                                class="btn btn-outline-primary rounded-pill me-2"
                                                 value="Declaration Draft" name="action_draft">Save as Draft</button>
                                             <button type="submit" class="btn btn-primary rounded-pill submit-button"
                                                 name="action_submit" value="Declaration L1">Submit</button>
