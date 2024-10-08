@@ -245,7 +245,7 @@
 
                                         <div class="d-flex justify-content-end mt-3">
                                             <button type="submit"
-                                                class="btn btn-outline-primary rounded-pill me-2"
+                                                class="btn btn-outline-primary rounded-pill me-2 draft-button"
                                                 value="Declaration Draft" name="action_draft">Save as Draft</button>
                                             <button type="submit" class="btn btn-primary rounded-pill submit-button"
                                                 name="action_submit" value="Declaration L1">Submit</button>
@@ -344,6 +344,32 @@
                             form.submit(); // Submit the form only if confirmed
                         }
                     });
+                });
+            });
+        });
+    </script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.draft-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent immediate form submission
+
+                    const form = document.getElementById('btEditForm');
+
+                    // Check if the form is valid before proceeding
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // Show validation messages if invalid
+                        return; // Exit if the form is not valid
+                    }
+
+                    const input = document.createElement('input');
+                    input.type =
+                        'hidden'; // Hidden input so it doesn't show in the form
+                    input.name = button.name; // Use the button's name attribute
+                    input.value = button.value; // Use the button's value attribute
+
+                    form.appendChild(input); // Append the hidden input to the form
+                    form.submit(); // Submit the form only if confirmed
                 });
             });
         });

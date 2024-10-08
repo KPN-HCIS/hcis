@@ -388,7 +388,7 @@
                                 <input type="hidden" name="status" value="Pending L1" id="status">
                                 <input type="hidden" id="formActionType" name="formActionType" value="">
                                 <div class="d-flex justify-content-end mt-3">
-                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2"
+                                    <button type="submit" class="btn btn-outline-primary rounded-pill me-2 draft-button"
                                         name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
                                         Draft</button>
                                     <button type="submit" class="btn btn-primary rounded-pill submit-button"
@@ -538,6 +538,86 @@
                             form.submit(); // Submit the form only if confirmed
                         }
                     });
+                });
+            });
+        });
+    </script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.draft-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent immediate form submission
+
+                    const form = document.getElementById('btEditForm');
+
+                    // Check if the form is valid before proceeding
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // Show validation messages if invalid
+                        return; // Exit if the form is not valid
+                    }
+
+                    // Retrieve the values from the input fields
+                    const dateReq = document.getElementById('date_required_1').value;
+                    const dateReq2 = document.getElementById('date_required_2').value;
+                    const totalBtPerdiem = document.getElementById('total_bt_perdiem').value;
+                    const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
+                    const totalBtTransport = document.getElementById('total_bt_transport').value;
+                    const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+                    const caCheckbox = document.getElementById('cashAdvancedCheckbox').checked;
+                    const perdiemCheckbox = document.getElementById('perdiemCheckbox').checked;
+                    const totalCa = document.getElementById('totalca').value;
+
+                    if (perdiemCheckbox && !dateReq) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Please select a Date Required.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return;
+                    }
+
+                    if (caCheckbox && !dateReq2) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Please select a Date Required.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return;
+                    }
+                    // Check if CA is checked and all fields are zero
+                    if (caCheckbox && totalBtPenginapan == 0 &&
+                        totalBtTransport == 0 && totalBtLainnya == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Cash Advanced fields (Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                    if (perdiemCheckbox && totalBtPerdiem == 0) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Total Perdiem is 0. Please fill in the values.",
+                            icon: "warning",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        return; // Exit without showing the confirmation if all fields are zero
+                    }
+                    const input = document.createElement('input');
+                    input.type =
+                        'hidden'; // Hidden input so it doesn't show in the form
+                    input.name = button.name; // Use the button's name attribute
+                    input.value = button.value; // Use the button's value attribute
+
+                    form.appendChild(input); // Append the hidden input to the form
+                    form.submit(); // Submit the form only if confirmed
                 });
             });
         });
