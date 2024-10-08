@@ -3,16 +3,16 @@
 @section('css')
     <style>
         /* .breadcrumb-item+.breadcrumb-item::before {
-                                font-size: 28px !important;
-                                vertical-align: middle !important;
-                            } */
+                                                                                        font-size: 28px !important;
+                                                                                        vertical-align: middle !important;
+                                                                                    } */
 
         /* .table {
-                            border-collapse: separate;
-                            width: 100%;
-                            position: relative;
-                            overflow: auto;
-                        } */
+                                                                                    border-collapse: separate;
+                                                                                    width: 100%;
+                                                                                    position: relative;
+                                                                                    overflow: auto;
+                                                                                } */
 
         .table thead th {
             position: -webkit-sticky !important;
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Export Excel -->
-            <div class="col-md-6 mt-4 mb-2 text-end">
+            {{-- <div class="col-md-6 mt-4 mb-2 text-end">
                 <a href="{{ route('export.excel', [
                     'start-date' => request()->query('start-date'),
                     'end-date' => request()->query('end-date'),
@@ -89,9 +89,53 @@
                     class="btn btn-outline-success rounded-pill btn-action">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
-            </div>
+            </div> --}}
         </div>
     </div>
+    <div class="card">
+        <div class="card-body">
+            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDivision.admin') }}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label for="division" class="form-label">Filter by Division:</label>
+                        <select class="form-select select2" id="division" name="division">
+                            <option value="" selected disabled>--- Choose Department ---</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->department_name }}"
+                                    {{ request()->input('division') === $department->department_name ? 'selected' : '' }}>
+                                    {{ $department->department_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Find</button>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ route('export.excel.division', [
+                            // 'start-date' => request()->query('start-date'),
+                            // 'end-date' => request()->query('end-date'),
+                            'division' => request()->input('division'), // Add the selected division
+                        ]) }}"
+                            class="btn btn-outline-success w-100">
+                            <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export as Excel
+                        </a>
+                    </div>
+
+                    <div class="col-md-2">
+                        <a href="{{ route('export.pdf.division', [
+                        // 'start-date' => request()->query('start-date'),
+                        // 'end-date' => request()->query('end-date'),
+                        'division' => request()->input('division')]) }}"
+                            class="btn btn-outline-danger w-100" target="_blank">
+                            <i class="bi bi-filetype-pdf"></i> Export as PDF
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     @include('hcis.reimbursements.businessTrip.modal')
 
     <div class="card">
@@ -100,7 +144,7 @@
                 <div class="row align-items-end">
                     <h3 class="card-title">SPPD Data</h3>
 
-                    <div class="col-md-5">
+                    {{-- <div class="col-md-5">
                         <label for="start-date" class="mb-2">Departure Date:</label>
                         <input type="date" id="start-date" name="start-date" class="form-control"
                             value="{{ request()->query('start-date') }}">
@@ -112,7 +156,7 @@
                     </div>
                     <div class="col-md-2 mt-2">
                         <button type="submit" class="btn btn-primary rounded-pill w-100">Find</button>
-                    </div>
+                    </div> --}}
                 </div>
             </form>
 
@@ -138,38 +182,43 @@
                                 @endphp
                                 <div class="d-flex flex-wrap gap-2 mt-1 mb-2 justify-content-start">
                                     <button type="submit" name="filter" value="all"
-                                        class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        class="btn {{ request()->input('filter') === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         All
                                     </button>
-                                    {{-- <a href="{{ route('businessTrip.admin.division') }}"
-                                        class="btn {{ request()->routeIs('businessTrip.admin.division') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+
+                                    <a href="{{ route('businessTrip.admin.division') }}"
+                                        class="btn {{ request()->input('division') || request()->routeIs('businessTrip.admin.division') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Division
-                                    </a> --}}
+                                    </a>
+
                                     <button type="submit" name="filter" value="request"
-                                        class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        class="btn {{ request()->input('filter') === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Request
                                     </button>
+
                                     <button type="submit" name="filter" value="declaration"
-                                        class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        class="btn {{ request()->input('filter') === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Declaration
                                     </button>
+
                                     <button type="submit" name="filter" value="return_refund"
-                                        class="btn {{ $currentFilter === 'return_refund' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        class="btn {{ request()->input('filter') === 'return_refund' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Return/Refund
                                     </button>
+
                                     <button type="submit" name="filter" value="done"
-                                        class="btn {{ $currentFilter === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        class="btn {{ request()->input('filter') === 'done' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Done
                                     </button>
+
                                     <button type="submit" name="filter" value="rejected"
-                                        class="btn {{ $currentFilter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
+                                        class="btn {{ request()->input('filter') === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Rejected
                                     </button>
                                 </div>
                             </form>
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover" id="defaultTable" width="100%"
-                                    cellspacing="0">
+                                <table class="table table-sm table-hover" id="defaultTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
@@ -183,7 +232,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th style="width: 150px;">Action</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>

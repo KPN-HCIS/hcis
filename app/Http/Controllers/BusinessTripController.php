@@ -2218,29 +2218,213 @@ class BusinessTripController extends Controller
         return redirect()->route('businessTrip')->with('success', 'Request Successfully Added');
     }
 
-    // public function saveDraft(Request $request)
-    // {
-    //     // Create a new BusinessTrip instance
-    //     $bt = new BusinessTrip();
-    //     $bt->id = (string) Str::uuid();
-    //     $userId = Auth::id();
-    //     $noSppd = $this->generateNoSppd();
+    public function adminDivision(Request $request)
+    {
+        $user = Auth::user();
 
-    //     // Extract all input data
-    //     $draftData = $request->all();
-    //     $draftData['id'] = $bt->id;
-    //     $draftData['user_id'] = $userId;
-    //     $draftData['no_sppd'] = $noSppd;
-    //     $draftData['status'] = 'Draft'; // Ensure status is set to 'Draft'
+        $query = BusinessTrip::whereNotIn('status', ['Draft', 'Declaration Draft'])
+            ->orderBy('created_at', 'desc');
 
-    //     // Create the BusinessTrip record
-    //     BusinessTrip::create($draftData);
+        $filter = $request->input('filter', 'all');
+        $division = $request->input('division');
 
-    //     // Handle related models if needed (Taksi, Hotel, Tiket, ca_transaction)
+        if ($division) {
+            $query->whereHas('employee', function ($q) use ($division) {
+                $q->where('divisi', $division);
+            });
+        }
 
-    //     // Respond with JSON
-    //     return response()->json(['success' => true]);
-    // }
+        if ($filter === 'request') {
+            $query->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
+        } elseif ($filter === 'declaration') {
+            $query->whereIn('status', ['Declaration Approved', 'Declaration L1', 'Declaration L2', 'Approved']);
+        } elseif ($filter === 'done') {
+            $query->whereIn('status', ['Doc Accepted', 'Verified']);
+        } elseif ($filter === 'return_refund') {
+            $query->whereIn('status', ['Return/Refund']);
+        } elseif ($filter === 'rejected') {
+            $query->whereIn('status', ['Rejected', 'Declaration Rejected']);
+        }
+
+        $sppd = $query->get();
+
+        // Collect all SPPD numbers from the BusinessTrip instances
+        $sppdNos = $sppd->pluck('no_sppd');
+        $btIds = $sppd->pluck('id');
+        $departments = Designation::select('department_name')->distinct()->get();
+
+        $btApprovals = BTApproval::whereIn('bt_id', $btIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
+        // Log::info('Ticket Approvals:', $btApprovals->toArray());
+
+        $btApprovals = $btApprovals->keyBy('bt_id');
+        // dd($btApprovals);
+        // Log::info('BT Approvals:', $btApprovals->toArray());
+
+        $employeeIds = $sppd->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
+
+        // Related data
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
+            ->whereNull('deleted_at')
+            ->get()
+            ->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
+        $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
+
+        $parentLink = 'Reimbursement';
+        $link = 'Business Trip (Admin)';
+
+        return view('hcis.reimbursements.businessTrip.btAdminDivison', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName', 'departments', 'division'));
+    }
+
+    public function filterDivision(Request $request)
+    {
+        $user = Auth::user();
+        $division = $request->input('division');
+
+        $query = BusinessTrip::whereNotIn('status', ['Draft', 'Declaration Draft'])
+            ->orderBy('created_at', 'desc');
+
+        if ($division) {
+            $query->where('divisi', 'LIKE', '%' . $division . '%');
+        }
+
+        $sppd = $query->get();
+
+        // Collect all SPPD numbers from the BusinessTrip instances
+        $sppdNos = $sppd->pluck('no_sppd');
+        $btIds = $sppd->pluck('id');
+        $departments = Designation::select('department_name')->distinct()->get();
+        // $departments = BusinessTrip::select('divisi')->distinct()->get();
+
+        $btApprovals = BTApproval::whereIn('bt_id', $btIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get()
+            ->keyBy('bt_id');
+
+        $employeeIds = $sppd->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
+
+        // Related data
+        $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
+            ->whereNull('deleted_at')
+            ->get()
+            ->keyBy('no_sppd');
+        $tickets = Tiket::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
+        $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
+        $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
+        $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
+
+        $parentLink = 'Reimbursement';
+        $link = 'Business Trip (Admin)';
+
+        return view('hcis.reimbursements.businessTrip.btAdminDivison', compact(
+            'sppd',
+            'parentLink',
+            'link',
+            'caTransactions',
+            'tickets',
+            'hotel',
+            'taksi',
+            'managerL1Names',
+            'managerL2Names',
+            'btApprovals',
+            'employeeName',
+            'departments',
+            'division'
+        ));
+    }
+
+    public function exportExcelDivision(Request $request)
+    {
+        // Retrieve query parameters
+        $startDate = $request->query('start-date');
+        $endDate = $request->query('end-date');
+        $division = $request->input('division'); // Get the division input
+
+        // Initialize query builders
+        $query = BusinessTrip::query();
+        $queryCA = CATransaction::query();
+
+        // Apply filters if both dates are present
+        if ($startDate && $endDate) {
+            $query->whereBetween('mulai', [$startDate, $endDate]);
+        }
+
+        // Apply division filter if it is selected
+        if ($division) {
+            $query->where('divisi', 'LIKE', '%' . $division . '%');
+        }
+        // Exclude drafts
+        $query->where(function ($subQuery) {
+            $subQuery->where('status', '<>', 'draft')
+                ->where('status', '<>', 'declaration draft'); // Adjust if 'declaration draft' is the exact status name
+        });
+        $queryCA->where('approval_status', '<>', 'draft'); // Adjust 'status' and 'draft' as needed
+
+        // Fetch the filtered BusinessTrip data
+        $businessTrips = $query->get();
+
+        // Extract the no_sppd values from the filtered BusinessTrip records
+        $noSppds = $businessTrips->pluck('no_sppd')->unique();
+
+        // Fetch CA data where no_sppd matches the filtered BusinessTrip records
+        $caData = $queryCA->whereIn('no_sppd', $noSppds)->get();
+
+        // Pass the filtered data to the export class
+        return Excel::download(new BusinessTripExport($businessTrips, $caData), 'Data_Perjalanan_Dinas.xlsx');
+    }
+
+    public function exportPdfDivision(Request $request)
+    {
+        // Retrieve query parameters
+        $startDate = $request->query('start-date');
+        $endDate = $request->query('end-date');
+        $division = $request->input('division'); // Get the division input
+
+        // Initialize query builders
+        $query = BusinessTrip::query();
+
+        // Apply filters if both dates are present
+        if ($startDate && $endDate) {
+            $query->whereBetween('mulai', [$startDate, $endDate]);
+        }
+
+        // Apply division filter if it is selected
+        if ($division) {
+            $query->where('divisi', 'LIKE', '%' . $division . '%');
+        }
+
+        // Exclude drafts and specifically 'Declaration Draft'
+        $query->where(function ($subQuery) {
+            $subQuery->where('status', '<>', 'draft')
+                ->where('status', '<>', 'declaration draft');
+        });
+
+        // Fetch the filtered BusinessTrip data
+        $businessTrips = $query->get();
+
+        // Generate PDF
+        $pdf = PDF::loadView('hcis.reimbursements.businessTrip.division-pdf', ['businessTrips' => $businessTrips]);
+
+        // Return PDF as a download
+        return $pdf->stream('Data_Perjalanan_Dinas.pdf');
+    }
+
     public function admin(Request $request)
     {
         $user = Auth::user();
@@ -2307,6 +2491,9 @@ class BusinessTripController extends Controller
             ->orderBy('created_at', 'desc');
 
         $filter = $request->input('filter', 'all');
+        $startDate = $request->query('start-date');
+        $endDate = $request->query('end-date');
+
 
         if ($filter === 'request') {
             $query->whereIn('status', ['Pending L1', 'Pending L2', 'Approved']);
@@ -2336,17 +2523,6 @@ class BusinessTripController extends Controller
         $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
         $employeeName = Employee::pluck('fullname', 'employee_id');
 
-        $startDate = $request->query('start-date');
-        $endDate = $request->query('end-date');
-
-
-        if ($startDate && $endDate) {
-            $query->whereBetween('mulai', [$startDate, $endDate])
-                ->orderBy('created_at', 'desc');
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
-
         // Fetch related data based on the filtered SPPD numbers
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
             ->whereNull('deleted_at')
@@ -2358,6 +2534,22 @@ class BusinessTripController extends Controller
 
         $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
         $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
+
+        $btApprovals = BTApproval::whereIn('bt_id', $btIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
+        // Log::info('Ticket Approvals:', $btApprovals->toArray());
+
+        $btApprovals = $btApprovals->keyBy('bt_id');
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('mulai', [$startDate, $endDate]);
+        }
+        // dd($startDate, $endDate);
+        $sppd = $query->orderBy('created_at', 'desc')->get();
 
         $parentLink = 'Reimbursement';
         $link = 'Business Trip (Admin)';
@@ -2617,7 +2809,10 @@ class BusinessTripController extends Controller
         }
 
         // Exclude drafts
-        $query->where('status', '<>', 'draft'); // Adjust 'status' and 'draft' as needed
+        $query->where(function ($subQuery) {
+            $subQuery->where('status', '<>', 'draft')
+                ->where('status', '<>', 'declaration draft');
+        });
         $queryCA->where('approval_status', '<>', 'draft'); // Adjust 'status' and 'draft' as needed
 
         // Fetch the filtered BusinessTrip data

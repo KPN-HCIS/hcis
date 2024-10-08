@@ -223,6 +223,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/businessTrip/declaration/admin/status/{id}', [BusinessTripController::class, 'deklarasiStatusAdmin'])->name('businessTrip.deklarasi.admin.status');
     Route::delete('/businessTrip/admin/delete/{id}', [BusinessTripController::class, 'deleteAdmin'])->name('delete.btAdmin');
 
+    //division
+    Route::get('/businessTrip/admin/division', [BusinessTripController::class, 'adminDivision'])->name('businessTrip.admin.division');
+    Route::get('/admin/business-trip/filter-division', [BusinessTripController::class, 'filterDivision'])
+    ->name('businessTrip-filterDivision.admin');
+    Route::get('businessTrip/division/export/excel/', [BusinessTripController::class, 'exportExcelDivision'])->name('export.excel.division');
+    Route::get('/businessTrip/division/export-pdf', [BusinessTripController::class, 'exportPdfDivision'])->name('export.pdf.division');
+
+
+
 
     //Export BT excel
     Route::get('businessTrip/export/excel/', [BusinessTripController::class, 'exportExcel'])->name('export.excel');
