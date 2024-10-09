@@ -108,6 +108,15 @@ function clearFormPenginapan(index, event) {
         input.value = 0;
     });
 
+    const companyCodeSelect = formContainer.querySelector(
+        `#company_bt_penginapan_${index}`
+    );
+    if (companyCodeSelect) {
+        companyCodeSelect.selectedIndex = 0; // Reset the select element to the default option
+        var event = new Event("change");
+        companyCodeSelect.dispatchEvent(event); // Trigger the change event to update the select2 component
+    }
+
     formContainer.querySelectorAll("select").forEach((select) => {
         select.selectedIndex = 0;
     });
