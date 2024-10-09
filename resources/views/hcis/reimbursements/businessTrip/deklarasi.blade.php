@@ -85,15 +85,14 @@
                                         <tr>
                                             <th>Estimated Declaration</th>
                                             <td class="block">:</td>
-                                            <td> {{ $ca->declare_estimate ? date('d M Y', strtotime($ca->declare_estimate)) : '-' }}
-                                            </td>
+                                            <td>{{ isset($ca->declare_estimate) ? date('d M Y', strtotime($ca->declare_estimate)) : '-' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Date Required</th>
                                             <td class="block">:</td>
-                                            <td> {{ $ca->date_required ? date('d M Y', strtotime($ca->date_required)) : '-' }}
-                                            </td>
+                                            <td>{{ isset($ca->date_required) ? date('d M Y', strtotime($ca->date_required)) : '-' }}</td>
                                         </tr>
+
                                         <tr>
                                             <th>Costing Company</th>
                                             <td class="block">:</td>
