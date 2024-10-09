@@ -242,18 +242,18 @@
                         @endif
                     </td>
                     <td>{{ $perdiem['company_code'] }}</td>
-                    <td>{{ $perdiem['total_days'] }} Hari</td>
+                    <td>{{ $perdiem['total_days'] }} Days</td>
                 </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="4" class="head-row">Total</td>
                 <td>
-                    {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
+                    {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
                 </td>
             </tr>
         </table>
     @endif
-    <table class="table-approve" style="width: 70%;">
+    <table class="table-approve" style="width: 80%;">
         <tr>
             <th colspan="3"><b>Detail Cash Advanced :</b></th>
         </tr>
@@ -445,14 +445,14 @@
                             @endif
                         </td>
                         <td>{{ $perdiem['company_code'] }}</td>
-                        <td>{{ $perdiem['total_days'] }} Hari</td>
+                        <td>{{ $perdiem['total_days'] }} Days</td>
                         <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
                     </tr>
                 @endforeach
                 <tr class="total-row">
                     <td colspan="4" class="head-row">Total</td>
                     <td>
-                        {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
+                        {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
                     </td>
                     <td style="text-align: right;">
                         Rp.
@@ -519,7 +519,7 @@
                         <td>{{ \Carbon\Carbon::parse($penginapan['end_date'])->format('d-M-y') }}</td>
                         <td>{{ $penginapan['hotel_name'] }}</td>
                         <td>{{ $penginapan['company_code'] }}</td>
-                        <td>{{ $penginapan['total_days'] }} Hari</td>
+                        <td>{{ $penginapan['total_days'] }} Night</td>
                         <td style="text-align: right;">Rp. {{ number_format($penginapan['nominal'], 0, ',', '.') }}
                         </td>
                     </tr>
