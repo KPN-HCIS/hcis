@@ -1,4 +1,11 @@
 var formCountPenginapan = 0;
+let isCADecPenginapan;
+
+if (routeInfoElement) {
+    isCADecPenginapan = true;
+} else {
+    isCADecPenginapan = false;
+}
 
 window.addEventListener("DOMContentLoaded", function () {
     formCountPenginapan = document.querySelectorAll(
@@ -33,6 +40,9 @@ function removeFormPenginapan(index, event) {
                     'input[name="total_bt_penginapan"]'
                 ).value = formatNumber(total);
                 calculateTotalNominalBTTotal();
+                if (isCADecPenginapan) {
+                    calculateTotalNominalBTBalance();
+                }
             }
             $(`#form-container-bt-penginapan-${index}`).remove();
             formCountPenginapan--;
@@ -61,6 +71,9 @@ function removeFormPenginapanDec(index, event) {
                     'input[name="total_bt_penginapan"]'
                 ).value = formatNumber(total);
                 calculateTotalNominalBTTotal();
+                if (isCADecPenginapan) {
+                    calculateTotalNominalBTBalance();
+                }
             }
             $(`#form-container-bt-penginapan-dec-${index}`).remove();
             formCountPenginapan--;
@@ -107,6 +120,9 @@ function clearFormPenginapan(index, event) {
         `#nominal_bt_penginapan_${formCountPenginapan}`
     ).value = 0;
     calculateTotalNominalBTTotal();
+    if (isCADecPenginapan) {
+        calculateTotalNominalBTBalance();
+    }
 }
 
 function calculateTotalNominalBTPenginapan() {

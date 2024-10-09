@@ -60,8 +60,8 @@
                     @endif
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
+                            {{-- <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button> --}}
                         </div>
                     </div>
                 </div>
@@ -97,8 +97,8 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
-                                <button class="btn btn-warning mr-2" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button>
+                                <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
+                                <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonNBT" onclick="addMoreFormNBTDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonNBT" onclick="addMoreFormNBTDec(event)">Add More</button>
     </div>
 @elseif (!empty($declareCA) && $declareCA[0]['nominal_nbt'] !== null)
     <div id="form-container-nonb">
@@ -142,8 +142,8 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
-                                <button class="btn btn-warning mr-2" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button>
+                                <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
+                                <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonNBT" onclick="addMoreFormNBTDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonNBT" onclick="addMoreFormNBTDec(event)">Add More</button>
     </div>
 @else
     <div id="form-container-nonb">
@@ -184,8 +184,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormNBT(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormNBT(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormNBT(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -193,6 +193,6 @@
     </div>
 
     <div class="mt-1">
-        <button class="btn btn-primary" id="addMoreButtonNBT" onclick="addMoreFormNBTDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonNBT" onclick="addMoreFormNBTDec(event)">Add More</button>
     </div>
 @endif

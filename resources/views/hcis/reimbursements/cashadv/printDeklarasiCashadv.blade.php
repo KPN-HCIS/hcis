@@ -214,40 +214,42 @@
     @endphp
 
     @if ( $transactions->type_ca == 'dns' )
-        <table class="table-approve">
-            <tr>
-                <th colspan="5"><b>Perdiem Plan :</b></th>
-            </tr>
-            <tr class="head-row">
-                <td>Start Date</td>
-                <td>End Date</td>
-                <td>Office Location</td>
-                <td>Company Code</td>
-                <td>Total Days</td>
-            </tr>
+        @if (count($declareCA['detail_perdiem']) > 0 && !empty($declareCA['detail_perdiem'][0]['company_code']))
+            <table class="table-approve">
+                <tr>
+                    <th colspan="5"><b>Perdiem Plan :</b></th>
+                </tr>
+                <tr class="head-row">
+                    <td>Start Date</td>
+                    <td>End Date</td>
+                    <td>Office Location</td>
+                    <td>Company Code</td>
+                    <td>Total Days</td>
+                </tr>
 
-            @foreach($detailCA['detail_perdiem'] as $perdiem)
-            <tr style="text-align: center">
-                <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
-                <td>
-                    @if ($perdiem['location'] == 'Others')
-                        Other ({{$perdiem['other_location']}})
-                    @else
-                        {{$perdiem['location']}}
-                    @endif
-                </td>
-                <td>{{ $perdiem['company_code'] }}</td>
-                <td>{{ $perdiem['total_days'] }} Hari</td>
-            </tr>
-            @endforeach
-            <tr class="total-row">
-                <td colspan="4" class="head-row">Total</td>
-                <td>
-                    {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
-                </td>
-            </tr>
-        </table>
+                @foreach($declareCA['detail_perdiem'] as $perdiem)
+                <tr style="text-align: center">
+                    <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
+                    <td>
+                        @if ($perdiem['location'] == 'Others')
+                            Other ({{$perdiem['other_location']}})
+                        @else
+                            {{$perdiem['location']}}
+                        @endif
+                    </td>
+                    <td>{{ $perdiem['company_code'] }}</td>
+                    <td>{{ $perdiem['total_days'] }} Hari</td>
+                </tr>
+                @endforeach
+                <tr class="total-row">
+                    <td colspan="4" class="head-row">Total</td>
+                    <td>
+                        {{ array_sum(array_column($declareCA['detail_perdiem'], 'total_days')) }} Hari
+                    </td>
+                </tr>
+            </table>
+        @endif
 
         <table class="table-approve" style="width: 80%;">
             <tr>
@@ -482,7 +484,7 @@
                 <td style="width: 100%;">
                     <table class="table-approve" style="text-align:center;">
                         <tr>
-                            <td colspan="{{ count($approval) }}">Approval</td>
+                            <th colspan="{{ count($approval) }}">Approval</th>
                         </tr>
                         <tr>
                             @foreach ($approval as $role)
@@ -639,7 +641,7 @@
             @if (count($declareCA['detail_transport']) > 0 && !empty($declareCA['detail_transport'][0]['company_code']))
                 <table class="table-approve">
                     <tr>
-                        <th colspan="4"><b>Transport Plan :</b></th>
+                        <th colspan="4"><b>Transport Plan Declaration :</b></th>
                     </tr>
                     <tr class="head-row">
                         <td>Date</td>
@@ -706,7 +708,7 @@
             @if (count($declareCA['detail_penginapan']) > 0 && !empty($declareCA['detail_penginapan'][0]['company_code']))
                 <table class="table-approve">
                     <tr>
-                        <th colspan="6"><b>Accomodation Plan :</b></th>
+                        <th colspan="6"><b>Accomodation Plan Declaration :</b></th>
                     </tr>
                     <tr class="head-row">
                         <td>Start Date</td>
@@ -769,7 +771,7 @@
             @if (count($declareCA['detail_lainnya']) > 0 && !empty($declareCA['detail_lainnya'][0]['keterangan']))
                 <table class="table-approve">
                     <tr>
-                        <th colspan="3"><b>Others Plan :</b></th>
+                        <th colspan="3"><b>Others Plan Declaration :</b></th>
                     </tr>
                     <tr class="head-row">
                         <td>Date</td>

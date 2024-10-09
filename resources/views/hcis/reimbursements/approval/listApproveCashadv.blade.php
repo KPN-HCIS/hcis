@@ -673,6 +673,17 @@
             }
         }
 
+        const editButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const caNumber = this.getAttribute('data-no-ca');
+                const idNumber = this.getAttribute('data-no-id');
+
+                document.getElementById('reject_no_ca').textContent = caNumber;
+                document.getElementById('reject_no_id').value = idNumber; // Mengisi input no_id
+            });
+        });
+
     </script>
     {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     {{-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script> --}}

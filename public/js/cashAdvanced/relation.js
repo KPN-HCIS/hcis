@@ -1,18 +1,20 @@
 var formCountRelation = 0;
 
-    window.addEventListener('DOMContentLoaded', function() {
-        formCountRelation = document.querySelectorAll('#form-container-relation > div').length;
-    });
+window.addEventListener("DOMContentLoaded", function () {
+    formCountRelation = document.querySelectorAll(
+        "#form-container-relation > div"
+    ).length;
+});
 
-    function addMoreFormRelationDec(event) {
-        event.preventDefault();
-        formCountRelation++;
+function addMoreFormRelationDec(event) {
+    event.preventDefault();
+    formCountRelation++;
 
-        const newForm = document.createElement("div");
-        newForm.id = `form-container-e-relation-${formCountRelation}`;
-        newForm.className = "card-body p-2 mb-3";
-        newForm.style.backgroundColor = "#f8f8f8";
-        newForm.innerHTML = `
+    const newForm = document.createElement("div");
+    newForm.id = `form-container-e-relation-${formCountRelation}`;
+    newForm.className = "card-body p-2 mb-3";
+    newForm.style.backgroundColor = "#f8f8f8";
+    newForm.innerHTML = `
             <p class="fs-4 text-primary" style="font-weight: bold; ">Relation Entertainment ${formCountRelation}</p>
             <div class="card-body bg-light p-2 mb-3">
                 <p class="fs-5 text-primary" style="font-weight: bold;">Relation Declaration</p>
@@ -92,25 +94,25 @@ var formCountRelation = 0;
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormRelation(${formCountRelation}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormRelation(${formCountRelation}, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormRelation(${formCountRelation}, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormRelation(${formCountRelation}, event)">Delete</button>
                     </div>
                 </div>
             </div>
         `;
-        document.getElementById("form-container-relation").appendChild(newForm);
-        updateCheckboxVisibility();
-    }
+    document.getElementById("form-container-relation").appendChild(newForm);
+    updateCheckboxVisibility();
+}
 
-    function addMoreFormRelationReq(event) {
-        event.preventDefault();
-        formCountRelation++;
+function addMoreFormRelationReq(event) {
+    event.preventDefault();
+    formCountRelation++;
 
-        const newForm = document.createElement("div");
-        newForm.id = `form-container-e-relation-${formCountRelation}`;
-        newForm.className = "card-body p-2 mb-3";
-        newForm.style.backgroundColor = "#f8f8f8";
-        newForm.innerHTML = `
+    const newForm = document.createElement("div");
+    newForm.id = `form-container-e-relation-${formCountRelation}`;
+    newForm.className = "card-body p-2 mb-3";
+    newForm.style.backgroundColor = "#f8f8f8";
+    newForm.innerHTML = `
             <p class="fs-4 text-primary" style="font-weight: bold; ">Relation Entertainment ${formCountRelation}</p>
             <div class="card-body bg-light p-2 mb-3">
                 <p class="fs-5 text-primary" style="font-weight: bold;">Relation Request</p>
@@ -190,42 +192,44 @@ var formCountRelation = 0;
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormRelation(${formCountRelation}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormRelation(${formCountRelation}, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormRelation(${formCountRelation}, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormRelation(${formCountRelation}, event)">Delete</button>
                     </div>
                 </div>
             </div>
         `;
-        document.getElementById("form-container-relation").appendChild(newForm);
-        updateCheckboxVisibility();
-    }
+    document.getElementById("form-container-relation").appendChild(newForm);
+    updateCheckboxVisibility();
+}
 
-    $('.btn-warning').click(function(event) {
-        event.preventDefault();
-        var index = $(this).closest('.card-body').index() + 1;
-        removeFormRelation(index, event);
-    });
+$(".btn-warning").click(function (event) {
+    event.preventDefault();
+    var index = $(this).closest(".card-body").index() + 1;
+    removeFormRelation(index, event);
+});
 
-    function removeFormRelation(index, event) {
-        event.preventDefault();
-        if (formCountRelation > 0) {
-            const formContainer = document.getElementById(`form-container-e-relation-${index}`);
-            if (formContainer) {
-                $(`#form-container-e-relation-${index}`).remove();
-                formCountRelation--;
-            }
+function removeFormRelation(index, event) {
+    event.preventDefault();
+    if (formCountRelation > 0) {
+        const formContainer = document.getElementById(
+            `form-container-e-relation-${index}`
+        );
+        if (formContainer) {
+            $(`#form-container-e-relation-${index}`).remove();
+            formCountRelation--;
         }
     }
+}
 
-    function clearFormRelation(index, event) {
-        event.preventDefault();
-        let form = document.getElementById(`form-container-e-relation-${index}`);
+function clearFormRelation(index, event) {
+    event.preventDefault();
+    let form = document.getElementById(`form-container-e-relation-${index}`);
 
-        form.querySelectorAll('input[type="text"], textarea').forEach(input => {
-            input.value = '';
-        });
+    form.querySelectorAll('input[type="text"], textarea').forEach((input) => {
+        input.value = "";
+    });
 
-        form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-    }
+    form.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+        checkbox.checked = false;
+    });
+}

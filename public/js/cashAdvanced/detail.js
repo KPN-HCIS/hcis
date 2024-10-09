@@ -1,4 +1,12 @@
 var formCountDetail = 0;
+let isCADecDetail;
+
+const routeInfoDetail = document.getElementById("routeInfo");
+if (routeInfoDetail) {
+    isCADecDetail = true;
+} else {
+    isCADecDetail = false;
+}
 
 window.addEventListener("DOMContentLoaded", function () {
     formCountDetail = document.querySelectorAll(
@@ -52,10 +60,8 @@ function addMoreFormDetailDec(event) {
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px"
-                            onclick="clearFormDetail(${formCountDetail}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2"
-                            onclick="removeFormDetail(${formCountDetail}, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormDetail(${formCountDetail}, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormDetail(${formCountDetail}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -73,9 +79,15 @@ function addMoreFormDetailDec(event) {
         .addEventListener("input", function () {
             formatInputENT(this);
             calculateTotalNominalEDetail();
+            if (isCADecDetail) {
+                calculateTotalNominalBTBalance();
+            }
         });
 
     calculateTotalNominalEDetail(); // Hitung total secara otomatis.
+    if (isCADecDetail) {
+        calculateTotalNominalBTBalance();
+    }
     updateCheckboxVisibility(); // Memperbarui visibilitas checkbox.
 }
 
@@ -124,9 +136,9 @@ function addMoreFormDetailReq(event) {
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px"
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px"
                             onclick="clearFormDetail(${formCountDetail}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2"
+                        <button class="btn btn-outline-primary mr-2 btn-sm"
                             onclick="removeFormDetail(${formCountDetail}, event)">Delete</button>
                     </div>
                 </div>
@@ -145,9 +157,15 @@ function addMoreFormDetailReq(event) {
         .addEventListener("input", function () {
             formatInputENT(this);
             calculateTotalNominalEDetail();
+            if (isCADecDetail) {
+                calculateTotalNominalBTBalance();
+            }
         });
 
     calculateTotalNominalEDetail(); // Hitung total secara otomatis.
+    if (isCADecDetail) {
+        calculateTotalNominalBTBalance();
+    }
     updateCheckboxVisibility(); // Memperbarui visibilitas checkbox.
 }
 
@@ -322,6 +340,9 @@ document.addEventListener("DOMContentLoaded", function () {
             input.addEventListener("input", function () {
                 formatInputENT(this);
                 calculateTotalNominalEDetail(); // Ensure we calculate total here
+                if (isCADecDetail) {
+                    calculateTotalNominalBTBalance();
+                }
             });
         });
 
@@ -333,6 +354,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     calculateTotalNominalEDetail();
+    if (isCADecDetail) {
+        calculateTotalNominalBTBalance();
+    }
     updateCheckboxVisibility();
 });
 
@@ -345,4 +369,7 @@ function formatInputENT(input) {
         input.value = formatNumber(0);
     }
     calculateTotalNominalEDetail();
+    if (isCADecDetail) {
+        calculateTotalNominalBTBalance();
+    }
 }

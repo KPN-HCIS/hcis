@@ -82,8 +82,8 @@
                     <!-- Action Buttons -->
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem(${formCountPerdiem}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormPerdiem(${formCountPerdiem}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem(${formCountPerdiem}, event)">Reset</button>
+                            <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPerdiem(${formCountPerdiem}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -194,10 +194,8 @@
                     </div>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px"
-                                onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2"
-                                onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -206,7 +204,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" onclick="addMoreFormPerdiem(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" onclick="addMoreFormPerdiemReq(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -297,8 +295,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPerdiem(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPerdiem(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPerdiem(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -306,7 +304,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" onclick="addMoreFormPerdiemReq(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" onclick="addMoreFormPerdiemReq(event)">Add More</button>
     </div>
 
     <div class="mt-2">

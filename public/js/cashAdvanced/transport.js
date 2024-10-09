@@ -1,4 +1,11 @@
 var formCountTransport = 0;
+let isCADecTransport;
+
+if (routeInfoElement) {
+    isCADecTransport = true;
+} else {
+    isCADecTransport = false;
+}
 
 window.addEventListener("DOMContentLoaded", function () {
     formCountTransport = document.querySelectorAll(
@@ -15,11 +22,11 @@ $(".btn-warning").click(function (event) {
 function removeFormTransport(index, event) {
     event.preventDefault();
     if (formCountTransport > 0) {
-        const formContainer = document.getElementById(
+        const formContainerTransport = document.getElementById(
             `form-container-bt-transport-${index}`
         );
-        if (formContainer) {
-            const nominalInput = formContainer.querySelector(
+        if (formContainerTransport) {
+            const nominalInput = formContainerTransport.querySelector(
                 `#nominal_bt_transport_${index}`
             );
             if (nominalInput) {
@@ -33,6 +40,9 @@ function removeFormTransport(index, event) {
                     'input[name="total_bt_transport"]'
                 ).value = formatNumber(total);
                 calculateTotalNominalBTTotal();
+                if (isCADecTransport) {
+                    calculateTotalNominalBTBalance();
+                }
             }
             $(`#form-container-bt-transport-${index}`).remove();
             formCountTransport--;
@@ -54,23 +64,23 @@ function clearFormTransport(index, event) {
         document.querySelector('input[name="total_bt_transport"]').value =
             formatNumber(total);
 
-        let formContainer = document.getElementById(
+        let formContainerTransport = document.getElementById(
             `form-container-bt-transport-${index}`
         );
 
-        formContainer
+        formContainerTransport
             .querySelectorAll('input[type="text"], input[type="date"]')
             .forEach((input) => {
                 input.value = "";
             });
 
-        formContainer
+        formContainerTransport
             .querySelectorAll('input[type="number"]')
             .forEach((input) => {
                 input.value = 0;
             });
 
-        const companyCodeSelect = formContainer.querySelector(
+        const companyCodeSelect = formContainerTransport.querySelector(
             `#company_bt_transport_${index}`
         );
         if (companyCodeSelect) {
@@ -79,16 +89,21 @@ function clearFormTransport(index, event) {
             companyCodeSelect.dispatchEvent(event); // Trigger the change event to update the select2 component
         }
 
-        formContainer.querySelectorAll("select").forEach((select) => {
+        formContainerTransport.querySelectorAll("select").forEach((select) => {
             select.selectedIndex = 0;
         });
 
-        formContainer.querySelectorAll("textarea").forEach((textarea) => {
-            textarea.value = "";
-        });
+        formContainerTransport
+            .querySelectorAll("textarea")
+            .forEach((textarea) => {
+                textarea.value = "";
+            });
 
         document.querySelector(`#nominal_bt_transport_${index}`).value = 0;
         calculateTotalNominalBTTotal();
+        if (isCADecTransport) {
+            calculateTotalNominalBTBalance();
+        }
     }
 }
 

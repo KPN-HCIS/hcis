@@ -1,4 +1,11 @@
 var formCountOthers = 0;
+let isCADecLainnya;
+
+if (routeInfoElement) {
+    isCADecLainnya = true;
+} else {
+    isCADecLainnya = false;
+}
 
 window.addEventListener("DOMContentLoaded", function () {
     formCountOthers = document.querySelectorAll(
@@ -32,6 +39,9 @@ function removeFormLainnya(index, event) {
                 document.querySelector('input[name="total_bt_lainnya"]').value =
                     formatNumber(total);
                 calculateTotalNominalBTTotal();
+                if (isCADecLainnya) {
+                    calculateTotalNominalBTBalance();
+                }
             }
             $(`#form-container-bt-lainnya-${index}`).remove();
             formCountOthers--;
@@ -65,6 +75,9 @@ function clearFormLainnya(index, event) {
     // Reset nilai untuk nominal BT Lainnya
     document.querySelector(`#nominal_bt_lainnya_${index}`).value = 0;
     calculateTotalNominalBTTotal();
+    if (isCADecLainnya) {
+        calculateTotalNominalBTBalance();
+    }
 }
 
 function calculateTotalNominalBTLainnya() {

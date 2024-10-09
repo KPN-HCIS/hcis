@@ -10,9 +10,9 @@
         newForm.className = "card-body p-2 mb-3";
         newForm.style.backgroundColor = "#f8f8f8";
         newForm.innerHTML = `
-                <p class="fs-4 text-primary" style="font-weight: bold; ">Penginapan ${formCountPenginapan}</p>
+                <p class="fs-4 text-primary" style="font-weight: bold; ">Accommodation ${formCountPenginapan}</p>
                 <div class="card-body bg-light p-2 mb-3">
-                    <p class="fs-5 text-primary" style="font-weight: bold;">Penginapan Request</p>
+                    <p class="fs-5 text-primary" style="font-weight: bold;">Accommodation Request</p>
                     <div class="row">
                         <!-- Penginapan Date -->
                         <div class="col-md-4 mb-2">
@@ -82,8 +82,8 @@
                     <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
+                            <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -181,8 +181,8 @@
                     <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -208,9 +208,9 @@
     </div>
 @else
     <div id="form-container-penginapan">
-        <div id="form-container-bt-transport-1" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
+        <div id="form-container-bt-penginapan-1" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
             <p class="fs-4 text-primary" style="font-weight: bold; ">Accommodation 1</p>
-            <div id="form-container-bt-transport-req-1" class="card-body bg-light p-2 mb-3">
+            <div id="form-container-bt-penginapan-req-1" class="card-body bg-light p-2 mb-3">
                 <p class="fs-5 text-primary" style="font-weight: bold;">Accommodation Request</p>
                 <div class="row">
                     <!-- Penginapan Date -->
@@ -281,8 +281,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormPenginapan(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPenginapan(1, event)">Delete</button>
                     </div>
                 </div>
             </div>

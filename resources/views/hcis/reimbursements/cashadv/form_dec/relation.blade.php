@@ -154,8 +154,8 @@
                         <br>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormRelation({{ $loop->index + 1 }}, event)">Reset</button>
-                                {{-- <button class="btn btn-warning mr-2" onclick="removeFormRelation({{ $loop->index + 1 }}, event)">Delete</button> --}}
+                                <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormRelation({{ $loop->index + 1 }}, event)">Reset</button>
+                                {{-- <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormRelation({{ $loop->index + 1 }}, event)">Delete</button> --}}
                             </div>
                         </div>
                     @endif
@@ -251,8 +251,8 @@
                     <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormRelation({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormRelation({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormRelation({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormRelation({{ $loop->index + 1 }}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -261,7 +261,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>
     </div>
 @elseif (!empty($declareCA['relation_e']) && $declareCA['relation_e'][0]['name'] !== null)
     <div id="form-container-relation">
@@ -354,8 +354,8 @@
                     <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormRelation({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormRelation({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormRelation({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormRelation({{ $loop->index + 1 }}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -364,7 +364,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>
     </div>
 @else
     <div id="form-container-relation">
@@ -448,8 +448,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormRelation(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormRelation(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormRelation(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormRelation(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -457,6 +457,6 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>
     </div>
 @endif

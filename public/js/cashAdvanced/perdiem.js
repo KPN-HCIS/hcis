@@ -1,5 +1,13 @@
 var formCountPerdiem = 0;
 let perdiemData = [];
+let isCADecPerdiem;
+
+const routeInfoElement = document.getElementById("routeInfo");
+if (routeInfoElement) {
+    isCADecPerdiem = true;
+} else {
+    isCADecPerdiem = false;
+}
 
 window.addEventListener("DOMContentLoaded", function () {
     formCountPerdiem = document.querySelectorAll(
@@ -40,31 +48,34 @@ $(".btn-warning").click(function (event) {
 function removeFormPerdiem(index, event) {
     event.preventDefault();
     if (formCountPerdiem > 0) {
-        const formContainer = document.getElementById(
+        const formContainerPerdiem = document.getElementById(
             `form-container-bt-perdiem-${index}`
         );
-        if (formContainer) {
-            // const nominalInput = formContainer.querySelector(`#nominal_bt_perdiem_${index}`);
-            const nominalInput = document.querySelector(
+        if (formContainerPerdiem) {
+            const nominalInputPerdiem = document.querySelector(
                 `#nominal_bt_perdiem_${index}`
             );
-            if (nominalInput) {
-                let nominalValue = cleanNumber(nominalInput.value);
+            if (nominalInputPerdiem) {
+                let nominalValuePerdiem = cleanNumber(
+                    nominalInputPerdiem.value
+                );
                 let total = cleanNumber(
                     document.querySelector('input[name="total_bt_perdiem"]')
                         .value
                 );
-                total -= nominalValue;
+                total -= nominalValuePerdiem;
                 document.querySelector('input[name="total_bt_perdiem"]').value =
                     formatNumber(total);
                 calculateTotalNominalBTTotal();
+                if (isCADecPerdiem) {
+                    calculateTotalNominalBTBalance();
+                }
             }
-            formContainer.remove();
+            $(`#form-container-bt-perdiem-${index}`).remove();
 
             perdiemData = perdiemData.filter(
                 (data) => data.index !== index.toString()
             );
-            console.log("Data Perdiem setelah dihapus:", perdiemData); // Cek di console
 
             calculateTotalNominalBTPerdiem();
         }
@@ -74,38 +85,41 @@ function removeFormPerdiem(index, event) {
 function clearFormPerdiem(index, event) {
     event.preventDefault();
     if (formCountPerdiem > 0) {
-        const nominalInput = document.querySelector(
+        const nominalInputPerdiem = document.querySelector(
             `#nominal_bt_perdiem_${index}`
         );
-        if (nominalInput) {
-            let nominalValue = cleanNumber(nominalInput.value);
+        if (nominalInputPerdiem) {
+            let nominalValuePerdiem = cleanNumber(nominalInputPerdiem.value);
             let total = cleanNumber(
                 document.querySelector('input[name="total_bt_perdiem"]').value
             );
-            total -= nominalValue;
+            total -= nominalValuePerdiem;
             document.querySelector('input[name="total_bt_perdiem"]').value =
                 formatNumber(total);
-            nominalInput.value = 0;
+            nominalInputPerdiem.value = 0;
             calculateTotalNominalBTTotal();
+            if (isCADecPerdiem) {
+                calculateTotalNominalBTBalance();
+            }
         }
 
-        const formContainer = document.getElementById(
+        const formContainerPerdiem = document.getElementById(
             `form-container-bt-perdiem-${index}`
         );
-        if (formContainer) {
-            formContainer
+        if (formContainerPerdiem) {
+            formContainerPerdiem
                 .querySelectorAll('input[type="text"], input[type="date"]')
                 .forEach((input) => {
                     input.value = "";
                 });
 
-            formContainer
+            formContainerPerdiem
                 .querySelectorAll('input[type="number"]')
                 .forEach((input) => {
                     input.value = 0;
                 });
 
-            const companyCodeSelect = formContainer.querySelector(
+            const companyCodeSelect = formContainerPerdiem.querySelector(
                 `#company_bt_perdiem_${index}`
             );
             if (companyCodeSelect) {
@@ -114,7 +128,7 @@ function clearFormPerdiem(index, event) {
                 companyCodeSelect.dispatchEvent(event); // Trigger the change event to update the select2 component
             }
 
-            const locationSelect = formContainer.querySelector(
+            const locationSelect = formContainerPerdiem.querySelector(
                 `#location_bt_perdiem_${index}`
             );
             if (locationSelect) {
@@ -123,15 +137,22 @@ function clearFormPerdiem(index, event) {
                 locationSelect.dispatchEvent(event); // Trigger the change event to update the select2 component
             }
 
-            formContainer.querySelectorAll("select").forEach((select) => {
-                select.selectedIndex = 0;
-            });
+            formContainerPerdiem
+                .querySelectorAll("select")
+                .forEach((select) => {
+                    select.selectedIndex = 0;
+                });
 
-            formContainer.querySelectorAll("textarea").forEach((textarea) => {
-                textarea.value = "";
-            });
+            formContainerPerdiem
+                .querySelectorAll("textarea")
+                .forEach((textarea) => {
+                    textarea.value = "";
+                });
 
             calculateTotalNominalBTTotal();
+            if (isCADecPerdiem) {
+                calculateTotalNominalBTBalance();
+            }
         }
 
         perdiemData = perdiemData.filter(
@@ -194,6 +215,9 @@ function calculateTotalDaysPerdiem(input) {
 
             allowanceInput.value = formatNumber(allowance);
             calculateTotalNominalBTPerdiem();
+            if (isCADecPerdiem) {
+                calculateTotalNominalBTBalance();
+            }
         } else {
             totalDaysInput.value = 0;
             allowanceInput.value = 0;
@@ -231,6 +255,9 @@ function calculateTotalNominalBTPerdiem() {
     document.querySelector('input[name="total_bt_perdiem"]').value =
         formatNumber(total);
     calculateTotalNominalBTTotal();
+    if (isCADecPerdiem) {
+        calculateTotalNominalBTBalance();
+    }
 }
 
 function onNominalChange() {

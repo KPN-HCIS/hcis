@@ -40,8 +40,8 @@
                     <br>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormDetail({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormDetail({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormDetail({{ $loop->index + 1 }}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonDetail" onclick="addMoreFormDetailReq(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonDetail" onclick="addMoreFormDetailReq(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -104,8 +104,8 @@
                 <br>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormDetail(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormDetail(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormDetail(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormDetail(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonDetail" onclick="addMoreFormDetailReq(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonDetail" onclick="addMoreFormDetailReq(event)">Add More</button>
     </div>
 
     <div class="mt-2">
