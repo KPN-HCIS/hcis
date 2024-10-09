@@ -85,6 +85,8 @@ function clearFormPenginapan(index, event) {
         `form-container-bt-penginapan-${index}`
     );
 
+    // console.log(formContainer, index);
+
     formContainer
         .querySelectorAll('input[type="text"], input[type="date"]')
         .forEach((input) => {

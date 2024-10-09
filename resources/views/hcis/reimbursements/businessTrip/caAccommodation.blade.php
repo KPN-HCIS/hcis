@@ -198,9 +198,9 @@
     </div>
 @else
     <div id="form-container-penginapan">
-        <div id="form-container-bt-transport-1" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
+        <div id="form-container-bt-penginapan-1" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
             <p class="fs-4 text-primary" style="font-weight: bold; ">Accommodation 1</p>
-            <div id="form-container-bt-transport-req-1" class="card-body bg-light p-2 mb-3">
+            <div id="form-container-bt-penginapan-req-1" class="card-body bg-light p-2 mb-3">
                 <p class="fs-5 text-primary" style="font-weight: bold;">Accommodation Request</p>
                 <div class="row">
                     <!-- Penginapan Date -->
