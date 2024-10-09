@@ -381,7 +381,14 @@ class BusinessTripController extends Controller
         if ($request->hotel === 'Ya') {
             // Get all existing hotels for this business trip
             $existingHotels = Hotel::where('no_sppd', $oldNoSppd)->get()->keyBy('id');
-            // dd($existingHotels->no_htl);
+            $newNoHtl = null;
+
+            // If there are existing hotels, use the first one’s no_htl
+            if ($existingHotels->isNotEmpty()) {
+                $firstHotel = $existingHotels->first();
+                $newNoHtl = $firstHotel->no_htl; // Use existing no_htl
+            }
+
             $processedHotelIds = [];
 
             foreach ($request->nama_htl as $key => $value) {
@@ -405,12 +412,15 @@ class BusinessTripController extends Controller
 
                         $processedHotelIds[] = $hotelId;
                     } else {
-                        // Create a new hotel record if no valid ID is provided
-                        $existingNoHtl = $existingHotels->first()?->no_htl ?? $this->generateNoSppdHtl();
+
+                        if (!$newNoHtl) {
+                            $newNoHtl = $this->generateNoSppdHtl(); // Generate a new no_htl only if not set
+                        }
+
                         $newHotel = Hotel::create([
                             'id' => (string) Str::uuid(),
                             // 'no_htl' => $this->generateNoSppdHtl(),
-                            'no_htl' => $existingNoHtl,
+                            'no_htl' => $newNoHtl,
                             // dd($existingNoHtl),
                             'user_id' => Auth::id(),
                             'unit' => $request->divisi,
@@ -426,6 +436,7 @@ class BusinessTripController extends Controller
                         ]);
 
                         $processedHotelIds[] = $newHotel->id;
+                        // dd($newHotel);
                     }
                 }
             }
@@ -440,6 +451,13 @@ class BusinessTripController extends Controller
         if ($request->tiket === 'Ya') {
             // Get all existing tickets for this business trip
             $existingTickets = Tiket::where('no_sppd', $oldNoSppd)->get()->keyBy('noktp_tkt');
+
+            $newNoTkt = null;
+            // If there are existing tickets, use the first one’s no_tkt
+            if ($existingTickets->isNotEmpty()) {
+                $firstTicket = $existingTickets->first();
+                $newNoTkt = $firstTicket->no_tkt; // Use existing no_tkt
+            }
 
             $processedTicketIds = [];
 
@@ -480,12 +498,12 @@ class BusinessTripController extends Controller
                         $existingTicket = $existingTickets[$value];
                         $existingTicket->update($ticketData);
                     } else {
-                        $existingNoTkt = $existingTicket->no_tkt ?? $this->generateNoSppdTkt();
+                        if (!$newNoTkt) {
+                            $newNoTkt = $this->generateNoSppdTkt();
+                        }
                         Tiket::create(array_merge($ticketData, [
                             'id' => (string) Str::uuid(),
-                            // 'no_tkt' => $this->generateNoSppdTkt(),
-                            'no_tkt' => $existingNoTkt,
-                            // dd($existingNoTkt),
+                            'no_tkt' => $newNoTkt, // Assign the generated no_tkt
                             'noktp_tkt' => $value,
                             'approval_status' => $statusValue,
                         ]));
