@@ -1458,13 +1458,18 @@ class BusinessTripController extends Controller
                             }
                             // Integrate CA PDF generation from cashadvancedDownload
                             $pdfName = 'CA.pdf';
-                            $viewPath = 'hcis.reimbursements.cashadv.printCashadv';
+                            $viewPath = 'hcis.reimbursements.businessTrip.ca_pdf';
                             $employee_data = Employee::where('id', $user->id)->first();
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
                             $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
                             $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
-
+                            $approval = ca_approval::with('employee')
+                                ->where('ca_id', $ca->id)
+                                ->where('approval_status', '!=', 'Rejected')
+                                ->orderBy('layer', 'asc')
+                                ->get();
+                            // dd($approval);
                             $data = [
                                 'link' => 'Cash Advanced',
                                 'parentLink' => 'Reimbursement',
@@ -1475,6 +1480,7 @@ class BusinessTripController extends Controller
                                 'perdiem' => $perdiem,
                                 'no_sppds' => $no_sppds,
                                 'transactions' => $ca,
+                                'approval' => $approval,
                             ];
                             break;
                         case 'tiket':
@@ -1557,7 +1563,26 @@ class BusinessTripController extends Controller
                     // $pdfContent = PDF::loadView($viewPath, $data)->output();
                     // $zip->addFromString($pdfName, $pdfContent);
                     try {
-                        $pdfContent = PDF::loadView($viewPath, $data)->output();
+                        // $pdfContent = PDF::loadView($viewPath, $data)->output();
+                        // $zip->addFromString($pdfName, $pdfContent);
+                        $pdf = PDF::loadView($viewPath, $data);
+
+                        if ($type === 'ca') {
+                            // Add the special footer for CA PDF using a callback
+                            $pdf->output();
+                            $canvas = $pdf->getCanvas();
+                            $canvas->page_script('
+                                if ($PAGE_COUNT > 2) {
+                                    $font = $fontMetrics->getFont("Helvetica", "normal");
+                                    $size = 8;
+                                    $color = array(0, 0, 0);
+                                    $text = "Page " . $PAGE_NUM . " of " . $PAGE_COUNT . " Cash Advanced No. ' . $ca->no_ca . '";
+                                    $pdf->text(400, 810, $text, $font, $size, $color);
+                                }
+                            ');
+                        }
+
+                        $pdfContent = $pdf->output();
                         $zip->addFromString($pdfName, $pdfContent);
                     } catch (\Exception $e) {
                         Log::error("Error generating PDF for {$type}: " . $e->getMessage());

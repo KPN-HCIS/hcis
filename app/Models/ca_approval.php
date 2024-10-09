@@ -56,4 +56,5 @@ class ca_approval extends Model
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
+
 }

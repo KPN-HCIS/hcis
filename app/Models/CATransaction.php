@@ -48,4 +48,9 @@ class CATransaction extends Model
     {
         return $this->belongsTo(Employee::class, 'user_id', 'id');
     }
+
+    public function companies()
+    {
+        return $this->belongsTo(Company::class, 'contribution_level_code', 'contribution_level_code');
+    }
 }
