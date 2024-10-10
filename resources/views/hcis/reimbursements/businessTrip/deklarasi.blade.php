@@ -192,7 +192,7 @@
                                             </div>
                                         </div>
                                         <div class="row mb-2">
-                                            <div class="col-md-6 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <label class="form-label">Total Cash Advanced</label>
                                                 <div class="input-group">
                                                     <div class="input-group-append">
@@ -204,7 +204,7 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <label class="form-label">Total Cash Advanced Deklarasi</label>
                                                 <div class="input-group">
                                                     <div class="input-group-append">
@@ -213,6 +213,18 @@
                                                     <input class="form-control bg-light" name="totalca" id="totalca"
                                                         type="text" min="0"
                                                         value="{{ number_format($ca->total_real ?? '0', 0, ',', '.') }}"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Total Cost</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Rp</span>
+                                                    </div>
+                                                    <input class="form-control bg-light" name="" id=""
+                                                        type="text" min="0"
+                                                        value="{{ number_format($ca->total_cost ?? '0', 0, ',', '.') }}"
                                                         readonly>
                                                 </div>
                                             </div>

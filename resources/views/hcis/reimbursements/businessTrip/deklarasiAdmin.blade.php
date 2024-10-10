@@ -86,13 +86,13 @@
                                         <tr>
                                             <th>Estimated Declaration</th>
                                             <td class="block">:</td>
-                                            <td> {{ $ca->declare_estimate ? date('d M Y', strtotime($ca->declare_estimate)) : '-' }}
+                                            <td>{{ isset($ca->declare_estimate) ? date('d M Y', strtotime($ca->declare_estimate)) : '-' }}
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Date Required</th>
                                             <td class="block">:</td>
-                                            <td> {{ $ca->date_required ? date('d M Y', strtotime($ca->date_required)) : '-' }}
+                                            <td>{{ isset($ca->date_required) ? date('d M Y', strtotime($ca->date_required)) : '-' }}
                                             </td>
                                         </tr>
                                         <tr>
@@ -194,7 +194,7 @@
                                             </div>
                                         </div>
                                         <div class="row mb-2">
-                                            <div class="col-md-6 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <label class="form-label">Total Cash Advanced</label>
                                                 <div class="input-group">
                                                     <div class="input-group-append">
@@ -206,7 +206,7 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <label class="form-label">Total Cash Advanced Deklarasi</label>
                                                 <div class="input-group">
                                                     <div class="input-group-append">
@@ -215,6 +215,18 @@
                                                     <input class="form-control bg-light" name="totalca" id="totalca"
                                                         type="text" min="0"
                                                         value="{{ number_format($ca->total_real ?? '0', 0, ',', '.') }}"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <label class="form-label">Total Cost</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">Rp</span>
+                                                    </div>
+                                                    <input class="form-control bg-light" name="" id=""
+                                                        type="text" min="0"
+                                                        value="{{ number_format($ca->total_cost ?? '0', 0, ',', '.') }}"
                                                         readonly>
                                                 </div>
                                             </div>

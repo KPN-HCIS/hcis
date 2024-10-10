@@ -911,9 +911,11 @@ class BusinessTripController extends Controller
             $ca->date_required = null;
             $ca->declare_estimate = Carbon::parse($request->kembali)->addDays(3);
             $ca->total_days = Carbon::parse($request->mulai)->diffInDays(Carbon::parse($request->kembali));
-            $ca->total_ca = (int) str_replace('.', '', $request->totalca);
-            $ca->total_real = $request->totalca;
-            $ca->total_cost = (int) str_replace('.', '', $request->totalca);
+            $ca->total_ca = '0';
+            $ca->total_real = (int) str_replace('.', '', $request->totalca);
+            $ca->total_cost = -1 * (int) str_replace('.', '', $ca->total_real);
+
+            // dd($ca->total_real, $ca->total_cost);
 
             if ($statusValue === 'Declaration Draft') {
                 // Set CA status to Draft
@@ -942,16 +944,16 @@ class BusinessTripController extends Controller
 
             $ca->declaration_at = Carbon::now();
             $total_real = (int) str_replace('.', '', $request->totalca);
-            $total_ca = $ca->total_ca;
+            // $total_ca = $ca->total_ca;
 
-            if ($total_ca === 0) {
+            if ($total_real === 0) {
                 // Redirect back with a SweetAlert message
                 return redirect()->back()->with('error', 'Total CA cannot be zero.')->withInput();
             }
 
             // Assign total_real and calculate total_cost
-            $ca->total_real = $total_real;
-            $ca->total_cost = $total_ca - $total_real;
+            // $ca->total_real = $total_real;
+            // $ca->total_cost = $total_ca - $total_real;
 
             // Initialize arrays for details
             $detail_perdiem = [];
@@ -1132,15 +1134,13 @@ class BusinessTripController extends Controller
         $ca->declaration_at = Carbon::now();
 
         $total_real = (int) str_replace('.', '', $request->totalca);
-        // dd($total_real);
+        // // dd($total_real);
         $total_ca = $ca->total_ca;
-
         if ($ca->detail_ca === null) {
-            $ca->total_ca = $total_real;
-            // dd($ca->total_ca);
-            $ca->total_real = $total_real;
-            // dd($ca->total_real);
-            $ca->total_cost = $ca->total_ca - $ca->total_real;
+            $ca->total_ca = '0';
+            $ca->total_real = (int) str_replace('.', '', $request->totalca);
+            $ca->total_cost = -1 * (int) str_replace('.', '', $ca->total_real);
+
         } else {
             $ca->total_real = $total_real;
             $ca->total_cost = $total_ca - $total_real;
