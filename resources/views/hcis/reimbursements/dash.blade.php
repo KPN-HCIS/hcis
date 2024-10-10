@@ -23,38 +23,49 @@
         text-align: center;
     }
 </style> --}}
-<style>
-    .menu-card {
-    text-decoration: none; /* Menghapus underline dari link */
-}
+    <style>
+        .menu-card {
+            text-decoration: none;
+            /* Menghapus underline dari link */
+        }
 
-.card {
-    border: none; /* Menghapus border default card */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Menambahkan shadow */
-    transition: transform 0.3s; /* Menambahkan animasi transisi */
-}
+        .card {
+            border: none;
+            /* Menghapus border default card */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Menambahkan shadow */
+            transition: transform 0.3s;
+            /* Menambahkan animasi transisi */
+        }
 
-.card:hover {
-    transform: translateY(-10px); /* Efek saat di-hover */
-}
+        .card:hover {
+            transform: translateY(-10px);
+            /* Efek saat di-hover */
+        }
 
-.card-body {
-    padding: 20px; /* Menambahkan padding pada card body */
-}
+        .card-body {
+            padding: 20px;
+            /* Menambahkan padding pada card body */
+        }
 
-.card-img {
-    max-width: 100px; /* Mengatur ukuran maksimal gambar */
-    margin: 0 auto; /* Memusatkan gambar */
-    display: block; /* Memastikan gambar menjadi blok */
-}
+        .card-img {
+            max-width: 100px;
+            /* Mengatur ukuran maksimal gambar */
+            margin: 0 auto;
+            /* Memusatkan gambar */
+            display: block;
+            /* Memastikan gambar menjadi blok */
+        }
 
-h4 {
-    margin-top: 20px; /* Menambahkan jarak atas pada heading */
-    margin-bottom: 0; /* Menghapus jarak bawah pada heading */
-    color: #333; /* Mengatur warna teks */
-}
-
-</style>
+        h4 {
+            margin-top: 20px;
+            /* Menambahkan jarak atas pada heading */
+            margin-bottom: 0;
+            /* Menghapus jarak bawah pada heading */
+            color: #333;
+            /* Mengatur warna teks */
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -104,16 +115,24 @@ h4 {
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            <div class="col">
-                <a href="{{ route('businessTrip.admin') }}">
-                    <div class="card">
-                        <div class="card-body">
-                            <img src="/images/menu/business-trip.png" alt="logo" style="width: 100px; height: 100px;">
-                            <h4 class="my-3">Business Trip (Admin)</h4>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div> <!-- end col-->
+            @if (auth()->check())
+                @can('adminbt')
+                    <div class="col">
+                        <a href="{{ route('businessTrip.admin') }}">
+                            <div class="card">
+                                <div class="card-body">
+                                    <img src="/images/menu/business-trip.png" alt="logo"
+                                        style="width: 100px; height: 100px;">
+                                    <h4 class="my-3">Business Trip (Admin)</h4>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            {{-- </div> --}}
+
             <div class="col-md-3">
                 <a href="{{ '' }}">
                     <div class="card">

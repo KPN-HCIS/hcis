@@ -196,6 +196,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd'])->name('medical.form.add');
     Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate'])->name('medical.form.post');
 
+    Route::middleware(['permission:adminbt'])->group(function () {
+        //ADMIN BT
+        Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin'])->name('businessTrip.admin');
+        Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin'])->name('businessTrip-filterDate.admin');
+        Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
+        Route::get('/businessTrip/declaration/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin'])->name('businessTrip.deklarasi.admin');
+        Route::put('/businessTrip/declaration/admin/status/{id}', [BusinessTripController::class, 'deklarasiStatusAdmin'])->name('businessTrip.deklarasi.admin.status');
+        Route::delete('/businessTrip/admin/delete/{id}', [BusinessTripController::class, 'deleteAdmin'])->name('delete.btAdmin');
+
+        //division
+        Route::get('/businessTrip/admin/division', [BusinessTripController::class, 'adminDivision'])->name('businessTrip.admin.division');
+        Route::get('/admin/business-trip/filter-division', [BusinessTripController::class, 'filterDivision'])
+            ->name('businessTrip-filterDivision.admin');
+        Route::get('businessTrip/division/export/excel/', [BusinessTripController::class, 'exportExcelDivision'])->name('export.excel.division');
+        Route::get('/businessTrip/division/export-pdf', [BusinessTripController::class, 'exportPdfDivision'])->name('export.pdf.division');
+    });
+
     //Business Trip
     Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip'])->name('businessTrip');
     Route::get('/businessTrip/form/add', [BusinessTripController::class, 'businessTripformAdd'])->name('businessTrip.add');
@@ -214,23 +231,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/businessTrip/search', [BusinessTripController::class, 'search'])->name('businessTrip-search');
     Route::get('/businessTrip/filterDate', [BusinessTripController::class, 'filterDate'])->name('businessTrip-filterDate');
-
-    //ADMIN BT
-    Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin'])->name('businessTrip.admin');
-    Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin'])->name('businessTrip-filterDate.admin');
-    Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
-    Route::get('/businessTrip/declaration/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin'])->name('businessTrip.deklarasi.admin');
-    Route::put('/businessTrip/declaration/admin/status/{id}', [BusinessTripController::class, 'deklarasiStatusAdmin'])->name('businessTrip.deklarasi.admin.status');
-    Route::delete('/businessTrip/admin/delete/{id}', [BusinessTripController::class, 'deleteAdmin'])->name('delete.btAdmin');
-
-    //division
-    Route::get('/businessTrip/admin/division', [BusinessTripController::class, 'adminDivision'])->name('businessTrip.admin.division');
-    Route::get('/admin/business-trip/filter-division', [BusinessTripController::class, 'filterDivision'])
-    ->name('businessTrip-filterDivision.admin');
-    Route::get('businessTrip/division/export/excel/', [BusinessTripController::class, 'exportExcelDivision'])->name('export.excel.division');
-    Route::get('/businessTrip/division/export-pdf', [BusinessTripController::class, 'exportPdfDivision'])->name('export.pdf.division');
-
-
 
 
     //Export BT excel
