@@ -2761,8 +2761,6 @@ class BusinessTripController extends Controller
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
         // Initialize default values
-        $totalCa = 0;
-        $totalReal = 0;
 
         if ($ca) {
             // Retrieve and process total values from the request if available
@@ -2773,18 +2771,19 @@ class BusinessTripController extends Controller
                 $totalReal = (int) str_replace('.', '', $request->totalca);
             }
 
-            $ca->total_real = $totalReal;
+            $total_real = (int) str_replace('.', '', $request->totalca);
+            // // dd($total_real);
             $total_ca = $ca->total_ca;
 
             if ($ca->detail_ca === null) {
-                $ca->total_ca = $totalReal;
-                // dd($ca->total_ca);
-                $ca->total_real = $totalReal;
-                // dd($ca->total_real);
-                $ca->total_cost = $ca->total_ca - $ca->total_real;
+                $ca->total_ca = '0';
+                $ca->total_real = (int) str_replace('.', '', $request->totalca);
+                $ca->total_cost = -1 * (int) str_replace('.', '', $ca->total_real);
+
             } else {
-                $ca->total_real = $totalReal;
-                $ca->total_cost = $total_ca - $totalReal;
+                $ca->total_real = $total_real;
+                $ca->total_cost = $total_ca - $total_real;
+                // dd($ca->total_cost);
             }
 
             // Validate if the total cost is negative and status is 'Return/Refund'
