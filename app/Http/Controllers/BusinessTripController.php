@@ -920,15 +920,15 @@ class BusinessTripController extends Controller
             if ($statusValue === 'Declaration Draft') {
                 // Set CA status to Draft
                 // dd($statusValue);
-                $caStatus = $ca->approval_status = 'Draft';
+                $caStatus = $ca->approval_sett = 'Draft';
                 // dd($caStatus);
 
             } elseif ($statusValue === 'Declaration L1') {
                 // Set CA status to Pending
-                $caStatus = $ca->approval_status = 'Pending';
+                $caStatus = $ca->approval_sett = 'Pending';
             }
 
-            $ca->approval_status = $caStatus;
+            $ca->approval_status = 'Approved';
             $ca->approval_sett = $request->approval_sett;
             $ca->approval_extend = $request->approval_extend;
             $ca->created_by = $userId;
@@ -948,7 +948,7 @@ class BusinessTripController extends Controller
 
             if ($total_real === 0) {
                 // Redirect back with a SweetAlert message
-                return redirect()->back()->with('error', 'Total CA cannot be zero.')->withInput();
+                return redirect()->back()->with('error', 'CA Real cannot be zero.')->withInput();
             }
 
             // Assign total_real and calculate total_cost
