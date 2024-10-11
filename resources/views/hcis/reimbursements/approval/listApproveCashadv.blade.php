@@ -552,7 +552,8 @@
                                     <button type="submit" name="action_ca_approve" value="Approve"
                                         class="btn mb-2 btn-success btn-pill px-4 me-2 approve-button"
                                         data-no-id="{{ $transactions->id }}"
-                                        data-no-ca="{{ $transactions->no_ca }}">
+                                        data-no-ca="{{ $transactions->no_ca }}"
+                                        >
                                         Approve
                                     </button>
                                 </div>

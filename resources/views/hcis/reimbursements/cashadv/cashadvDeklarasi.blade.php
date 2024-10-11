@@ -277,7 +277,13 @@
 
             extEndDateInput.addEventListener('change', function() {
                 if (new Date(extEndDateInput.value) < new Date(extStartDateInput.value)) {
-                    alert("End Date cannot be earlier than Start Date.");
+                    Swal.fire({
+                        title: 'Cannot Sett Date!',
+                        text: 'End Date cannot be earlier than Start Date.',
+                        icon: 'warning',
+                        confirmButtonColor: "#9a2a27",
+                        confirmButtonText: 'Ok',
+                    });
                     extEndDateInput.value = ""; // Reset jika salah
                 }
                 calculateExtTotalDays();

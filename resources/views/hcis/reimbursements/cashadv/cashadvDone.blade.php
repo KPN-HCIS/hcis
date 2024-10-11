@@ -154,13 +154,13 @@
                                                 @if ($ca_transaction->approval_status == 'Approved' || $ca_transaction->approval_status == 'Done')
                                                     @if ($ca_transaction->approval_sett == 'Waiting for Declaration')
                                                         <p class="badge text-bg-success"
-                                                        
+
                                                         title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }} and Waiting for Declaration">
                                                         {{ $ca_transaction->approval_status }}
                                                         </p>
                                                     @else
                                                         <p class="badge text-bg-success"
-                                                        
+
                                                         title="Approved By: {{ isset($fullnames[$ca_transaction->status_id]) ? $fullnames[$ca_transaction->status_id] : 'Unknown Employee' }}">
                                                         {{ $ca_transaction->approval_status }}
                                                         </p>
@@ -229,7 +229,15 @@
 
         // Jika ada pesan sukses, tampilkan sebagai alert
         if (successMessage) {
-            alert(successMessage);
+            if (successMessage) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: successMessage,
+                    icon: 'success', // Mengubah ke 'success' jika ini merupakan pesan sukses
+                    confirmButtonColor: "#9a2a27",
+                    confirmButtonText: 'Ok'
+                });
+            }
         }
     </script>
 @endpush

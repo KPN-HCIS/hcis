@@ -211,7 +211,15 @@
 
     // Jika ada pesan sukses, tampilkan sebagai alert
     if (successMessage) {
-        alert(successMessage);
+        if (successMessage) {
+            Swal.fire({
+                title: 'Success!',
+                text: successMessage,
+                icon: 'success', // Mengubah ke 'success' jika ini merupakan pesan sukses
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'Ok'
+            });
+        }
     }
 </script>
 @endpush

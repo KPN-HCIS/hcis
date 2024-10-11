@@ -143,6 +143,7 @@
                                         <th>Settlement</th>
                                         <th>Status CA</th>
                                         <th>Actions</th>
+                                        <th>Export</th>
                                         <th>Delete</th>
                                     </tr>
                                 </thead>
@@ -183,12 +184,51 @@
                                                     {{ $ca_transaction->ca_status }}
                                                 </p>
                                             </td>
-                                            <td class="text-left">
-                                                <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-secondary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                            <td class="text-center">
                                                 @if($ca_transaction->approval_sett=='Approved')
-                                                <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"  data-bs-target="#exampleModal" data-id="{{ $ca_transaction->id }}" data-status="{{ $ca_transaction->ca_status }}" title="Status Update"><i class="ri-file-edit-line"></i></button>
+                                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" title="Status Update" data-bs-target="#statusModal"
+                                                        data-id="{{ $ca_transaction->id }}"
+                                                        data-status="{{ $ca_transaction->ca_status }}"
+                                                        data-no="{{ $ca_transaction->no_ca }}">
+                                                        <i class="ri-file-edit-line"></i>
+                                                    </button>
                                                 @endif
-
+                                                @if(($ca_transaction->approval_status == 'Pending') ||
+                                                    ($ca_transaction->approval_status == 'Approved' &&
+                                                    ($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Draft')))
+                                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" title="Approval Update" data-bs-target="#approvalModal"
+                                                        data-type="{{ $ca_transaction->type_ca }}"
+                                                        data-total="{{ number_format($ca_transaction->total_ca, 0, ',', '.') }}"
+                                                        data-id="{{ $ca_transaction->id }}"
+                                                        data-no="{{ $ca_transaction->no_ca }}"
+                                                        data-sppd="{{ $ca_transaction->no_sppd }}"
+                                                        data-sett="{{ $ca_transaction->approval_sett }}"
+                                                        data-status="{{ $ca_transaction->approval_status }}">
+                                                        <i class="bi bi-list-check"></i>
+                                                    </button>
+                                                @elseif(($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Pending' || $ca_transaction->approval_sett == 'Approved') && $ca_transaction->approval_status != 'Rejected' && $ca_transaction->approval_status != 'Draft')
+                                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" title="Approval Declaration Update" data-bs-target="#approvalDecModal"
+                                                        data-type="{{ $ca_transaction->type_ca }}"
+                                                        data-total="{{ number_format($ca_transaction->total_ca, 0, ',', '.') }}"
+                                                        data-id="{{ $ca_transaction->id }}"
+                                                        data-no="{{ $ca_transaction->no_ca }}"
+                                                        data-sppd="{{ $ca_transaction->no_sppd }}"
+                                                        data-sett="{{ $ca_transaction->approval_sett }}"
+                                                        data-status="{{ $ca_transaction->approval_status }}">
+                                                        <i class="bi bi-list-check"></i>
+                                                    </button>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($ca_transaction->approval_status != 'Draft' && $ca_transaction->approval_status != 'Rejected')
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"  data-bs-target="#exportModal"
+                                                        data-id="{{ $ca_transaction->id }}"
+                                                        data-status="{{ $ca_transaction->approval_sett }}"
+                                                        data-no="{{ $ca_transaction->no_ca }}"
+                                                        title="Print">
+                                                        <i class="bi bi-file-earmark-arrow-down"></i>
+                                                    </button>
+                                                @endif
                                             </td>
                                             <td class="text-center">
                                                 <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
@@ -208,35 +248,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Update Cash Advanced Status</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('cashadvanced.adupdate', ':id') }}" method="POST">@csrf
-                    <div class="modal-body">
-                            {{-- <label for="transaction-id-display" class="col-form-label">Transaction ID: </label> --}}
-                            {{-- <input type="text" class="form-control" id="transaction-id-display" readonly> --}}
-                            <input type="hidden" name="transaction_id" id="transaction_id">
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Status : </label>
-                            <select class="form-select" name="ca_status" id="ca_status">
-                                <option value="On Progress">On Progress</option>
-                                <option value="Refund">Refund</option>
-                                <option value="Done">Done</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
+    @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
 @endsection
 @section('script')
     {{-- @vite(['resources/js/pages/demo.form-advanced.js']) --}}
@@ -255,7 +268,13 @@
 
         // Jika ada pesan sukses, tampilkan sebagai alert
         if (successMessage) {
-            alert(successMessage);
+            Swal.fire({
+                title: 'Success!',
+                text: successMessage,
+                icon: 'success',
+                confirmButtonColor: "#9a2a27",
+                confirmButtonText: 'Ok'
+            });
         }
         function redirectToExportExcel() {
             const route = "{{ route('exportca.excel') }}";
@@ -316,8 +335,8 @@
         }
         //script modal
         document.addEventListener('DOMContentLoaded', function () {
-            var exampleModal = document.getElementById('exampleModal');
-            exampleModal.addEventListener('show.bs.modal', function (event) {
+            var statusModal = document.getElementById('statusModal');
+            statusModal.addEventListener('show.bs.modal', function (event) {
                 // Dapatkan tombol yang men-trigger modal
                 var button = event.relatedTarget;
 
@@ -326,7 +345,7 @@
                 var transactionStatus = button.getAttribute('data-status');
 
                 // Temukan form di dalam modal dan update action-nya
-                var form = exampleModal.querySelector('form');
+                var form = statusModal.querySelector('form');
                 var action = form.getAttribute('action');
                 form.setAttribute('action', action.replace(':id', transactionId));
 
@@ -339,5 +358,285 @@
                 statusSelect.value = transactionStatus;
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var exportModal = document.getElementById('exportModal');
+            var declareSection = document.querySelector('.declare-section');
+            exportModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+
+                var transactionId = button.getAttribute('data-id');
+                var status = button.getAttribute('data-status');
+                console.log(status);
+
+                var downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = '{{ route("cashadvanced.download", ":id") }}'.replace(':id', transactionId);
+
+                var declareLink = document.getElementById('declareLink');
+                declareLink.href = '{{ route("cashadvanced.downloadDeclare", ":id") }}'.replace(':id', transactionId);
+
+                var transactionInput = document.getElementById('transaction_id');
+                transactionInput.value = transactionId;
+
+                if (status === 'Pending' || status === 'Approved' || status === 'Rejected') {
+                    declareSection.style.display = 'flex'; // Tampilkan
+                } else {
+                    declareSection.style.display = 'none'; // Sembunyikan
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var approvalModal = document.getElementById('approvalModal');
+            approvalModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+
+                var transactionType = button.getAttribute('data-type');
+                var transactionTotal = button.getAttribute('data-total');
+                var transactionId = button.getAttribute('data-id');
+                var transactionNo = button.getAttribute('data-no');
+                var transactionSPPD = button.getAttribute('data-sppd');
+
+                var form = approvalModal.querySelector('form');
+                var action = form.getAttribute('action');
+                form.setAttribute('action', action.replace(':id', transactionId));
+
+                form.querySelector('#ca_type').value = transactionType;
+                form.querySelector('#totalca').value = transactionTotal;
+                form.querySelector('#no_id').value = transactionId;
+                form.querySelector('#no_ca').value = transactionNo;
+                form.querySelector('#bisnis_numb').value = transactionSPPD;
+
+                var buttonList = document.getElementById('buttonList');
+                buttonList.innerHTML = '';
+
+                var previousLayerApproved = true; // Untuk mengecek status layer sebelumnya
+
+                @foreach ($ca_approvals as $approval)
+                    if (transactionId === "{{ $approval->ca_id }}") {
+                        var rowContainer = document.createElement('div');
+                        rowContainer.className = 'row mb-3 text-center';
+
+                        var nameCol = document.createElement('div');
+                        nameCol.className = 'col-md-6';
+                        var nameText = document.createElement('p');
+                        nameText.textContent = "{{ $approval->ReqName }}";
+                        nameCol.appendChild(nameText);
+
+                        var buttonCol = document.createElement('div');
+                        buttonCol.className = 'col-md-6';
+
+                        var dateText = document.createElement('p');
+
+                        if ("{{ $approval->approval_status }}" === "Approved") {
+                            dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                            buttonCol.appendChild(dateText);
+                        } else if (previousLayerApproved) {
+                            // Form Data
+                            var dataNoIdInput = document.createElement('input');
+                            dataNoIdInput.type = 'hidden';
+                            dataNoIdInput.name = 'data_no_id';
+                            dataNoIdInput.value = "{{ $approval->id }}";
+
+                            // Tombol Approve
+                            var rejectButton = document.createElement('button');
+                            rejectButton.type = 'submit';
+                            rejectButton.name = 'action_ca_reject';
+                            rejectButton.style = 'margin-right:5px';
+                            rejectButton.value = 'Reject';
+                            rejectButton.className = 'btn btn-sm btn-primary btn-pill mr-3 px-1';
+                            rejectButton.textContent = 'Reject';
+
+                            // Tombol Approve
+                            var approveButton = document.createElement('button');
+                            approveButton.type = 'submit';
+                            approveButton.name = 'action_ca_approve';
+                            approveButton.value = 'Approve';
+                            approveButton.className = 'btn btn-sm btn-success btn-pill px-1';
+                            approveButton.textContent = 'Approve';
+
+                            form.querySelector('#data_no_id').value = "{{ $approval->id }}";
+
+                            buttonCol.appendChild(rejectButton);
+                            buttonCol.appendChild(approveButton);
+                        } else {
+                            // Jika layer sebelumnya tidak disetujui, layer ini tidak menampilkan tombol
+                            dateText.textContent = 'Waiting for previous approval';
+                            buttonCol.appendChild(dateText);
+                        }
+
+                        // Jika approval_status tidak "Approved", previousLayerApproved menjadi false
+                        if ("{{ $approval->approval_status }}" !== "Approved") {
+                            previousLayerApproved = false;
+                        }
+
+                        rowContainer.appendChild(nameCol);
+                        rowContainer.appendChild(buttonCol);
+
+                        buttonList.appendChild(rowContainer);
+                    }
+                @endforeach
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var approvalDecModal = document.getElementById('approvalDecModal');
+
+            approvalDecModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+
+                var transactionType = button.getAttribute('data-type');
+                var transactionTotal = button.getAttribute('data-total');
+                var transactionId = button.getAttribute('data-id');
+                var transactionNo = button.getAttribute('data-no');
+                var transactionSPPD = button.getAttribute('data-sppd');
+
+                var form = approvalDecModal.querySelector('form');
+                var action = form.getAttribute('action');
+                form.setAttribute('action', action.replace(':id', transactionId));
+
+                form.querySelector('#ca_type').value = transactionType;
+                form.querySelector('#totalca').value = transactionTotal;
+                form.querySelector('#no_id').value = transactionId;
+                form.querySelector('#no_ca').value = transactionNo;
+                form.querySelector('#bisnis_numb').value = transactionSPPD;
+
+                // Clear existing content to prevent duplicates
+                document.getElementById('requestList').innerHTML = '';
+                document.getElementById('declarationList').innerHTML = '';
+
+                var previousLayerApproved = true; // To check previous layer status
+                var previousLayerApprovedDec = true; // To check previous declaration status
+
+                var requestLabel = document.createElement('label');
+                requestLabel.className = 'col-form-label mb-3';
+                requestLabel.textContent = 'Approval Request';
+                document.getElementById('requestList').appendChild(requestLabel);
+
+                var declarationLabel = document.createElement('label');
+                declarationLabel.className = 'col-form-label mb-3';
+                declarationLabel.textContent = 'Approval Declaration';
+                document.getElementById('declarationList').appendChild(declarationLabel);
+
+                @foreach ($ca_approvals as $approval)
+                    if (transactionId === "{{ $approval->ca_id }}") {
+                        var rowContainer = document.createElement('div');
+                        rowContainer.className = 'row mb-3 text-center';
+
+                        var nameCol = document.createElement('div');
+                        nameCol.className = 'col-md-6';
+                        var nameText = document.createElement('p');
+                        nameText.textContent = "{{ $approval->ReqName }}";
+                        nameCol.appendChild(nameText);
+
+                        var buttonCol = document.createElement('div');
+                        buttonCol.className = 'col-md-6';
+
+                        var dateText = document.createElement('p');
+
+                        if ("{{ $approval->approval_status }}" === "Approved") {
+                            dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                            buttonCol.appendChild(dateText);
+                        } else if (previousLayerApproved) {
+                            var rejectButton = document.createElement('button');
+                            rejectButton.type = 'submit';
+                            rejectButton.name = 'action_ca_reject';
+                            rejectButton.style = 'margin-right:5px';
+                            rejectButton.value = 'Reject';
+                            rejectButton.className = 'btn btn-sm btn-primary btn-pill mr-3 px-1';
+                            rejectButton.textContent = 'Reject';
+
+                            var approveButton = document.createElement('button');
+                            approveButton.type = 'submit';
+                            approveButton.name = 'action_ca_approve';
+                            approveButton.value = 'Approve';
+                            approveButton.className = 'btn btn-sm btn-success btn-pill px-1';
+                            approveButton.textContent = 'Approve';
+
+                            form.querySelector('#data_no_id').value = "{{ $approval->id }}";
+
+                            buttonCol.appendChild(rejectButton);
+                            buttonCol.appendChild(approveButton);
+                        } else {
+                            dateText.textContent = 'Waiting for previous approval';
+                            buttonCol.appendChild(dateText);
+                        }
+
+                        if ("{{ $approval->approval_status }}" !== "Approved") {
+                            previousLayerApproved = false;
+                        }
+
+                        rowContainer.appendChild(nameCol);
+                        rowContainer.appendChild(buttonCol);
+
+                        document.getElementById('requestList').appendChild(rowContainer);
+                    }
+                @endforeach
+
+                @foreach ($ca_sett as $approval_sett)
+                    if (transactionId === "{{ $approval_sett->ca_id }}") {
+                        var rowContainerDec = document.createElement('div');
+                        rowContainerDec.className = 'row mb-3 text-center';
+
+                        var nameColDec = document.createElement('div');
+                        nameColDec.className = 'col-md-6';
+                        var nameTextDec = document.createElement('p');
+                        nameTextDec.textContent = "{{ $approval_sett->employee->fullname }}";
+                        nameColDec.appendChild(nameTextDec);
+
+                        var buttonColDec = document.createElement('div');
+                        buttonColDec.className = 'col-md-6';
+
+                        var dateTextDec = document.createElement('p');
+
+                        if ("{{ $approval_sett->approval_status }}" === "Approved") {
+                            dateTextDec.textContent = "{{ $approval_sett->approval_status }} ({{ \Carbon\Carbon::parse($approval_sett->approved_at)->format('d-M-y') }})";
+                            buttonColDec.appendChild(dateTextDec);
+                        } else if (previousLayerApprovedDec) {
+                            var rejectButtonDec = document.createElement('button');
+                            rejectButtonDec.type = 'submit';
+                            rejectButtonDec.name = 'action_ca_reject';
+                            rejectButtonDec.style = 'margin-right:5px';
+                            rejectButtonDec.value = 'Reject';
+                            rejectButtonDec.className = 'btn btn-sm btn-primary btn-pill mr-3 px-1';
+                            rejectButtonDec.textContent = 'Reject';
+
+                            var approveButtonDec = document.createElement('button');
+                            approveButtonDec.type = 'submit';
+                            approveButtonDec.name = 'action_ca_approve';
+                            approveButtonDec.value = 'Approve';
+                            approveButtonDec.className = 'btn btn-sm btn-success btn-pill px-1';
+                            approveButtonDec.textContent = 'Approve';
+
+                            form.querySelector('#data_no_id').value = "{{ $approval_sett->id }}";
+
+                            buttonColDec.appendChild(rejectButtonDec);
+                            buttonColDec.appendChild(approveButtonDec);
+                        } else {
+                            dateTextDec.textContent = 'Waiting for previous approval';
+                            buttonColDec.appendChild(dateTextDec);
+                        }
+
+                        if ("{{ $approval_sett->approval_status }}" !== "Approved") {
+                            previousLayerApprovedDec = false;
+                        }
+                        rowContainerDec.appendChild(nameColDec);
+                        rowContainerDec.appendChild(buttonColDec);
+
+                        document.getElementById('declarationList').appendChild(rowContainerDec);
+                    }
+                @endforeach
+            });
+        });
+
     </script>
+
+    @if (session('refresh'))
+        <script>
+            // Refresh the page after 1 seconds
+            setTimeout(function(){
+                window.location.reload();
+            }, 1000);
+        </script>
+    @endif
 @endpush

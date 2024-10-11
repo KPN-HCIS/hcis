@@ -147,10 +147,6 @@ class ReimburseController extends Controller
 
         foreach ($ca_transactions as $transaction) {
             $transaction->settName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
-            // if ($transaction->approval_status == 'Approved' && $transaction->approval_sett == 'Approved') {
-            //     //$transaction->approval_status = 'Done';
-            // }
-
         }
 
         return view('hcis.reimbursements.cashadv.cashadv', [
@@ -225,10 +221,19 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Report CA';
         $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee'])->orderBy('created_at', 'desc');
+        $ca_approvals = ca_approval::with(['employee', 'statusReqEmployee'])->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+            ->get();
+
+        foreach ($ca_approvals as $approval) {
+            $approval->ReqName = $approval->statusReqEmployee ? $approval->statusReqEmployee->fullname : '';
+        }
+
+        $ca_sett = ca_sett_approval::orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+            ->get();
 
         $startDate = date('Y-m-d');
         $endDate = date('Y-m-d');
-        //dd($startDate);
+        // dd($ca_approvals);
 
         $permissionLocations = $this->permissionLocations;
         $permissionCompanies = $this->permissionCompanies;
@@ -294,6 +299,8 @@ class ReimburseController extends Controller
             'ca_transactions' => $ca_transactions,
             'startDate' => $startDate,
             'endDate' => $endDate,
+            'ca_approvals' => $ca_approvals,
+            'ca_sett' => $ca_sett,
         ]);
     }
     public function cashadvancedAdminUpdate(Request $request, $id)
@@ -314,7 +321,8 @@ class ReimburseController extends Controller
         $ca_transaction->save();
 
         // Redirect kembali dengan pesan sukses
-        return redirect()->back()->with('success', 'Transaction status updated successfully.');
+        return redirect()->back()->with('success', 'Transaction status updated successfully.')
+            ->with('refresh', true);
     }
     public function deklarasiCashadvanced()
     {

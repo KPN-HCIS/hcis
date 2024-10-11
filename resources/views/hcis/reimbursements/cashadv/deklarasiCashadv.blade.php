@@ -579,7 +579,13 @@
 
             // Validate dates
             if (endDate < startDate) {
-                alert("End Date cannot be earlier than Start Date");
+                Swal.fire({
+                    title: 'Cannot Sett Date!',
+                    text: 'End Date cannot be earlier than Start Date.',
+                    icon: 'warning',
+                    confirmButtonColor: "#9a2a27",
+                    confirmButtonText: 'Ok'
+                });
                 endDateInput.value = "";
             }
 

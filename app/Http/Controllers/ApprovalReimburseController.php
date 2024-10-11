@@ -201,6 +201,87 @@ class ApprovalReimburseController extends Controller
         return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Approved, Thanks for Approving.');
     }
 
+    public function cashadvancedActionApprovalAdmin(Request $req, $ca_id)
+    {
+        // Ambil dataNoId dari request
+        $dataNoId = $req->input('data_no_id');
+        $model = ca_approval::where('ca_id', $ca_id)
+            ->where('id', $dataNoId)
+            ->first();
+
+        if (!$model) {
+            return redirect()->route('cashadvanced.admin')->with('error', 'Approval not found for this transaction.');
+        }
+
+        // Ambil semua approval yang terkait dengan ca_id
+        $approvals = ca_approval::where('ca_id', $ca_id)
+            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+            ->get();
+
+        if ($req->input('action_ca_reject')) {
+            $caApprovals = ca_approval::where('ca_id', $ca_id)->get();
+            if ($caApprovals->isNotEmpty()) {
+                foreach ($caApprovals as $caApproval) {
+                    $caApproval->approval_status = 'Rejected';
+                    $caApproval->approved_at = Carbon::now();
+                    $caApproval->reject_info = $req->reject_info;
+                    $caApproval->save();
+                }
+            }
+            // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
+            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_status = 'Rejected';
+                $caTransaction->save();
+            }
+
+            return redirect()->route('cashadvanced.admin')->with('success', 'Transaction Rejected, Rejection will be send to the employee.')
+                ->with('refresh', true);
+        }
+
+        if ($req->input('action_ca_approve')) {
+            $nextApproval = null;
+
+            // Mencari layer berikutnya yang lebih tinggi
+            foreach ($approvals as $approval) {
+                if ($approval->layer > $model->layer) {
+                    $nextApproval = $approval;
+                    break;
+                }
+            }
+
+            // Jika tidak ada layer yang lebih tinggi (berarti ini adalah layer tertinggi)
+            if (!$nextApproval) {
+                // Set status ke Approved untuk layer tertinggi
+                $model->approval_status = 'Approved';
+                $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                $model->save();
+
+                // Update approval_status pada ca_transaction
+                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->approval_status = 'Approved'; // Set ke Approved untuk transaksi
+                    $caTransaction->save();
+                }
+            } else {
+                // Jika ada layer yang lebih tinggi, update status layer saat ini dan alihkan ke layer berikutnya
+                $model->approval_status = 'Approved';
+                $model->approved_at = Carbon::now();
+                $model->save();
+
+                // Update status_id pada ca_transaction ke employee_id layer berikutnya
+                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->status_id = $nextApproval->employee_id;
+                    $caTransaction->save();
+                }
+            }
+        }
+
+        return redirect()->route('cashadvanced.admin')->with('success', 'Transaction approved successfully.')
+            ->with('refresh', true);
+    }
+
     public function cashadvancedDeklarasi()
     {
         $userId = Auth::id();
@@ -339,6 +420,87 @@ class ApprovalReimburseController extends Controller
         }
 
         return redirect()->route('approval.cashadvancedDeklarasi')->with('success', 'Transaction Approved, Thanks for Approving.');
+    }
+
+    public function cashadvancedActionDeklarasiAdmin(Request $req, $ca_id)
+    {
+        // Ambil dataNoId dari request
+        $dataNoId = $req->input('data_no_id');
+        $model = ca_sett_approval::where('ca_id', $ca_id)
+            ->where('id', $dataNoId)
+            ->first();
+
+        if (!$model) {
+            return redirect()->route('cashadvanced.admin')->with('error', 'Approval not found for this transaction.');
+        }
+
+        // Ambil semua approval yang terkait dengan ca_id
+        $approvals = ca_sett_approval::where('ca_id', $ca_id)
+            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+            ->get();
+
+        if ($req->input('action_ca_reject')) {
+            $caApprovals = ca_sett_approval::where('ca_id', $ca_id)->get();
+            if ($caApprovals->isNotEmpty()) {
+                foreach ($caApprovals as $caApproval) {
+                    $caApproval->approval_status = 'Rejected';
+                    $caApproval->approved_at = Carbon::now();
+                    $caApproval->reject_info = $req->reject_info;
+                    $caApproval->save();
+                }
+            }
+            // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
+            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_sett = 'Rejected';
+                $caTransaction->save();
+            }
+
+            return redirect()->route('cashadvanced.admin')->with('success', 'Transaction Rejected, Rejection will be send to the employee.')
+                ->with('refresh', true);
+        }
+
+        if ($req->input('action_ca_approve')) {
+            $nextApproval = null;
+
+            // Mencari layer berikutnya yang lebih tinggi
+            foreach ($approvals as $approval) {
+                if ($approval->layer > $model->layer) {
+                    $nextApproval = $approval;
+                    break;
+                }
+            }
+
+            // Jika tidak ada layer yang lebih tinggi (berarti ini adalah layer tertinggi)
+            if (!$nextApproval) {
+                // Set status ke Approved untuk layer tertinggi
+                $model->approval_status = 'Approved';
+                $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                $model->save();
+
+                // Update approval_sett pada ca_transaction
+                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->approval_sett = 'Approved'; // Set ke Approved untuk transaksi
+                    $caTransaction->save();
+                }
+            } else {
+                // Jika ada layer yang lebih tinggi, update status layer saat ini dan alihkan ke layer berikutnya
+                $model->approval_sett = 'Approved';
+                $model->approved_at = Carbon::now();
+                $model->save();
+
+                // Update status_id pada ca_transaction ke employee_id layer berikutnya
+                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->status_id = $nextApproval->employee_id;
+                    $caTransaction->save();
+                }
+            }
+        }
+
+        return redirect()->route('cashadvanced.admin')->with('success', 'Transaction approved successfully.')
+            ->with('refresh', true);
     }
 
     public function cashadvancedExtend()
