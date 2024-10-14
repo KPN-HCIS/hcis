@@ -440,7 +440,9 @@ class ApprovalReimburseController extends Controller
             ->get();
 
         if ($req->input('action_ca_reject')) {
-            $caApprovals = ca_sett_approval::where('ca_id', $ca_id)->get();
+            $caApprovals = ca_sett_approval::where('ca_id', $ca_id)
+                ->where('id', $dataNoId)
+                ->get();
             if ($caApprovals->isNotEmpty()) {
                 foreach ($caApprovals as $caApproval) {
                     $caApproval->approval_status = 'Rejected';
@@ -486,7 +488,7 @@ class ApprovalReimburseController extends Controller
                 }
             } else {
                 // Jika ada layer yang lebih tinggi, update status layer saat ini dan alihkan ke layer berikutnya
-                $model->approval_sett = 'Approved';
+                $model->approval_status = 'Approved';
                 $model->approved_at = Carbon::now();
                 $model->save();
 

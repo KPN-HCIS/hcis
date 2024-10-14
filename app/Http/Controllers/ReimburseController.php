@@ -221,15 +221,22 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Report CA';
         $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee'])->orderBy('created_at', 'desc');
-        $ca_approvals = ca_approval::with(['employee', 'statusReqEmployee'])->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+        $ca_approvals = ca_approval::with(['employee', 'statusReqEmployee'])
+            ->where('approval_status', '<>', 'Rejected')
+            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
             ->get();
 
         foreach ($ca_approvals as $approval) {
             $approval->ReqName = $approval->statusReqEmployee ? $approval->statusReqEmployee->fullname : '';
         }
 
-        $ca_sett = ca_sett_approval::orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+        $ca_sett = ca_sett_approval::where('approval_status', '<>', 'Rejected')
+            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
             ->get();
+
+        foreach ($ca_sett as $approval_sett) {
+            $approval_sett->ReqName = $approval_sett->statusReqEmployee ? $approval_sett->statusReqEmployee->fullname : '';
+        }
 
         $startDate = date('Y-m-d');
         $endDate = date('Y-m-d');

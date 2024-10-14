@@ -216,14 +216,42 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalReject" tabindex="-1" aria-labelledby="modalRejectLabel" aria-hidden="true">
+        <div class="modal-dialog" style="wid">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title text-center fs-5" id="modalRejectLabel">Rejection Reason - <label id="reject_no_ca_2"></label></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_rejectDec" method="POST" action="{{ route('approvalAdmin.cashadvancedApprovedAdmin',':id') }}">@csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label class="form-label" for="reason">Reasons for Refusal</label>
+                                <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
+                            </div>
+                            <input type="hidden" name="data_no_id" id="data_no_id">
+                            <input type="hidden" name="rejectDec_no_id" id="rejectDec_no_id">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                        {{-- <button type="submit" name="action_ca_submit" value="Pending" class="btn btn-primary" id="rejectButton">Extending</button> --}}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="approvalDecModal" tabindex="-1" aria-labelledby="approvalDecModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="approvalDecModalLabel">Approval Cash Advanced Declaration Update</h5>
+                    <h5 class="modal-title" id="approvalDecModalLabel">Approval Cash Advanced Declaration Update - <label id="approval_no_ca"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
+                <form id="form_approvalDec" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
                     <div class="modal-body">
                         <input type="hidden" name="no_id" id="no_id">
                         <input type="hidden" name="ca_type" id="ca_type">
@@ -244,6 +272,34 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRejectDec" tabindex="-1" aria-labelledby="modalRejectDecLabel" aria-hidden="true">
+        <div class="modal-dialog" style="wid">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title text-center fs-5" id="modalRejectDecLabel">Rejection Reason - <label id="rejectDec_no_ca_2"></label></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_rejectDec" method="POST" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin',':id') }}">@csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label class="form-label" for="reason">Reasons for Refusal</label>
+                                <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
+                            </div>
+                            <input type="hidden" name="data_no_id" id="data_no_id">
+                            <input type="hidden" name="rejectDec_no_id" id="rejectDec_no_id">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                        {{-- <button type="submit" name="action_ca_submit" value="Pending" class="btn btn-primary" id="rejectButton">Extending</button> --}}
                     </div>
                 </form>
             </div>

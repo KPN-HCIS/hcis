@@ -166,7 +166,13 @@
                                             <td>{{ date('j M Y', strtotime($ca_transaction->formatted_end_date)) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_ca) }}</td>
                                             <td>Rp. {{ number_format($ca_transaction->total_real) }}</td>
-                                            <td>Rp. {{ number_format($ca_transaction->total_cost) }}</td>
+                                            <td>
+                                                @if ($ca_transaction->total_cost < 0)
+                                                    <span class="text-danger">Rp. -{{ number_format(abs($ca_transaction->total_cost)) }}</span>
+                                                @else
+                                                    <span class="text-success">Rp. {{ number_format($ca_transaction->total_cost) }}</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <p class="badge text-bg-{{ $ca_transaction->approval_status == 'Approved' ? 'success' : ($ca_transaction->approval_status == 'Declaration' ? 'info' : ($ca_transaction->approval_status == 'Pending' ? 'warning' : ($ca_transaction->approval_status == 'Rejected' ? 'danger' : ($ca_transaction->approval_status == 'Draft' ? 'secondary' : 'default')))) }}" style="pointer-events: auto; cursor: default;" title="{{$ca_transaction->approval_status." - ".$ca_transaction->ReqName}}">
                                                     {{ $ca_transaction->approval_status }}
@@ -203,7 +209,10 @@
                                                         data-no="{{ $ca_transaction->no_ca }}"
                                                         data-sppd="{{ $ca_transaction->no_sppd }}"
                                                         data-sett="{{ $ca_transaction->approval_sett }}"
-                                                        data-status="{{ $ca_transaction->approval_status }}">
+                                                        data-status="{{ $ca_transaction->approval_status }}"
+                                                        data-start-date="{{ $ca_transaction->start_date }}"
+                                                        data-end-date="{{ $ca_transaction->end_date }}"
+                                                        data-total-days="{{ $ca_transaction->total_days }}">
                                                         <i class="bi bi-list-check"></i>
                                                     </button>
                                                 @elseif(($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Pending' || $ca_transaction->approval_sett == 'Approved') && $ca_transaction->approval_status != 'Rejected' && $ca_transaction->approval_status != 'Draft')
@@ -214,7 +223,10 @@
                                                         data-no="{{ $ca_transaction->no_ca }}"
                                                         data-sppd="{{ $ca_transaction->no_sppd }}"
                                                         data-sett="{{ $ca_transaction->approval_sett }}"
-                                                        data-status="{{ $ca_transaction->approval_status }}">
+                                                        data-status="{{ $ca_transaction->approval_status }}"
+                                                        data-start-date="{{ $ca_transaction->start_date }}"
+                                                        data-end-date="{{ $ca_transaction->end_date }}"
+                                                        data-total-days="{{ $ca_transaction->total_days }}">
                                                         <i class="bi bi-list-check"></i>
                                                     </button>
                                                 @endif
@@ -334,6 +346,8 @@
             });
         }
         //script modal
+
+        // Modal Mengubah Status
         document.addEventListener('DOMContentLoaded', function () {
             var statusModal = document.getElementById('statusModal');
             statusModal.addEventListener('show.bs.modal', function (event) {
@@ -359,6 +373,7 @@
             });
         });
 
+        // Modal Export
         document.addEventListener('DOMContentLoaded', function () {
             var exportModal = document.getElementById('exportModal');
             var declareSection = document.querySelector('.declare-section');
@@ -386,6 +401,7 @@
             });
         });
 
+        // Approval Request Modal
         document.addEventListener('DOMContentLoaded', function () {
             var approvalModal = document.getElementById('approvalModal');
             approvalModal.addEventListener('show.bs.modal', function (event) {
@@ -440,11 +456,13 @@
 
                             // Tombol Approve
                             var rejectButton = document.createElement('button');
-                            rejectButton.type = 'submit';
-                            rejectButton.name = 'action_ca_reject';
-                            rejectButton.style = 'margin-right:5px';
-                            rejectButton.value = 'Reject';
-                            rejectButton.className = 'btn btn-sm btn-primary btn-pill mr-3 px-1';
+                            rejectButton.type = 'button';
+                            rejectButton.className = 'btn btn-sm btn-primary btn-pill px-1 me-1';
+                            rejectButton.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
+                            rejectButton.setAttribute('data-bs-target', '#modalReject'); // Menambahkan atribut data-bs-target
+                            rejectButton.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
+                            rejectButton.setAttribute('data-no-ca', transactionNo); // Menambahkan atribut data-no-ca
+                            rejectButton.setAttribute('data-no-idCA', '{{ $approval->id }}');
                             rejectButton.textContent = 'Reject';
 
                             // Tombol Approve
@@ -454,7 +472,6 @@
                             approveButton.value = 'Approve';
                             approveButton.className = 'btn btn-sm btn-success btn-pill px-1';
                             approveButton.textContent = 'Approve';
-
                             form.querySelector('#data_no_id').value = "{{ $approval->id }}";
 
                             buttonCol.appendChild(rejectButton);
@@ -479,6 +496,7 @@
             });
         });
 
+        // Approval Declaration Modal
         document.addEventListener('DOMContentLoaded', function () {
             var approvalDecModal = document.getElementById('approvalDecModal');
 
@@ -490,6 +508,11 @@
                 var transactionId = button.getAttribute('data-id');
                 var transactionNo = button.getAttribute('data-no');
                 var transactionSPPD = button.getAttribute('data-sppd');
+                var transactionStart = button.getAttribute('data-start-date');
+                var transactionEnd = button.getAttribute('data-end-date');
+                var transactionTotal = button.getAttribute('data-total-days');
+
+                document.getElementById('approval_no_ca').textContent = transactionNo;
 
                 var form = approvalDecModal.querySelector('form');
                 var action = form.getAttribute('action');
@@ -526,7 +549,7 @@
                         var nameCol = document.createElement('div');
                         nameCol.className = 'col-md-6';
                         var nameText = document.createElement('p');
-                        nameText.textContent = "{{ $approval->ReqName }}";
+                        nameText.textContent = "{{ $approval->ReqName }} {{ $approval->employee_id}}";
                         nameCol.appendChild(nameText);
 
                         var buttonCol = document.createElement('div');
@@ -539,12 +562,16 @@
                             buttonCol.appendChild(dateText);
                         } else if (previousLayerApproved) {
                             var rejectButton = document.createElement('button');
-                            rejectButton.type = 'submit';
-                            rejectButton.name = 'action_ca_reject';
-                            rejectButton.style = 'margin-right:5px';
-                            rejectButton.value = 'Reject';
-                            rejectButton.className = 'btn btn-sm btn-primary btn-pill mr-3 px-1';
-                            rejectButton.textContent = 'Reject';
+                            rejectButton.type = 'button'; // Mengubah type menjadi 'button'
+                            rejectButton.className = 'btn mb-2 btn-primary btn-pill px-4 me-2'; // Mengatur class sesuai yang diinginkan
+                            rejectButton.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
+                            rejectButton.setAttribute('data-bs-target', '#modalReject'); // Menambahkan atribut data-bs-target
+                            rejectButton.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
+                            rejectButton.setAttribute('data-no-ca', transactionNo); // Menambahkan atribut data-no-ca
+                            rejectButton.setAttribute('data-start-date', transactionStart); // Menambahkan atribut data-start-date
+                            rejectButton.setAttribute('data-end-date', transactionEnd); // Menambahkan atribut data-end-date
+                            rejectButton.setAttribute('data-total-days', transactionTotal); // Menambahkan atribut data-total-days
+                            rejectButton.textContent = 'Reject'; // Mengubah text button
 
                             var approveButton = document.createElement('button');
                             approveButton.type = 'submit';
@@ -581,7 +608,7 @@
                         var nameColDec = document.createElement('div');
                         nameColDec.className = 'col-md-6';
                         var nameTextDec = document.createElement('p');
-                        nameTextDec.textContent = "{{ $approval_sett->employee->fullname }}";
+                        nameTextDec.textContent = "{{ $approval_sett->ReqName}}";
                         nameColDec.appendChild(nameTextDec);
 
                         var buttonColDec = document.createElement('div');
@@ -594,12 +621,17 @@
                             buttonColDec.appendChild(dateTextDec);
                         } else if (previousLayerApprovedDec) {
                             var rejectButtonDec = document.createElement('button');
-                            rejectButtonDec.type = 'submit';
-                            rejectButtonDec.name = 'action_ca_reject';
-                            rejectButtonDec.style = 'margin-right:5px';
-                            rejectButtonDec.value = 'Reject';
-                            rejectButtonDec.className = 'btn btn-sm btn-primary btn-pill mr-3 px-1';
-                            rejectButtonDec.textContent = 'Reject';
+                            rejectButtonDec.type = 'button'; // Mengubah type menjadi 'button'
+                            rejectButtonDec.className = 'btn btn-sm btn-primary btn-pill px-1 me-1'; // Mengatur class sesuai yang diinginkan
+                            rejectButtonDec.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
+                            rejectButtonDec.setAttribute('data-bs-target', '#modalRejectDec'); // Menambahkan atribut data-bs-target
+                            rejectButtonDec.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
+                            rejectButtonDec.setAttribute('data-no-ca', transactionNo); // Menambahkan atribut data-no-ca
+                            rejectButtonDec.setAttribute('data-start-date', transactionStart); // Menambahkan atribut data-start-date
+                            rejectButtonDec.setAttribute('data-end-date', transactionEnd); // Menambahkan atribut data-end-date
+                            rejectButtonDec.setAttribute('data-total-days', transactionTotal); // Menambahkan atribut data-total-days
+                            rejectButtonDec.setAttribute('data-no-idCA', '{{ $approval_sett->id }}');
+                            rejectButtonDec.textContent = 'Reject'; // Mengubah text button
 
                             var approveButtonDec = document.createElement('button');
                             approveButtonDec.type = 'submit';
@@ -626,6 +658,54 @@
                         document.getElementById('declarationList').appendChild(rowContainerDec);
                     }
                 @endforeach
+            });
+        });
+
+        // Reject Request Modal
+        document.addEventListener('DOMContentLoaded', function () {
+            var modalRejectDec = document.getElementById('modalReject');
+            modalReject.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+
+                var transactionId = button.getAttribute('data-no-id');
+                var transactionNo = button.getAttribute('data-no-ca');
+                var transactionIdCA = button.getAttribute('data-no-idCA');
+                console.log(transactionIdCA);
+
+                // Mendefinisikan form terlebih dahulu
+                var form = modalReject.querySelector('form');
+
+                form.querySelector('#data_no_id').value = transactionIdCA;
+
+                document.getElementById('reject_no_ca_2').textContent = transactionNo;
+
+                var form = modalReject.querySelector('form');
+                var action = form.getAttribute('action');
+                form.setAttribute('action', action.replace(':id', transactionId));
+            });
+        });
+
+        // Reject Declaration Modal
+        document.addEventListener('DOMContentLoaded', function () {
+            var modalRejectDec = document.getElementById('modalRejectDec');
+            modalRejectDec.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+
+                var transactionId = button.getAttribute('data-no-id');
+                var transactionNo = button.getAttribute('data-no-ca');
+                var transactionIdCA = button.getAttribute('data-no-idCA');
+                console.log(transactionIdCA);
+
+                // Mendefinisikan form terlebih dahulu
+                var form = modalRejectDec.querySelector('form');
+
+                form.querySelector('#data_no_id').value = transactionIdCA;
+
+                document.getElementById('rejectDec_no_ca_2').textContent = transactionNo;
+
+                var form = modalRejectDec.querySelector('form');
+                var action = form.getAttribute('action');
+                form.setAttribute('action', action.replace(':id', transactionId));
             });
         });
 
