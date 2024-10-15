@@ -54,7 +54,7 @@
                                 <div class="col-md-4 mb-2">
                                     <label for="nama" class="form-label">Hospital Name</label>
                                     <input type="text" class="form-control form-control-sm" id="" name=""
-                                        style="cursor:not-allowed;" value="" placeholder="ex: RS. Murni">
+                                        style="cursor:not-allowed;" value="" placeholder="ex: RS. Murni Teguh" required>
                                 </div>
 
                                 <div class="col-md-4 mb-2">
@@ -62,14 +62,11 @@
                                     <select class="form-select form-select-sm select2" id="" name=""
                                         required>
                                         <option value="" disabled selected>--- Choose Disease ---</option>
-                                        <option value="">Cancer</option>
-                                        <option value="">Stroke</option>
-                                        <option value="">Heart Attack</option>
-                                        {{-- @foreach ($companies as $company)
-                                            <option value="{{ $company->contribution_level_code }}">
-                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                        @foreach ($diseases as $disease)
+                                            <option value="{{ $disease->disease_name }}">
+                                                {{ $disease->disease_name }}
                                             </option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -83,7 +80,7 @@
                                 <div class="col-md-6 mb-1">
                                     <label for="medical_date" class="form-label">Medical Date</label>
                                     <input type="date" class="form-control form-control-sm" id="" name=""
-                                        style="cursor:not-allowed;" value="">
+                                        style="cursor:not-allowed;" value="" required>
                                 </div>
                             </div>
                             <div class="row g-3">
@@ -92,7 +89,7 @@
                                     <div class="input-group input-group-sm" id="rawatInap">
                                         <span class="input-group-text">Rp</span>
                                         <input type="text" id="inputRawatInap" class="form-control" placeholder="0"
-                                            oninput="formatCurrency(this)" />
+                                            oninput="formatCurrency(this)"/>
                                     </div>
                                 </div>
                                 <div class="col-md-3">

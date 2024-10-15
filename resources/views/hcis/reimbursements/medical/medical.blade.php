@@ -72,7 +72,7 @@
                                         <td>Jocelyn Flores</td>
                                         <td class="text-center">Anak</td>
                                         <td>Surabaya, 17 September 2004</td>
-                                        <td class="text-center">20 tahun</td>
+                                        <td class="text-center">24 tahun</td>
                                         <td class="text-center">Pelajar</td>
                                     </tr>
                                 </tbody>
@@ -140,20 +140,20 @@
                                 <thead class="bg-primary text-center align-middle">
                                     <tr>
                                         <th></th>
-                                        <th>No</th>
-                                        <th>Date</th>
-                                        <th>Period</th>
-                                        <th data-priority="0">No. Medical</th>
-                                        <th>Hospital Name</th>
-                                        <th>Patient Name</th>
-                                        <th>Disease</th>
-                                        <th>Labor</th>
-                                        <th>Inpatient</th>
-                                        <th>Outpatient</th>
-                                        <th>Glasses Lens</th>
-                                        <th>Glasses</th>
-                                        <th data-priority="1">Status</th>
-                                        <th>Action</th>
+                                        <th class="text-center">No</th>
+                                        <th class="text-center">Date</th>
+                                        <th class="text-center">Period</th>
+                                        <th class="text-center" data-priority="0">No. Medical</th>
+                                        <th class="text-center">Hospital Name</th>
+                                        <th class="text-center">Patient Name</th>
+                                        <th class="text-center">Disease</th>
+                                        <th class="text-center">Labor</th>
+                                        <th class="text-center">Inpatient</th>
+                                        <th class="text-center">Outpatient</th>
+                                        <th class="text-center">Glasses Lens</th>
+                                        <th class="text-center">Glasses</th>
+                                        <th class="text-center" data-priority="1">Status</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
 
                                 </thead>
@@ -166,13 +166,15 @@
                                         <td class="text-center">011/MDCL-2024</td>
                                         <td>RS. Murni Teguh</td>
                                         <td>Metta Saputra</td>
-                                        <td>Demam</td>
+                                        <td class="text-center">Demam</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 200.0000</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
-                                        <td class="text-center">Selesai</td>
+                                        <td style="align-content: center; text-align: center">
+                                            <span class="badge rounded-pill bg-success text-center" style="font-size: 12px; padding: 0.5rem 1rem;">Done</span>
+                                        </td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
                                     <tr>
@@ -183,13 +185,15 @@
                                         <td class="text-center">012/MDCL-2024</td>
                                         <td>RS. Murni Teguh 2</td>
                                         <td>Metta Saputra</td>
-                                        <td>Demam</td>
+                                        <td class="text-center">Demam</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 300.0000</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
-                                        <td class="text-center">Selesai</td>
+                                        <td style="align-content: center; text-align: center">
+                                            <span class="badge rounded-pill bg-warning text-center" style="font-size: 12px; padding: 0.5rem 1rem;">Pending</span>
+                                        </td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
                                 </tbody>
