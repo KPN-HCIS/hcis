@@ -35,8 +35,8 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya(${formCountOthers}, event)">Reset</button>
-                                <button class="btn btn-warning mr-2" onclick="removeFormLainnya(${formCountOthers}, event)">Delete</button>
+                                <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormLainnya(${formCountOthers}, event)">Reset</button>
+                                <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormLainnya(${formCountOthers}, event)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -107,8 +107,8 @@
                     @endif
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormLainnya({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormLainnya({{ $loop->index + 1 }}, event)">Reset</button>
+                            {{-- <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormLainnya({{ $loop->index + 1 }}, event)">Delete</button> --}}
                         </div>
                     </div>
                 </div>
@@ -143,8 +143,8 @@
                     </div>
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
-                            <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya({{ $loop->index + 1 }}, event)">Reset</button>
-                            <button class="btn btn-warning mr-2" onclick="removeFormLainnya({{ $loop->index + 1 }}, event)">Delete</button>
+                            <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormLainnya({{ $loop->index + 1 }}, event)">Reset</button>
+                            <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormLainnya({{ $loop->index + 1 }}, event)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonLainnya" onclick="addMoreFormLainnyaDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonLainnya" onclick="addMoreFormLainnyaDec(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -199,8 +199,8 @@
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
-                                <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya({{ $loop->index + 1 }}, event)">Reset</button>
-                                <button class="btn btn-warning mr-2" onclick="removeFormLainnya({{ $loop->index + 1 }}, event)">Delete</button>
+                                <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormLainnya({{ $loop->index + 1 }}, event)">Reset</button>
+                                <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormLainnya({{ $loop->index + 1 }}, event)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -210,7 +210,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonLainnya" onclick="addMoreFormLainnyaDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonLainnya" onclick="addMoreFormLainnyaDec(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -254,8 +254,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormLainnya(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormLainnya(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormLainnya(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormLainnya(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -263,7 +263,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButton" onclick="addMoreFormLainnyaDec(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButton" onclick="addMoreFormLainnyaDec(event)">Add More</button>
     </div>
 
     <div class="mt-2">

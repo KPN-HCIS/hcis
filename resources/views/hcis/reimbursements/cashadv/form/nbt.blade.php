@@ -16,7 +16,7 @@
                                 <span class="input-group-text">Rp</span>
                             </div>
                             <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_{{ $loop->index + 1 }}" type="text" min="0" value="{{ number_format($item['nominal_nbt'], 0, ',', '.') }}"
-                                onfocus="this.value = this.value === '0' ? '' : this.value;" oninput="formatInputNBT(this)" onblur="formatOnBlur(this)">
+                                onfocus="this.value = this.value === '0' ? '' : this.value;" oninput="formatInputNBT(this)" >
                         </div>
                     </div>
                     <div class="col-md-12 mb-2">
@@ -28,8 +28,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormNBT({{ $loop->index + 1 }}, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormNBT({{ $loop->index + 1 }}, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonNBT" onclick="addMoreFormNBTReq(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonNBT" onclick="addMoreFormNBTReq(event)">Add More</button>
     </div>
 @else
     <div id="form-container-nonb">
@@ -56,7 +56,7 @@
                             <div class="input-group-append">
                                 <span class="input-group-text">Rp</span>
                             </div>
-                            <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_1" type="text" min="0" value="0" onfocus="this.value = this.value === '0' ? '' : this.value;" oninput="formatInputNBT(this)" onblur="formatOnBlur(this)">
+                            <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_1" type="text" min="0" value="0" onfocus="this.value = this.value === '0' ? '' : this.value;" oninput="formatInputNBT(this)" >
                         </div>
                     </div>
                     <div class="col-md-12 mb-2">
@@ -68,8 +68,8 @@
                 </div>
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
-                        <button class="btn btn-danger mr-2" style="margin-right: 10px" onclick="clearFormNBT(1, event)">Reset</button>
-                        <button class="btn btn-warning mr-2" onclick="removeFormNBT(1, event)">Delete</button>
+                        <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormNBT(1, event)">Reset</button>
+                        <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormNBT(1, event)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -77,6 +77,6 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary" id="addMoreButtonNBT" onclick="addMoreFormNBTReq(event)">Add More</button>
+        <button class="btn btn-primary btn-sm" id="addMoreButtonNBT" onclick="addMoreFormNBTReq(event)">Add More</button>
     </div>
 @endif

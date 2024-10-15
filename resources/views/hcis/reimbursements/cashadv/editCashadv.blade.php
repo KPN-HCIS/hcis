@@ -85,7 +85,7 @@
                                         <option value="Others"
                                             {{ $transactions->destination == 'Others' ? 'selected' : '' }}>Others</option>
                                     </select>
-                                    <br><input type="text" name="others_location" id="others_location"
+                                    <br><br><input type="text" name="others_location" id="others_location"
                                         class="form-control" placeholder="Other Location"
                                         value="{{ $transactions->others_location }}"
                                         style="{{ $transactions->destination == 'Others' ? 'display: block;' : 'display: none;' }}">
@@ -439,7 +439,16 @@
         document.getElementById('end_date').addEventListener('change', function() {
             const endDate = new Date(this.value);
             const declarationEstimateDate = new Date(endDate);
-            declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+            // Menambahkan 3 hari kerja
+            let daysToAdd = 0;
+            while (daysToAdd < 3) {
+                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1);
+                // Jika bukan Sabtu (6) dan bukan Minggu (0), kita tambahkan hari
+                if (declarationEstimateDate.getDay() !== 6 && declarationEstimateDate.getDay() !== 0) {
+                    daysToAdd++;
+                }
+            }
 
             const year = declarationEstimateDate.getFullYear();
             const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');
@@ -499,7 +508,13 @@
 
             // Validate dates
             if (endDate < startDate) {
-                alert("End Date cannot be earlier than Start Date");
+                Swal.fire({
+                    title: 'Cannot Sett Date!',
+                    text: 'End Date cannot be earlier than Start Date.',
+                    icon: 'warning',
+                    confirmButtonColor: "#9a2a27",
+                    confirmButtonText: 'Ok',
+                });
                 endDateInput.value = "";
             }
 

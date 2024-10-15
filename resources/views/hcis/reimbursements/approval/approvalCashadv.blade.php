@@ -149,16 +149,10 @@
             </div>
         </div>
     </div>
+
+    @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
 @endsection
 
 @push('scripts')
-<script>
-    // Periksa apakah ada pesan sukses
-    var successMessage = "{{ session('success') }}";
 
-    // Jika ada pesan sukses, tampilkan sebagai alert
-    if (successMessage) {
-        alert(successMessage);
-    }
-</script>
 @endpush

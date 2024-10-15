@@ -1,4 +1,12 @@
 var formCountNBT = 0;
+let isCADecNBT;
+
+const routeInfoNonBT = document.getElementById("routeInfo");
+if (routeInfoNonBT) {
+    isCADecNBT = true;
+} else {
+    isCADecNBT = false;
+}
 
 window.addEventListener("DOMContentLoaded", function () {
     formCountNBT = document.querySelectorAll(
@@ -31,7 +39,7 @@ function addMoreFormNBTReq(event) {
                             <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_${formCountNBT}" type="text" min="0" value="0"
                                 onfocus="this.value = this.value === '0' ? '' : this.value;"
                                 oninput="formatInputNBT(this)"
-                                onblur="formatOnBlur(this)">
+                                >
                         </div>
                     </div>
                     <div class="col-md-12 mb-2">
@@ -57,9 +65,15 @@ function addMoreFormNBTReq(event) {
         .addEventListener("input", function () {
             formatInputNBT(this);
             calculateTotalNominal();
+            if (isCADecNBT) {
+                calculateTotalNominalBTBalance();
+            }
         });
 
     calculateTotalNominal();
+    if (isCADecNBT) {
+        calculateTotalNominalBTBalance();
+    }
 }
 
 function addMoreFormNBTDec(event) {
@@ -87,7 +101,7 @@ function addMoreFormNBTDec(event) {
                             <input class="form-control" name="nominal_nbt[]" id="nominal_nbt_${formCountNBT}" type="text" min="0" value="0"
                                 onfocus="this.value = this.value === '0' ? '' : this.value;"
                                 oninput="formatInputNBT(this)"
-                                onblur="formatOnBlur(this)">
+                                >
                         </div>
                     </div>
                     <div class="col-md-12 mb-2">
@@ -113,9 +127,15 @@ function addMoreFormNBTDec(event) {
         .addEventListener("input", function () {
             formatInputNBT(this);
             calculateTotalNominal();
+            // if (isCADecNBT) {
+            //     calculateTotalNominalBTBalance();
+            // }
         });
 
     calculateTotalNominal();
+    if (isCADecNBT) {
+        calculateTotalNominalBTBalance();
+    }
 }
 
 $(".btn-warning").click(function (event) {
@@ -137,6 +157,9 @@ function removeFormNBT(index, event) {
             if (nominalInput) {
                 formContainer.querySelector(`#nominal_nbt_${index}`).value = 0;
                 calculateTotalNominal();
+                if (isCADecNBT) {
+                    calculateTotalNominalBTBalance();
+                }
             }
             $(`#form-container-nbt-${index}`).remove();
             formCountNBT--;
@@ -163,6 +186,9 @@ function clearFormNBT(index, event) {
         // Reset nominal value to 0
         formContainer.querySelector(`#nominal_nbt_${index}`).value = 0;
         calculateTotalNominal(); // Recalculate total after clearing the form
+        if (isCADecNBT) {
+            calculateTotalNominalBTBalance();
+        }
     }
 }
 
@@ -184,10 +210,16 @@ document.addEventListener("DOMContentLoaded", function () {
             input.addEventListener("input", function () {
                 formatInputNBT(this); // Hanya memformat dan menghitung input nominal
                 calculateTotalNominal();
+                if (isCADecNBT) {
+                    calculateTotalNominalBTBalance();
+                }
             });
         });
 
     calculateTotalNominal(); // Kalkulasi total saat halaman pertama kali dimuat
+    if (isCADecNBT) {
+        calculateTotalNominalBTBalance();
+    }
 });
 
 function formatInputNBT(input) {
@@ -199,4 +231,7 @@ function formatInputNBT(input) {
         input.value = formatNumber(0);
     }
     calculateTotalNominal();
+    if (isCADecNBT) {
+        calculateTotalNominalBTBalance();
+    }
 }

@@ -366,7 +366,6 @@
             var ca_e = document.getElementById("ca_e");
             var div_bisnis_numb_dns = document.getElementById("div_bisnis_numb_dns");
             var div_bisnis_numb_ent = document.getElementById("div_bisnis_numb_ent");
-            var bisnis_numb = document.getElementById("bisnis_numb");
 
             if (ca_type.value === "dns") {
                 ca_bt.style.display = "block";
@@ -380,7 +379,6 @@
                 ca_e.style.display = "none";
                 div_bisnis_numb_dns.style.display = "none";
                 div_bisnis_numb_ent.style.display = "none";
-                bisnis_numb.style.value = "";
             } else if (ca_type.value === "entr"){
                 ca_bt.style.display = "none";
                 ca_nbt.style.display = "none";
@@ -393,7 +391,6 @@
                 ca_e.style.display = "none";
                 div_bisnis_numb_dns.style.display = "none";
                 div_bisnis_numb_ent.style.display = "none";
-                bisnis_numb.style.value = "";
             }
         }
 
@@ -462,7 +459,6 @@
         document.getElementById('end_date').addEventListener('change', function() {
             const endDate = new Date(this.value);
             const declarationEstimateDate = new Date(endDate);
-            
             // Menambahkan 3 hari kerja
             let daysToAdd = 0;
             while (daysToAdd < 3) {
@@ -496,7 +492,13 @@
 
             // Validate dates
             if (endDate < startDate) {
-                alert("End Date cannot be earlier than Start Date");
+                Swal.fire({
+                    title: 'Cannot Sett Date!',
+                    text: 'End Date cannot be earlier than Start Date.',
+                    icon: 'warning',
+                    confirmButtonColor: "#9a2a27",
+                    confirmButtonText: 'Ok',
+                });
                 endDateInput.value = "";
             }
 

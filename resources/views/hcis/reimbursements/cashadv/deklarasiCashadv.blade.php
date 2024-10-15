@@ -165,14 +165,11 @@
                                 <input type="date" name="end_date" id="end_date" class="form-control"
                                     placeholder="mm/dd/yyyy" value="{{ $transactions->end_date }}">
                             </div>
+                            <div id="routeInfo" data-route="true"></div>
                             @php
                                 $detailCA = json_decode($transactions->detail_ca, true) ?? [];
                                 $declareCA = json_decode($transactions->declare_ca, true) ?? [];
                             @endphp
-                            <script>
-                                // Pass the PHP array into a JavaScript variable
-                                const initialDetailCA = @json($declareCA);
-                            </script>
                             <br>
                             <div class="row" id="ca_bt" style="display: none;">
                                 @if ($transactions->type_ca == 'dns')
@@ -339,17 +336,18 @@
                                 </div>
                                 <input class="form-control bg-light" name="totalca" id="totalca"
                                     type="text" min="0"
-                                    value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
+                                    value="{{ number_format($transactions->total_real, 0, ',', '.') }}" readonly>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-2" style="display:none">
-                            <label class="form-label">Selisih Total</label>
+                        <div class="col-md-4 mb-2" >
+                            <label class="form-label">Total Cash Advanced Balance</label>
                             <div class="input-group">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
                                 </div>
-                                <input class="form-control bg-light" name="selisih_totalca" id="selisih_totalca"
-                                    type="text" readonly>
+                                <input class="form-control bg-light" name="totalca_real" id="totalca_real"
+                                    type="text"
+                                    value="{{ number_format($transactions->total_cost, 0, ',', '.') }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -415,6 +413,7 @@
             calculateTotalNominalBTPenginapan();
             calculateTotalNominalBTLainnya();
             calculateTotalNominalBTTotal();
+            calculateTotalNominalBTBalance();
         }
 
         function calculateTotalNominalBTTotal() {
@@ -432,6 +431,13 @@
                 total += parseNumber(input.value);
             });
             document.querySelector('input[name="totalca"]').value = formatNumber(total);
+        }
+
+        function calculateTotalNominalBTBalance() {
+            const totaldec = cleanNumber(document.getElementById('totalca_deklarasi').value); // Dapatkan nilai dari input pertama
+            const totalca = document.getElementById('totalca').value;
+            const total = totaldec - cleanNumber(totalca);
+            document.getElementById('totalca_real').value = formatNumber(total);
         }
     </script>
 
@@ -573,7 +579,13 @@
 
             // Validate dates
             if (endDate < startDate) {
-                alert("End Date cannot be earlier than Start Date");
+                Swal.fire({
+                    title: 'Cannot Sett Date!',
+                    text: 'End Date cannot be earlier than Start Date.',
+                    icon: 'warning',
+                    confirmButtonColor: "#9a2a27",
+                    confirmButtonText: 'Ok'
+                });
                 endDateInput.value = "";
             }
 
@@ -598,9 +610,4 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-    <script>
-        console.log('jQuery available?', typeof $ !== 'undefined');
-        console.log('select2 available?', typeof $.fn.select2 !== 'undefined');
-    </script>
 @endpush

@@ -115,6 +115,196 @@
             </div>
         </div>
     </div>
+@elseif (request()->routeIs('cashadvanced.admin'))
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Update Cash Advanced Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('cashadvanced.adupdate', ':id') }}" method="POST">@csrf
+                    <div class="modal-body">
+                            {{-- <label for="transaction-id-display" class="col-form-label">Transaction ID: </label> --}}
+                            {{-- <input type="text" class="form-control" id="transaction-id-display" readonly> --}}
+                            <input type="hidden" name="transaction_id" id="transaction_id">
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Status : </label>
+                            <select class="form-select" name="ca_status" id="ca_status">
+                                <option value="On Progress">On Progress</option>
+                                <option value="Refund">Refund</option>
+                                <option value="Done">Done</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exportModalLabel">Export Cash Advanced</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="transaction_id" id="transaction_id">
+                    <div class="row">
+                        <div class="declare-request" style="display: flex;">
+                            <div class="col-md-7 mb-3 text-center">
+                                <label for="export-request" class="col-form-label">Export PDF Request:</label>
+                            </div>
+                            <div class="col-md-5 mb-3 text-center">
+                                <a href="{{ route('cashadvanced.download', ':id') }}" id="downloadLink" target="_blank" class="btn btn-outline-primary" title="Download PDF">
+                                    <i class="bi bi-file-earmark-arrow-down"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="declare-section" style="display: none;">
+                            <div class="col-md-7 mb-3 text-center">
+                                <label for="export-deklarasi" class="col-form-label">Export PDF Deklarasi:</label>
+                            </div>
+                            <div class="col-md-5 mb-3 text-center">
+                                <a href="{{ route('cashadvanced.downloadDeclare', ':id') }}" id="declareLink" target="_blank" class="btn btn-outline-primary" title="Download PDF Deklarasi">
+                                    <i class="bi bi-file-earmark-arrow-down"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approvalModalLabel">Approval Cash Advanced Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('approvalAdmin.cashadvancedApprovedAdmin', ':id') }}" method="POST">@csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="no_id" id="no_id">
+                        <input type="hidden" name="ca_type" id="ca_type">
+                        <input type="hidden" name="totalca" id="totalca">
+                        <input type="hidden" name="no_ca" id="no_ca">
+                        <input type="hidden" name="bisnis_numb" id="bisnis_numb">
+                        <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
+                        <input type="hidden" name="approval_status" id="approval_status">
+                        <input type="hidden" name="data_no_id" id="data_no_id"> <!-- Hidden field to hold data_no_id -->
+                        <label for="recipient-name" class="col-form-label">Approval Request : </label>
+                        <div class="row">
+                            <div class="col-md-12 mb-3 text-center" id="nameList"></div>
+                            <div class="col-md-12 mb-3 text-center" id="buttonList"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalReject" tabindex="-1" aria-labelledby="modalRejectLabel" aria-hidden="true">
+        <div class="modal-dialog" style="wid">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title text-center fs-5" id="modalRejectLabel">Rejection Reason - <label id="reject_no_ca_2"></label></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_rejectDec" method="POST" action="{{ route('approvalAdmin.cashadvancedApprovedAdmin',':id') }}">@csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label class="form-label" for="reason">Reasons for Refusal</label>
+                                <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
+                            </div>
+                            <input type="hidden" name="data_no_id" id="data_no_id">
+                            <input type="hidden" name="rejectDec_no_id" id="rejectDec_no_id">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                        {{-- <button type="submit" name="action_ca_submit" value="Pending" class="btn btn-primary" id="rejectButton">Extending</button> --}}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="approvalDecModal" tabindex="-1" aria-labelledby="approvalDecModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approvalDecModalLabel">Approval Cash Advanced Declaration Update - <label id="approval_no_ca"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_approvalDec" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="no_id" id="no_id">
+                        <input type="hidden" name="ca_type" id="ca_type">
+                        <input type="hidden" name="totalca" id="totalca">
+                        <input type="hidden" name="no_ca" id="no_ca">
+                        <input type="hidden" name="bisnis_numb" id="bisnis_numb">
+                        <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
+                        <input type="hidden" name="approval_status" id="approval_status">
+                        <input type="hidden" name="data_no_id" id="data_no_id"> <!-- Hidden field to hold data_no_id -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3 text-right border-end border-danger-subtle" id="requestList">
+                                <label for="recipient-name" class="col-form-label mb-3">Approval Request : </label>
+                            </div>
+                            <div class="col-md-6 mb-3 text-right" id="declarationList">
+                                <label for="recipient-name" class="col-form-label mb-3">Approval Declaration : </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRejectDec" tabindex="-1" aria-labelledby="modalRejectDecLabel" aria-hidden="true">
+        <div class="modal-dialog" style="wid">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title text-center fs-5" id="modalRejectDecLabel">Rejection Reason - <label id="rejectDec_no_ca_2"></label></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_rejectDec" method="POST" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin',':id') }}">@csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label class="form-label" for="reason">Reasons for Refusal</label>
+                                <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
+                            </div>
+                            <input type="hidden" name="data_no_id" id="data_no_id">
+                            <input type="hidden" name="rejectDec_no_id" id="rejectDec_no_id">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                        {{-- <button type="submit" name="action_ca_submit" value="Pending" class="btn btn-primary" id="rejectButton">Extending</button> --}}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endif
 
 {{-- Table Deklarasi --}}
@@ -512,23 +702,33 @@
 
 {{-- Approval --}}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.approve-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const transactionId = button.getAttribute('data-id');
-                const form = document.getElementById(approve-form-${transactionId});
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Mencegah submit form secara langsung
+                const transactionCA = button.getAttribute('data-no-ca');
+                const form = document.getElementById('approveForm');
 
                 Swal.fire({
-                    title: "Do you want to approve this request?",
+                    title: `Do you want to approve transaction "${transactionCA}"?`,
                     text: "You won't be able to revert this!",
-                    icon: "warning",
+                    icon: "question",
                     showCancelButton: true,
-                    confirmButtonColor: "#4BB543", // Primary color
-                    cancelButtonColor: "#CCCCC", // Darker shade for cancel button
-                    confirmButtonText: "Yes, Approve it!"
+                    confirmButtonColor: "#0c63e4",
+                    cancelButtonColor: "#9a2a27",
+                    confirmButtonText: "Yes, approve it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        form.submit();
+                        // Buat input baru untuk action_ca_approve
+                        const input = document.createElement('input');
+                        input.type = 'hidden'; // Set input sebagai hidden
+                        input.name = 'action_ca_approve'; // Set nama input
+                        input.value = 'Approve'; // Set nilai input
+
+                        // Tambahkan input ke form
+                        form.appendChild(input);
+
+                        form.submit(); // Kirim form
                     }
                 });
             });

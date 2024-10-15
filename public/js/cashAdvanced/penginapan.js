@@ -1,4 +1,11 @@
 var formCountPenginapan = 0;
+let isCADecPenginapan;
+
+if (routeInfoElement) {
+    isCADecPenginapan = true;
+} else {
+    isCADecPenginapan = false;
+}
 
 window.addEventListener("DOMContentLoaded", function () {
     formCountPenginapan = document.querySelectorAll(
@@ -33,6 +40,9 @@ function removeFormPenginapan(index, event) {
                     'input[name="total_bt_penginapan"]'
                 ).value = formatNumber(total);
                 calculateTotalNominalBTTotal();
+                if (isCADecPenginapan) {
+                    calculateTotalNominalBTBalance();
+                }
             }
             $(`#form-container-bt-penginapan-${index}`).remove();
             formCountPenginapan--;
@@ -61,6 +71,9 @@ function removeFormPenginapanDec(index, event) {
                     'input[name="total_bt_penginapan"]'
                 ).value = formatNumber(total);
                 calculateTotalNominalBTTotal();
+                if (isCADecPenginapan) {
+                    calculateTotalNominalBTBalance();
+                }
             }
             $(`#form-container-bt-penginapan-dec-${index}`).remove();
             formCountPenginapan--;
@@ -95,6 +108,15 @@ function clearFormPenginapan(index, event) {
         input.value = 0;
     });
 
+    const companyCodeSelect = formContainer.querySelector(
+        `#company_bt_penginapan_${index}`
+    );
+    if (companyCodeSelect) {
+        companyCodeSelect.selectedIndex = 0; // Reset the select element to the default option
+        var event = new Event("change");
+        companyCodeSelect.dispatchEvent(event); // Trigger the change event to update the select2 component
+    }
+
     formContainer.querySelectorAll("select").forEach((select) => {
         select.selectedIndex = 0;
     });
@@ -107,6 +129,9 @@ function clearFormPenginapan(index, event) {
         `#nominal_bt_penginapan_${formCountPenginapan}`
     ).value = 0;
     calculateTotalNominalBTTotal();
+    if (isCADecPenginapan) {
+        calculateTotalNominalBTBalance();
+    }
 }
 
 function calculateTotalNominalBTPenginapan() {
