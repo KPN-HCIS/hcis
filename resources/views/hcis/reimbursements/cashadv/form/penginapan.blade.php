@@ -30,7 +30,7 @@
                                 placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPenginapan(document.getElementById('start_bt_penginapan_${formCountPenginapan}'), this, document.querySelector('#total_days_bt_penginapan_${formCountPenginapan}'))">
                         </div>
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Total Days</label>
+                            <label class="form-label">Total Nights</label>
                             <div class="input-group">
                                 <input
                                     class="form-control bg-light total-days-penginapan"
@@ -124,7 +124,7 @@
                                 onchange="calculateTotalDaysPenginapan(document.getElementById('start_bt_penginapan_{{ $loop->index + 1 }}'), this, document.querySelector('#total_days_bt_penginapan_1'))">
                         </div>
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Total Days</label>
+                            <label class="form-label">Total Nights</label>
                             <div class="input-group">
                                 <input
                                     class="form-control bg-light total-days-penginapan"
@@ -229,7 +229,7 @@
                             placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPenginapan(document.getElementById('start_bt_penginapan_1'), this, document.querySelector('#total_days_bt_penginapan_1'))">
                     </div>
                     <div class="col-md-4 mb-2">
-                        <label class="form-label">Total Days</label>
+                        <label class="form-label">Total Nights</label>
                         <div class="input-group">
                             <input
                                 class="form-control bg-light total-days-penginapan"
