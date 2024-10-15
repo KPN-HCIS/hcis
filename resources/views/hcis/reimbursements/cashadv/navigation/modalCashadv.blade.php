@@ -192,7 +192,7 @@
                     <h5 class="modal-title" id="approvalModalLabel">Approval Cash Advanced Update</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('approvalAdmin.cashadvancedApprovedAdmin', ':id') }}" method="POST">@csrf
+                <form id="approveForm" action="{{ route('approvalAdmin.cashadvancedApprovedAdmin', ':id') }}" method="POST">@csrf
                     <div class="modal-body">
                         <input type="hidden" name="no_id" id="no_id">
                         <input type="hidden" name="ca_type" id="ca_type">
@@ -251,7 +251,7 @@
                     <h5 class="modal-title" id="approvalDecModalLabel">Approval Cash Advanced Declaration Update - <label id="approval_no_ca"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="form_approvalDec" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
+                <form id="approveFormDec" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
                     <div class="modal-body">
                         <input type="hidden" name="no_id" id="no_id">
                         <input type="hidden" name="ca_type" id="ca_type">

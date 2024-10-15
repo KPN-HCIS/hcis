@@ -272,135 +272,11 @@
     <!-- Include Bootstrap Date Range Picker -->
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <script src="{{ asset('/js/cashAdvanced/adminPage.js') }}"></script>
 @endsection
 @push('scripts')
     <script>
-        // Periksa apakah ada pesan sukses
-        var successMessage = "{{ session('success') }}";
-
-        // Jika ada pesan sukses, tampilkan sebagai alert
-        if (successMessage) {
-            Swal.fire({
-                title: 'Success!',
-                text: successMessage,
-                icon: 'success',
-                confirmButtonColor: "#9a2a27",
-                confirmButtonText: 'Ok'
-            });
-        }
-        function redirectToExportExcel() {
-            const route = "{{ route('exportca.excel') }}";
-
-            const startDate = document.getElementById('start_date').value;
-            const endDate = document.getElementById('end_date').value;
-
-            // Create a form element
-            const form = document.createElement('form');
-            form.method = 'GET';
-            form.action = route;
-
-            const startDateInput = document.createElement('input');
-            startDateInput.type = 'hidden';
-            startDateInput.name = 'start_date';
-            startDateInput.value = startDate;
-
-            const endDateInput = document.createElement('input');
-            endDateInput.type = 'hidden';
-            endDateInput.name = 'end_date';
-            endDateInput.value = endDate;
-
-            form.appendChild(startDateInput);
-            form.appendChild(endDateInput);
-
-            // Append the form to the body and submit it
-            document.body.appendChild(form);
-            form.submit();
-        }
-
-        // Event listener untuk menangkap date range yang dipilih
-        $('#singledaterange').on('apply.daterangepicker', function(ev, picker) {
-            var startDate = picker.startDate.format('YYYY-MM-DD');
-            var endDate = picker.endDate.format('YYYY-MM-DD');
-
-            // Panggil fungsi untuk mendapatkan data yang difilter
-            filterTableByDateRange(startDate, endDate);
-        });
-
-        // Fungsi untuk mengirimkan tanggal yang dipilih ke server dan memperbarui tabel
-        function filterTableByDateRange(startDate, endDate) {
-            $.ajax({
-                url: '{{ route("cashadvanced.admin") }}', // Route yang sudah Anda buat
-                type: 'GET',
-                data: {
-                    start_date: startDate,
-                    end_date: endDate
-                },
-                success: function(response) {
-                    // Perbarui tabel dengan data yang difilter
-                    // $('#scheduleTable tbody').html(response);
-                    // $('#tableFilter').html(response);
-                },
-                error: function(xhr) {
-                    // console.error(xhr);
-                }
-            });
-        }
-        //script modal
-
-        // Modal Mengubah Status
-        document.addEventListener('DOMContentLoaded', function () {
-            var statusModal = document.getElementById('statusModal');
-            statusModal.addEventListener('show.bs.modal', function (event) {
-                // Dapatkan tombol yang men-trigger modal
-                var button = event.relatedTarget;
-
-                // Ambil data-id dan data-status dari tombol tersebut
-                var transactionId = button.getAttribute('data-id');
-                var transactionStatus = button.getAttribute('data-status');
-
-                // Temukan form di dalam modal dan update action-nya
-                var form = statusModal.querySelector('form');
-                var action = form.getAttribute('action');
-                form.setAttribute('action', action.replace(':id', transactionId));
-
-                // Set nilai transaction_id di input hidden
-                var transactionInput = form.querySelector('#transaction_id');
-                transactionInput.value = transactionId;
-
-                // Pilih status yang sesuai di dropdown
-                var statusSelect = form.querySelector('#ca_status');
-                statusSelect.value = transactionStatus;
-            });
-        });
-
-        // Modal Export
-        document.addEventListener('DOMContentLoaded', function () {
-            var exportModal = document.getElementById('exportModal');
-            var declareSection = document.querySelector('.declare-section');
-            exportModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-
-                var transactionId = button.getAttribute('data-id');
-                var status = button.getAttribute('data-status');
-                console.log(status);
-
-                var downloadLink = document.getElementById('downloadLink');
-                downloadLink.href = '{{ route("cashadvanced.download", ":id") }}'.replace(':id', transactionId);
-
-                var declareLink = document.getElementById('declareLink');
-                declareLink.href = '{{ route("cashadvanced.downloadDeclare", ":id") }}'.replace(':id', transactionId);
-
-                var transactionInput = document.getElementById('transaction_id');
-                transactionInput.value = transactionId;
-
-                if (status === 'Pending' || status === 'Approved' || status === 'Rejected') {
-                    declareSection.style.display = 'flex'; // Tampilkan
-                } else {
-                    declareSection.style.display = 'none'; // Sembunyikan
-                }
-            });
-        });
-
         // Approval Request Modal
         document.addEventListener('DOMContentLoaded', function () {
             var approvalModal = document.getElementById('approvalModal');
@@ -435,8 +311,10 @@
 
                         var nameCol = document.createElement('div');
                         nameCol.className = 'col-md-6';
-                        var nameText = document.createElement('p');
-                        nameText.textContent = "{{ $approval->ReqName }}";
+                        var nameText = document.createElement('div');
+                        nameText.innerHTML = `
+                                {{ $approval->ReqName }}
+                            `;
                         nameCol.appendChild(nameText);
 
                         var buttonCol = document.createElement('div');
@@ -445,7 +323,7 @@
                         var dateText = document.createElement('p');
 
                         if ("{{ $approval->approval_status }}" === "Approved") {
-                            dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                            dateText.textContent = `{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})`;
                             buttonCol.appendChild(dateText);
                         } else if (previousLayerApproved) {
                             // Form Data
@@ -472,6 +350,11 @@
                             approveButton.value = 'Approve';
                             approveButton.className = 'btn btn-sm btn-success btn-pill px-1';
                             approveButton.textContent = 'Approve';
+                            approveButton.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
+
+                            // Tambahkan event listener SweetAlert pada tombol Approve
+                            addSweetAlert(approveButton);
+
                             form.querySelector('#data_no_id').value = "{{ $approval->id }}";
 
                             buttonCol.appendChild(rejectButton);
@@ -549,7 +432,7 @@
                         var nameCol = document.createElement('div');
                         nameCol.className = 'col-md-6';
                         var nameText = document.createElement('p');
-                        nameText.textContent = "{{ $approval->ReqName }} {{ $approval->employee_id}}";
+                        nameText.innerHTML = "{{ $approval->ReqName }} </br> Layer {{ $approval->layer}}";
                         nameCol.appendChild(nameText);
 
                         var buttonCol = document.createElement('div');
@@ -561,29 +444,8 @@
                             dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
                             buttonCol.appendChild(dateText);
                         } else if (previousLayerApproved) {
-                            var rejectButton = document.createElement('button');
-                            rejectButton.type = 'button'; // Mengubah type menjadi 'button'
-                            rejectButton.className = 'btn mb-2 btn-primary btn-pill px-4 me-2'; // Mengatur class sesuai yang diinginkan
-                            rejectButton.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
-                            rejectButton.setAttribute('data-bs-target', '#modalReject'); // Menambahkan atribut data-bs-target
-                            rejectButton.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
-                            rejectButton.setAttribute('data-no-ca', transactionNo); // Menambahkan atribut data-no-ca
-                            rejectButton.setAttribute('data-start-date', transactionStart); // Menambahkan atribut data-start-date
-                            rejectButton.setAttribute('data-end-date', transactionEnd); // Menambahkan atribut data-end-date
-                            rejectButton.setAttribute('data-total-days', transactionTotal); // Menambahkan atribut data-total-days
-                            rejectButton.textContent = 'Reject'; // Mengubah text button
-
-                            var approveButton = document.createElement('button');
-                            approveButton.type = 'submit';
-                            approveButton.name = 'action_ca_approve';
-                            approveButton.value = 'Approve';
-                            approveButton.className = 'btn btn-sm btn-success btn-pill px-1';
-                            approveButton.textContent = 'Approve';
-
-                            form.querySelector('#data_no_id').value = "{{ $approval->id }}";
-
-                            buttonCol.appendChild(rejectButton);
-                            buttonCol.appendChild(approveButton);
+                            dateText.textContent = 'Something Wrong, This form just for Approve Declaration';
+                            buttonCol.appendChild(dateText);
                         } else {
                             dateText.textContent = 'Waiting for previous approval';
                             buttonCol.appendChild(dateText);
@@ -608,7 +470,7 @@
                         var nameColDec = document.createElement('div');
                         nameColDec.className = 'col-md-6';
                         var nameTextDec = document.createElement('p');
-                        nameTextDec.textContent = "{{ $approval_sett->ReqName}}";
+                        nameTextDec.innerHTML = "{{ $approval_sett->ReqName }} </br> Layer {{ $approval_sett->layer }}";
                         nameColDec.appendChild(nameTextDec);
 
                         var buttonColDec = document.createElement('div');
@@ -639,6 +501,10 @@
                             approveButtonDec.value = 'Approve';
                             approveButtonDec.className = 'btn btn-sm btn-success btn-pill px-1';
                             approveButtonDec.textContent = 'Approve';
+                            approveButtonDec.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
+
+                            // Tambahkan event listener SweetAlert pada tombol Approve
+                            addSweetAlertDec(approveButtonDec);
 
                             form.querySelector('#data_no_id').value = "{{ $approval_sett->id }}";
 
@@ -660,55 +526,6 @@
                 @endforeach
             });
         });
-
-        // Reject Request Modal
-        document.addEventListener('DOMContentLoaded', function () {
-            var modalRejectDec = document.getElementById('modalReject');
-            modalReject.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-
-                var transactionId = button.getAttribute('data-no-id');
-                var transactionNo = button.getAttribute('data-no-ca');
-                var transactionIdCA = button.getAttribute('data-no-idCA');
-                console.log(transactionIdCA);
-
-                // Mendefinisikan form terlebih dahulu
-                var form = modalReject.querySelector('form');
-
-                form.querySelector('#data_no_id').value = transactionIdCA;
-
-                document.getElementById('reject_no_ca_2').textContent = transactionNo;
-
-                var form = modalReject.querySelector('form');
-                var action = form.getAttribute('action');
-                form.setAttribute('action', action.replace(':id', transactionId));
-            });
-        });
-
-        // Reject Declaration Modal
-        document.addEventListener('DOMContentLoaded', function () {
-            var modalRejectDec = document.getElementById('modalRejectDec');
-            modalRejectDec.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-
-                var transactionId = button.getAttribute('data-no-id');
-                var transactionNo = button.getAttribute('data-no-ca');
-                var transactionIdCA = button.getAttribute('data-no-idCA');
-                console.log(transactionIdCA);
-
-                // Mendefinisikan form terlebih dahulu
-                var form = modalRejectDec.querySelector('form');
-
-                form.querySelector('#data_no_id').value = transactionIdCA;
-
-                document.getElementById('rejectDec_no_ca_2').textContent = transactionNo;
-
-                var form = modalRejectDec.querySelector('form');
-                var action = form.getAttribute('action');
-                form.setAttribute('action', action.replace(':id', transactionId));
-            });
-        });
-
     </script>
 
     @if (session('refresh'))
