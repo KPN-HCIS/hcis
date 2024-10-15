@@ -440,17 +440,37 @@
             endDateInput.addEventListener('change', calculateTotalDays);
         });
 
+        // document.getElementById('end_date').addEventListener('change', function() {
+        //     const endDate = new Date(this.value);
+        //     const declarationEstimateDate = new Date(endDate);
+        //     declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+        //     // Mengecek apakah tanggal jatuh pada akhir pekan
+        //     const dayOfWeek = declarationEstimateDate.getDay();
+        //     if (dayOfWeek === 6) { // Sabtu
+        //         declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 2); // Tambah 2 hari untuk ke Senin
+        //     } else if (dayOfWeek === 0) { // Minggu
+        //         declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1); // Tambah 1 hari untuk ke Senin
+        //     }
+
+        //     const year = declarationEstimateDate.getFullYear();
+        //     const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');
+        //     const day = String(declarationEstimateDate.getDate()).padStart(2, '0');
+
+        //     document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
+        // });
         document.getElementById('end_date').addEventListener('change', function() {
             const endDate = new Date(this.value);
             const declarationEstimateDate = new Date(endDate);
-            declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
-
-            // Mengecek apakah tanggal jatuh pada akhir pekan
-            const dayOfWeek = declarationEstimateDate.getDay();
-            if (dayOfWeek === 6) { // Sabtu
-                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 2); // Tambah 2 hari untuk ke Senin
-            } else if (dayOfWeek === 0) { // Minggu
-                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1); // Tambah 1 hari untuk ke Senin
+            
+            // Menambahkan 3 hari kerja
+            let daysToAdd = 0;
+            while (daysToAdd < 3) {
+                declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1);
+                // Jika bukan Sabtu (6) dan bukan Minggu (0), kita tambahkan hari
+                if (declarationEstimateDate.getDay() !== 6 && declarationEstimateDate.getDay() !== 0) {
+                    daysToAdd++;
+                }
             }
 
             const year = declarationEstimateDate.getFullYear();
