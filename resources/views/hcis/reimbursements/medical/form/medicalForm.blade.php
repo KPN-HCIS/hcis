@@ -78,8 +78,7 @@
                                 </div>
                                 <div class="col-md-6 mb-1">
                                     <label for="medical_date" class="form-label">Medical Date</label>
-                                    <input type="date" class="form-control form-control-sm" id="" name=""
-                                        style="cursor:not-allowed;" value="" required>
+                                    <input type="date" class="form-control form-control-sm" id="" name="" value="" required>
                                 </div>
                             </div>
                             <div class="row g-3">
