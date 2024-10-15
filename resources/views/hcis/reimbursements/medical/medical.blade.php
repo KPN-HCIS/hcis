@@ -127,6 +127,25 @@
         .recordsPerPage{
             border-radius: 4px;
         }
+
+        table {
+            white-space: nowrap;
+        }
+
+        tr.sticky {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: var(--stickyBackground);
+        }
+
+
+        th.sticky,
+        td.sticky {
+            position: sticky;
+            left: 0;
+            background: var(--stickyBackground);
+        }
     </style>
 @endsection
 
@@ -234,6 +253,7 @@
                 </div>
             </div>
 
+<<<<<<< Updated upstream
             <!-- Plafond table -->
             <div class="form-header" style="margin-top: 20px;">Jenis Plafond</div>
             <table class="table" id="jenisPlafonTable">
@@ -298,6 +318,109 @@
                 <span id="paginationInfo">Showing 0 to 0 of 0 entries</span>
                 <button class="prevBtn" id="prevButton"><i class="bi bi-caret-left-fill"></i> Previous</button>
                 <button class="nextBtn" id="nextButton">Next <i class="bi bi-caret-right-fill"></i></button>
+=======
+            {{-- Jenis Plafond --}}
+            <div class="card shadow-none">
+                <div class="card-body">
+                    <h4 class="card-title">Jenis Plafond</h4>
+                    <div class="card-text">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover nowrap">
+                                <thead class="bg-primary text-center align-middle">
+                                    <tr class="sticky">
+                                        <th class="text-center sticky" style="background-color: #AB2F2B !important;"
+                                            rowspan="2">Periode</th>
+                                        <th class="text-center" colspan="4">Jenis Plafond</th>
+                                    </tr>
+                                    <tr class="sticky" style="z-index: auto">
+                                        <th class="text-center">Persalinan</th>
+                                        <th class="text-center">Rawat Inap</th>
+                                        <th class="text-center">Rawat Jalan</th>
+                                        <th class="text-center">Kacamata</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center sticky" style="background-color: white !important;">2022</td>
+                                        <td class="text-center">Rp 16.000.000</td>
+                                        <td class="text-center">Rp 10.000.000</td>
+                                        <td class="text-center">Rp 7.000.000</td>
+                                        <td class="text-center">Rp 750.000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Detail Penggunaan Plafond --}}
+            <div class="card shadow-none">
+                <div class="card-body">
+                    <h4 class="card-title">Riwayat Penggunaan Plafond</h4>
+                    <div class="card-text">
+                        <div class="table-responsive">
+                            <table class="display nowrap responsive" id="example">
+                                <thead class="bg-primary text-center align-middle">
+                                    <tr>
+                                        <th></th>
+                                        <th>No</th>
+                                        <th>Tanggal</th>
+                                        <th>Periode</th>
+                                        <th data-priority="0">No Medical</th>
+                                        <th>Nama Rumah Sakit</th>
+                                        <th>Pasien</th>
+                                        <th>Disease</th>
+                                        <th>Persalinan</th>
+                                        <th>Rawat Inap</th>
+                                        <th>Rawat Jalan</th>
+                                        <th>Lensa Kacamata</th>
+                                        <th>Bingkai Kacamata</th>
+                                        <th data-priority="1">Status</th>
+                                        <th data-priority="2">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center"></td>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">01 Sept 2024</td>
+                                        <td class="text-center">2024</td>
+                                        <td class="text-center">011/MDCL-2024</td>
+                                        <td>RS. Murni Teguh</td>
+                                        <td>Metta Saputra</td>
+                                        <td>Demam</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">Rp 200.0000</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">Selesai</td>
+                                        <td class="text-center">Selesai</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center"></td>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">01 Sept 2024</td>
+                                        <td class="text-center">2024</td>
+                                        <td class="text-center">011/MDCL-2024</td>
+                                        <td>RS. Murni Teguh</td>
+                                        <td>Metta Saputra</td>
+                                        <td>Demam</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">Rp 200.0000</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">Selesai</td>
+                                        <td class="text-center">Selesai</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+>>>>>>> Stashed changes
             </div>
             <!-- Auto added row according to years -->
             <script>
