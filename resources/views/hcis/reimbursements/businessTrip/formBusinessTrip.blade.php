@@ -59,7 +59,7 @@
                                         name="nama" style="cursor:not-allowed;" value="{{ $employee_data->fullname }}"
                                         readonly>
                                 </div>
-                                <div class="col-md-6 mb-2">
+                                <div class="col-md-6 mb-1">
                                     <label for="divisi" class="form-label">Divison</label>
                                     <input type="text" class="form-control form-control-sm bg-light" id="divisi"
                                         name="divisi" style="cursor:not-allowed;" value="{{ $employee_data->unit }}"

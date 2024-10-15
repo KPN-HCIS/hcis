@@ -43,7 +43,7 @@
             </div>
             <div class="col-6 col-sm-auto">
                 <div class="mb-2">
-                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
+                    <a href="{{ route('cashadvanced') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
                         Medical
                         @if ( $pendingHTLCount >= 1 )
                             <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingHTLCount }}</span>
@@ -55,7 +55,7 @@
             </div>
             <div class="col-6 col-sm-auto">
                 <div class="mb-2">
-                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
+                    <a href="{{ route('businessTrip.approval') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
                         Business Trip
                         <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">99</span>
                     </a>
@@ -63,7 +63,7 @@
             </div>
             <div class="col-6 col-sm-auto">
                 <div class="mb-2">
-                    <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
+                    <a href="{{ route('cashadvanced') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
                         Hometrip
                         <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">99</span>
                     </a>
@@ -73,6 +73,22 @@
                 <div class="mb-2">
                     <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
                         Assessment
+                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-6 col-sm-auto">
+                <div class="mb-2">
+                    <a href="{{ route('ticket.approval') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
+                        Ticket
+                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-6 col-sm-auto">
+                <div class="mb-2">
+                    <a href="{{ route('ticket.approval') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
+                        Hotel
                         <span class="badge bg-danger position-absolute top-0 start-100 translate-middle"></span>
                     </a>
                 </div>

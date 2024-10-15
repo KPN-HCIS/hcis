@@ -12,9 +12,18 @@ class MedicalController extends Controller
         $keluarga = DataKeluarga::orderBy('umur', 'desc')->paginate(5);
 
         $parentLink = 'Reimbursement';
-        $link = 'Business Trip';
+        $link = 'Medical';
 
         return view('hcis.reimbursements.medical.medical', compact('keluarga', 'parentLink', 'link'));
+    }
+    public function medicalForm()
+    {
+        $keluarga = DataKeluarga::orderBy('umur', 'desc')->paginate(5);
+
+        $parentLink = 'Medical';
+        $link = 'Add Medical Coverage Usage';
+
+        return view('hcis.reimbursements.medical.form.medicalForm', compact('keluarga', 'parentLink', 'link'));
     }
 
 }

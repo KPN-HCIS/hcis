@@ -190,11 +190,17 @@ Route::middleware('auth')->group(function () {
 
     //Medical
     Route::get('/medical', [MedicalController::class, 'medical'])->name('medical');
+    Route::get('/medical/form-add', [MedicalController::class, 'medicalForm'])->name('medical-form.add');
+    Route::post('/medical/form-add/post', [MedicalController::class, 'medicalCreate'])->name('medical-form.post');
+    Route::get('/medical/form-update/{id}', [MedicalController::class, 'medicalFormUpdate'])->name('medical-form.edit');
+    Route::put('/medical/form-update/update/{id}', [MedicalController::class, 'medicalUpdate'])->name('medical-form.put');
+    Route::get('/medical/export-excel/', [MedicalController::class, 'medicalForm'])->name('export.medical');
+
 
     //Taksi Form
     Route::get('/taksi', [TaksiController::class, 'taksi'])->name('taksi');
-    Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd'])->name('medical.form.add');
-    Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate'])->name('medical.form.post');
+    Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd'])->name('taksi.form.add');
+    Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate'])->name('taksi.form.post');
 
     Route::middleware(['permission:adminbt'])->group(function () {
         //ADMIN BT
