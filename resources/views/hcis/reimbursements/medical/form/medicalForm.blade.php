@@ -53,8 +53,7 @@
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <label for="nama" class="form-label">Hospital Name</label>
-                                    <input type="text" class="form-control form-control-sm" id="" name=""
-                                        style="cursor:not-allowed;" value="" placeholder="ex: RS. Murni Teguh" required>
+                                    <input type="text" class="form-control form-control-sm" id="" name="" value="" placeholder="ex: RS. Murni Teguh" required>
                                 </div>
 
                                 <div class="col-md-4 mb-2">
