@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BusinessTrip extends Model
 {
     use HasFactory, HasUuids;
+    use SoftDeletes;
 
     public function employee()
     {
@@ -26,8 +28,41 @@ class BusinessTrip extends Model
     {
         return $this->belongsTo(Taksi::class, 'user_id', 'user_id');
     }
+    public function manager1()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l1_id', 'employee_id');
+    }
+
+    public function manager2()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l2_id', 'employee_id');
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(BTApproval::class, 'bt_id', 'id');
+    }
+    // BusinessTrip.php
+    public function latestApprovalL1()
+    {
+        return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+            ->where('layer', 1)
+            ->where('approval_status', 'Pending L2')
+            ->latest('approved_at')
+            ->with('manager1');
+    }
+
+   public function latestApprovalL2()
+    {
+        return $this->hasOne(BTApproval::class, 'bt_id', 'id')
+            ->where('layer', 2)
+            ->where('approval_status', 'Approved')
+            ->latest('approved_at')
+            ->with('manager2');
+    }
+
     protected $keyType = 'string';
-    public $incrementing=false;
+    public $incrementing = false;
 
     protected $fillable = [
         'id',
@@ -62,6 +97,8 @@ class BusinessTrip extends Model
         'manager_l1_id',
         'manager_l2_id',
         'update_db',
+        'deleted_at',
+
     ];
 
     protected $table = 'bt_transaction';

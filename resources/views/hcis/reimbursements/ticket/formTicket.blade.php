@@ -23,143 +23,247 @@
             </div>
         </div>
         <div class="d-sm-flex align-items-center justify-content-center">
-            <div class="card col-md-8">
-                <div class="card-header d-flex bg-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Data</h4>
-                    <a href="{{ route('ticket') }}" type="button" class="btn btn-close"></a>
+            <div class="card col-md-12">
+                <div class="card-header d-flex bg-primary text-white justify-content-between">
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Ticket</h4>
+                    <a href="{{ route('ticket') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="scheduleForm" method="post" action="{{ route('ticket.submit') }}">@csrf
-                            <div class="row my-2">
-                                <div class="col-md-6">
+                        <form id="btEditForm" method="post" action="{{ route('ticket.submit') }}">@csrf
+                            <div class="row">
+                                <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Name</label>
-                                        <input type="text" name="name" id="name" value="{{ $employee_data->fullname }}" class="form-control bg-light" readonly>
+                                        <input type="text" name="name" id="name"
+                                            value="{{ $employee_data->fullname }}"
+                                            class="form-control bg-light form-control-sm" readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Unit</label>
-                                        <input type="text" name="unit" id="unit" value="{{ $employee_data->unit }}" class="form-control bg-light" readonly>
+                                        <input type="text" name="unit" id="unit"
+                                            value="{{ $employee_data->unit }}" class="form-control bg-light form-control-sm"
+                                            readonly>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row my-2">
-                                <div class="col-md-6">
+                                <div class="col-md-2">
                                     <div class="mb-2">
                                         <label class="form-label" for="start">Grade</label>
-                                        <input type="text" name="grade" id="grade" value="{{ $employee_data->job_level }}" class="form-control bg-light" readonly>
+                                        <input type="text" name="grade" id="grade"
+                                            value="{{ $employee_data->job_level }}"
+                                            class="form-control bg-light form-control-sm" readonly>
                                     </div>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="col-md-12">
-                                <div class="mb-2">
-                                    <label class="form-label" for="name">Business Trip Number</label>
-                                    <select class="form-control select2" id="bisnis_numb" name="bisnis_numb">
-                                        <option value="-">No Business Trip</option>
-                                        @foreach($no_sppds as $no_sppd)
-                                            <option value="{{ $no_sppd->no_sppd }}">{{ $no_sppd->no_sppd }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row my-2">
-                                <label class="form-label" for="jk_tkt">Nama Penumpang (No KTP)</label>
-                                <div class="col-md-2">
-                                    <div class="mb-2 mr-0">
-                                        <select class="form-control" id="jk_tkt" name="jk_tkt" required>
-                                            <option value="">-</option>
-                                            <option value="Mr">Mr</option>
-                                            <option value="Mrs">Mrs</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-8">
                                     <div class="mb-2">
-                                        <input type="text" name="np_tkt" id="np_tkt" class="form-control" placeholder="Nama Penumpang" required>
+                                        <label class="form-label" for="bisnis_numb">Business Trip Number</label>
+                                        <select class="form-control select2 form-select-sm" id="bisnis_numb"
+                                            name="bisnis_numb">
+                                            <option value="-">No Business Trip</option>
+                                            @foreach ($no_sppds as $no_sppd)
+                                                <option value="{{ $no_sppd->no_sppd }}">{{ $no_sppd->no_sppd }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-2">
-                                        <input type="number" name="noktp_tkt" id="noktp_tkt" class="form-control" placeholder="No KTP" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="tlp_tkt">Nomor Telephone</label>
-                                        <input type="number" name="tlp_tkt" id="tlp_tkt" class="form-control" maxlength="12" placeholder="Telp" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="jenis_tkt">Jenis Transportasi</label>
-                                        <select class="form-select" name="jenis_tkt" required>
-                                            <option value="Pesawat">Pesawat</option>
-                                            <option value="Kereta">Kereta</option>
-                                            <option value="Bus">Bus</option>
-                                            <option value="Ferry">Ferry</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="dari_tkt">Kota Keberangkatan</label>
-                                        <input type="text" name="dari_tkt" id="dari_tkt" class="form-control" placeholder="Kota Keberangkatan" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="start">Kota Kedatangan</label>
-                                        <input type="text" name="ke_tkt" id="ke_tkt" class="form-control" placeholder="Kota Kedatangan" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="tgl_brkt_tkt">Tanggal Berangkat</label>
-                                        <input type="date" name="tgl_brkt_tkt" id="tgl_brkt_tkt" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="jam_brkt_tkt">Jam Keberangkatan</label>
-                                        <input type="time" name="jam_brkt_tkt" id="jam_brkt_tkt" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="type_tkt">Type Tiket</label>
-                                        <select name="type_tkt" id="type_tkt" class="form-select" onchange="toggleDivs()">
-                                            <option value="One-Way">One-Way</option>
-                                            <option value="Round-Trip">Round-Trip</option>
+                                        <label class="form-label" for="jns_dinas_tkt">Service Type</label>
+                                        <select class="form-select form-select-sm" name="jns_dinas_tkt" id="jns_dinas_tkt"
+                                            required>
+                                            <option value="" disabled selected>Select Service Type</option>
+                                            <option value="Dinas">Dinas</option>
+                                            <option value="Cuti">Cuti</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row my-2" id="div_ticket">
-                                <div class="col-md-5">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="tgl_plg_tkt">Tanggal Pulang</label>
-                                        <input type="date" name="tgl_plg_tkt" id="tgl_plg_tkt" class="form-control" >
+                            <div id="tiket_div">
+                                <div class="d-flex flex-column gap-1" id="ticket_forms_container">
+                                    <?php
+                                    $i = 1;
+                                    ?>
+                                    <div class="card bg-light shadow-none" id="ticket-form-<?php echo $i; ?>"
+                                        style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
+                                        <div class="card-body">
+                                            <div class="h5 text-uppercase">
+                                                <b>TICKET <?php echo $i; ?></b>
+                                            </div>
+                                            <div class="row">
+                                                <label class="form-label" for="jk_tkt">Passengers Name (No KTP)</label>
+                                                <div class="col-md-2">
+                                                    <div class="mb-2 mt-1 gap-1">
+                                                        <div class="form-group" id="jk_tkt_<?php echo $i; ?>">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio"
+                                                                    id="male_<?php echo $i; ?>" name="jk_tkt[]"
+                                                                    value="Male" required>
+                                                                <label class="form-check-label"
+                                                                    for="male_<?php echo $i; ?>">Mr</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline ms-2">
+                                                                <input class="form-check-input" type="radio"
+                                                                    id="female_<?php echo $i; ?>" name="jk_tkt[]"
+                                                                    value="Female" required>
+                                                                <label class="form-check-label"
+                                                                    for="female_<?php echo $i; ?>">Mrs</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-5">
+                                                    <div class="mb-2">
+                                                        <input type="text" name="np_tkt[]"
+                                                            id="np_tkt_<?php echo $i; ?>"
+                                                            class="form-control form-control-sm" required
+                                                            placeholder="Passengers Name">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="mb-2">
+                                                        <input type="number" name="noktp_tkt[]"
+                                                            id="noktp_tkt_<?php echo $i; ?>"
+                                                            class="form-control form-control-sm" required
+                                                            placeholder="No KTP"
+                                                            oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-2">
+                                                        <label class="form-label" for="tlp_tkt_<?php echo $i; ?>">Phone
+                                                            Number</label>
+                                                        <input type="number" name="tlp_tkt[]"
+                                                            id="tlp_tkt_<?php echo $i; ?>"
+                                                            class="form-control form-control-sm" maxlength="12"
+                                                            placeholder="ex: 08123123123" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label">From</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="dari_tkt[]"
+                                                            type="text" placeholder="ex. Yogyakarta (YIA)" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label">To</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="ke_tkt[]"
+                                                            type="text" placeholder="ex. Jakarta (CGK)" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-2">
+                                                    <label class="form-label"
+                                                        for="jenis_tkt_<?php echo $i; ?>">Transportation
+                                                        Type</label>
+                                                    <div class="input-group">
+                                                        <select class="form-select form-select-sm" name="jenis_tkt[]"
+                                                            id="jenis_tkt_<?php echo $i; ?>" required>
+                                                            <option value="">Select Transportation Type</option>
+                                                            <option value="Train">Train</option>
+                                                            <option value="Bus">Bus</option>
+                                                            <option value="Airplane">Airplane</option>
+                                                            <option value="Car">Car</option>
+                                                            <option value="Ferry">Ferry</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-2">
+                                                    <label for="type_tkt_<?php echo $i; ?>" class="form-label">Ticket
+                                                        Type</label>
+                                                    <select class="form-select form-select-sm" name="type_tkt[]" required>
+                                                        {{-- <option value="" selected>Choose Ticket Type</option> --}}
+                                                        <option value="One Way" selected>One Way</option>
+                                                        <option value="Round Trip">Round Trip</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-2">
+                                                    <label class="form-label">Date</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm"
+                                                            id="tgl_brkt_tkt_<?php echo $i; ?>" name="tgl_brkt_tkt[]"
+                                                            type="date" onchange="validateDates(<?php echo $i; ?>)"
+                                                            required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-2">
+                                                    <label class="form-label">Time</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm"
+                                                            id="jam_brkt_tkt_<?php echo $i; ?>" name="jam_brkt_tkt[]"
+                                                            type="time" onchange="validateDates(<?php echo $i; ?>)"
+                                                            required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="round-trip-options" style="display: none;">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Return Date</label>
+                                                        <div class="input-group">
+                                                            <input class="form-control form-control-sm"
+                                                                name="tgl_plg_tkt[]" type="date"
+                                                                id="tgl_plg_tkt_<?php echo $i; ?>"
+                                                                onchange="validateDates(<?php echo $i; ?>)">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Return Time</label>
+                                                        <div class="input-group">
+                                                            <input class="form-control form-control-sm"
+                                                                id="jam_plg_tkt_<?php echo $i; ?>" name="jam_plg_tkt[]"
+                                                                type="time"
+                                                                onchange="validateDates(<?php echo $i; ?>)">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 mb-2">
+                                                    <label for="ket_tkt_<?php echo $i; ?>"
+                                                        class="form-label">Information</label>
+                                                    <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3"
+                                                        placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-danger remove-ticket-btn"
+                                                    id="remove-ticket-btn">Remove
+                                                    Data</button>
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="jam_plg_tkt">Jam Kepulangan</label>
-                                        <input type="time" name="jam_plg_tkt" id="jam_plg_tkt" class="form-control" >
-                                    </div>
-                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary add-ticket-btn mb-2"
+                                    id="add-ticket-btn">Add
+                                    Ticket
+                                    Data</button>
                             </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-md d-md-flex justify-content-end text-center">
-                                    <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
-                                    <a href="{{ route('ticket') }}" type="button" class="btn btn-danger rounded-pill shadow px-4 me-2">Cancel</a>
-                                    <button type="submit" class="btn btn-primary rounded-pill shadow px-4">Submit</button>
-                                </div>
+
+                            <input type="hidden" name="status" value="Pending L1" id="status">
+                            <input type="hidden" id="formActionType" name="formActionType" value="">
+
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-outline-primary rounded-pill me-2"
+                                    name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
+                                    Draft</button>
+                                <button type="submit" class="btn btn-primary rounded-pill submit-button"
+                                    name="action_submit" value="Pending L1" id="submit-btn">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -167,37 +271,351 @@
             </div>
         </div>
     </div>
-@endsection
-<!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
-@push('scripts')
-<script>
-    function toggleDivs() {
-        var typeTkt = document.getElementById("type_tkt").value;
-        var divTicket = document.getElementById("div_ticket");
 
-        if (typeTkt === "One-Way") {
-            divTicket.style.display = "none";
-        } else if (typeTkt === "Round-Trip") {
-            divTicket.style.display = "flex";
-        }
-    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.submit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent immediate form submission
 
-    // Call the function on page load to set the initial state
-    window.onload = function() {
-        toggleDivs();
-    };
-</script>
+                    const form = document.getElementById('btEditForm');
 
+                    // Check if the form is valid before proceeding
+                    if (!form.checkValidity()) {
+                        form.reportValidity(); // Show validation messages if invalid
+                        return; // Exit if the form is not valid
+                    }
 
-<script>
-    $(document).ready(function() {
-        $('.select2').select2({
-            theme: "bootstrap-5",
+                    // Show SweetAlert confirmation with the input summary
+                    Swal.fire({
+                        title: "Do you want to submit this request?",
+                        html: `You won't be able to revert this!`, // Use 'html' instead of 'text'
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AB2F2B",
+                        cancelButtonColor: "#CCCCCC",
+                        confirmButtonText: "Yes, submit it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const input = document.createElement('input');
+                            input.type =
+                                'hidden'; // Hidden input so it doesn't show in the form
+                            input.name = button.name; // Use the button's name attribute
+                            input.value = button.value; // Use the button's value attribute
 
+                            form.appendChild(input); // Append the hidden input to the form
+                            form.submit();
+                        }
+                    });
+                });
+            });
         });
-    });
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script>
-@endpush
+    </script>
+    <script>
+        function validateDates(index) {
+            const departureDateInput = document.getElementById(`tgl_brkt_tkt_${index}`);
+            const returnDateInput = document.getElementById(`tgl_plg_tkt_${index}`);
+            const departureTimeInput = document.getElementById(`jam_brkt_tkt_${index}`);
+            const returnTimeInput = document.getElementById(`jam_plg_tkt_${index}`);
+
+            if (
+                departureDateInput &&
+                returnDateInput &&
+                departureTimeInput &&
+                returnTimeInput
+            ) {
+                const departureDate = new Date(departureDateInput.value);
+                const returnDate = new Date(returnDateInput.value);
+
+                // Check if return date is earlier than departure date
+                if (returnDate < departureDate) {
+                    Swal.fire({
+                        title: "Warning!",
+                        text: "Return date cannot be earlier than the departure date.",
+                        icon: "error",
+                        confirmButtonColor: "#AB2F2B",
+                        confirmButtonText: "OK",
+                    });
+                    returnDateInput.value = ""; // Reset the return date if it's invalid
+                    return; // Stop further validation
+                }
+
+                // If the dates are the same, check the times
+                if (returnDate.getTime() === departureDate.getTime()) {
+                    const departureTime = departureTimeInput.value;
+                    const returnTime = returnTimeInput.value;
+
+                    if (departureTime && returnTime && returnTime < departureTime) {
+                        Swal.fire({
+                            title: "Warning!",
+                            text: "Return time cannot be earlier than the departure time.",
+                            icon: "error",
+                            confirmButtonColor: "#AB2F2B",
+                            confirmButtonText: "OK",
+                        });
+                        returnTimeInput.value = ""; // Reset the return time if it's invalid
+                    }
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let formTicketCount =
+                document.querySelectorAll('[id^="ticket-form-"]').length || 1;
+            const maxTicketForms = 5;
+            const ticketFormsContainer = document.getElementById("ticket_forms_container");
+            const addTicketButton = document.getElementById("add-ticket-btn");
+
+            function toggleRequiredAttributes(form, isRequired) {
+                const fields = [
+                    'input[name="jk_tkt[]"]',
+                    'input[name="np_tkt[]"]',
+                    'input[name="noktp_tkt[]"]',
+                    'input[name="tlp_tkt[]"]',
+                    'input[name="dari_tkt[]"]',
+                    'input[name="ke_tkt[]"]',
+                    'input[name="tgl_brkt_tkt[]"]',
+                    'input[name="jam_brkt_tkt[]"]',
+                    'select[name="jenis_tkt[]"]',
+                    'select[name="type_tkt[]"]',
+                ];
+
+                fields.forEach((selector) => {
+                    const field = form.querySelector(selector);
+                    if (field) {
+                        if (isRequired) {
+                            field.setAttribute("required", "");
+                        } else {
+                            field.removeAttribute("required");
+                        }
+                    }
+                });
+
+                const typeSelect = form.querySelector('select[name="type_tkt[]"]');
+                const returnDateField = form.querySelector('input[name="tgl_plg_tkt[]"]');
+                const returnTimeField = form.querySelector('input[name="jam_plg_tkt[]"]');
+
+                // Update required fields for round trip option
+                function updateReturnFields() {
+                    if (isRequired && typeSelect && typeSelect.value === "Round Trip") {
+                        returnDateField.setAttribute("required", "");
+                        returnTimeField.setAttribute("required", "");
+                    } else {
+                        returnDateField && returnDateField.removeAttribute("required");
+                        returnTimeField && returnTimeField.removeAttribute("required");
+                    }
+                }
+
+                if (typeSelect) {
+                    typeSelect.addEventListener("change", updateReturnFields);
+                    updateReturnFields();
+                }
+            }
+
+            function updateFormNumbers() {
+                const forms = ticketFormsContainer.querySelectorAll('[id^="ticket-form-"]');
+                forms.forEach((form, index) => {
+                    const formNumber = index + 1;
+                    form.querySelector(".h5.text-uppercase b").textContent = `TICKET ${formNumber}`;
+                    form.id = `ticket-form-${formNumber}`;
+                    form.querySelector(".remove-ticket-btn").dataset.formId = formNumber;
+
+                    updateFormElementIds(form, formNumber);
+                });
+                formTicketCount = forms.length;
+                updateRemoveButtons();
+                updateAddButtonVisibility();
+            }
+
+            function updateAddButtonVisibility() {
+                addTicketButton.style.display = formTicketCount < maxTicketForms ? "inline-block" : "none";
+            }
+
+            function updateFormElementIds(form, formNumber) {
+                const elements = form.querySelectorAll("[id],[name],[onchange]");
+                elements.forEach((element) => {
+                    // Update IDs
+                    if (element.id) {
+                        element.id = element.id.replace(/\d+$/, formNumber);
+                    }
+                    // Update names
+                    if (element.name) {
+                        element.name = element.name.replace(/\[\d*\]/, `[${formNumber}]`);
+                    }
+                    // Update onchange attributes
+                    if (element.hasAttribute("onchange")) {
+                        const onchangeValue = element.getAttribute("onchange");
+                        const updatedOnchangeValue = onchangeValue.replace(/\d+/, formNumber);
+                        element.setAttribute("onchange", updatedOnchangeValue);
+                    }
+                });
+            }
+
+            function updateRemoveButtons() {
+                const removeButtons = document.querySelectorAll(".remove-ticket-btn");
+                removeButtons.forEach((button) => {
+                    button.style.display = formTicketCount > 1 ? "inline-block" : "none";
+                });
+            }
+
+
+            function addNewTicketForm() {
+                if (formTicketCount < maxTicketForms) {
+                    formTicketCount++;
+                    const newTicketForm = createNewTicketForm(formTicketCount);
+                    ticketFormsContainer.insertAdjacentHTML("beforeend", newTicketForm);
+                    const addedForm = ticketFormsContainer.lastElementChild;
+                    toggleRequiredAttributes(addedForm, true); // Making all fields required by default
+                    updateFormNumbers();
+                } else {
+                    Swal.fire({
+                        title: "Warning!",
+                        text: "You have reached the maximum number of tickets (5).",
+                        icon: "error",
+                        confirmButtonColor: "#AB2F2B",
+                        confirmButtonText: "OK",
+                    });
+                }
+            }
+
+            document.getElementById("add-ticket-btn").addEventListener("click", addNewTicketForm);
+
+            ticketFormsContainer.addEventListener("click", function(e) {
+                if (e.target.classList.contains("remove-ticket-btn")) {
+                    const formId = e.target.dataset.formId;
+                    document.getElementById(`ticket-form-${formId}`).remove();
+                    updateFormNumbers();
+                }
+            });
+
+            ticketFormsContainer.addEventListener("change", function(e) {
+                if (e.target.name && e.target.name.startsWith("type_tkt")) {
+                    const roundTripOptions = e.target.closest(".card-body").querySelector(
+                        ".round-trip-options");
+                    if (roundTripOptions) {
+                        roundTripOptions.style.display = e.target.value === "Round Trip" ? "block" : "none";
+                    }
+                }
+            });
+
+            function createNewTicketForm(formNumber) {
+                return `
+        <div class="card bg-light shadow-none" id="ticket-form-${formNumber}" style="display: block;">
+            <div class="card-body">
+                <div class="h5 text-uppercase">
+                    <b>TICKET ${formNumber}</b>
+                </div>
+                <div class="row">
+                    <label class="form-label" for="jk_tkt">Passengers Name (No KTP)</label>
+                    <div class="col-md-2">
+                        <div class="mb-2 mt-1 gap-1">
+                            <div class="form-group" id="jk_tkt_${formNumber}">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="male_${formNumber}" name="jk_tkt[]" value="Male">
+                                    <label class="form-check-label" for="male_${formNumber}">Mr</label>
+                                </div>
+                                <div class="form-check form-check-inline ms-2">
+                                    <input class="form-check-input" type="radio" id="female_${formNumber}" name="jk_tkt[]" value="Female">
+                                    <label class="form-check-label" for="female_${formNumber}">Mrs</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="mb-2">
+                            <input type="text" name="np_tkt[]" id="np_tkt_${formNumber}" class="form-control form-control-sm" placeholder="Passengers Name">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="mb-2">
+                            <input type="number" name="noktp_tkt[]" id="noktp_tkt_${formNumber}" class="form-control form-control-sm" placeholder="No KTP">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-2">
+                            <label class="form-label" for="tlp_tkt_${formNumber}">Phone Number</label>
+                            <input type="number" name="tlp_tkt[]" id="tlp_tkt_${formNumber}" class="form-control form-control-sm" maxlength="12" placeholder="ex: 08123123123">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label">From</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="dari_tkt[]" type="text" placeholder="ex. Yogyakarta (YIA)">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label">To</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="ke_tkt[]" type="text" placeholder="ex. Jakarta (CGK)">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label" for="jenis_tkt_${formNumber}">Transportation Type</label>
+                        <div class="input-group">
+                            <select class="form-select form-select-sm" name="jenis_tkt[]" id="jenis_tkt_${formNumber}">
+                                <option value="">Select Transportation Type</option>
+                                <option value="Train">Train</option>
+                                <option value="Bus">Bus</option>
+                                <option value="Airplane">Airplane</option>
+                                <option value="Car">Car</option>
+                                <option value="Ferry">Ferry</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label for="type_tkt_${formNumber}" class="form-label">Ticket Type</label>
+                        <select class="form-select form-select-sm" name="type_tkt[]">
+                            <option value="One Way" selected>One Way</option>
+                            <option value="Round Trip">Round Trip</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Date</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" id="tgl_brkt_tkt_${formNumber}" name="tgl_brkt_tkt[]" type="date" onchange="validateDates(${formNumber})">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Time</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" id="jam_brkt_tkt_${formNumber}" name="jam_brkt_tkt[]" type="time" onchange="validateDates(${formNumber})">
+                        </div>
+                    </div>
+                </div>
+                <div class="round-trip-options" style="display: none;">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Return Date</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" name="tgl_plg_tkt[]" type="date" id="tgl_plg_tkt_${formNumber}" onchange="validateDates(${formNumber})">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Return Time</label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" id="jam_plg_tkt_${formNumber}" name="jam_plg_tkt[]" type="time" onchange="validateDates(${formNumber})">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label for="ket_tkt_${formNumber}" class="form-label">Information</label>
+                        <textarea class="form-control" id="ket_tkt_${formNumber}" name="ket_tkt[]" rows="3" placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn" id="remove-ticket-btn">Remove Data</button>
+                </div>
+            </div>
+        </div>`;
+            }
+        });
+    </script>
+@endsection

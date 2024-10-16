@@ -17,7 +17,9 @@ class ca_sett_approval extends Model
         'role_name',
         'employee_id',
         'layer',
-        'approval_status'
+        'approval_status',
+        'approved_at',
+        'reject_info',
     ];
 
     protected $keyType = 'string';

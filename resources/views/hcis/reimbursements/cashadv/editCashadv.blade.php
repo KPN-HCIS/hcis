@@ -268,6 +268,138 @@
                                     </div>
                                 @endif
                             </div>
+                            <div class="row" id="ca_e" style="display: none;">
+                                @if ($transactions->type_ca == 'entr')
+                                    <div class="col-md-12">
+                                        <div class="table-responsive-sm">
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="text-bg-danger p-2" style="text-align:center">Estimated Entertainment</div>
+                                                    <div class="card">
+                                                        <div class="card-body text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-e-detail" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Entertain</button>
+                                                        </div>
+                                                        <div id="entertain-card" class="card-body" style="display: none;">
+                                                            <div class="accordion" id="accordionEntertain">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="headingEntertain">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEntertain" aria-expanded="true" aria-controls="collapseEntertain">
+                                                                            Rencana Entertain
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapseEntertain" class="accordion-collapse collapse show" aria-labelledby="headingEntertain">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-e-detail">
+                                                                                @foreach ($detailCA['detail_e'] as $detail)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Entertainment Type</label>
+                                                                                        <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
+                                                                                            <option value="">-</option>
+                                                                                            <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
+                                                                                            <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
+                                                                                            <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
+                                                                                            <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                                                                            <option value="fund" {{ $detail['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Entertainment Fee Detail</label>
+                                                                                        <textarea name="enter_fee_e_detail[]" id="enter_fee_e_detail[]" class="form-control">{{ $detail['fee_detail'] }}<</textarea>
+                                                                                    </div>
+                                                                                    <div class="input-group">
+                                                                                        <div class="input-group-append">
+                                                                                            <span class="input-group-text">Rp</span>
+                                                                                        </div>
+                                                                                        <input class="form-control" name="nominal_e_detail[]" id="nominal_e_detail[]" type="text" min="0" value="{{ number_format($detail['nominal'], 0, ',', '.') }}">
+                                                                                    </div>
+                                                                                    <hr class="border border-primary border-1 opacity-50">
+                                                                                @endforeach
+                                                                            </div>
+                                                                            <div class="mb-2">
+                                                                                <label class="form-label">Total Entertain</label>
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-append">
+                                                                                        <span class="input-group-text">Rp</span>
+                                                                                    </div>
+                                                                                    <input class="form-control bg-light" name="total_e_detail[]" id="total_e_detail[]" type="text" min="0" value="0" readonly>
+                                                                                </div>
+                                                                            </div>
+                                                                            <button type="button" id="add-more-e-detail" class="btn btn-primary mt-3">Add More</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="card-body text-center">
+                                                            <button type="button" style="width: 60%" id="toggle-e-relation" class="btn btn-primary mt-3" data-state="false"><i class="bi bi-plus-circle"></i> Relation</button>
+                                                        </div>
+                                                        <div id="relation-card" class="card-body" style="display: none;">
+                                                            <div class="accordion" id="accordionRelation">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="headingRelation">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelation" aria-expanded="true" aria-controls="collapseRelation">
+                                                                            Rencana Relation
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapseRelation" class="accordion-collapse collapse show" aria-labelledby="headingRelation">
+                                                                        <div class="accordion-body">
+                                                                            <div id="form-container-e-relation">
+                                                                                @foreach($detailCA['relation_e'] as $relation)
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label">Relation Type</label>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" type="checkbox" name="accommodation_e_relation[]" id="accommodation_e_relation[]" value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="accommodation_e_relation[]">Accommodation</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="transport_e_relation[]" type="checkbox" id="transport_e_relation[]" value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="transport_e_relation[]">Transport</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="gift_e_relation[]" type="checkbox" id="gift_e_relation[]" value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="gift_e_relation[]">Gift</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="fund_e_relation[]" type="checkbox" id="fund_e_relation[]" value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="fund_e_relation[]">Fund</label>
+                                                                                        </div>
+                                                                                        <div class="form-check">
+                                                                                            <input class="form-check-input" name="food_e_relation[]" type="checkbox" id="food_e_relation[]" value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
+                                                                                            <label class="form-check-label" for="food_e_relation[]">Food/Beverages/Souvenir</label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Name</label>
+                                                                                        <input type="text" name="rname_e_relation[]" id="rname_e_relation[]" value="{{ $relation['name'] }}" class="form-control">
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Position</label>
+                                                                                        <input type="text" name="rposition_e_relation[]" id="rposition_e_relation[]" value="{{ $relation['position'] }}" class="form-control">
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Company</label>
+                                                                                        <input type="text" name="rcompany_e_relation[]" id="rcompany_e_relation[]" value="{{ $relation['company'] }}" class="form-control">
+                                                                                    </div>
+                                                                                    <div class="mb-2">
+                                                                                        <label class="form-label" for="start">Purpose</label>
+                                                                                        <input type="text" name="rpurpose_e_relation[]" id="rpurpose_e_relation[]" value="{{ $relation['purpose'] }}" class="form-control">
+                                                                                    </div>
+                                                                                    <hr class="border border-primary border-1 opacity-50">
+                                                                                @endforeach
+                                                                            </div>
+                                                                            <button type="button" id="add-more-e-relation" class="btn btn-primary mt-3">Add More</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
                             <div class="row">
                                 <div class="col-md-12 mb-2 mt-3">
                                     <label class="form-label">Total Cash Advanced</label>
@@ -367,26 +499,34 @@
             var ca_type = document.getElementById("ca_type");
             var ca_nbt = document.getElementById("ca_nbt");
             var ca_e = document.getElementById("ca_e");
+            var div_bisnis_numb = document.getElementById("div_bisnis_numb");
             var bisnis_numb = document.getElementById("bisnis_numb");
+            var div_allowance = document.getElementById("div_allowance");
 
             function toggleDivs() {
                 if (ca_type.value === "dns") {
                     ca_bt.style.display = "block";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
-                } else if (ca_type.value === "ndns") {
+                    div_bisnis_numb.style.display = "block";
+                    div_allowance.style.display = "block";
+                } else if (ca_type.value === "ndns"){
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "block";
                     ca_e.style.display = "none";
+                    div_bisnis_numb.style.display = "none";
                     bisnis_numb.style.value = "";
-                } else if (ca_type.value === "entr") {
+                    div_allowance.style.display = "none";
+                } else if (ca_type.value === "entr"){
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "block";
-                } else {
+                    div_bisnis_numb.style.display = "block";
+                } else{
                     ca_bt.style.display = "none";
                     ca_nbt.style.display = "none";
                     ca_e.style.display = "none";
+                    div_bisnis_numb.style.display = "none";
                     bisnis_numb.style.value = "";
                 }
             }
@@ -429,7 +569,50 @@
                 } else {
                     totalDaysInput.value = 0; // Mengatur ke 0 jika tidak valid
                 }
+                calculateTotalCA();
             }
+
+            // function formatInput(input) {
+            //     let value = input.value.replace(/\./g, '');
+            //     value = parseFloat(value);
+            //     if (!isNaN(value)) {
+            //         // input.value = formatNumber(value);
+            //         input.value = formatNumber(Math.floor(value));
+            //     } else {
+            //         input.value = formatNumber(0);
+            //     }
+
+            //     calculateTotalCA();
+            // }
+
+            // function calculateTotalCA() {
+            //     const allowance = parseNumber(allowanceInput.value);
+            //     const transport = parseNumber(transportInput.value);
+            //     const accommodation = parseNumber(accommodationInput.value);
+            //     const other = parseNumber(otherInput.value);
+            //     const nominal_1 = parseNumber(nominal_1Input.value);
+            //     const nominal_2 = parseNumber(nominal_2Input.value);
+            //     const nominal_3 = parseNumber(nominal_3Input.value);
+            //     const nominal_4 = parseNumber(nominal_4Input.value);
+            //     const nominal_5 = parseNumber(nominal_5Input.value);
+
+            //     // Perbaiki penulisan caTypeInput.value
+            //     const ca_type = caTypeInput.value;
+
+            //     let totalca = 0;
+            //     if (ca_type === 'dns') {
+            //         totalca = allowance + transport + accommodation + other;
+            //     } else if (ca_type === 'ndns') {
+            //         totalca = transport + accommodation + other;
+            //         allowanceInput.value = 0;
+            //     } else if (ca_type === 'entr') {
+            //         totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
+            //         allowanceInput.value = 0;
+            //     }
+
+            //     // totalcaInput.value = formatNumber(totalca.toFixed(2));
+            //     totalcaInput.value = formatNumber(Math.floor(totalca));
+            // }
 
             // Menambahkan event listener untuk perubahan di input tanggal
             startDateInput.addEventListener('change', calculateTotalDays);
@@ -449,6 +632,18 @@
                     daysToAdd++;
                 }
             }
+
+            const year = declarationEstimateDate.getFullYear();
+            const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');
+            const day = String(declarationEstimateDate.getDate()).padStart(2, '0');
+
+            document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
+        });
+
+        document.getElementById('end_date').addEventListener('change', function() {
+            const endDate = new Date(this.value);
+            const declarationEstimateDate = new Date(endDate);
+            declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
 
             const year = declarationEstimateDate.getFullYear();
             const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');

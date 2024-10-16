@@ -2,9 +2,58 @@
 
 @section('css')
     <style>
-        .breadcrumb-item+.breadcrumb-item::before {
-            font-size: 28px !important;
-            vertical-align: middle !important;
+        /* .breadcrumb-item+.breadcrumb-item::before {
+                font-size: 28px !important;
+                vertical-align: middle !important;
+            } */
+
+        .table {
+            border-collapse: separate;
+            width: 100%;
+            position: relative;
+            overflow: auto;
+        }
+
+        .table thead th {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            background-color: #fff !important;
+            border-bottom: 2px solid #ddd !important;
+            padding-right: 6px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
+        .table tbody td {
+            background-color: #fff !important;
+            padding-right: 10px;
+            position: relative;
+        }
+
+        .table th.sticky-col-header {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 3 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 2px 0 0 #fff;
+        }
+
+        .table td.sticky-col {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 6px 0 0 #fff;
         }
     </style>
 @endsection
@@ -15,33 +64,30 @@
             <!-- Breadcrumb Navigation -->
             <div class="col-md-6 mt-3">
                 <div class="page-title-box d-flex align-items-center">
-                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center;">
-                        <li class="breadcrumb-item">
-                            <a href="/reimbursements" style="font-size: 32px; text-decoration: none; color: #007bff;">
-                                <i class="bi bi-arrow-left" style="font-size: 32px;"></i>
+                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
+                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
+                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
+                                <i class="bi bi-arrow-left"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item" style="font-size: 24px;">{{ $parentLink }}</li>
-                        <li class="breadcrumb-item active" style="font-size: 24px;">{{ $link }}</li>
+                        <li class="breadcrumb-item">
+                            {{ $parentLink }}
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $link }}
+                        </li>
                     </ol>
                 </div>
             </div>
-
-            <!-- Add Data Button -->
-            {{-- <div class="col-md-6 mt-4 text-end">
-                <a href="{{ route('export.excel') }}" class="btn btn-outline-primary rounded-pill btn-action">
-                    <i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel
-                </a>
-            </div> --}}
         </div>
     </div>
-
 
     <div class="card">
         <div class="card-body">
             <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate.approval') }}">
                 <div class="row align-items-end">
-                    <h3 class="card-title">Data SPPD</h3>
+                    <h3 class="card-title">SPPD Data</h3>
+
                     <div class="col-md-5">
                         <label for="start-date" class="mb-2">Departure Date:</label>
                         <input type="date" id="start-date" name="start-date" class="form-control"
@@ -52,12 +98,12 @@
                         <input type="date" id="end-date" name="end-date" class="form-control"
                             value="{{ request()->query('end-date') }}">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 mt-2">
                         <button type="submit" class="btn btn-primary rounded-pill w-100">Find</button>
                     </div>
                 </div>
             </form>
-
+            @include('hcis.reimbursements.businessTrip.modal')
             <div class="row">
                 <div class="col-md-12">
                     <div class="card shadow mb-4">
@@ -74,15 +120,42 @@
                                         aria-label="search" aria-describedby="search">
                                 </div>
                             </div>
+                            @php
+                                $currentFilter = request('filter', 'all');
+                            @endphp
+                            <form method="GET" action="{{ route('businessTrip.approval') }}">
+                                <button type="submit" name="filter" value="all"
+                                    class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
+                                    All
+                                </button>
+
+                                <button type="submit" name="filter" value="request"
+                                    class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
+                                    Request
+                                    @if ($requestCount >= 1)
+                                        <span
+                                            class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-circle">{{ $requestCount }}</span>
+                                    @endif
+                                </button>
+
+                                <button type="submit" name="filter" value="declaration"
+                                    class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
+                                    Declaration
+                                    @if ($declarationCount >= 1)
+                                        <span
+                                            class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-circle">{{ $declarationCount }}</span>
+                                    @endif
+                                </button>
+                            </form>
+
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
+                                <table class="table table-sm table-hover" id="defaultTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
                                             <th>Name</th>
-                                            <th>No SPPD</th>
+                                            <th class="sticky-col-header">No SPPD</th>
                                             <th>Destination</th>
-                                            {{-- <th>Needs</th> --}}
                                             <th>Start</th>
                                             <th>End</th>
                                             <th>CA</th>
@@ -90,7 +163,7 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                            <th style="width: 80px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -101,12 +174,11 @@
                                                     {{ $loop->iteration }}
                                                 </th>
                                                 <td>{{ $n->nama }}</td>
-                                                <td>{{ $n->no_sppd }}</td>
+                                                <td class="sticky-col">{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
-                                                {{-- <td>{{ $n->keperluan }}</td> --}}
-                                                <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-m-Y') }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-m-Y') }}</td>
-                                                <td style="text-align: center">
+                                                <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-M-Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-M-Y') }}</td>
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -114,161 +186,157 @@
                                                                 'No. CA' => $caTransactions[$n->no_sppd]->no_ca,
                                                                 'No. SPPD' => $caTransactions[$n->no_sppd]->no_sppd,
                                                                 'Unit' => $caTransactions[$n->no_sppd]->unit,
-                                                                'Destination' => $caTransactions[$n->no_sppd]->destination,
-                                                                'CA Total' => $caTransactions[$n->no_sppd]->total_ca,
-                                                                'Total Real' => $caTransactions[$n->no_sppd]->total_real,
-                                                                'Total Cost' => $caTransactions[$n->no_sppd]->total_cost,
-                                                                'Start' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
-                                                                'End' => date('d-m-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
-                                                            ]) }}"><u>Detail</u></a>
+                                                                'Destination' => $sppd->where('no_sppd', $n->no_sppd)->first()->tujuan,
+                                                                'CA Total' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_ca, 0, ',', '.'),
+                                                                'Total Real' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_real, 0, ',', '.'),
+                                                                'Total Cost' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_cost, 0, ',', '.'),
+                                                                'Start' => date('d-M-Y', strtotime($caTransactions[$n->no_sppd]->start_date)),
+                                                                'End' => date('d-M-Y', strtotime($caTransactions[$n->no_sppd]->end_date)),
+                                                            ]) }}"><u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
-                                                            data-ca=""
-                                                            data-tiket="{{ json_encode([
-                                                                'No. Ticket' => $tickets[$n->no_sppd]->no_tkt,
-                                                                'No. SPPD' => $tickets[$n->no_sppd]->no_sppd,
-                                                                'Unit' => $tickets[$n->no_sppd]->unit,
-                                                                'Gender' => $tickets[$n->no_sppd]->jk_tkt,
-                                                                // 'NP Ticket' => $tickets[$n->no_sppd]->np_tkt,
-                                                                'No. KTP' => $tickets[$n->no_sppd]->noktp_tkt,
-                                                                'Phone No.' => $tickets[$n->no_sppd]->tlp_tkt,
-                                                                'From' => $tickets[$n->no_sppd]->dari_tkt,
-                                                                'To' => $tickets[$n->no_sppd]->ke_tkt,
-                                                                'Depature Date' => date('d-m-Y', strtotime($tickets[$n->no_sppd]->tgl_brkt_tkt)),
-                                                                'Time' => !empty($tickets[$n->no_sppd]->jam_brkt_tkt)
-                                                                    ? date('H:i', strtotime($tickets[$n->no_sppd]->jam_brkt_tkt))
-                                                                    : 'No Data',
-                                                                'Return Date' => isset($tickets[$n->no_sppd]->tgl_plg_tkt)
-                                                                    ? date('d-m-Y', strtotime($tickets[$n->no_sppd]->tgl_plg_tkt))
-                                                                    : 'No Data',
-                                                                'Return Time' => !empty($tickets[$n->no_sppd]->jam_plg_tkt)
-                                                                    ? date('H:i', strtotime($tickets[$n->no_sppd]->jam_plg_tkt))
-                                                                    : 'No Data',
-                                                            ]) }}"><u>Detail</u></a>
+                                                            data-tiket="{{ json_encode(
+                                                                $tickets[$n->no_sppd]->map(function ($ticket) {
+                                                                    return [
+                                                                        // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
+                                                                        'No. SPPD' => $ticket->no_sppd,
+                                                                        'No. Ticket' => $ticket->no_tkt,
+                                                                        'Passengers Name' => $ticket->np_tkt,
+                                                                        'Unit' => $ticket->unit,
+                                                                        'Gender' => $ticket->jk_tkt,
+                                                                        'NIK' => $ticket->noktp_tkt,
+                                                                        'Phone No.' => $ticket->tlp_tkt,
+                                                                        'From' => $ticket->dari_tkt,
+                                                                        'To' => $ticket->ke_tkt,
+                                                                        'Departure Date' => date('d-m-Y', strtotime($ticket->tgl_brkt_tkt)),
+                                                                        'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
+                                                                        'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-m-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
+                                                                        'Return Time' => !empty($ticket->jam_plg_tkt) ? date('H:i', strtotime($ticket->jam_plg_tkt)) : 'No Data',
+                                                                    ];
+                                                                }),
+                                                            ) }}">
+                                                            <u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
+
+
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
-                                                            data-hotel="{{ json_encode([
-                                                                'No. Hotel' => $hotel[$n->no_sppd]->no_htl,
-                                                                'No. SPPD' => $hotel[$n->no_sppd]->no_sppd,
-                                                                'Unit' => $hotel[$n->no_sppd]->unit,
-                                                                'Hotel Name' => $hotel[$n->no_sppd]->nama_htl,
-                                                                'Location' => $hotel[$n->no_sppd]->lokasi_htl,
-                                                                'Room' => $hotel[$n->no_sppd]->jmlkmr_htl,
-                                                                'Bed' => $hotel[$n->no_sppd]->bed_htl,
-                                                                'Check In' => date('d-m-Y', strtotime($hotel[$n->no_sppd]->tgl_masuk_htl)),
-                                                                'Check Out' => date('d-m-Y', strtotime($hotel[$n->no_sppd]->tgl_keluar_htl)),
-                                                                'Total Days' => $hotel[$n->no_sppd]->total_hari,
-                                                            ]) }}"><u>Detail</u></a>
+                                                            data-hotel="{{ json_encode(
+                                                                $hotel[$n->no_sppd]->map(function ($hotel) {
+                                                                    return [
+                                                                        'No. Hotel' => $hotel->no_htl,
+                                                                        'No. SPPD' => $hotel->no_sppd,
+                                                                        'Unit' => $hotel->unit,
+                                                                        'Hotel Name' => $hotel->nama_htl,
+                                                                        'Location' => $hotel->lokasi_htl,
+                                                                        'Room' => $hotel->jmlkmr_htl,
+                                                                        'Bed' => $hotel->bed_htl,
+                                                                        'Check In' => date('d-m-Y', strtotime($hotel->tgl_masuk_htl)),
+                                                                        'Check Out' => date('d-m-Y', strtotime($hotel->tgl_keluar_htl)),
+                                                                        'Total Days' => $hotel->total_hari,
+                                                                    ];
+                                                                }),
+                                                            ) }}">
+                                                            <u>Details</u></a>
                                                     @else
                                                         -
                                                     @endif
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->taksi == 'Ya' && isset($taksi[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
                                                             data-taksi="{{ json_encode([
-                                                                'No. Voucher Taxi' => $taksi[$n->no_sppd]->no_vt,
+                                                                'Total Voucher' => $taksi[$n->no_sppd]->no_vt . ' Voucher',
                                                                 'No. SPPD' => $taksi[$n->no_sppd]->no_sppd,
                                                                 'Unit' => $taksi[$n->no_sppd]->unit,
                                                                 'Nominal' => 'Rp ' . number_format($taksi[$n->no_sppd]->nominal_vt, 0, ',', '.'),
                                                                 'Keeper Voucher' => 'Rp' . number_format($taksi[$n->no_sppd]->keeper_vt, 0, ',', '.'),
-                                                            ]) }}"><u>Detail<u></a>
+                                                            ]) }}"><u>Details<u></a>
                                                     @else
                                                         -
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    <p type="button"
-                                                        class="btn btn-sm rounded-pill btn-{{ $n->status == 'Approved'
+                                                <td style="align-content: center;">
+                                                    <span
+                                                        class="badge rounded-pill bg-{{ $n->status == 'Approved'
                                                             ? 'success'
-                                                            : ($n->status == 'Return' || $n->status == 'return/refunds'
+                                                            : ($n->status == 'Rejected' || $n->status == 'Return' || $n->status == 'return/refunds'
                                                                 ? 'danger'
-                                                                : (in_array($n->status, ['Pending L1', 'Pending L2', 'Pending Declaration', 'Waiting Submitted'])
+                                                                : (in_array($n->status, ['Pending L1', 'Pending L2', 'Declaration L1', 'Declaration L2', 'Waiting Submitted'])
                                                                     ? 'warning'
-                                                                    : (in_array($n->status, ['Doc Accepted', 'verified'])
-                                                                        ? 'primary'
-                                                                        : 'secondary'))) }}"
-                                                        style="pointer-events: none">
+                                                                    : ($n->status == 'Draft'
+                                                                        ? 'secondary'
+                                                                        : (in_array($n->status, ['Doc Accepted', 'verified'])
+                                                                            ? 'primary'
+                                                                            : 'secondary')))) }}"
+                                                        style="
+                                                    font-size: 12px;
+                                                    padding: 0.5rem 1rem;">
                                                         {{ $n->status }}
-                                                    </p>
+                                                    </span>
                                                 </td>
-                                                <td>
-                                                    <a href="{{ route('export', ['id' => $n->id, 'types' => 'sppd,ca,tiket,hotel,taksi']) }}"
-                                                        class="btn btn-outline-info rounded-pill">
-                                                        <i class="bi bi-download"></i>
+                                                <td style="text-align: center; vertical-align: middle;">
+                                                    <a class="btn btn-primary rounded-pill"
+                                                        href="{{ $n->status === 'Declaration L1' || $n->status === 'Declaration L2' ? route('businessTrip.approvalDetail.dekalrasi', ['id' => $n->id]) : route('businessTrip.approvalDetail', ['id' => $n->id]) }}"
+                                                        style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                        Act
                                                     </a>
-
-                                                    @php
-                                                        $today = \Carbon\Carbon::today()->format('Y-m-d');
-                                                    @endphp
-                                                    @if ($n->kembali <= $today && $n->status == 'Approved')
-                                                        <form method="GET"
-                                                            action="/businessTrip/deklarasi/admin/{{ $n->id }}"
-                                                            style="display: inline-block;">
-                                                            <button type="submit"
-                                                                class="btn btn-outline-success rounded-pill"
-                                                                data-toggle="tooltip" title="Deklarasi">
-                                                                <i class="bi bi-card-checklist"></i>
-                                                            </button>
-                                                        </form>
-                                                    @else
-                                                        {{-- <form method="GET"
-                                                            action="/businessTrip/form/update/{{ $n->id }}"
-                                                            style="display: inline-block;">
-                                                            <button type="submit"
-                                                                class="btn btn-outline-warning rounded-pill my-1"
-                                                                {{ $n->status === 'Diterima' ? 'disabled' : '' }}
-                                                                data-toggle="tooltip" title="Edit">
-                                                                <i class="bi bi-pencil-square"></i>
-                                                            </button>
-                                                        </form> --}}
-                                                        <form id="deleteForm_{{ $n->id }}" method="POST"
-                                                            action="/businessTrip/delete/{{ $n->id }}"
-                                                            style="display: inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-
-                                                            <button type="button"
-                                                                class="btn btn-outline-danger rounded-pill"
-                                                                onclick="confirmDelete('{{ $n->id }}')"
-                                                                {{ $n->status === 'Diterima' ? 'disabled' : '' }}>
-                                                                <i class="bi bi-trash-fill"></i>
-                                                            </button>
-                                                        </form>
-                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
+                                    @if (session('message'))
+                                        <script>
+                                            alert('{{ session('message') }}');
+                                        </script>
+                                    @endif
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Success Modal -->
+                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content bg-light rounded-4 border-0 shadow" style="border-radius: 1rem;">
+                            <div class="modal-body text-center p-5" style="padding: 2rem;">
+                                <div class="mb-4">
+                                    <i class="bi bi-check-circle-fill"
+                                        style="font-size: 100px; color: #AB2F2B !important;"></i>
+                                </div>
+                                <h4 class="mb-3 fw-bold" style="font-size: 32px; color: #AB2F2B !important;">Success!</h4>
+                                <p class="mb-4" id="successModalBody" style="font-size: 20px;">
+                                    <!-- The success message will be inserted here -->
+                                </p>
+                                <button type="button" class="btn btn-outline-primary rounded-pill px-4"
+                                    data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Detail Modal -->
                 <div class="modal fade" id="detailModal" tabindex="-1" role="dialog"
                     aria-labelledby="detailModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="detailModalLabel">Detail Information</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                    style="border: 0px; border-radius:4px;">
-                                    <span aria-hidden="true">&times;</span>
+                            <div class="modal-header bg-primary">
+                                <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
+                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal"
+                                    aria-label="Close">
                                 </button>
                             </div>
                             <div class="modal-body">
@@ -276,7 +344,8 @@
                                 <div id="detailContent"></div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-outline-primary rounded-pill"
+                                    data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
@@ -286,7 +355,62 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
-                    //    let table = new DataTable('#scheduleTable');
+                    window.addEventListener('resize', function() {
+                        document.body.style.display = 'none';
+                        document.body.offsetHeight; // Force a reflow
+                        document.body.style.display = '';
+                    });
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const forms = document.querySelectorAll('.status-form');
+                        forms.forEach(form => {
+                            form.addEventListener('submit', function(e) {
+                                e.preventDefault();
+                                const action = this.querySelector('input[name="status_approval"]').value;
+                                const confirmMessage = action === 'Rejected' ?
+                                    'Are you sure you want to reject this?' :
+                                    'Are you sure you want to confirm this?';
+
+                                if (confirm(confirmMessage)) {
+                                    const formData = new FormData(this);
+                                    fetch(this.action, {
+                                            method: 'POST',
+                                            body: formData,
+                                            headers: {
+                                                'X-Requested-With': 'XMLHttpRequest'
+                                            }
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                // Update the success modal content
+                                                document.getElementById('successModalBody').textContent =
+                                                    data.message;
+
+                                                // Show the success modal
+                                                var successModal = new bootstrap.Modal(document
+                                                    .getElementById('successModal'));
+                                                successModal.show();
+
+                                                // Reload the page after modal is closed
+                                                document.getElementById('successModal').addEventListener(
+                                                    'hidden.bs.modal',
+                                                    function() {
+                                                        window.location.reload();
+                                                    });
+                                            } else {
+                                                alert('An error occurred. Please try again.');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            alert('An error occurred. Please try again.');
+                                        });
+                                }
+                            });
+                        });
+                    });
+                    //    let table = new DataTable('#defaultTable');
 
                     function getDate() {
                         var today = new Date();
@@ -352,64 +476,88 @@
                             var hotel = $(this).data('hotel');
                             var taksi = $(this).data('taksi');
 
-                            function createTableHtml(data) {
-                                var tableHtml = '<table class="table table-sm"><thead><tr>';
-                                for (var key in data) {
-                                    if (data.hasOwnProperty(key)) {
-                                        tableHtml += '<th>' + key + '</th>';
+                            function createTableHtml(data, title) {
+                                var tableHtml = '<h5>' + title + '</h5>';
+                                tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+                                var isArray = Array.isArray(data) && data.length > 0;
+
+                                // Assuming all objects in the data array have the same keys, use the first object to create headers
+                                if (isArray) {
+                                    for (var key in data[0]) {
+                                        if (data[0].hasOwnProperty(key)) {
+                                            tableHtml += '<th>' + key + '</th>';
+                                        }
+                                    }
+                                } else if (typeof data === 'object') {
+                                    // If data is a single object, create headers from its keys
+                                    for (var key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            tableHtml += '<th>' + key + '</th>';
+                                        }
                                     }
                                 }
-                                tableHtml += '</tr></thead><tbody><tr>';
-                                for (var key in data) {
-                                    if (data.hasOwnProperty(key)) {
-                                        tableHtml += '<td>' + data[key] + '</td>';
+
+                                tableHtml += '</tr></thead><tbody>';
+
+                                // Loop through each item in the array and create a row for each
+                                if (isArray) {
+                                    data.forEach(function(row) {
+                                        tableHtml += '<tr>';
+                                        for (var key in row) {
+                                            if (row.hasOwnProperty(key)) {
+                                                tableHtml += '<td>' + row[key] + '</td>';
+                                            }
+                                        }
+                                        tableHtml += '</tr>';
+                                    });
+                                } else if (typeof data === 'object') {
+                                    // If data is a single object, create a single row
+                                    tableHtml += '<tr>';
+                                    for (var key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            tableHtml += '<td>' + data[key] + '</td>';
+                                        }
                                     }
+                                    tableHtml += '</tr>';
                                 }
-                                tableHtml += '</tr></tbody></table>';
+
+                                tableHtml += '</tbody></table>';
                                 return tableHtml;
                             }
 
-                            $('#detailTypeHeader').text('');
+                            // $('#detailTypeHeader').text('Detail Information');
                             $('#detailContent').empty();
 
-                            if (ca && ca !== 'undefined') {
-                                try {
-                                    var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
-                                    $('#detailTypeHeader').text('CA Detail');
-                                    $('#detailContent').html(createTableHtml(caData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading CA data</p>');
-                                }
-                            } else if (tiket && tiket !== 'undefined') {
-                                try {
-                                    var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
-                                    $('#detailTypeHeader').text('Ticket Detail');
-                                    $('#detailContent').html(createTableHtml(tiketData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Ticket data</p>');
-                                }
-                            } else if (hotel && hotel !== 'undefined') {
-                                try {
-                                    var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                                    $('#detailTypeHeader').text('Hotel Detail');
-                                    $('#detailContent').html(createTableHtml(hotelData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Hotel data</p>');
-                                }
-                            } else if (taksi && taksi !== 'undefined') {
-                                try {
-                                    var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
-                                    $('#detailTypeHeader').text('Taxi Detail');
-                                    $('#detailContent').html(createTableHtml(taksiData));
-                                } catch (e) {
-                                    $('#detailContent').html('<p>Error loading Taxi data</p>');
-                                }
-                            } else {
-                                $('#detailTypeHeader').text('No Data Available');
-                                $('#detailContent').html('<p>No detail information available.</p>');
-                            }
+                            try {
+                                var content = '';
 
-                            $('#detailModal').modal('show');
+                                if (ca && ca !== 'undefined') {
+                                    var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
+                                    content += createTableHtml(caData, 'CA Detail');
+                                }
+                                if (tiket && tiket !== 'undefined') {
+                                    var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
+                                    content += createTableHtml(tiketData, 'Ticket Detail');
+                                }
+                                if (hotel && hotel !== 'undefined') {
+                                    var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
+                                    content += createTableHtml(hotelData, 'Hotel Detail');
+                                }
+                                if (taksi && taksi !== 'undefined') {
+                                    var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
+                                    content += createTableHtml(taksiData, 'Taxi Detail');
+                                }
+
+                                if (content !== '') {
+                                    $('#detailContent').html(content);
+                                } else {
+                                    $('#detailContent').html('<p>No detail information available.</p>');
+                                }
+
+                                $('#detailModal').modal('show');
+                            } catch (e) {
+                                $('#detailContent').html('<p>Error loading data</p>');
+                            }
                         });
 
                         $('#detailModal').on('hidden.bs.modal', function() {
@@ -420,6 +568,8 @@
                             $('.modal-backdrop').remove();
                         });
                     });
+
+
 
                     $(document).ready(function() {
                         var table = $('#yourTableId').DataTable({

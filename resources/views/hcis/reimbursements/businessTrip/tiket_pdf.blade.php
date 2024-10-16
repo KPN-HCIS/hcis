@@ -76,11 +76,11 @@
         <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
     </div>
     <h5 class="center">TICKET FORM</h5>
-    <h5 class="center">No. {{ $ticket->no_sppd }}</h5>
+    <h5 class="center">No. {{ $ticket->no_sppd ?? 'Non Business Trip'}}</h5>
 
     <table>
-        <p>Harap dipesankan tiket sebagai berikut :</p>
-        <p><b>Detail tiket yang dipesan :</b></p>
+        <p>Please order tickets as follows:</p>
+        <p><b>Details of the ticket ordered:</b></p>
     </table>
 
     <table>
@@ -116,7 +116,7 @@
                 <td class="colon">:</td>
                 <td class="value">
                     @php
-                        $formattedDate = Carbon\Carbon::parse($passenger->tgl_brkt_tkt)->format('d F Y');
+                        $formattedDate = Carbon\Carbon::parse($passenger->tgl_brkt_tkt)->format('d M Y');
                         $formattedTime = Carbon\Carbon::parse($passenger->jam_brkt_tkt)->format('H:i');
                     @endphp
                     {{ $formattedDate }}, {{ $formattedTime }} WIB
@@ -128,7 +128,7 @@
                     <td class="colon">:</td>
                     <td class="value">
                         @php
-                            $formattedReturnDate = Carbon\Carbon::parse($passenger->tgl_plg_tkt)->format('d F Y');
+                            $formattedReturnDate = Carbon\Carbon::parse($passenger->tgl_plg_tkt)->format('d M Y');
                             $formattedReturnTime = Carbon\Carbon::parse($passenger->jam_plg_tkt)->format('H:i');
                         @endphp
                         {{ $formattedReturnDate }}, {{ $formattedReturnTime }} WIB
@@ -145,16 +145,6 @@
                 <td class="colon">:</td>
                 <td class="value"><b>{{ $passenger->type_tkt }}</b></td>
             </tr>
-            <tr>
-                <td class="label">Under the Burden of PT</td>
-                <td class="colon">:</td>
-                <td class="value">{{ $passenger->company_name }}</td>
-            </tr>
-            <tr>
-                <td class="label">Cost Center</td>
-                <td class="colon">:</td>
-                <td class="value"><b>{{ $passenger->cost_center ?? '0' }}</b></td>
-            </tr>
             @if (!$loop->last)
                 <tr>
                     <td colspan="3">
@@ -164,33 +154,49 @@
             @endif
         @endforeach
     </table>
-
     <table>
         <tr>
-            <td colspan="3"><b>Disetujui Oleh :</b></td>
+            <td colspan="3"><b>Others:</b></td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 1</td>
+            <td class="label">Company</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->atasan_1 }}</td>
+            <td class="value">{{ $passenger->company_name }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Cost Center</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->tanggal_atasan_1 }}</td>
+            <td class="value"><b>{{ $passenger->cost_center ?? '0' }}</b></td>
+        </tr>
+        <tr>
+            <td class="label">Ticket Status</td>
+            <td class="colon">:</td>
+            <td class="value"><b>{{ $ticket->approval_status ?? '-'}}</b></td>
         </tr>
     </table>
-
     <table>
         <tr>
-            <td class="label">Nama Atasan 2</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->atasan_2 }}</td>
+            <td colspan="3"><b>Approved By :</b></td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Manager Name 1</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->tanggal_atasan_2 }}</td>
+            <td class="value"> {{ $ticket->manager1_fullname ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Date</td>
+            <td class="colon">:</td>
+            <td class="value"> {{ $ticket->latestApprovalL1->approved_at ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Manager Name 2</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $ticket->manager2_fullname ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Date</td>
+            <td class="colon">:</td>
+            <td class="value"> {{ $ticket->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
     </table>
 
@@ -201,7 +207,7 @@
             <td class="value">{{ $ticket->businessTrip->hrd }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value">{{ $ticket->businessTrip->tanggal_hrd }}</td>
         </tr>
