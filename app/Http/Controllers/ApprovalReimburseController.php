@@ -23,44 +23,18 @@ use Illuminate\Http\Request;
 
 class ApprovalReimburseController extends Controller
 {
-    public function approval()
+    public function reimbursementsApproval()
     {
         $userId = Auth::id();
-        $parentLink = 'Reimbursement';
-        $link = 'Cash Advanced Approval';
-        $employeeId = auth()->user()->employee_id;
-
-        // Ambil ca_approval berdasarkan employee_id
-        $ca_approval = ca_approval::with('employee')->where('employee_id', $employeeId)->where('approval_status', 'Pending')->get();
-
-        $ca_approvals_with_transactions = $ca_approval->map(function ($approval) {
-            $approval->transactions = CATransaction::where('id', $approval->ca_id)->get();
-            return $approval;
-        });
-        $pendingCACount = ca_approval::where('employee_id', $employeeId)->where('approval_status', 'Pending')->count();
-        $pendingHTLCount = htl_transaction::where('approval_status', 'Pending')->count();
-
-        foreach ($ca_approval as $ca_approvals) {
-            foreach ($ca_approvals->transactions as $transaction) {
-                $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
-                $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
-            }
-        }
 
         return view('hcis.reimbursements.approval.approval', [
-            'pendingCACount' => $pendingCACount,
-            'pendingHTLCount' => $pendingHTLCount,
-            'link' => $link,
-            'parentLink' => $parentLink,
             'userId' => $userId,
-            'ca_approval' => $ca_approvals_with_transactions,
-            // 'company' => $company,
         ]);
     }
     public function cashadvancedApproval()
     {
         $userId = Auth::id();
-        $parentLink = 'Reimbursement';
+        $parentLink = 'Approval';
         $link = 'Cash Advanced Approval';
         $employeeId = auth()->user()->employee_id;
 
@@ -96,7 +70,7 @@ class ApprovalReimburseController extends Controller
     public function cashadvancedFormApproval($key)
     {
         $userId = Auth::id();
-        $parentLink = 'Reimbursement';
+        $parentLink = 'Approval';
         $link = 'Cash Advanced Approval';
 
         $employee_data = Employee::where('id', $userId)->first();
@@ -299,7 +273,7 @@ class ApprovalReimburseController extends Controller
     public function cashadvancedDeklarasi()
     {
         $userId = Auth::id();
-        $parentLink = 'Reimbursement';
+        $parentLink = 'Approval';
         $link = 'Cash Advanced';
         $employeeId = auth()->user()->employee_id;
 
@@ -334,7 +308,7 @@ class ApprovalReimburseController extends Controller
     public function cashadvancedFormDeklarasi($key)
     {
         $userId = Auth::id();
-        $parentLink = 'Reimbursement';
+        $parentLink = 'Approval';
         $link = 'Cash Advanced Approval';
 
         $employee_data = Employee::where('id', $userId)->first();
@@ -533,7 +507,7 @@ class ApprovalReimburseController extends Controller
     public function cashadvancedExtend()
     {
         $userId = Auth::id();
-        $parentLink = 'Reimbursement';
+        $parentLink = 'Approval';
         $link = 'Cash Advanced';
         $employeeId = auth()->user()->employee_id;
 

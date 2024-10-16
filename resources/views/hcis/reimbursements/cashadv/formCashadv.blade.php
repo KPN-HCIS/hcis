@@ -425,7 +425,7 @@
                 if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
                     const timeDiff = endDate - startDate;
                     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                    const totalDays = daysDiff > 0 ? daysDiff + 1 : 0; // Menambahkan 1 untuk menghitung hari awal
+                    const totalDays = daysDiff >= 0 ? daysDiff + 1 : 0; // Menambahkan 1 untuk menghitung hari awal
                     totalDaysInput.value = totalDays;
                 } else {
                     totalDaysInput.value = 0; // Mengatur ke 0 jika tidak valid
@@ -457,14 +457,18 @@
         //     document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
         // });
         document.getElementById('end_date').addEventListener('change', function() {
+            const holidays = {!! json_encode($holiday) !!};
             const endDate = new Date(this.value);
             const declarationEstimateDate = new Date(endDate);
             // Menambahkan 3 hari kerja
             let daysToAdd = 0;
             while (daysToAdd < 3) {
                 declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1);
-                // Jika bukan Sabtu (6) dan bukan Minggu (0), kita tambahkan hari
-                if (declarationEstimateDate.getDay() !== 6 && declarationEstimateDate.getDay() !== 0) {
+                const dayOfWeek = declarationEstimateDate.getDay();
+                const declarationDateString = declarationEstimateDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+                // Cek apakah tanggal adalah hari Sabtu (6) atau Minggu (0)
+                if (dayOfWeek !== 6 && dayOfWeek !== 0 && !holidays.includes(declarationDateString)) {
                     daysToAdd++;
                 }
             }

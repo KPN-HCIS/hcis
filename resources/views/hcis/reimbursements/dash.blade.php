@@ -114,7 +114,7 @@ h5 {
             </div> <!-- end col-->
             {{-- <div class="col-md-3">
             </div> <!-- end col--> --}}
-            <div class="col">
+            {{-- <div class="col">
                 <a href="{{ route('businessTrip.approval') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -123,7 +123,7 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> <!-- end col-->
+            </div> <!-- end col--> --}}
             @if (auth()->check())
                 @can('adminbt')
                     <div class="col">
@@ -163,7 +163,7 @@ h5 {
                     </div> <!-- end card-->
                 </a>
             </div>
-            <div class="col-md-3">
+            {{-- <div class="col-md-3">
                 <a href="{{ route('ticket.approval') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -172,7 +172,7 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div>
+            </div> --}}
 
             <div class="col">
                 <a href="{{ route('hotel') }}">
@@ -184,8 +184,8 @@ h5 {
                     </div> <!-- end card-->
                 </a>
             </div>
-            
-            <div class="col-md-3">
+
+            {{-- <div class="col-md-3">
                 <a href="{{ route('hotel.approval') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -194,7 +194,7 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div>
+            </div> --}}
 
             {{-- <div class="col-md-3">
                 <a href="{{ route('approval') }}">
@@ -207,7 +207,7 @@ h5 {
                 </a>
             </div> <!-- end col--> --}}
 
-            
+
 
         </div> <!-- end row -->
         <hr><br>

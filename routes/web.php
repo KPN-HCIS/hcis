@@ -158,7 +158,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
 
     // Approval
-    Route::get('/approval', [ApprovalReimburseController::class, 'approval'])->name('approval');
+    Route::get('/approval', [ApprovalReimburseController::class, 'reimbursementsApproval'])->name('approvalRem');
 
     // Approval Reimburse
     Route::get('/approval/cashadvanced', [ApprovalReimburseController::class, 'cashadvancedApproval'])->name('approval.cashadvanced');

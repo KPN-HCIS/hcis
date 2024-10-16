@@ -25,6 +25,7 @@ use App\Models\ca_approval;
 use App\Models\htl_transaction;
 use App\Models\Tiket;
 use App\Models\TiketApproval;
+use App\Models\master_holiday;
 use App\Models\HotelApproval;
 use App\Models\tkt_transaction;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -541,6 +542,8 @@ class ReimburseController extends Controller
             ->where('status', '!=', 'Verified')
             ->get();
 
+        $holiday = master_holiday::pluck('tanggal_libur');
+
         function findDepartmentHead($employee)
         {
             $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
@@ -600,6 +603,7 @@ class ReimburseController extends Controller
             'managerL2' => $managerL2,
             'director_id' => $director_id,
             'formCount' => $formCount,
+            'holiday' => $holiday,
         ]);
     }
     public function cashadvancedSubmit(Request $req)
@@ -2190,7 +2194,7 @@ class ReimburseController extends Controller
         $userId = $user->id;
         $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
 
-        $parentLink = 'Reimbursement';
+        $parentLink = 'Approval';
         $link = 'Hotel Approval';
 
         // Get unique ticket numbers with conditions
@@ -2891,7 +2895,7 @@ class ReimburseController extends Controller
         $userId = $user->id;
         $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
 
-        $parentLink = 'Reimbursement';
+        $parentLink = 'Approval';
         $link = 'Ticket Approval';
 
         // Get unique ticket numbers with conditions
@@ -3126,5 +3130,4 @@ class ReimburseController extends Controller
         ];
         return $romanMonths[$month];
     }
-
 }
