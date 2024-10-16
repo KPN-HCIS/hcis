@@ -164,7 +164,7 @@ class ApprovalReimburseController extends Controller
 
             // Mencari layer berikutnya yang lebih tinggi
             foreach ($approvals as $approval) {
-                if ($approval->layer > $model->layer && $approval->employee_id<>$model->employee_id) {
+                if ($approval->layer > $model->layer && $approval->employee_id <> $model->employee_id) {
                     $nextApproval = $approval;
                     break;
                 }
@@ -252,7 +252,7 @@ class ApprovalReimburseController extends Controller
 
             // Mencari layer berikutnya yang lebih tinggi
             foreach ($approvals as $approval) {
-                if ($approval->layer > $model->layer && $approval->employee_id<>$model->employee_id) {
+                if ($approval->layer > $model->layer && $approval->employee_id <> $model->employee_id) {
                     $nextApproval = $approval;
                     break;
                 }
@@ -384,7 +384,6 @@ class ApprovalReimburseController extends Controller
                     $caApprovalSett->save();
                 }
             }
-            // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
             $caTransaction = ca_transaction::where('id', $ca_id)->first();
             if ($caTransaction) {
                 $caTransaction->approval_sett = 'Rejected';
@@ -400,7 +399,7 @@ class ApprovalReimburseController extends Controller
 
             // Mencari layer berikutnya yang lebih tinggi
             foreach ($approvals as $approval) {
-                if ($approval->layer > $model->layer && $approval->employee_id<>$model->employee_id) {
+                if ($approval->layer > $model->layer && $approval->employee_id <> $model->employee_id) {
                     $nextApproval = $approval;
                     break;
                 }
@@ -462,15 +461,13 @@ class ApprovalReimburseController extends Controller
             ->get();
 
         if ($req->input('action_ca_reject')) {
-            $caApprovals = ca_sett_approval::where('ca_id', $ca_id)
-                ->where('id', $dataNoId)
-                ->get();
-            if ($caApprovals->isNotEmpty()) {
-                foreach ($caApprovals as $caApproval) {
-                    $caApproval->approval_status = 'Rejected';
-                    $caApproval->approved_at = Carbon::now();
-                    $caApproval->reject_info = $req->reject_info;
-                    $caApproval->save();
+            $caApprovalsSett = ca_sett_approval::where('ca_id', $ca_id)->get();
+            if ($caApprovalsSett->isNotEmpty()) {
+                foreach ($caApprovalsSett as $caApprovalSett) {
+                    $caApprovalSett->approval_status = 'Rejected';
+                    $caApprovalSett->approved_at = Carbon::now();
+                    $caApprovalSett->reject_info = $req->reject_info;
+                    $caApprovalSett->save();
                 }
             }
             // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
@@ -489,7 +486,7 @@ class ApprovalReimburseController extends Controller
 
             // Mencari layer berikutnya yang lebih tinggi
             foreach ($approvals as $approval) {
-                if ($approval->layer > $model->layer && $approval->employee_id<>$model->employee_id) {
+                if ($approval->layer > $model->layer && $approval->employee_id <> $model->employee_id) {
                     $nextApproval = $approval;
                     break;
                 }

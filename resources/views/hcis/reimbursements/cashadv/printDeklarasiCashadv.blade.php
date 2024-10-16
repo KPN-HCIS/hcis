@@ -1037,7 +1037,7 @@
     <footer>
         <script type="text/php">
             if (isset($pdf)) {
-                $x = 400;
+                $x = 360;
                 $y = 810;
                 $text = "Page {PAGE_NUM} of {PAGE_COUNT} Declaration Cash Advanced No. {{ $transactions->no_ca }}";
                 $font = null;

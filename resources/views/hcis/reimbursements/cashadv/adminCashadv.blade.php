@@ -379,8 +379,7 @@
 
                 if (
                     status === "Pending" ||
-                    status === "Approved" ||
-                    status === "Rejected"
+                    status === "Approved"
                 ) {
                     declareSection.style.display = "flex"; // Tampilkan
                 } else {
