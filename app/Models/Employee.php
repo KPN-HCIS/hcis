@@ -89,4 +89,5 @@ class Employee extends Model
             ->distinct()
             ->pluck('group_company');
     }
+    
 }

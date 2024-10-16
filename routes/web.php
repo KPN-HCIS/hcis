@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SendbackController as AdminSendbackController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\ApprovalReimburseController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -53,6 +54,10 @@ Route::get('inactive-employees', [EmployeeController::class, 'EmployeeInactive']
 Route::get('updmenu-employees', [EmployeeController::class, 'updateEmployeeAccessMenu']);
 Route::get('daily-schedules', [ScheduleController::class, 'reminderDailySchedules']);
 Route::get('update-designtaion', [DesignationController::class, 'UpdateDesignation']);
+// Route::get('generate-weeklyoff-shift', [AttendanceController::class, 'GenerateWeeklyShiftOff']);
+// Route::get('backup-daily-attendance', [AttendanceController::class, 'BackupDailyAttendance']);
+// Route::get('add-backdated-attendance', [AttendanceController::class, 'AddBackdatedAttendance']);
+Route::get('update-bt-to-db', [AttendanceController::class, 'UpdateBTtoDB']);
 
 Route::get('/test-email', function () {
     $messages = '<p>This is a test message with <strong>bold</strong> text.</p>';
@@ -113,10 +118,61 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/delete/{id}', [ReimburseController::class, 'cashadvancedDelete'])->name('cashadvanced.delete');
     Route::get('/cashadvanced/download/{id}', [ReimburseController::class, 'cashadvancedDownload'])->name('cashadvanced.download');
 
-    // Approval Reimburse
+    // My Cash Advanced
+
+    Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
+    Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
+
+    Route::middleware(['permission:reportca_hcis'])->group(function () {
+        Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+        Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
+        Route::post('/cashadvanced/adupdate/{id}', [ReimburseController::class, 'cashadvancedAdminUpdate'])->name('cashadvanced.adupdate');
+
+        Route::post('/cashadvanced/approval/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalAdmin'])->name('approvalAdmin.cashadvancedApprovedAdmin');
+        Route::post('/cashadvanced/approvalDec/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiAdmin'])->name('approvalDecAdmin.cashadvancedDecApprovedAdmin');
+    });
+
+    // Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
+    // Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
+    Route::get('/cashadvanced/request', [ReimburseController::class, 'requestCashadvanced'])->name('cashadvancedRequest');
+
+    // My Cash Advanced Deklarasi
+    Route::get('/cashadvanced/deklarasi', [ReimburseController::class, 'deklarasiCashadvanced'])->name('cashadvancedDeklarasi');
+    Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
+    Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
+    Route::get('/cashadvanced/deklarasi/download/{id}', [ReimburseController::class, 'cashadvancedDownloadDeklarasi'])->name('cashadvanced.downloadDeclare');
+
+    // My Cash Advanced Done
+    Route::get('/cashadvanced/done', [ReimburseController::class, 'doneCashadvanced'])->name('cashadvancedDone');
+
+    // My Cash Advanced Reject
+    Route::get('/cashadvanced/reject', [ReimburseController::class, 'rejectCashadvanced'])->name('cashadvancedReject');
+
+    // My Cash Advanced Extend
+    Route::post('/cashadvanced/extend', [ReimburseController::class, 'cashadvancedExtend'])->name('cashadvanced.extend');
+
+    // My Cash Advanced
+    Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
+    Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
+    Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
+    Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
+
+    // Approval
     Route::get('/approval', [ApprovalReimburseController::class, 'approval'])->name('approval');
-    Route::get('/approval/cashadvanced/{id}', [ApprovalReimburseController::class, 'cashadvancedFormApproval'])->name('approval.cashadvanced');
-    Route::post('/approval/cashadvanced/{id}', [ReimburseController::class, 'cashadvancedActionApproval'])->name('approval.cashadvancedApproved');
+
+    // Approval Reimburse
+    Route::get('/approval/cashadvanced', [ApprovalReimburseController::class, 'cashadvancedApproval'])->name('approval.cashadvanced');
+    Route::get('/approval/cashadvanced/form/{id}', [ApprovalReimburseController::class, 'cashadvancedFormApproval'])->name('approval.cashadvancedForm');
+    Route::post('/approval/cashadvanced/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionApproval'])->name('approval.cashadvancedApproved');
+
+    // Approval Reimburse
+    Route::get('/approval/cashadvancedDeklarasi', [ApprovalReimburseController::class, 'cashadvancedDeklarasi'])->name('approval.cashadvancedDeklarasi');
+    Route::get('/approval/cashadvancedDeklarasi/form/{id}', [ApprovalReimburseController::class, 'cashadvancedFormDeklarasi'])->name('approval.cashadvancedFormDeklarasi');
+    Route::post('/approval/cashadvancedDeklarasi/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasi'])->name('approval.cashadvancedDeclare');
+
+    // Approval Extend
+    Route::get('/approval/cashadvancedExtend', [ApprovalReimburseController::class, 'cashadvancedExtend'])->name('approval.cashadvancedExtend');
+    Route::post('/approval/cashadvancedExtended', [ApprovalReimburseController::class, 'cashadvancedActionExtended'])->name('approval.cashadvancedExtended');
 
     // My Hotel
     Route::get('/hotel', [ReimburseController::class, 'hotel'])->name('hotel');
@@ -166,7 +222,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/units-of-measurement', [TeamGoalController::class, 'unitOfMeasurement']);
 
     // Approval
-    Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
+    // Route::post('/approval/goal', [ApprovalController::class, 'store'])->name('approval.goal');
 
     // Sendback
     Route::post('/sendback/goal', [SendbackController::class, 'store'])->name('sendback.goal');
@@ -228,6 +284,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/businessTrip/delete/{id}', [BusinessTripController::class, 'delete'])->name('delete.bt');
     Route::post('/businessTrip/saveDraft', [BusinessTripController::class, 'saveDraft'])->name('businessTrip.saveDraft');
 
+    //pdf BT
+    Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
+    Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('exportbt');
     //Search
     Route::get('/search/name', [SearchController::class, 'searchNik'])->name('searchNik');
 
@@ -287,6 +346,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/guides-delete/{id}', [GuideController::class, 'destroy'])->name('delete.guide');
 
     // ============================ Administrator ===================================
+
 
     Route::middleware(['permission:viewschedule'])->group(function () {
         // Schedule

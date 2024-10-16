@@ -4,40 +4,41 @@
     <!-- Brand Logo Light -->
     <a href="{{ Url('/') }}" class="logo logo-light">
         <span class="logo-lg">
-            <img src="/images/logo.png" alt="logo">
+            <img src="{{ asset('images/logo.png')}}" alt="logo">
+            
         </span>
         <span class="logo-sm">
-            <img src="/images/logo-sm.png" alt="small logo">
+            <img src="{{ asset('images/logo-sm.png')}}" alt="small logo">
         </span>
     </a>
 
     <!-- Brand Logo Dark -->
     <a href="{{ Url('/') }}" class="logo logo-dark">
         <span class="logo-lg">
-            <img src="/images/logo-dark.png" alt="logo">
+            <img src="{{ asset('images/logo-dark.png')}}" alt="logo">
         </span>
         <span class="logo-sm">
-            <img src="/images/logo-sm.png" alt="small logo">
+            <img src="{{ asset('images/logo-sm.png')}}" alt="small logo">
         </span>
     </a>
     @else
     <!-- Brand Logo Light -->
     <a href="" class="logo logo-light">
         <span class="logo-lg">
-            <img src="/images/logo_hcis_ori.png" alt="logo">
+            <img src="{{ asset('images/logo_hcis_ori.png')}}" alt="logo">
         </span>
         <span class="logo-sm">
-            <img src="/images/logo-sm_ori.png" alt="small logo">
+            <img src="{{ asset('images/logo-sm_ori.png')}}" alt="small logo">
         </span>
     </a>
 
     <!-- Brand Logo Dark -->
     <a href="" class="logo logo-dark">
         <span class="logo-lg">
-            <img src="/images/logo-dark_hcis_ori.png" alt="logo">
+            <img src="{{ asset('images/logo-dark_hcis_ori.png')}}" alt="logo">
         </span>
         <span class="logo-sm">
-            <img src="/images/logo-sm_ori.png" alt="small logo">
+            <img src="{{ asset('images/logo-sm_ori.png')}}" alt="small logo">
         </span>
     </a>
     @endif
@@ -75,7 +76,7 @@
             </li>
             @endif
             @if(session('system') == 'kpnpm')
-                <li class="side-nav-item">
+                {{-- <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#sidebarEmail" aria-expanded="false" aria-controls="sidebarEmail" class="side-nav-link">
                         <i class="ri-star-line"></i>
                         <span> Goals </span>
@@ -93,7 +94,7 @@
                             @endif
                         </ul>
                     </div>
-                </li>
+                </li> --}}
             @elseif(session('system') == 'kpnreimburse')
                 <li class="side-nav-item">
                     <a href="{{ route('reimbursements') }}"  aria-controls="sidebarEmail" class="side-nav-link">
@@ -102,14 +103,14 @@
                     </a>
                 </li>
             @endif
-            @if (auth()->user()->isApprover())
+            {{-- @if (auth()->user()->isApprover())
             <li class="side-nav-item">
                 <a href="{{ url('/reports') }}" class="side-nav-link">
                     <i class="ri-file-chart-line"></i>
                     <span> Reports </span>
                 </a>
             </li>
-            @endif
+            @endif --}}
             <li class="side-nav-item">
                 <a href="{{ url('/guides') }}" class="side-nav-link">
                     <i class="ri-file-text-line"></i>

@@ -96,6 +96,7 @@ class BusinessTrip extends Model
         'status',
         'manager_l1_id',
         'manager_l2_id',
+        'update_db',
         'deleted_at',
 
     ];

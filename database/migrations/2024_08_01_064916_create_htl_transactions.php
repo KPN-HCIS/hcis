@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('tgl_masuk_htl');
             $table->date('tgl_keluar_htl');
             $table->integer('total_hari');
+            $table->string('approval_status', 50);
             $table->string('created_by', 50);
             $table->timestamps();
         });

@@ -50,7 +50,10 @@ class ca_approval extends Model
         }
     }
 
-
+    public function statusReqEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
 
     public function employee()
     {

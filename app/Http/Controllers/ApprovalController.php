@@ -2,161 +2,315 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Approval;
-use App\Models\ApprovalLayer;
-use App\Models\ApprovalRequest;
-use App\Models\ApprovalSnapshots;
-use App\Models\Goal;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use App\Models\ca_approval;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use App\Models\CATransaction;
+use App\Models\Company;
+use App\Models\Designation;
+use App\Models\htl_transaction;
+use App\Models\Employee;
+use App\Models\Location;
+use App\Models\ca_transaction;
+use App\Models\ListPerdiem;
+use App\Models\ca_sett_approval;
+use App\Models\MatrixApproval;
+use Carbon\Carbon;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\DB;
 
-class ApprovalController extends Controller
+use Illuminate\Http\Request;
+
+class ApprovalReimburseController extends Controller
 {
-
-    public function store(Request $request): RedirectResponse
-
+    public function approval()
     {
-        // Inisialisasi array untuk menyimpan pesan validasi kustom
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced Approval';
+        $employeeId = auth()->user()->employee_id;
 
-        $nextLayer = ApprovalLayer::where('approver_id', $request->current_approver_id)
-                                    ->where('employee_id', $request->employee_id)->max('layer');
+        // Ambil ca_approval berdasarkan employee_id
+        $ca_approval = ca_approval::with('employee')->where('employee_id', $employeeId)->where('approval_status', 'Pending')->get();
 
-        // Cari approver_id pada layer selanjutnya
-        $nextApprover = ApprovalLayer::where('layer', $nextLayer + 1)->where('employee_id', $request->employee_id)->value('approver_id');
+        $ca_approvals_with_transactions = $ca_approval->map(function ($approval) {
+            $approval->transactions = CATransaction::where('id', $approval->ca_id)->get();
+            return $approval;
+        });
+        $pendingCACount = ca_approval::where('employee_id', $employeeId)->where('approval_status', 'Pending')->count();
+        $pendingHTLCount = htl_transaction::where('approval_status', 'Pending')->count();
 
-        if (!$nextApprover) {
-            $approver = $request->current_approver_id;
-            $statusRequest = 'Approved';
-            $statusForm = 'Approved';
-        }else{
-            $approver = $nextApprover;
-            $statusRequest = 'Pending';
-            $statusForm = 'Submitted';
-        }
-
-        $status = 'Approved';
-
-        $customMessages = [];
-
-        $kpis = $request->input('kpi', []);
-        $targets = $request->input('target', []);
-        $uoms = $request->input('uom', []);
-        $weightages = $request->input('weightage', []);
-        $types = $request->input('type', []);
-        $custom_uoms = $request->input('custom_uom', []);
-
-        // Menyiapkan aturan validasi
-        $rules = [
-            'kpi.*' => 'required|string',
-            'target.*' => 'required|string',
-            'uom.*' => 'required|string',
-            'weightage.*' => 'required|integer|min:5|max:100',
-            'type.*' => 'required|string',
-        ];
-
-        // Pesan validasi kustom
-        $customMessages = [
-            'weightage.*.integer' => 'Weightage harus berupa angka.',
-            'weightage.*.min' => 'Weightage harus lebih besar atau sama dengan :min %.',
-            'weightage.*.max' => 'Weightage harus kurang dari atau sama dengan :max %.',
-        ];
-
-        // Membuat Validator instance
-        if ($request->submit_type === 'submit_form') {
-            $validator = Validator::make($request->all(), $rules, $customMessages);
-    
-            // Jika validasi gagal
-            if ($validator->fails()) {
-                return back()->withErrors($validator)->withInput();
+        foreach ($ca_approval as $ca_approvals) {
+            foreach ($ca_approvals->transactions as $transaction) {
+                $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+                $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
             }
         }
 
-        // Inisialisasi array untuk menyimpan data KPI
-        
-        $kpiData = [];
-        // Reset nomor indeks untuk penggunaan berikutnya
-        $index = 1;
+        return view('hcis.reimbursements.approval.approvalCashadv', [
+            'pendingCACount' => $pendingCACount,
+            'pendingHTLCount' => $pendingHTLCount,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_approval' => $ca_approvals_with_transactions,
+            // 'company' => $company,
+        ]);
+    }
+    public function cashadvancedApproval()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+        $employeeId = auth()->user()->employee_id;
 
-        // Iterasi melalui input untuk mendapatkan data KPI
-        foreach ($kpis as $index => $kpi) {
-            // Memastikan ada nilai untuk semua input terkait
-            if (isset($targets[$index], $uoms[$index], $weightages[$index], $types[$index])) {
-                // Simpan data KPI ke dalam array dengan nomor indeks sebagai kunci
-                if($custom_uoms[$index]){
-                    $customuom = $custom_uoms[$index];
-                }else{
-                    $customuom = null;
+        $ca_transactions = CATransaction::with('employee')->where('status_id', $employeeId)->where('approval_status', 'Pending')->get();
+
+        $pendingCACount = CATransaction::where('status_id', $employeeId)->where('approval_status', 'Pending')->count();
+        $pendingDECCount = CATransaction::where('sett_id', $employeeId)->where('approval_sett', 'Pending')->count();
+
+        // Memformat tanggal
+        foreach ($ca_transactions as $transaction) {
+            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
+        }
+
+        $pendingHTLCount = htl_transaction::where('approval_status', 'Pending')->count();
+
+        return view('hcis.reimbursements.approval.approvalCashadv', [
+            'pendingCACount' => $pendingCACount,
+            'pendingDECCount' => $pendingDECCount,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
+            'pendingHTLCount' => $pendingHTLCount,
+        ]);
+    }
+    public function cashadvancedFormApproval($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced Approval';
+
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $transactions = CATransaction::findByRouteKey($key);
+
+        return view('hcis.reimbursements.approval.listApproveCashadv', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+        ]);
+    }
+    function cashadvancedActionApproval(Request $req, $ca_id)
+    {
+        $userId = Auth::id();
+        $employeeId = auth()->user()->employee_id;
+        $model = ca_approval::where('ca_id', $ca_id)->where('employee_id', $employeeId)->firstOrFail();
+
+        // Cek apakah ini sudah di-approve atau tidak
+        if ($model->approval_status == 'Approved') {
+            Alert::warning('Warning', 'This approval has already been approved.');
+            return redirect()->route('approval.cashadvanced');
+        }
+
+        // Ambil semua approval yang terkait dengan ca_id
+        $approvals = ca_approval::where('ca_id', $ca_id)
+            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+            ->get();
+
+        // Cek jika tombol reject ditekan
+        if ($req->input('action_ca_reject')) {
+            ca_approval::where('ca_id', $ca_id)->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
+            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_status = 'Rejected';
+                $caTransaction->save();
+            }
+
+            Alert::success('Success', 'All approvals rejected successfully.');
+            return redirect()->route('approval.cashadvanced');
+        }
+
+        // Cek jika tombol approve ditekan
+        if ($req->input('action_ca_approve')) {
+            $nextApproval = null;
+
+            // Mencari layer berikutnya yang lebih tinggi
+            foreach ($approvals as $approval) {
+                if ($approval->layer > $model->layer) {
+                    $nextApproval = $approval;
+                    break;
                 }
+            }
 
-                $kpiData[$index] = [
-                    'kpi' => $kpi,
-                    'target' => $targets[$index],
-                    'uom' => $uoms[$index],
-                    'weightage' => $weightages[$index],
-                    'type' => $types[$index],
-                    'custom_uom' => $customuom
-                ];
+            // Jika tidak ada layer yang lebih tinggi (berarti ini adalah layer tertinggi)
+            if (!$nextApproval) {
+                // Set status ke Approved untuk layer tertinggi
+                $model->approval_status = 'Approved';
+                $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                $model->save();
 
-                $index++;
+                // Update status_id pada ca_transaction
+                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->approval_status = 'Approved'; // Set ke ID user layer tertinggi
+                    $caTransaction->save();
+                }
+            } else {
+                // Jika ada layer yang lebih tinggi, update status layer saat ini dan alihkan ke layer berikutnya
+                $model->approval_status = 'Approved';
+                $model->approved_at = Carbon::now();
+                $model->save();
+
+                // Update status_id pada ca_transaction ke employee_id layer berikutnya
+                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->status_id = $nextApproval->employee_id;
+                    $caTransaction->save();
+                }
             }
         }
 
-        // Simpan data KPI ke dalam file JSON
-        $jsonData = json_encode($kpiData);
+        Alert::success('Success', 'Approval updated successfully.');
+        return redirect()->route('approval.cashadvanced');
+    }
 
-        $checkApprovalSnapshots = ApprovalSnapshots::where('form_id', $request->id)->where('employee_id', $request->current_approver_id)->first();
+    public function cashadvancedDeklarasi()
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced';
+        $employeeId = auth()->user()->employee_id;
 
-        if ($checkApprovalSnapshots) {
-            $snapshot = ApprovalSnapshots::find($checkApprovalSnapshots->id);
-            $snapshot->form_data = $jsonData;
-            $snapshot->updated_by = Auth::user()->id;
-        } else {
-            $snapshot = new ApprovalSnapshots;
-            $snapshot->id = Str::uuid();
-            $snapshot->form_data = $jsonData;
-            $snapshot->form_id = $request->id;
-            $snapshot->employee_id = Auth::user()->employee_id;
-            $snapshot->created_by = Auth::user()->id;
+        $ca_transactions = CATransaction::with('employee')->where('sett_id', $employeeId)->where('approval_sett', 'Pending')->get();
 
+        $pendingCACount = CATransaction::where('status_id', $employeeId)->where('approval_status', 'Pending')->count();
+        $pendingDECCount = CATransaction::where('sett_id', $employeeId)->where('approval_sett', 'Pending')->count();
+
+        // Memformat tanggal
+        foreach ($ca_transactions as $transaction) {
+            $transaction->formatted_start_date = Carbon::parse($transaction->start_date)->format('d-m-Y');
+            $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
         }
-        $snapshot->save();
 
-        $model = Goal::find($request->id);
-        $model->form_data = $jsonData;
-        $model->form_status = $statusForm;
-        
-        $model->save();
+        $pendingHTLCount = htl_transaction::where('approval_status', 'Pending')->count();
 
-        $approvalRequest = ApprovalRequest::where('form_id', $request->id)->first();
-        $approvalRequest->current_approval_id = $approver;
-        $approvalRequest->status = $statusRequest;
-        $approvalRequest->updated_by = Auth::user()->id;
-        $approvalRequest->messages = $request->messages;
-        $approvalRequest->sendback_messages = null;
-        $approvalRequest->sendback_to = null;
-        // Set other attributes as needed
-        $approvalRequest->save();
+        return view('hcis.reimbursements.approval.approvalDeklarasiCashadv', [
+            'pendingCACount' => $pendingCACount,
+            'pendingDECCount' => $pendingDECCount,
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'ca_transactions' => $ca_transactions,
+            'pendingHTLCount' => $pendingHTLCount,
+        ]);
+    }
+    public function cashadvancedFormDeklarasi($key)
+    {
+        $userId = Auth::id();
+        $parentLink = 'Reimbursement';
+        $link = 'Cash Advanced Approval';
 
-        $checkApproval = Approval::where('request_id', $approvalRequest->id)->where('approver_id', $request->current_approver_id)->first();
+        $employee_data = Employee::where('id', $userId)->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
+        $transactions = CATransaction::findByRouteKey($key);
 
-        if ($checkApproval) {
-            $approval = $checkApproval;
-            $approval->messages = $request->messages;
+        return view('hcis.reimbursements.approval.listApproveDeklarasiCashadv', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'perdiem' => $perdiem,
+            'no_sppds' => $no_sppds,
+            'transactions' => $transactions,
+        ]);
+    }
+    function cashadvancedActionDeklarasi(Request $req, $ca_id)
+    {
+        $userId = Auth::id();
+        $employeeId = auth()->user()->employee_id;
+        $model = ca_sett_approval::where('ca_id', $ca_id)->where('employee_id', $employeeId)->firstOrFail();
 
-        } else {
-            $approval = new Approval;
-            $approval->request_id = $approvalRequest->id;
-            $approval->approver_id = Auth::user()->employee_id;
-            $approval->created_by = Auth::user()->id;
-            $approval->status = $status;
-            $approval->messages = $request->messages;
-            // Set other attributes as needed
+        // Cek apakah ini sudah di-approve atau tidak
+        if ($model->approval_status == 'Approved') {
+            Alert::warning('Warning', 'This approval has already been approved.');
+            return redirect()->route('approval.cashadvancedDeklarasi');
         }
-        $approval->save();
-            
-        return redirect()->route('team-goals');
+
+        // Ambil semua approval yang terkait dengan ca_id
+        $approvals = ca_sett_approval::where('ca_id', $ca_id)
+            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+            ->get();
+
+        // Cek jika tombol reject ditekan
+        if ($req->input('action_ca_reject')) {
+            ca_sett_approval::where('ca_id', $ca_id)->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
+            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_sett = 'Rejected';
+                $caTransaction->save();
+            }
+
+            Alert::success('Success', 'All approvals rejected successfully.');
+            return redirect()->route('approval.cashadvancedDeklarasi');
+        }
+
+        // Cek jika tombol approve ditekan
+        if ($req->input('action_ca_approve')) {
+            $nextApproval = null;
+
+            // Mencari layer berikutnya yang lebih tinggi
+            foreach ($approvals as $approval) {
+                if ($approval->layer > $model->layer) {
+                    $nextApproval = $approval;
+                    break;
+                }
+            }
+
+            // Jika tidak ada layer yang lebih tinggi (berarti ini adalah layer tertinggi)
+            if (!$nextApproval) {
+                // Set status ke Approved untuk layer tertinggi
+                $model->approval_status = 'Approved';
+                $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                $model->save();
+
+                // Update status_id pada ca_transaction
+                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->approval_sett = 'Approved'; // Set ke ID user layer tertinggi
+                    $caTransaction->save();
+                }
+            } else {
+                // Jika ada layer yang lebih tinggi, update status layer saat ini dan alihkan ke layer berikutnya
+                $model->approval_status = 'Approved';
+                $model->approved_at = Carbon::now();
+                $model->save();
+
+                // Update status_id pada ca_transaction ke employee_id layer berikutnya
+                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->sett_id = $nextApproval->employee_id;
+                    $caTransaction->save();
+                }
+            }
+        }
+
+        Alert::success('Success', 'Approval updated successfully.');
+        return redirect()->route('approval.cashadvancedDeklarasi');
     }
 }

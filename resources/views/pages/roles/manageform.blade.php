@@ -116,6 +116,12 @@
                       View Reports
                     </label>
                   </div>
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" value="{{ $permissions[12] }}" name="reportView" {{ isset($permissionNames[12]) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="reportView">
+                      HCIS - Report Cash Advanced
+                    </label>
+                  </div>
                 </div>
               </div>
               <div class="tab-pane fade" id="list-guide" role="tabpanel" aria-labelledby="list-guide-list">

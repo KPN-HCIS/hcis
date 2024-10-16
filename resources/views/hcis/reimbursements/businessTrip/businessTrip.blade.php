@@ -50,6 +50,7 @@
             padding-right: 10px;
             box-shadow: inset 6px 0 0 #fff;
         }
+
     </style>
 @endsection
 
