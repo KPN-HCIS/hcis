@@ -190,15 +190,7 @@
                                                     {{ $ca_transaction->ca_status }}
                                                 </p>
                                             </td>
-                                            <td class="text-center">
-                                                @if($ca_transaction->approval_sett=='Approved')
-                                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" title="Status Update" data-bs-target="#statusModal"
-                                                        data-id="{{ $ca_transaction->id }}"
-                                                        data-status="{{ $ca_transaction->ca_status }}"
-                                                        data-no="{{ $ca_transaction->no_ca }}">
-                                                        <i class="ri-file-edit-line"></i>
-                                                    </button>
-                                                @endif
+                                            <td class="text-left">
                                                 @if(($ca_transaction->approval_status == 'Pending') ||
                                                     ($ca_transaction->approval_status == 'Approved' &&
                                                     ($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Draft')))
@@ -228,6 +220,14 @@
                                                         data-end-date="{{ $ca_transaction->end_date }}"
                                                         data-total-days="{{ $ca_transaction->total_days }}">
                                                         <i class="bi bi-list-check"></i>
+                                                    </button>
+                                                @endif
+                                                @if($ca_transaction->approval_sett=='Approved' && $ca_transaction->ca_status<>'Done')
+                                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" title="Status Update" data-bs-target="#statusModal"
+                                                        data-id="{{ $ca_transaction->id }}"
+                                                        data-status="{{ $ca_transaction->ca_status }}"
+                                                        data-no="{{ $ca_transaction->no_ca }}">
+                                                        <i class="ri-file-edit-line"></i>
                                                     </button>
                                                 @endif
                                             </td>
@@ -412,7 +412,47 @@
                 // Pilih status yang sesuai di dropdown
                 var statusSelect = form.querySelector("#ca_status");
                 statusSelect.value = transactionStatus;
+
+                // Update opsi dropdown berdasarkan status yang dipilih
+                updateStatusOptions(transactionStatus, statusSelect);
             });
+
+            function updateStatusOptions(selectedStatus, statusSelect) {
+                // Reset opsi yang ada
+                var options = [
+                    { value: 'On Progress', text: 'On Progress' },
+                    { value: 'Refund', text: 'Refund' },
+                    { value: 'Done', text: 'Done' }
+                ];
+
+                // Filter opsi berdasarkan status yang dipilih
+                var filteredOptions;
+                if (selectedStatus === 'On Progress') {
+                    filteredOptions = options.filter(function(option) {
+                        return option.value === 'On Progress' || option.value === 'Done';
+                    });
+                } else if (selectedStatus === 'Refund') {
+                    filteredOptions = options.filter(function(option) {
+                        return option.value === 'Refund' || option.value === 'Done';
+                    });
+                } else {
+                    filteredOptions = options; // Default: tampilkan semua opsi
+                }
+
+                // Hapus opsi yang ada
+                while (statusSelect.options.length > 0) {
+                    statusSelect.remove(0);
+                }
+
+                // Tambahkan opsi baru yang sudah difilter
+                filteredOptions.forEach(function(option) {
+                    var newOption = new Option(option.text, option.value);
+                    statusSelect.add(newOption);
+                });
+
+                // Set nilai dropdown ke status yang dipilih
+                statusSelect.value = selectedStatus;
+            }
         });
 
         // Approval Request Modal

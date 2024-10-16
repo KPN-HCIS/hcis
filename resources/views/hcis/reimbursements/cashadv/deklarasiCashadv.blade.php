@@ -364,7 +364,7 @@
                             <a href="{{ route('cashadvanced') }}" type="button"
                                 class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
                             <button type="submit" name="action_ca_draft" value="Draft"
-                                class=" btn mb-2 btn-secondary btn-pill px-4 me-2 declaration-button">Draft</button>
+                                class=" btn mb-2 btn-secondary btn-pill px-4 me-2 declaration-button-draft">Draft</button>
                             <button type="submit" name="action_ca_submit" value="Pending"
                                 class=" btn mb-2 btn-primary btn-pill px-4 me-2 declaration-button">Submit</button>
                         </div>

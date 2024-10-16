@@ -289,7 +289,7 @@
                         <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('cashadvanced') }}" type="button" class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_draft" value="Draft" class="btn mb-2 btn-secondary btn-pill px-4 me-2 submit-button">Draft</button>
+                            <button type="submit" name="action_ca_draft" value="Draft" class="btn mb-2 btn-secondary btn-pill px-4 me-2 submit-button-draft">Draft</button>
                             <button type="submit" name="action_ca_submit" value="Pending" class="btn mb-2 btn-primary btn-pill px-4 me-2 submit-button">Submit</button>
                         </div>
                     </div>
@@ -437,10 +437,28 @@
             endDateInput.addEventListener('change', calculateTotalDays);
         });
 
+        // document.getElementById('end_date').addEventListener('change', function() {
+        //     const endDate = new Date(this.value);
+        //     const declarationEstimateDate = new Date(endDate);
+        //     declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
+
+        //     // Mengecek apakah tanggal jatuh pada akhir pekan
+        //     const dayOfWeek = declarationEstimateDate.getDay();
+        //     if (dayOfWeek === 6) { // Sabtu
+        //         declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 2); // Tambah 2 hari untuk ke Senin
+        //     } else if (dayOfWeek === 0) { // Minggu
+        //         declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1); // Tambah 1 hari untuk ke Senin
+        //     }
+
+        //     const year = declarationEstimateDate.getFullYear();
+        //     const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');
+        //     const day = String(declarationEstimateDate.getDate()).padStart(2, '0');
+
+        //     document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
+        // });
         document.getElementById('end_date').addEventListener('change', function() {
             const endDate = new Date(this.value);
             const declarationEstimateDate = new Date(endDate);
-
             // Menambahkan 3 hari kerja
             let daysToAdd = 0;
             while (daysToAdd < 3) {

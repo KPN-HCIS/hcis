@@ -28,7 +28,12 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
     {
         $query = CATransaction::select(
              
-            'ca_transactions.type_ca', 
+            DB::raw("CASE 
+                WHEN ca_transactions.type_ca = 'dns' THEN 'Dinas'
+                WHEN ca_transactions.type_ca = 'ndns' THEN 'Non Dinas'
+                WHEN ca_transactions.type_ca = 'entr' THEN 'Entertain'
+                ELSE ca_transactions.type_ca 
+            END as type_ca_label"), 
             'ca_transactions.unit', 
             DB::raw("DATE_FORMAT(ca_transactions.created_at, '%d-%M-%Y') as formatted_created_at"),
             DB::raw("DATE_FORMAT(ca_transactions.date_required, '%d-%M-%Y') as formatted_date_required"),
@@ -38,8 +43,8 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
             'ca_transactions.contribution_level_code', 
             'employees.employee_id', 
             'employees.fullname', 
-            'employees.manager_l1_id', 
-            'employees.manager_l2_id', 
+            DB::raw("manager1.fullname as manager_l1_fullname"), 
+            DB::raw("manager2.fullname as manager_l2_fullname"), 
             'ca_transactions.no_ca', 
             'ca_transactions.no_sppd',
             'ca_transactions.total_ca', 
@@ -49,8 +54,34 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
             'ca_transactions.approval_sett',
             'ca_transactions.approval_extend',
             DB::raw("DATEDIFF(CURDATE(), ca_transactions.declare_estimate) as days_difference"),
+            DB::raw("CASE 
+                        WHEN DATEDIFF(CURDATE(), ca_transactions.declare_estimate) > 0 THEN 'Overdue'
+                        ELSE 'Not Overdue'
+                    END as overdue_status"),
+            DB::raw("CASE 
+                    WHEN DATEDIFF(CURDATE(), ca_transactions.declare_estimate) > 0 THEN ca_transactions.total_ca
+                    ELSE 0 
+                END as total_ca_adjusted"),
+            DB::raw("CASE 
+                WHEN DATEDIFF(CURDATE(), ca_transactions.declare_estimate) BETWEEN 0 AND 6 THEN ca_transactions.total_ca
+                ELSE 0 
+            END as total_ca_within_6_days"),
+            DB::raw("CASE 
+                WHEN DATEDIFF(CURDATE(), ca_transactions.declare_estimate) BETWEEN 7 AND 14 THEN ca_transactions.total_ca
+                ELSE 0 
+            END as total_ca_within_14_days"),
+            DB::raw("CASE 
+                WHEN DATEDIFF(CURDATE(), ca_transactions.declare_estimate) BETWEEN 15 AND 30 THEN ca_transactions.total_ca
+                ELSE 0 
+            END as total_ca_within_30_days"),
+            DB::raw("CASE 
+                WHEN DATEDIFF(CURDATE(), ca_transactions.declare_estimate) BETWEEN 30 AND 999 THEN ca_transactions.total_ca
+                ELSE 0 
+            END as total_ca_within_99_days"),
         )
-        ->leftJoin('employees', 'ca_transactions.user_id', '=', 'employees.id'); // lakukan left join dengan tabel employee
+        ->leftJoin('employees', 'ca_transactions.user_id', '=', 'employees.id')
+        ->leftJoin('employees as manager1', 'employees.manager_l1_id', '=', 'manager1.employee_id')
+        ->leftJoin('employees as manager2', 'employees.manager_l2_id', '=', 'manager2.employee_id'); // lakukan left join dengan tabel employee
 
         if ($this->startDate && $this->endDate) {
             $query->whereBetween('ca_transactions.start_date', [$this->startDate, $this->endDate]);
@@ -76,7 +107,6 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
             'Div Head',
             'Doc No',
             'Assignment',
-            
             'Total CA',
             'Total Settlement',
             'Balance',
@@ -84,6 +114,12 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
             'Settlement Status',
             'Extend Status',
             'Days',
+            'Overdue',
+            'Current',
+            '< 7 Days',
+            '7 - 14 Days',
+            '15 - 30 Days',
+            '> 30 Days',
         ];
     }
 
