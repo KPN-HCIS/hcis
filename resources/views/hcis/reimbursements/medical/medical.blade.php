@@ -111,10 +111,10 @@
                                     </tr>
                                     <tr>
                                         <td class="text-center">2023</td>
-                                        <td class="text-center">Rp 16.000.000</td>
-                                        <td class="text-center">Rp 10.000.000</td>
+                                        <td class="text-center">Rp 0</td>
                                         <td class="text-center">Rp 7.000.000</td>
-                                        <td class="text-center">Rp 750.000</td>
+                                        <td class="text-center">Rp 3.000.000</td>
+                                        <td class="text-center">Rp 250.000</td>
                                     </tr>
                                     <tr>
                                         <td class="text-center">2024</td>

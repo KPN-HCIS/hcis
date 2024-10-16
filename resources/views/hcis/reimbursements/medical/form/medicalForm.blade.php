@@ -29,7 +29,7 @@
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
                         <h4 class="mb-0">Add Medical Usage</h4>
-                        <a href="/medical" type="button" class="btn-close btn-close-white"></a>
+                        <a href="/medical" type="button" class="btn-close btn-close-white" aria-label="Close"></a>
                     </div>
                     <div class="card-body">
                         <form id="medicForm" action="/medical/form-add/post" method="POST">
