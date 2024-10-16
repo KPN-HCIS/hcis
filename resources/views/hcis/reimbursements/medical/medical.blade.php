@@ -49,42 +49,30 @@
                             <table class="table table-bordered table-sm table-striped table-hover">
                                 <thead class="bg-primary align-middle text-center">
                                     <th>No</th>
-                                    <th>NIK</th>
                                     <th>Name</th>
+                                    <th>Gender</th>
                                     <th>Relation</th>
                                     <th>Date of Birth</th>
                                     <th>Age</th>
                                     <th>Status</th>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="text-center">1</td>
-                                        <td class="text-center">31231313131</td>
-                                        <td>Shin Ryujin</td>
-                                        <td class="text-center">Istri</td>
-                                        <td>Surabaya, 12 September 2000</td>
-                                        <td class="text-center">24 tahun</td>
-                                        <td class="text-center">Wife House</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2</td>
-                                        <td class="text-center">01124040023</td>
-                                        <td>Metta Saputra</td>
-                                        <td class="text-center">Anak</td>
-                                        <td>Palembang, 02 Mei 2000</td>
-                                        <td class="text-center">24 tahun</td>
-                                        <td class="text-center">Pelajar</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">3</td>
-                                        <td class="text-center">352101313131</td>
-                                        <td>Jocelyn Flores</td>
-                                        <td class="text-center">Anak</td>
-                                        <td>Surabaya, 17 September 2018</td>
-                                        <td class="text-center">6 tahun</td>
-                                        <td class="text-center">Pelajar</td>
-                                    </tr>
+                                    @foreach ($family as $item)
+                                        <tr>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                            <td>{{ $item->name }}</td>
+                                            <td>{{ $item->gender }}</td>
+                                            <td>{{ $item->relation_type }}</td>
+                                            <td class="text-center">
+                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->format('d-M-Y') }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->age }} Years Old
+                                            </td>
+                                            <td class="text-center">{{ $item->jobs }}</td>
+                                        </tr>
                                 </tbody>
+                                @endforeach
                             </table>
                         </div>
                     </div>
@@ -182,7 +170,8 @@
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-success text-center" style="font-size: 12px; padding: 0.5rem 1rem;">Done</span>
+                                            <span class="badge rounded-pill bg-success text-center"
+                                                style="font-size: 12px; padding: 0.5rem 1rem;">Done</span>
                                         </td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
@@ -201,7 +190,8 @@
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-warning text-center" style="font-size: 12px; padding: 0.5rem 1rem;">Pending</span>
+                                            <span class="badge rounded-pill bg-warning text-center"
+                                                style="font-size: 12px; padding: 0.5rem 1rem;">Pending</span>
                                         </td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
@@ -220,7 +210,8 @@
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-danger text-center" style="font-size: 12px; padding: 0.5rem 1rem;">Rejected</span>
+                                            <span class="badge rounded-pill bg-danger text-center"
+                                                style="font-size: 12px; padding: 0.5rem 1rem;">Rejected</span>
                                         </td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>

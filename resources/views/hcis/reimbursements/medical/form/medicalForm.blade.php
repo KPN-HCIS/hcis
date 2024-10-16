@@ -40,15 +40,14 @@
                                     <select class="form-select form-select-sm select2" id="" name=""
                                         required>
                                         <option value="" disabled selected>--- Choose Patient ---</option>
-                                        <option value="">Illumi Zoldyck</option>
-                                        <option value="">Killua Zoldyck</option>
-                                        <option value="">Alluka Zoldyck</option>
-                                        <option value="">Milluki Zoldyck</option>
-                                        {{-- @foreach ($companies as $company)
-                                            <option value="{{ $company->contribution_level_code }}">
-                                                {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                        <option value="{{ $employee_name->fullname }}">
+                                            {{ $employee_name->fullname }} (Me)
+                                        </option>
+                                        @foreach ($families as $family)
+                                            <option value="{{ $family->name }}">
+                                                {{ $family->name }} ({{ $family->relation_type }})
                                             </option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="col-md-4 mb-2">
