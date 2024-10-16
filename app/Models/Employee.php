@@ -25,6 +25,20 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class, 'users_id', 'id');
     }
+    public function businessTripsAsManager1()
+    {
+        return $this->hasMany(BusinessTrip::class, 'manager_l1_id', 'employee_id');
+    }
+
+    public function businessTripsAsManager2()
+    {
+        return $this->hasMany(BusinessTrip::class, 'manager_l2_id', 'employee_id');
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(BTApproval::class, 'employee_id', 'employee_id');
+    }
     public function businessTrip()
     {
         return $this->belongsTo(BusinessTrip::class, 'user_id', 'id');
@@ -66,7 +80,7 @@ class Employee extends Model
     public function schedule()
     {
         return $this->belongsTo(Schedule::class, 'bisnis_unit', 'group_company')
-                ->whereRaw("FIND_IN_SET('bisnis_unit', group_company)");
+            ->whereRaw("FIND_IN_SET('bisnis_unit', group_company)");
     }
     public static function getUniqueGroupCompanies()
     {

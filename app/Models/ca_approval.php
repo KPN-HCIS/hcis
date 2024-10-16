@@ -17,7 +17,9 @@ class ca_approval extends Model
         'role_name',
         'employee_id',
         'layer',
-        'approval_status'
+        'approval_status',
+        'approved_at',
+        'reject_info',
     ];
 
     protected $keyType = 'string';
@@ -57,4 +59,5 @@ class ca_approval extends Model
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
+
 }

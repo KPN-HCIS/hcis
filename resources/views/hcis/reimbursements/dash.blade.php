@@ -23,30 +23,38 @@
         text-align: center;
     }
 </style> --}}
-<style>
-    .menu-card {
-    text-decoration: none; /* Menghapus underline dari link */
-}
+    <style>
+        .menu-card {
+            text-decoration: none;
+            /* Menghapus underline dari link */
+        }
 
-.card {
-    border: none; /* Menghapus border default card */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Menambahkan shadow */
-    transition: transform 0.3s; /* Menambahkan animasi transisi */
-}
+        .card {
+            border: none;
+            /* Menghapus border default card */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Menambahkan shadow */
+            transition: transform 0.3s;
+            /* Menambahkan animasi transisi */
+        }
 
-.card:hover {
-    transform: translateY(-10px); /* Efek saat di-hover */
-}
+        .card:hover {
+            transform: translateY(-10px);
+            /* Efek saat di-hover */
+        }
 
 .card-body {
     padding: 5px; /* Menambahkan padding pada card body */
 }
 
-.card-img {
-    max-width: 100px; /* Mengatur ukuran maksimal gambar */
-    margin: 0 auto; /* Memusatkan gambar */
-    display: block; /* Memastikan gambar menjadi blok */
-}
+        .card-img {
+            max-width: 100px;
+            /* Mengatur ukuran maksimal gambar */
+            margin: 0 auto;
+            /* Memusatkan gambar */
+            display: block;
+            /* Memastikan gambar menjadi blok */
+        }
 
 h5 {
     margin-top: 5px; /* Menambahkan jarak atas pada heading */
@@ -94,7 +102,7 @@ h5 {
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            {{-- <div class="col">
+            <div class="col">
                 <a href="{{ route('businessTrip') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -103,19 +111,49 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> <!-- end col--> --}}
+            </div> <!-- end col-->
             {{-- <div class="col-md-3">
-                <a href="{{ '' }}">
-                    <div class="card" style="height: 215px">
+            </div> <!-- end col--> --}}
+            <div class="col">
+                <a href="{{ route('businessTrip.approval') }}">
+                    <div class="card" style="height: 200px">
                         <div class="card-body">
-                            <img src="{{ asset('images/menu/business-trip.png')}}" alt="logo" style="width: 100px; height: 100px;">
-                            <h4 class="my-3">Home Trip</h4>
+                            <img src="/images/menu/bt.png" alt="logo" style="width: 100px; height: 100px;">
+                            <h5 class="my-3">Business Trip (Approval)</h5>
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div><!-- end col--> --}}
+            </div> <!-- end col-->
+            @if (auth()->check())
+                @can('adminbt')
+                    <div class="col">
+                        <a href="{{ route('businessTrip.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="/images/menu/bt.png" alt="logo"
+                                        style="width: 100px; height: 100px;">
+                                    <h5 class="my-3">Business Trip (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
 
-            {{-- <div class="col">
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            {{-- </div> --}}
+
+            <div class="col-md-3">
+                <a href="{{ '' }}">
+                    <div class="card" style="height: 200px">
+                        <div class="card-body">
+                            <img src="{{ asset('images/menu/bt.png')}}" alt="logo" style="width: 100px; height: 100px;">
+                            <h5 class="my-3">Home Trip</h5>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div><!-- end col-->
+
+            <div class="col">
                 <a href="{{ route('ticket') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -124,9 +162,19 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> --}}
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('ticket.approval') }}">
+                    <div class="card" style="height: 200px">
+                        <div class="card-body">
+                            <img src="/images/menu/tkt.png" alt="logo" style="width: 100px; height: 100px;">
+                            <h5 class="my-3">Tiket Approval</h5>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div>
 
-            {{-- <div class="col">
+            <div class="col">
                 <a href="{{ route('hotel') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
@@ -135,7 +183,29 @@ h5 {
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> --}}
+            </div>
+            
+            <div class="col-md-3">
+                <a href="{{ route('hotel.approval') }}">
+                    <div class="card" style="height: 200px">
+                        <div class="card-body">
+                            <img src="/images/menu/ht.png" alt="logo" style="width: 100px; height: 100px;">
+                            <h5 class="my-3">Hotel Approval</h5>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div>
+
+            {{-- <div class="col-md-3">
+                <a href="{{ route('approval') }}">
+                    <div class="card" style="height: 200px">
+                        <div class="card-body">
+                            <img src="/images/menu/cashadv.png" alt="logo">
+                            <h4 class="my-3">Approval</h4>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div> <!-- end col--> --}}
 
             
 

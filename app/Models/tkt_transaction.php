@@ -11,11 +11,29 @@ class tkt_transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'no_tkt', 'no_sppd', 'user_id', 'unit', 'jk_tkt', 'np_tkt', 'tlp_tkt', 'dari_tkt', 'ke_tkt', 'tgl_brkt_tkt', 'tgl_plg_tkt', 'jam_brkt_tkt', 'jam_plg_tkt', 'jenis_tkt', 'created_by'
+        'no_tkt',
+        'no_sppd',
+        'user_id',
+        'unit',
+        'jk_tkt',
+        'np_tkt',
+        'tlp_tkt',
+        'dari_tkt',
+        'ke_tkt',
+        'tgl_brkt_tkt',
+        'tgl_plg_tkt',
+        'jam_brkt_tkt',
+        'jam_plg_tkt',
+        'jenis_tkt',
+        'created_by'
     ];
 
     protected $keyType = 'string';
     public $incrementing = false;
+    public function businessTrip()
+    {
+        return $this->belongsTo(BusinessTrip::class, 'user_id', 'user_id');
+    }
 
     protected static function boot()
     {

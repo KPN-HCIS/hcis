@@ -5,71 +5,55 @@
         th {
             color: white !important;
         }
-        table {
-            white-space: nowrap;
-        }
-
-        tr.sticky {
-            position: sticky;
-            top: 0;
-            z-index: 1;
-            background: var(--stickyBackground);
-        }
-
-
-        th.sticky,
-        td.sticky {
-            position: sticky;
-            left: 0;
-            background: var(--stickyBackground);
-        }
     </style>
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12">
-                <div class="page-title-box">
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item">{{ $parentLink }}</li>
-                            <li class="breadcrumb-item active">{{ $link }}</li>
-                        </ol>
-                    </div>
-                    <h4 class="page-title">{{ $link }}</h4>
+            <div class="col-md-6 mt-3">
+                <div class="page-title-box d-flex align-items-center">
+                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
+                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
+                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $parentLink }}
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $link }}
+                        </li>
+                    </ol>
                 </div>
             </div>
-        </div>
-        <!-- Kembali button -->
-        <div class="row mb-3">
-            <div class="col">
-                <a href="/reimbursements" class="btn btn-primary btn-action">
-                    <i class="bi bi-caret-left-fill"></i> Back
+            <div class="col-md-6 mt-4 mb-2 text-end">
+                <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
-                {{-- <a href="/businessTrip" class="btn btn-info btn-action">
-                    <i class="bi bi-arrow-clockwise"></i> Refresh
-                </a> --}}
-                <a href="#" class="btn btn-outline-success btn-action">
-                    <i class="bi bi-file-earmark-spreadsheet"></i> Export to Excel
+                {{-- Add Data Button --}}
+                <a href="{{ route('medical-form.add') }}" class="btn btn-primary rounded-pill">
+                    <i class="bi bi-plus-circle"></i> Add Medical
                 </a>
             </div>
         </div>
+
         <div class="row">
             {{-- Data Keluarga --}}
             <div class="card shadow-none">
                 <div class="card-body">
-                    <h4 class="card-title">Data Keluarga</h4>
+                    <h4 class="card-title">Family Data</h4>
                     <div class="card-text">
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm table-striped table-hover">
                                 <thead class="bg-primary align-middle text-center">
                                     <th>No</th>
                                     <th>NIK</th>
-                                    <th>Nama</th>
-                                    <th>Hubungan</th>
-                                    <th>Tanggal Lahir</th>
-                                    <th>Umur</th>
+                                    <th>Name</th>
+                                    <th>Relation</th>
+                                    <th>Date of Birth</th>
+                                    <th>Age</th>
                                     <th>Status</th>
                                 </thead>
                                 <tbody>
@@ -82,6 +66,15 @@
                                         <td class="text-center">24 tahun</td>
                                         <td class="text-center">Pelajar</td>
                                     </tr>
+                                    <tr>
+                                        <td class="text-center">2</td>
+                                        <td class="text-center">352101313131</td>
+                                        <td>Jocelyn Flores</td>
+                                        <td class="text-center">Anak</td>
+                                        <td>Surabaya, 17 September 2004</td>
+                                        <td class="text-center">20 tahun</td>
+                                        <td class="text-center">Pelajar</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -92,20 +85,20 @@
             {{-- Jenis Plafond --}}
             <div class="card shadow-none">
                 <div class="card-body">
-                    <h4 class="card-title">Jenis Plafond</h4>
+                    <h4 class="card-title">Health Coverage Limit</h4>
                     <div class="card-text">
                         <div class="table-responsive">
                             <table class="display nowrap dataTable dtr-inline collapsed">
                                 <thead class="bg-primary text-center align-middle">
                                     <tr>
-                                        <th rowspan="2">Periode</th>
-                                        <th colspan="4">Jenis Plafond</th>
+                                        <th rowspan="2" class="text-center">Period</th>
+                                        <th colspan="4" class="text-center">Type of Health Coverage</th>
                                     </tr>
                                     <tr>
-                                        <th>Persalinan</th>
-                                        <th>Rawat Inap</th>
-                                        <th>Rawat Jalan</th>
-                                        <th>Kacamata</th>
+                                        <th class="text-center">Labor</th>
+                                        <th class="text-center">Inpatient</th>
+                                        <th class="text-center">Outpatient</th>
+                                        <th class="text-center">Glasses</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -140,7 +133,7 @@
             {{-- Detail Penggunaan Plafond --}}
             <div class="card shadow-none">
                 <div class="card-body">
-                    <h4 class="card-title">Riwayat Penggunaan Plafond</h4>
+                    <h4 class="card-title">Health Coverage Usage History</h4>
                     <div class="card-text">
                         <div class="table-responsive">
                             <table class="display nowrap responsive" id="example">
@@ -148,17 +141,17 @@
                                     <tr>
                                         <th></th>
                                         <th>No</th>
-                                        <th>Tanggal</th>
-                                        <th>Periode</th>
-                                        <th data-priority="0">No Medical</th>
-                                        <th>Nama Rumah Sakit</th>
-                                        <th>Pasien</th>
+                                        <th>Date</th>
+                                        <th>Period</th>
+                                        <th data-priority="0">No. Medical</th>
+                                        <th>Hospital Name</th>
+                                        <th>Patient Name</th>
                                         <th>Disease</th>
-                                        <th>Persalinan</th>
-                                        <th>Rawat Inap</th>
-                                        <th>Rawat Jalan</th>
-                                        <th>Lensa Kacamata</th>
-                                        <th>Bingkai Kacamata</th>
+                                        <th>Labor</th>
+                                        <th>Inpatient</th>
+                                        <th>Outpatient</th>
+                                        <th>Glasses Lens</th>
+                                        <th>Glasses</th>
                                         <th data-priority="1">Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -180,24 +173,24 @@
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Selesai</td>
-                                        <td class="text-center">Selesai</td>
+                                        <td class="text-center">RAWR~</td>
                                     </tr>
                                     <tr>
                                         <td class="text-center"></td>
-                                        <td class="text-center">1</td>
-                                        <td class="text-center">01 Sept 2024</td>
+                                        <td class="text-center">2</td>
+                                        <td class="text-center">02 Sept 2024</td>
                                         <td class="text-center">2024</td>
-                                        <td class="text-center">011/MDCL-2024</td>
-                                        <td>RS. Murni Teguh</td>
+                                        <td class="text-center">012/MDCL-2024</td>
+                                        <td>RS. Murni Teguh 2</td>
                                         <td>Metta Saputra</td>
                                         <td>Demam</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
-                                        <td class="text-center">Rp 200.0000</td>
+                                        <td class="text-center">Rp 300.0000</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Selesai</td>
-                                        <td class="text-center">Selesai</td>
+                                        <td class="text-center">RAWR~</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -208,29 +201,5 @@
         </div>
     </div>
 
-    <script>
-        $("#example").DataTable({
-            responsive: {
-                details: {
-                    type: 'column',
-                    target: 'tr',
-                },
-            },
-            columnDefs: [{
-                    className: 'control',
-                    orderable: false,
-                    targets: 0
-                },
-                {
-                    responsivePriority: 1,
-                    targets: 0
-                },
-                {
-                    responsivePriority: 4,
-                    targets: 3
-                }
-            ],
-            order: [1, 'asc']
-        });
-    </script>
+    <script src="{{ asset('/js/medical/medical.js') }}"></script>
 @endsection

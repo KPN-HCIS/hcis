@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bt_approval', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('bt_id', 50);
             $table->integer('role_id')->default(0);
             $table->string('role_name', 50);
+            $table->string('employee_id');
             $table->integer('layer')->default(0);
             $table->string('approval_status');
             $table->datetime('approved_at')->nullable();

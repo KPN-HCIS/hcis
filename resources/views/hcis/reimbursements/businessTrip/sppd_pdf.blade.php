@@ -116,10 +116,10 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Ditugaskan Kepada :</b></td>
+            <td colspan="3"><b>Assigned to:</b></td>
         </tr>
         <tr>
-            <td class="label">Nama</td>
+            <td class="label">Name</td>
             <td class="colon">:</td>
             <td class="value">{{ $sppd->employee->fullname }}</td>
         </tr>
@@ -134,7 +134,7 @@
             <td class="value">{{ $sppd->employee->email }}</td>
         </tr>
         <tr>
-            <td class="label">Divisi</td>
+            <td class="label">Division</td>
             <td class="colon">:</td>
             <td class="value">{{ $sppd->divisi }}</td>
         </tr>
@@ -152,15 +152,15 @@
 
     <table>
         <tr>
-            <td colspan="3"><b>Untuk Melakukan Perjalanan Dinas ke :</b></td>
+            <td colspan="3"><b>To Make a Business Trip to:</b></td>
         </tr>
         <tr>
-            <td class="label">Tujuan</td>
+            <td class="label">Destination</td>
             <td class="colon">:</td>
             <td class="value">{{ $sppd->tujuan }}</td>
         </tr>
         <tr>
-            <td class="label">Keperluan</td>
+            <td class="label">Needs</td>
             <td class="colon">:</td>
             <td class="value">{{ $sppd->keperluan }}</td>
         </tr>
@@ -170,62 +170,67 @@
             Carbon::setLocale('id');
         @endphp
         <tr>
-            <td class="label">Dari Tanggal</td>
+            <td class="label">From Date</td>
             <td class="colon">:</td>
-            <td class="value">{{ Carbon::parse($sppd->mulai)->format('d F Y') }}</td>
+            <td class="value">{{ Carbon::parse($sppd->mulai)->format('d M Y') }}</td>
         </tr>
         <tr>
-            <td class="label">Sampai dengan tanggal</td>
+            <td class="label">To Date</td>
             <td class="colon">:</td>
-            <td class="value">{{ Carbon::parse($sppd->kembali)->format('d F Y') }}</td>
+            <td class="value">{{ Carbon::parse($sppd->kembali)->format('d M Y') }}</td>
+        </tr>
+        <tr>
+            <td class="label">Status</td>
+            <td class="colon">:</td>
+            <td class="value"><b>{{ $sppd->status }}</b></td>
         </tr>
     </table>
 
     <table>
         <tr>
-            <td colspan="3"><b>Disetujui Oleh :</b></td>
+            <td colspan="3"><b>Approved By :</b></td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 1</td>
+            <td class="label">Manager Name 1</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->atasan_1 }}</td>
+            <td class="value"> {{ $sppd->manager1->fullname ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->tanggal_atasan_1 }}</td>
+            <td class="value"> {{ $sppd->latestApprovalL1->approved_at ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Nama Atasan 2</td>
+            <td class="label">Manager Name 2</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->atasan_2 }}</td>
+            <td class="value">{{ $sppd->manager2->fullname ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Tanggal</td>
+            <td class="label">Date</td>
             <td class="colon">:</td>
-            <td class="value">{{ $sppd->tanggal_atasan_2 }}</td>
+            <td class="value"> {{ $sppd->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
     </table>
-    <p><b><i>Catatan : Persetujuan ini sudah disetujui secara Elektronik dan tidak memerlukan tanda tangan</b></i></p>
+    <p><b><i>Note: This agreement has been agreed electronically and does not require a signature.</b></i></p>
 
-    <h4>Diisi oleh Pejabat di Tempat tujuan</h4>
+    <h4>To be filled in by an official at the destination</h4>
     <table class="bottom-table">
         <tr>
-            <td>Tanggal Tiba</td>
+            <td>Arrival Date</td>
             <td>1.</td>
             <td>2.</td>
             <td>3.</td>
             <td>4.</td>
         </tr>
         <tr>
-            <td>Tanggal Kembali</td>
+            <td>Return Date</td>
             <td>1.</td>
             <td>2.</td>
             <td>3.</td>
             <td>4.</td>
         </tr>
         <tr>
-            <td class="ttd">Tanda tangan & Cap</td>
+            <td class="ttd">Signature & Stamp</td>
             <td>1.</td>
             <td>2.</td>
             <td>3.</td>
