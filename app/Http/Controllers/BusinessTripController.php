@@ -1554,7 +1554,7 @@ class BusinessTripController extends Controller
                             break;
                         case 'deklarasi':
                             $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
-                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2', 'Declaration Draft'])) {
+                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2', 'Rejected', 'Declaration Draft'])) {
                                 continue 2;
                             }
                             $pdfName = 'Deklarasi.pdf';
@@ -1790,7 +1790,7 @@ class BusinessTripController extends Controller
                             break;
                         case 'deklarasi':
                             $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
-                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2'])) {
+                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2', 'Rejected', 'Declaration Draft'])) {
                                 continue 2;
                             }
                             $pdfName = 'Deklarasi.pdf';

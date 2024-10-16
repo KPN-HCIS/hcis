@@ -59,6 +59,15 @@
                                 <tbody>
                                     <tr>
                                         <td class="text-center">1</td>
+                                        <td class="text-center">31231313131</td>
+                                        <td>Shin Ryujin</td>
+                                        <td class="text-center">Istri</td>
+                                        <td>Surabaya, 12 September 2000</td>
+                                        <td class="text-center">24 tahun</td>
+                                        <td class="text-center">Wife House</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center">2</td>
                                         <td class="text-center">01124040023</td>
                                         <td>Metta Saputra</td>
                                         <td class="text-center">Anak</td>
@@ -67,12 +76,12 @@
                                         <td class="text-center">Pelajar</td>
                                     </tr>
                                     <tr>
-                                        <td class="text-center">2</td>
+                                        <td class="text-center">3</td>
                                         <td class="text-center">352101313131</td>
                                         <td>Jocelyn Flores</td>
                                         <td class="text-center">Anak</td>
-                                        <td>Surabaya, 17 September 2004</td>
-                                        <td class="text-center">24 tahun</td>
+                                        <td>Surabaya, 17 September 2018</td>
+                                        <td class="text-center">6 tahun</td>
                                         <td class="text-center">Pelajar</td>
                                     </tr>
                                 </tbody>
@@ -166,7 +175,7 @@
                                         <td class="text-center">011/MDCL-2024</td>
                                         <td>RS. Murni Teguh</td>
                                         <td>Metta Saputra</td>
-                                        <td class="text-center">Demam</td>
+                                        <td class="text-center">Demam Panggung</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 200.0000</td>
@@ -184,8 +193,8 @@
                                         <td class="text-center">2024</td>
                                         <td class="text-center">012/MDCL-2024</td>
                                         <td>RS. Murni Teguh 2</td>
-                                        <td>Metta Saputra</td>
-                                        <td class="text-center">Demam</td>
+                                        <td>Jocelyn</td>
+                                        <td class="text-center">Sakit Hati</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 300.0000</td>
@@ -193,6 +202,25 @@
                                         <td class="text-center">-</td>
                                         <td style="align-content: center; text-align: center">
                                             <span class="badge rounded-pill bg-warning text-center" style="font-size: 12px; padding: 0.5rem 1rem;">Pending</span>
+                                        </td>
+                                        <td class="text-center">RAWR~</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center"></td>
+                                        <td class="text-center">2</td>
+                                        <td class="text-center">03 Sept 2024</td>
+                                        <td class="text-center">2024</td>
+                                        <td class="text-center">013/MDCL-2024</td>
+                                        <td>RS. Murni Teguh 3</td>
+                                        <td>Flores</td>
+                                        <td class="text-center">Budeg</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">Rp 400.0000</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">-</td>
+                                        <td style="align-content: center; text-align: center">
+                                            <span class="badge rounded-pill bg-danger text-center" style="font-size: 12px; padding: 0.5rem 1rem;">Rejected</span>
                                         </td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
