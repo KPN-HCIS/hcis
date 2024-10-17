@@ -1,0 +1,68 @@
+  {{-- Detail Penggunaan Plafond --}}
+  <div class="card shadow-none">
+      <div class="card-body">
+          <h4 class="card-title">Health Coverage Usage History</h4>
+          <div class="card-text">
+              <div class="table-responsive">
+                  <table class="display nowrap responsive" id="example" width="100%">
+                      <thead class="bg-primary text-center align-middle">
+                          <tr>
+                              <th></th>
+                              <th>No</th>
+                              <th>Date</th>
+                              <th>Period</th>
+                              <th data-priority="0">No. Medical</th>
+                              <th>Hospital Name</th>
+                              <th>Patient Name</th>
+                              <th>Disease</th>
+                              <th>Child Birth</th>
+                              <th>Inpatient</th>
+                              <th>Outpatient</th>
+                              <th>Glasses</th>
+                              <th data-priority="1">Status</th>
+                              <th data-priority="2">Action</th>
+                          </tr>
+
+                      </thead>
+                      <tbody>
+                          @foreach ($medical as $item)
+                              <tr>
+                                  <td class="text-center"></td>
+                                  <td class="text-center">{{ $loop->iteration }}</td>
+                                  <td>
+                                      {{ \Carbon\Carbon::parse($item->date)->format('d F Y') }}
+                                  </td>
+                                  <td class="text-center">{{ $item->period }}</td>
+                                  <td class="text-center">{{ $item->no_medic }}</td>
+                                  <td>{{ $item->hospital_name }}</td>
+                                  <td>{{ $item->patient_name }}</td>
+                                  <td>{{ $item->disease }}</td>
+                                  <td class="text-center">
+                                      {{ 'Rp. ' . number_format($item->child_birth, 0, ',', '.') }}</td>
+                                  <td class="text-center">
+                                      {{ 'Rp. ' . number_format($item->inpatient, 0, ',', '.') }}</td>
+                                  <td class="text-center">
+                                      {{ 'Rp. ' . number_format($item->outpatient, 0, ',', '.') }}</td>
+                                  <td class="text-center">
+                                      {{ 'Rp. ' . number_format($item->glasses, 0, ',', '.') }}</td>
+                                  <td style="align-content: center; text-align: center">
+                                      @php
+                                          $badgeClass = match ($item->status) {
+                                              'Pending' => 'bg-warning',
+                                              'Done' => 'bg-success',
+                                              'Rejected' => 'bg-danger',
+                                              'Draft' => 'bg-secondary',
+                                              default => 'bg-light', // fallback class for unexpected statuses
+                                          };
+                                      @endphp
+                                      <span class="badge rounded-pill {{ $badgeClass }} text-center"
+                                          style="font-size: 12px; padding: 0.5rem 1rem;">
+                                          {{ $item->status }}
+                                      </span>
+                                  </td>
+                                  <td class="text-center">RAWR~</td>
+                              </tr>
+                          @endforeach
+                      </tbody>
+                  </table>
+              </div>

@@ -30,6 +30,11 @@
             vertical-align: middle !important;
         }
 
+        table.dataTable>tbody>tr.child ul.dtr-details>li {
+            display: flex;
+            align-items: center !important;
+        }
+
         table.dataTable>tbody>tr.child span.dtr-title {
             min-width: 120px !important;
             max-width: 120px !important;
@@ -66,157 +71,34 @@
             </div>
         </div>
 
-
-        <div class="row mt-2">
-            {{-- Data Keluarga --}}
-            <div class="card shadow-none">
-                <div class="card-body">
-                    <h4 class="card-title">Family Data</h4>
-                    <div class="card-text">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-sm table-striped table-hover">
-                                <thead class="bg-primary align-middle text-center">
-                                    <th>No</th>
-                                    <th>NIK</th>
-                                    <th>Name</th>
-                                    <th>Relation</th>
-                                    <th>Date of Birth</th>
-                                    <th>Age</th>
-                                    <th>Status</th>
-                                </thead>
-                                <tbody>
-                                    @foreach ($family as $item)
-                                        <tr>
-                                            <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->gender }}</td>
-                                            <td>{{ $item->relation_type }}</td>
-                                            <td class="text-center">
-                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->format('d F Y') }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->age }} Years Old
-                                            </td>
-                                            <td class="text-center">{{ $item->jobs }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+        <div class="row">
+            <div class="card shadow-none p-1 py-3 d-flex align-items-center">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
+                            aria-selected="true">History</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+                            aria-selected="false">Plafon
+                            Medical</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact"
+                            aria-selected="false">Family
+                            Data</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                        @include('hcis.reimbursements.medical.historyMedical')
                     </div>
-                </div>
-            </div>
-
-            {{-- Jenis Plafond --}}
-            <div class="card shadow-none">
-                <div class="card-body">
-                    <h4 class="card-title">Health Coverage Limit</h4>
-                    <div class="card-text">
-                        <div class="table-responsive">
-                            <table class="display nowrap dataTable dtr-inline collapsed">
-                                <thead class="bg-primary text-center align-middle">
-                                    <tr>
-                                        <th rowspan="2" class="text-center sticky"
-                                            style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
-                                        <th colspan="4" class="text-center">Type of Health Coverage</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center">Child Birth</th>
-                                        <th class="text-center">Inpatient</th>
-                                        <th class="text-center">Outpatient</th>
-                                        <th class="text-center">Glasses</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($medical_plan as $item)
-                                        <tr>
-                                            <td class="text-center">{{ $item->period }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->child_birth_balance, 0, ',', '.') }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->inpatient_balance, 0, ',', '.') }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->outpatient_balance, 0, ',', '.') }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->glasses_balance, 0, ',', '.') }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">...
                     </div>
-                </div>
-            </div>
-
-            {{-- Detail Penggunaan Plafond --}}
-            <div class="card shadow-none">
-                <div class="card-body">
-                    <h4 class="card-title">Health Coverage Usage History</h4>
-                    <div class="card-text">
-                        <div class="table-responsive">
-                            <table class="display nowrap responsive" id="example" width="100%">
-                                <thead class="bg-primary text-center align-middle">
-                                    <tr>
-                                        <th></th>
-                                        <th>No</th>
-                                        <th>Date</th>
-                                        <th>Period</th>
-                                        <th data-priority="0">No. Medical</th>
-                                        <th>Hospital Name</th>
-                                        <th>Patient Name</th>
-                                        <th>Disease</th>
-                                        <th>Child Birth</th>
-                                        <th>Inpatient</th>
-                                        <th>Outpatient</th>
-                                        <th>Glasses</th>
-                                        <th data-priority="1">Status</th>
-                                        <th data-priority="2">Action</th>
-                                    </tr>
-
-                                </thead>
-                                <tbody>
-                                    @foreach ($medical as $item)
-                                        <tr>
-                                            <td class="text-center"></td>
-                                            <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>
-                                                {{ \Carbon\Carbon::parse($item->date)->format('d F Y') }}
-                                            </td>
-                                            <td class="text-center">{{ $item->period }}</td>
-                                            <td class="text-center">{{ $item->no_medic }}</td>
-                                            <td>{{ $item->hospital_name }}</td>
-                                            <td>{{ $item->patient_name }}</td>
-                                            <td>{{ $item->disease }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->child_birth, 0, ',', '.') }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->inpatient, 0, ',', '.') }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->outpatient, 0, ',', '.') }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->glasses, 0, ',', '.') }}</td>
-                                            <td style="align-content: center; text-align: center">
-                                                @php
-                                                    $badgeClass = match ($item->status) {
-                                                        'Pending' => 'bg-warning',
-                                                        'Done' => 'bg-success',
-                                                        'Rejected' => 'bg-danger',
-                                                        'Draft' => 'bg-secondary',
-                                                        default
-                                                            => 'bg-light', // fallback class for unexpected statuses
-                                                    };
-                                                @endphp
-                                                <span class="badge rounded-pill {{ $badgeClass }} text-center"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem;">
-                                                    {{ $item->status }}
-                                                </span>
-                                            </td>
-                                            <td class="text-center">RAWR~</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...
                     </div>
                 </div>
             </div>
