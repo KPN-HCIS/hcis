@@ -99,6 +99,7 @@
                                             </td>
                                             <td class="text-center">{{ $item->jobs }}</td>
                                         </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -130,10 +131,14 @@
                                     @foreach ($medical_plan as $item)
                                         <tr>
                                             <td class="text-center">{{ $item->period }}</td>
-                                            <td class="text-center">{{ 'Rp. ' . number_format($item->child_birth_balance, 0, ',', '.') }}</td>
-                                            <td class="text-center">{{ 'Rp. ' . number_format($item->inpatient_balance, 0, ',', '.') }}</td>
-                                            <td class="text-center">{{ 'Rp. ' . number_format($item->outpatient_balance, 0, ',', '.') }}</td>
-                                            <td class="text-center">{{ 'Rp. ' . number_format($item->glasses_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">
+                                                {{ 'Rp. ' . number_format($item->child_birth_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">
+                                                {{ 'Rp. ' . number_format($item->inpatient_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">
+                                                {{ 'Rp. ' . number_format($item->outpatient_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">
+                                                {{ 'Rp. ' . number_format($item->glasses_balance, 0, ',', '.') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -157,13 +162,12 @@
                                         <th>Date</th>
                                         <th>Period</th>
                                         <th data-priority="0">No. Medical</th>
-                                        <th>Hospital Nameeeeeeeeee</th>
+                                        <th>Hospital Name</th>
                                         <th>Patient Name</th>
                                         <th>Disease</th>
-                                        <th>Labor</th>
+                                        <th>Child Birth</th>
                                         <th>Inpatient</th>
                                         <th>Outpatient</th>
-                                        <th>Glasses Lens</th>
                                         <th>Glasses</th>
                                         <th data-priority="1">Status</th>
                                         <th data-priority="2">Action</th>
@@ -171,27 +175,45 @@
 
                                 </thead>
                                 <tbody>
-                                    {{-- @foreach ($medical_plan as $item) --}}
-                                    <tr>
-                                        <td class="text-center"></td>
-                                        <td class="text-center">1</td>
-                                        <td class="text-center">01 Sept 2024</td>
-                                        <td class="text-center">2024</td>
-                                        <td class="text-center">011/MDCL-2024</td>
-                                        <td>RS. Murni Teguh</td>
-                                        <td>Metta Saputra</td>
-                                        <td>Demam</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">Rp 200.0000</td>
-                                        <td class="text-center">-</td>
-                                        <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-success text-center"
-                                                style="font-size: 12px; padding: 0.5rem 1rem;">Done</span>
-                                        </td>
-                                        <td class="text-center">RAWR~</td>
-                                    </tr>
-                                    {{-- @endforeach --}}
+                                    @foreach ($medical as $item)
+                                        <tr>
+                                            <td class="text-center"></td>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                            <td>
+                                                {{ \Carbon\Carbon::parse($item->date)->format('d F Y') }}
+                                            </td>
+                                            <td class="text-center">{{ $item->period }}</td>
+                                            <td class="text-center">{{ $item->no_medic }}</td>
+                                            <td>{{ $item->hospital_name }}</td>
+                                            <td>{{ $item->patient_name }}</td>
+                                            <td>{{ $item->disease }}</td>
+                                            <td class="text-center">
+                                                {{ 'Rp. ' . number_format($item->child_birth, 0, ',', '.') }}</td>
+                                            <td class="text-center">
+                                                {{ 'Rp. ' . number_format($item->inpatient, 0, ',', '.') }}</td>
+                                            <td class="text-center">
+                                                {{ 'Rp. ' . number_format($item->outpatient, 0, ',', '.') }}</td>
+                                            <td class="text-center">
+                                                {{ 'Rp. ' . number_format($item->glasses, 0, ',', '.') }}</td>
+                                            <td style="align-content: center; text-align: center">
+                                                @php
+                                                    $badgeClass = match ($item->status) {
+                                                        'Pending' => 'bg-warning',
+                                                        'Done' => 'bg-success',
+                                                        'Rejected' => 'bg-danger',
+                                                        'Draft' => 'bg-secondary',
+                                                        default
+                                                            => 'bg-light', // fallback class for unexpected statuses
+                                                    };
+                                                @endphp
+                                                <span class="badge rounded-pill {{ $badgeClass }} text-center"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem;">
+                                                    {{ $item->status }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">RAWR~</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

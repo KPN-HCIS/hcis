@@ -129,13 +129,13 @@
                             @endphp
 
                             <div class="col-md-8 mt-2">
-                                <label for="medical_prrof" class="form-label">Upload Proof</label>
+                                <label for="medical_proof" class="form-label">Upload Proof</label>
                                 <div class="d-flex align-items-center">
-                                    <input type="file" id="medical_prrof" name="medical_prrof"
+                                    <input type="file" id="medical_proof" name="medical_proof"
                                         accept="image/*,application/pdf" class="form-control me-2">
 
-                                    @if (isset($ca->medical_prrof) && $ca->medical_prrof)
-                                        <a href="{{ Storage::url($ca->medical_prrof) }}" target="_blank"
+                                    @if (isset($medic->medical_proof) && $medic->medical_proof)
+                                        <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
                                             class="btn btn-primary rounded-pill">
                                             View
                                         </a>

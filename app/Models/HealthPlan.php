@@ -13,6 +13,7 @@ class HealthPlan extends Model
     use SoftDeletes;
 
     protected $table = 'health_plan';
+    protected $primaryKey = 'plan_id';
     protected $fillable = [
         'plan_id',
         'employee_id',
@@ -23,6 +24,7 @@ class HealthPlan extends Model
         'glasses_balance',
         'period',
         'child_birth_balance',
+        'created_by',
     ];
 
 }

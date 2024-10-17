@@ -11,7 +11,7 @@ class HealthCoverage extends Model
 {
     use HasFactory,  HasUuids;
     use SoftDeletes;
-
+    protected $primaryKey = 'usage_id';
     protected $table = 'health_coverage_usage';
 
     protected $fillable = [
