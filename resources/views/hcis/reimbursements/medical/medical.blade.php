@@ -30,6 +30,11 @@
             vertical-align: middle !important;
         }
 
+        table.dataTable>tbody>tr.child ul.dtr-details>li {
+            display: flex;
+            align-items: center !important;
+        }
+
         table.dataTable>tbody>tr.child span.dtr-title {
             min-width: 120px !important;
             max-width: 120px !important;
