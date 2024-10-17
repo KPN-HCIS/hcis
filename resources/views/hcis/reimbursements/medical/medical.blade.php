@@ -4,6 +4,36 @@
     <style>
         th {
             color: white !important;
+            text-align: center;
+        }
+
+        table {
+            white-space: nowrap;
+        }
+
+        tr.sticky {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: var(--stickyBackground);
+        }
+
+        th.sticky,
+        td.sticky {
+            position: sticky;
+            left: 0;
+            background: var(--stickyBackground);
+        }
+
+        table.dataTable>tbody>tr.child ul.dtr-details {
+            width: 100%;
+            vertical-align: middle !important;
+        }
+
+        table.dataTable>tbody>tr.child span.dtr-title {
+            min-width: 120px !important;
+            max-width: 120px !important;
+            text-wrap: wrap !important;
         }
     </style>
 @endsection
@@ -11,35 +41,33 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6 mt-3">
-                <div class="page-title-box d-flex align-items-center">
-                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
-                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
-                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
-                                <i class="bi bi-arrow-left"></i>
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item">
+            <!-- Breadcrumb Section -->
+            <div class="col-md-6 d-flex align-items-center">
+                <ol class="breadcrumb mb-0" style="align-items: center; padding-left: 0;">
+                    <li class="breadcrumb-item" style="font-size: 18px;">
+                        <a href="/reimbursements">
                             {{ $parentLink }}
-                        </li>
-                        <li class="breadcrumb-item">
-                            {{ $link }}
-                        </li>
-                    </ol>
-                </div>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        {{ $link }}
+                    </li>
+                </ol>
             </div>
-            <div class="col-md-6 mt-4 mb-2 text-end">
+
+            <!-- Button Section -->
+            <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
                 <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
-                {{-- Add Data Button --}}
                 <a href="{{ route('medical-form.add') }}" class="btn btn-primary rounded-pill">
                     <i class="bi bi-plus-circle"></i> Add Medical
                 </a>
             </div>
         </div>
 
-        <div class="row">
+
+        <div class="row mt-2">
             {{-- Data Keluarga --}}
             <div class="card shadow-none">
                 <div class="card-body">
@@ -49,8 +77,8 @@
                             <table class="table table-bordered table-sm table-striped table-hover">
                                 <thead class="bg-primary align-middle text-center">
                                     <th>No</th>
+                                    <th>NIK</th>
                                     <th>Name</th>
-                                    <th>Gender</th>
                                     <th>Relation</th>
                                     <th>Date of Birth</th>
                                     <th>Age</th>
@@ -72,7 +100,6 @@
                                             <td class="text-center">{{ $item->jobs }}</td>
                                         </tr>
                                 </tbody>
-                                @endforeach
                             </table>
                         </div>
                     </div>
@@ -88,7 +115,8 @@
                             <table class="display nowrap dataTable dtr-inline collapsed">
                                 <thead class="bg-primary text-center align-middle">
                                     <tr>
-                                        <th rowspan="2" class="text-center">Period</th>
+                                        <th rowspan="2" class="text-center sticky"
+                                            style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
                                         <th colspan="4" class="text-center">Type of Health Coverage</th>
                                     </tr>
                                     <tr>
@@ -121,23 +149,24 @@
                     <h4 class="card-title">Health Coverage Usage History</h4>
                     <div class="card-text">
                         <div class="table-responsive">
-                            <table class="display nowrap responsive" id="example">
+                            <table class="display nowrap responsive" id="example" width="100%">
                                 <thead class="bg-primary text-center align-middle">
                                     <tr>
                                         <th></th>
-                                        <th class="text-center">No</th>
-                                        <th class="text-center">Date</th>
-                                        <th class="text-center">Period</th>
-                                        <th class="text-center" data-priority="0">No. Medical</th>
-                                        <th class="text-center">Hospital Name</th>
-                                        <th class="text-center">Patient Name</th>
-                                        <th class="text-center">Disease</th>
-                                        <th class="text-center">Child Birth</th>
-                                        <th class="text-center">Inpatient</th>
-                                        <th class="text-center">Outpatient</th>
-                                        <th class="text-center">Glasses</th>
-                                        <th class="text-center" data-priority="1">Status</th>
-                                        <th class="text-center" data-priority="1">Action</th>
+                                        <th>No</th>
+                                        <th>Date</th>
+                                        <th>Period</th>
+                                        <th data-priority="0">No. Medical</th>
+                                        <th>Hospital Nameeeeeeeeee</th>
+                                        <th>Patient Name</th>
+                                        <th>Disease</th>
+                                        <th>Labor</th>
+                                        <th>Inpatient</th>
+                                        <th>Outpatient</th>
+                                        <th>Glasses Lens</th>
+                                        <th>Glasses</th>
+                                        <th data-priority="1">Status</th>
+                                        <th data-priority="2">Action</th>
                                     </tr>
 
                                 </thead>
@@ -151,7 +180,7 @@
                                         <td class="text-center">011/MDCL-2024</td>
                                         <td>RS. Murni Teguh</td>
                                         <td>Metta Saputra</td>
-                                        <td class="text-center">Demam Panggung</td>
+                                        <td>Demam</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 200.0000</td>
