@@ -6,67 +6,68 @@
             color: white !important;
             text-align: center;
         }
+
         table {
             white-space: nowrap;
         }
+
         tr.sticky {
             position: sticky;
             top: 0;
             z-index: 1;
             background: var(--stickyBackground);
         }
+
         th.sticky,
         td.sticky {
             position: sticky;
             left: 0;
             background: var(--stickyBackground);
         }
-        table.dataTable>tbody>tr.child ul.dtr-details {
-        width: 100%;
-        vertical-align: middle !important;
 
+        table.dataTable>tbody>tr.child ul.dtr-details {
+            width: 100%;
+            vertical-align: middle !important;
         }
+
         table.dataTable>tbody>tr.child span.dtr-title {
-        min-width: 120px !important;
-        max-width: 120px !important;
-        text-wrap: wrap !important;
+            min-width: 120px !important;
+            max-width: 120px !important;
+            text-wrap: wrap !important;
         }
     </style>
-    
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6 mt-3">
-                <div class="page-title-box d-flex align-items-center">
-                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
-                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
-                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
-                                <i class="bi bi-arrow-left"></i>
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item">
+            <!-- Breadcrumb Section -->
+            <div class="col-md-6 d-flex align-items-center">
+                <ol class="breadcrumb mb-0" style="align-items: center; padding-left: 0;">
+                    <li class="breadcrumb-item" style="font-size: 18px;">
+                        <a href="/reimbursements">
                             {{ $parentLink }}
-                        </li>
-                        <li class="breadcrumb-item">
-                            {{ $link }}
-                        </li>
-                    </ol>
-                </div>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        {{ $link }}
+                    </li>
+                </ol>
             </div>
-            <div class="col-md-6 mt-4 mb-2 text-end">
+        
+            <!-- Button Section -->
+            <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
                 <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
-                {{-- Add Data Button --}}
                 <a href="{{ route('medical-form.add') }}" class="btn btn-primary rounded-pill">
                     <i class="bi bi-plus-circle"></i> Add Medical
                 </a>
             </div>
         </div>
-
-        <div class="row">
+        
+        
+        <div class="row mt-2">
             {{-- Data Keluarga --}}
             <div class="card shadow-none">
                 <div class="card-body">
@@ -76,30 +77,33 @@
                             <table class="table table-bordered table-sm table-striped table-hover">
                                 <thead class="bg-primary align-middle text-center">
                                     <th>No</th>
+                                    <th>NIK</th>
                                     <th>Name</th>
-                                    <th>Gender</th>
                                     <th>Relation</th>
                                     <th>Date of Birth</th>
                                     <th>Age</th>
                                     <th>Status</th>
                                 </thead>
                                 <tbody>
-                                    @foreach ($family as $item)
-                                        <tr>
-                                            <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->gender }}</td>
-                                            <td>{{ $item->relation_type }}</td>
-                                            <td class="text-center">
-                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->format('d-M-Y') }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->age }} Years Old
-                                            </td>
-                                            <td class="text-center">{{ $item->jobs }}</td>
-                                        </tr>
+                                    <tr>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">01124040023</td>
+                                        <td>Metta Saputra</td>
+                                        <td class="text-center">Anak</td>
+                                        <td>Palembang, 02 Mei 2000</td>
+                                        <td class="text-center">24 tahun</td>
+                                        <td class="text-center">Pelajar</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center">2</td>
+                                        <td class="text-center">352101313131</td>
+                                        <td>Jocelyn Flores</td>
+                                        <td class="text-center">Anak</td>
+                                        <td>Surabaya, 17 September 2004</td>
+                                        <td class="text-center">20 tahun</td>
+                                        <td class="text-center">Pelajar</td>
+                                    </tr>
                                 </tbody>
-                                @endforeach
                             </table>
                         </div>
                     </div>
@@ -114,12 +118,13 @@
                         <div class="table-responsive">
                             <table class="display nowrap dataTable dtr-inline collapsed">
                                 <thead class="bg-primary text-center align-middle">
-                                    <tr >
-                                        <th rowspan="2" class="text-center sticky" style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
+                                    <tr>
+                                        <th rowspan="2" class="text-center sticky"
+                                            style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
                                         <th colspan="4" class="text-center">Type of Health Coverage</th>
                                     </tr>
                                     <tr>
-                                        <th >Labor</th>
+                                        <th>Labor</th>
                                         <th class="text-center">Inpatient</th>
                                         <th class="text-center">Outpatient</th>
                                         <th class="text-center">Glasses</th>
@@ -150,20 +155,20 @@
                                 <thead class="bg-primary text-center align-middle">
                                     <tr>
                                         <th></th>
-                                        <th class="text-center">No</th>
-                                        <th class="text-center">Date</th>
-                                        <th class="text-center">Period</th>
-                                        <th class="text-center" data-priority="0">No. Medical</th>
-                                        <th class="text-center">Hospital Nameeeeeeeeee</th>
-                                        <th class="text-center">Patient Name</th>
-                                        <th class="text-center">Disease</th>
-                                        <th class="text-center">Labor</th>
-                                        <th class="text-center">Inpatient</th>
-                                        <th class="text-center">Outpatient</th>
-                                        <th class="text-center">Glasses Lens</th>
-                                        <th class="text-center">Glasses</th>
-                                        <th class="text-center" data-priority="1">Status</th>
-                                        <th class="text-center" data-priority="2">Action</th>
+                                        <th>No</th>
+                                        <th>Date</th>
+                                        <th>Period</th>
+                                        <th data-priority="0">No. Medical</th>
+                                        <th>Hospital Nameeeeeeeeee</th>
+                                        <th>Patient Name</th>
+                                        <th>Disease</th>
+                                        <th>Labor</th>
+                                        <th>Inpatient</th>
+                                        <th>Outpatient</th>
+                                        <th>Glasses Lens</th>
+                                        <th>Glasses</th>
+                                        <th data-priority="1">Status</th>
+                                        <th data-priority="2">Action</th>
                                     </tr>
 
                                 </thead>
@@ -176,16 +181,13 @@
                                         <td class="text-center">011/MDCL-2024</td>
                                         <td>RS. Murni Teguh</td>
                                         <td>Metta Saputra</td>
-                                        <td class="text-center">Demam Panggung</td>
+                                        <td>Demam</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 200.0000</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
-                                        <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-success text-center"
-                                                style="font-size: 12px; padding: 0.5rem 1rem;">Done</span>
-                                        </td>
+                                        <td class="text-center">Selesai</td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
                                     <tr>
@@ -195,37 +197,14 @@
                                         <td class="text-center">2024</td>
                                         <td class="text-center">012/MDCL-2024</td>
                                         <td>RS. Murni Teguh 2</td>
-                                        <td>Jocelyn</td>
-                                        <td class="text-center">Sakit Hati</td>
+                                        <td>Metta Saputra</td>
+                                        <td>Demam</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 300.0000</td>
                                         <td class="text-center">-</td>
                                         <td class="text-center">-</td>
-                                        <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-warning text-center"
-                                                style="font-size: 12px; padding: 0.5rem 1rem;">Pending</span>
-                                        </td>
-                                        <td class="text-center">RAWR~</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center"></td>
-                                        <td class="text-center">2</td>
-                                        <td class="text-center">03 Sept 2024</td>
-                                        <td class="text-center">2024</td>
-                                        <td class="text-center">013/MDCL-2024</td>
-                                        <td>RS. Murni Teguh 3</td>
-                                        <td>Flores</td>
-                                        <td class="text-center">Budeg</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">Rp 400.0000</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-danger text-center"
-                                                style="font-size: 12px; padding: 0.5rem 1rem;">Rejected</span>
-                                        </td>
+                                        <td class="text-center">Selesai</td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
                                 </tbody>
