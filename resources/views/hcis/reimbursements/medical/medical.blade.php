@@ -6,67 +6,68 @@
             color: white !important;
             text-align: center;
         }
+
         table {
             white-space: nowrap;
         }
+
         tr.sticky {
             position: sticky;
             top: 0;
             z-index: 1;
             background: var(--stickyBackground);
         }
+
         th.sticky,
         td.sticky {
             position: sticky;
             left: 0;
             background: var(--stickyBackground);
         }
-        table.dataTable>tbody>tr.child ul.dtr-details {
-        width: 100%;
-        vertical-align: middle !important;
 
+        table.dataTable>tbody>tr.child ul.dtr-details {
+            width: 100%;
+            vertical-align: middle !important;
         }
+
         table.dataTable>tbody>tr.child span.dtr-title {
-        min-width: 120px !important;
-        max-width: 120px !important;
-        text-wrap: wrap !important;
+            min-width: 120px !important;
+            max-width: 120px !important;
+            text-wrap: wrap !important;
         }
     </style>
-    
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6 mt-3">
-                <div class="page-title-box d-flex align-items-center">
-                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
-                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
-                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
-                                <i class="bi bi-arrow-left"></i>
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item">
+            <!-- Breadcrumb Section -->
+            <div class="col-md-6 d-flex align-items-center">
+                <ol class="breadcrumb mb-0" style="align-items: center; padding-left: 0;">
+                    <li class="breadcrumb-item" style="font-size: 18px;">
+                        <a href="/reimbursements">
                             {{ $parentLink }}
-                        </li>
-                        <li class="breadcrumb-item">
-                            {{ $link }}
-                        </li>
-                    </ol>
-                </div>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        {{ $link }}
+                    </li>
+                </ol>
             </div>
-            <div class="col-md-6 mt-4 mb-2 text-end">
+        
+            <!-- Button Section -->
+            <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
                 <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
-                {{-- Add Data Button --}}
                 <a href="{{ route('medical-form.add') }}" class="btn btn-primary rounded-pill">
                     <i class="bi bi-plus-circle"></i> Add Medical
                 </a>
             </div>
         </div>
-
-        <div class="row">
+        
+        
+        <div class="row mt-2">
             {{-- Data Keluarga --}}
             <div class="card shadow-none">
                 <div class="card-body">
@@ -117,12 +118,13 @@
                         <div class="table-responsive">
                             <table class="display nowrap dataTable dtr-inline collapsed">
                                 <thead class="bg-primary text-center align-middle">
-                                    <tr >
-                                        <th rowspan="2" class="text-center sticky" style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
+                                    <tr>
+                                        <th rowspan="2" class="text-center sticky"
+                                            style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
                                         <th colspan="4" class="text-center">Type of Health Coverage</th>
                                     </tr>
                                     <tr>
-                                        <th >Labor</th>
+                                        <th>Labor</th>
                                         <th class="text-center">Inpatient</th>
                                         <th class="text-center">Outpatient</th>
                                         <th class="text-center">Glasses</th>
