@@ -59,7 +59,7 @@
                     </li>
                 </ol>
             </div>
-        
+
             <!-- Button Section -->
             <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
                 <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
@@ -70,8 +70,8 @@
                 </a>
             </div>
         </div>
-        
-        
+
+
         <div class="row mt-2">
             {{-- Data Keluarga --}}
             <div class="card shadow-none">
@@ -90,24 +90,20 @@
                                     <th>Status</th>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="text-center">1</td>
-                                        <td class="text-center">01124040023</td>
-                                        <td>Metta Saputra</td>
-                                        <td class="text-center">Anak</td>
-                                        <td>Palembang, 02 Mei 2000</td>
-                                        <td class="text-center">24 tahun</td>
-                                        <td class="text-center">Pelajar</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2</td>
-                                        <td class="text-center">352101313131</td>
-                                        <td>Jocelyn Flores</td>
-                                        <td class="text-center">Anak</td>
-                                        <td>Surabaya, 17 September 2004</td>
-                                        <td class="text-center">20 tahun</td>
-                                        <td class="text-center">Pelajar</td>
-                                    </tr>
+                                    @foreach ($family as $item)
+                                        <tr>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                            <td>{{ $item->name }}</td>
+                                            <td>{{ $item->gender }}</td>
+                                            <td>{{ $item->relation_type }}</td>
+                                            <td class="text-center">
+                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->format('d F Y') }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->age }} Years Old
+                                            </td>
+                                            <td class="text-center">{{ $item->jobs }}</td>
+                                        </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -129,20 +125,22 @@
                                         <th colspan="4" class="text-center">Type of Health Coverage</th>
                                     </tr>
                                     <tr>
-                                        <th>Labor</th>
+                                        <th class="text-center">Child Birth</th>
                                         <th class="text-center">Inpatient</th>
                                         <th class="text-center">Outpatient</th>
                                         <th class="text-center">Glasses</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="sticky" style="background-color:white;z-index: auto;">2022</td>
-                                        <td class="text-center">Rp 16.000.000</td>
-                                        <td class="text-center">Rp 10.000.000</td>
-                                        <td class="text-center">Rp 7.000.000</td>
-                                        <td class="text-center">Rp 750.000</td>
-                                    </tr>
+                                    @foreach ($medical_plan as $item)
+                                        <tr>
+                                            <td class="text-center">{{ $item->period }}</td>
+                                            <td class="text-center">{{ 'Rp. ' . number_format($item->child_birth_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">{{ 'Rp. ' . number_format($item->inpatient_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">{{ 'Rp. ' . number_format($item->outpatient_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">{{ 'Rp. ' . number_format($item->glasses_balance, 0, ',', '.') }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -178,6 +176,7 @@
 
                                 </thead>
                                 <tbody>
+                                    {{-- @foreach ($medical_plan as $item) --}}
                                     <tr>
                                         <td class="text-center"></td>
                                         <td class="text-center">1</td>
@@ -191,27 +190,13 @@
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 200.0000</td>
                                         <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">Selesai</td>
+                                        <td style="align-content: center; text-align: center">
+                                            <span class="badge rounded-pill bg-success text-center"
+                                                style="font-size: 12px; padding: 0.5rem 1rem;">Done</span>
+                                        </td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
-                                    <tr>
-                                        <td class="text-center"></td>
-                                        <td class="text-center">2</td>
-                                        <td class="text-center">02 Sept 2024</td>
-                                        <td class="text-center">2024</td>
-                                        <td class="text-center">012/MDCL-2024</td>
-                                        <td>RS. Murni Teguh 2</td>
-                                        <td>Metta Saputra</td>
-                                        <td>Demam</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">Rp 300.0000</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">Selesai</td>
-                                        <td class="text-center">RAWR~</td>
-                                    </tr>
+                                    {{-- @endforeach --}}
                                 </tbody>
                             </table>
                         </div>
