@@ -72,6 +72,7 @@
         </div>
         <div class="row">
             <div class="card shadow-none p-1 py-3">
+                <div class="d-flex justify-content-center">
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
@@ -89,7 +90,7 @@
                             aria-selected="false">Family Data</button>
                     </li>
                 </ul>
-
+            </div>
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                         @include('hcis.reimbursements.medical.historyMedical')
