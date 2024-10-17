@@ -1,5 +1,5 @@
   {{-- Detail Penggunaan Plafond --}}
-  <div class="card shadow-none">
+  <div class="card">
       <div class="card-body">
           <h4 class="card-title">Health Coverage Usage History</h4>
           <div class="card-text">
@@ -64,8 +64,8 @@
                                       @if ($item->status == 'Draft')
                                           <form method="GET" action=" /medical/form-update/{{ $item->usage_id }}"
                                               style="display: inline-block;">
-                                              <button type="submit" class="btn btn-outline-warning rounded-pill my-1" data-toggle="tooltip"
-                                                  title="Edit">
+                                              <button type="submit" class="btn btn-outline-warning rounded-pill my-1"
+                                                  data-toggle="tooltip" title="Edit">
                                                   <i class="bi bi-pencil-square"></i>
                                               </button>
                                           </form>
@@ -90,3 +90,6 @@
                       </tbody>
                   </table>
               </div>
+          </div>
+      </div>
+  </div>
