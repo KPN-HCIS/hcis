@@ -4,8 +4,35 @@
     <style>
         th {
             color: white !important;
+            text-align: center;
+        }
+        table {
+            white-space: nowrap;
+        }
+        tr.sticky {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: var(--stickyBackground);
+        }
+        th.sticky,
+        td.sticky {
+            position: sticky;
+            left: 0;
+            background: var(--stickyBackground);
+        }
+        table.dataTable>tbody>tr.child ul.dtr-details {
+        width: 100%;
+        vertical-align: middle !important;
+
+        }
+        table.dataTable>tbody>tr.child span.dtr-title {
+        min-width: 120px !important;
+        max-width: 120px !important;
+        text-wrap: wrap !important;
         }
     </style>
+    
 @endsection
 
 @section('content')
@@ -87,12 +114,12 @@
                         <div class="table-responsive">
                             <table class="display nowrap dataTable dtr-inline collapsed">
                                 <thead class="bg-primary text-center align-middle">
-                                    <tr>
-                                        <th rowspan="2" class="text-center">Period</th>
+                                    <tr >
+                                        <th rowspan="2" class="text-center sticky" style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
                                         <th colspan="4" class="text-center">Type of Health Coverage</th>
                                     </tr>
                                     <tr>
-                                        <th class="text-center">Labor</th>
+                                        <th >Labor</th>
                                         <th class="text-center">Inpatient</th>
                                         <th class="text-center">Outpatient</th>
                                         <th class="text-center">Glasses</th>
@@ -100,21 +127,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="text-center">2022</td>
-                                        <td class="text-center">Rp 16.000.000</td>
-                                        <td class="text-center">Rp 10.000.000</td>
-                                        <td class="text-center">Rp 7.000.000</td>
-                                        <td class="text-center">Rp 750.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2023</td>
-                                        <td class="text-center">Rp 0</td>
-                                        <td class="text-center">Rp 7.000.000</td>
-                                        <td class="text-center">Rp 3.000.000</td>
-                                        <td class="text-center">Rp 250.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2024</td>
+                                        <td class="sticky" style="background-color:white;z-index: auto;">2022</td>
                                         <td class="text-center">Rp 16.000.000</td>
                                         <td class="text-center">Rp 10.000.000</td>
                                         <td class="text-center">Rp 7.000.000</td>
@@ -133,7 +146,7 @@
                     <h4 class="card-title">Health Coverage Usage History</h4>
                     <div class="card-text">
                         <div class="table-responsive">
-                            <table class="display nowrap responsive" id="example">
+                            <table class="display nowrap responsive" id="example" width="100%">
                                 <thead class="bg-primary text-center align-middle">
                                     <tr>
                                         <th></th>
@@ -141,7 +154,7 @@
                                         <th class="text-center">Date</th>
                                         <th class="text-center">Period</th>
                                         <th class="text-center" data-priority="0">No. Medical</th>
-                                        <th class="text-center">Hospital Name</th>
+                                        <th class="text-center">Hospital Nameeeeeeeeee</th>
                                         <th class="text-center">Patient Name</th>
                                         <th class="text-center">Disease</th>
                                         <th class="text-center">Labor</th>
@@ -150,7 +163,7 @@
                                         <th class="text-center">Glasses Lens</th>
                                         <th class="text-center">Glasses</th>
                                         <th class="text-center" data-priority="1">Status</th>
-                                        <th class="text-center">Action</th>
+                                        <th class="text-center" data-priority="2">Action</th>
                                     </tr>
 
                                 </thead>
