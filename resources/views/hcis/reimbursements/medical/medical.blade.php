@@ -9,6 +9,7 @@
 
         table {
             white-space: nowrap;
+            width: 100%;
         }
 
         tr.sticky {
@@ -59,9 +60,6 @@
                     </li>
                 </ol>
             </div>
-
-            @include('hcis.reimbursements.businessTrip.modal')
-
             <!-- Button Section -->
             <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
                 <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
@@ -72,16 +70,15 @@
                 </a>
             </div>
         </div>
-
         <div class="row">
-            <div class="card shadow-none p-1 py-3 d-flex align-items-center">
+            <div class="card shadow-none p-1 py-3">
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
                             aria-selected="true">History</button>
                     </li>
-                    {{-- <li class="nav-item" role="presentation">
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
                             aria-selected="false">Plafon Medical</button>
@@ -90,7 +87,7 @@
                         <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact"
                             aria-selected="false">Family Data</button>
-                    </li> --}}
+                    </li>
                 </ul>
 
                 <div class="tab-content" id="pills-tabContent">
