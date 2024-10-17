@@ -64,7 +64,7 @@
                                             <td>{{ $item->gender }}</td>
                                             <td>{{ $item->relation_type }}</td>
                                             <td class="text-center">
-                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->format('d-M-Y') }}
+                                                {{ \Carbon\Carbon::parse($item->date_of_birth)->format('d F Y') }}
                                             </td>
                                             <td class="text-center">
                                                 {{ \Carbon\Carbon::parse($item->date_of_birth)->age }} Years Old
@@ -92,34 +92,22 @@
                                         <th colspan="4" class="text-center">Type of Health Coverage</th>
                                     </tr>
                                     <tr>
-                                        <th class="text-center">Labor</th>
+                                        <th class="text-center">Child Birth</th>
                                         <th class="text-center">Inpatient</th>
                                         <th class="text-center">Outpatient</th>
                                         <th class="text-center">Glasses</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="text-center">2022</td>
-                                        <td class="text-center">Rp 16.000.000</td>
-                                        <td class="text-center">Rp 10.000.000</td>
-                                        <td class="text-center">Rp 7.000.000</td>
-                                        <td class="text-center">Rp 750.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2023</td>
-                                        <td class="text-center">Rp 0</td>
-                                        <td class="text-center">Rp 7.000.000</td>
-                                        <td class="text-center">Rp 3.000.000</td>
-                                        <td class="text-center">Rp 250.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2024</td>
-                                        <td class="text-center">Rp 16.000.000</td>
-                                        <td class="text-center">Rp 10.000.000</td>
-                                        <td class="text-center">Rp 7.000.000</td>
-                                        <td class="text-center">Rp 750.000</td>
-                                    </tr>
+                                    @foreach ($medical_plan as $item)
+                                        <tr>
+                                            <td class="text-center">{{ $item->period }}</td>
+                                            <td class="text-center">{{ 'Rp. ' . number_format($item->child_birth_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">{{ 'Rp. ' . number_format($item->inpatient_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">{{ 'Rp. ' . number_format($item->outpatient_balance, 0, ',', '.') }}</td>
+                                            <td class="text-center">{{ 'Rp. ' . number_format($item->glasses_balance, 0, ',', '.') }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -144,17 +132,17 @@
                                         <th class="text-center">Hospital Name</th>
                                         <th class="text-center">Patient Name</th>
                                         <th class="text-center">Disease</th>
-                                        <th class="text-center">Labor</th>
+                                        <th class="text-center">Child Birth</th>
                                         <th class="text-center">Inpatient</th>
                                         <th class="text-center">Outpatient</th>
-                                        <th class="text-center">Glasses Lens</th>
                                         <th class="text-center">Glasses</th>
                                         <th class="text-center" data-priority="1">Status</th>
-                                        <th class="text-center">Action</th>
+                                        <th class="text-center" data-priority="1">Action</th>
                                     </tr>
 
                                 </thead>
                                 <tbody>
+                                    {{-- @foreach ($medical_plan as $item) --}}
                                     <tr>
                                         <td class="text-center"></td>
                                         <td class="text-center">1</td>
@@ -168,53 +156,13 @@
                                         <td class="text-center">-</td>
                                         <td class="text-center">Rp 200.0000</td>
                                         <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
                                         <td style="align-content: center; text-align: center">
                                             <span class="badge rounded-pill bg-success text-center"
                                                 style="font-size: 12px; padding: 0.5rem 1rem;">Done</span>
                                         </td>
                                         <td class="text-center">RAWR~</td>
                                     </tr>
-                                    <tr>
-                                        <td class="text-center"></td>
-                                        <td class="text-center">2</td>
-                                        <td class="text-center">02 Sept 2024</td>
-                                        <td class="text-center">2024</td>
-                                        <td class="text-center">012/MDCL-2024</td>
-                                        <td>RS. Murni Teguh 2</td>
-                                        <td>Jocelyn</td>
-                                        <td class="text-center">Sakit Hati</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">Rp 300.0000</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-warning text-center"
-                                                style="font-size: 12px; padding: 0.5rem 1rem;">Pending</span>
-                                        </td>
-                                        <td class="text-center">RAWR~</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center"></td>
-                                        <td class="text-center">2</td>
-                                        <td class="text-center">03 Sept 2024</td>
-                                        <td class="text-center">2024</td>
-                                        <td class="text-center">013/MDCL-2024</td>
-                                        <td>RS. Murni Teguh 3</td>
-                                        <td>Flores</td>
-                                        <td class="text-center">Budeg</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">Rp 400.0000</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-center">-</td>
-                                        <td style="align-content: center; text-align: center">
-                                            <span class="badge rounded-pill bg-danger text-center"
-                                                style="font-size: 12px; padding: 0.5rem 1rem;">Rejected</span>
-                                        </td>
-                                        <td class="text-center">RAWR~</td>
-                                    </tr>
+                                    {{-- @endforeach --}}
                                 </tbody>
                             </table>
                         </div>
