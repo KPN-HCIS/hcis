@@ -32,7 +32,7 @@
                         <a href="/medical" type="button" class="btn-close btn-close-white" aria-label="Close"></a>
                     </div>
                     <div class="card-body">
-                        <form id="medicForm" action="/medical/form-add/post" method="POST">
+                        <form id="medicForm" action="/medical/form-add/post" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row mb-2">
                                 <div class="col-md-4 mb-2">
@@ -83,40 +83,23 @@
                                         required>
                                 </div>
                             </div>
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <label for="rawatInap" class="form-label">Inpatient</label>
-                                    <div class="input-group input-group-sm" id="rawatInap">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputRawatInap" name="inpatient" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="rawatJalan" class="form-label">Outpatient</label>
-                                    <div class="input-group input-group-sm" id="rawatJalan">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputRawatJalan" name="outpatient" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="persalinan" class="form-label">Child Birth</label>
-                                    <div class="input-group input-group-sm" id="persalinan">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputPersalinan" name="child_birth" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="kacamata" class="form-label">Glasses</label>
-                                    <div class="input-group input-group-sm" id="kacamata">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputKacamata" name="glasses" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)" />
-                                    </div>
+                            <div class="row mb-2">
+                                <div class="col-md-12">
+                                    <label for="medical_type" class="form-label">Medical Type</label>
+                                    <select class="form-select form-select-sm select2" id="medical_type" name="medical_type[]"
+                                        multiple required>
+                                        {{-- <option value="" selected>--- Choose Medical Type ---</option> --}}
+                                        @foreach ($medical_type as $type)
+                                            <option value="{{ $type->name }}">
+                                                {{ $type->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
+                            {{-- Dynamic Forms --}}
+                            <div id="dynamicForms" class="row"></div>
+
                             <div class="row mb-2">
                                 <div class="col-md-12 mt-2">
                                     <label for="" class="form-label">Detail Information</label>
@@ -142,59 +125,6 @@
                                     @endif
                                 </div>
                             </div>
-                            {{-- <div class="row g-3">
-                                <div class="col-md-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="rawatInap"
-                                            onchange="toggleInput('rawatInap', 'rawatInapInputGroup')" />
-                                        <label class="form-check-label" for="rawatInap">Rawat Inap</label>
-                                    </div>
-                                    <div class="input-group input-group-sm" id="rawatInapInputGroup" style="display: none;">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputRawatInap" class="form-control" placeholder="0" oninput="formatCurrency(this)"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="rawatJalan"
-                                            onchange="toggleInput('rawatJalan', 'rawatJalanInputGroup')" />
-                                        <label class="form-check-label" for="rawatJalan">Rawat Jalan</label>
-                                    </div>
-                                    <div class="input-group input-group-sm" id="rawatJalanInputGroup"
-                                        style="display: none;">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputRawatJalan" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="persalinan"
-                                            onchange="toggleInput('persalinan', 'persalinanInputGroup')" />
-                                        <label class="form-check-label" for="persalinan">Persalinan</label>
-                                    </div>
-                                    <div class="input-group input-group-sm" id="persalinanInputGroup"
-                                        style="display: none;">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputPersalinan" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="kacamata"
-                                            onchange="toggleInput('kacamata', 'kacamataInputGroup')" />
-                                        <label class="form-check-label" for="kacamata">Kacamata</label>
-                                    </div>
-                                    <div class="input-group input-group-sm" id="kacamataInputGroup"
-                                        style="display: none;">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputKacamata" class="form-control" placeholder="0" oninput="formatCurrency(this)"/>
-                                    </div>
-                                </div>
-                            </div> --}}
-
-
                             <input type="hidden" name="status" value="Pending L1" id="status">
 
                             <div class="d-flex justify-content-end mt-4">
@@ -212,4 +142,7 @@
     </div>
 
     <script src="{{ asset('/js/medical/medical.js') }}"></script>
+    <script>
+         var medicalTypeData = @json($medical_type);
+    </script>
 @endsection

@@ -250,6 +250,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/medical/form-add/post', [MedicalController::class, 'medicalCreate'])->name('medical-form.post');
     Route::get('/medical/form-update/{id}', [MedicalController::class, 'medicalFormUpdate'])->name('medical-form.edit');
     Route::put('/medical/form-update/update/{id}', [MedicalController::class, 'medicalUpdate'])->name('medical-form.put');
+    Route::delete('/medical/delete/{id}', [MedicalController::class, 'medicalDelete'])->name('medical.delete');
+
     Route::get('/medical/export-excel/', [MedicalController::class, 'medicalForm'])->name('export.medical');
 
 

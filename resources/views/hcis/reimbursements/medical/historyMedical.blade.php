@@ -60,7 +60,31 @@
                                           {{ $item->status }}
                                       </span>
                                   </td>
-                                  <td class="text-center">RAWR~</td>
+                                  <td class="text-center">
+                                      @if ($item->status == 'Draft')
+                                          <form method="GET" action=" /medical/form-update/{{ $item->usage_id }}"
+                                              style="display: inline-block;">
+                                              <button type="submit" class="btn btn-outline-warning rounded-pill my-1" data-toggle="tooltip"
+                                                  title="Edit">
+                                                  <i class="bi bi-pencil-square"></i>
+                                              </button>
+                                          </form>
+                                          <form id="deleteForm_{{ $item->usage_id }}" method="POST"
+                                              action="/medical/delete/{{ $item->usage_id }}"
+                                              style="display: inline-block;">
+                                              @csrf
+                                              @method('DELETE')
+                                              <input type="hidden" id="no_sppd_{{ $item->usage_id }}"
+                                                  value="{{ $item->no_medic }}">
+                                              <button type="button"
+                                                  class="btn btn-outline-danger rounded-pill delete-button"
+                                                  data-id="{{ $item->usage_id }}"
+                                                  {{ $item->status === 'Diterima' ? 'disabled' : '' }}>
+                                                  <i class="bi bi-trash-fill"></i>
+                                              </button>
+                                          </form>
+                                      @endif
+                                  </td>
                               </tr>
                           @endforeach
                       </tbody>

@@ -17,11 +17,8 @@ class HealthPlan extends Model
     protected $fillable = [
         'plan_id',
         'employee_id',
-        'plan_name',
-        'child_birth_balance',
-        'inpatient_balance',
-        'outpatient_balance',
-        'glasses_balance',
+        'medical_type',
+        'balance',
         'period',
         'child_birth_balance',
         'created_by',

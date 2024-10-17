@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\MasterDisease;
 use App\Models\HealthPlan;
 use App\Models\HealthCoverage;
+use App\Models\MasterMedical;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ class MedicalController extends Controller
     {
         $employee_id = Auth::user()->employee_id;
         $families = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
+        $medical_type = MasterMedical::orderBy('id', 'desc')->get();
 
         $employee_name = Employee::select('fullname')
             ->where('employee_id', $employee_id)
@@ -40,7 +42,23 @@ class MedicalController extends Controller
         $parentLink = 'Medical';
         $link = 'Add Medical Coverage Usage';
 
-        return view('hcis.reimbursements.medical.form.medicalForm', compact('diseases', 'families', 'parentLink', 'link', 'employee_name'));
+        return view('hcis.reimbursements.medical.form.medicalForm', compact('diseases', 'medical_type', 'families', 'parentLink', 'link', 'employee_name'));
+    }
+    public function medicalFormUpdate($id)
+    {
+        $employee_id = Auth::user()->employee_id;
+        $families = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
+        $medic = HealthCoverage::findOrFail($id);
+
+        $employee_name = Employee::select('fullname')
+            ->where('employee_id', $employee_id)
+            ->first();
+
+        $diseases = MasterDisease::orderBy('disease_name', 'asc')->where('active', 'T')->get();
+        $parentLink = 'Medical';
+        $link = 'Add Medical Coverage Usage';
+
+        return view('hcis.reimbursements.medical.form.medicalEditForm', compact('diseases', 'families', 'parentLink', 'link', 'employee_name', 'medic'));
     }
 
     public function medicalCreate(Request $request)
@@ -59,12 +77,13 @@ class MedicalController extends Controller
         $statusValue = $request->has('action_draft') ? 'Draft' : 'Pending';
 
         // Handle medical proof file upload
-        // $medical_proof_path = null;
+        $medical_proof_path = null;
         if ($request->hasFile('medical_proof')) {
             $file = $request->file('medical_proof');
-            $path = $file->store('public/proofs');
-            $medic->prove_declare = $path;
+            $medical_proof_path = $file->store('public/storage/proofs'); // Store file and get the path
         }
+
+        // dd($medical_proof_path);
         // Format inputs
         $glasses = (int) str_replace('.', '', $request->glasses);
         $childBirth = (int) str_replace('.', '', $request->child_birth);
@@ -75,7 +94,7 @@ class MedicalController extends Controller
         $uncoveredInpatient = $uncoveredOutpatient = $uncoveredGlasses = $uncoveredChildBirth = 0;
 
         // Update balances and calculate uncovered amounts
-        if ($medical_plan) {
+        if ($statusValue !== 'Draft' && $medical_plan) {
             // Inpatient
             $medical_plan->inpatient_balance -= $inpatient;
             $uncoveredInpatient = $medical_plan->inpatient_balance < 0 ? abs($medical_plan->inpatient_balance) : 0;
@@ -130,33 +149,44 @@ class MedicalController extends Controller
 
             // Others
             'status' => $statusValue,
-            // 'medical_proof' => $medical_proof_path,
+            'medical_proof' => $medical_proof_path,
         ]);
 
         return redirect()->route('medical')->with('success', 'Medical Successfully Added');
+    }
+
+    public function medicalDelete($id)
+    {
+        // Find the business trip by ID
+        $medical = HealthCoverage::findOrFail($id);
+        $medical->delete();
+
+        // Redirect back with a success message
+        return redirect()->route('medical')->with('success', 'Medical Draft Deleted');
     }
 
 
 
     public function generateNoMedic()
     {
+        $currentYear = date('y');
         // Fetch the last no_medic number
         $lastCoverage = HealthCoverage::withTrashed() // Include soft-deleted records
             ->orderBy('no_medic', 'desc')
             ->first();
 
         // Determine the next no_medic number
-        if ($lastCoverage) {
-            // Extract the last number, increment it by 1
-            $lastNumber = (int) substr($lastCoverage->no_medic, 3); // Get the last 6 digits
+        if ($lastCoverage && substr($lastCoverage->no_medic, 2, 2) == $currentYear) {
+            // Extract the last 6 digits (the sequence part) and increment it by 1
+            $lastNumber = (int) substr($lastCoverage->no_medic, 4); // Extract the last 6 digits
             $nextNumber = $lastNumber + 1;
         } else {
-            // If there are no records, start from 600000001
+            // If no records for this year or no records at all, start from 000001
             $nextNumber = 1;
         }
 
         // Format the next number as a 9-digit number starting with '6'
-        $newNoMedic = '6' . str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
+        $newNoMedic = 'MD' . $currentYear . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
 
         return $newNoMedic;
     }

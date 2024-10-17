@@ -23,13 +23,13 @@
                             <tr>
                                 <td class="text-center">{{ $item->period }}</td>
                                 <td class="text-center">
-                                    {{ 'Rp. ' . number_format($item->child_birth_balance, 0, ',', '.') }}</td>
+                                   -</td>
                                 <td class="text-center">
-                                    {{ 'Rp. ' . number_format($item->inpatient_balance, 0, ',', '.') }}</td>
+                                    -</td>
                                 <td class="text-center">
-                                    {{ 'Rp. ' . number_format($item->outpatient_balance, 0, ',', '.') }}</td>
+                                    -</td>
                                 <td class="text-center">
-                                    {{ 'Rp. ' . number_format($item->glasses_balance, 0, ',', '.') }}</td>
+                                    -</td>
                             </tr>
                         @endforeach
                     </tbody>
