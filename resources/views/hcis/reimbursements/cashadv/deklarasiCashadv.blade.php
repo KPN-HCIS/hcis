@@ -7,15 +7,14 @@
         th, td{
             vertical-align: top !important;
         }
+
+        .table > :not(caption) > * > * {
+            /* padding: 0.2rem 0.2rem; Sesuaikan padding di sini */
+        }
     </style>
 @endsection
 
 @section('content')
-    <style>
-        .table > :not(caption) > * > * {
-            padding: 0.2rem 0.2rem; /* Sesuaikan padding di sini */
-        }
-    </style>
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <!-- Page Heading -->
@@ -41,36 +40,36 @@
                 <div class="card-body p-2">
                     <div class="row">
                         <div class="col-md-6 mb-2">
-                            <table class="table" style="border: none; border-collapse: collapse; padding: 1%;">
+                            <table style="border: none; border-collapse: collapse;">
                                 <tr>
-                                    <th class="label" style="border: none; width:30%;">Employee ID</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ $employee_data->employee_id }}</td>
+                                    <th style="width:40%;">Employee ID</th>
+                                    <td>:</td>
+                                    <td>{{ $employee_data->employee_id }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="width: 20%; border: none;">Employee Name</th>
-                                    <td class="colon" style="width: 3%; border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ $employee_data->fullname }}</td>
+                                    <th>Employee Name</th>
+                                    <td>:</td>
+                                    <td>{{ $employee_data->fullname }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">Unit</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ $employee_data->unit }}</td>
+                                    <th >Unit</th>
+                                    <td >:</td>
+                                    <td >{{ $employee_data->unit }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">Job Level</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ $employee_data->job_level }}</td>
+                                    <th >Job Level</th>
+                                    <td >:</td>
+                                    <td >{{ $employee_data->job_level }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">Costing Company</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ $transactions->companies->contribution_level }} ({{ $transactions->companies->contribution_level_code }})</td>
+                                    <th >Costing Company</th>
+                                    <td >:</td>
+                                    <td >{{ $transactions->companies->contribution_level }} ({{ $transactions->companies->contribution_level_code }})</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">Destination</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">
+                                    <th >Destination</th>
+                                    <td >:</td>
+                                    <td >
                                         @if ($transactions->destination == 'Others')
                                             {{ $transactions->others_location }}
                                         @else
@@ -79,43 +78,43 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">CA Purposes</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ $transactions->ca_needs }}</td>
+                                    <th >CA Purposes</th>
+                                    <td >:</td>
+                                    <td >{{ $transactions->ca_needs }}</td>
                                 </tr>
                             </table>
                         </div>
                         <div class="col-md-6 mb-2">
-                            <table class="table" style="border: none; border-collapse: collapse; padding: 1%;">
+                            <table style="border: none; border-collapse: collapse; padding: 1%;">
                                 <tr>
                                     <th class="label" style="border: none; width:40%;">Start Date</th>
-                                    <td class="colon" style="border: none; width:1%;">:</td>
-                                    <td class="value" style="border: none;">{{ $transactions->start_date }}</td>
+                                    <td class="block" style="border: none;">:</td>
+                                    <td >{{ $transactions->start_date }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">End Date</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{$transactions->end_date}}</td>
+                                    <th >End Date</th>
+                                    <td >:</td>
+                                    <td >{{$transactions->end_date}}</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">Total Date</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ $transactions->total_days }} Days</td>
+                                    <th >Total Date</th>
+                                    <td >:</td>
+                                    <td >{{ $transactions->total_days }} Days</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">CA Date Required</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ \Carbon\Carbon::parse($transactions->date_required)->format('d-M-y') }}</td>
+                                    <th >CA Date Required</th>
+                                    <td >:</td>
+                                    <td >{{ \Carbon\Carbon::parse($transactions->date_required)->format('d-M-y') }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">Declaration Estimate</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">{{ \Carbon\Carbon::parse($transactions->declare_estimate)->format('d-M-y') }}</td>
+                                    <th >Declaration Estimate</th>
+                                    <td >:</td>
+                                    <td >{{ \Carbon\Carbon::parse($transactions->declare_estimate)->format('d-M-y') }}</td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">Cash Advanced Type</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">
+                                    <th >Cash Advanced Type</th>
+                                    <td >:</td>
+                                    <td >
                                         @if ($transactions->type_ca == 'dns')
                                             Bussiness Trip
                                         @elseif ($transactions->type_ca == 'entr')
@@ -126,9 +125,9 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th class="label" style="border: none;">No. SPPD</th>
-                                    <td class="colon" style="border: none;">:</td>
-                                    <td class="value" style="border: none;">
+                                    <th >No. SPPD</th>
+                                    <td >:</td>
+                                    <td >
                                         @if ($transactions->no_sppd == NULL)
                                             -
                                         @else
@@ -175,7 +174,7 @@
                                 @if ($transactions->type_ca == 'dns')
                                     <div class="col-md-12">
                                         <div class="table-responsive-sm">
-                                            <div class="d-flex flex-column gap-2">
+                                            <div class="d-flex flex-column">
                                                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                                     <li class="nav-item" role="presentation">
                                                         <button class="nav-link {{ isset($declareCA['detail_perdiem'][0]['start_date']) && $declareCA['detail_perdiem'][0]['start_date'] ? 'active' : '' }}" id="pills-perdiem-tab"
@@ -231,7 +230,7 @@
                             @if ($transactions->type_ca == 'ndns')
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
+                                        <div class="d-flex flex-column">
                                             @include('hcis.reimbursements.cashadv.form_dec.nbt')
                                         </div>
                                     </div>
@@ -242,7 +241,7 @@
                             @if ($transactions->type_ca == 'entr')
                                 <div class="col-md-12">
                                     <div class="table-responsive-sm">
-                                        <div class="d-flex flex-column gap-2">
+                                        <div class="d-flex flex-column">
                                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link active" id="pills-detail-tab"

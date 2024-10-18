@@ -137,9 +137,7 @@
                                         <option value="entr">Entertainment</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="row" id="div_bisnis_numb_dns" style="display: none;">
-                                <div class="col-md-12 mb-2">
+                                <div class="col-md-6 mb-2" id="div_bisnis_numb_dns" style="display: none;">
                                     <label class="form-label" for="name">Business Trip Number</label>
                                     <select class="form-control select2" id="bisnis_numb_dns" name="bisnis_numb_dns">
                                         <option value="">Select</option>

@@ -350,8 +350,8 @@
                 text: "You won't be able to revert this!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#0c63e4",
-                cancelButtonColor: "#9a2a27",
+                confirmButtonColor: "#AB2F2B",
+                cancelButtonColor: "#CCCCCC",
                 confirmButtonText: "Yes, delete it!"
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -575,22 +575,22 @@
                     inputSummary = `
                         <table style="width: 100%;">
                             <tr>
-                                <td style="width: 60%"><strong>Total Perdiem</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Perdiem</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalBtPerdiem}</td>
                             </tr>
                             <tr>
-                                <td style="width: 60%"><strong>Total Transport</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Transport</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalBtTransport}</td>
                             </tr>
                             <tr>
-                                <td style="width: 60%"><strong>Total Accommodation</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Accommodation</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalBtPenginapan}</td>
                             </tr>
                             <tr>
-                                <td style="width: 60%"><strong>Total Others</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Others</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalBtLainnya}</td>
                             </tr>
@@ -600,7 +600,7 @@
 
                         <table style="width: 100%;">
                             <tr>
-                                <td style="width: 60%"><strong>Total Request</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Request</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalCA}</td>
                             </tr>
