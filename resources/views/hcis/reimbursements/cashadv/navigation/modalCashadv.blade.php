@@ -307,7 +307,7 @@
     </div>
 @endif
 
-{{-- Table Deklarasi --}}
+{{-- Success --}}
 @if (session('success'))
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -321,6 +321,24 @@
         });
     </script>
 @endif
+
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: `
+                    @foreach ($errors->all() as $error)
+                        {{ $error }}
+                    @endforeach
+                `,
+                confirmButtonText: 'Ok'
+            });
+        });
+    </script>
+@endif
+
 <script>
     document.querySelectorAll('.delete-button').forEach(button => {
         button.addEventListener('click', () => {

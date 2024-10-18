@@ -85,7 +85,14 @@
             {{-- Jenis Plafond --}}
             <div class="card shadow-none">
                 <div class="card-body">
-                    <h4 class="card-title">Health Coverage Limit</h4>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="card-title">Health Coverage Limit</h3>
+                        <div class="input-group" style="width: 18%;">
+                            <button class="btn btn-outline-success rounded-pill btn-action me-1" data-bs-toggle="modal" data-bs-target="#importExcelHealtCoverage">
+                                <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
+                            </button>
+                        </div>
+                    </div>
                     <div class="card-text">
                         <div class="table-responsive">
                             <table class="display nowrap dataTable dtr-inline collapsed">
@@ -200,6 +207,8 @@
             </div>
         </div>
     </div>
+
+    @include('hcis.reimbursements.medical.navigation.modalMedical')
 
     <script src="{{ asset('/js/medical/medical.js') }}"></script>
 @endsection

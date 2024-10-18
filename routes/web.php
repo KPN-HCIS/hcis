@@ -251,6 +251,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/medical/form-update/{id}', [MedicalController::class, 'medicalFormUpdate'])->name('medical-form.edit');
     Route::put('/medical/form-update/update/{id}', [MedicalController::class, 'medicalUpdate'])->name('medical-form.put');
     Route::get('/medical/export-excel/', [MedicalController::class, 'medicalForm'])->name('export.medical');
+    Route::post('/medical/import-excel/', [MedicalController::class, 'importExcel'])->name('import.medical');
 
 
     //Taksi Form
