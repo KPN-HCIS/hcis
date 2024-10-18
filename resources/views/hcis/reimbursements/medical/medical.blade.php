@@ -60,6 +60,8 @@
                     </li>
                 </ol>
             </div>
+            @include('hcis.reimbursements.businessTrip.modal')
+
             <!-- Button Section -->
             <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
                 <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">

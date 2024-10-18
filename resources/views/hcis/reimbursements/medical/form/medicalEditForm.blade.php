@@ -32,8 +32,9 @@
                         <a href="/medical" type="button" class="btn-close btn-close-white" aria-label="Close"></a>
                     </div>
                     <div class="card-body">
-                        <form id="medicForm" action="/medical/form-add/post" method="POST" enctype="multipart/form-data">
+                        <form id="medicForm" action="/medical/form-update/update/{{ $medic->usage_id }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            @method('PUT')
                             <div class="row mb-2">
                                 <div class="col-md-4 mb-2">
                                     <label for="patient_name" class="form-label">Patient Name</label>
@@ -44,8 +45,7 @@
                                             {{ $employee_name->fullname }} (Me)
                                         </option>
                                         @foreach ($families as $family)
-                                            <option value="{{ $family->name }}"
-                                                {{ $family->name  ? 'selected' : '' }}>
+                                            <option value="{{ $family->name }}" {{ $family->name ? 'selected' : '' }}>
                                                 {{ $family->name }} ({{ $family->relation_type }})
                                             </option>
                                         @endforeach
@@ -54,7 +54,8 @@
                                 <div class="col-md-4 mb-2">
                                     <label for="nama" class="form-label">Hospital Name</label>
                                     <input type="text" class="form-control form-control-sm" id="hospital_name"
-                                        name="hospital_name" placeholder="ex: RS. Murni Teguh" value="{{ $medic->hospital_name }}" required>
+                                        name="hospital_name" placeholder="ex: RS. Murni Teguh"
+                                        value="{{ $medic->hospital_name }}" required>
                                 </div>
 
                                 <div class="col-md-4 mb-2">
@@ -64,7 +65,7 @@
                                         <option value="" disabled selected>--- Choose Disease ---</option>
                                         @foreach ($diseases as $disease)
                                             <option value="{{ $disease->disease_name }}"
-                                                {{ $disease->disease_name  ? 'selected' : '' }}>
+                                                {{ $disease->disease_name === $selectedDisease ? 'selected' : '' }}>
                                                 {{ $disease->disease_name }}
                                             </option>
                                         @endforeach
@@ -76,54 +77,38 @@
                                 <div class="col-md-6 mb-2">
                                     <label for="keperluan" class="form-label">No. Invoice</label>
                                     <input type="text" class="form-control form-control-sm" id="no_invoice"
-                                        name="no_invoice" rows="3" placeholder="Please add your invoice number ..." value="{{ $medic->no_invoice }}"
-                                        required></input>
+                                        name="no_invoice" rows="3" placeholder="Please add your invoice number ..."
+                                        value="{{ $medic->no_invoice }}" required></input>
                                 </div>
                                 <div class="col-md-6 mb-1">
                                     <label for="medical_date" class="form-label">Medical Date</label>
-                                    <input type="date" class="form-control form-control-sm" id="date" name="date" value="{{ $medic->date }}"
-                                        required>
+                                    <input type="date" class="form-control form-control-sm" id="date" name="date"
+                                        value="{{ $medic->date }}" required>
                                 </div>
                             </div>
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <label for="rawatInap" class="form-label">Inpatient</label>
-                                    <div class="input-group input-group-sm" id="rawatInap">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputRawatInap" name="inpatient" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)" value="{{ $medic->inpatient }}"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="rawatJalan" class="form-label">Outpatient</label>
-                                    <div class="input-group input-group-sm" id="rawatJalan">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputRawatJalan" name="outpatient" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)" value="{{ $medic->outpatient }}"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="persalinan" class="form-label">Child Birth</label>
-                                    <div class="input-group input-group-sm" id="persalinan">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputPersalinan" name="child_birth" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)" value="{{ $medic->child_birth }}"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="kacamata" class="form-label">Glasses</label>
-                                    <div class="input-group input-group-sm" id="kacamata">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputKacamata" name="glasses" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)" value="{{ $medic->glasses }}"/>
-                                    </div>
+                            <div class="row mb-2">
+                                <div class="col-md-12">
+                                    <label for="medical_type" class="form-label">Medical Type</label>
+                                    <select class="form-select form-select-sm select2" id="medical_type"
+                                        name="medical_type[]" multiple required>
+                                        {{-- <option value="" selected>--- Choose Medical Type ---</option> --}}
+                                        @foreach ($medical_type as $type)
+                                            <option value="{{ $type->name }}"
+                                                @if ($selectedMedicalTypes->contains($type->name)) selected @endif>
+                                                {{ $type->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
+                            {{-- Dynamic Forms --}}
+                            <div id="dynamicForms" class="row"></div>
+
                             <div class="row mb-2">
                                 <div class="col-md-12 mt-2">
                                     <label for="" class="form-label">Detail Information</label>
                                     <textarea class="form-control form-control-sm" id="coverage_detail" name="coverage_detail" rows="3"
-                                        placeholder="Please add more detail of disease ..." required  value="{{ $medic->coverage_detail }}"></textarea>
+                                        placeholder="Please add more detail of disease ..." required>{{ $medic->coverage_detail }}</textarea>
                                 </div>
                             </div>
                             @php
@@ -144,60 +129,7 @@
                                     @endif
                                 </div>
                             </div>
-                            {{-- <div class="row g-3">
-                                <div class="col-md-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="rawatInap"
-                                            onchange="toggleInput('rawatInap', 'rawatInapInputGroup')" />
-                                        <label class="form-check-label" for="rawatInap">Rawat Inap</label>
-                                    </div>
-                                    <div class="input-group input-group-sm" id="rawatInapInputGroup" style="display: none;">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputRawatInap" class="form-control" placeholder="0" oninput="formatCurrency(this)"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="rawatJalan"
-                                            onchange="toggleInput('rawatJalan', 'rawatJalanInputGroup')" />
-                                        <label class="form-check-label" for="rawatJalan">Rawat Jalan</label>
-                                    </div>
-                                    <div class="input-group input-group-sm" id="rawatJalanInputGroup"
-                                        style="display: none;">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputRawatJalan" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="persalinan"
-                                            onchange="toggleInput('persalinan', 'persalinanInputGroup')" />
-                                        <label class="form-check-label" for="persalinan">Persalinan</label>
-                                    </div>
-                                    <div class="input-group input-group-sm" id="persalinanInputGroup"
-                                        style="display: none;">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputPersalinan" class="form-control"
-                                            placeholder="0" oninput="formatCurrency(this)"/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="kacamata"
-                                            onchange="toggleInput('kacamata', 'kacamataInputGroup')" />
-                                        <label class="form-check-label" for="kacamata">Kacamata</label>
-                                    </div>
-                                    <div class="input-group input-group-sm" id="kacamataInputGroup"
-                                        style="display: none;">
-                                        <span class="input-group-text">Rp</span>
-                                        <input type="text" id="inputKacamata" class="form-control" placeholder="0" oninput="formatCurrency(this)"/>
-                                    </div>
-                                </div>
-                            </div> --}}
-
-
-                            <input type="hidden" name="status" value="Pending L1" id="status">
+                            <input type="hidden" name="status" value="Pending" id="status">
 
                             <div class="d-flex justify-content-end mt-4">
                                 <button type="submit" class="btn btn-outline-primary rounded-pill me-2 draft-button"
@@ -213,5 +145,9 @@
         </div>
     </div>
 
-    <script src="{{ asset('/js/medical/medical.js') }}"></script>
+    <script src="{{ asset('/js/medical/medical-edit.js') }}"></script>
+    <script>
+        var medicalTypeData = @json($medical_type);
+        var balanceMapping = @json($balanceMapping);
+    </script>
 @endsection

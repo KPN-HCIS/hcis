@@ -26,22 +26,24 @@
                   <tr>
                       <td class="text-center"></td>
                       <td class="text-center">{{ $loop->iteration }}</td>
-                      <td>
-                          {{ \Carbon\Carbon::parse($item->date)->format('d F Y') }}
-                      </td>
+                      <td>{{ \Carbon\Carbon::parse($item->date)->format('d F Y') }}</td>
                       <td class="text-center">{{ $item->period }}</td>
                       <td class="text-center">{{ $item->no_medic }}</td>
                       <td>{{ $item->hospital_name }}</td>
                       <td>{{ $item->patient_name }}</td>
                       <td>{{ $item->disease }}</td>
                       <td class="text-center">
-                          {{ 'Rp. ' . number_format($item->child_birth, 0, ',', '.') }}</td>
+                          {{ 'Rp. ' . number_format($item->child_birth_total, 0, ',', '.') }}
+                      </td>
                       <td class="text-center">
-                          {{ 'Rp. ' . number_format($item->inpatient, 0, ',', '.') }}</td>
+                          {{ 'Rp. ' . number_format($item->inpatient_total, 0, ',', '.') }}
+                      </td>
                       <td class="text-center">
-                          {{ 'Rp. ' . number_format($item->outpatient, 0, ',', '.') }}</td>
+                          {{ 'Rp. ' . number_format($item->outpatient_total, 0, ',', '.') }}
+                      </td>
                       <td class="text-center">
-                          {{ 'Rp. ' . number_format($item->glasses, 0, ',', '.') }}</td>
+                          {{ 'Rp. ' . number_format($item->glasses_total, 0, ',', '.') }}
+                      </td>
                       <td style="align-content: center; text-align: center">
                           @php
                               $badgeClass = match ($item->status) {
@@ -49,7 +51,7 @@
                                   'Done' => 'bg-success',
                                   'Rejected' => 'bg-danger',
                                   'Draft' => 'bg-secondary',
-                                  default => 'bg-light', // fallback class for unexpected statuses
+                                  default => 'bg-light',
                               };
                           @endphp
                           <span class="badge rounded-pill {{ $badgeClass }} text-center"
@@ -59,22 +61,20 @@
                       </td>
                       <td class="text-center">
                           @if ($item->status == 'Draft')
-                              <form method="GET" action=" /medical/form-update/{{ $item->usage_id }}"
+                              <form method="GET" action="/medical/form-update/{{ $item->usage_id }}"
                                   style="display: inline-block;">
                                   <button type="submit" class="btn btn-outline-warning rounded-pill my-1"
                                       data-toggle="tooltip" title="Edit">
                                       <i class="bi bi-pencil-square"></i>
                                   </button>
                               </form>
-                              <form id="deleteForm_{{ $item->usage_id }}" method="POST"
+                              <form id="deleteForm_{{ $item->no_medic }}" method="POST"
                                   action="/medical/delete/{{ $item->usage_id }}" style="display: inline-block;">
                                   @csrf
                                   @method('DELETE')
-                                  <input type="hidden" id="no_sppd_{{ $item->usage_id }}"
-                                      value="{{ $item->no_medic }}">
+                                  <input type="hidden" id="no_sppd_{{ $item->no_medic }}" value="{{ $item->no_medic }}">
                                   <button type="button" class="btn btn-outline-danger rounded-pill delete-button"
-                                      data-id="{{ $item->usage_id }}"
-                                      {{ $item->status === 'Diterima' ? 'disabled' : '' }}>
+                                      data-id="{{ $item->no_medic }}">
                                       <i class="bi bi-trash-fill"></i>
                                   </button>
                               </form>
