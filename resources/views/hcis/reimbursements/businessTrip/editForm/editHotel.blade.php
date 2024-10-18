@@ -82,7 +82,7 @@
                             onchange="calculateTotalDays(<?php echo $i; ?>)">
                     </div>
                     <div class="col-md-4 mb-2">
-                        <label class="form-label">Total Days</label>
+                        <label class="form-label">Total Nights</label>
                         <input type="number" class="form-control form-control-sm bg-light" name="total_hari[]"
                             id="total-days-<?php echo $i; ?>" readonly value="{{ $hotel['total_hari'] ?? '' }}">
                     </div>
