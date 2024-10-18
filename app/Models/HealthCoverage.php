@@ -30,6 +30,7 @@ class HealthCoverage extends Model
         'balance_uncoverage',
         'balance_verif',
         'verif_by',
+        'reject_info',
         'created_by',
         'status',
         'medical_proof',

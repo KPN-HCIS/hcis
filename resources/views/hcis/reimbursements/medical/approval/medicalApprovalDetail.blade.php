@@ -116,7 +116,7 @@
                         <div class="d-flex justify-content-end mt-4">
                             @if (isset($medic->medical_proof) && $medic->medical_proof)
                                 <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
-                                    class="btn btn-outline-primary rounded-pill" style="margin-right: 10px;">
+                                    class="btn btn-primary rounded-pill" style="margin-right: 14px;">
                                     View
                                 </a>
                             @endif
@@ -130,8 +130,7 @@
                                 id="approve-form-{{ $medic->usage_id }}">
                                 @csrf
                                 @method('PUT')
-                                {{-- <input type="hidden" name="status_approval"
-                                    value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}"> --}}
+                                <input type="hidden" name="status_approval" value="Done">
                                 <button type="button" class="btn btn-success rounded-pill approve-button"
                                     style="padding: 0.5rem 1rem;" data-id="{{ $medic->usage_id }}">
                                     Approve

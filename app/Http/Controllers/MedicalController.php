@@ -40,6 +40,19 @@ class MedicalController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
+            ->where('status', 'Rejected')  // Filter for rejected status
+            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
+            ->get();
+        $rejectMedic = $rejectMedic->keyBy('no_medic');
+
+        $employeeName = HealthCoverage::where('employee_id', $employee_id)
+            ->where('status', 'Rejected')  // Filter for rejected status
+            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
+            ->get();
+        $employeeName = $employeeName->keyBy('no_medic');
+
+        // dd($rejectMedic);
         $medical = $medicalGroup->map(function ($item) use ($employee_id) {
             // Fetch the usage_id based on no_medic
             $usageId = HealthCoverage::where('no_medic', $item->no_medic)
@@ -57,7 +70,7 @@ class MedicalController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Medical';
 
-        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link'));
+        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName'));
     }
     public function medicalForm()
     {
@@ -459,6 +472,7 @@ class MedicalController extends Controller
         )
             ->whereNotNull('verif_by')   // Only include records where verif_by is not null
             ->whereNotNull('balance_verif')
+            ->where('status', 'Pending')
             ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -499,7 +513,7 @@ class MedicalController extends Controller
 
         // Extract the medical types from medicGroup
         $selectedMedicalTypes = $medicGroup->pluck('medical_type')->unique();
-        $balanceMapping = $medicGroup->pluck('balance', 'medical_type');
+        $balanceMapping = $medicGroup->pluck('balance_verif', 'medical_type');
         $selectedDisease = $medic->disease;
 
         // Fetch related data as before
@@ -513,7 +527,58 @@ class MedicalController extends Controller
         return view('hcis.reimbursements.medical.approval.medicalApprovalDetail', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes'));
     }
 
+    public function medicalApprovalUpdate($id, Request $request)
+    {
+        // Find the medical record by ID
+        $medical = HealthCoverage::findOrFail($id);
 
+        // Determine the new status based on the action
+        $action = $request->input('status_approval');
+        $rejectInfo = $request->input('reject_info');
+
+        if ($action == 'Rejected') {
+            $statusValue = 'Rejected';
+
+            // Update all records with the same 'no_medic' to 'Rejected'
+            HealthCoverage::where('no_medic', $medical->no_medic)->update([
+                'status' => $statusValue,
+                'reject_info' => $rejectInfo,
+            ]);
+
+            return redirect()->route('medical.approval')->with('success', 'Medical request rejected.');
+        } elseif ($action == 'Done') {
+            $statusValue = 'Done';
+
+            // Fetch all records with the same 'no_medic'
+            $healthCoverages = HealthCoverage::where('no_medic', $medical->no_medic)->get();
+
+            // Loop through each health coverage record and update accordingly
+            foreach ($healthCoverages as $coverage) {
+                $medicalType = $coverage->medical_type;
+                $balanceVerif = $coverage->balance_verif;
+                $employeeId = $coverage->employee_id;  // Use employee_id from the current data
+
+                // Fetch the health plan for this employee and medical type
+                $healthPlan = HealthPlan::where('employee_id', $employeeId)
+                    ->where('medical_type', $medicalType)
+                    ->first();
+
+                if ($healthPlan) {
+                    // Deduct the verified balance from the health plan for this specific medical type
+                    $healthPlan->balance -= $balanceVerif;
+                    $healthPlan->save();
+                }
+
+                // Update the medical record to mark it as done and store verification info
+                $coverage->update([
+                    'status' => $statusValue,
+                    'verif_by' => Auth::user()->employee_id,  // Verifying by the current user
+                ]);
+            }
+
+            return redirect()->route('medical.approval')->with('success', 'Medical request approved and balances updated.');
+        }
+    }
 
 
     public function generateNoMedic()
