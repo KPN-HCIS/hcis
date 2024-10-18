@@ -14,6 +14,7 @@ use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class MedicalController extends Controller
 {
@@ -190,17 +191,32 @@ class MedicalController extends Controller
         }
 
         $medical_costs = $request->input('medical_costs', []);
+        Log::info("Received medical_costs: " . json_encode($medical_costs));
         $date = Carbon::parse($request->date);
         $period = $date->year;
 
-        // Fetch existing health coverages for this no_medic
+        // Fetch all existing health coverages for this no_medic
         $existingCoverages = HealthCoverage::where('no_medic', $no_medic)->get();
+        Log::info("Existing coverages: " . $existingCoverages->pluck('medical_type')->implode(', '));
 
-        // Update status for all records with the same no_medic
-        HealthCoverage::where('no_medic', $no_medic)->update(['status' => $statusValue]);
+        // Update common fields for all records with the same no_medic
+        $commonUpdateData = [
+            'no_invoice' => $request->no_invoice,
+            'hospital_name' => $request->hospital_name,
+            'patient_name' => $request->patient_name,
+            'disease' => $request->disease,
+            'date' => $date,
+            'coverage_detail' => $request->coverage_detail,
+            'status' => $statusValue,
+            'medical_proof' => $medical_proof_path ?? $existingMedical->medical_proof,
+        ];
 
+        HealthCoverage::where('no_medic', $no_medic)->update($commonUpdateData);
+
+        // Process each medical type
         foreach ($medical_costs as $medical_type => $cost) {
             $cost = (int) str_replace('.', '', $cost); // Clean the currency format
+            Log::info("Existing cost: " . $cost);
 
             // Fetch the specific health plan for the employee and medical type
             $medical_plan = HealthPlan::where('employee_id', $employee_id)
@@ -216,52 +232,43 @@ class MedicalController extends Controller
             $existingCoverage = $existingCoverages->where('medical_type', $medical_type)->first();
 
             if ($existingCoverage) {
-                // Update existing coverage
+                // Update balance for existing coverage
                 $oldCost = $existingCoverage->balance;
+                // dd( $existingCoverage->balance, $oldCost );
                 $costDifference = $cost - $oldCost;
+                // dd( $costDifference );
 
                 if ($statusValue !== 'Draft') {
                     $medical_plan->balance -= $costDifference;
+                    // dd( $medical_plan->balance -= $costDifference);
+                    // dd( $statusValue);
                     $medical_plan->save();
                 }
 
                 $existingCoverage->update([
-                    'no_invoice' => $request->no_invoice,
-                    'hospital_name' => $request->hospital_name,
-                    'patient_name' => $request->patient_name,
-                    'disease' => $request->disease,
-                    'date' => $date,
-                    'coverage_detail' => $request->coverage_detail,
                     'balance' => $cost,
                     'balance_uncoverage' => ($medical_plan->balance < 0) ? abs($medical_plan->balance) : 0,
-                    'medical_proof' => $medical_proof_path ?? $existingCoverage->medical_proof,
                 ]);
+                Log::info("Updated existing coverage for medical_type: $medical_type, new balance: $cost");
             } else {
                 // Create new coverage for new medical type
-                if ($statusValue !== 'Draft') {
-                    $medical_plan->balance -= $cost;
-                    $medical_plan->save();
-                }
-
-                HealthCoverage::create([
+                HealthCoverage::create(array_merge($commonUpdateData, [
                     'usage_id' => (string) Str::uuid(),
                     'employee_id' => $employee_id,
                     'no_medic' => $no_medic,
-                    'no_invoice' => $request->no_invoice,
-                    'hospital_name' => $request->hospital_name,
-                    'patient_name' => $request->patient_name,
-                    'disease' => $request->disease,
-                    'date' => $date,
-                    'coverage_detail' => $request->coverage_detail,
                     'period' => $period,
                     'medical_type' => $medical_type,
                     'balance' => $cost,
                     'balance_uncoverage' => ($medical_plan->balance < 0) ? abs($medical_plan->balance) : 0,
-                    'status' => $statusValue,
-                    'medical_proof' => $medical_proof_path,
-                ]);
+                ]));
+
+                if ($statusValue !== 'Draft') {
+                    $medical_plan->balance -= $cost;
+                    $medical_plan->save();
+                }
             }
         }
+        // dd($medical_plan->balance -= $cost);
 
         // Remove any coverages that are no longer present in the update
         $existingCoverages->whereNotIn('medical_type', array_keys($medical_costs))->each(function ($coverage) {
@@ -270,7 +277,6 @@ class MedicalController extends Controller
 
         return redirect()->route('medical')->with('success', 'Medical data successfully updated.');
     }
-
 
 
     public function medicalDelete($id)
