@@ -15,7 +15,7 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('medical.admin') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('medical.approval') }}">{{ $parentLink }}</a></li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -23,13 +23,14 @@
                 </div>
             </div>
         </div>
+        @include('hcis.reimbursements.businessTrip.modal')
 
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
                         <h4 class="mb-0">Medical Data - {{ $medic->no_medic }}</h4>
-                        <a href="/medical/admin" type="button" class="btn-close btn-close-white" aria-label="Close"></a>
+                        <a href="/medical/approval" type="button" class="btn-close btn-close-white" aria-label="Close"></a>
                     </div>
                     <div class="card-body">
                         <form id="medicForm" action="/medical/admin/form-update/update/{{ $medic->usage_id }}"
@@ -109,26 +110,77 @@
                             @php
                                 use Illuminate\Support\Facades\Storage;
                             @endphp
-                            <input type="hidden" name="status" value="Pending" id="status">
-
-                            <div class="d-flex justify-content-end mt-4">
-                                @if (isset($medic->medical_proof) && $medic->medical_proof)
-                                    <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
-                                        class="btn btn-outline-primary rounded-pill" style="margin-right: 10px;"> <!-- Adjusted margin-right to "mr-3" -->
-                                        View
-                                    </a>
-                                @endif
-                                <button type="submit" class="btn btn-primary rounded-pill submit-button"
-                                    name="action_submit" value="Pending" id="submit-btn">Submit</button>
-                            </div>
+                            <input type="hidden" id="no_sppd" value="{{ $medic->no_medic }}">
                         </form>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            @if (isset($medic->medical_proof) && $medic->medical_proof)
+                                <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
+                                    class="btn btn-outline-primary rounded-pill" style="margin-right: 10px;">
+                                    View
+                                </a>
+                            @endif
+                            <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal"
+                                data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
+                                Reject
+                            </button>
+                            <form method="POST"
+                                action="{{ route('medical-approval-form.put', ['id' => $medic->usage_id]) }}"
+                                style="display: inline-block; margin-right: 5px;" class="status-form"
+                                id="approve-form-{{ $medic->usage_id }}">
+                                @csrf
+                                @method('PUT')
+                                {{-- <input type="hidden" name="status_approval"
+                                    value="{{ Auth::user()->id == $n->manager_l1_id ? 'Pending L2' : 'Approved' }}"> --}}
+                                <button type="button" class="btn btn-success rounded-pill approve-button"
+                                    style="padding: 0.5rem 1rem;" data-id="{{ $medic->usage_id }}">
+                                    Approve
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="{{ asset('/js/medical/medical-edit.js') }}"></script>
+    <!-- Rejection Reason Modal -->
+    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-bottom-0">
+                    <h5 class="modal-title" id="rejectReasonModalLabel" style="color: #333; font-weight: 600;">Rejection
+                        Reason</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="rejectReasonForm" method="POST"
+                        action="{{ route('medical-approval-form.put', ['id' => $medic->usage_id]) }}">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="status_approval" value="Rejected">
+
+                        <div class="mb-3">
+                            <label for="reject_info" class="form-label" style="color: #555; font-weight: 500;">Please
+                                provide a reason for rejection:</label>
+                            <textarea class="form-control border-2" name="reject_info" id="reject_info" rows="4" required
+                                style="resize: vertical; min-height: 100px;"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                data-bs-dismiss="modal" style="min-width: 100px;">Cancel</button>
+                            <button type="submit" class="btn btn-primary rounded-pill"
+                                style="min-width: 100px;">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ asset('/js/medical/medical-approval.js') }}"></script>
     <script>
         var medicalTypeData = @json($medical_type);
         var balanceMapping = @json($balanceMapping);

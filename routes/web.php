@@ -259,6 +259,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/medical/admin/form-update/update/{id}', [MedicalController::class, 'medicalAdminUpdate'])->name('medical-admin-form.put');
     Route::delete('/medical/admin/delete/{id}', [MedicalController::class, 'medicalAdminDelete'])->name('medical-admin.delete');
 
+    //Medical Approval
+    Route::get('/medical/approval', [MedicalController::class, 'medicalApproval'])->name('medical.approval');
+    Route::get('/medical/approval/form-approval/{id}', [MedicalController::class, 'medicalApprovalForm'])->name('medical-approval-form.edit');
+    Route::put('/medical/approval/form-approval/update/{id}', [MedicalController::class, 'medicalApprovalUpdate'])->name('medical-approval-form.put');
 
     //Taksi Form
     Route::get('/taksi', [TaksiController::class, 'taksi'])->name('taksi');
