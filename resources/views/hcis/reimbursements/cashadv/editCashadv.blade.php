@@ -151,7 +151,6 @@
                                     <input type="hidden" name="ca_type" id="ca_type" value="{{ $transactions->type_ca }}">
                                 </div>
                                 <div class="col-md-6 mb-2">
-                                    <div class="mb-2">
                                         <label class="form-label" for="bisnis_numb">Business Trip Number</label>
                                         <input type="text" name="bisnis_numb" id="bisnis_numb" class="form-control bg-light" value="{{ $transactions->no_sppd ?? 'Tidak ada Bussiness Trip Number' }}" readonly>
                                     </div>

@@ -102,7 +102,7 @@
                 <p class="fs-4 text-primary" style="font-weight: bold; ">Accommodation {{ $loop->index + 1 }}</p>
                 <div id="form-container-bt-penginapan-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-2" style="border-radius: 1%;">
                     <div class="row">
-                        <p class="fs-5 text-primary" style="font-weight: bold;">Accommodation Declaration</p>
+                        <p class="fs-5 text-primary" style="font-weight: bold;">Accommodation Request</p>
                         <div class="col-md-6">
                             <table width="100%">
                                 <tr>
@@ -225,7 +225,6 @@
                             </div>
                         </div>
                     @endif
-
                     <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
@@ -425,7 +424,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
                                 <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
@@ -525,7 +523,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
                         <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>

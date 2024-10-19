@@ -9,7 +9,7 @@
         }
 
         .table > :not(caption) > * > * {
-            padding: 0.2rem 0.2rem; /* Sesuaikan padding di sini */
+            /* padding: 0.2rem 0.2rem; Sesuaikan padding di sini */
         }
     </style>
 @endsection

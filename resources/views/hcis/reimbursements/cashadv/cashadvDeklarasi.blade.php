@@ -186,10 +186,10 @@
                                                         </button>
                                                     @endif
                                                 @elseif ($ca_transaction->approval_sett == 'Pending')
-                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-warning" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-info" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 {{-- @elseif ($ca_transaction->approval_sett == 'Reject') --}}
                                                 @elseif ($ca_transaction->approval_sett == 'Draft')
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Rejected')
                                                     @if ($ca_transaction->approval_extend == 'Pending')
                                                     @else
