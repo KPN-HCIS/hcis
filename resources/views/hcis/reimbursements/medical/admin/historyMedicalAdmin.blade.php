@@ -55,42 +55,28 @@
                               };
                           @endphp
                           <span class="badge rounded-pill {{ $badgeClass }} text-center"
-                              style="font-size: 12px; padding: 0.5rem 1rem; cursor: pointer;"
-                              @if ($item->status == 'Rejected' && isset($rejectMedic[$item->no_medic])) onclick="showRejectInfo('{{ $item->no_medic }}')"
-                                  title="Click to see rejection reason" @endif>
+                              style="font-size: 12px; padding: 0.5rem 1rem;">
                               {{ $item->status }}
                           </span>
                       </td>
                       <td class="text-center">
-                          @if ($item->status == 'Draft')
-                              <form method="GET" action="/medical/form-update/{{ $item->usage_id }}"
-                                  style="display: inline-block;">
-                                  <button type="submit" class="btn btn-outline-warning rounded-pill my-1"
-                                      data-toggle="tooltip" title="Edit">
-                                      <i class="bi bi-pencil-square"></i>
-                                  </button>
-                              </form>
-                              <form id="deleteForm_{{ $item->no_medic }}" method="POST"
-                                  action="/medical/delete/{{ $item->usage_id }}" style="display: inline-block;">
-                                  @csrf
-                                  @method('DELETE')
-                                  <input type="hidden" id="no_sppd_{{ $item->no_medic }}"
-                                      value="{{ $item->no_medic }}">
-                                  <button type="button" class="btn btn-outline-danger rounded-pill delete-button"
-                                      data-id="{{ $item->no_medic }}">
-                                      <i class="bi bi-trash-fill"></i>
-                                  </button>
-                              </form>
-                          @endif
-                          @if ($item->status == 'Rejected')
-                              <form method="GET" action="/medical/form-update/{{ $item->usage_id }}"
-                                  style="display: inline-block;">
-                                  <button type="submit" class="btn btn-outline-warning rounded-pill my-1"
-                                      data-toggle="tooltip" title="Edit">
-                                      <i class="bi bi-pencil-square"></i>
-                                  </button>
-                              </form>
-                          @endif
+                          <form method="GET" action="/medical/admin/form-update/{{ $item->usage_id }}"
+                              style="display: inline-block;">
+                              <button type="submit" class="btn btn-outline-warning rounded-pill my-1"
+                                  data-toggle="tooltip" title="Edit">
+                                  <i class="bi bi-pencil-square"></i>
+                              </button>
+                          </form>
+                          <form id="deleteForm_{{ $item->no_medic }}" method="POST"
+                              action="/medical/admin/delete/{{ $item->usage_id }}" style="display: inline-block;">
+                              @csrf
+                              @method('DELETE')
+                              <input type="hidden" id="no_sppd_{{ $item->no_medic }}" value="{{ $item->no_medic }}">
+                              <button type="button" class="btn btn-outline-danger rounded-pill delete-button"
+                                  data-id="{{ $item->no_medic }}">
+                                  <i class="bi bi-trash-fill"></i>
+                              </button>
+                          </form>
                       </td>
                   </tr>
               @endforeach

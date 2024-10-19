@@ -255,10 +255,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/medical/form-update/{id}', [MedicalController::class, 'medicalFormUpdate'])->name('medical-form.edit');
     Route::put('/medical/form-update/update/{id}', [MedicalController::class, 'medicalUpdate'])->name('medical-form.put');
     Route::delete('/medical/delete/{id}', [MedicalController::class, 'medicalDelete'])->name('medical.delete');
-
     Route::get('/medical/export-excel/', [MedicalController::class, 'medicalForm'])->name('export.medical');
     Route::post('/medical/import-excel/', [MedicalController::class, 'importExcel'])->name('import.medical');
 
+    //Medical Admin
+    Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
+    Route::get('/medical/admin/form-update/{id}', [MedicalController::class, 'medicalAdminForm'])->name('medical-admin-form.edit');
+    Route::put('/medical/admin/form-update/update/{id}', [MedicalController::class, 'medicalAdminUpdate'])->name('medical-admin-form.put');
+    Route::delete('/medical/admin/delete/{id}', [MedicalController::class, 'medicalAdminDelete'])->name('medical-admin.delete');
+
+    //Medical Approval
+    Route::get('/medical/approval', [MedicalController::class, 'medicalApproval'])->name('medical.approval');
+    Route::get('/medical/approval/form-approval/{id}', [MedicalController::class, 'medicalApprovalForm'])->name('medical-approval-form.edit');
+    Route::put('/medical/approval/form-approval/update/{id}', [MedicalController::class, 'medicalApprovalUpdate'])->name('medical-approval-form.put');
 
     //Taksi Form
     Route::get('/taksi', [TaksiController::class, 'taksi'])->name('taksi');
