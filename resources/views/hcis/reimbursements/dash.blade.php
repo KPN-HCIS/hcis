@@ -127,8 +127,8 @@
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
                 </a>
-            </div> <!-- end col--> --}}
-            @if (auth()->check())
+            </div> <!-- end col-->
+            {{-- @if (auth()->check())
                 @can('adminbt')
                     <div class="col">
                         <a href="{{ route('businessTrip.admin') }}">
@@ -141,7 +141,7 @@
                         </a>
                     </div> <!-- end col-->
                 @endcan
-            @endif
+            @endif --}}
             {{-- </div> --}}
 
             <div class="col-md-3">
@@ -190,8 +190,6 @@
                 </a>
             </div>
 
-            <div class="col-md-3">
-
             {{-- <div class="col-md-3">
                 <a href="{{ route('hotel.approval') }}">
                     <div class="card" style="height: 200px">
@@ -227,6 +225,20 @@
                                 <div class="card-body">
                                     <img src="{{ asset('images/menu/report.png') }}" alt="logo">
                                     <h5 class="my-3">Cash Advanced (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('reportca_hcis')
+                    <div class="col-md-3">
+                        <a href="{{ route('medical.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/report.png') }}" alt="logo">
+                                    <h5 class="my-3">Medical (Admin)</h5>
                                 </div> <!-- end card-body-->
                             </div> <!-- end card-->
                         </a>

@@ -5,27 +5,23 @@
             <tr>
                 <th rowspan="2" class="text-center sticky"
                     style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
-                <th colspan="4" class="text-center">Type of Health Coverage</th>
+                <th colspan="{{ count($master_medical) }}" class="text-center">Type of Health Coverage</th>
             </tr>
             <tr>
-                <th class="text-center">Child Birth</th>
-                <th class="text-center">Inpatient</th>
-                <th class="text-center">Outpatient</th>
-                <th class="text-center">Glasses</th>
+                @foreach ($master_medical as $master_medicals)
+                    <th class="text-center">{{  $master_medicals->name }}</th>
+                @endforeach
             </tr>
         </thead>
         <tbody>
-            @foreach ($medical_plan as $item)
+            @foreach ($formatted_data as $period => $balances)
                 <tr>
-                    <td class="text-center">{{ $item->period }}</td>
-                    <td class="text-center">
-                        -</td>
-                    <td class="text-center">
-                        -</td>
-                    <td class="text-center">
-                        -</td>
-                    <td class="text-center">
-                        -</td>
+                    <td class="text-center">{{ $period }}</td>
+                    @foreach ($master_medical as $master_medical_item)
+                        <td class="text-center">
+                            {{ isset($balances[$master_medical_item->medical_type]) ? number_format($balances[$master_medical_item->medical_type], 0, ',', '.') : '-' }}
+                        </td>
+                    @endforeach
                 </tr>
             @endforeach
         </tbody>

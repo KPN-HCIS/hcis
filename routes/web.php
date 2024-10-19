@@ -38,6 +38,7 @@ use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use App\Http\Controllers\ReimburseController;
 use App\Models\Designation;
+use Faker\Provider\Medical;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -130,6 +131,9 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/cashadvanced/approval/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalAdmin'])->name('approvalAdmin.cashadvancedApprovedAdmin');
         Route::post('/cashadvanced/approvalDec/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiAdmin'])->name('approvalDecAdmin.cashadvancedDecApprovedAdmin');
+
+        Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
+        Route::get('/medical/detail/{employee_id}', [MedicalController::class, 'medicalDetail'])->name('medical.detail');
     });
 
     // Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');

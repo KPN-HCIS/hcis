@@ -8,28 +8,90 @@ use App\Models\MasterDisease;
 use App\Models\HealthPlan;
 use App\Models\HealthCoverage;
 use App\Models\MasterMedical;
+use App\Models\Company;
+use App\Models\Location;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Imports\ImportHealthCoverage;
+use App\Models\ca_sett_approval;
+use App\Models\CATransaction;
+use App\Models\ca_approval;
 
 
 class MedicalController extends Controller
 {
+    protected $permissionLocations;
+    protected $permissionCompanies;
+    protected $permissionGroupCompanies;
+
     public function medical()
     {
         $employee_id = Auth::user()->employee_id;
         $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
         $medical = HealthCoverage::orderBy('created_at', 'desc')->where('employee_id', $employee_id)->get();
         $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
+        $master_medical = MasterMedical::all();
+
+        $formatted_data = [];
+        foreach ($medical_plan as $plan) {
+            $formatted_data[$plan->period][$plan->medical_type] = $plan->balance;
+        }
+
+        $medicalGroup = HealthCoverage::select(
+            'no_medic',
+            'date',
+            'period',
+            'hospital_name',
+            'patient_name',
+            'disease',
+            DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
+            'status'
+        )
+            ->where('employee_id', $employee_id)
+            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
+            ->where('status', 'Rejected')  // Filter for rejected status
+            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
+            ->get();
+        $rejectMedic = $rejectMedic->keyBy('no_medic');
+
+        $employeeName = HealthCoverage::where('employee_id', $employee_id)
+            ->where('status', 'Rejected')  // Filter for rejected status
+            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
+            ->get();
+        $employeeName = $employeeName->keyBy('no_medic');
+
+        // dd($rejectMedic);
+        $medical = $medicalGroup->map(function ($item) use ($employee_id) {
+            // Fetch the usage_id based on no_medic
+            $usageId = HealthCoverage::where('no_medic', $item->no_medic)
+                ->where('employee_id', $employee_id)
+                ->value('usage_id'); // Assuming there's one usage_id per no_medic
+
+            // Add usage_id to the current item
+            $item->usage_id = $usageId;
+
+            return $item;
+        });
+
+        $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
 
         $parentLink = 'Reimbursement';
         $link = 'Medical';
 
-        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link'));
+        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName'));
     }
+
     public function medicalForm()
     {
         $employee_id = Auth::user()->employee_id;
@@ -182,6 +244,111 @@ class MedicalController extends Controller
         return $newNoMedic;
     }
 
+    public function medicalAdmin(Request $request)
+    {
+        $parentLink = 'Reimbursement';
+        $link = 'Medical Data Employee';
+        $userId = Auth::id();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+
+        // Ambil tahun saat ini
+        $currentYear = date('Y');
+
+        // Inisialisasi query untuk karyawan
+        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
+
+        // Inisialisasi variabel untuk menyimpan data yang akan dikirimkan ke view
+        $med_employee = collect(); // Kosongkan med_employee jika tidak ada filter
+
+        // Hanya ambil data jika request memiliki parameter 'stat' dan tidak kosong
+        if ($request->has('stat') && $request->input('stat') !== '') {
+            $status = $request->input('stat');
+            $query->where('office_area', $status);
+
+            // Eksekusi query untuk mendapatkan data yang difilter
+            $med_employee = $query->orderBy('created_at', 'desc')->get();
+        }
+
+        // Ambil semua rencana kesehatan untuk tahun saat ini
+        $medical_plans = HealthPlan::where('period', $currentYear)->get();
+
+        // Format rencana kesehatan ke dalam array berdasarkan employee_id
+        $balances = [];
+        foreach ($medical_plans as $plan) {
+            $balances[$plan->employee_id][$plan->medical_type] = $plan->balance;
+        }
+
+        // Siapkan nama lengkap (fullname) dan tanggal bergabung (date_of_joining)
+        foreach ($med_employee as $transaction) {
+            $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
+            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
+
+            $employeeMedicalPlan = $medical_plans->where('employee_id', $transaction->employee_id)->first();
+            $transaction->period = $employeeMedicalPlan ? $employeeMedicalPlan->period : '-';
+        }
+
+        return view('hcis.reimbursements.medical.adminMedical', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'med_employee' => $med_employee,
+            'companies' => $companies,
+            'locations' => $locations,
+            'master_medical' => MasterMedical::all(),
+            'balances' => $balances, // Kirim balances ke view
+        ]);
+    }
+
+    public function medicalDetail(Request $request, $employee_id)
+    {
+        // Gunakan findByRouteKey untuk mendekripsi $key
+        // $employee = Employee::findByRouteKey($key);
+
+        // Ambil employee_id yang telah didekripsi
+        // $employee_id = $employee->employee_id;
+
+        // Ambil data dependents, medical, dan medical_plan berdasarkan employee_id
+        $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
+        $medical = HealthCoverage::orderBy('created_at', 'desc')->where('employee_id', $employee_id)->get();
+        $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
+        $master_medical = MasterMedical::all();
+
+        // Format data medical_plan
+        $formatted_data = [];
+        foreach ($medical_plan as $plan) {
+            $formatted_data[$plan->period][$plan->medical_type] = $plan->balance;
+        }
+
+        $parentLink = 'Reimbursement';
+        $link = 'Medical';
+
+        // Kirim data ke view
+        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'master_medical', 'formatted_data'));
+    }
+
+    public function medicalAdminUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'ca_status' => 'required|string',
+        ]);
+
+        // Temukan transaksi berdasarkan ID
+        $ca_transaction = CATransaction::find($id);
+
+        if (!$ca_transaction) {
+            return redirect()->back()->with('error', 'Transaction not found.');
+        }
+
+        // Update field ca_status berdasarkan value yang dipilih di modal
+        $ca_transaction->ca_status = $request->input('ca_status');
+        $ca_transaction->save();
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->back()->with('success', 'Transaction status updated successfully.')
+            ->with('refresh', true);
+    }
+
     public function importExcel(Request $request)
     {
         $userId = Auth::id();
@@ -196,6 +363,6 @@ class MedicalController extends Controller
             $request->file('file')
         );
 
-        return redirect()->route('medical')->with('success', 'Transaction successfully added From Excell.');
+        return redirect()->route('medical.admin')->with('success', 'Transaction successfully added From Excell.');
     }
 }

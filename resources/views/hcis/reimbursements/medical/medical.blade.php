@@ -62,6 +62,9 @@
             </div>
             <!-- Button Section -->
             <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
+                <button class="btn btn-outline-success rounded-pill btn-action me-1" data-bs-toggle="modal" data-bs-target="#importExcelHealtCoverage">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
+                </button>
                 <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>

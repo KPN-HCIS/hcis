@@ -63,9 +63,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-4 ">
                             <label class="form-label">Amount</label>
-                            <div class="input-group mb-3">
+                            <div class="input-group">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
                                 </div>
@@ -79,8 +79,7 @@
                             </div>
                         </div>
                     </div>
-                    <br>
-                    <div class="row mt-3">
+                    <div class="row mt-2">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(${formCountPenginapan}, event)">Reset</button>
                             <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPenginapan(${formCountPenginapan}, event)">Delete</button>
@@ -161,9 +160,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-4">
                             <label class="form-label">Amount</label>
-                            <div class="input-group mb-3">
+                            <div class="input-group">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
                                 </div>
@@ -178,8 +177,7 @@
                             </div>
                         </div>
                     </div>
-                    <br>
-                    <div class="row mt-3">
+                    <div class="row mt-2">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan({{ $loop->index + 1 }}, event)">Reset</button>
                             <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPenginapan({{ $loop->index + 1 }}, event)">Delete</button>
@@ -262,9 +260,9 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <label class="form-label">Amount</label>
-                        <div class="input-group mb-3">
+                        <div class="input-group">
                             <div class="input-group-append">
                                 <span class="input-group-text">Rp</span>
                             </div>
@@ -278,8 +276,7 @@
                         </div>
                     </div>
                 </div>
-                <br>
-                <div class="row mt-3">
+                <div class="row mt-2">
                     <div class="d-flex justify-start w-100">
                         <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPenginapan(1, event)">Reset</button>
                         <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPenginapan(1, event)">Delete</button>
