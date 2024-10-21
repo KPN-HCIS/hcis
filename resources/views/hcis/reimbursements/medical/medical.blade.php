@@ -166,9 +166,8 @@
                 });
             });
 
-            // Commenting out the formatDate function as it may not be needed for rejection info
-            /*
             function formatDate(dateTimeString) {
+                if (!dateTimeString) return 'N/A';
                 var date = new Date(dateTimeString);
                 var day = ('0' + date.getDate()).slice(-2);
                 var month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -177,39 +176,30 @@
                 var minutes = ('0' + date.getMinutes()).slice(-2);
                 return `${day}/${month}/${year} ${hours}:${minutes}`;
             }
-            */
 
             window.showRejectInfo = function(transactionId) {
-                var rejectMedic = {!! json_encode($rejectMedic) !!}; // Adjusted variable for rejected medical records
-                var employeeName = {!! json_encode($employeeName) !!}; // Add this line
+                var rejectMedic = {!! json_encode($rejectMedic) !!};
+                var employeeName = {!! json_encode($employees) !!};
 
-                // Find the rejected medical record for the given transaction ID (no_medic)
-                var rejectionInfo = rejectMedic[transactionId]; // Access directly with key
+                var rejectionInfo = rejectMedic[transactionId];
                 if (rejectionInfo) {
-                    var rejectedBy = employeeName[rejectionInfo.employee_id] || 'N/A'; // Retrieve fullname
-                    document.getElementById('rejectedBy').textContent = ': ' +
-                    rejectedBy; // Update rejected by text
+                    var rejectedBy = employeeName[rejectionInfo.rejected_by] || 'N/A';
+                    document.getElementById('rejectedBy').textContent = ': ' + rejectedBy;
                     document.getElementById('rejectionReason').textContent = ': ' + (rejectionInfo
-                        .reject_info || 'N/A'); // Update rejection reason
-                    // Commenting out rejection date display as it may not be needed
-                    /*
-                    var rejectionDate = rejectionInfo.date ? formatDate(rejectionInfo.date) : 'N/A'; // Use date from the record
-                    document.getElementById('rejectionDate').textContent = ': ' + rejectionDate; // Update rejection date
-                    */
+                        .reject_info || 'N/A');
+
+                    // Use rejected_at instead of approved_at
+                    var rejectionDate = formatDate(rejectionInfo.rejected_at);
+                    document.getElementById('rejectionDate').textContent = ': ' + rejectionDate;
                     rejectModal.show();
                 } else {
                     console.error('Rejection information not found for transaction ID:', transactionId);
                 }
             };
 
-            // Commenting out the modal hidden event listener as it may not be needed
-            /*
             document.getElementById('rejectReasonModal').addEventListener('hidden.bs.modal', function() {
                 // console.log('Modal closed');
             });
-            */
         });
-    </script>
-
     </script>
 @endsection

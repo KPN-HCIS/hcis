@@ -33,24 +33,33 @@ class MedicalController extends Controller
             DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
-            'status'
+            'status',
+            DB::raw('MAX(created_at) as latest_created_at')
         )
             ->where('employee_id', $employee_id)
             ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+            // ->orderBy('latest_created_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
 
         $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
             ->where('status', 'Rejected')  // Filter for rejected status
-            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
-            ->get();
-        $rejectMedic = $rejectMedic->keyBy('no_medic');
+            ->get()
+            ->keyBy('no_medic');
 
-        $employeeName = HealthCoverage::where('employee_id', $employee_id)
-            ->where('status', 'Rejected')  // Filter for rejected status
-            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
-            ->get();
-        $employeeName = $employeeName->keyBy('no_medic');
+        // Get employee IDs from both 'employee_id' and 'rejected_by'
+        $employeeIds = $rejectMedic->pluck('employee_id')->merge($rejectMedic->pluck('rejected_by'))->unique();
+
+        // Fetch employee names for those IDs
+        $employees = Employee::whereIn('employee_id', $employeeIds)
+            ->pluck('fullname', 'employee_id');
+
+        // Now map the full names to the respective HealthCoverage records
+        $rejectMedic->transform(function ($item) use ($employees) {
+            $item->employee_fullname = $employees->get($item->employee_id);
+            $item->rejected_by_fullname = $employees->get($item->rejected_by);
+            return $item;
+        });
 
         // dd($rejectMedic);
         $medical = $medicalGroup->map(function ($item) use ($employee_id) {
@@ -70,7 +79,7 @@ class MedicalController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Medical';
 
-        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName'));
+        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees'));
     }
     public function medicalForm()
     {
@@ -230,6 +239,11 @@ class MedicalController extends Controller
             'status' => $statusValue,
             'medical_proof' => $medical_proof_path ?? $existingMedical->medical_proof,
             'created_by' => $employee_id,
+            'balance_verif' => null,
+            'verif_by' => null,
+            'reject_info' => null,
+            'rejected_at' => null,
+            'rejected_by' => null,
         ];
 
         HealthCoverage::where('no_medic', $no_medic)->update($commonUpdateData);
@@ -255,22 +269,18 @@ class MedicalController extends Controller
             if ($existingCoverage) {
                 // Update balance for existing coverage
                 $oldCost = $existingCoverage->balance;
-                // dd( $existingCoverage->balance, $oldCost );
                 $costDifference = $cost - $oldCost;
-                // dd( $costDifference );
+                // dd($existingCoverage, $costDifference, $statusValue);
 
                 if ($statusValue !== 'Draft') {
-                    $medical_plan->balance -= $costDifference;
-                    // dd( $medical_plan->balance -= $costDifference);
-                    // dd( $statusValue);
+                    $medical_plan->balance -= $cost;
                     $medical_plan->save();
                 }
-
+                // dd($cost);
                 $existingCoverage->update([
                     'balance' => $cost,
                     'balance_uncoverage' => ($medical_plan->balance < 0) ? abs($medical_plan->balance) : 0,
                 ]);
-                Log::info("Updated existing coverage for medical_type: $medical_type, new balance: $cost");
             } else {
                 // Create new coverage for new medical type
                 HealthCoverage::create(array_merge($commonUpdateData, [
@@ -282,6 +292,12 @@ class MedicalController extends Controller
                     'balance' => $cost,
                     'created_by' => $employee_id,
                     'balance_uncoverage' => ($medical_plan->balance < 0) ? abs($medical_plan->balance) : 0,
+                    'balance_verif' => null,
+                    'verif_by' => null,
+                    'reject_info' => null,
+                    'rejected_at' => null,
+                    'rejected_by' => null,
+
                 ]));
 
                 if ($statusValue !== 'Draft') {
@@ -530,22 +546,53 @@ class MedicalController extends Controller
     public function medicalApprovalUpdate($id, Request $request)
     {
         // Find the medical record by ID
+        $employee_id = Auth::user()->employee_id;
         $medical = HealthCoverage::findOrFail($id);
 
         // Determine the new status based on the action
         $action = $request->input('status_approval');
         $rejectInfo = $request->input('reject_info');
+        // $medical_cost = HealthCoverage::where(
+        //     'employee_id',
+        //     $employee_id,
+        // )->orWhere('no_medic', $medical->no_medic)
+        //     ->get();
+
+        //     dd($medical_cost);
 
         if ($action == 'Rejected') {
             $statusValue = 'Rejected';
 
-            // Update all records with the same 'no_medic' to 'Rejected'
-            HealthCoverage::where('no_medic', $medical->no_medic)->update([
-                'status' => $statusValue,
-                'reject_info' => $rejectInfo,
-            ]);
+            // Fetch all records with the same 'no_medic'
+            $healthCoverages = HealthCoverage::where('no_medic', $medical->no_medic)->get();
 
-            return redirect()->route('medical.approval')->with('success', 'Medical request rejected.');
+            // Loop through each health coverage record and update accordingly
+            foreach ($healthCoverages as $coverage) {
+                $medicalType = $coverage->medical_type;
+                $balance = $coverage->balance;
+                $employeeId = $coverage->employee_id;
+
+                // Fetch the health plan for this employee and medical type
+                $healthPlan = HealthPlan::where('employee_id', $employeeId)
+                    ->where('medical_type', $medicalType)
+                    ->first();
+
+                if ($healthPlan) {
+                    // Add the balance from the health coverage back to the health plan
+                    $healthPlan->balance += $balance;
+                    $healthPlan->save();
+                }
+
+                // Update the health coverage record to reflect rejection
+                $coverage->update([
+                    'status' => $statusValue,
+                    'reject_info' => $rejectInfo,
+                    'rejected_by' => $employee_id,
+                    'rejected_at' => now(),
+                ]);
+            }
+
+            return redirect()->route('medical.approval')->with('success', 'Medical request rejected and balances updated.');
         } elseif ($action == 'Done') {
             $statusValue = 'Done';
 
@@ -555,8 +602,12 @@ class MedicalController extends Controller
             // Loop through each health coverage record and update accordingly
             foreach ($healthCoverages as $coverage) {
                 $medicalType = $coverage->medical_type;
+                $balance = $coverage->balance;
                 $balanceVerif = $coverage->balance_verif;
-                $employeeId = $coverage->employee_id;  // Use employee_id from the current data
+                $employeeId = $coverage->employee_id;
+
+                // Calculate the difference
+                $balanceDifference = $balance - $balanceVerif;
 
                 // Fetch the health plan for this employee and medical type
                 $healthPlan = HealthPlan::where('employee_id', $employeeId)
@@ -564,11 +615,16 @@ class MedicalController extends Controller
                     ->first();
 
                 if ($healthPlan) {
-                    // Deduct the verified balance from the health plan for this specific medical type
-                    $healthPlan->balance -= $balanceVerif;
+                    // If the result is positive, add the difference to the health plan balance
+                    if ($balanceDifference > 0) {
+                        $healthPlan->balance += $balanceDifference;
+                    }
+                    // If the result is negative or zero, subtract the absolute difference from the health plan balance
+                    elseif ($balanceDifference < 0) {
+                        $healthPlan->balance -= abs($balanceDifference);
+                    }
                     $healthPlan->save();
                 }
-
                 // Update the medical record to mark it as done and store verification info
                 $coverage->update([
                     'status' => $statusValue,

@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Hotel'])
+@extends('layouts_.vertical', ['page_title' => 'Medical Approvals'])
 
 @section('css')
     <style>
@@ -182,91 +182,6 @@
 
             // Trigger the change event to apply the selected value
             $('#dt-length-0').trigger('change');
-        });
-
-        $(document).ready(function() {
-            $('.btn-detail').click(function() {
-                var hotel = $(this).data('hotel');
-
-                function createTableHtml(data, title) {
-                    var tableHtml = '<h5>' + title + '</h5>';
-                    tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
-                    var isArray = Array.isArray(data) && data.length > 0;
-
-                    // Assuming all objects in the data array have the same keys, use the first object to create headers
-                    if (isArray) {
-                        for (var key in data[0]) {
-                            if (data[0].hasOwnProperty(key)) {
-                                tableHtml += '<th>' + key + '</th>';
-                            }
-                        }
-                    } else if (typeof data === 'object') {
-                        // If data is a single object, create headers from its keys
-                        for (var key in data) {
-                            if (data.hasOwnProperty(key)) {
-                                tableHtml += '<th>' + key + '</th>';
-                            }
-                        }
-                    }
-
-                    tableHtml += '</tr></thead><tbody>';
-
-                    // Loop through each item in the array and create a row for each
-                    if (isArray) {
-                        data.forEach(function(row) {
-                            tableHtml += '<tr>';
-                            for (var key in row) {
-                                if (row.hasOwnProperty(key)) {
-                                    tableHtml += '<td>' + row[key] + '</td>';
-                                }
-                            }
-                            tableHtml += '</tr>';
-                        });
-                    } else if (typeof data === 'object') {
-                        // If data is a single object, create a single row
-                        tableHtml += '<tr>';
-                        for (var key in data) {
-                            if (data.hasOwnProperty(key)) {
-                                tableHtml += '<td>' + data[key] + '</td>';
-                            }
-                        }
-                        tableHtml += '</tr>';
-                    }
-
-                    tableHtml += '</tbody></table>';
-                    return tableHtml;
-                }
-
-                // $('#detailTypeHeader').text('Detail Information');
-                $('#detailContent').empty();
-
-                try {
-                    var content = '';
-
-                    if (hotel && hotel !== 'undefined') {
-                        var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                        content += createTableHtml(hotelData, 'Hotel Detail');
-                    }
-
-                    if (content !== '') {
-                        $('#detailContent').html(content);
-                    } else {
-                        $('#detailContent').html('<p>No detail information available.</p>');
-                    }
-
-                    $('#detailModal').modal('show');
-                } catch (e) {
-                    $('#detailContent').html('<p>Error loading data</p>');
-                }
-            });
-
-            $('#detailModal').on('hidden.bs.modal', function() {
-                $('body').removeClass('modal-open').css({
-                    overflow: '',
-                    padding: ''
-                });
-                $('.modal-backdrop').remove();
-            });
         });
     </script>
 @endsection
