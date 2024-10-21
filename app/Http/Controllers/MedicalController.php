@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Imports\ImportHealthCoverage;
 use App\Exports\MedicalExport;
+use App\Exports\MedicalDetailExport;
 
 
 class MedicalController extends Controller
@@ -680,7 +681,7 @@ class MedicalController extends Controller
         ]);
     }
 
-    public function medicalDetail(Request $request, $key)
+    public function medicalAdminDetail(Request $request, $key)
     {
         // Gunakan findByRouteKey untuk mendekripsi $key
         $employee = Employee::findByRouteKey($key);
@@ -748,10 +749,10 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName', 'master_medical', 'formatted_data', 'employee_id'));
     }
 
-    public function importExcel(Request $request)
+    public function importAdminExcel(Request $request)
     {
         $userId = Auth::id();
         // Validasi file yang diunggah
@@ -768,11 +769,16 @@ class MedicalController extends Controller
         return redirect()->route('medical.admin')->with('success', 'Transaction successfully added From Excell.');
     }
 
-    public function exportExcel(Request $request)
+    public function exportAdminExcel(Request $request)
     {
         $stat = $request->input('stat');
         $customSearch = $request->input('customsearch');
 
         return Excel::download(new MedicalExport($stat, $customSearch), 'medical_report.xlsx');
+    }
+
+    public function exportDetailExcel($employee_id)
+    {
+        return Excel::download(new MedicalDetailExport($employee_id), 'medical_detail.xlsx');
     }
 }

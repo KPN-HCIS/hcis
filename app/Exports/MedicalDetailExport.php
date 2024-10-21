@@ -18,65 +18,56 @@ use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEvents
+class MedicalDetailExport implements FromCollection, WithHeadings, WithStyles, WithEvents
 {
-    protected $stat;
-    protected $customSearch;
+    protected $employee_id;
 
-    public function __construct($stat, $customSearch)
+    public function __construct($employee_id)
     {
-        $this->stat = $stat;
-        $this->customSearch = $customSearch;
+        $this->employee_id = $employee_id;
     }
 
     public function collection()
     {
-        $currentYear = date('Y');
+        $medicalGroup = HealthCoverage::select(
+            'no_medic',
+            'date',
+            'period',
+            'hospital_name',
+            'patient_name',
+            'disease',
+            DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
+            'status',
+            DB::raw('MAX(created_at) as latest_created_at')
 
-        $master_medical = MasterMedical::all();
-        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
+        )
+            ->where('employee_id', $this->employee_id)
+            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+            ->orderBy('latest_created_at', 'desc')
+            ->get();
 
-        if (!empty($this->stat)) {
-            $query->where('office_area', $this->stat);
-        }
-        if (!empty($this->customSearch)) {
-            $query->where('fullname', 'like', '%' . $this->customSearch . '%');
-        }
-
-        $med_employee = $query->orderBy('created_at', 'desc')->get();
-
-        $medical_plans = HealthPlan::where('period', $currentYear)->get();
-
-        $balances = [];
-        foreach ($medical_plans as $plan) {
-            $balances[$plan->employee_id][$plan->medical_type] = $plan->balance;
-        }
-
-        foreach ($med_employee as $transaction) {
-            $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
-            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
-
-            $employeeMedicalPlan = $medical_plans->where('employee_id', $transaction->employee_id)->first();
-            $transaction->period = $employeeMedicalPlan ? $employeeMedicalPlan->period : '-';
-        }
-
-        return $med_employee->map(function ($transaction, $index) use ($balances, $master_medical) {
-            $data = [
-                'No'               => $index + 1,
-                'NIK'              => $transaction->kk,
-                'Employee ID'      => $transaction->employee_id,
-                'Employee Name'    => $transaction->fullname,
-                'Join Date'        => \Carbon\Carbon::parse($transaction->date_of_joining)->format('d-F-Y'),
-                'Period'           => $transaction->period,
-                'Created At'       => $transaction->created_at,
+        $counter = 1;
+        $medicalGroupWithNumbers = $medicalGroup->map(function ($item) use (&$counter) {
+            return [
+                'number' => $counter++, // Nomor urut di bagian depan
+                'date' => \Carbon\Carbon::parse($item->date)->format('d-F-Y'),
+                'period' => $item->period,
+                'no_medic' => $item->no_medic,
+                'hospital_name' => $item->hospital_name,
+                'patient_name' => $item->patient_name,
+                'disease' => $item->disease,
+                'status' => $item->status,
+                'child_birth_total' => $item->child_birth_total,
+                'inpatient_total' => $item->inpatient_total,
+                'outpatient_total' => $item->outpatient_total,
+                'glasses_total' => $item->glasses_total,
             ];
-
-            foreach ($master_medical as $medical_item) {
-                $data[$medical_item->name] = isset($balances[$transaction->employee_id][$medical_item->name]) ? $balances[$transaction->employee_id][$medical_item->name] : 0;
-            }
-
-            return $data;
         });
+
+        return $medicalGroupWithNumbers;
     }
 
     public function headings(): array
@@ -84,11 +75,13 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
         // Base headings
         $headings = [
             'No',
-            'NIK',
-            'Employee ID',
-            'Name',
-            'Join Date',
+            'Date',
             'Period',
+            'No Medic',
+            'Hospital Name',
+            'Patient Name',
+            'Disease',
+            'Status',
         ];
 
         // Fetch dynamic medical types and append to headings
@@ -97,7 +90,6 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
             $headings[] = $medical_item->name; // Append each medical type to headings
         }
 
-        // Return the final headings array
         return $headings;
     }
 

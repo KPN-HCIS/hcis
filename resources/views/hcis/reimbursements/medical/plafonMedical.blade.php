@@ -19,7 +19,7 @@
                     <td class="text-center">{{ $period }}</td>
                     @foreach ($master_medical as $master_medical_item)
                         <td class="text-center">
-                            {{ isset($balances[$master_medical_item->medical_type]) ? number_format($balances[$master_medical_item->medical_type], 0, ',', '.') : '-' }}
+                            {{ isset($balances[$master_medical_item->name]) ? number_format($balances[$master_medical_item->name], 0, ',', '.') : '-' }}
                         </td>
                     @endforeach
                 </tr>

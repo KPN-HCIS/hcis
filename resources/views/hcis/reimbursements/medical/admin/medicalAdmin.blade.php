@@ -60,11 +60,11 @@
                     </li>
                 </ol>
             </div>
-            @include('hcis.reimbursements.businessTrip.modal')
+            @include('hcis.reimbursements.medical.navigation.modalMedical')
 
             <!-- Button Section -->
             <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
-                <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                <a href="{{ route('exportmed-detail.excel', $employee_id) }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
             </div>
