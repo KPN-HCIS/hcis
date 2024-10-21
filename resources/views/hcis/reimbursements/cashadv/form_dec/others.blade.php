@@ -19,24 +19,22 @@
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Amount</label>
-                                <div class="input-group mb-3">
+                                <div class="input-group">
                                     <div class="input-group-append">
                                         <span class="input-group-text">Rp</span>
                                     </div>
                                     <input class="form-control" name="nominal_bt_lainnya[]" id="nominal_bt_lainnya_${formCountOthers}" type="text" min="0" value="0" onfocus="this.value = this.value === '0' ? '' : this.value;" oninput="formatInput(this)" onblur="formatOnBlur(this)">
                                 </div>
                             </div>
-                            <div class="col-md-12 mb-2">
-                                <div class="mb-2">
-                                    <label class="form-label">Information</label>
-                                    <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
-                                </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Information</label>
+                                <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
                                 <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormLainnya(${formCountOthers}, event)">Reset</button>
-                                <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormLainnya(${formCountOthers}, event)">Delete</button>
+                                <button class="btn btn-outline-danger mr-2 btn-sm" onclick="removeFormLainnya(${formCountOthers}, event)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -88,7 +86,7 @@
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Amount</label>
-                                <div class="input-group mb-3">
+                                <div class="input-group">
                                     <div class="input-group-append">
                                         <span class="input-group-text">Rp</span>
                                     </div>
@@ -97,7 +95,7 @@
                             </div>
 
                             <!-- Information -->
-                            <div class="col-md-12 mb-2">
+                            <div class="col-md-12">
                                 <div class="mb-2">
                                     <label class="form-label">Information</label>
                                     <textarea name="keterangan_bt_lainnya[]" class="form-control">{{ $lainnya_dec['keterangan'] }}</textarea>
@@ -125,7 +123,7 @@
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Amount</label>
-                            <div class="input-group mb-3">
+                            <div class="input-group">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
                                 </div>
@@ -134,7 +132,7 @@
                         </div>
 
                         <!-- Information -->
-                        <div class="col-md-12 mb-2">
+                        <div class="col-md-12">
                             <div class="mb-2">
                                 <label class="form-label">Information</label>
                                 <textarea name="keterangan_bt_lainnya[]" class="form-control">{{ $lainnya_dec['keterangan'] }}</textarea>
@@ -153,7 +151,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary btn-sm" id="addMoreButtonLainnya" onclick="addMoreFormLainnyaDec(event)">Add More</button>
+        <button class="btn btn-primary" id="addMoreButtonLainnya" onclick="addMoreFormLainnyaDec(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -181,7 +179,7 @@
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label">Amount</label>
-                                <div class="input-group mb-3">
+                                <div class="input-group">
                                     <div class="input-group-append">
                                         <span class="input-group-text">Rp</span>
                                     </div>
@@ -190,7 +188,7 @@
                             </div>
 
                             <!-- Information -->
-                            <div class="col-md-12 mb-2">
+                            <div class="col-md-12">
                                 <div class="mb-2">
                                     <label class="form-label">Information</label>
                                     <textarea name="keterangan_bt_lainnya[]" class="form-control">{{ $lainnya_dec['keterangan'] }}</textarea>
@@ -210,7 +208,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary btn-sm" id="addMoreButtonLainnya" onclick="addMoreFormLainnyaDec(event)">Add More</button>
+        <button class="btn btn-primary" id="addMoreButtonLainnya" onclick="addMoreFormLainnyaDec(event)">Add More</button>
     </div>
 
     <div class="mt-2">
@@ -236,7 +234,7 @@
                     </div>
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Amount</label>
-                        <div class="input-group mb-3">
+                        <div class="input-group">
                             <div class="input-group-append">
                                 <span class="input-group-text">Rp</span>
                             </div>
@@ -245,7 +243,7 @@
                     </div>
 
                     <!-- Information -->
-                    <div class="col-md-12 mb-2">
+                    <div class="col-md-12">
                         <div class="mb-2">
                             <label class="form-label">Information</label>
                             <textarea name="keterangan_bt_lainnya[]" class="form-control"></textarea>
@@ -263,7 +261,7 @@
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-primary btn-sm" id="addMoreButton" onclick="addMoreFormLainnyaDec(event)">Add More</button>
+        <button class="btn btn-primary" id="addMoreButton" onclick="addMoreFormLainnyaDec(event)">Add More</button>
     </div>
 
     <div class="mt-2">

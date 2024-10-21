@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Employee extends Model
 {
@@ -12,14 +13,80 @@ class Employee extends Model
 
     protected $fillable = [
         // Kolom-kolom lainnya,
-        'access_menu','id','employee_id', 'fullname', 'gender', 'email', 'group_company',
-        'designation', 'job_level', 'company_name', 'contribution_level_code',
-        'work_area_code', 'office_area', 'manager_l1_id', 'manager_l2_id',
-        'employee_type', 'unit', 'date_of_joining', 'users_id','personal_email','personal_mobile_number','date_of_birth','place_of_birth'
-        ,'nationality','religion','marital_status','citizenship_status','ethnic_group','homebase','current_address','current_city'
-        ,'permanent_address','permanent_city','blood_group','tax_status','bpjs_tk','bpjs_ks','ktp','kk','npwp','mother_name','bank_name'
-        ,'bank_account_number','bank_account_name'
+        'access_menu',
+        'id',
+        'employee_id',
+        'fullname',
+        'gender',
+        'email',
+        'group_company',
+        'designation',
+        'job_level',
+        'company_name',
+        'contribution_level_code',
+        'work_area_code',
+        'office_area',
+        'manager_l1_id',
+        'manager_l2_id',
+        'employee_type',
+        'unit',
+        'date_of_joining',
+        'users_id',
+        'personal_email',
+        'personal_mobile_number',
+        'date_of_birth',
+        'place_of_birth',
+        'nationality',
+        'religion',
+        'marital_status',
+        'citizenship_status',
+        'ethnic_group',
+        'homebase',
+        'current_address',
+        'current_city',
+        'permanent_address',
+        'permanent_city',
+        'blood_group',
+        'tax_status',
+        'bpjs_tk',
+        'bpjs_ks',
+        'ktp',
+        'kk',
+        'npwp',
+        'mother_name',
+        'bank_name',
+        'bank_account_number',
+        'bank_account_name'
     ];
+
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = Str::uuid()->toString();
+            }
+        });
+    }
+
+    public function getRouteKey()
+    {
+        return encrypt($this->getKey());
+    }
+
+    public static function findByRouteKey($key)
+    {
+        try {
+            $employee_id = decrypt($key);
+
+            return self::findOrFail($employee_id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
 
     public function user()
     {
@@ -89,5 +156,17 @@ class Employee extends Model
             ->distinct()
             ->pluck('group_company');
     }
-    
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'user_id', 'id');
+    }
+    public function statusReqEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'status_id', 'employee_id');
+    }
+    public function statusSettEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'sett_id', 'employee_id');
+    }
 }

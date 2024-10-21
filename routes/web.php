@@ -38,6 +38,7 @@ use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use App\Http\Controllers\ReimburseController;
 use App\Models\Designation;
+use Faker\Provider\Medical;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -158,7 +159,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
 
     // Approval
-    Route::get('/approval', [ApprovalReimburseController::class, 'approval'])->name('approval');
+    Route::get('/approval', [ApprovalReimburseController::class, 'reimbursementsApproval'])->name('approvalRem');
 
     // Approval Reimburse
     Route::get('/approval/cashadvanced', [ApprovalReimburseController::class, 'cashadvancedApproval'])->name('approval.cashadvanced');
@@ -252,12 +253,18 @@ Route::middleware('auth')->group(function () {
     Route::put('/medical/form-update/update/{id}', [MedicalController::class, 'medicalUpdate'])->name('medical-form.put');
     Route::delete('/medical/delete/{id}', [MedicalController::class, 'medicalDelete'])->name('medical.delete');
     Route::get('/medical/export-excel/', [MedicalController::class, 'medicalForm'])->name('export.medical');
+    Route::post('/medical/import-excel/', [MedicalController::class, 'importExcel'])->name('import.medical');
 
     //Medical Admin
-    Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
+    Route::get('/exportmed/excel', [MedicalController::class, 'exportExcel'])->name('exportmed.excel');
+    Route::get('/medical/admin/table', [MedicalController::class, 'medicalAdminTable'])->name('medical-table.admin');
     Route::get('/medical/admin/form-update/{id}', [MedicalController::class, 'medicalAdminForm'])->name('medical-admin-form.edit');
     Route::put('/medical/admin/form-update/update/{id}', [MedicalController::class, 'medicalAdminUpdate'])->name('medical-admin-form.put');
     Route::delete('/medical/admin/delete/{id}', [MedicalController::class, 'medicalAdminDelete'])->name('medical-admin.delete');
+    Route::middleware(['permission:reportca_hcis'])->group(function () {
+        Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
+        Route::get('/medical/detail/{key}', [MedicalController::class, 'medicalDetail'])->name('medical.detail');
+    });
 
     //Medical Approval
     Route::get('/medical/approval', [MedicalController::class, 'medicalApproval'])->name('medical.approval');

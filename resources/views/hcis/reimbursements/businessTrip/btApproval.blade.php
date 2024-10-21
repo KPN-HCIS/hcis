@@ -80,6 +80,7 @@
                 </div>
             </div>
         </div>
+        @include('hcis.reimbursements.approval.navigation.navigationAll')
     </div>
 
     <div class="card">
