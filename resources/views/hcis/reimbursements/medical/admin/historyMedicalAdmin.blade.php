@@ -55,7 +55,9 @@
                               };
                           @endphp
                           <span class="badge rounded-pill {{ $badgeClass }} text-center"
-                              style="font-size: 12px; padding: 0.5rem 1rem;">
+                              style="font-size: 12px; padding: 0.5rem 1rem; cursor: pointer;"
+                              @if ($item->status == 'Rejected' && isset($rejectMedic[$item->no_medic])) onclick="showRejectInfo('{{ $item->no_medic }}')"
+                                title="Click to see rejection reason" @endif>
                               {{ $item->status }}
                           </span>
                       </td>

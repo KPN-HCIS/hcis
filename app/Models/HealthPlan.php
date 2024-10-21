@@ -13,6 +13,7 @@ class HealthPlan extends Model
     use SoftDeletes;
 
     protected $table = 'health_plan';
+    protected $primaryKey = 'plan_id';
     protected $fillable = [
         'plan_id',
         'employee_id',

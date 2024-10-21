@@ -95,7 +95,7 @@ class MedicalController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Medical';
 
-        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data'));
     }
 
     public function medicalForm()
@@ -413,8 +413,9 @@ class MedicalController extends Controller
 
         $parentLink = 'Medical (Admin)';
         $link = 'Medical Details';
+        $key = 'key';
 
-        return view('hcis.reimbursements.medical.admin.medicalAdminForm', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes'));
+        return view('hcis.reimbursements.medical.admin.medicalAdminForm', compact('key', 'selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes'));
     }
 
     public function medicalAdminUpdate(Request $request, $id)
@@ -590,9 +591,10 @@ class MedicalController extends Controller
                 $employeeId = $coverage->employee_id;
 
                 // Fetch the health plan for this employee and medical type
-                $healthPlan = HealthPlan::where('employee_id', $employeeId)
+                $healthPlan = HealthPlan::where('employee_id', $medical->employee_id)
                     ->where('medical_type', $medicalType)
                     ->first();
+                // dd($healthPlan);
 
                 if ($healthPlan) {
                     // Add the balance from the health coverage back to the health plan
@@ -762,22 +764,31 @@ class MedicalController extends Controller
 
         )
             ->where('employee_id', $employee_id)
+            ->where('status', '!=', 'Draft')
             ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
             ->orderBy('latest_created_at', 'desc')
             ->get();
 
         $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
             ->where('status', 'Rejected')  // Filter for rejected status
-            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
-            ->get();
-        $rejectMedic = $rejectMedic->keyBy('no_medic');
+            ->get()
+            ->keyBy('no_medic');
 
-        $employeeName = HealthCoverage::where('employee_id', $employee_id)
-            ->where('status', 'Rejected')  // Filter for rejected status
-            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
-            ->get();
-        $employeeName = $employeeName->keyBy('no_medic');
+        // Get employee IDs from both 'employee_id' and 'rejected_by'
+        $employeeIds = $rejectMedic->pluck('employee_id')->merge($rejectMedic->pluck('rejected_by'))->unique();
 
+        // Fetch employee names for those IDs
+        $employees = Employee::whereIn('employee_id', $employeeIds)
+            ->pluck('fullname', 'employee_id');
+
+        // Now map the full names to the respective HealthCoverage records
+        $rejectMedic->transform(function ($item) use ($employees) {
+            $item->employee_fullname = $employees->get($item->employee_id);
+            $item->rejected_by_fullname = $employees->get($item->rejected_by);
+            return $item;
+        });
+
+        // dd($rejectMedic);
         $medical = $medicalGroup->map(function ($item) use ($employee_id) {
             // Fetch the usage_id based on no_medic
             $usageId = HealthCoverage::where('no_medic', $item->no_medic)
@@ -802,7 +813,7 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data'));
     }
 
     public function importExcel(Request $request)
