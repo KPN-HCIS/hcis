@@ -1,14 +1,7 @@
 @extends('layouts_.vertical', ['page_title' => 'Cash Advanced (Admin)'])
 
 @section('css')
-    @vite([
-        'node_modules/select2/dist/css/select2.min.css',
-        'node_modules/daterangepicker/daterangepicker.css',
-        'node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.css',
-        'node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
-        'node_modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
-        'node_modules/flatpickr/dist/flatpickr.min.css'
-    ])
+    @vite(['node_modules/select2/dist/css/select2.min.css', 'node_modules/daterangepicker/daterangepicker.css', 'node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.css', 'node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css', 'node_modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css', 'node_modules/flatpickr/dist/flatpickr.min.css'])
     <style>
         .table {
             border-collapse: separate;
@@ -88,8 +81,10 @@
                             <div class="input-group">
                                 <label class="col-form-label mx-2">Lokasi Unit : </label>
                                 <div style="width: 250px;">
-                                    <select class="form-select select2" style="width: 38px;" aria-label="Status" id="stat" name="stat">
-                                        <option value="-" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All Status</option>
+                                    <select class="form-select select2" style="width: 38px;" aria-label="Status"
+                                        id="stat" name="stat">
+                                        <option value="-" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
+                                            Status</option>
                                         @foreach ($locations as $location)
                                             <option value="{{ $location->area }}"
                                                 {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
@@ -98,12 +93,14 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <input type="text" name="customsearch" id="customsearch" class="form-control mx-2" placeholder="Employee Name" aria-label="search" aria-describedby="search" >
+                                <input type="text" name="customsearch" id="customsearch" class="form-control mx-2"
+                                    placeholder="Employee Name" aria-label="search" aria-describedby="search">
                                 <div class="input-group-append mx-2">
                                     <button class="btn btn-primary" type="submit">Filter</button>
                                 </div>
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-success btn-action me-1" data-bs-toggle="modal" data-bs-target="#importExcelHealtCoverage" type="button">
+                                    <button class="btn btn-outline-success btn-action me-1" data-bs-toggle="modal"
+                                        data-bs-target="#importExcelHealtCoverage" type="button">
                                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
                                     </button>
                                     <button class="btn btn-success" type="button" onclick="redirectToExportExcel()">
@@ -124,7 +121,8 @@
                             <h3 class="card-title">{{ $link }}</h3>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-sm dt-responsive nowrap" id="scheduleTable" width="100%" cellspacing="0">
+                            <table class="table table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
+                                cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th class="text-center">No</th>
@@ -145,18 +143,19 @@
                                         @foreach ($med_employee as $med_employees)
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                                <td>{{ $med_employees->kk }}</td>
+                                                <td class="text-start">{{ $med_employees->ktp }}</td>
                                                 <td>{{ $med_employees->employee_id }}</td>
                                                 <td>{{ $med_employees->fullname }}</td>
                                                 <td>{{ $med_employees->date_of_joining }}</td>
                                                 <td>{{ $med_employees->period }}</td>
                                                 @foreach ($master_medical as $master_medical_item)
                                                     <td class="text-center">
-                                                        {{ isset($balances[$med_employees->employee_id][$master_medical_item->name]) ? number_format($balances[$med_employees->employee_id][$master_medical_item->name], 0, ',', '.') : '-' }}
+                                                        {{ isset($balances[$med_employees->employee_id][$master_medical_item->name]) ? 'Rp. ' . number_format($balances[$med_employees->employee_id][$master_medical_item->name], 0, ',', '.') : '-' }}
                                                     </td>
                                                 @endforeach
                                                 <td class="text-center">
-                                                    <a href="{{ route('medical.detail', $med_employees->getRouteKey()) }}" class="btn btn-outline-warning" title="Edit">
+                                                    <a href="{{ route('medical.detail', $med_employees->getRouteKey()) }}"
+                                                        class="btn btn-outline-warning" title="Edit">
                                                         <i class="ri-edit-box-line"></i>
                                                     </a>
                                                 </td>
@@ -205,6 +204,7 @@
                 confirmButtonText: "Ok",
             });
         }
+
         function redirectToExportExcel() {
             const route = "{{ route('exportmed.excel') }}";
 
@@ -238,7 +238,7 @@
         }
 
         // Event listener untuk menangkap date range yang dipilih
-        $("#singledaterange").on("apply.daterangepicker", function (ev, picker) {
+        $("#singledaterange").on("apply.daterangepicker", function(ev, picker) {
             var startDate = picker.startDate.format("YYYY-MM-DD");
             var endDate = picker.endDate.format("YYYY-MM-DD");
 
@@ -249,30 +249,29 @@
         // Fungsi untuk mengirimkan tanggal yang dipilih ke server dan memperbarui tabel
         function filterTableByDateRange(startDate, endDate) {
             $.ajax({
-                url: '{{ route("cashadvanced.admin") }}', // Route yang sudah Anda buat
+                url: '{{ route('cashadvanced.admin') }}', // Route yang sudah Anda buat
                 type: "GET",
                 data: {
                     start_date: startDate,
                     end_date: endDate,
                 },
-                success: function (response) {
+                success: function(response) {
                     // Perbarui tabel dengan data yang difilter
                     // $('#scheduleTable tbody').html(response);
                     // $('#tableFilter').html(response);
                 },
-                error: function (xhr) {
+                error: function(xhr) {
                     // console.error(xhr);
                 },
             });
         }
         //script modal
-
     </script>
 
     @if (session('refresh'))
         <script>
             // Refresh the page after 1 seconds
-            setTimeout(function(){
+            setTimeout(function() {
                 window.location.reload();
             }, 1000);
         </script>

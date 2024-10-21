@@ -9,7 +9,7 @@
             </tr>
             <tr>
                 @foreach ($master_medical as $master_medicals)
-                    <th class="text-center">{{  $master_medicals->name }}</th>
+                    <th class="text-center">{{ $master_medicals->name }}</th>
                 @endforeach
             </tr>
         </thead>
@@ -19,7 +19,7 @@
                     <td class="text-center">{{ $period }}</td>
                     @foreach ($master_medical as $master_medical_item)
                         <td class="text-center">
-                            {{ isset($balances[$master_medical_item->medical_type]) ? number_format($balances[$master_medical_item->medical_type], 0, ',', '.') : '-' }}
+                            {{ isset($balances[$master_medical_item->name]) ? 'Rp. ' . number_format($balances[$master_medical_item->name], 0, ',', '.') : '-' }}
                         </td>
                     @endforeach
                 </tr>
