@@ -8,13 +8,16 @@ use App\Models\MasterDisease;
 use App\Models\HealthPlan;
 use App\Models\HealthCoverage;
 use App\Models\MasterMedical;
-use Carbon\Carbon;
+use App\Models\Company;
+use App\Models\Location;
 use Illuminate\Support\Facades\DB;
-use Excel;
+use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use App\Imports\ImportHealthCoverage;
 
 class MedicalController extends Controller
 {
