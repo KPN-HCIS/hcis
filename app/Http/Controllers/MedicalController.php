@@ -10,6 +10,7 @@ use App\Models\HealthCoverage;
 use App\Models\MasterMedical;
 use App\Models\Company;
 use App\Models\Location;
+use App\Models\MasterBusinessUnit;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -490,38 +491,49 @@ class MedicalController extends Controller
     {
         // Fetch all dependents, no longer filtered by employee_id
         $family = Dependents::orderBy('date_of_birth', 'desc')->get();
+        $employeeId = auth()->user()->employee_id;
+        $employee = Employee::where('employee_id', $employeeId)->first();
 
-        // Fetch grouped medical data for all employees, filtered by verif_by and balance_verif being null
-        $medicalGroup = HealthCoverage::select(
-            'no_medic',
-            'date',
-            'period',
-            'hospital_name',
-            'patient_name',
-            'disease',
-            DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
-            DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
-            DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
-            DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
-            'status'
-        )
-            ->whereNotNull('verif_by')   // Only include records where verif_by is not null
-            ->whereNotNull('balance_verif')
-            ->where('status', 'Pending')
-            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Check if the user has approval rights
+        $hasApprovalRights = DB::table('master_bisnisunits')
+            ->where('approval_medical', $employee->ktp)
+            ->where('nama_bisnis', $employee->group_company)
+            ->exists();
 
-        // Add usage_id for each medical record without filtering by employee_id
-        $medical = $medicalGroup->map(function ($item) {
-            // Fetch the usage_id based on no_medic (for any employee)
-            $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
+        if ($hasApprovalRights) {
+            $medicalGroup = HealthCoverage::select(
+                'no_medic',
+                'date',
+                'period',
+                'hospital_name',
+                'patient_name',
+                'disease',
+                DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
+                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
+                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
+                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
+                'status'
+            )
+                ->whereNotNull('verif_by')   // Only include records where verif_by is not null
+                ->whereNotNull('balance_verif')
+                ->where('status', 'Pending')
+                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-            // Add usage_id to the current item
-            $item->usage_id = $usageId;
+            // Add usage_id for each medical record without filtering by employee_id
+            $medical = $medicalGroup->map(function ($item) {
+                // Fetch the usage_id based on no_medic (for any employee)
+                $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
 
-            return $item;
-        });
+                // Add usage_id to the current item
+                $item->usage_id = $usageId;
+
+                return $item;
+            });
+        } else {
+            $medical = collect(); // Empty collection if user doesn't have approval rights
+        }
 
         // Fetch medical plans for all employees
         $medical_plan = HealthPlan::orderBy('period', 'desc')->get();
@@ -815,7 +827,7 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees','employee_id','master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data'));
     }
 
     public function importAdminExcel(Request $request)

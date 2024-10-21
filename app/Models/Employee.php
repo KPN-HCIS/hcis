@@ -140,6 +140,11 @@ class Employee extends Model
     {
         return $this->hasMany(ApprovalRequest::class, 'employee_id', 'current_approval_id');
     }
+
+    public function healthCoverage()
+    {
+        return $this->hasMany(HealthCoverage::class, 'employee_id', 'employee_id');
+    }
     public function creatorApproverLayer()
     {
         return $this->hasMany(ApprovalLayer::class, 'creator_id', 'id');

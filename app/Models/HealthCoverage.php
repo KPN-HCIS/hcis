@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HealthCoverage extends Model
 {
-    use HasFactory,  HasUuids;
+    use HasFactory, HasUuids;
     use SoftDeletes;
     protected $primaryKey = 'usage_id';
     protected $table = 'health_coverage_usage';
@@ -38,4 +38,9 @@ class HealthCoverage extends Model
         'medical_proof',
         'created_by',
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
 }

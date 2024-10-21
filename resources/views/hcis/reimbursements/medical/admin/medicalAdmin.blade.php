@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Medical'])
+@extends('layouts_.vertical', ['page_title' => 'Medical (Admin)'])
 
 @section('css')
     <style>
