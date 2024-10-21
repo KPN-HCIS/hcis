@@ -815,7 +815,7 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees','employee_id','master_medical', 'formatted_data'));
     }
 
     public function importAdminExcel(Request $request)

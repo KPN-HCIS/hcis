@@ -45,6 +45,7 @@ class MedicalDetailExport implements FromCollection, WithHeadings, WithStyles, W
 
         )
             ->where('employee_id', $this->employee_id)
+            ->where('status', '!=', 'Draft')
             ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
             ->orderBy('latest_created_at', 'desc')
             ->get();
