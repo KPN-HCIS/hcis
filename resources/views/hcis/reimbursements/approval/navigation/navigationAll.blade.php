@@ -20,5 +20,10 @@
                 class="nav-link {{ request()->routeIs('hotel.approval') ? 'active' : '' }}" id="pills-hotel-tab" role="tab"
                 aria-controls="pills-hotel" aria-selected="false">Hotel Approval</a>
         </li>
+        <li class="nav-item" role="presentation" id="nav-medical">
+            <a href="{{ route('medical.approval') }}" style="border-radius: 10px 10px 0px 0px"
+                class="nav-link {{ request()->routeIs('medical.approval') ? 'active' : '' }}" id="pills-medical-tab" role="tab"
+                aria-controls="pills-medical" aria-selected="false">Medical Approval</a>
+        </li>
     </ul>
 </div>

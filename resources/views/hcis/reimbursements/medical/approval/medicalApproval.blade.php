@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Hotel'])
+@extends('layouts_.vertical', ['page_title' => 'Medical Approvals'])
 
 @section('css')
     <style>
@@ -62,6 +62,7 @@
                     </li>
                 </ol>
             </div>
+            @include('hcis.reimbursements.approval.navigation.navigationAll')
         </div>
         @include('hcis.reimbursements.businessTrip.modal')
         <!-- Content Row -->
@@ -69,6 +70,7 @@
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
+                        <h3 class="mb-3">Medical Data</h3>
                         <div class="table-responsive">
                             <table class="display nowrap responsive" id="example" width="100%">
                                 <thead class="bg-primary text-center align-middle">
@@ -81,10 +83,9 @@
                                         <th>Hospital Name</th>
                                         <th>Patient Name</th>
                                         <th>Disease</th>
-                                        <th>Child Birth</th>
-                                        <th>Inpatient</th>
-                                        <th>Outpatient</th>
-                                        <th>Glasses</th>
+                                        @foreach ($master_medical as $master_medicals)
+                                            <th class="text-center">{{ $master_medicals->name }}</th>
+                                        @endforeach
                                         <th data-priority="1">Status</th>
                                         <th data-priority="2">Action</th>
                                     </tr>
@@ -101,18 +102,18 @@
                                             <td>{{ $item->hospital_name }}</td>
                                             <td>{{ $item->patient_name }}</td>
                                             <td>{{ $item->disease }}</td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->child_birth_total, 0, ',', '.') }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->inpatient_total, 0, ',', '.') }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->outpatient_total, 0, ',', '.') }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ 'Rp. ' . number_format($item->glasses_total, 0, ',', '.') }}
-                                            </td>
+                                            @foreach ($master_medical as $master_medicals)
+                                                <td class="text-center">
+                                                    @php
+                                                        // Dynamically determine the corresponding total field for each medical type
+                                                        $medical_type =
+                                                            strtolower(str_replace(' ', '_', $master_medicals->name)) .
+                                                            '_total';
+                                                    @endphp
+
+                                                    {{ 'Rp. ' . number_format($item->$medical_type, 0, ',', '.') }}
+                                                </td>
+                                            @endforeach
                                             <td style="align-content: center; text-align: center">
                                                 @php
                                                     $badgeClass = match ($item->status) {
@@ -182,91 +183,6 @@
 
             // Trigger the change event to apply the selected value
             $('#dt-length-0').trigger('change');
-        });
-
-        $(document).ready(function() {
-            $('.btn-detail').click(function() {
-                var hotel = $(this).data('hotel');
-
-                function createTableHtml(data, title) {
-                    var tableHtml = '<h5>' + title + '</h5>';
-                    tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
-                    var isArray = Array.isArray(data) && data.length > 0;
-
-                    // Assuming all objects in the data array have the same keys, use the first object to create headers
-                    if (isArray) {
-                        for (var key in data[0]) {
-                            if (data[0].hasOwnProperty(key)) {
-                                tableHtml += '<th>' + key + '</th>';
-                            }
-                        }
-                    } else if (typeof data === 'object') {
-                        // If data is a single object, create headers from its keys
-                        for (var key in data) {
-                            if (data.hasOwnProperty(key)) {
-                                tableHtml += '<th>' + key + '</th>';
-                            }
-                        }
-                    }
-
-                    tableHtml += '</tr></thead><tbody>';
-
-                    // Loop through each item in the array and create a row for each
-                    if (isArray) {
-                        data.forEach(function(row) {
-                            tableHtml += '<tr>';
-                            for (var key in row) {
-                                if (row.hasOwnProperty(key)) {
-                                    tableHtml += '<td>' + row[key] + '</td>';
-                                }
-                            }
-                            tableHtml += '</tr>';
-                        });
-                    } else if (typeof data === 'object') {
-                        // If data is a single object, create a single row
-                        tableHtml += '<tr>';
-                        for (var key in data) {
-                            if (data.hasOwnProperty(key)) {
-                                tableHtml += '<td>' + data[key] + '</td>';
-                            }
-                        }
-                        tableHtml += '</tr>';
-                    }
-
-                    tableHtml += '</tbody></table>';
-                    return tableHtml;
-                }
-
-                // $('#detailTypeHeader').text('Detail Information');
-                $('#detailContent').empty();
-
-                try {
-                    var content = '';
-
-                    if (hotel && hotel !== 'undefined') {
-                        var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                        content += createTableHtml(hotelData, 'Hotel Detail');
-                    }
-
-                    if (content !== '') {
-                        $('#detailContent').html(content);
-                    } else {
-                        $('#detailContent').html('<p>No detail information available.</p>');
-                    }
-
-                    $('#detailModal').modal('show');
-                } catch (e) {
-                    $('#detailContent').html('<p>Error loading data</p>');
-                }
-            });
-
-            $('#detailModal').on('hidden.bs.modal', function() {
-                $('body').removeClass('modal-open').css({
-                    overflow: '',
-                    padding: ''
-                });
-                $('.modal-backdrop').remove();
-            });
         });
     </script>
 @endsection

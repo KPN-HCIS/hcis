@@ -231,20 +231,7 @@
                     </div> <!-- end col-->
                 @endcan
             @endif
-            @if (auth()->check())
-                @can('reportca_hcis')
-                    <div class="col-md-3">
-                        <a href="{{ route('medical.admin') }}">
-                            <div class="card" style="height: 200px">
-                                <div class="card-body">
-                                    <img src="{{ asset('images/menu/report.png') }}" alt="logo">
-                                    <h5 class="my-3">Medical (Admin)</h5>
-                                </div> <!-- end card-body-->
-                            </div> <!-- end card-->
-                        </a>
-                    </div> <!-- end col-->
-                @endcan
-            @endif
+
             @if (auth()->check())
                 @can('adminbt')
                     <div class="col-md-3">
@@ -257,6 +244,20 @@
                             </div> <!-- end card-->
                         </a>
                     </div>
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('admin_medic')
+                    <div class="col-md-3">
+                        <a href="{{ route('medical.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/md.png') }}" alt="logo">
+                                    <h5 class="my-3">Medical (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
                 @endcan
             @endif
         </div>

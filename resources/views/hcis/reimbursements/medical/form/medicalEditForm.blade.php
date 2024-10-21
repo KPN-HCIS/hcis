@@ -32,7 +32,8 @@
                         <a href="/medical" type="button" class="btn-close btn-close-white" aria-label="Close"></a>
                     </div>
                     <div class="card-body">
-                        <form id="medicForm" action="/medical/form-update/update/{{ $medic->usage_id }}" method="POST" enctype="multipart/form-data">
+                        <form id="medicForm" action="/medical/form-update/update/{{ $medic->usage_id }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="row mb-2">
@@ -149,5 +150,155 @@
     <script>
         var medicalTypeData = @json($medical_type);
         var balanceMapping = @json($balanceMapping);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.submit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    const form = document.getElementById('medicForm');
+
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+
+                    let hasInvalidCosts = false;
+                    document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let value = input.value.replace(/\D/g,
+                            ""); // Remove non-digit characters
+                        let parsedValue = parseInt(value, 10) || 0;
+
+                        if (parsedValue === 0) {
+                            hasInvalidCosts = true;
+                        }
+                    });
+
+                    // If invalid costs exist, show a simple alert and stop submission
+                    if (hasInvalidCosts) {
+                        Swal.fire({
+                            title: "Invalid Medical Costs",
+                            text: "Please fill value for the medical type you selected.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                        return; // Prevent form submission
+                    }
+
+                    // Gather dynamic medical costs
+                    let medicalCosts = {};
+                    document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
+                        let value = input.value.replace(/\D/g,
+                            ""); // Remove non-digit characters
+                        medicalCosts[type] = parseInt(value, 10) || 0;
+                    });
+
+
+                    // Create a table for medical costs
+                    let medicalCostsTable = `
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
+                    </tr>
+                    ${Object.entries(medicalCosts).map(([type, cost]) => `
+                                                <tr>
+                                                        <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                    </tr>
+                                                `).join('')}
+                        </table>
+                    `;
+
+                    // Calculate total cost
+                    const totalCost = Object.values(medicalCosts).reduce((sum, cost) => sum + cost,
+                        0);
+
+                    const inputSummary = `
+                ${medicalCostsTable}
+                <hr style="margin: 20px 0;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <td style="width: 40%; text-align: left; padding: 8px;">Total Cost</td>
+                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCost.toLocaleString('id-ID')}</strong></td>
+                    </tr>
+                </table>
+            `;
+
+                    Swal.fire({
+                        title: "Do you want to submit this request?",
+                        html: `You won't be able to revert this!<br><br>${inputSummary}`,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AB2F2B",
+                        cancelButtonColor: "#CCCCCC",
+                        confirmButtonText: "Yes, submit it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = button.name;
+                            input.value = button.value;
+
+                            form.appendChild(input);
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.draft-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    const form = document.getElementById('medicForm');
+
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+
+                    let hasInvalidCosts = false;
+                    document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let value = input.value.replace(/\D/g,
+                            ""); // Remove non-digit characters
+                        let parsedValue = parseInt(value, 10) || 0;
+
+                        if (parsedValue === 0) {
+                            hasInvalidCosts = true;
+                        }
+                    });
+
+                    // If invalid costs exist, show a simple alert and stop submission
+                    if (hasInvalidCosts) {
+                        Swal.fire({
+                            title: "Invalid Medical Costs",
+                            text: "Please fill value for the medical type you selected.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                    } else {
+                        // No invalid costs, submit the form immediately
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = button.name;
+                        input.value = button.value;
+
+                        form.appendChild(input);
+                        form.submit();
+                    }
+                });
+            });
+        });
     </script>
 @endsection
