@@ -263,7 +263,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/medical/admin/delete/{id}', [MedicalController::class, 'medicalAdminDelete'])->name('medical-admin.delete');
     Route::middleware(['permission:reportca_hcis'])->group(function () {
         Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
-        Route::get('/medical/detail/{employee_id}', [MedicalController::class, 'medicalDetail'])->name('medical.detail');
+        Route::get('/medical/detail/{key}', [MedicalController::class, 'medicalDetail'])->name('medical.detail');
     });
 
     //Medical Approval

@@ -156,7 +156,7 @@
                                                     </td>
                                                 @endforeach
                                                 <td class="text-center">
-                                                    <a href="{{ route('medical.detail', $med_employees->employee_id) }}" class="btn btn-outline-warning" title="Edit">
+                                                    <a href="{{ route('medical.detail', $med_employees->getRouteKey()) }}" class="btn btn-outline-warning" title="Edit">
                                                         <i class="ri-edit-box-line"></i>
                                                     </a>
                                                 </td>

@@ -680,13 +680,13 @@ class MedicalController extends Controller
         ]);
     }
 
-    public function medicalDetail(Request $request, $employee_id)
+    public function medicalDetail(Request $request, $key)
     {
         // Gunakan findByRouteKey untuk mendekripsi $key
-        // $employee = Employee::findByRouteKey($key);
+        $employee = Employee::findByRouteKey($key);
 
         // Ambil employee_id yang telah didekripsi
-        // $employee_id = $employee->employee_id;
+        $employee_id = $employee->employee_id;
 
         // Ambil data dependents, medical, dan medical_plan berdasarkan employee_id
         $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
