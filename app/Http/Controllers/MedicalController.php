@@ -193,7 +193,7 @@ class MedicalController extends Controller
         $diseases = MasterDisease::orderBy('disease_name', 'asc')->where('active', 'T')->get();
 
         $parentLink = 'Medical';
-        $link = 'Add Medical Coverage Usage';
+        $link = 'Edit Medical Coverage Usage';
 
         return view('hcis.reimbursements.medical.form.medicalEditForm', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes'));
     }

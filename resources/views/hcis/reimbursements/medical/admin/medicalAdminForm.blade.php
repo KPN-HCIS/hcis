@@ -114,7 +114,8 @@
                             <div class="d-flex justify-content-end mt-4">
                                 @if (isset($medic->medical_proof) && $medic->medical_proof)
                                     <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
-                                        class="btn btn-outline-primary rounded-pill" style="margin-right: 10px;"> <!-- Adjusted margin-right to "mr-3" -->
+                                        class="btn btn-outline-primary rounded-pill" style="margin-right: 10px;">
+                                        <!-- Adjusted margin-right to "mr-3" -->
                                         View
                                     </a>
                                 @endif
@@ -132,5 +133,85 @@
     <script>
         var medicalTypeData = @json($medical_type);
         var balanceMapping = @json($balanceMapping);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.submit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    const form = document.getElementById('medicForm');
+
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+
+                    let hasInvalidCosts = false;
+                    document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let value = input.value.replace(/\D/g,
+                            ""); // Remove non-digit characters
+                        let parsedValue = parseInt(value, 10) || 0;
+
+                        if (parsedValue === 0) {
+                            hasInvalidCosts = true;
+                        }
+                    });
+
+                    // If invalid costs exist, show a simple alert and stop submission
+                    if (hasInvalidCosts) {
+                        Swal.fire({
+                            title: "Invalid Medical Costs",
+                            text: "Please fill value for the medical type you selected.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                        return; // Prevent form submission
+                    }
+
+                    // Calculate total cost
+                    let totalCost = 0;
+                    document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let value = input.value.replace(/\D/g,
+                            ""); // Remove non-digit characters
+                        totalCost += parseInt(value, 10) || 0;
+                    });
+
+                    console.log('Total Cost:', totalCost); // Debug log
+
+                    const inputSummary = `
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                            <tr>
+                                <td text-align: left; padding: 2px;">Total Cost</td>
+                                <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCost.toLocaleString('id-ID')}</strong></td>
+                            </tr>
+                        </table>
+                    `;
+
+                    Swal.fire({
+                        title: "Do you want to submit this request?",
+                        html: `You won't be able to revert this!<br><br>${inputSummary}`,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#AB2F2B",
+                        cancelButtonColor: "#CCCCCC",
+                        confirmButtonText: "Yes, submit it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = button.name;
+                            input.value = button.value;
+
+                            form.appendChild(input);
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
     </script>
 @endsection

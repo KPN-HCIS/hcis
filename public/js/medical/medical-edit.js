@@ -47,7 +47,7 @@ $(document).ready(function () {
                     <label for="${type}" class="form-label">${type}</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input type="text" class="form-control currency-input" id="${type}" name="medical_costs[${type}]" placeholder="0" value="${formattedValue}">
+                        <input type="text" class="form-control currency-input" id="${type}" name="medical_costs[${type}]" placeholder="0" value="${formattedValue}" required>
                     </div>
                 </div>
             `;
