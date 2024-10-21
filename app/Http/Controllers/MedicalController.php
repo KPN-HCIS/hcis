@@ -85,7 +85,7 @@ class MedicalController extends Controller
             return $item;
         });
 
-        $master_medical = MasterMedical::all();
+        $master_medical = MasterMedical::where('active', 'T')->get();
 
         $formatted_data = [];
         foreach ($medical_plan as $plan) {
@@ -731,7 +731,7 @@ class MedicalController extends Controller
             'med_employee' => $med_employee,
             'companies' => $companies,
             'locations' => $locations,
-            'master_medical' => MasterMedical::all(),
+            'master_medical' => MasterMedical::where('active', 'T')->get(),
             'balances' => $balances, // Kirim balances ke view
         ]);
     }
@@ -801,7 +801,7 @@ class MedicalController extends Controller
             return $item;
         });
 
-        $master_medical = MasterMedical::all();
+        $master_medical = MasterMedical::where('active', 'T')->get();
 
         // Format data medical_plan
         $formatted_data = [];

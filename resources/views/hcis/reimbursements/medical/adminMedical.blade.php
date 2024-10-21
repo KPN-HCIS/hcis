@@ -152,7 +152,7 @@
                                                 <td>{{ $med_employees->period }}</td>
                                                 @foreach ($master_medical as $master_medical_item)
                                                     <td class="text-center">
-                                                        {{ isset($balances[$med_employees->employee_id][$master_medical_item->medical_type]) ? number_format($balances[$med_employees->employee_id][$master_medical_item->medical_type], 0, ',', '.') : '-' }}
+                                                        {{ isset($balances[$med_employees->employee_id][$master_medical_item->name]) ? number_format($balances[$med_employees->employee_id][$master_medical_item->name], 0, ',', '.') : '-' }}
                                                     </td>
                                                 @endforeach
                                                 <td class="text-center">
