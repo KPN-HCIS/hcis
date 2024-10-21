@@ -10,6 +10,7 @@ use App\Models\HealthCoverage;
 use App\Models\MasterMedical;
 use App\Models\Company;
 use App\Models\Location;
+use App\Models\MasterPlafond;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -91,6 +92,90 @@ class MedicalController extends Controller
         $formatted_data = [];
         foreach ($medical_plan as $plan) {
             $formatted_data[$plan->period][$plan->medical_type] = $plan->balance;
+        }
+
+        $employees_cast = Employee::where('employee_id', $employee_id)->get();
+        $currentYear = date('Y'); // Tanggal akhir tahun
+
+        foreach ($employees_cast as $employee) {
+            $startDate = $employee->date_of_joining;
+            $job_level = $employee->job_level;
+            $endDate = date('Y-12-31'); // Tanggal akhir tahun
+
+            // Hitung selisih tahun
+            $startDate = date_create($startDate);
+            $endDate = date_create($endDate);
+            $difference = date_diff($startDate, $endDate);
+            $yearsWorked = $difference->y;
+
+            $plafond_list = MasterPlafond::where('group_name', $job_level)->get();
+
+            if ($yearsWorked > 0) {
+                // Proses untuk karyawan bekerja lebih dari 1 tahun
+                foreach ($plafond_list as $plafond_lists) {
+                    // Cek apakah sudah ada entri dengan employee_id ini, period tahun ini, dan medical_type yang sama
+                    $existingHealthPlan = HealthPlan::where('employee_id', $employee->employee_id)
+                        ->where('period', $currentYear)
+                        ->where('medical_type', $plafond_lists->medical_type)
+                        ->first();
+
+                    // Hanya insert jika belum ada entri untuk kombinasi employee_id, period, dan medical_type ini
+                    if (!$existingHealthPlan) {
+                        // Insert ke HealthPlan
+                        HealthPlan::create([
+                            'plan_id' => (string) Str::uuid(), // generate UUID sebagai plan_id
+                            'employee_id' => $employee->employee_id,
+                            'medical_type' => $plafond_lists->medical_type,
+                            'balance' => $plafond_lists->balance,
+                            'period' => $currentYear,
+                            'created_by' => $employee_id,
+                            'created_at' => now(),
+                        ]);
+                    }
+                }
+            } else if ($yearsWorked == 0) {
+                // Karyawan bekerja kurang dari 1 tahun, hitung plafon prorata berdasarkan bulan
+                $startDate = date_create($employee->date_of_joining);
+                $bulan_awal = date_format($startDate, "m");
+                $bulan_akhir = date('m'); // Bulan saat ini
+                $bulan = ($bulan_akhir - $bulan_awal) + 1;
+
+                // Menghitung plafon prorata dari $plafond_list
+                foreach ($plafond_list as $plafond_lists) {
+                    // Set nilai default $balance
+                    $balance = 0;
+
+                    // Cek apakah sudah ada entri dengan employee_id ini, period tahun ini, dan medical_type yang sama
+                    $existingHealthPlan = HealthPlan::where('employee_id', $employee->employee_id)
+                        ->where('period', $currentYear)
+                        ->where('medical_type', $plafond_lists->medical_type)
+                        ->first();
+
+                    if (!$existingHealthPlan) {
+                        // Cek tipe medical_type untuk menentukan perhitungan prorata
+                        if ($plafond_lists->medical_type == 'Child Birth') {
+                            $balance = $plafond_lists->balance * ($bulan / 12);
+                        } elseif ($plafond_lists->medical_type == 'Inpatient') {
+                            $balance = $plafond_lists->balance * ($bulan / 12);
+                        } elseif ($plafond_lists->medical_type == 'Outpatient') {
+                            $balance = $plafond_lists->balance * ($bulan / 12);
+                        } elseif ($plafond_lists->medical_type == 'Glasses') {
+                            $balance = $plafond_lists->balance * ($bulan / 12);
+                        }
+
+                        // Insert ke HealthPlan jika $balance sudah diatur
+                        HealthPlan::create([
+                            'plan_id' => (string) Str::uuid(),
+                            'employee_id' => $employee->employee_id,
+                            'medical_type' => $plafond_lists->medical_type,
+                            'balance' => $balance,
+                            'period' => $currentYear,
+                            'created_by' => $employee_id,
+                            'created_at' => now(),
+                        ]);
+                    }
+                }
+            }
         }
 
         $parentLink = 'Reimbursement';
@@ -815,7 +900,7 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data'));
     }
 
     public function importAdminExcel(Request $request)
