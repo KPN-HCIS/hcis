@@ -188,22 +188,47 @@
                         return; // Prevent form submission
                     }
 
-                    let totalCost = 0;
+                    // Gather dynamic medical costs
+                    let medicalCosts = {};
                     document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
                         let value = input.value.replace(/\D/g,
                             ""); // Remove non-digit characters
-                        totalCost += parseInt(value, 10) || 0;
+                        medicalCosts[type] = parseInt(value, 10) || 0;
                     });
 
+
+                    // Create a table for medical costs
+                    let medicalCostsTable = `
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
+                    </tr>
+                    ${Object.entries(medicalCosts).map(([type, cost]) => `
+                                                <tr>
+                                                        <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                    </tr>
+                                                `).join('')}
+                        </table>
+                    `;
+
+                    // Calculate total cost
+                    const totalCost = Object.values(medicalCosts).reduce((sum, cost) => sum + cost,
+                        0);
+
                     const inputSummary = `
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                                <tr>
-                                    <td text-align: left; padding: 2px;">Total Cost</td>
-                                    <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                    <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCost.toLocaleString('id-ID')}</strong></td>
-                                </tr>
-                            </table>
-                        `;
+                ${medicalCostsTable}
+                <hr style="margin: 20px 0;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <td style="width: 40%; text-align: left; padding: 8px;">Total Cost</td>
+                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCost.toLocaleString('id-ID')}</strong></td>
+                    </tr>
+                </table>
+            `;
 
                     Swal.fire({
                         title: "Do you want to submit this request?",
@@ -262,7 +287,15 @@
                             confirmButtonText: "OK",
                             confirmButtonColor: "#AB2F2B",
                         });
-                        return; // Prevent form submission
+                    } else {
+                        // No invalid costs, submit the form immediately
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = button.name;
+                        input.value = button.value;
+
+                        form.appendChild(input);
+                        form.submit();
                     }
                 });
             });
