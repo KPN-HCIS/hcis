@@ -524,11 +524,12 @@ class MedicalController extends Controller
 
         // Fetch medical plans for all employees
         $medical_plan = HealthPlan::orderBy('period', 'desc')->get();
+        $master_medical = MasterMedical::where('active', 'T')->get();
 
         $parentLink = 'Reimbursement';
         $link = 'Medical Approval';
 
-        return view('hcis.reimbursements.medical.approval.medicalApproval', compact('family', 'medical_plan', 'medical', 'parentLink', 'link'));
+        return view('hcis.reimbursements.medical.approval.medicalApproval', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'master_medical'));
     }
 
 
