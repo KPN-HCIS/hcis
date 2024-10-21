@@ -18,9 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Imports\ImportHealthCoverage;
-use App\Models\ca_sett_approval;
-use App\Models\CATransaction;
-use App\Models\ca_approval;
+use App\Exports\MedicalExport;
 
 
 class MedicalController extends Controller
@@ -33,6 +31,8 @@ class MedicalController extends Controller
     {
         $employee_id = Auth::user()->employee_id;
         $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
+        $medical = HealthCoverage::orderBy('created_at', 'desc')->where('employee_id', $employee_id)->get();
+        $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
         $medicalGroup = HealthCoverage::select(
             'no_medic',
             'date',
@@ -44,11 +44,13 @@ class MedicalController extends Controller
             DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
-            'status'
+            'status',
+            DB::raw('MAX(created_at) as latest_created_at')
+
         )
             ->where('employee_id', $employee_id)
             ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('latest_created_at', 'desc')
             ->get();
 
         $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
@@ -76,7 +78,6 @@ class MedicalController extends Controller
             return $item;
         });
 
-        $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
         $master_medical = MasterMedical::all();
 
         $formatted_data = [];
@@ -84,55 +85,10 @@ class MedicalController extends Controller
             $formatted_data[$plan->period][$plan->medical_type] = $plan->balance;
         }
 
-        $medicalGroup = HealthCoverage::select(
-            'no_medic',
-            'date',
-            'period',
-            'hospital_name',
-            'patient_name',
-            'disease',
-            DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
-            DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
-            DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
-            DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
-            'status'
-        )
-            ->where('employee_id', $employee_id)
-            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
-            ->where('status', 'Rejected')  // Filter for rejected status
-            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
-            ->get();
-        $rejectMedic = $rejectMedic->keyBy('no_medic');
-
-        $employeeName = HealthCoverage::where('employee_id', $employee_id)
-            ->where('status', 'Rejected')  // Filter for rejected status
-            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
-            ->get();
-        $employeeName = $employeeName->keyBy('no_medic');
-
-        // dd($rejectMedic);
-        $medical = $medicalGroup->map(function ($item) use ($employee_id) {
-            // Fetch the usage_id based on no_medic
-            $usageId = HealthCoverage::where('no_medic', $item->no_medic)
-                ->where('employee_id', $employee_id)
-                ->value('usage_id'); // Assuming there's one usage_id per no_medic
-
-            // Add usage_id to the current item
-            $item->usage_id = $usageId;
-
-            return $item;
-        });
-
-        $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
-
         $parentLink = 'Reimbursement';
         $link = 'Medical';
 
-        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName'));
+        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName', 'master_medical', 'formatted_data'));
     }
 
     public function medicalForm()
@@ -374,7 +330,7 @@ class MedicalController extends Controller
         return redirect()->route('medical')->with('success', 'Medical Draft Deleted');
     }
 
-    public function medicalAdmin()
+    public function medicalAdminTable()
     {
         // Fetch all dependents, no longer filtered by employee_id
         $family = Dependents::orderBy('date_of_birth', 'desc')->get();
@@ -736,6 +692,50 @@ class MedicalController extends Controller
         $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
         $medical = HealthCoverage::orderBy('created_at', 'desc')->where('employee_id', $employee_id)->get();
         $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
+        $medicalGroup = HealthCoverage::select(
+            'no_medic',
+            'date',
+            'period',
+            'hospital_name',
+            'patient_name',
+            'disease',
+            DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
+            'status',
+            DB::raw('MAX(created_at) as latest_created_at')
+
+        )
+            ->where('employee_id', $employee_id)
+            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+            ->orderBy('latest_created_at', 'desc')
+            ->get();
+
+        $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
+            ->where('status', 'Rejected')  // Filter for rejected status
+            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
+            ->get();
+        $rejectMedic = $rejectMedic->keyBy('no_medic');
+
+        $employeeName = HealthCoverage::where('employee_id', $employee_id)
+            ->where('status', 'Rejected')  // Filter for rejected status
+            ->select('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'reject_info')
+            ->get();
+        $employeeName = $employeeName->keyBy('no_medic');
+
+        $medical = $medicalGroup->map(function ($item) use ($employee_id) {
+            // Fetch the usage_id based on no_medic
+            $usageId = HealthCoverage::where('no_medic', $item->no_medic)
+                ->where('employee_id', $employee_id)
+                ->value('usage_id'); // Assuming there's one usage_id per no_medic
+
+            // Add usage_id to the current item
+            $item->usage_id = $usageId;
+
+            return $item;
+        });
+
         $master_medical = MasterMedical::all();
 
         // Format data medical_plan
@@ -748,29 +748,7 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'master_medical', 'formatted_data'));
-    }
-
-    public function medicalAdminUpdate(Request $request, $id)
-    {
-        $request->validate([
-            'ca_status' => 'required|string',
-        ]);
-
-        // Temukan transaksi berdasarkan ID
-        $ca_transaction = CATransaction::find($id);
-
-        if (!$ca_transaction) {
-            return redirect()->back()->with('error', 'Transaction not found.');
-        }
-
-        // Update field ca_status berdasarkan value yang dipilih di modal
-        $ca_transaction->ca_status = $request->input('ca_status');
-        $ca_transaction->save();
-
-        // Redirect kembali dengan pesan sukses
-        return redirect()->back()->with('success', 'Transaction status updated successfully.')
-            ->with('refresh', true);
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employeeName', 'master_medical', 'formatted_data'));
     }
 
     public function importExcel(Request $request)
@@ -788,5 +766,13 @@ class MedicalController extends Controller
         );
 
         return redirect()->route('medical.admin')->with('success', 'Transaction successfully added From Excell.');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $stat = $request->input('stat');
+        $customSearch = $request->input('customsearch');
+
+        return Excel::download(new MedicalExport($stat, $customSearch), 'medical_report.xlsx');
     }
 }

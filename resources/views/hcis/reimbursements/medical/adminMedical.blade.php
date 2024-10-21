@@ -206,30 +206,33 @@
             });
         }
         function redirectToExportExcel() {
-            const route = "{{ route('exportca.excel') }}";
+            const route = "{{ route('exportmed.excel') }}";
 
-            const startDate = document.getElementById("start_date").value;
-            const endDate = document.getElementById("end_date").value;
+            // Ambil nilai dari input
+            const stat = document.getElementById("stat").value;
+            const customSearch = document.getElementById("customsearch").value;
 
-            // Create a form element
+            // Buat elemen form
             const form = document.createElement("form");
             form.method = "GET";
             form.action = route;
 
-            const startDateInput = document.createElement("input");
-            startDateInput.type = "hidden";
-            startDateInput.name = "start_date";
-            startDateInput.value = startDate;
+            // Tambahkan input tersembunyi untuk setiap parameter
+            const statInput = document.createElement("input");
+            statInput.type = "hidden";
+            statInput.name = "stat";
+            statInput.value = stat;
 
-            const endDateInput = document.createElement("input");
-            endDateInput.type = "hidden";
-            endDateInput.name = "end_date";
-            endDateInput.value = endDate;
+            const customSearchInput = document.createElement("input");
+            customSearchInput.type = "hidden";
+            customSearchInput.name = "customsearch";
+            customSearchInput.value = customSearch;
 
-            form.appendChild(startDateInput);
-            form.appendChild(endDateInput);
+            // Tambahkan input ke form
+            form.appendChild(statInput);
+            form.appendChild(customSearchInput);
 
-            // Append the form to the body and submit it
+            // Tambahkan form ke body dan kirim
             document.body.appendChild(form);
             form.submit();
         }

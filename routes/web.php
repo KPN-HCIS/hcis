@@ -131,9 +131,6 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/cashadvanced/approval/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalAdmin'])->name('approvalAdmin.cashadvancedApprovedAdmin');
         Route::post('/cashadvanced/approvalDec/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiAdmin'])->name('approvalDecAdmin.cashadvancedDecApprovedAdmin');
-
-        Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
-        Route::get('/medical/detail/{employee_id}', [MedicalController::class, 'medicalDetail'])->name('medical.detail');
     });
 
     // Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
@@ -259,10 +256,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/medical/import-excel/', [MedicalController::class, 'importExcel'])->name('import.medical');
 
     //Medical Admin
-    Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
+    Route::get('/exportmed/excel', [MedicalController::class, 'exportExcel'])->name('exportmed.excel');
+    Route::get('/medical/admin/table', [MedicalController::class, 'medicalAdminTable'])->name('medical-table.admin');
     Route::get('/medical/admin/form-update/{id}', [MedicalController::class, 'medicalAdminForm'])->name('medical-admin-form.edit');
     Route::put('/medical/admin/form-update/update/{id}', [MedicalController::class, 'medicalAdminUpdate'])->name('medical-admin-form.put');
     Route::delete('/medical/admin/delete/{id}', [MedicalController::class, 'medicalAdminDelete'])->name('medical-admin.delete');
+    Route::middleware(['permission:reportca_hcis'])->group(function () {
+        Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
+        Route::get('/medical/detail/{employee_id}', [MedicalController::class, 'medicalDetail'])->name('medical.detail');
+    });
 
     //Medical Approval
     Route::get('/medical/approval', [MedicalController::class, 'medicalApproval'])->name('medical.approval');
