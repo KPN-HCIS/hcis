@@ -525,8 +525,6 @@ class MedicalController extends Controller
             $medical = $medicalGroup->map(function ($item) {
                 // Fetch the usage_id based on no_medic (for any employee)
                 $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
-
-                // Add usage_id to the current item
                 $item->usage_id = $usageId;
 
                 return $item;
