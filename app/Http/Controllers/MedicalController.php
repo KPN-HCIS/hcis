@@ -127,7 +127,7 @@ class MedicalController extends Controller
                         }
                     }
                 }
-            } else if ($yearsWorked == 0) {
+            } elseif ($yearsWorked == 0) {
                 $startDate = date_create($employee->date_of_joining);
                 $bulan_awal = date_format($startDate, "m");
                 $bulan_akhir = date('m');
@@ -509,11 +509,7 @@ class MedicalController extends Controller
 
         // Process the medical verification costs
         $medical_costs = $request->input('medical_costs', []);
-        Log::info("Received medical_costs for verification: " . json_encode($medical_costs));
-
-        // Fetch all existing health coverages for this no_medic
         $existingCoverages = HealthCoverage::where('no_medic', $no_medic)->get();
-        Log::info("Existing coverages: " . $existingCoverages->pluck('medical_type')->implode(', '));
 
         // Update the medical proof and common fields (if needed)
         $commonUpdateData = [

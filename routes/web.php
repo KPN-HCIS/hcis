@@ -255,17 +255,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/medical/export-excel/', [MedicalController::class, 'medicalForm'])->name('export.medical');
 
     //Medical Admin
-    Route::post('/medical/import-excel/', [MedicalController::class, 'importAdminExcel'])->name('import.medical');
-    Route::get('/exportmed/excel', [MedicalController::class, 'exportAdminExcel'])->name('exportmed.excel');
-    Route::get('/exportmed/detail/excel/{employee_id}', [MedicalController::class, 'exportDetailExcel'])->name('exportmed-detail.excel');
-    Route::get('/medical/admin/table', [MedicalController::class, 'medicalAdminTable'])->name('medical-table.admin');
-    Route::get('/medical/admin/form-update/{id}', [MedicalController::class, 'medicalAdminForm'])->name('medical-admin-form.edit');
-    Route::put('/medical/admin/form-update/update/{id}', [MedicalController::class, 'medicalAdminUpdate'])->name('medical-admin-form.put');
-    Route::delete('/medical/admin/delete/{id}', [MedicalController::class, 'medicalAdminDelete'])->name('medical-admin.delete');
-
     Route::middleware(['permission:admin_medic'])->group(function () {
         Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
         Route::get('/medical/detail/{key}', [MedicalController::class, 'medicalAdminDetail'])->name('medical.detail');
+
+        Route::post('/medical/import-excel/', [MedicalController::class, 'importAdminExcel'])->name('import.medical');
+        Route::get('/exportmed/excel', [MedicalController::class, 'exportAdminExcel'])->name('exportmed.excel');
+        Route::get('/exportmed/detail/excel/{employee_id}', [MedicalController::class, 'exportDetailExcel'])->name('exportmed-detail.excel');
+        Route::get('/medical/admin/table', [MedicalController::class, 'medicalAdminTable'])->name('medical-table.admin');
+        Route::get('/medical/admin/form-update/{id}', [MedicalController::class, 'medicalAdminForm'])->name('medical-admin-form.edit');
+        Route::put('/medical/admin/form-update/update/{id}', [MedicalController::class, 'medicalAdminUpdate'])->name('medical-admin-form.put');
+        Route::delete('/medical/admin/delete/{id}', [MedicalController::class, 'medicalAdminDelete'])->name('medical-admin.delete');
     });
 
     //Medical Approval
