@@ -128,6 +128,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
+            --}}
             {{-- @if (auth()->check())
                 @can('adminbt')
                     <div class="col">

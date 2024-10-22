@@ -559,7 +559,7 @@ class MedicalController extends Controller
 
         // Check if the user has approval rights
         $hasApprovalRights = DB::table('master_bisnisunits')
-            ->where('approval_medical', $employee->ktp)
+            ->where('approval_medical', $employee->employee_id)
             ->where('nama_bisnis', $employee->group_company)
             ->exists();
 
@@ -833,6 +833,84 @@ class MedicalController extends Controller
         )
             ->where('employee_id', $employee_id)
             ->where('status', '!=', 'Draft')
+            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+            ->orderBy('latest_created_at', 'desc')
+            ->get();
+
+        $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
+            ->where('status', 'Rejected')  // Filter for rejected status
+            ->get()
+            ->keyBy('no_medic');
+
+        // Get employee IDs from both 'employee_id' and 'rejected_by'
+        $employeeIds = $rejectMedic->pluck('employee_id')->merge($rejectMedic->pluck('rejected_by'))->unique();
+
+        // Fetch employee names for those IDs
+        $employees = Employee::whereIn('employee_id', $employeeIds)
+            ->pluck('fullname', 'employee_id');
+
+        // Now map the full names to the respective HealthCoverage records
+        $rejectMedic->transform(function ($item) use ($employees) {
+            $item->employee_fullname = $employees->get($item->employee_id);
+            $item->rejected_by_fullname = $employees->get($item->rejected_by);
+            return $item;
+        });
+
+        // dd($rejectMedic);
+        $medical = $medicalGroup->map(function ($item) use ($employee_id) {
+            // Fetch the usage_id based on no_medic
+            $usageId = HealthCoverage::where('no_medic', $item->no_medic)
+                ->where('employee_id', $employee_id)
+                ->value('usage_id'); // Assuming there's one usage_id per no_medic
+
+            // Add usage_id to the current item
+            $item->usage_id = $usageId;
+
+            return $item;
+        });
+
+        $master_medical = MasterMedical::where('active', 'T')->get();
+
+        // Format data medical_plan
+        $formatted_data = [];
+        foreach ($medical_plan as $plan) {
+            $formatted_data[$plan->period][$plan->medical_type] = $plan->balance;
+        }
+
+        $parentLink = 'Reimbursement';
+        $link = 'Medical';
+
+        // Kirim data ke view
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data'));
+    }
+    public function medicalAdminConfirmation(Request $request, $key)
+    {
+        // Gunakan findByRouteKey untuk mendekripsi $key
+        $employee = Employee::findByRouteKey($key);
+
+        // Ambil employee_id yang telah didekripsi
+        $employee_id = $employee->employee_id;
+
+        // Ambil data dependents, medical, dan medical_plan berdasarkan employee_id
+        $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
+        $medical = HealthCoverage::orderBy('created_at', 'desc')->where('employee_id', $employee_id)->get();
+        $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
+        $medicalGroup = HealthCoverage::select(
+            'no_medic',
+            'date',
+            'period',
+            'hospital_name',
+            'patient_name',
+            'disease',
+            DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
+            'status',
+            DB::raw('MAX(created_at) as latest_created_at')
+
+        )
+            ->where('status', '!=', 'Draft')
             ->where('status', '!=', 'Done')
             ->whereNull('verif_by')
             ->whereNull('balance_verif')
@@ -884,7 +962,7 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.admin.medicalAdminConfirmation', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data'));
     }
 
     public function importAdminExcel(Request $request)
