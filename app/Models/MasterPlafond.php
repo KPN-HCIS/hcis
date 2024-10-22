@@ -9,5 +9,5 @@ class MasterPlafond extends Model
 {
     use HasFactory;
 
-    protected $table = 'master_plafond';
+    protected $table = 'mdc_plafonds';
 }

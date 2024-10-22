@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class MasterMedical extends Model
 {
-    protected $table = 'master_medical_type';
+    protected $table = 'mdc_types';
 }

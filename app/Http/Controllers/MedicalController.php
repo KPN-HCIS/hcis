@@ -308,13 +308,11 @@ class MedicalController extends Controller
         }
 
         $medical_costs = $request->input('medical_costs', []);
-        Log::info("Received medical_costs: " . json_encode($medical_costs));
         $date = Carbon::parse($request->date);
         $period = $date->year;
 
         // Fetch all existing health coverages for this no_medic
         $existingCoverages = HealthCoverage::where('no_medic', $no_medic)->get();
-        Log::info("Existing coverages: " . $existingCoverages->pluck('medical_type')->implode(', '));
 
         // Update common fields for all records with the same no_medic
         $commonUpdateData = [
@@ -647,13 +645,6 @@ class MedicalController extends Controller
         // Determine the new status based on the action
         $action = $request->input('status_approval');
         $rejectInfo = $request->input('reject_info');
-        // $medical_cost = HealthCoverage::where(
-        //     'employee_id',
-        //     $employee_id,
-        // )->orWhere('no_medic', $medical->no_medic)
-        //     ->get();
-
-        //     dd($medical_cost);
 
         if ($action == 'Rejected') {
             $statusValue = 'Rejected';

@@ -12,7 +12,7 @@ class HealthPlan extends Model
     use HasFactory, HasUuids;
     use SoftDeletes;
 
-    protected $table = 'health_plan';
+    protected $table = 'mdc_plans';
     protected $primaryKey = 'plan_id';
     protected $fillable = [
         'plan_id',
