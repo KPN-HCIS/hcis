@@ -19,7 +19,13 @@
                     <td class="text-center sticky bg-white">{{ $period }}</td>
                     @foreach ($master_medical as $master_medical_item)
                         <td class="text-center">
-                            {{ isset($balances[$master_medical_item->name]) ? 'Rp. ' . number_format($balances[$master_medical_item->name], 0, ',', '.') : '-' }}
+                            @if (isset($balances[$master_medical_item->name]))
+                                <span style="color: {{ $balances[$master_medical_item->name] < 0 ? 'red' : 'black' }}">
+                                    Rp. {{ number_format($balances[$master_medical_item->name], 0, ',', '.') }}
+                                </span>
+                            @else
+                                -
+                            @endif
                         </td>
                     @endforeach
                 </tr>
