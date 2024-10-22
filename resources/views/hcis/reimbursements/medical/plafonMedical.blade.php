@@ -16,7 +16,7 @@
         <tbody>
             @foreach ($formatted_data as $period => $balances)
                 <tr>
-                    <td class="text-center">{{ $period }}</td>
+                    <td class="text-center sticky bg-white" style="">{{ $period }}</td>
                     @foreach ($master_medical as $master_medical_item)
                         <td class="text-center">
                             {{ isset($balances[$master_medical_item->name]) ? 'Rp. ' . number_format($balances[$master_medical_item->name], 0, ',', '.') : '-' }}

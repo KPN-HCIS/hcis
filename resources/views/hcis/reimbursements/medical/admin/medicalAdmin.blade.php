@@ -48,7 +48,7 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Breadcrumb Section -->
-            <div class="col-md-6 d-flex align-items-center">
+            <div class="col-md-6 mb-2 d-flex align-items-center">
                 <ol class="breadcrumb mb-0" style="align-items: center; padding-left: 0;">
                     <li class="breadcrumb-item" style="font-size: 18px;">
                         <a href="/reimbursements">
@@ -63,7 +63,7 @@
             @include('hcis.reimbursements.medical.navigation.modalMedical')
 
             <!-- Button Section -->
-            <div class="col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
+            <div class="col-md-6 mb-2 d-flex justify-content-center justify-content-md-end align-items-center">
                 <a href="{{ route('exportmed-detail.excel', $employee_id) }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
