@@ -842,6 +842,7 @@ class MedicalController extends Controller
         )
             ->where('employee_id', $employee_id)
             ->where('status', '!=', 'Draft')
+            ->where('status', '!=', 'Done')
             ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
             ->orderBy('latest_created_at', 'desc')
             ->get();

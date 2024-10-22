@@ -8,37 +8,26 @@
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="row">
-            <div class="col-12">
-                <div class="page-title-box">
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item">{{ $parentLink }}</li>
-                            <li class="breadcrumb-item active">{{ $link }}</li>
-                        </ol>
-                    </div>
-                    <h4 class="page-title">{{ $link }}</h4>
+            <div class="col-md-6 mt-3">
+                <div class="page-title-box d-flex align-items-center">
+                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
+                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
+                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $parentLink }}
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $link }}
+                        </li>
+                    </ol>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-auto">
-                <div class="mb-3">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white border-dark-subtle"><i class="ri-search-line"></i></span>
-                        </div>
-                        <input type="text" name="customsearch" id="customsearch"
-                            class="form-control  border-dark-subtle border-left-0" placeholder="Search.."
-                            aria-label="search" aria-describedby="search">
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="mb-2 text-end">
-                    <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow"><i
-                            class="bi bi-plus-circle"></i> Add Ticket</a>
-                </div>
+            <div class="col-md-6 mt-4 mb-2 text-end">
+                <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow"><i
+                    class="bi bi-plus-circle"></i> Add Ticket</a>
             </div>
         </div>
         @include('hcis.reimbursements.businessTrip.modal')
@@ -50,6 +39,18 @@
                         @php
                             $currentFilter = $filter;
                         @endphp
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h3>Ticket Data</h3>
+                            <div class="input-group" style="width: 30%;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white border-dark-subtle"><i
+                                            class="ri-search-line"></i></span>
+                                </div>
+                                <input type="text" name="customsearch" id="customsearch"
+                                    class="form-control w-  border-dark-subtle border-left-0" placeholder="Search.."
+                                    aria-label="search" aria-describedby="search">
+                            </div>
+                        </div>
 
                         <form method="GET" action="{{ route('ticket') }}">
                             <button type="submit" name="filter" value="request"

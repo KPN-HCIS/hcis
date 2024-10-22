@@ -29,7 +29,8 @@
                 <div class="card">
                     <div class="card-header d-flex bg-primary text-white justify-content-between">
                         <h4 class="mb-0">Medical Data - {{ $medic->no_medic }}</h4>
-                        <a href="/medical/admin" type="button" class="btn-close btn-close-white" aria-label="Close"></a>
+                        <a href="javascript:history.back()" type="button" class="btn-close btn-close-white"
+                            aria-label="Close"></a>
                     </div>
                     <div class="card-body">
                         <form id="medicForm" action="/medical/admin/form-update/update/{{ $medic->usage_id }}"
