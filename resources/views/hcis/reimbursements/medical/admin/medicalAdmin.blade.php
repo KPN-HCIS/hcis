@@ -76,7 +76,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="card shadow-none p-1 py-3">
+            <div class="card shadow-none p-1 py-3 px-2">
                 <div class="d-flex justify-content-center">
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
