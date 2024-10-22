@@ -65,7 +65,7 @@
             <div class="col-md-6 mt-3">
                 <div class="page-title-box d-flex align-items-center">
                     <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
-                        <li class="breadcrumb-item" style="font-size: 32px; display: flex; align-items: center;">
+                        <li class="breadcrumb-item" style="font-size: 25px; display: flex; align-items: center;">
                             <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
                                 <i class="bi bi-arrow-left"></i>
                             </a>
