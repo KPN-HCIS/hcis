@@ -78,34 +78,46 @@
                 <div class="card shadow mb-4">
                     <div class="card-body">
                         <form action="{{ route('medical.admin') }}" method="GET">
-                            <div class="input-group">
-                                <label class="col-form-label mx-2">Lokasi Unit : </label>
-                                <div style="width: 250px;">
-                                    <select class="form-select select2" style="width: 38px;" aria-label="Status"
-                                        id="stat" name="stat">
-                                        <option value="-" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
-                                            Status</option>
-                                        @foreach ($locations as $location)
-                                            <option value="{{ $location->area }}"
-                                                {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
-                                                {{ $location->area . ' (' . $location->company_name . ')' }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <input type="text" name="customsearch" id="customsearch" class="form-control mx-2"
-                                    placeholder="Employee Name" aria-label="search" aria-describedby="search">
-                                <div class="input-group-append mx-2">
-                                    <button class="btn btn-primary" type="submit">Filter</button>
-                                </div>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-success btn-action me-1" data-bs-toggle="modal"
-                                        data-bs-target="#importExcelHealtCoverage" type="button">
-                                        <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
-                                    </button>
-                                    <button class="btn btn-success" type="button" onclick="redirectToExportExcel()">
-                                        <i class="ri-file-excel-2-line"></i> Export to Excel
-                                    </button>
+                            <div class="container-fluid p-2">
+                                <div class="row align-items-end g-2">
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">Unit Location:</label>
+                                        <select class="form-select select2" aria-label="Status" id="stat"
+                                            name="stat">
+                                            <option value="-" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
+                                                Status</option>
+                                            @foreach ($locations as $location)
+                                                <option value="{{ $location->area }}"
+                                                    {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
+                                                    {{ $location->area . ' (' . $location->company_name . ')' }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 col-md-3">
+                                        <label class="form-label">Employee Name</label>
+                                        <input type="text" name="customsearch" id="customsearch" class="form-control"
+                                            placeholder="Employee Name">
+                                    </div>
+
+                                    <div class="col-12 col-md-1">
+                                        <button class="btn btn-primary w-100" type="submit">Filter</button>
+                                    </div>
+
+                                    <div class="col-12 col-md-2">
+                                        <button class="btn btn-outline-success w-100" data-bs-toggle="modal"
+                                            data-bs-target="#importExcelHealtCoverage" type="button">
+                                            <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
+                                        </button>
+                                    </div>
+
+                                    <div class="col-12 col-md-2">
+                                        <button class="btn btn-success w-100" type="button"
+                                            onclick="redirectToExportExcel()">
+                                            <i class="ri-file-excel-2-line"></i> Export to Excel
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -117,7 +129,7 @@
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <h3 class="card-title">{{ $link }}</h3>
                         </div>
                         <div class="table-responsive">
