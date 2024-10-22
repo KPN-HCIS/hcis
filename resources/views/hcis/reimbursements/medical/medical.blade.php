@@ -204,4 +204,12 @@
             });
         });
     </script>
+    @if (session('refresh'))
+        <script>
+            // Refresh the page after 1 seconds
+            setTimeout(function(){
+                window.location.reload();
+            }, 1000);
+        </script>
+    @endif
 @endsection

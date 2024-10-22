@@ -56,32 +56,26 @@ class MedicalController extends Controller
             ->get();
 
         $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
-            ->where('status', 'Rejected')  // Filter for rejected status
+            ->where('status', 'Rejected')
             ->get()
             ->keyBy('no_medic');
 
-        // Get employee IDs from both 'employee_id' and 'rejected_by'
         $employeeIds = $rejectMedic->pluck('employee_id')->merge($rejectMedic->pluck('rejected_by'))->unique();
 
-        // Fetch employee names for those IDs
         $employees = Employee::whereIn('employee_id', $employeeIds)
             ->pluck('fullname', 'employee_id');
 
-        // Now map the full names to the respective HealthCoverage records
         $rejectMedic->transform(function ($item) use ($employees) {
             $item->employee_fullname = $employees->get($item->employee_id);
             $item->rejected_by_fullname = $employees->get($item->rejected_by);
             return $item;
         });
 
-        // dd($rejectMedic);
         $medical = $medicalGroup->map(function ($item) use ($employee_id) {
-            // Fetch the usage_id based on no_medic
             $usageId = HealthCoverage::where('no_medic', $item->no_medic)
                 ->where('employee_id', $employee_id)
-                ->value('usage_id'); // Assuming there's one usage_id per no_medic
+                ->value('usage_id');
 
-            // Add usage_id to the current item
             $item->usage_id = $usageId;
 
             return $item;
@@ -95,14 +89,13 @@ class MedicalController extends Controller
         }
 
         $employees_cast = Employee::where('employee_id', $employee_id)->get();
-        $currentYear = date('Y'); // Tanggal akhir tahun
+        $currentYear = date('Y');
 
         foreach ($employees_cast as $employee) {
             $startDate = $employee->date_of_joining;
             $job_level = $employee->job_level;
-            $endDate = date('Y-12-31'); // Tanggal akhir tahun
+            $endDate = date('Y-12-31');
 
-            // Hitung selisih tahun
             $startDate = date_create($startDate);
             $endDate = date_create($endDate);
             $difference = date_diff($startDate, $endDate);
@@ -111,19 +104,15 @@ class MedicalController extends Controller
             $plafond_list = MasterPlafond::where('group_name', $job_level)->get();
 
             if ($yearsWorked > 0) {
-                // Proses untuk karyawan bekerja lebih dari 1 tahun
                 foreach ($plafond_list as $plafond_lists) {
-                    // Cek apakah sudah ada entri dengan employee_id ini, period tahun ini, dan medical_type yang sama
                     $existingHealthPlan = HealthPlan::where('employee_id', $employee->employee_id)
                         ->where('period', $currentYear)
                         ->where('medical_type', $plafond_lists->medical_type)
                         ->first();
 
-                    // Hanya insert jika belum ada entri untuk kombinasi employee_id, period, dan medical_type ini
                     if (!$existingHealthPlan) {
-                        // Insert ke HealthPlan
-                        HealthPlan::create([
-                            'plan_id' => (string) Str::uuid(), // generate UUID sebagai plan_id
+                        $newHealthPlan = HealthPlan::create([
+                            'plan_id' => (string) Str::uuid(),
                             'employee_id' => $employee->employee_id,
                             'medical_type' => $plafond_lists->medical_type,
                             'balance' => $plafond_lists->balance,
@@ -131,28 +120,27 @@ class MedicalController extends Controller
                             'created_by' => $employee_id,
                             'created_at' => now(),
                         ]);
+
+                        if ($newHealthPlan) {
+                            session()->flash('refresh', true);
+                        }
                     }
                 }
             } else if ($yearsWorked == 0) {
-                // Karyawan bekerja kurang dari 1 tahun, hitung plafon prorata berdasarkan bulan
                 $startDate = date_create($employee->date_of_joining);
                 $bulan_awal = date_format($startDate, "m");
-                $bulan_akhir = date('m'); // Bulan saat ini
+                $bulan_akhir = date('m');
                 $bulan = ($bulan_akhir - $bulan_awal) + 1;
 
-                // Menghitung plafon prorata dari $plafond_list
                 foreach ($plafond_list as $plafond_lists) {
-                    // Set nilai default $balance
                     $balance = 0;
 
-                    // Cek apakah sudah ada entri dengan employee_id ini, period tahun ini, dan medical_type yang sama
                     $existingHealthPlan = HealthPlan::where('employee_id', $employee->employee_id)
                         ->where('period', $currentYear)
                         ->where('medical_type', $plafond_lists->medical_type)
                         ->first();
 
                     if (!$existingHealthPlan) {
-                        // Cek tipe medical_type untuk menentukan perhitungan prorata
                         if ($plafond_lists->medical_type == 'Child Birth') {
                             $balance = $plafond_lists->balance * ($bulan / 12);
                         } elseif ($plafond_lists->medical_type == 'Inpatient') {
@@ -163,8 +151,7 @@ class MedicalController extends Controller
                             $balance = $plafond_lists->balance * ($bulan / 12);
                         }
 
-                        // Insert ke HealthPlan jika $balance sudah diatur
-                        HealthPlan::create([
+                        $newHealthPlan = HealthPlan::create([
                             'plan_id' => (string) Str::uuid(),
                             'employee_id' => $employee->employee_id,
                             'medical_type' => $plafond_lists->medical_type,
@@ -173,6 +160,10 @@ class MedicalController extends Controller
                             'created_by' => $employee_id,
                             'created_at' => now(),
                         ]);
+
+                        if ($newHealthPlan) {
+                            session()->flash('refresh', true);
+                        }
                     }
                 }
             }
@@ -209,10 +200,8 @@ class MedicalController extends Controller
         $employee_id = Auth::user()->employee_id;
         $no_medic = $this->generateNoMedic();
 
-        // Handle status value
         $statusValue = $request->has('action_draft') ? 'Draft' : 'Pending';
 
-        // Handle medical proof file upload
         $medical_proof_path = null;
         if ($request->hasFile('medical_proof')) {
             $file = $request->file('medical_proof');
@@ -223,28 +212,23 @@ class MedicalController extends Controller
         $date = Carbon::parse($request->date);
         $period = $date->year;
 
-        // Iterate through each medical type and update the health plan balance
         foreach ($medical_costs as $medical_type => $cost) {
-            $cost = (int) str_replace('.', '', $cost); // Clean the currency format
+            $cost = (int) str_replace('.', '', $cost);
 
-            // Fetch the specific health plan for the employee and medical type
             $medical_plan = HealthPlan::where('employee_id', $employee_id)
                 ->where('period', $period)
                 ->where('medical_type', $medical_type)
                 ->first();
 
             if (!$medical_plan) {
-                continue; // If no health plan found, skip to the next medical type
+                continue;
             }
 
-            // Update the balance if the status is not 'Draft'
             if ($statusValue !== 'Draft') {
                 $medical_plan->balance -= $cost;
-                // dd($medical_plan->balance -= $cost);
                 $medical_plan->save();
             }
 
-            // Create the HealthCoverage entry for each medical type
             HealthCoverage::create([
                 'usage_id' => (string) Str::uuid(),
                 'employee_id' => $employee_id,
