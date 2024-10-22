@@ -2,6 +2,11 @@
 
 @section('css')
     <style>
+        #example_filter {
+            margin-bottom: 20px;
+            /* Adjust as needed */
+        }
+
         th {
             color: white !important;
             text-align: center;
@@ -64,7 +69,8 @@
 
             <!-- Button Section -->
             <div class="col-md-6 mb-2 d-flex justify-content-center justify-content-md-end align-items-center">
-                <a href="{{ route('exportmed-detail.excel', $employee_id) }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                <a href="{{ route('exportmed-detail.excel', $employee_id) }}"
+                    class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a>
             </div>

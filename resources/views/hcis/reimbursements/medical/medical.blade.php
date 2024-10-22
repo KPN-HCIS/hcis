@@ -2,6 +2,11 @@
 
 @section('css')
     <style>
+        #example_filter {
+            margin-bottom: 20px;
+            /* Adjust as needed */
+        }
+
         th {
             color: white !important;
             text-align: center;
@@ -207,7 +212,7 @@
     @if (session('refresh'))
         <script>
             // Refresh the page after 1 seconds
-            setTimeout(function(){
+            setTimeout(function() {
                 window.location.reload();
             }, 1000);
         </script>
