@@ -732,6 +732,8 @@ class MedicalController extends Controller
                 $updateData = [
                     'status' => $statusValue,
                     'verif_by' => Auth::user()->employee_id,
+                    'approved_by' => $employee_id,
+                    'approved_at' => now(),
                 ];
 
                 // Only add balance_uncoverage to update data if it's not null
