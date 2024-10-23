@@ -12,10 +12,9 @@
                   <th>Hospital Name</th>
                   <th>Patient Name</th>
                   <th>Disease</th>
-                  <th>Child Birth</th>
-                  <th>Inpatient</th>
-                  <th>Outpatient</th>
-                  <th>Glasses</th>
+                  @foreach ($master_medical as $master_medicals)
+                      <th class="text-center">{{ $master_medicals->name }}</th>
+                  @endforeach
                   <th data-priority="1">Status</th>
                   <th data-priority="2">Action</th>
               </tr>
@@ -32,18 +31,16 @@
                       <td>{{ $item->hospital_name }}</td>
                       <td>{{ $item->patient_name }}</td>
                       <td>{{ $item->disease }}</td>
-                      <td class="text-center">
-                          {{ 'Rp. ' . number_format($item->child_birth_total, 0, ',', '.') }}
-                      </td>
-                      <td class="text-center">
-                          {{ 'Rp. ' . number_format($item->inpatient_total, 0, ',', '.') }}
-                      </td>
-                      <td class="text-center">
-                          {{ 'Rp. ' . number_format($item->outpatient_total, 0, ',', '.') }}
-                      </td>
-                      <td class="text-center">
-                          {{ 'Rp. ' . number_format($item->glasses_total, 0, ',', '.') }}
-                      </td>
+                      @foreach ($master_medical as $master_medicals)
+                          <td class="text-center">
+                              @php
+                                  // Dynamically determine the corresponding total field for each medical type
+                                  $medical_type = strtolower(str_replace(' ', '_', $master_medicals->name)) . '_total';
+                              @endphp
+
+                              {{ 'Rp. ' . number_format($item->$medical_type, 0, ',', '.') }}
+                          </td>
+                      @endforeach
                       <td style="align-content: center; text-align: center">
                           @php
                               $badgeClass = match ($item->status) {

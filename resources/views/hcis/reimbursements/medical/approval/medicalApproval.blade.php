@@ -105,13 +105,12 @@
                                             @foreach ($master_medical as $master_medicals)
                                                 <td class="text-center">
                                                     @php
-                                                        // Dynamically determine the corresponding total field for each medical type
-                                                        $medical_type =
+                                                        // Displaying the balance_verif based on medical type dynamically
+                                                        $balance_verif_field =
                                                             strtolower(str_replace(' ', '_', $master_medicals->name)) .
-                                                            '_total';
+                                                            '_balance_verif';
                                                     @endphp
-
-                                                    {{ 'Rp. ' . number_format($item->$medical_type, 0, ',', '.') }}
+                                                    {{ 'Rp. ' . number_format($item->$balance_verif_field, 0, ',', '.') }}
                                                 </td>
                                             @endforeach
                                             <td style="align-content: center; text-align: center">

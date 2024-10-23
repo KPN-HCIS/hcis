@@ -571,10 +571,10 @@ class MedicalController extends Controller
                 'hospital_name',
                 'patient_name',
                 'disease',
-                DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
+                DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance_verif ELSE 0 END) as child_birth_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance_verif ELSE 0 END) as inpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance_verif ELSE 0 END) as outpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance_verif ELSE 0 END) as glasses_balance_verif'),
                 'status'
             )
                 ->whereNotNull('verif_by')   // Only include records where verif_by is not null
@@ -691,32 +691,53 @@ class MedicalController extends Controller
                 $medicalType = $coverage->medical_type;
                 $balance = $coverage->balance;
                 $balanceVerif = $coverage->balance_verif;
+                $balanceUncoverage = $coverage->balance_uncoverage;
                 $employeeId = $coverage->employee_id;
+
+                $date = Carbon::parse($request->date);
+                $period = $date->year;
 
                 // Calculate the difference
                 $balanceDifference = $balance - $balanceVerif;
 
+                // Update balance_uncoverage based on the difference only if it's not null
+                if ($balanceUncoverage !== null) {
+                    $balanceDifferenceUncover = $balanceDifference - $balanceUncoverage;
+                    if ($balanceDifferenceUncover < 0) {
+                        $coverage->balance_uncoverage = abs($balanceDifferenceUncover);
+                    } else {
+                        $coverage->balance_uncoverage -= abs($balanceDifferenceUncover);
+                    }
+                }
+
                 // Fetch the health plan for this employee and medical type
                 $healthPlan = HealthPlan::where('employee_id', $employeeId)
                     ->where('medical_type', $medicalType)
+                    ->where('period', $period)
                     ->first();
 
                 if ($healthPlan) {
                     // If the result is positive, add the difference to the health plan balance
                     if ($balanceDifference > 0) {
                         $healthPlan->balance += $balanceDifference;
-                    }
-                    // If the result is negative or zero, subtract the absolute difference from the health plan balance
-                    elseif ($balanceDifference < 0) {
+                    } elseif ($balanceDifference < 0) {
                         $healthPlan->balance -= abs($balanceDifference);
                     }
                     $healthPlan->save();
                 }
-                // Update the medical record to mark it as done and store verification info
-                $coverage->update([
+
+                $updateData = [
                     'status' => $statusValue,
-                    'verif_by' => Auth::user()->employee_id,  // Verifying by the current user
-                ]);
+                    'verif_by' => Auth::user()->employee_id,
+                ];
+
+                // Only add balance_uncoverage to update data if it's not null
+                if ($coverage->balance_uncoverage !== null) {
+                    $updateData['balance_uncoverage'] = $coverage->balance_uncoverage;
+                }
+
+                // Update the coverage record
+                $coverage->update($updateData);
             }
 
             return redirect()->route('medical.approval')->with('success', 'Medical request approved and balances updated.');
