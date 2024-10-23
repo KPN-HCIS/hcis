@@ -56,21 +56,6 @@
 @section('content')
     <!-- Begin Page Content -->
     <div class="container-fluid">
-        {{-- <style>
-            thead th.sticky {
-                position: sticky;
-                left: 0;
-                background-color: white; /* Pastikan background tidak transparan */
-                z-index: 1; /* Agar tetap di atas elemen lain */
-            }
-
-            tbody td.sticky {
-                position: sticky;
-                left: 0;
-                background-color: white;
-                z-index: 1;
-            }
-        </style> --}}
         <!-- Page Heading -->
         <div class="row">
             <!-- Breadcrumb Navigation -->
@@ -104,9 +89,9 @@
                         <i class="bi bi-plus-circle"></i> Add Data
                     </a>
                 @endif
-                {{-- <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" >
+                <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" >
                     <i class="bi bi-plus-circle"></i> Add Data
-                </a> --}}
+                </a>
             </div>
         </div>
         <!-- Content Row -->
@@ -125,7 +110,7 @@
                         </div>
                         @include('hcis.reimbursements.cashadv.navigation.navigationCashadv')
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
+                            <table class="table table-hover table-sm dt-responsive nowrap" id="defaultTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
@@ -173,11 +158,11 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($ca_transaction->approval_status == 'Approved')
-                                                    <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                    <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-info" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_status == 'Declaration')
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-info" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
                                                 @elseif ($ca_transaction->approval_status == 'Pending')
-                                                    <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                    <a href="{{ route('cashadvanced.download', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-info" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_status == 'Reject')
                                                 @elseif ($ca_transaction->approval_status == 'Draft')
                                                     <a href="{{ route('cashadvanced.edit', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>

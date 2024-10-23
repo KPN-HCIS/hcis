@@ -344,9 +344,9 @@
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td>Rp. {{ number_format($transactions->total_ca), 0, ',', '.' }}</td>
+                <td>Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
                 <td></td>
-                <td>Rp. {{ number_format($transactions->total_real), 0, ',', '.' }}</td>
+                <td>Rp. {{ number_format($transactions->total_real, 0, ',', '.') }}</td>
             </tr>
         </table>
     @elseif ( $transactions->type_ca == 'ndns' )
@@ -382,9 +382,9 @@
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td>Rp. {{ number_format($transactions->total_ca), 0, ',', '.' }}</td>
+                <td>Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
                 <td></td>
-                <td>Rp. {{ number_format($transactions->total_real), 0, ',', '.' }}</td>
+                <td>Rp. {{ number_format($transactions->total_real, 0, ',', '.') }}</td>
             </tr>
         </table>
     @elseif ( $transactions->type_ca == 'entr' )
@@ -420,9 +420,9 @@
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td>Rp. {{ number_format($transactions->total_ca), 0, ',', '.' }}</td>
+                <td>Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
                 <td></td>
-                <td>Rp. {{ number_format($transactions->total_real), 0, ',', '.' }}</td>
+                <td>Rp. {{ number_format($transactions->total_real, 0, ',', '.' )}}</td>
             </tr>
         </table>
     @endif
@@ -1013,17 +1013,17 @@
         <tr>
             <td class="label"><b>Total Plan Cash Advanced</b></td>
             <td class="colon">:</td>
-            <td class="value">Rp. {{ number_format($transactions->total_ca), 0, ',', '.' }}</td>
+            <td class="value">Rp. {{ number_format($transactions->total_ca, 0, ',', '.' )}}</td>
         </tr>
         <tr>
             <td class="label"><b>Total Real Cash Advanced</b></td>
             <td class="colon">:</td>
-            <td class="value">Rp. {{ number_format($transactions->total_real), 0, ',', '.' }}</td>
+            <td class="value">Rp. {{ number_format($transactions->total_real, 0, ',', '.' )}}</td>
         </tr>
         <tr>
             <td class="label"><b>Balance</b></td>
             <td class="colon">:</td>
-            <td class="value">Rp. {{ number_format($transactions->total_cost), 0, ',', '.' }}</td>
+            <td class="value">Rp. {{ number_format($transactions->total_cost, 0, ',', '.' )}}</td>
         </tr>
         @if($transactions->total_cost>0)
         <tr>
@@ -1037,9 +1037,9 @@
     <footer>
         <script type="text/php">
             if (isset($pdf)) {
-                $x = 400;
+                $x = 360;
                 $y = 810;
-                $text = "Page {PAGE_NUM} of {PAGE_COUNT} Cash Advanced No. {{ $transactions->no_ca }}";
+                $text = "Page {PAGE_NUM} of {PAGE_COUNT} Declaration Cash Advanced No. {{ $transactions->no_ca }}";
                 $font = null;
                 $size = 8;
                 $color = array(0, 0, 0);

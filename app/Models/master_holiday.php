@@ -5,18 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DataKeluarga extends Model
+class master_holiday extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'id',
-        'nik',
-        'nama',
-        'hubungan',
-        'tanggal_lahir',
-        'umur',
-        'status',
-    ];
 
-    protected $table = 'data_keluarga';
+    protected $fillable = [
+        // Kolom-kolom lainnya,
+        'id',
+        'tanggal_libur',
+        'ket',
+    ];
+    protected $table = 'master_holidays';
 }

@@ -107,8 +107,6 @@ class BusinessTripController extends Controller
         $hotel = Hotel::whereIn('no_sppd', $sppdNos)->get()->groupBy('no_sppd');
         $taksi = Taksi::whereIn('no_sppd', $sppdNos)->get()->keyBy('no_sppd');
 
-
-
         // Get manager names
         $managerL1Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l1_id'))->pluck('fullname', 'employee_id');
         $managerL2Names = Employee::whereIn('employee_id', $sppd->pluck('manager_l2_id'))->pluck('fullname', 'employee_id');
@@ -1554,7 +1552,7 @@ class BusinessTripController extends Controller
                             break;
                         case 'deklarasi':
                             $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
-                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2', 'Declaration Draft'])) {
+                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2', 'Rejected', 'Declaration Draft'])) {
                                 continue 2;
                             }
                             $pdfName = 'Deklarasi.pdf';
@@ -1790,7 +1788,7 @@ class BusinessTripController extends Controller
                             break;
                         case 'deklarasi':
                             $ca = CATransaction::where('no_sppd', $sppd->no_sppd)->first();
-                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2'])) {
+                            if (!$ca || in_array($sppd->status, ['Approved', 'Pending L1', 'Pending L2', 'Rejected', 'Declaration Draft'])) {
                                 continue 2;
                             }
                             $pdfName = 'Deklarasi.pdf';
@@ -2151,8 +2149,8 @@ class BusinessTripController extends Controller
             $ca->total_real = '0';
             $ca->total_cost = (int) str_replace('.', '', $request->totalca);
             $ca->approval_status = $caStatus;
-            $ca->approval_sett = $request->approval_sett;
-            $ca->approval_extend = $request->approval_extend;
+            $ca->approval_sett = $request->approval_sett ? $request->approval_sett : '';
+            $ca->approval_extend = $request->approval_extend ? $request->approval_extend : '';
             $ca->created_by = $userId;
 
             // Initialize arrays

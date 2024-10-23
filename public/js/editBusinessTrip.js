@@ -1096,7 +1096,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             onchange="calculateTotalDays(${formNumber})">
                     </div>
                     <div class="col-md-4 mb-2">
-                        <label class="form-label">Total Days</label>
+                        <label class="form-label">Total Nights</label>
                         <input type="number" class="form-control form-control-sm bg-light" id="total-days-${formNumber}" name="total_hari[]"
                             readonly>
                     </div>

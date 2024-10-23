@@ -192,7 +192,7 @@
                     <h5 class="modal-title" id="approvalModalLabel">Approval Cash Advanced Update</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('approvalAdmin.cashadvancedApprovedAdmin', ':id') }}" method="POST">@csrf
+                <form id="approveForm" action="{{ route('approvalAdmin.cashadvancedApprovedAdmin', ':id') }}" method="POST">@csrf
                     <div class="modal-body">
                         <input type="hidden" name="no_id" id="no_id">
                         <input type="hidden" name="ca_type" id="ca_type">
@@ -228,7 +228,7 @@
                         <div class="row">
                             <div class="col-md-12 mb-2">
                                 <label class="form-label" for="reason">Reasons for Refusal</label>
-                                <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
+                                <textarea name="reject_info" id="reject_info" class="form-control" required></textarea>
                             </div>
                             <input type="hidden" name="data_no_id" id="data_no_id">
                             <input type="hidden" name="rejectDec_no_id" id="rejectDec_no_id">
@@ -251,7 +251,7 @@
                     <h5 class="modal-title" id="approvalDecModalLabel">Approval Cash Advanced Declaration Update - <label id="approval_no_ca"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="form_approvalDec" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
+                <form id="approveFormDec" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
                     <div class="modal-body">
                         <input type="hidden" name="no_id" id="no_id">
                         <input type="hidden" name="ca_type" id="ca_type">
@@ -290,7 +290,7 @@
                         <div class="row">
                             <div class="col-md-12 mb-2">
                                 <label class="form-label" for="reason">Reasons for Refusal</label>
-                                <textarea name="reject_reason" id="reject_reason" class="form-control" required></textarea>
+                                <textarea name="reject_info" id="reject_info" class="form-control" required></textarea>
                             </div>
                             <input type="hidden" name="data_no_id" id="data_no_id">
                             <input type="hidden" name="rejectDec_no_id" id="rejectDec_no_id">
@@ -307,7 +307,7 @@
     </div>
 @endif
 
-{{-- Table Deklarasi --}}
+{{-- Success --}}
 @if (session('success'))
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -321,6 +321,24 @@
         });
     </script>
 @endif
+
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: `
+                    @foreach ($errors->all() as $error)
+                        {{ $error }}
+                    @endforeach
+                `,
+                confirmButtonText: 'Ok'
+            });
+        });
+    </script>
+@endif
+
 <script>
     document.querySelectorAll('.delete-button').forEach(button => {
         button.addEventListener('click', () => {
@@ -332,8 +350,8 @@
                 text: "You won't be able to revert this!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#0c63e4",
-                cancelButtonColor: "#9a2a27",
+                confirmButtonColor: "#AB2F2B",
+                cancelButtonColor: "#CCCCCC",
                 confirmButtonText: "Yes, delete it!"
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -557,22 +575,22 @@
                     inputSummary = `
                         <table style="width: 100%;">
                             <tr>
-                                <td style="width: 60%"><strong>Total Perdiem</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Perdiem</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalBtPerdiem}</td>
                             </tr>
                             <tr>
-                                <td style="width: 60%"><strong>Total Transport</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Transport</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalBtTransport}</td>
                             </tr>
                             <tr>
-                                <td style="width: 60%"><strong>Total Accommodation</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Accommodation</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalBtPenginapan}</td>
                             </tr>
                             <tr>
-                                <td style="width: 60%"><strong>Total Others</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Others</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalBtLainnya}</td>
                             </tr>
@@ -582,7 +600,7 @@
 
                         <table style="width: 100%;">
                             <tr>
-                                <td style="width: 60%"><strong>Total Request</strong></td>
+                                <td style="text-align:right;width: 60%"><strong>Total Request</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalCA}</td>
                             </tr>

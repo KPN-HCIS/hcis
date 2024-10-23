@@ -80,7 +80,7 @@
                         <input class="form-control form-control-sm bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_${formCountPerdiem}" type="text" value="0" onchange="onNominalChange()">
                     </div>
                     <!-- Action Buttons -->
-                    <div class="row mt-3">
+                    <div class="row mt-2">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem(${formCountPerdiem}, event)">Reset</button>
                             <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPerdiem(${formCountPerdiem}, event)">Delete</button>
@@ -192,7 +192,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-3">
+                    <div class="row mt-2">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem({{ $loop->index + 1 }}, event)">Reset</button>
                             <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPerdiem({{ $loop->index + 1 }}, event)">Delete</button>
@@ -293,7 +293,7 @@
                     <input class="form-control form-control-sm bg-light" name="nominal_bt_perdiem[]" id="nominal_bt_perdiem_1" type="text" value="0" onchange="onNominalChange()">
                 </div>
                 <br>
-                <div class="row mt-3">
+                <div class="row mt-2">
                     <div class="d-flex justify-start w-100">
                         <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormPerdiem(1, event)">Reset</button>
                         <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormPerdiem(1, event)">Delete</button>

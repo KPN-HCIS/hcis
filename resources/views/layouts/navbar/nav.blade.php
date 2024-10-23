@@ -5,7 +5,7 @@
     </button>
 
     <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-       <h1 class="h3 mb-0 text-gray-800">@yield('title')</h1> 
+       <h1 class="h3 mb-0 text-gray-800">@yield('title')</h1>
     </div>
 
     <!-- Topbar Navbar -->
@@ -46,7 +46,7 @@
         </a>
         <!-- Dropdown - User Information -->
         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-            
+
         <span class="dropdown-item d-lg-none"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> {{ Auth::user()->name.' '.Auth::user()->employee_id }}</span>
 
         <div class="dropdown-divider d-lg-inline"></div>

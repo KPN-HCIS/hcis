@@ -88,7 +88,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}">
+            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}" style="display:none">
                 <div class="row align-items-end">
                     <h3 class="card-title">SPPD Data</h3>
 
@@ -523,11 +523,11 @@
                             getDate();
                         });
 
-                        document.getElementById('recordsPerPage').addEventListener('change', function() {
-                            const perPage = this.value;
-                            const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
-                            window.location.search = `?per_page=${perPage}&page=${currentPage}`;
-                        });
+                        // document.getElementById('recordsPerPage').addEventListener('change', function() {
+                        //     const perPage = this.value;
+                        //     const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+                        //     window.location.search = `?per_page=${perPage}&page=${currentPage}`;
+                        // });
 
                         // function confirmDelete(id) {
                         //     if (confirm("Are you sure you want to delete this item?")) {

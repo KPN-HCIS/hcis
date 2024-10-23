@@ -171,11 +171,11 @@
                                             </td>
                                             <td class="text-center">
                                                 @if ($ca_transaction->approval_sett == 'Approved')
-                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-info" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == 'Waiting for Declaration')
                                                     @if ($ca_transaction->approval_extend == 'Pending')
                                                     @else
-                                                        <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
+                                                        <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalExtend"
                                                                 data-no-id="{{ $ca_transaction->id }}"
                                                                 data-no-ca="{{ $ca_transaction->no_ca }}"
@@ -186,10 +186,10 @@
                                                         </button>
                                                     @endif
                                                 @elseif ($ca_transaction->approval_sett == 'Pending')
-                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-primary" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                                                    <a href="{{ route('cashadvanced.downloadDeclare', $ca_transaction->id) }}" target="_blank" class="btn btn-outline-info" title="Print"><i class="bi bi-file-earmark-arrow-down"></i></a>
                                                 {{-- @elseif ($ca_transaction->approval_sett == 'Reject') --}}
                                                 @elseif ($ca_transaction->approval_sett == 'Draft')
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                 @elseif ($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Rejected')
                                                     @if ($ca_transaction->approval_extend == 'Pending')
                                                     @else
@@ -201,11 +201,11 @@
                                                                 data-total-days="{{ $ca_transaction->total_days }}">
                                                             <i class="ri-calendar-line"></i>
                                                         </button>
-                                                        <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
+                                                        <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                         {{-- <a href="#" class="btn btn-outline-primary" title="Extend" ><i class="ri-calendar-line"></i></a> --}}
                                                     @endif
                                                 @elseif ($ca_transaction->approval_sett != 'Pending')
-                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-primary" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
+                                                    <a href="{{ route('cashadvanced.deklarasi', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Deklarasi" ><i class="ri-edit-box-line"></i></a>
                                                 @endif
                                             </td>
                                         </tr>
@@ -219,6 +219,10 @@
         </div>
     </div>
     @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
 @endsection
 
 @push('scripts')
