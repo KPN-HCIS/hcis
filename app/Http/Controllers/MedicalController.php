@@ -657,10 +657,13 @@ class MedicalController extends Controller
                 $medicalType = $coverage->medical_type;
                 $balance = $coverage->balance;
                 $employeeId = $coverage->employee_id;
+                $date = Carbon::parse($request->date);
+                $period = $date->year;
 
                 // Fetch the health plan for this employee and medical type
                 $healthPlan = HealthPlan::where('employee_id', $medical->employee_id)
                     ->where('medical_type', $medicalType)
+                    ->where('period', $period)
                     ->first();
                 // dd($healthPlan);
 
