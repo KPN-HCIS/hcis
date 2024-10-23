@@ -508,6 +508,7 @@ class MedicalController extends Controller
         // Process the medical verification costs
         $medical_costs = $request->input('medical_costs', []);
         $existingCoverages = HealthCoverage::where('no_medic', $no_medic)->get();
+        $medicalEmployee = HealthCoverage::where('no_medic', $no_medic)->first();
 
         // Update the medical proof and common fields (if needed)
         $commonUpdateData = [
@@ -522,10 +523,12 @@ class MedicalController extends Controller
             $date = Carbon::parse($request->date);
             $period = $date->year;
 
-            $medical_plan = HealthPlan::where('employee_id', $employee_id)
+            $medical_plan = HealthPlan::where('employee_id', $medicalEmployee->employee_id)
                 ->where('period', $period)
                 ->where('medical_type', $medical_type)
                 ->first();
+
+            // dd($medical_plan);
 
             if (!$medical_plan) {
                 continue;
@@ -535,23 +538,19 @@ class MedicalController extends Controller
             $existingCoverage = $existingCoverages->where('medical_type', $medical_type)->first();
 
             if ($existingCoverage) {
-                // Always update balance_verif, verif_by, and status
                 $existingCoverage->update([
                     'balance_verif' => $verif_cost,
                     'verif_by' => $employee_id,
                     'status' => 'Pending',
                 ]);
                 if ($medical_plan->balance < $verif_cost) {
-                    $balance_diff = $verif_cost - $medical_plan->balance;
+                    $old_balance_total = $medical_plan->balance + $existingCoverage->balance; // Combine balances
+                    $balance_diff = $old_balance_total - $verif_cost;
+                    $balance_diff_formatted = abs($balance_diff);
 
-                    // Update balance_uncoverage only if the balance is lower
                     $existingCoverage->update([
-                        'balance_uncoverage' => $existingCoverage->balance_uncoverage + $balance_diff,
+                        'balance_uncoverage' => $balance_diff_formatted,
                     ]);
-
-                    Log::info("Updated balance_uncoverage for medical_type: $medical_type, balance_diff: $balance_diff");
-                } else {
-                    Log::info("No uncoverage update needed for medical_type: $medical_type, HealthPlan balance is greater than or equal to verif_cost.");
                 }
             } else {
                 Log::info("No existing coverage found for medical_type: $medical_type");
