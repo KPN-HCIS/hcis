@@ -535,16 +535,24 @@ class MedicalController extends Controller
             $existingCoverage = $existingCoverages->where('medical_type', $medical_type)->first();
 
             if ($existingCoverage) {
-                $balance_diff = $verif_cost - $existingCoverage->balance;
+                // Always update balance_verif, verif_by, and status
                 $existingCoverage->update([
                     'balance_verif' => $verif_cost,
                     'verif_by' => $employee_id,
                     'status' => 'Pending',
                 ]);
-                $new_balance_uncoverage = $existingCoverage->balance_uncoverage + $balance_diff;
-                $existingCoverage->update([
-                    'balance_uncoverage' => $new_balance_uncoverage
-                ]);
+                if ($medical_plan->balance < $verif_cost) {
+                    $balance_diff = $verif_cost - $medical_plan->balance;
+
+                    // Update balance_uncoverage only if the balance is lower
+                    $existingCoverage->update([
+                        'balance_uncoverage' => $existingCoverage->balance_uncoverage + $balance_diff,
+                    ]);
+
+                    Log::info("Updated balance_uncoverage for medical_type: $medical_type, balance_diff: $balance_diff");
+                } else {
+                    Log::info("No uncoverage update needed for medical_type: $medical_type, HealthPlan balance is greater than or equal to verif_cost.");
+                }
             } else {
                 Log::info("No existing coverage found for medical_type: $medical_type");
             }
@@ -671,10 +679,13 @@ class MedicalController extends Controller
                 $medicalType = $coverage->medical_type;
                 $balance = $coverage->balance;
                 $employeeId = $coverage->employee_id;
+                $date = Carbon::parse($request->date);
+                $period = $date->year;
 
                 // Fetch the health plan for this employee and medical type
                 $healthPlan = HealthPlan::where('employee_id', $medical->employee_id)
                     ->where('medical_type', $medicalType)
+                    ->where('period', $period)
                     ->first();
                 // dd($healthPlan);
 
@@ -706,6 +717,9 @@ class MedicalController extends Controller
                 $balance = $coverage->balance;
                 $balanceVerif = $coverage->balance_verif;
                 $employeeId = $coverage->employee_id;
+                $date = Carbon::parse($request->date);
+                $period = $date->year;
+
 
                 // Calculate the difference
                 $balanceDifference = $balance - $balanceVerif;
@@ -713,6 +727,7 @@ class MedicalController extends Controller
                 // Fetch the health plan for this employee and medical type
                 $healthPlan = HealthPlan::where('employee_id', $employeeId)
                     ->where('medical_type', $medicalType)
+                    ->where('period', $period)
                     ->first();
 
                 if ($healthPlan) {
