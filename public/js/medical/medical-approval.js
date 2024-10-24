@@ -13,9 +13,14 @@ $("#example").DataTable({
             targets: 0,
         },
         {
+            className: "none", // This will hide Disease and the 4 dynamic columns
+            targets: [8, 9, 10, 11, 12], // Disease (8) and the 4 dynamic medical columns (9-12)
+        },
+        {
             responsivePriority: 1,
             targets: 0,
         },
+
         {
             responsivePriority: 4,
             targets: 3,
