@@ -624,6 +624,11 @@ class MedicalController extends Controller
 
                 return $item;
             });
+
+            $medicalGroup->map(function ($item) {
+                $item->total_per_no_medic = $item->child_birth_total + $item->inpatient_total + $item->outpatient_total + $item->glasses_total;
+                return $item;
+            });
         } else {
             $medical = collect(); // Empty collection if user doesn't have approval rights
         }
@@ -877,6 +882,11 @@ class MedicalController extends Controller
             ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
             ->orderBy('latest_created_at', 'desc')
             ->get();
+
+        $medicalGroup->map(function ($item) {
+            $item->total_per_no_medic = $item->child_birth_total + $item->inpatient_total + $item->outpatient_total + $item->glasses_total;
+            return $item;
+        });
 
         $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
             ->where('status', 'Rejected')  // Filter for rejected status
