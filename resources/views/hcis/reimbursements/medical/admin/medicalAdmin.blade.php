@@ -2,6 +2,11 @@
 
 @section('css')
     <style>
+        #example_filter {
+            margin-bottom: 20px;
+            /* Adjust as needed */
+        }
+
         th {
             color: white !important;
             text-align: center;

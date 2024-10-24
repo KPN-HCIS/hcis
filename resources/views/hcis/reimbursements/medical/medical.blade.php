@@ -2,6 +2,11 @@
 
 @section('css')
     <style>
+        #example_filter {
+            margin-bottom: 20px;
+            /* Adjust as needed */
+        }
+
         th {
             color: white !important;
             text-align: center;
@@ -73,7 +78,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="card shadow-none p-1 py-3">
+            <div class="card shadow-none p-1 py-3 px-2">
                 <div class="d-flex justify-content-center">
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -207,7 +212,7 @@
     @if (session('refresh'))
         <script>
             // Refresh the page after 1 seconds
-            setTimeout(function(){
+            setTimeout(function() {
                 window.location.reload();
             }, 1000);
         </script>

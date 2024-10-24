@@ -508,6 +508,7 @@ class MedicalController extends Controller
         // Process the medical verification costs
         $medical_costs = $request->input('medical_costs', []);
         $existingCoverages = HealthCoverage::where('no_medic', $no_medic)->get();
+        $medicalEmployee = HealthCoverage::where('no_medic', $no_medic)->first();
 
         // Update the medical proof and common fields (if needed)
         $commonUpdateData = [
@@ -518,19 +519,39 @@ class MedicalController extends Controller
 
         // Process each medical type and update balance_verif
         foreach ($medical_costs as $medical_type => $verif_cost) {
-            $verif_cost = (int) str_replace('.', '', $verif_cost); // Clean the currency format
+            $verif_cost = (int) str_replace('.', '', $verif_cost);
+            $date = Carbon::parse($request->date);
+            $period = $date->year;
+
+            $medical_plan = HealthPlan::where('employee_id', $medicalEmployee->employee_id)
+                ->where('period', $period)
+                ->where('medical_type', $medical_type)
+                ->first();
+
+            // dd($medical_plan);
+
+            if (!$medical_plan) {
+                continue;
+            }
 
             // Find existing coverage for this medical type
             $existingCoverage = $existingCoverages->where('medical_type', $medical_type)->first();
 
             if ($existingCoverage) {
-                // Update only the balance_verif for existing coverage
                 $existingCoverage->update([
                     'balance_verif' => $verif_cost,
                     'verif_by' => $employee_id,
                     'status' => 'Pending',
                 ]);
-                Log::info("Updated balance_verif for medical_type: $medical_type, new balance_verif: $verif_cost");
+                if ($medical_plan->balance < $verif_cost) {
+                    $old_balance_total = $medical_plan->balance + $existingCoverage->balance; // Combine balances
+                    $balance_diff = $old_balance_total - $verif_cost;
+                    $balance_diff_formatted = abs($balance_diff);
+
+                    $existingCoverage->update([
+                        'balance_uncoverage' => $balance_diff_formatted,
+                    ]);
+                }
             } else {
                 Log::info("No existing coverage found for medical_type: $medical_type");
             }
@@ -571,10 +592,10 @@ class MedicalController extends Controller
                 'hospital_name',
                 'patient_name',
                 'disease',
-                DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance ELSE 0 END) as child_birth_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
+                DB::raw('SUM(CASE WHEN medical_type = "Child Birth" THEN balance_verif ELSE 0 END) as child_birth_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance_verif ELSE 0 END) as inpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance_verif ELSE 0 END) as outpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance_verif ELSE 0 END) as glasses_balance_verif'),
                 'status'
             )
                 ->whereNotNull('verif_by')   // Only include records where verif_by is not null
@@ -657,10 +678,13 @@ class MedicalController extends Controller
                 $medicalType = $coverage->medical_type;
                 $balance = $coverage->balance;
                 $employeeId = $coverage->employee_id;
+                $date = Carbon::parse($request->date);
+                $period = $date->year;
 
                 // Fetch the health plan for this employee and medical type
                 $healthPlan = HealthPlan::where('employee_id', $medical->employee_id)
                     ->where('medical_type', $medicalType)
+                    ->where('period', $period)
                     ->first();
                 // dd($healthPlan);
 
@@ -692,6 +716,9 @@ class MedicalController extends Controller
                 $balance = $coverage->balance;
                 $balanceVerif = $coverage->balance_verif;
                 $employeeId = $coverage->employee_id;
+                $date = Carbon::parse($request->date);
+                $period = $date->year;
+
 
                 // Calculate the difference
                 $balanceDifference = $balance - $balanceVerif;
@@ -699,6 +726,7 @@ class MedicalController extends Controller
                 // Fetch the health plan for this employee and medical type
                 $healthPlan = HealthPlan::where('employee_id', $employeeId)
                     ->where('medical_type', $medicalType)
+                    ->where('period', $period)
                     ->first();
 
                 if ($healthPlan) {
@@ -715,7 +743,9 @@ class MedicalController extends Controller
                 // Update the medical record to mark it as done and store verification info
                 $coverage->update([
                     'status' => $statusValue,
-                    'verif_by' => Auth::user()->employee_id,  // Verifying by the current user
+                    'verif_by' => Auth::user()->employee_id,
+                    'approved_by' => $employee_id,
+                    'approved_at' => now(),
                 ]);
             }
 
