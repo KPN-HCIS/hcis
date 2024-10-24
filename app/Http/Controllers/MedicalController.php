@@ -601,7 +601,7 @@ class MedicalController extends Controller
                 ->whereNotNull('verif_by')   // Only include records where verif_by is not null
                 ->whereNotNull('balance_verif')
                 ->where('status', 'Pending')
-                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'created_at')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -850,19 +850,36 @@ class MedicalController extends Controller
         $userId = Auth::id();
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
+        $unit = MasterBusinessUnit::get();
 
         $currentYear = date('Y');
 
-        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
-
         $med_employee = collect();
         $hasFilter = false;
+        $medicalGroup = [];
+
+        $healthCoverageQuery = HealthCoverage::query();
+
+        // Filter berdasarkan start_date dan end_date hanya untuk HealthCoverage
+        if (request()->get('start_date') == '') {
+        } else {
+            if ($request->has(['start_date', 'end_date']) && $request->input('start_date') != '' && $request->input('end_date') != '') {
+                $startDate = $request->input('start_date');
+                $endDate = Carbon::parse($request->input('end_date'))->addDay();
+                $healthCoverageQuery->whereBetween('created_at', [$startDate, $endDate]);
+                $hasFilter = true;
+            }
+        }
+
+        $medicalGroup = $healthCoverageQuery->where('status', 'Done')->get()->groupBy('employee_id');
+
+        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
 
         if (request()->get('stat') == '') {
         } else {
             if ($request->has('stat') && $request->input('stat') !== '') {
                 $status = $request->input('stat');
-                $query->where('office_area', $status);
+                $query->where('group_company', $status);
                 $hasFilter = true;
             }
         }
@@ -876,7 +893,6 @@ class MedicalController extends Controller
             }
         }
 
-        // Hanya jalankan query jika ada salah satu filter
         if ($hasFilter) {
             $med_employee = $query->orderBy('created_at', 'desc')->get();
         }
@@ -894,9 +910,13 @@ class MedicalController extends Controller
 
             $employeeMedicalPlan = $medical_plans->where('employee_id', $transaction->employee_id)->first();
             $transaction->period = $employeeMedicalPlan ? $employeeMedicalPlan->period : '-';
+
+            if (isset($medicalGroup[$transaction->employee_id])) {
+                $transaction->medical_coverage = $medicalGroup[$transaction->employee_id];
+            }
         }
 
-        return view('hcis.reimbursements.medical.adminMedical', [
+        return view('hcis.reimbursements.medical.admin.reportMedicalAdmin', [
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
@@ -905,6 +925,8 @@ class MedicalController extends Controller
             'locations' => $locations,
             'master_medical' => MasterMedical::where('active', 'T')->get(),
             'balances' => $balances, // Kirim balances ke view
+            'unit' => $unit,
+            'medicalGroup' => $medicalGroup,
         ]);
     }
 
@@ -1083,8 +1105,10 @@ class MedicalController extends Controller
     {
         $stat = $request->input('stat');
         $customSearch = $request->input('customsearch');
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
 
-        return Excel::download(new MedicalExport($stat, $customSearch), 'medical_report.xlsx');
+        return Excel::download(new MedicalExport($stat, $customSearch, $start_date, $end_date), 'medical_report.xlsx');
     }
 
     public function exportDetailExcel($employee_id)

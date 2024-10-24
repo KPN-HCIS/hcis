@@ -33,19 +33,28 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
     public function collection()
     {
         $currentYear = date('Y');
+        $medicalGroup = [];
 
-        // Query untuk mengambil data master medical dan employee
+        $healthCoverageQuery = HealthCoverage::query();
+        if (!empty($this->start_date)) {
+            $healthCoverageQuery->whereBetween('created_at', [$this->start_date, $this->end_date]);
+        }
+
         $master_medical = MasterMedical::all();
+
+        $medicalGroup = $healthCoverageQuery->get()->groupBy('employee_id');
+
         $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
 
         if (!empty($this->stat)) {
-            $query->where('office_area', $this->stat);
+            $query->where('group_company', $this->stat);
         }
         if (!empty($this->customSearch)) {
             $query->where('fullname', 'like', '%' . $this->customSearch . '%');
         }
 
         $med_employee = $query->orderBy('created_at', 'desc')->get();
+
         $medical_plans = HealthPlan::where('period', $currentYear)->get();
 
         $balances = [];
@@ -59,6 +68,10 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
 
             $employeeMedicalPlan = $medical_plans->where('employee_id', $transaction->employee_id)->first();
             $transaction->period = $employeeMedicalPlan ? $employeeMedicalPlan->period : '-';
+
+            if (isset($medicalGroup[$transaction->employee_id])) {
+                $transaction->medical_coverage = $medicalGroup[$transaction->employee_id];
+            }
         }
 
         // Buat array untuk menyimpan hasil gabungan dari kedua kode
@@ -74,28 +87,30 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
 
             // Loop hasil dari kode kedua dan tambahkan ke hasil gabungan
             foreach ($medicalGroup as $item) {
-                // dd($item);
-                $combinedData[] = [
-                    'number' => count($combinedData) + 1,
-                    'NIK' => $transaction->kk,
-                    'Transaction Date' => \Carbon\Carbon::parse($item->date)->format('d-F-Y'),
-                    'Submission Date' => \Carbon\Carbon::parse($item->created_at)->format('d-F-Y'),
-                    'Name' => $transaction->fullname,
-                    'Patient Name' => $item->patient_name,
-                    'Gorup' => $transaction->designation_name,
-                    'Disease' => $item->disease,
-                    'Reimburse',
-                    'NoRek' => $transaction->bank_name .  ' - ' . $transaction->bank_account_number,
-                    'NoInvoice' => $item->no_invoice,
-                    'MedicalType' => $item->medical_type,
-                    'Balance' => $item->balance,
-                    'BalanceUncoverage' => $item->balance_uncoverage,
-                    'BalanceVerify' => $item->balance_verif,
-                    'PT' => $transaction->company_name,
-                    'CostCenter' => $transaction->contribution_level_code,
-                    'JobLevel' => $transaction->job_level,
-                    'GroupCompany' => $transaction->group_company,
-                ];
+                if ($item->status == 'Done') {
+                    $combinedData[] = [
+                        'number' => count($combinedData) + 1,
+                        'NIK' => $transaction->kk,
+                        'Transaction Date' => \Carbon\Carbon::parse($item->date)->format('d-F-Y'),
+                        'Submission Date' => \Carbon\Carbon::parse($item->created_at)->format('d-F-Y'),
+                        'Name' => $transaction->fullname,
+                        'Patient Name' => $item->patient_name,
+                        'Gorup' => $transaction->designation_name,
+                        'Disease' => $item->disease,
+                        'Status' => $item->status,
+                        'Reimburse',
+                        'NoRek' => $transaction->bank_name .  ' - ' . $transaction->bank_account_number,
+                        'NoInvoice' => $item->no_invoice,
+                        'MedicalType' => $item->medical_type,
+                        'Balance' => $item->balance,
+                        'BalanceUncoverage' => $item->balance_uncoverage,
+                        'BalanceVerify' => $item->balance_verif,
+                        'PT' => $transaction->company_name,
+                        'CostCenter' => $transaction->contribution_level_code,
+                        'JobLevel' => $transaction->job_level,
+                        'GroupCompany' => $transaction->group_company,
+                    ];
+                }
             }
         }
 
@@ -115,6 +130,7 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
             'Patient Name',
             'Div',
             'Desease',
+            'Status',
             'Type',
             'Account Detail',
             'No Invoice',
