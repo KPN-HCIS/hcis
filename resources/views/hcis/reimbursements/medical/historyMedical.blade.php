@@ -11,12 +11,13 @@
                   <th data-priority="0">No. Medical</th>
                   <th>Hospital Name</th>
                   <th>Patient Name</th>
+                  <th data-priority="1">Total Medical</th>
                   <th>Disease</th>
                   @foreach ($master_medical as $master_medicals)
                       <th class="text-center">{{ $master_medicals->name }}</th>
                   @endforeach
-                  <th data-priority="1">Status</th>
-                  <th data-priority="2">Action</th>
+                  <th data-priority="2">Status</th>
+                  <th data-priority="3">Action</th>
               </tr>
 
           </thead>
@@ -30,6 +31,7 @@
                       <td class="text-center">{{ $item->no_medic }}</td>
                       <td>{{ $item->hospital_name }}</td>
                       <td>{{ $item->patient_name }}</td>
+                      <td>{{ 'Rp. ' . number_format($item->total_per_no_medic, 0, ',', '.') }}</td>
                       <td>{{ $item->disease }}</td>
                       @foreach ($master_medical as $master_medicals)
                           <td class="text-center">

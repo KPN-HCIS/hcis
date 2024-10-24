@@ -56,6 +56,11 @@ class MedicalController extends Controller
             ->orderBy('latest_created_at', 'desc')
             ->get();
 
+        $medicalGroup->map(function ($item) {
+            $item->total_per_no_medic = $item->child_birth_total + $item->inpatient_total + $item->outpatient_total + $item->glasses_total;
+            return $item;
+        });
+
         $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
             ->where('status', 'Rejected')
             ->get()
@@ -173,17 +178,23 @@ class MedicalController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Medical';
 
-        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data', 'medicalGroup'));
     }
 
     public function medicalForm()
     {
         $employee_id = Auth::user()->employee_id;
+        $currentYear = now()->year;
         $families = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
         $medical_type = MasterMedical::orderBy('id', 'desc')->where(
             'active',
             'T'
         )->get();
+
+        $medicalBalances = HealthPlan::where('employee_id', $employee_id)
+            ->whereYear('period', $currentYear)
+            ->get();
+
 
         $employee_name = Employee::select('fullname')
             ->where('employee_id', $employee_id)
@@ -193,7 +204,7 @@ class MedicalController extends Controller
         $parentLink = 'Medical';
         $link = 'Add Medical Coverage Usage';
 
-        return view('hcis.reimbursements.medical.form.medicalForm', compact('diseases', 'medical_type', 'families', 'parentLink', 'link', 'employee_name'));
+        return view('hcis.reimbursements.medical.form.medicalForm', compact('diseases', 'medical_type', 'families', 'parentLink', 'link', 'employee_name', 'medicalBalances'));
     }
 
     public function medicalCreate(Request $request)

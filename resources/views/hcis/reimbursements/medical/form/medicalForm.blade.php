@@ -99,6 +99,28 @@
                             </div>
                             {{-- Dynamic Forms --}}
                             <div id="dynamicForms" class="row"></div>
+                            <div id="balanceForm" class="row"></div>
+                            <div class="row">
+                                @foreach ($medicalBalances as $type)
+                                    @php
+                                        // Find the corresponding balance from medicalBalances based on medical type
+                                        $balance =
+                                            $medicalBalances->where('medical_type', $type->medical_type)->first()
+                                                ->balance ?? 0;
+                                    @endphp
+                                    <div class="col-md-3 mb-3">
+                                        <label for="{{ $type->medical_type }}"
+                                            class="form-label">{{ $type->medical_type }}</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">Rp</span>
+                                            <input type="text" class="form-control currency-input"
+                                                id="{{ $type->medical_type }}"
+                                                name="medical_costs[{{ $type->medical_type }}]"
+                                                value="{{ $balance }}">
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
 
                             <div class="row mb-2">
                                 <div class="col-md-12 mt-2">
@@ -198,12 +220,12 @@
                     <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
                 </tr>
                 ${Object.entries(medicalCosts).map(([type, cost]) => `
-                                                <tr>
-                                                        <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
-                                                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
-                                                    </tr>
-                                                `).join('')}
+                                                                    <tr>
+                                                                            <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                                        </tr>
+                                                                    `).join('')}
                     </table>
                 `;
 
