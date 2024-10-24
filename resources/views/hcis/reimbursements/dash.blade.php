@@ -192,6 +192,18 @@
                 </a>
             </div>
 
+            <div class="col-md-3">
+                <a href="{{ route('home-trip') }}">
+                    <div class="card" style="height: 200px">
+                        <div class="card-body">
+                            <img src="{{ asset('images/menu/bt.png') }}" alt="logo"
+                                style="width: 100px; height: 100px;">
+                            <h5 class="my-3">Home Trip</h5>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div><!-- end col-->
+
             {{-- <div class="col-md-3">
                 <a href="{{ route('hotel.approval') }}">
                     <div class="card" style="height: 200px">
@@ -256,6 +268,20 @@
                                 <div class="card-body">
                                     <img src="{{ asset('images/menu/md.png') }}" alt="logo">
                                     <h5 class="my-3">Medical (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('adminht')
+                    <div class="col-md-3">
+                        <a href="{{ route('home-trip.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/bt.png') }}" alt="logo">
+                                    <h5 class="my-3">Home Trip (Admin)</h5>
                                 </div> <!-- end card-body-->
                             </div> <!-- end card-->
                         </a>
