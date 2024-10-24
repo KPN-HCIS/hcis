@@ -114,7 +114,7 @@
     <div class="header">
         <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
     </div>
-    <h5 class="center">CASH ADVANCE (CA) TRANSACTION</h5>
+    <h5 class="center">DECLARATION CASH ADVANCED</h5>
     <h5 class="center">No. {{ $transactions->no_ca }}</h5>
 
     <table>
@@ -445,7 +445,7 @@
                             <td>{{ $transactions->employee->fullname }}</td>
                         </tr>
                         <tr>
-                            <td>Date : </td>
+                            <td>{{ $transactions->declaration_at }}</td>
                         </tr>
                     </table>
                 </td>
@@ -1011,12 +1011,12 @@
 
     <table>
         <tr>
-            <td class="label"><b>Total Plan Cash Advanced</b></td>
+            <td class="label"><b>Total Cash Advanced</b></td>
             <td class="colon">:</td>
             <td class="value">Rp. {{ number_format($transactions->total_ca, 0, ',', '.' )}}</td>
         </tr>
         <tr>
-            <td class="label"><b>Total Real Cash Advanced</b></td>
+            <td class="label"><b>Total Declaration</b></td>
             <td class="colon">:</td>
             <td class="value">Rp. {{ number_format($transactions->total_real, 0, ',', '.' )}}</td>
         </tr>

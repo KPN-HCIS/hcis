@@ -137,10 +137,10 @@
                                         <th>Start Date</th>
                                         <th>End Date</th>
                                         <th>Total CA</th>
-                                        <th>Total Settlement</th>
+                                        <th>Total Declaration</th>
                                         <th>Balance</th>
                                         <th>Request</th>
-                                        <th>Settlement</th>
+                                        <th>Declaration</th>
                                         <th>Status CA</th>
                                         <th>Actions</th>
                                         <th>Export</th>
@@ -186,7 +186,7 @@
                                             <td>
                                                 <p class="badge text-bg-{{ $ca_transaction->ca_status == 'Done' ? 'success' :
                                                 ($ca_transaction->ca_status == 'Refund' ? 'danger' :
-                                                ($ca_transaction->ca_status == 'On Progress' ? 'secondary' : 'default')) }}">
+                                                ($ca_transaction->ca_status == 'On Progress' ? 'secondary' : 'default')) }}" title="{{$ca_transaction->paid_date}}">
                                                     {{ $ca_transaction->ca_status }}
                                                 </p>
                                             </td>

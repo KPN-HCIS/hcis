@@ -136,6 +136,10 @@
                                 <option value="Done">Done</option>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label for="paid_date">Paid Date</label>
+                            <input type="date" id="paid_date" name="paid_date" class="form-control">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -387,8 +391,9 @@
                     form.reportValidity(); // Show validation messages if invalid
                     return; // Exit if the form is not valid
                 }
-
+                const totalAwal = document.getElementById('totalca_deklarasi').value || '0';
                 const totalCA = document.getElementById('totalca').value || '0';
+                const totalReal = document.getElementById('totalca_real').value || '0';
 
                 let inputSummary = '';
 
@@ -431,6 +436,16 @@
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalCA}</td>
                             </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Cash Advanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalAwal}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Balanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalReal}</td>
+                            </tr>
                         </table>
                     `;
 
@@ -462,6 +477,16 @@
                                 <td style="width: 60%"><strong>Total Declaration</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Cash Advanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalAwal}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Balanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalReal}</td>
                             </tr>
                         </table>
                     `;
@@ -495,6 +520,16 @@
                                 <td style="width: 60%"><strong>Total Declaration</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Cash Advanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalAwal}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Balanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalReal}</td>
                             </tr>
                         </table>
                     `;

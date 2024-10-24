@@ -59,6 +59,17 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-2">
+                                    <label class="form-label" for="ca_type">CA Type</label>
+                                    <select name="ca_type" id="ca_type" class="form-control" onchange="toggleDivs()">
+                                        <option value="">-</option>
+                                        <option value="dns">Business Trip</option>
+                                        <option value="ndns">Non Business Trip</option>
+                                        <option value="entr">Entertainment</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Costing Company</label>
                                     <select class="form-control select2" id="companyFilter" name="companyFilter" required>
                                         <option value="">Select Company...</option>
@@ -128,15 +139,7 @@
                                         <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" placeholder="mm/dd/yyyy" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="ca_type">CA Type</label>
-                                    <select name="ca_type" id="ca_type" class="form-control" onchange="toggleDivs()">
-                                        <option value="">-</option>
-                                        <option value="dns">Business Trip</option>
-                                        <option value="ndns">Non Business Trip</option>
-                                        <option value="entr">Entertainment</option>
-                                    </select>
-                                </div>
+                                
                             </div>
                             <div class="col-md-6 mb-2" id="div_bisnis_numb_dns" style="display: none;">
                                 <label class="form-label" for="name">Business Trip Number</label>
@@ -302,6 +305,34 @@
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
+    <script>
+        document.getElementById('start_date').addEventListener('input', function () {
+            const startDate = new Date(this.value);
+            const caRequiredField = document.getElementById('ca_required');
+
+            caRequiredField.value = '';
+            
+            if (startDate) {
+                startDate.setDate(startDate.getDate() - 2);
+                const minDate = startDate.toISOString().split('T')[0];
+                caRequiredField.setAttribute('min', minDate);
+            }
+        });
+        // window.onload = function() {
+        //     document.getElementById('start_date').addEventListener('input', function () {
+        //         const startDate = new Date(this.value);
+        //         const caRequiredField = document.getElementById('ca_required');
+
+        //         caRequiredField.value = '';
+                
+        //         if (startDate) {
+        //             startDate.setDate(startDate.getDate() - 2);
+        //             const minDate = startDate.toISOString().split('T')[0];
+        //             caRequiredField.setAttribute('min', minDate);
+        //         }
+        //     });
+        // };
+    </script>
     <script>
         function cleanNumber(value) {
             return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;

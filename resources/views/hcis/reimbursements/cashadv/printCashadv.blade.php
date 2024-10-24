@@ -375,7 +375,7 @@
                             <td>{{ $transactions->employee->fullname }}</td>
                         </tr>
                         <tr>
-                            <td>Date : </td>
+                            <td>{{ $transactions->created_at }}</td>
                         </tr>
                     </table>
                 </td>

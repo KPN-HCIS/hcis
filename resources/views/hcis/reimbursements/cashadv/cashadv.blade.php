@@ -89,9 +89,9 @@
                         <i class="bi bi-plus-circle"></i> Add Data
                     </a>
                 @endif
-                <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" >
+                {{-- <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill" >
                     <i class="bi bi-plus-circle"></i> Add Data
-                </a>
+                </a> --}}
             </div>
         </div>
         <!-- Content Row -->
@@ -110,7 +110,7 @@
                         </div>
                         @include('hcis.reimbursements.cashadv.navigation.navigationCashadv')
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm dt-responsive nowrap" id="defaultTable" width="100%"
+                            <table class="table table-hover table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
@@ -190,6 +190,10 @@
     </div>
 
     @include('hcis.reimbursements.cashadv.navigation.modalCashadv')
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
 @endsection
 
 @push('scripts')

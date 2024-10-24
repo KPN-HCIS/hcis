@@ -59,6 +59,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-2">
+                                    <label class="form-label" for="type">CA Type</label>
+                                    
+                                    <input type="text" name="ca_type_disabled" id="ca_type_disabled" class="form-control bg-light"
+                                        value="@if($transactions->type_ca=='dns')Business Trip @elseif($transactions->type_ca=='ndns')Non Business Trip @elseif($transactions->type_ca=='entr')Entertainment @endif" readonly>
+                                    <input type="hidden" name="ca_type" id="ca_type" value="{{ $transactions->type_ca }}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Costing Company</label>
                                     <select class="form-control select2" id="companyFilter" name="companyFilter" required>
                                         <option value="">Select Company...</option>
@@ -134,23 +143,8 @@
                                         <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" value="{{ $transactions->declare_estimate }}" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="type">CA Type</label>
-                                    <select name="ca_type_disabled" id="ca_type_disabled" class="form-control bg-light" disabled>
-                                        <option value="">-</option>
-                                        <option value="dns" {{ $transactions->type_ca == 'dns' ? 'selected' : '' }}>
-                                            Business Trip
-                                        </option>
-                                        <option value="ndns" {{ $transactions->type_ca == 'ndns' ? 'selected' : '' }}>
-                                            Non Business Trip
-                                        </option>
-                                        <option value="entr" {{ $transactions->type_ca == 'entr' ? 'selected' : '' }}>
-                                            Entertainment
-                                        </option>
-                                    </select>
-                                    <input type="hidden" name="ca_type" id="ca_type" value="{{ $transactions->type_ca }}">
-                                </div>
-                                <div class="col-md-6 mb-2">
+                                
+                                <div class="col-md-6 mb-2" style="display:{{ $transactions->type_ca == 'ndns' ? 'none' : 'block' }}">
                                         <label class="form-label" for="bisnis_numb">Business Trip Number</label>
                                         <input type="text" name="bisnis_numb" id="bisnis_numb" class="form-control bg-light" value="{{ $transactions->no_sppd ?? 'Tidak ada Bussiness Trip Number' }}" readonly>
                                     </div>
@@ -438,6 +432,33 @@
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const startDateField = document.getElementById('start_date');
+            const caRequiredField = document.getElementById('ca_required');
+
+            // Fungsi untuk mengatur minDate CA Required berdasarkan Start Date
+            function setMinCaDate() {
+                const startDate = new Date(startDateField.value);
+                if (startDate) {
+                    startDate.setDate(startDate.getDate() - 2);
+                    const minDate = startDate.toISOString().split('T')[0];
+                    caRequiredField.setAttribute('min', minDate);
+                }
+            }
+
+            // Cek jika form dalam mode edit (Start Date sudah terisi)
+            if (startDateField.value) {
+                setMinCaDate(); // Set min date untuk CA Date Required
+            }
+
+            // Setiap kali start_date diubah, lakukan validasi ulang
+            startDateField.addEventListener('input', function () {
+                caRequiredField.value = ''; // Kosongkan CA Date Required jika Start Date diubah
+                setMinCaDate(); // Set min date berdasarkan Start Date yang baru
+            });
+        });
+    </script>
     <script>
         function cleanNumber(value) {
             return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;

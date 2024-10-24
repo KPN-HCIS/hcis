@@ -232,7 +232,7 @@ class ReimburseController extends Controller
             ->where('approval_status', '<>', 'Rejected')
             ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
             ->get();
-
+        
         foreach ($ca_approvals as $approval) {
             $approval->ReqName = $approval->statusReqEmployee ? $approval->statusReqEmployee->fullname : '';
         }
@@ -332,6 +332,8 @@ class ReimburseController extends Controller
 
         // Update field ca_status berdasarkan value yang dipilih di modal
         $ca_transaction->ca_status = $request->input('ca_status');
+        $ca_transaction->paid_date = $request->input('paid_date');
+        
         $ca_transaction->save();
 
         // Redirect kembali dengan pesan sukses
@@ -350,7 +352,7 @@ class ReimburseController extends Controller
             ->where(function ($query) {
                 $query->where('approval_status', 'Approved');
             })
-            ->where('end_date', '<=', $today)
+            // ->where('end_date', '<=', $today)
             ->where('ca_status', '!=', 'Done')
             ->get();
 

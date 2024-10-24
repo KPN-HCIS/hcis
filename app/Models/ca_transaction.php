@@ -34,6 +34,7 @@ class ca_transaction extends Model
         'approval_status',
         'approval_sett',
         'approval_extend',
+        'paid_date',
         'ca_status'
     ];
 
