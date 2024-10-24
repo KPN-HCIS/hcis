@@ -33,7 +33,7 @@ class MedicalController extends Controller
     public function medical()
     {
         $employee_id = Auth::user()->employee_id;
-        $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
+        $family = Dependents::orderBy('date_of_birth', 'asc')->where('employee_id', $employee_id)->get();
         $medical = HealthCoverage::orderBy('created_at', 'desc')->where('employee_id', $employee_id)->get();
         $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
         $medicalGroup = HealthCoverage::select(

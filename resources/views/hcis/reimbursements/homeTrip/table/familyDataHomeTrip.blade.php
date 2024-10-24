@@ -23,7 +23,7 @@
                     <td class="text-center">
                         {{ \Carbon\Carbon::parse($item->date_of_birth)->age }} Years Old
                     </td>
-                    <td class="text-center">{{ $item->jobs }}</td>
+                    <td class="text-center">{{ $item->jobs ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>

@@ -37,6 +37,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use App\Http\Controllers\ReimburseController;
+use App\Http\Controllers\HomeTripController;
 use App\Models\Designation;
 use Faker\Provider\Medical;
 use Illuminate\Support\Facades\Route;
@@ -294,6 +295,9 @@ Route::middleware('auth')->group(function () {
         Route::get('businessTrip/division/export/excel/', [BusinessTripController::class, 'exportExcelDivision'])->name('export.excel.division');
         Route::get('/businessTrip/division/export-pdf', [BusinessTripController::class, 'exportPdfDivision'])->name('export.pdf.division');
     });
+
+    //Home Trip
+    Route::get('/home-trip', [HomeTripController::class, 'homeTrip'])->name('home-trip');
 
     //Business Trip
     Route::get('/businessTrip', [BusinessTripController::class, 'businessTrip'])->name('businessTrip');
