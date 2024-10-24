@@ -10,7 +10,6 @@ use App\Models\HealthCoverage;
 use App\Models\MasterMedical;
 use App\Models\Company;
 use App\Models\Location;
-use FontLib\Table\Type\fpgm;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -34,7 +33,6 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
     {
         $currentYear = date('Y');
 
-        // Query untuk mengambil data master medical dan employee
         $master_medical = MasterMedical::all();
         $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
 
@@ -46,6 +44,7 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
         }
 
         $med_employee = $query->orderBy('created_at', 'desc')->get();
+
         $medical_plans = HealthPlan::where('period', $currentYear)->get();
 
         $balances = [];
@@ -61,46 +60,23 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
             $transaction->period = $employeeMedicalPlan ? $employeeMedicalPlan->period : '-';
         }
 
-        // Buat array untuk menyimpan hasil gabungan dari kedua kode
-        $combinedData = [];
+        return $med_employee->map(function ($transaction, $index) use ($balances, $master_medical) {
+            $data = [
+                'No'               => $index + 1,
+                'NIK'              => $transaction->kk,
+                'Employee ID'      => $transaction->employee_id,
+                'Employee Name'    => $transaction->fullname,
+                'Join Date'        => \Carbon\Carbon::parse($transaction->date_of_joining)->format('d-F-Y'),
+                'Period'           => $transaction->period,
+                'Created At'       => $transaction->created_at,
+            ];
 
-        // Ambil semua employee_id dari kode pertama
-        foreach ($med_employee as $transaction) {
-            // Jalankan kode kedua untuk setiap employee_id
-            $medicalGroup = HealthCoverage::where('employee_id', $transaction->employee_id)
-                ->where('status', '!=', 'Draft')
-                ->orderBy('created_at', 'desc')
-                ->get();
-
-            // Loop hasil dari kode kedua dan tambahkan ke hasil gabungan
-            foreach ($medicalGroup as $item) {
-                // dd($item);
-                $combinedData[] = [
-                    'number' => count($combinedData) + 1,
-                    'NIK' => $transaction->kk,
-                    'Transaction Date' => \Carbon\Carbon::parse($item->date)->format('d-F-Y'),
-                    'Submission Date' => \Carbon\Carbon::parse($item->created_at)->format('d-F-Y'),
-                    'Name' => $transaction->fullname,
-                    'Patient Name' => $item->patient_name,
-                    'Gorup' => $transaction->designation_name,
-                    'Disease' => $item->disease,
-                    'Reimburse',
-                    'NoRek' => $transaction->bank_name .  ' - ' . $transaction->bank_account_number,
-                    'NoInvoice' => $item->no_invoice,
-                    'MedicalType' => $item->medical_type,
-                    'Balance' => $item->balance,
-                    'BalanceUncoverage' => $item->balance_uncoverage,
-                    'BalanceVerify' => $item->balance_verif,
-                    'PT' => $transaction->company_name,
-                    'CostCenter' => $transaction->contribution_level_code,
-                    'JobLevel' => $transaction->job_level,
-                    'GroupCompany' => $transaction->group_company,
-                ];
+            foreach ($master_medical as $medical_item) {
+                $data[$medical_item->name] = isset($balances[$transaction->employee_id][$medical_item->name]) ? $balances[$transaction->employee_id][$medical_item->name] : 0;
             }
-        }
 
-        // Return hasil gabungan dari kedua kode
-        return collect($combinedData);
+            return $data;
+        });
     }
 
     public function headings(): array
@@ -109,25 +85,19 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
         $headings = [
             'No',
             'NIK',
-            'Tanggal Transaksi',
-            'Tanggal Pengajuan',
-            'Employee Name',
-            'Patient Name',
-            'Div',
-            'Desease',
-            'Type',
-            'Account Detail',
-            'No Invoice',
-            'Medical Type',
-            'Balance',
-            'Balance Uncoverage',
-            'Balance Verify',
-            'PT',
-            'Cost Center',
-            'Job Level',
-            'Group Company',
+            'Employee ID',
+            'Name',
+            'Join Date',
+            'Period',
         ];
 
+        // Fetch dynamic medical types and append to headings
+        $master_medical_heading = MasterMedical::all();
+        foreach ($master_medical_heading as $medical_item) {
+            $headings[] = $medical_item->name; // Append each medical type to headings
+        }
+
+        // Return the final headings array
         return $headings;
     }
 

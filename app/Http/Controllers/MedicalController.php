@@ -756,34 +756,108 @@ class MedicalController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $locations = Location::orderBy('area')->get();
 
-        // Ambil tahun saat ini
         $currentYear = date('Y');
 
-        // Inisialisasi query untuk karyawan
         $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
 
-        // Inisialisasi variabel untuk menyimpan data yang akan dikirimkan ke view
-        $med_employee = collect(); // Kosongkan med_employee jika tidak ada filter
+        $med_employee = collect();
+        $hasFilter = false;
 
-        // Hanya ambil data jika request memiliki parameter 'stat' dan tidak kosong
-        if ($request->has('stat') && $request->input('stat') !== '') {
-            $status = $request->input('stat');
-            $query->where('office_area', $status);
+        if (request()->get('stat') == '') {
+        } else {
+            if ($request->has('stat') && $request->input('stat') !== '') {
+                $status = $request->input('stat');
+                $query->where('office_area', $status);
+                $hasFilter = true;
+            }
+        }
 
-            // Eksekusi query untuk mendapatkan data yang difilter
+        if (request()->get('customsearch') == '') {
+        } else {
+            if ($request->has('customsearch') && $request->input('customsearch') !== '') {
+                $customsearch = $request->input('customsearch');
+                $query->where('fullname', 'LIKE', '%' . $customsearch . '%');
+                $hasFilter = true;
+            }
+        }
+
+        // Hanya jalankan query jika ada salah satu filter
+        if ($hasFilter) {
             $med_employee = $query->orderBy('created_at', 'desc')->get();
         }
 
-        // Ambil semua rencana kesehatan untuk tahun saat ini
         $medical_plans = HealthPlan::where('period', $currentYear)->get();
 
-        // Format rencana kesehatan ke dalam array berdasarkan employee_id
         $balances = [];
         foreach ($medical_plans as $plan) {
             $balances[$plan->employee_id][$plan->medical_type] = $plan->balance;
         }
 
-        // Siapkan nama lengkap (fullname) dan tanggal bergabung (date_of_joining)
+        foreach ($med_employee as $transaction) {
+            $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
+            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
+
+            $employeeMedicalPlan = $medical_plans->where('employee_id', $transaction->employee_id)->first();
+            $transaction->period = $employeeMedicalPlan ? $employeeMedicalPlan->period : '-';
+        }
+
+        return view('hcis.reimbursements.medical.adminMedical', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'userId' => $userId,
+            'med_employee' => $med_employee,
+            'companies' => $companies,
+            'locations' => $locations,
+            'master_medical' => MasterMedical::where('active', 'T')->get(),
+            'balances' => $balances, // Kirim balances ke view
+        ]);
+    }
+
+    public function medicalReportAdmin(Request $request)
+    {
+        $parentLink = 'Reimbursement';
+        $link = 'Medical Data Employee';
+        $userId = Auth::id();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+
+        $currentYear = date('Y');
+
+        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
+
+        $med_employee = collect();
+        $hasFilter = false;
+
+        if (request()->get('stat') == '') {
+        } else {
+            if ($request->has('stat') && $request->input('stat') !== '') {
+                $status = $request->input('stat');
+                $query->where('office_area', $status);
+                $hasFilter = true;
+            }
+        }
+
+        if (request()->get('customsearch') == '') {
+        } else {
+            if ($request->has('customsearch') && $request->input('customsearch') !== '') {
+                $customsearch = $request->input('customsearch');
+                $query->where('fullname', 'LIKE', '%' . $customsearch . '%');
+                $hasFilter = true;
+            }
+        }
+
+        // Hanya jalankan query jika ada salah satu filter
+        if ($hasFilter) {
+            $med_employee = $query->orderBy('created_at', 'desc')->get();
+        }
+
+        $medical_plans = HealthPlan::where('period', $currentYear)->get();
+
+        $balances = [];
+        foreach ($medical_plans as $plan) {
+            $balances[$plan->employee_id][$plan->medical_type] = $plan->balance;
+        }
+
         foreach ($med_employee as $transaction) {
             $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
             $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
@@ -883,21 +957,16 @@ class MedicalController extends Controller
         // Kirim data ke view
         return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data'));
     }
-    public function medicalAdminConfirmation(Request $request, $key)
+    public function medicalAdminConfirmation(Request $request)
     {
-        // Gunakan findByRouteKey untuk mendekripsi $key
-        $employee = Employee::findByRouteKey($key);
-
-        // Ambil employee_id yang telah didekripsi
-        $employee_id = $employee->employee_id;
-
         // Ambil data dependents, medical, dan medical_plan berdasarkan employee_id
-        $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
-        $medical = HealthCoverage::orderBy('created_at', 'desc')->where('employee_id', $employee_id)->get();
-        $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
+        $family = Dependents::orderBy('date_of_birth', 'desc')->get();
+        $medical = HealthCoverage::orderBy('created_at', 'desc')->get();
+        $medical_plan = HealthPlan::orderBy('period', 'desc')->get();
         $medicalGroup = HealthCoverage::select(
             'no_medic',
             'date',
+            'employee_id',
             'period',
             'hospital_name',
             'patient_name',
@@ -914,12 +983,11 @@ class MedicalController extends Controller
             ->where('status', '!=', 'Done')
             ->whereNull('verif_by')
             ->whereNull('balance_verif')
-            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'employee_id')
             ->orderBy('latest_created_at', 'desc')
             ->get();
 
-        $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
-            ->where('status', 'Rejected')  // Filter for rejected status
+        $rejectMedic = HealthCoverage::where('status', 'Rejected')  // Filter for rejected status
             ->get()
             ->keyBy('no_medic');
 
@@ -938,10 +1006,9 @@ class MedicalController extends Controller
         });
 
         // dd($rejectMedic);
-        $medical = $medicalGroup->map(function ($item) use ($employee_id) {
+        $medical = $medicalGroup->map(function ($item) {
             // Fetch the usage_id based on no_medic
             $usageId = HealthCoverage::where('no_medic', $item->no_medic)
-                ->where('employee_id', $employee_id)
                 ->value('usage_id'); // Assuming there's one usage_id per no_medic
 
             // Add usage_id to the current item
@@ -962,7 +1029,7 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdminConfirmation', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data'));
     }
 
     public function importAdminExcel(Request $request)

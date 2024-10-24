@@ -67,8 +67,17 @@
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
-                    <a href="{{ route('reimbursements') }}" class="page-title"><i class="ri-arrow-left-circle-line"></i></a>
-                    {{-- <button type="button" class="page-title btn btn-warning rounded-pill">Back</button> --}}
+                    <a href="{{ request()->routeIs('medical.report') ? route('medical.admin') : route('reimbursements') }}" class="mb-2 me-4 page-title"><i class="ri-arrow-left-circle-line"></i></a>
+                    @if (request()->routeIs('medical.admin'))
+                        <a href="{{ route('medical.confirmation') }}" class="mb-2 btn btn-primary"><i class="bi bi-card-checklist"></i> Confirmation</a>
+                        <a href="{{ route('medical.report') }}" class="mb-2 btn btn-primary"><i class="bi bi-file-earmark-post"></i> Report</a>
+                    @endif
+                    @if (request()->routeIs('medical.report'))
+                        <button class="mb-2 btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#importExcelHealtCoverage" type="button">
+                            <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -77,15 +86,15 @@
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <form action="{{ route('medical.admin') }}" method="GET">
+                        <form action="{{ request()->routeIs('medical.report') ? route('medical.report') : route('medical.admin') }}" method="GET">
                             <div class="container-fluid p-2">
-                                <div class="row align-items-end g-2">
-                                    <div class="col-12 col-md-4">
+                                <div class="row align-items-end g-1">
+                                    <div class="col-12 col-md-{{ request()->routeIs('medical.report') ? '4' : '5'}}">
                                         <label class="form-label">Unit Location:</label>
                                         <select class="form-select select2" aria-label="Status" id="stat"
                                             name="stat">
-                                            <option value="-" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
-                                                Status</option>
+                                            <option value="" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
+                                                Location</option>
                                             @foreach ($locations as $location)
                                                 <option value="{{ $location->area }}"
                                                     {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
@@ -95,29 +104,29 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-md-{{ request()->routeIs('medical.report') ? '4' : '5'}}">
                                         <label class="form-label">Employee Name</label>
-                                        <input type="text" name="customsearch" id="customsearch" class="form-control"
+                                        <input type="text" name="customsearch" id="customsearch" value="{{ request()->get('customsearch') }}" class="form-control"
                                             placeholder="Employee Name">
                                     </div>
 
-                                    <div class="col-12 col-md-1">
+                                    <div class="col-12 col-md-2">
                                         <button class="btn btn-primary w-100" type="submit">Filter</button>
                                     </div>
 
-                                    <div class="col-12 col-md-2">
-                                        <button class="btn btn-outline-success w-100" data-bs-toggle="modal"
-                                            data-bs-target="#importExcelHealtCoverage" type="button">
-                                            <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
-                                        </button>
-                                    </div>
-
-                                    <div class="col-12 col-md-2">
-                                        <button class="btn btn-success w-100" type="button"
-                                            onclick="redirectToExportExcel()">
-                                            <i class="ri-file-excel-2-line"></i> Export to Excel
-                                        </button>
-                                    </div>
+                                    @if (request()->routeIs('medical.report'))
+                                        <div class="col-12 col-md-2">
+                                            @if (isset($_GET['stat']) && $_GET['stat'] !== '' || isset($_GET['customsearch']) && $_GET['customsearch'] !== '')
+                                                <button style="display: block" class="btn btn-success w-100" type="button" onclick="redirectToExportExcel()">
+                                                    <i class="ri-file-excel-2-line"></i> Export Excel
+                                                </button>
+                                            @else
+                                                <button style="display: none" class="btn btn-success w-100" type="button" onclick="redirectToExportExcel()">
+                                                    <i class="ri-file-excel-2-line"></i> Export Excel
+                                                </button>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </form>
