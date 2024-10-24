@@ -352,6 +352,10 @@ Route::middleware('auth')->group(function () {
     // Route::put('/home-trip/form-update/update/{id}', [HomeTripController::class, 'homeTripUpdate'])->name('home-trip-form.put');
     // Route::delete('/home-trip/delete/{id}', [HomeTripController::class, 'homeTripDelete'])->name('home-trip.delete');
 
+    //Home Trip Approval
+    // HT APPROVAL ROUTE HERE !!!!!!!
+
+
     // Authentication
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');

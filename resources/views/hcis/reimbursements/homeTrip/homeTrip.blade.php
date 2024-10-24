@@ -4,7 +4,6 @@
     <style>
         #example_filter {
             margin-bottom: 20px;
-            /* Adjust as needed */
         }
 
         th {
