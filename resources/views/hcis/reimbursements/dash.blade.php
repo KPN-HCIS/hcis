@@ -262,6 +262,20 @@
                     </div> <!-- end col-->
                 @endcan
             @endif
+            @if (auth()->check())
+                @can('adminht')
+                    <div class="col-md-3">
+                        <a href="{{ route('home-trip.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/bt.png') }}" alt="logo">
+                                    <h5 class="my-3">Home Trip (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
         </div>
     @endsection
 
