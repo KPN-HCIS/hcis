@@ -668,6 +668,7 @@ class MedicalController extends Controller
     {
         // Fetch the HealthCoverage record by ID
         $medic = HealthCoverage::findOrFail($id);
+        $currentYear = now()->year;
         $medical_type = MasterMedical::orderBy('id', 'desc')->where(
             'active',
             'T'
@@ -676,6 +677,16 @@ class MedicalController extends Controller
         // Find all records with the same no_medic (group of medical types)
         $medicGroup = HealthCoverage::where('no_medic', $medic->no_medic)
             ->get();
+
+        $medicalBalances = HealthPlan::where('employee_id', $medic->employee_id)
+            ->whereYear('period', $currentYear)
+            ->get();
+
+        $balanceData = [];
+        foreach ($medicalBalances as $balance) {
+            // Assuming `medical_type` is a property of `HealthPlan`
+            $balanceData[$balance->medical_type] = $balance->balance;
+        }
 
         // Extract the medical types from medicGroup
         $selectedMedicalTypes = $medicGroup->pluck('medical_type')->unique();
@@ -690,7 +701,7 @@ class MedicalController extends Controller
         $parentLink = 'Medical Approval';
         $link = 'Medical Details';
 
-        return view('hcis.reimbursements.medical.approval.medicalApprovalDetail', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes'));
+        return view('hcis.reimbursements.medical.approval.medicalApprovalDetail', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes', 'balanceData'));
     }
 
     public function medicalApprovalUpdate($id, Request $request)

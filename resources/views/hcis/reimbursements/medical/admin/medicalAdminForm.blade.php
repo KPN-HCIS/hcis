@@ -112,16 +112,39 @@
                             @php
                                 use Illuminate\Support\Facades\Storage;
                             @endphp
+                            <div class="row mb-2">
+                                <div class="col-md-12 mt-2">
+                                    <label for="" class="form-label">Uploaded Proof</label>
+                                    @if (isset($medic->medical_proof) && $medic->medical_proof)
+                                        <div class="file-preview">
+                                            @php
+                                                $fileExtension = pathinfo($medic->medical_proof, PATHINFO_EXTENSION);
+                                                // Set the image based on the file type
+                                                $imageSrc = '';
+                                                if (in_array($fileExtension, ['pdf'])) {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your PDF icon
+                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                                    $imageSrc = Storage::url($medic->medical_proof); // Image files should display their own thumbnail
+                                                } else {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png';
+                                                }
+                                            @endphp
+
+                                            <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
+                                                style="text-decoration: none;">
+                                                <img src="{{ $imageSrc }}" alt="{{ $fileExtension }} file"
+                                                    class="file-icon" style="width: 50px; height: 50px;">
+                                                <div style="margin-top: 5px;"><u>View Proof</u></div>
+                                            </a>
+                                        </div>
+                                    @else
+                                        <div class="text-danger">No proof uploaded</div>
+                                    @endif
+                                </div>
+                            </div>
                             <input type="hidden" name="status" value="Pending" id="status">
 
                             <div class="d-flex justify-content-end mt-4">
-                                @if (isset($medic->medical_proof) && $medic->medical_proof)
-                                    <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
-                                        class="btn btn-outline-primary rounded-pill" style="margin-right: 10px;">
-                                        <!-- Adjusted margin-right to "mr-3" -->
-                                        View
-                                    </a>
-                                @endif
                                 <button type="submit" class="btn btn-primary rounded-pill submit-button"
                                     name="action_submit" value="Pending" id="submit-btn">Submit</button>
                             </div>
@@ -232,12 +255,12 @@
                 <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
             </tr>
             ${Object.entries(medicalCosts).map(([type, cost]) => `
-                                                                                                      <tr>
-                                                                                                        <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
-                                                                                                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                                                                                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
-                                                                                                        </tr>
-                                                                                                        `).join('')}
+                                                                                                                      <tr>
+                                                                                                                        <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                                                                                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                                                                                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                                                                                        </tr>
+                                                                                                                        `).join('')}
 
                 </table>
             `;

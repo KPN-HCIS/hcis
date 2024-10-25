@@ -33,6 +33,47 @@ $("#example").DataTable({
 
 //Medical Form JS
 $(document).ready(function () {
+    // Function to generate balance display based on selected types
+    function generateBalanceDisplay(selectedTypes) {
+        var balanceContainer = $("#balanceContainer");
+        balanceContainer.empty(); // Clear previous balances
+
+        if (selectedTypes && selectedTypes.length > 0) {
+            selectedTypes.forEach(function (type) {
+                var balance = typeToBalanceMap[type] || 0; // Default to 0 if not found
+                var balanceGroup = `
+                <div class="col-md-3 mb-3">
+                    <label for="${type}" class="form-label">${type} Plafond</label>
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        <input type="text" id="medical_plafond_${type}" class="form-control bg-light" value="${formatCurrency(
+                    balance
+                )}" readonly>
+                    </div>
+                </div>
+                `;
+                balanceContainer.append(balanceGroup); // Append the balance input dynamically
+            });
+        }
+    }
+
+    // Function to handle change event on medical type selection
+    function handleMedicalTypeChange() {
+        var selectedTypes = $("#medical_type").val();
+        generateBalanceDisplay(selectedTypes); // Generate balances based on selection
+    }
+
+    // Initial load handling: generate balance display for initially selected types
+    handleMedicalTypeChange();
+    // Attach change event listener to the medical type dropdown
+    $("#medical_type").on("change", handleMedicalTypeChange);
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat("id-ID").format(value); // Format number as currency
+    }
+});
+
+$(document).ready(function () {
     var typeToNameMap = {};
     medicalTypeData.forEach(function (type) {
         typeToNameMap[type.medical_type] = type.name;

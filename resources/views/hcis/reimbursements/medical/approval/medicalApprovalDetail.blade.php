@@ -98,6 +98,7 @@
                                 </div>
                             </div>
                             {{-- Dynamic Forms --}}
+                            <div id="balanceContainer" class="row"></div>
                             <div id="dynamicForms" class="row"></div>
 
                             <div class="row mb-2">
@@ -110,18 +111,44 @@
                             @php
                                 use Illuminate\Support\Facades\Storage;
                             @endphp
+                            <div class="row mb-2">
+                                <div class="col-md-12 mt-2">
+                                    <label for="" class="form-label">Uploaded Proof</label>
+                                    @if (isset($medic->medical_proof) && $medic->medical_proof)
+                                        <div class="file-preview text-left">
+                                            @php
+                                                // Get the file extension
+                                                $fileExtension = pathinfo($medic->medical_proof, PATHINFO_EXTENSION);
+                                                // Set the image based on the file type
+                                                $imageSrc = '';
+                                                if (in_array($fileExtension, ['pdf'])) {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your PDF icon
+                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                                    $imageSrc = Storage::url($medic->medical_proof); // Image files should display their own thumbnail
+                                                } else {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your default icon
+                                                }
+                                            @endphp
+
+                                            <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
+                                                style="text-decoration: none;">
+                                                <img src="{{ $imageSrc }}" alt="{{ $fileExtension }} file"
+                                                    class="file-icon" style="width: 50px; height: 50px;">
+                                                <div style="margin-top: 5px;"><u>View Proof</u></div>
+                                            </a>
+                                        </div>
+                                    @else
+                                        <div class="text-danger">No proof uploaded</div>
+                                    @endif
+                                </div>
+                            </div>
+
                             <input type="hidden" id="no_sppd" value="{{ $medic->no_medic }}">
                         </form>
 
                         <div class="d-flex justify-content-end mt-4">
-                            @if (isset($medic->medical_proof) && $medic->medical_proof)
-                                <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
-                                    class="btn btn-primary rounded-pill" style="margin-right: 14px;">
-                                    View
-                                </a>
-                            @endif
                             <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal"
-                                data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 5px">
+                                data-bs-target="#rejectReasonModal" style="padding: 0.5rem 1rem; margin-right: 10px">
                                 Reject
                             </button>
                             <form method="POST"
@@ -183,5 +210,6 @@
     <script>
         var medicalTypeData = @json($medical_type);
         var balanceMapping = @json($balanceMapping);
+        var typeToBalanceMap = @json($balanceData);
     </script>
 @endsection
