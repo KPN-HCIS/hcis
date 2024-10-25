@@ -1029,6 +1029,7 @@ class MedicalController extends Controller
             ->orderBy('latest_created_at', 'desc')
             ->get();
 
+
         $rejectMedic = HealthCoverage::where('status', 'Rejected')  // Filter for rejected status
             ->get()
             ->keyBy('no_medic');
@@ -1061,6 +1062,7 @@ class MedicalController extends Controller
 
         $medical = $medical->map(function ($item) {
             $item->total_per_no_medic = $item->maternity_total + $item->inpatient_total + $item->outpatient_total + $item->glasses_total;
+            $item->employee_fullname = $item->employee->fullname ?? 'N/A';
             return $item;
         });
 

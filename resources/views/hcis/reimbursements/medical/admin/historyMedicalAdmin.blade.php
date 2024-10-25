@@ -5,22 +5,22 @@
           <thead class="bg-primary text-center align-middle">
               <tr>
                   <th></th>
-                  <th>No</th>
+                  <th class="text-center">No</th>
                   @if (request()->routeIs('medical.confirmation'))
-                      <th>Employe Name</th>
+                      <th class="text-center">Employee Name</th>
                   @endif
                   <th>Date</th>
-                  <th>Period</th>
-                  <th data-priority="0">No. Medical</th>
-                  <th>Hospital Name</th>
-                  <th>Patient Name</th>
+                  <th class="text-center">Period</th>
+                  <th data-priority="0" class="text-center">No. Medical</th>
+                  <th class="text-center">Hospital Name</th>
+                  <th class="text-center">Patient Name</th>
                   <th data-priority="1">Total Medical</th>
-                  <th>Disease</th>
+                  <th class="text-center">Disease</th>
                   @foreach ($master_medical as $master_medicals)
                       <th class="text-center">{{ $master_medicals->name }}</th>
                   @endforeach
-                  <th data-priority="2">Status</th>
-                  <th data-priority="3">Action</th>
+                  <th data-priority="2" class="text-center">Status</th>
+                  <th data-priority="3" class="text-center">Action</th>
               </tr>
 
           </thead>
@@ -30,7 +30,7 @@
                       <td class="text-center"></td>
                       <td class="text-center">{{ $loop->iteration }}</td>
                       @if (request()->routeIs('medical.confirmation'))
-                          <td class="text-center">{{ $item->employee_id }}</td>
+                          <td class="text-center">{{ $item->employee_fullname  }}</td>
                       @endif
                       <td>{{ \Carbon\Carbon::parse($item->date)->format('d F Y') }}</td>
                       <td class="text-center">{{ $item->period }}</td>
