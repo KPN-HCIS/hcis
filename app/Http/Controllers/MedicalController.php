@@ -240,11 +240,6 @@ class MedicalController extends Controller
                 continue;
             }
 
-            if ($statusValue !== 'Draft') {
-                $medical_plan->balance -= $cost;
-                $medical_plan->save();
-            }
-
             HealthCoverage::create([
                 'usage_id' => (string) Str::uuid(),
                 'employee_id' => $employee_id,
@@ -259,7 +254,7 @@ class MedicalController extends Controller
                 'medical_type' => $medical_type,
                 'balance' => $cost,
                 'created_by' => $employee_id,
-                'balance_uncoverage' => ($medical_plan->balance < 0) ? abs($medical_plan->balance) : 0,
+                'balance_uncoverage' => 0,
                 'status' => $statusValue,
                 'medical_proof' => $medical_proof_path,
             ]);
@@ -363,33 +358,14 @@ class MedicalController extends Controller
             $cost = (int) str_replace('.', '', $cost); // Clean the currency format
             Log::info("Existing cost: " . $cost);
 
-            // Fetch the specific health plan for the employee and medical type
-            $medical_plan = HealthPlan::where('employee_id', $employee_id)
-                ->where('period', $period)
-                ->where('medical_type', $medical_type)
-                ->first();
-
-            if (!$medical_plan) {
-                continue; // If no health plan found, skip to the next medical type
-            }
-
             // Find existing coverage for this medical type
             $existingCoverage = $existingCoverages->where('medical_type', $medical_type)->first();
 
             if ($existingCoverage) {
                 // Update balance for existing coverage
-                $oldCost = $existingCoverage->balance;
-                $costDifference = $cost - $oldCost;
-                // dd($existingCoverage, $costDifference, $statusValue);
-
-                if ($statusValue !== 'Draft') {
-                    $medical_plan->balance -= $cost;
-                    $medical_plan->save();
-                }
-                // dd($cost);
                 $existingCoverage->update([
                     'balance' => $cost,
-                    'balance_uncoverage' => ($medical_plan->balance < 0) ? abs($medical_plan->balance) : 0,
+                    'balance_uncoverage' => 0,
                 ]);
             } else {
                 // Create new coverage for new medical type
@@ -401,7 +377,7 @@ class MedicalController extends Controller
                     'medical_type' => $medical_type,
                     'balance' => $cost,
                     'created_by' => $employee_id,
-                    'balance_uncoverage' => ($medical_plan->balance < 0) ? abs($medical_plan->balance) : 0,
+                    'balance_uncoverage' => 0,
                     'balance_verif' => null,
                     'verif_by' => null,
                     'reject_info' => null,
@@ -409,15 +385,8 @@ class MedicalController extends Controller
                     'rejected_by' => null,
 
                 ]));
-
-                if ($statusValue !== 'Draft') {
-                    $medical_plan->balance -= $cost;
-                    $medical_plan->save();
-                }
             }
         }
-        // dd($medical_plan->balance -= $cost);
-
         // Remove any coverages that are no longer present in the update
         $existingCoverages->whereNotIn('medical_type', array_keys($medical_costs))->each(function ($coverage) {
             $coverage->delete();
@@ -590,7 +559,7 @@ class MedicalController extends Controller
             }
         }
 
-        return redirect()->route('medical.admin')->with('success', 'Medical verification data successfully updated.');
+        return redirect()->route('medical.confirmation')->with('success', 'Medical verification data successfully updated.');
     }
 
 
@@ -722,25 +691,6 @@ class MedicalController extends Controller
 
             // Loop through each health coverage record and update accordingly
             foreach ($healthCoverages as $coverage) {
-                $medicalType = $coverage->medical_type;
-                $balance = $coverage->balance;
-                $employeeId = $coverage->employee_id;
-                $date = Carbon::parse($request->date);
-                $period = $date->year;
-
-                // Fetch the health plan for this employee and medical type
-                $healthPlan = HealthPlan::where('employee_id', $medical->employee_id)
-                    ->where('medical_type', $medicalType)
-                    ->where('period', $period)
-                    ->first();
-                // dd($healthPlan);
-
-                if ($healthPlan) {
-                    // Add the balance from the health coverage back to the health plan
-                    $healthPlan->balance += $balance;
-                    $healthPlan->save();
-                }
-
                 // Update the health coverage record to reflect rejection
                 $coverage->update([
                     'status' => $statusValue,
@@ -760,15 +710,10 @@ class MedicalController extends Controller
             // Loop through each health coverage record and update accordingly
             foreach ($healthCoverages as $coverage) {
                 $medicalType = $coverage->medical_type;
-                $balance = $coverage->balance;
                 $balanceVerif = $coverage->balance_verif;
                 $employeeId = $coverage->employee_id;
                 $date = Carbon::parse($request->date);
                 $period = $date->year;
-
-
-                // Calculate the difference
-                $balanceDifference = $balance - $balanceVerif;
 
                 // Fetch the health plan for this employee and medical type
                 $healthPlan = HealthPlan::where('employee_id', $employeeId)
@@ -777,14 +722,7 @@ class MedicalController extends Controller
                     ->first();
 
                 if ($healthPlan) {
-                    // If the result is positive, add the difference to the health plan balance
-                    if ($balanceDifference > 0) {
-                        $healthPlan->balance += $balanceDifference;
-                    }
-                    // If the result is negative or zero, subtract the absolute difference from the health plan balance
-                    elseif ($balanceDifference < 0) {
-                        $healthPlan->balance -= abs($balanceDifference);
-                    }
+                    $healthPlan->balance -= $balanceVerif;
                     $healthPlan->save();
                 }
                 // Update the medical record to mark it as done and store verification info
