@@ -229,7 +229,11 @@
 
 
         </div> <!-- end row -->
-        <hr><br>
+        <div style="display: flex; align-items: center; margin: 20px 0;">
+            <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
+            <span style="padding: 0 20px; font-weight: bold;">Admin</span>
+            <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
+        </div>
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 row-cols-xxl-8 text-center">
             @if (auth()->check())
                 @can('reportca_hcis')
