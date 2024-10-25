@@ -97,7 +97,9 @@
                                     </select>
                                 </div>
                             </div>
+
                             {{-- Dynamic Forms --}}
+                            <div id="balanceContainer" class="row"></div>
                             <div id="dynamicForms" class="row"></div>
 
                             <div class="row mb-2">
@@ -110,16 +112,39 @@
                             @php
                                 use Illuminate\Support\Facades\Storage;
                             @endphp
+                            <div class="row mb-2">
+                                <div class="col-md-12 mt-2">
+                                    <label for="" class="form-label">Uploaded Proof</label>
+                                    @if (isset($medic->medical_proof) && $medic->medical_proof)
+                                        <div class="file-preview">
+                                            @php
+                                                $fileExtension = pathinfo($medic->medical_proof, PATHINFO_EXTENSION);
+                                                // Set the image based on the file type
+                                                $imageSrc = '';
+                                                if (in_array($fileExtension, ['pdf'])) {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your PDF icon
+                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                                    $imageSrc = Storage::url($medic->medical_proof); // Image files should display their own thumbnail
+                                                } else {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png';
+                                                }
+                                            @endphp
+
+                                            <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
+                                                style="text-decoration: none;">
+                                                <img src="{{ $imageSrc }}" alt="{{ $fileExtension }} file"
+                                                    class="file-icon" style="width: 50px; height: 50px;">
+                                                <div style="margin-top: 5px;"><u>View Proof</u></div>
+                                            </a>
+                                        </div>
+                                    @else
+                                        <div class="text-danger">No proof uploaded</div>
+                                    @endif
+                                </div>
+                            </div>
                             <input type="hidden" name="status" value="Pending" id="status">
 
                             <div class="d-flex justify-content-end mt-4">
-                                @if (isset($medic->medical_proof) && $medic->medical_proof)
-                                    <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
-                                        class="btn btn-outline-primary rounded-pill" style="margin-right: 10px;">
-                                        <!-- Adjusted margin-right to "mr-3" -->
-                                        View
-                                    </a>
-                                @endif
                                 <button type="submit" class="btn btn-primary rounded-pill submit-button"
                                     name="action_submit" value="Pending" id="submit-btn">Submit</button>
                             </div>
@@ -134,6 +159,7 @@
     <script>
         var medicalTypeData = @json($medical_type);
         var balanceMapping = @json($balanceMapping);
+        var typeToBalanceMap = @json($balanceData);
     </script>
 
     <script>
@@ -150,16 +176,56 @@
                     }
 
                     let hasInvalidCosts = false;
+                    let exceededPlafond = false;
+                    let exceededType = '';
+
                     document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
                         let value = input.value.replace(/\D/g,
                             ""); // Remove non-digit characters
-                        let parsedValue = parseInt(value, 10) || 0;
+                        let parsedValue = parseInt(value, 10) || 0; // Get the numeric value
 
-                        if (parsedValue === 0) {
-                            hasInvalidCosts = true;
+                        // Get the plafond value for this medical type directly
+                        let plafondInput = document.getElementById(
+                            `medical_plafond_${type}`);
+                        let plafondValue = plafondInput.value; // Directly take the value
+
+                        // Remove any formatting like dots (for thousands) from the plafondValue
+                        let plafondNumber = parseInt(plafondValue.replace(/\./g, ''), 10) ||
+                            0; // Remove periods
+
+                        if (parsedValue <= 0) {
+                            hasInvalidCosts =
+                                true; // Invalid if the value is zero or negative
+                            return; // Skip further checks if invalid
+                        }
+
+                        // Check if the plafond is negative
+                        if (plafondNumber < 0) {
+                            if (parsedValue > 0) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
+                        } else {
+
+                            if (parsedValue > plafondNumber) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
                         }
                     });
 
+                    // Show alert if the plafond is exceeded
+                    if (exceededPlafond) {
+                        Swal.fire({
+                            title: "Plafond Exceeded",
+                            text: `The cost for ${exceededType} exceeds the available plafond.`,
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                        return; // Prevent form submission
+                    }
                     // If invalid costs exist, show a simple alert and stop submission
                     if (hasInvalidCosts) {
                         Swal.fire({
@@ -172,25 +238,48 @@
                         return; // Prevent form submission
                     }
 
-                    // Calculate total cost
-                    let totalCost = 0;
+                    // Gather dynamic medical costs
+                    let medicalCosts = {};
                     document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
                         let value = input.value.replace(/\D/g,
                             ""); // Remove non-digit characters
-                        totalCost += parseInt(value, 10) || 0;
+                        medicalCosts[type] = parseInt(value, 10) || 0;
                     });
 
-                    console.log('Total Cost:', totalCost); // Debug log
+
+                    // Create a table for medical costs
+                    let medicalCostsTable = `
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr>
+                <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
+            </tr>
+            ${Object.entries(medicalCosts).map(([type, cost]) => `
+                                                                                                                      <tr>
+                                                                                                                        <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                                                                                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                                                                                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                                                                                        </tr>
+                                                                                                                        `).join('')}
+
+                </table>
+            `;
+
+                    // Calculate total cost
+                    const totalCost = Object.values(medicalCosts).reduce((sum, cost) => sum + cost,
+                        0);
 
                     const inputSummary = `
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                            <tr>
-                                <td text-align: left; padding: 2px;">Total Cost</td>
-                                <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCost.toLocaleString('id-ID')}</strong></td>
-                            </tr>
-                        </table>
-                    `;
+        ${medicalCostsTable}
+        <hr style="margin: 20px 0;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr>
+                <td style="width: 40%; text-align: left; padding: 8px;">Total Cost</td>
+                <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCost.toLocaleString('id-ID')}</strong></td>
+            </tr>
+        </table>
+    `;
 
                     Swal.fire({
                         title: "Do you want to submit this request?",
@@ -211,6 +300,94 @@
                             form.submit();
                         }
                     });
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.draft-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    const form = document.getElementById('medicForm');
+
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+
+                    let hasInvalidCosts = false;
+                    let exceededPlafond = false;
+                    let exceededType = ''; // To store which type exceeded the plafond
+                    document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
+                        let value = input.value.replace(/\D/g,
+                            ""); // Remove non-digit characters
+                        let parsedValue = parseInt(value, 10) || 0; // Get the numeric value
+
+                        // Get the plafond value for this medical type directly
+                        let plafondInput = document.getElementById(
+                            `medical_plafond_${type}`);
+                        let plafondValue = plafondInput.value; // Directly take the value
+
+                        // Remove any formatting like dots (for thousands) from the plafondValue
+                        let plafondNumber = parseInt(plafondValue.replace(/\./g, ''), 10) ||
+                            0; // Remove periods
+
+                        // Check if the cost is valid (must be greater than 0)
+                        if (parsedValue <= 0) {
+                            hasInvalidCosts =
+                                true; // Invalid if the value is zero or negative
+                            return; // Skip further checks if invalid
+                        }
+
+                        // Check if the plafond is negative
+                        if (plafondNumber < 0) {
+                            // If input is positive, show alert immediately
+                            if (parsedValue > 0) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
+                        } else {
+                            // Check if input exceeds plafond directly
+                            if (parsedValue > plafondNumber) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
+                        }
+                    });
+                    // Show alert if the plafond is exceeded
+                    if (exceededPlafond) {
+                        Swal.fire({
+                            title: "Plafond Exceeded",
+                            text: `The cost for ${exceededType} exceeds the available plafond.`,
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                        return; // Prevent form submission
+                    }
+                    // If invalid costs exist, show a simple alert and stop submission
+                    if (hasInvalidCosts) {
+                        Swal.fire({
+                            title: "Invalid Medical Costs",
+                            text: "Please fill value for the medical type you selected.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                    } else {
+                        // No invalid costs, submit the form immediately
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = button.name;
+                        input.value = button.value;
+
+                        form.appendChild(input);
+                        form.submit();
+                    }
                 });
             });
         });

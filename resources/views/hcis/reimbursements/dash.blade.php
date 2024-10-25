@@ -95,7 +95,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            @if (auth()->user()->hasRole('superadmin'))
+            {{-- @if (auth()->user()->hasRole('superadmin')) --}}
             <div class="col">
                 <a href="{{ route('medical') }}">
                     <div class="card" style="height: 200px">
@@ -225,11 +225,15 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col--> --}}
-            @endif
+            {{-- @endif --}}
 
 
         </div> <!-- end row -->
-        <hr><br>
+        <div style="display: flex; align-items: center; margin: 20px 0;">
+            <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
+            <span style="padding: 0 20px; font-weight: bold;">Admin</span>
+            <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
+        </div>
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 row-cols-xxl-8 text-center">
             @if (auth()->check())
                 @can('reportca_hcis')
@@ -282,6 +286,34 @@
                                 <div class="card-body">
                                     <img src="{{ asset('images/menu/bt.png') }}" alt="logo">
                                     <h5 class="my-3">Home Trip (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('admintkt')
+                    <div class="col-md-3">
+                        <a href="{{ route('ticket.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/tkt.png') }}" alt="logo">
+                                    <h5 class="my-3">Ticket (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('adminhtl')
+                    <div class="col-md-3">
+                        <a href="{{ route('hotel.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/ht.png') }}" alt="logo">
+                                    <h5 class="my-3">Hotel (Admin)</h5>
                                 </div> <!-- end card-body-->
                             </div> <!-- end card-->
                         </a>

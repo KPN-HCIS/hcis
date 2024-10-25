@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Hotel'])
+@extends('layouts_.vertical', ['page_title' => 'Ticket'])
 
 @section('css')
     <style>
@@ -84,9 +84,10 @@
                     </ol>
                 </div>
             </div>
-            <div class="col-md-6 mt-4 mb-2 text-end">
-                <a href="{{ route('hotel.form') }}" class="btn btn-primary rounded-pill shadow"><i
-                        class="bi bi-plus-circle"></i> Add Hotel</a>
+            <div class="col-md-6 mb-2 mt-3 d-flex justify-content-center justify-content-md-end align-items-center">
+                <a href="{{ '' }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
+                </a>
             </div>
         </div>
         @include('hcis.reimbursements.businessTrip.modal')
@@ -98,9 +99,8 @@
                         @php
                             $currentFilter = $filter;
                         @endphp
-
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h3>Hotel Data</h3>
+                            <h3>Ticket Data</h3>
                             <div class="input-group" style="width: 30%;">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white border-dark-subtle"><i
@@ -111,7 +111,8 @@
                                     aria-label="search" aria-describedby="search">
                             </div>
                         </div>
-                        <form method="GET" action="{{ route('hotel') }}">
+
+                        <form method="GET" action="{{ route('ticket.admin') }}">
                             <button type="submit" name="filter" value="request"
                                 class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                 Request
@@ -127,16 +128,14 @@
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th>No</th>
-                                        <th>No SPPD</th>
-                                        <th style="text-align: left">No Hotel</th>
-                                        {{-- <th>Requestor</th> --}}
-                                        <th>Hotel Name</th>
-                                        <th>Location</th>
-                                        <th style="text-align: left">Total Hotel</th>
+                                        <th>No. SPPD</th>
+                                        <th>No. Ticket</th>
+                                        <th>Requestor Name</th>
+                                        <th>Total Tickets</th>
+                                        <th>Purposes</th>
+                                        <th>From/To</th>
                                         <th>Details</th>
                                         <th>Status</th>
-                                        {{-- <th>Start Date</th>
-                                  <th>End Date</th> --}}
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -144,34 +143,44 @@
                                     @foreach ($transactions as $transaction)
                                         <tr>
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
-                                            <td style="text-align: left">{{ $transaction->no_sppd }}</td>
-                                            <td style="text-align: left">{{ $transaction->no_htl }}</td>
-                                            {{-- <td>{{ $transaction->employee->fullname }}</td> --}}
-                                            <td>{{ $transaction->nama_htl }}</td>
-                                            <td>{{ $transaction->lokasi_htl }}</td>
+                                            <td>{{ $transaction->no_sppd }}</td>
+                                            <td>{{ $transaction->no_tkt }}</td>
                                             <td style="text-align: left">
-                                                {{ $hotelCounts[$transaction->no_htl]['total'] ?? 1 }} Hotels</td>
-                                            <td style="text-align: left">
+                                                {{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
+                                            <td>{{ $transaction->employee->fullname }}</td>
+                                            <td>{{ $transaction->jns_dinas_tkt }}</td>
+                                            <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
+                                            <td class="text-info">
                                                 <a class="text-info btn-detail" data-toggle="modal"
                                                     data-target="#detailModal" style="cursor: pointer"
-                                                    data-hotel="{{ json_encode(
-                                                        $hotel[$transaction->no_htl]->map(function ($hotel) {
+                                                    data-tiket="{{ json_encode(
+                                                        $ticket[$transaction->no_tkt]->map(function ($ticket) {
                                                             return [
-                                                                'No. Hotel' => $hotel->no_htl,
-                                                                'No. SPPD' => $hotel->no_sppd,
-                                                                'Unit' => $hotel->unit,
-                                                                'Hotel Name' => $hotel->nama_htl,
-                                                                'Location' => $hotel->lokasi_htl,
-                                                                'Room' => $hotel->jmlkmr_htl,
-                                                                'Bed' => $hotel->bed_htl,
-                                                                'Check In' => date('d-M-Y', strtotime($hotel->tgl_masuk_htl)),
-                                                                'Check Out' => date('d-M-Y', strtotime($hotel->tgl_keluar_htl)),
-                                                                'Total Days' => $hotel->total_hari,
+                                                                // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
+                                                                'No. SPPD' => $ticket->no_sppd,
+                                                                'No. Ticket' => $ticket->no_tkt,
+                                                                'Passengers Name' => $ticket->np_tkt,
+                                                                'Unit' => $ticket->unit,
+                                                                'Gender' => $ticket->jk_tkt,
+                                                                'NIK' => $ticket->noktp_tkt,
+                                                                'Phone No.' => $ticket->tlp_tkt,
+                                                                'Transport Type.' => $ticket->jenis_tkt,
+                                                                'From' => $ticket->dari_tkt,
+                                                                'To' => $ticket->ke_tkt,
+                                                                'Information' => $ticket->ket_tkt ?? 'No Data',
+                                                                'Purposes' => $ticket->jns_dinas_tkt,
+                                                                'Ticket Type' => $ticket->type_tkt,
+                                                                'Departure Date' => date('d-M-Y', strtotime($ticket->tgl_brkt_tkt)),
+                                                                'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
+                                                                'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-M-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
+                                                                'Return Time' => !empty($ticket->jam_plg_tkt) ? date('H:i', strtotime($ticket->jam_plg_tkt)) : 'No Data',
                                                             ];
                                                         }),
                                                     ) }}">
-                                                    <u>Details</u></a>
+                                                    <u>Details</u>
+                                                </a>
                                             </td>
+
                                             <td style="align-content: center">
                                                 <span
                                                     class="badge rounded-pill bg-{{ $transaction->approval_status == 'Approved' ||
@@ -195,51 +204,43 @@
                                                                     : (in_array($transaction->approval_status, ['Doc Accepted'])
                                                                         ? 'info'
                                                                         : 'secondary')))) }}"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem; cursor: {{ ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') && isset($hotelApprovals[$transaction->id]) ? 'pointer' : 'default' }};"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem; cursor: {{ ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') && isset($ticketApprovals[$transaction->id]) ? 'pointer' : 'default' }};"
                                                     @if (
                                                         ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') &&
-                                                            isset($hotelApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
+                                                            isset($ticketApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
                                                     title="Click to see rejection reason" @endif
-                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
+                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Name ?? 'Unknown' }}"
                                                     @elseif ($transaction->approval_status == 'Pending L2')
-                                                    title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}" @endif>
+                                                    title="L2 Manager: {{ $managerL2Name ?? 'Unknown' }}" @endif>
                                                     {{ $transaction->approval_status == 'Approved' ? 'Approved' : $transaction->approval_status }}
                                                 </span>
-
                                             </td>
-                                            {{-- <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
-                                <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }} --}}
                                             <td class="text-center">
-                                                @if ($transaction->approval_status == 'Draft')
-                                                    <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}"
-                                                        class="btn btn-sm rounded-pill btn-outline-warning"
-                                                        title="Edit"><i class="ri-edit-box-line"></i></a>
-
-                                                    <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}"
-                                                        method="POST" style="display:inline;"
-                                                        id="deleteForm_{{ $transaction->no_htl }}">
-                                                        @csrf
-                                                        {{-- Hidden input to store `no_htl` --}}
-                                                        <input type="hidden" id="no_sppd_{{ $transaction->no_htl }}"
-                                                            value="{{ $transaction->no_htl }}">
-                                                        <button
-                                                            class="btn btn-sm rounded-pill btn-outline-danger delete-button"
-                                                            title="Delete" data-id="{{ $transaction->no_htl }}">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <a href="{{ route('hotel.export', ['id' => $transaction->id]) }}"
-                                                        class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
-                                                        <i class="bi bi-download"></i>
-                                                    </a>
+                                                <a href="{{ route('ticket.export', ['id' => $transaction->id]) }}"
+                                                    class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                                <form
+                                                    action="{{ route('ticket.delete.admin', encrypt($transaction->id)) }}"
+                                                    method="POST" style="display:inline;"
+                                                    id="deleteForm_{{ $transaction->no_tkt }}">
+                                                    @csrf
+                                                    <input type="hidden" id="no_sppd_{{ $transaction->no_tkt }}"
+                                                        value="{{ $transaction->no_tkt }}">
+                                                    <button class="btn btn-sm rounded-pill btn-outline-danger delete-button"
+                                                        title="Delete" data-id="{{ $transaction->no_tkt }}">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </form>
                                             </td>
-                                    @endif
-                                    </tr>
+                                        </tr>
                                     @endforeach
                                 </tbody>
+                                @if (session('message'))
+                                    <script>
+                                        alert('{{ session('message') }}');
+                                    </script>
+                                @endif
                             </table>
                         </div>
                     </div>
@@ -314,6 +315,8 @@
         </div>
     </div>
 
+
+    {{-- @push('scripts') --}}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
@@ -347,10 +350,10 @@
             }
 
             window.showRejectInfo = function(transactionId) {
-                var hotelApprovals = {!! json_encode($hotelApprovals) !!};
+                var ticketApprovals = {!! json_encode($ticketApprovals) !!};
                 var employeeName = {!! json_encode($employeeName) !!}; // Add this line
 
-                var approval = hotelApprovals[transactionId];
+                var approval = ticketApprovals[transactionId];
                 if (approval) {
                     var rejectedBy = employeeName[approval.employee_id] || 'N/A'; // Retrieve fullname
                     document.getElementById('rejectedBy').textContent = ': ' + rejectedBy;
@@ -372,19 +375,8 @@
         });
 
         $(document).ready(function() {
-            var table = $('#yourTableId').DataTable({
-                "pageLength": 10 // Set default page length
-            });
-            // Set to 10 entries per page
-            $('#dt-length-0').val(10);
-
-            // Trigger the change event to apply the selected value
-            $('#dt-length-0').trigger('change');
-        });
-
-        $(document).ready(function() {
             $('.btn-detail').click(function() {
-                var hotel = $(this).data('hotel');
+                var tiket = $(this).data('tiket');
 
                 function createTableHtml(data, title) {
                     var tableHtml = '<h5>' + title + '</h5>';
@@ -441,9 +433,9 @@
                 try {
                     var content = '';
 
-                    if (hotel && hotel !== 'undefined') {
-                        var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                        content += createTableHtml(hotelData, 'Hotel Detail');
+                    if (tiket && tiket !== 'undefined') {
+                        var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
+                        content += createTableHtml(tiketData, 'Ticket Detail');
                     }
 
                     if (content !== '') {
@@ -465,6 +457,17 @@
                 });
                 $('.modal-backdrop').remove();
             });
+        });
+
+        $(document).ready(function() {
+            var table = $('#yourTableId').DataTable({
+                "pageLength": 10 // Set default page length
+            });
+            // Set to 10 entries per page
+            $('#dt-length-0').val(10);
+
+            // Trigger the change event to apply the selected value
+            $('#dt-length-0').trigger('change');
         });
     </script>
 @endsection

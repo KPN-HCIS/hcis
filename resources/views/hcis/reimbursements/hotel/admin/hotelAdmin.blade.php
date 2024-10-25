@@ -84,9 +84,10 @@
                     </ol>
                 </div>
             </div>
-            <div class="col-md-6 mt-4 mb-2 text-end">
-                <a href="{{ route('hotel.form') }}" class="btn btn-primary rounded-pill shadow"><i
-                        class="bi bi-plus-circle"></i> Add Hotel</a>
+            <div class="col-md-6 mb-2 mt-3 d-flex justify-content-center justify-content-md-end align-items-center">
+                <a href="{{ '' }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
+                </a>
             </div>
         </div>
         @include('hcis.reimbursements.businessTrip.modal')
@@ -111,7 +112,7 @@
                                     aria-label="search" aria-describedby="search">
                             </div>
                         </div>
-                        <form method="GET" action="{{ route('hotel') }}">
+                        <form method="GET" action="{{ route('hotel.admin') }}">
                             <button type="submit" name="filter" value="request"
                                 class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                 Request
@@ -129,7 +130,7 @@
                                         <th>No</th>
                                         <th>No SPPD</th>
                                         <th style="text-align: left">No Hotel</th>
-                                        {{-- <th>Requestor</th> --}}
+                                        <th>Requestor</th>
                                         <th>Hotel Name</th>
                                         <th>Location</th>
                                         <th style="text-align: left">Total Hotel</th>
@@ -146,7 +147,7 @@
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
                                             <td style="text-align: left">{{ $transaction->no_sppd }}</td>
                                             <td style="text-align: left">{{ $transaction->no_htl }}</td>
-                                            {{-- <td>{{ $transaction->employee->fullname }}</td> --}}
+                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td>{{ $transaction->nama_htl }}</td>
                                             <td>{{ $transaction->lokasi_htl }}</td>
                                             <td style="text-align: left">
@@ -200,11 +201,9 @@
                                                         ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') &&
                                                             isset($hotelApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
                                                     title="Click to see rejection reason" @endif
-                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
+                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Name ?? 'Unknown' }}"
                                                     @elseif ($transaction->approval_status == 'Pending L2')
-                                                    title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}" @endif>
+                                                    title="L2 Manager: {{ $managerL2Name ?? 'Unknown' }}" @endif>
                                                     {{ $transaction->approval_status == 'Approved' ? 'Approved' : $transaction->approval_status }}
                                                 </span>
 
@@ -212,32 +211,24 @@
                                             {{-- <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
                                 <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }} --}}
                                             <td class="text-center">
-                                                @if ($transaction->approval_status == 'Draft')
-                                                    <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}"
-                                                        class="btn btn-sm rounded-pill btn-outline-warning"
-                                                        title="Edit"><i class="ri-edit-box-line"></i></a>
-
-                                                    <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}"
-                                                        method="POST" style="display:inline;"
-                                                        id="deleteForm_{{ $transaction->no_htl }}">
-                                                        @csrf
-                                                        {{-- Hidden input to store `no_htl` --}}
-                                                        <input type="hidden" id="no_sppd_{{ $transaction->no_htl }}"
-                                                            value="{{ $transaction->no_htl }}">
-                                                        <button
-                                                            class="btn btn-sm rounded-pill btn-outline-danger delete-button"
-                                                            title="Delete" data-id="{{ $transaction->no_htl }}">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <a href="{{ route('hotel.export', ['id' => $transaction->id]) }}"
-                                                        class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
-                                                        <i class="bi bi-download"></i>
-                                                    </a>
+                                                <a href="{{ route('hotel.export', ['id' => $transaction->id]) }}"
+                                                    class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                                <form action="{{ route('hotel.delete.admin', encrypt($transaction->id)) }}"
+                                                    method="POST" style="display:inline;"
+                                                    id="deleteForm_{{ $transaction->no_htl }}">
+                                                    @csrf
+                                                    {{-- Hidden input to store `no_htl` --}}
+                                                    <input type="hidden" id="no_sppd_{{ $transaction->no_htl }}"
+                                                        value="{{ $transaction->no_htl }}">
+                                                    <button class="btn btn-sm rounded-pill btn-outline-danger delete-button"
+                                                        title="Delete" data-id="{{ $transaction->no_htl }}">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </form>
                                             </td>
-                                    @endif
-                                    </tr>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>

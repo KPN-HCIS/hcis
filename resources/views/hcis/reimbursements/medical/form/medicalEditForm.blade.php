@@ -103,6 +103,7 @@
                                 </div>
                             </div>
                             {{-- Dynamic Forms --}}
+                            <div id="balanceContainer" class="row"></div>
                             <div id="dynamicForms" class="row"></div>
 
                             <div class="row mb-2">
@@ -150,6 +151,7 @@
     <script>
         var medicalTypeData = @json($medical_type);
         var balanceMapping = @json($balanceMapping);
+        var typeToBalanceMap = @json($balanceData);
     </script>
 
     <script>
@@ -166,16 +168,56 @@
                     }
 
                     let hasInvalidCosts = false;
+                    let exceededPlafond = false;
+                    let exceededType = '';
+
                     document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
                         let value = input.value.replace(/\D/g,
                             ""); // Remove non-digit characters
-                        let parsedValue = parseInt(value, 10) || 0;
+                        let parsedValue = parseInt(value, 10) || 0; // Get the numeric value
 
-                        if (parsedValue === 0) {
-                            hasInvalidCosts = true;
+                        // Get the plafond value for this medical type directly
+                        let plafondInput = document.getElementById(
+                            `medical_plafond_${type}`);
+                        let plafondValue = plafondInput.value; // Directly take the value
+
+                        // Remove any formatting like dots (for thousands) from the plafondValue
+                        let plafondNumber = parseInt(plafondValue.replace(/\./g, ''), 10) ||
+                            0; // Remove periods
+
+                        if (parsedValue <= 0) {
+                            hasInvalidCosts =
+                                true; // Invalid if the value is zero or negative
+                            return; // Skip further checks if invalid
+                        }
+
+                        // Check if the plafond is negative
+                        if (plafondNumber < 0) {
+                            if (parsedValue > 0) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
+                        } else {
+
+                            if (parsedValue > plafondNumber) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
                         }
                     });
 
+                    // Show alert if the plafond is exceeded
+                    if (exceededPlafond) {
+                        Swal.fire({
+                            title: "Plafond Exceeded",
+                            text: `The cost for ${exceededType} exceeds the available plafond.`,
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                        return; // Prevent form submission
+                    }
                     // If invalid costs exist, show a simple alert and stop submission
                     if (hasInvalidCosts) {
                         Swal.fire({
@@ -200,35 +242,36 @@
 
                     // Create a table for medical costs
                     let medicalCostsTable = `
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <tr>
-                        <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
-                    </tr>
-                    ${Object.entries(medicalCosts).map(([type, cost]) => `
-                                                <tr>
-                                                        <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
-                                                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
-                                                    </tr>
-                                                `).join('')}
-                        </table>
-                    `;
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr>
+                <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
+            </tr>
+            ${Object.entries(medicalCosts).map(([type, cost]) => `
+                                                                                                          <tr>
+                                                                                                            <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                                                                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                                                                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                                                                            </tr>
+                                                                                                            `).join('')}
+
+                </table>
+            `;
 
                     // Calculate total cost
                     const totalCost = Object.values(medicalCosts).reduce((sum, cost) => sum + cost,
                         0);
 
                     const inputSummary = `
-                ${medicalCostsTable}
-                <hr style="margin: 20px 0;">
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <tr>
-                        <td style="width: 40%; text-align: left; padding: 8px;">Total Cost</td>
-                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCost.toLocaleString('id-ID')}</strong></td>
-                    </tr>
-                </table>
-            `;
+        ${medicalCostsTable}
+        <hr style="margin: 20px 0;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr>
+                <td style="width: 40%; text-align: left; padding: 8px;">Total Cost</td>
+                <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalCost.toLocaleString('id-ID')}</strong></td>
+            </tr>
+        </table>
+    `;
 
                     Swal.fire({
                         title: "Do you want to submit this request?",
@@ -268,16 +311,56 @@
                     }
 
                     let hasInvalidCosts = false;
+                    let exceededPlafond = false;
+                    let exceededType = ''; // To store which type exceeded the plafond
                     document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
                         let value = input.value.replace(/\D/g,
                             ""); // Remove non-digit characters
-                        let parsedValue = parseInt(value, 10) || 0;
+                        let parsedValue = parseInt(value, 10) || 0; // Get the numeric value
 
-                        if (parsedValue === 0) {
-                            hasInvalidCosts = true;
+                        // Get the plafond value for this medical type directly
+                        let plafondInput = document.getElementById(
+                            `medical_plafond_${type}`);
+                        let plafondValue = plafondInput.value; // Directly take the value
+
+                        // Remove any formatting like dots (for thousands) from the plafondValue
+                        let plafondNumber = parseInt(plafondValue.replace(/\./g, ''), 10) ||
+                            0; // Remove periods
+
+                        // Check if the cost is valid (must be greater than 0)
+                        if (parsedValue <= 0) {
+                            hasInvalidCosts =
+                                true; // Invalid if the value is zero or negative
+                            return; // Skip further checks if invalid
+                        }
+
+                        // Check if the plafond is negative
+                        if (plafondNumber < 0) {
+                            // If input is positive, show alert immediately
+                            if (parsedValue > 0) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
+                        } else {
+                            // Check if input exceeds plafond directly
+                            if (parsedValue > plafondNumber) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
                         }
                     });
-
+                    // Show alert if the plafond is exceeded
+                    if (exceededPlafond) {
+                        Swal.fire({
+                            title: "Plafond Exceeded",
+                            text: `The cost for ${exceededType} exceeds the available plafond.`,
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                        return; // Prevent form submission
+                    }
                     // If invalid costs exist, show a simple alert and stop submission
                     if (hasInvalidCosts) {
                         Swal.fire({

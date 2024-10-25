@@ -87,7 +87,9 @@
                                         <th data-priority="0">No. Medical</th>
                                         <th>Hospital Name</th>
                                         <th>Patient Name</th>
+                                        <th>Total Medical</th>
                                         <th>Disease</th>
+
                                         @foreach ($master_medical as $master_medicals)
                                             <th class="text-center">{{ $master_medicals->name }}</th>
                                         @endforeach
@@ -106,6 +108,7 @@
                                             <td class="text-center">{{ $item->no_medic }}</td>
                                             <td>{{ $item->hospital_name }}</td>
                                             <td>{{ $item->patient_name }}</td>
+                                            <td>{{ 'Rp. ' . number_format($item->total_per_no_medic, 0, ',', '.') }}</td>
                                             <td>{{ $item->disease }}</td>
                                             @foreach ($master_medical as $master_medicals)
                                                 <td class="text-center">
@@ -174,6 +177,40 @@
     </div>
 
     <script src="{{ asset('/js/medical/medical.js') }}"></script>
+    <script>
+        var isConfirmationRoute = @json(request()->routeIs('medical.confirmation'));
+        //medical table
+        $("#example").DataTable({
+            responsive: {
+                details: {
+                    type: "column",
+                    target: "tr",
+                },
+            },
+            columnDefs: [{
+                    className: "control",
+                    orderable: false,
+                    targets: 0,
+                },
+                {
+                    className: "none", // This will hide Disease and the 4 dynamic columns
+                    targets: isConfirmationRoute ? [9, 10, 11, 12, 13] : [8, 9, 10, 11, 12],
+                },
+                {
+                    responsivePriority: 1,
+                    targets: 0,
+                },
+
+                {
+                    responsivePriority: 4,
+                    targets: 3,
+                },
+            ],
+            order: [1, "asc"],
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
+        });
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
