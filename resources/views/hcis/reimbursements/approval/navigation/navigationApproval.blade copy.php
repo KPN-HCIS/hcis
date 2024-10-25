@@ -1,44 +1,65 @@
 <div class="row g-2 mb-3 justify-content-start">
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active btn btn-outline-primary rounded-pill shadow w-100 position-relative" id="pills-perdiem-tab"
-                data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
-                role="tab" aria-controls="pills-perdiem"
-                aria-selected="true">Cash Advanced
+    <div class=" col-6 col-sm-auto">
+        <div class="mb-2">
+            <a href="{{ route('approval.cashadvanced') }}"
+                class="btn {{ request()->routeIs('approval.cashadvanced') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill shadow w-100 position-relative">
+                Cash Advanced
                 @if ( $pendingCACount >= 1 )
                     <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingCACount }}</span>
                 @endif
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link btn btn-outline-primary rounded-pill shadow w-100 position-relative mx-3" id="pills-transport-tab" data-bs-toggle="pill"
-                data-bs-target="#pills-transport" type="button" role="tab"
-                aria-controls="pills-transport" aria-selected="false">Deklarasi Cash Advanced
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link btn btn-outline-primary rounded-pill shadow w-100 position-relative mx-4" id="pills-accomodation-tab"
-                data-bs-toggle="pill" data-bs-target="#pills-accomodation"
-                type="button" role="tab" aria-controls="pills-accomodation"
-                aria-selected="false">Extend Cash Advanced
-            </button>
-        </li>
-    </ul>
-
-    <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="pills-perdiem" role="tabpanel"
-            aria-labelledby="pills-perdiem-tab">
-            @include('hcis.reimbursements.approval.navigation.table.requestTabel')
-        </div>
-        <div class="tab-pane fade" id="pills-transport" role="tabpanel"
-            aria-labelledby="pills-transport-tab">
-            @include('hcis.reimbursements.approval.navigation.table.deklarasiTabel')
-        </div>
-        <div class="tab-pane fade" id="pills-accomodation" role="tabpanel"
-            aria-labelledby="pills-accomodation-tab">
-            @include('hcis.reimbursements.approval.navigation.table.extendTabel')
+            </a>
         </div>
     </div>
+    <div class="col-6 col-sm-auto">
+        <div class="mb-2">
+            <a href="{{ route('approval.cashadvancedDeklarasi') }}"
+                class="btn {{ request()->routeIs('approval.cashadvancedDeklarasi') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill shadow w-100 position-relative">
+                Deklarasi Cash Advanced
+                @if ( $pendingDECCount >= 1 )
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingDECCount }}</span>
+                @endif
+            </a>
+        </div>
+    </div>
+    <div class="col-6 col-sm-auto">
+        <div class="mb-2">
+            <a href="{{ route('approval.cashadvancedExtend') }}"
+                class="btn {{ request()->routeIs('approval.cashadvancedExtend') ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill shadow w-100 position-relative">
+                Extend Cash Advanced
+                @if ( $pendingEXCount >= 1 )
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingEXCount }}</span>
+                @endif
+            </a>
+        </div>
+    </div>
+    {{-- <div class="col-6 col-sm-auto">
+        <div class="mb-2">
+            <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
+                Medical
+                @if ( $pendingHTLCount >= 1 )
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingHTLCount }}</span>
+                @else
+
+                @endif
+            </a>
+        </div>
+    </div>
+    <div class="col-6 col-sm-auto" style="display:none">
+        <div class="mb-2">
+            <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
+                Hometrip
+                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">99</span>
+            </a>
+        </div>
+    </div>
+    <div class="col-6 col-sm-auto" style="display:none">
+        <div class="mb-2">
+            <a href="{{ route('cashadvanced.form') }}" class="btn btn-outline-primary rounded-pill shadow w-100 position-relative">
+                Assessment
+                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle"></span>
+            </a>
+        </div>
+    </div> --}}
 </div>
 
 <div class="modal fade" id="modalExtend" tabindex="-1" aria-labelledby="modalExtendLabel" aria-hidden="true">

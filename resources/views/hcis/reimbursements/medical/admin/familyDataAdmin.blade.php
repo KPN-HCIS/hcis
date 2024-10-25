@@ -3,8 +3,8 @@
     <table class="table table-bordered table-sm table-striped table-hover">
         <thead class="bg-primary align-middle text-center">
             <th>No</th>
-            <th>NIK</th>
             <th>Name</th>
+            <th>Gender</th>
             <th>Relation</th>
             <th>Date of Birth</th>
             <th>Age</th>

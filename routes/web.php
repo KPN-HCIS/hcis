@@ -37,6 +37,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyGoalController;
 use App\Http\Controllers\TeamGoalController;
 use App\Http\Controllers\ReimburseController;
+use App\Http\Controllers\HomeTripController;
 use App\Models\Designation;
 use Faker\Provider\Medical;
 use Illuminate\Support\Facades\Route;
@@ -257,6 +258,8 @@ Route::middleware('auth')->group(function () {
     //Medical Admin
     Route::middleware(['permission:admin_medic'])->group(function () {
         Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
+        Route::get('/medical/report', [MedicalController::class, 'medicalReportAdmin'])->name('medical.report');
+        Route::get('/medical/confirmation', [MedicalController::class, 'medicalAdminConfirmation'])->name('medical.confirmation');
         Route::get('/medical/detail/{key}', [MedicalController::class, 'medicalAdminDetail'])->name('medical.detail');
 
         Route::post('/medical/import-excel/', [MedicalController::class, 'importAdminExcel'])->name('import.medical');
@@ -336,6 +339,23 @@ Route::middleware('auth')->group(function () {
     //ADMIN PDF
     Route::get('/businessTrip/pdf/admin/{id}', [BusinessTripController::class, 'pdfDownloadAdmin'])->name('pdf.admin');
     Route::get('/businessTrip/export/admin/{id}/{types?}', [BusinessTripController::class, 'exportAdmin'])->name('export.admin');
+
+    //ADMIN Home Trip
+    Route::middleware(['permission:adminht'])->group(function () {
+
+        Route::get('/home-trip/admin', [HomeTripController::class, 'homeTrip'])->name('home-trip.admin');
+    });
+
+    //Home Trip
+    Route::get('/home-trip', [HomeTripController::class, 'homeTrip'])->name('home-trip');
+    // Route::get('/home-trip/form-add', [HomeTripController::class, 'homeTripForm'])->name('home-trip-form.add');
+    // Route::post('/home-trip/form-add/post', [HomeTripController::class, 'homeTripCreate'])->name('home-trip-form.post');
+    // Route::get('/home-trip/form-update/{id}', [HomeTripController::class, 'homeTripFormUpdate'])->name('home-trip-form.edit');
+    // Route::put('/home-trip/form-update/update/{id}', [HomeTripController::class, 'homeTripUpdate'])->name('home-trip-form.put');
+    // Route::delete('/home-trip/delete/{id}', [HomeTripController::class, 'homeTripDelete'])->name('home-trip.delete');
+
+    //Home Trip Approval
+    // HT APPROVAL ROUTE HERE !!!!!!!
 
 
     // Authentication

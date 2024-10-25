@@ -1,10 +1,9 @@
-@extends('layouts_.vertical', ['page_title' => 'Medical'])
+@extends('layouts_.vertical', ['page_title' => 'Home Trip'])
 
 @section('css')
     <style>
         #example_filter {
             margin-bottom: 20px;
-            /* Adjust as needed */
         }
 
         th {
@@ -69,11 +68,11 @@
 
             <!-- Button Section -->
             <div class="col-md-6 mb-2 d-flex justify-content-center justify-content-md-end align-items-center">
-                <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                {{-- <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
-                </a>
-                <a href="{{ route('medical-form.add') }}" class="btn btn-primary rounded-pill">
-                    <i class="bi bi-plus-circle"></i> Add Medical
+                </a> --}}
+                <a href="{{ '' }}" class="btn btn-primary rounded-pill">
+                    <i class="bi bi-plus-circle"></i> Add Home Trip
                 </a>
             </div>
         </div>
@@ -89,7 +88,7 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
                                 data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
-                                aria-selected="false">Plafon Medical</button>
+                                aria-selected="false">Plafon Home Trip</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
@@ -100,13 +99,13 @@
                 </div>
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                        @include('hcis.reimbursements.medical.historyMedical')
+                        {{-- @include('hcis.reimbursements.homeTrip.table.historyMedical') --}}
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                        @include('hcis.reimbursements.medical.plafonMedical')
+                        {{-- @include('hcis.reimbursements.homeTrip.table.plafonMedical') --}}
                     </div>
                     <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-                        @include('hcis.reimbursements.medical.familyData')
+                        @include('hcis.reimbursements.homeTrip.table.familyDataHomeTrip')
                     </div>
                 </div>
             </div>
@@ -158,7 +157,7 @@
 
     @include('hcis.reimbursements.medical.navigation.modalMedical')
 
-    <script src="{{ asset('/js/medical/medical.js') }}"></script>
+    {{-- <script src="{{ asset('/js/medical/medical.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {
@@ -216,5 +215,5 @@
                 window.location.reload();
             }, 1000);
         </script>
-    @endif
+    @endif --}}
 @endsection

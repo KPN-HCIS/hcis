@@ -25,5 +25,10 @@
                 class="nav-link {{ request()->routeIs('medical.approval') ? 'active' : '' }}" id="pills-medical-tab" role="tab"
                 aria-controls="pills-medical" aria-selected="false">Medical Approval</a>
         </li>
+        {{-- <li class="nav-item" role="presentation" id="nav-homeTrip">
+            <a href="{{ route('home-trip.approval') }}" style="border-radius: 10px 10px 0px 0px"
+                class="nav-link {{ request()->routeIs('home-trip.approval') ? 'active' : '' }}" id="pills-homeTrip-tab" role="tab"
+                aria-controls="pills-homeTrip" aria-selected="false">Home Trip Approval</a>
+        </li> --}}
     </ul>
 </div>

@@ -39,9 +39,22 @@ class ApprovalReimburseController extends Controller
         $employeeId = auth()->user()->employee_id;
 
         $ca_transactions = CATransaction::with('employee')->where('status_id', $employeeId)->where('approval_status', 'Pending')->get();
+        $ca_transactions_dec = CATransaction::with('employee')->where('sett_id', $employeeId)->where('approval_sett', 'Pending')->get();
+        $ca_transactions_ext = CATransaction::with('employee')->where('extend_id', $employeeId)->where('approval_extend', 'Pending')->get();
 
         $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
             ->pluck('fullname', 'employee_id');
+
+        $extendData = ca_extend::whereIn('ca_id', $ca_transactions->pluck('id'))
+            ->get(['ca_id', 'ext_end_date', 'ext_total_days', 'reason_extend']);
+
+        $extendTime = $extendData->keyBy('ca_id')->map(function ($item) {
+            return [
+                'ext_end_date' => $item->ext_end_date,
+                'ext_total_days' => $item->ext_total_days,
+                'reason_extend' => $item->reason_extend,
+            ];
+        });
 
         // Hitung Pending Request, Deklarasi, Extend dan Hotel
         $pendingCACount = CATransaction::where('status_id', $employeeId)->where('approval_status', 'Pending')->count();
@@ -60,10 +73,14 @@ class ApprovalReimburseController extends Controller
             'pendingDECCount' => $pendingDECCount,
             'pendingEXCount' => $pendingEXCount,
             'fullnames' => $fullnames,
+            'extendTime' => $extendTime,
+            'extendData' => $extendData,
             'link' => $link,
             'parentLink' => $parentLink,
             'userId' => $userId,
             'ca_transactions' => $ca_transactions,
+            'ca_transactions_dec' => $ca_transactions_dec,
+            'ca_transactions_ext' => $ca_transactions_ext,
             'pendingHTLCount' => $pendingHTLCount,
         ]);
     }
