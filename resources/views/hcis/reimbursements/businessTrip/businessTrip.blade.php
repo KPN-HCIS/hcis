@@ -6,8 +6,6 @@
             color: white !important;
             text-align: center;
         }
-
-
         #dt-length-0 {
             margin-bottom: 10px;
         }

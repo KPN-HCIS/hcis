@@ -2,17 +2,21 @@
 
 @section('css')
     <style>
-        /* .breadcrumb-item+.breadcrumb-item::before {
-                                                                                        font-size: 28px !important;
-                                                                                        vertical-align: middle !important;
-                                                                                    } */
+        th {
+            color: white !important;
+            text-align: center;
+        }
 
-        /* .table {
-                                                                                    border-collapse: separate;
-                                                                                    width: 100%;
-                                                                                    position: relative;
-                                                                                    overflow: auto;
-                                                                                } */
+        #dt-length-0 {
+            margin-bottom: 10px;
+        }
+
+        .table {
+            border-collapse: separate;
+            width: 100%;
+            /* position: relative; */
+            overflow: auto;
+        }
 
         .table thead th {
             position: -webkit-sticky !important;
@@ -20,10 +24,10 @@
             position: sticky !important;
             top: 0 !important;
             z-index: 2 !important;
-            background-color: #fff !important;
+            background-color: #AB2F2B !important;
             border-bottom: 2px solid #ddd !important;
             padding-right: 6px;
-            box-shadow: inset 2px 0 0 #fff;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
         .table tbody td {
@@ -38,10 +42,10 @@
             position: sticky !important;
             left: 0 !important;
             z-index: 3 !important;
-            background-color: #fff !important;
+            background-color: #AB2F2B !important;
             border-right: 2px solid #ddd !important;
             padding-right: 10px;
-            box-shadow: inset 2px 0 0 #fff;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
         .table td.sticky-col {
@@ -124,9 +128,10 @@
 
                     <div class="col-md-2">
                         <a href="{{ route('export.pdf.division', [
-                        // 'start-date' => request()->query('start-date'),
-                        // 'end-date' => request()->query('end-date'),
-                        'division' => request()->input('division')]) }}"
+                            // 'start-date' => request()->query('start-date'),
+                            // 'end-date' => request()->query('end-date'),
+                            'division' => request()->input('division'),
+                        ]) }}"
                             class="btn btn-outline-danger w-100" target="_blank">
                             <i class="bi bi-filetype-pdf"></i> Export as PDF
                         </a>
@@ -239,9 +244,9 @@
 
                                         @foreach ($sppd as $idx => $n)
                                             <tr>
-                                                <th scope="row" style="text-align: center;">
+                                                <td scope="row" style="text-align: center;">
                                                     {{ $loop->iteration }}
-                                                </th>
+                                                </td>
                                                 <td class="sticky-col">{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->nama }}</td>
                                                 <td>{{ $n->tujuan }}</td>

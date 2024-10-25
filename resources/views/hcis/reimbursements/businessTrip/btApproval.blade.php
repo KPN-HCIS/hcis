@@ -2,15 +2,19 @@
 
 @section('css')
     <style>
-        /* .breadcrumb-item+.breadcrumb-item::before {
-                font-size: 28px !important;
-                vertical-align: middle !important;
-            } */
+        th {
+            color: white !important;
+            text-align: center;
+        }
+
+        #dt-length-0 {
+            margin-bottom: 10px;
+        }
 
         .table {
             border-collapse: separate;
             width: 100%;
-            position: relative;
+            /* position: relative; */
             overflow: auto;
         }
 
@@ -20,10 +24,10 @@
             position: sticky !important;
             top: 0 !important;
             z-index: 2 !important;
-            background-color: #fff !important;
+            background-color: #AB2F2B !important;
             border-bottom: 2px solid #ddd !important;
             padding-right: 6px;
-            box-shadow: inset 2px 0 0 #fff;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
         .table tbody td {
@@ -38,10 +42,10 @@
             position: sticky !important;
             left: 0 !important;
             z-index: 3 !important;
-            background-color: #fff !important;
+            background-color: #AB2F2B !important;
             border-right: 2px solid #ddd !important;
             padding-right: 10px;
-            box-shadow: inset 2px 0 0 #fff;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
         .table td.sticky-col {
@@ -171,9 +175,9 @@
 
                                         @foreach ($sppd as $idx => $n)
                                             <tr>
-                                                <th scope="row" style="text-align: center;">
+                                                <td scope="row" style="text-align: center;">
                                                     {{ $loop->iteration }}
-                                                </th>
+                                                </td>
                                                 <td>{{ $n->nama }}</td>
                                                 <td class="sticky-col">{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
