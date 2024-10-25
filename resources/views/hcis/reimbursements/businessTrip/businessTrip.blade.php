@@ -2,10 +2,20 @@
 
 @section('css')
     <style>
+        th {
+            color: white !important;
+            text-align: center;
+        }
+
+
+        #dt-length-0 {
+            margin-bottom: 10px;
+        }
+
         .table {
             border-collapse: separate;
             width: 100%;
-            position: relative;
+            /* position: relative; */
             overflow: auto;
         }
 
@@ -15,10 +25,10 @@
             position: sticky !important;
             top: 0 !important;
             z-index: 2 !important;
-            background-color: #fff !important;
+            background-color: #AB2F2B !important;
             border-bottom: 2px solid #ddd !important;
             padding-right: 6px;
-            box-shadow: inset 2px 0 0 #fff;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
         .table tbody td {
@@ -33,10 +43,10 @@
             position: sticky !important;
             left: 0 !important;
             z-index: 3 !important;
-            background-color: #fff !important;
+            background-color: #AB2F2B !important;
             border-right: 2px solid #ddd !important;
             padding-right: 10px;
-            box-shadow: inset 2px 0 0 #fff;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
         .table td.sticky-col {
@@ -50,7 +60,6 @@
             padding-right: 10px;
             box-shadow: inset 6px 0 0 #fff;
         }
-
     </style>
 @endsection
 
@@ -88,7 +97,8 @@
 
     <div class="card">
         <div class="card-body">
-            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}" style="display:none">
+            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}"
+                style="display:none">
                 <div class="row align-items-end">
                     <h3 class="card-title">SPPD Data</h3>
 
@@ -180,9 +190,9 @@
 
                                         @foreach ($sppd as $idx => $n)
                                             <tr>
-                                                <th scope="row" style="text-align: center;">
+                                                <td scope="row" style="text-align: center;">
                                                     {{ $loop->iteration }}
-                                                </th>
+                                                </td>
                                                 <td class="sticky-col">{{ $n->no_sppd }}</td>
                                                 <td>{{ $n->tujuan }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-M-Y') }}</td>
@@ -320,7 +330,8 @@
                                                             style="display: inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <input type="hidden" id="no_sppd_{{ $n->id }}" value="{{ $n->no_sppd }}">
+                                                            <input type="hidden" id="no_sppd_{{ $n->id }}"
+                                                                value="{{ $n->no_sppd }}">
                                                             <button type="button"
                                                                 class="btn btn-outline-danger rounded-pill delete-button"
                                                                 data-id="{{ $n->id }}"

@@ -194,7 +194,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['permission:adminhtl'])->group(function () {
         Route::get('/hotel/admin', [ReimburseController::class, 'hotelAdmin'])->name('hotel.admin');
         Route::get('/hotel/report', [ReimburseController::class, 'hotelAdminReport'])->name('hotel.report');
-        Route::post('/hotel/delete/{id}', [ReimburseController::class, 'hotelDeleteAdmin'])->name('hotel.delete.admin');
+        Route::post('/hotel/admin/delete/{id}', [ReimburseController::class, 'hotelDeleteAdmin'])->name('hotel.delete.admin');
     });
 
     // My Ticket
@@ -215,7 +215,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['permission:admintkt'])->group(function () {
         Route::get('/ticket/admin', [ReimburseController::class, 'ticketAdmin'])->name('ticket.admin');
         Route::get('/ticket/report', [ReimburseController::class, 'ticketAdminReport'])->name('ticket.report');
-        Route::post('/ticket/delete/{id}', [ReimburseController::class, 'ticketDeleteAdmin'])->name('ticket.delete.admin');
+        Route::post('/ticket/admin/delete/{id}', [ReimburseController::class, 'ticketDeleteAdmin'])->name('ticket.delete.admin');
     });
 
     // My Goals
