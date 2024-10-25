@@ -95,6 +95,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
+            @if (auth()->user()->hasRole('superadmin'))
             <div class="col">
                 <a href="{{ route('medical') }}">
                     <div class="card" style="height: 200px">
@@ -145,6 +146,17 @@
             @endif --}}
             {{-- </div> --}}
 
+            {{-- <div class="col-md-3">
+                <a href="{{ '' }}">
+                    <div class="card" style="height: 200px">
+                        <div class="card-body">
+                            <img src="{{ asset('images/menu/bt.png') }}" alt="logo"
+                                style="width: 100px; height: 100px;">
+                            <h5 class="my-3">Home Trip</h5>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div><!-- end col--> --}}
 
             <div class="col">
                 <a href="{{ route('ticket') }}">
@@ -213,7 +225,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col--> --}}
-
+            @endif
 
 
         </div> <!-- end row -->

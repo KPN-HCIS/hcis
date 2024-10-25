@@ -258,6 +258,8 @@ Route::middleware('auth')->group(function () {
     //Medical Admin
     Route::middleware(['permission:admin_medic'])->group(function () {
         Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
+        Route::get('/medical/report', [MedicalController::class, 'medicalReportAdmin'])->name('medical.report');
+        Route::get('/medical/confirmation', [MedicalController::class, 'medicalAdminConfirmation'])->name('medical.confirmation');
         Route::get('/medical/detail/{key}', [MedicalController::class, 'medicalAdminDetail'])->name('medical.detail');
 
         Route::post('/medical/import-excel/', [MedicalController::class, 'importAdminExcel'])->name('import.medical');

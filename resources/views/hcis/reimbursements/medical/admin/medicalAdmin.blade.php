@@ -67,45 +67,49 @@
             </div>
             @include('hcis.reimbursements.medical.navigation.modalMedical')
 
-            <!-- Button Section -->
-            <div class="col-md-6 mb-2 d-flex justify-content-center justify-content-md-end align-items-center">
-                <a href="{{ route('exportmed-detail.excel', $employee_id) }}"
-                    class="btn btn-outline-success rounded-pill btn-action me-1">
-                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
-                </a>
-            </div>
+            @if (request()->routeIs('medical.detail'))
+                <div class="col-md-6 mb-2 d-flex justify-content-center justify-content-md-end align-items-center">
+                    <a href="{{ route('exportmed-detail.excel', $employee_id) }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                        <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
+                    </a>
+                </div>
+            @endif
         </div>
         <div class="row">
-            <div class="card shadow-none p-1 py-3 px-2">
-                <div class="d-flex justify-content-center">
-                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
-                                aria-selected="true">History</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
-                                aria-selected="false">Plafon Medical</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact"
-                                aria-selected="false">Family Data</button>
-                        </li>
-                    </ul>
-                </div>
+            <div class="card shadow-none p-1 py-3">
+                @if (request()->routeIs('medical.detail'))
+                    <div class="d-flex justify-content-center">
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
+                                    aria-selected="true">History</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+                                    aria-selected="false">Plafon Medical</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact"
+                                    aria-selected="false">Family Data</button>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                         @include('hcis.reimbursements.medical.admin.historyMedicalAdmin')
                     </div>
-                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                        @include('hcis.reimbursements.medical.admin.plafonMedicalAdmin')
-                    </div>
-                    <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-                        @include('hcis.reimbursements.medical.admin.familyDataAdmin')
-                    </div>
+                    @if (request()->routeIs('medical.detail'))
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                            @include('hcis.reimbursements.medical.admin.plafonMedicalAdmin')
+                        </div>
+                        <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                            @include('hcis.reimbursements.medical.admin.familyDataAdmin')
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

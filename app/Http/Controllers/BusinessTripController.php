@@ -2149,8 +2149,8 @@ class BusinessTripController extends Controller
             $ca->total_real = '0';
             $ca->total_cost = (int) str_replace('.', '', $request->totalca);
             $ca->approval_status = $caStatus;
-            $ca->approval_sett = $request->approval_sett;
-            $ca->approval_extend = $request->approval_extend;
+            $ca->approval_sett = $request->approval_sett ? $request->approval_sett : '';
+            $ca->approval_extend = $request->approval_extend ? $request->approval_extend : '';
             $ca->created_by = $userId;
 
             // Initialize arrays

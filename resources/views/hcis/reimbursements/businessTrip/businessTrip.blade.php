@@ -88,7 +88,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}">
+            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate') }}" style="display:none">
                 <div class="row align-items-end">
                     <h3 class="card-title">SPPD Data</h3>
 

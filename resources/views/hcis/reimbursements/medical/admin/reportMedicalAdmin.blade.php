@@ -67,9 +67,11 @@
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
-                    <a href="{{ route('reimbursements') }}" class="mb-2 me-4 page-title"><i class="ri-arrow-left-circle-line"></i></a>
-                    <a href="{{ route('medical.confirmation') }}" class="mb-2 btn btn-primary"><i class="bi bi-card-checklist"></i> Confirmation</a>
-                    <a href="{{ route('medical.report') }}" class="mb-2 btn btn-primary"><i class="bi bi-file-earmark-post"></i> Report</a>
+                    <a href="{{ route('medical.admin') }}" class="mb-2 me-4 page-title"><i class="ri-arrow-left-circle-line"></i></a>
+                    <button class="mb-2 btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#importExcelHealtCoverage" type="button">
+                        <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
+                    </button>
                 </div>
             </div>
         </div>
@@ -78,32 +80,53 @@
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <form action="{{ route('medical.admin') }}" method="GET">
+                        <form action="{{ route('medical.report') }}" method="GET">
                             <div class="container-fluid p-2">
                                 <div class="row align-items-end g-1">
-                                    <div class="col-12 col-md-5">
-                                        <label class="form-label">Unit Location:</label>
+                                    <div class="col-12 col-md-2">
+                                        <label class="form-label">Filter From :</label>
+                                        <input type="date" class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="{{ request()->get('start_date') }}" title="Start Date">
+                                    </div>
+
+                                    <div class="col-12 col-md-2">
+                                        <label class="form-label">Until :</label>
+                                        <input type="date" class="form-control" id="end_date" name="end_date" placeholder="End Date" value="{{ request()->get('end_date') }}" title="End Date">
+                                    </div>
+
+                                    <div class="col-12 col-md-3">
+                                        <label class="form-label">Business Units :</label>
                                         <select class="form-select select2" aria-label="Status" id="stat"
                                             name="stat">
-                                            <option value="" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
-                                                Location</option>
-                                            @foreach ($locations as $location)
-                                                <option value="{{ $location->area }}"
-                                                    {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
-                                                    {{ $location->area . ' (' . $location->company_name . ')' }}
+                                            <option value="" {{ request()->get('stat') == '-' ? 'selected' : '' }}>- Select Bussiness Unit -</option>
+                                            @foreach ($unit as $units)
+                                                <option value="{{ $units->nama_bisnis }}"
+                                                    {{ $units->nama_bisnis == request()->get('stat') ? 'selected' : '' }}>
+                                                    {{ $units->nama_bisnis }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
 
-                                    <div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-2">
                                         <label class="form-label">Employee Name</label>
                                         <input type="text" name="customsearch" id="customsearch" value="{{ request()->get('customsearch') }}" class="form-control"
                                             placeholder="Employee Name">
                                     </div>
 
-                                    <div class="col-12 col-md-2">
+                                    <div class="col-12 col-md-1">
                                         <button class="btn btn-primary w-100" type="submit">Filter</button>
+                                    </div>
+
+                                    <div class="col-12 col-md-2">
+                                        @if (isset($_GET['stat']) && $_GET['stat'] !== '' || isset($_GET['customsearch']) && $_GET['customsearch'] !== '')
+                                            <button style="display: block" class="btn btn-success w-100" type="button" onclick="redirectToExportExcel()">
+                                                Export <i class="ri-file-excel-2-line"></i>
+                                            </button>
+                                        @else
+                                            <button style="display: none" class="btn btn-success w-100" type="button" onclick="redirectToExportExcel()">
+                                                <i class="ri-file-excel-2-line"></i> Export Excel
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -125,40 +148,51 @@
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th class="text-center">No</th>
-                                        <th class="text-center">NIK</th>
-                                        <th class="text-center">Employee ID</th>
-                                        <th class="text-center">Name</th>
-                                        <th class="text-center">Join Date</th>
-                                        <th class="text-center">Period</th>
+                                        <th class="text-center">Submission Date</th>
+                                        <th class="text-center">No Invoice</th>
+                                        <th class="text-center">Hospital Name</th>
+                                        <th class="text-center">PT</th>
+                                        <th class="text-center">Employee</th>
+                                        <th class="text-center">Patient</th>
+                                        <th class="text-center">Desease</th>
+                                        <th class="text-center">MDC Type</th>
                                         @foreach ($master_medical as $master_medicals)
                                             <th class="text-center">{{ $master_medicals->name }}</th>
                                         @endforeach
-                                        <th class="text-center">Detail Plafond</th>
+                                        <th class="text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (request()->get('stat') == '-')
-                                    @else
+                                    @if (request()->get('stat') !== '-')
                                         @foreach ($med_employee as $med_employees)
-                                            <tr>
-                                                <td class="text-center">{{ $loop->iteration }}</td>
-                                                <td class="text-start">{{ $med_employees->ktp }}</td>
-                                                <td>{{ $med_employees->employee_id }}</td>
-                                                <td>{{ $med_employees->fullname }}</td>
-                                                <td>{{ $med_employees->date_of_joining }}</td>
-                                                <td>{{ $med_employees->period }}</td>
-                                                @foreach ($master_medical as $master_medical_item)
-                                                    <td class="text-center">
-                                                        {{ isset($balances[$med_employees->employee_id][$master_medical_item->name]) ? 'Rp. ' . number_format($balances[$med_employees->employee_id][$master_medical_item->name], 0, ',', '.') : '-' }}
-                                                    </td>
+                                            @if (isset($medicalGroup[$med_employees->employee_id]))
+                                                @foreach ($medicalGroup[$med_employees->employee_id] as $medicalRecord)
+                                                    <tr>
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                                        <td class="text-start">{{ $medicalRecord->created_at }}</td>
+                                                        {{-- <td class="text-start">{{ \Carbon\Carbon::parse($medicalRecord->created_at)->format('d-M-y') }}</td> --}}
+                                                        <td>{{ $medicalRecord->no_invoice }}</td>
+                                                        <td>{{ $medicalRecord->hospital_name }}</td>
+                                                        <td>{{ $med_employees->company_name }}</td>
+                                                        <td>{{ $med_employees->fullname }}</td>
+                                                        <td>{{ $medicalRecord->patient_name }}</td>
+                                                        <td>{{ $medicalRecord->disease }}</td>
+                                                        <td>{{ $medicalRecord->medical_type }}</td>
+                                                        @foreach ($master_medical as $master_medical_item)
+                                                            <td class="text-center">
+                                                                @if ($medicalRecord->medical_type == $master_medical_item->name)
+                                                                    {{-- Display balance if the types match --}}
+                                                                    {{ 'Rp. ' . number_format($medicalRecord->balance, 0, ',', '.') }}
+                                                                @else
+                                                                    {{-- Leave the cell empty or show a dash if there's no match --}}
+                                                                    Rp. 0
+                                                                @endif
+                                                            </td>
+                                                        @endforeach
+                                                        <td class="text-center">{{ $medicalRecord->status }}</td>
+                                                    </tr>
                                                 @endforeach
-                                                <td class="text-center">
-                                                    <a href="{{ route('medical.detail', $med_employees->getRouteKey()) }}"
-                                                        class="btn btn-outline-warning" title="Edit">
-                                                        <i class="ri-edit-box-line"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
+                                            @endif
                                         @endforeach
                                     @endif
                                 </tbody>
