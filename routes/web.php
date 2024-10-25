@@ -190,6 +190,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/hotel/approval/detail/{id}', [ReimburseController::class, 'hotelApprovalDetail'])->name('hotel.approval.detail');
     Route::put('/hotel/status/change/{id}', [ReimburseController::class, 'updatestatusHotel'])->name('change.status.hotel');
 
+    //Hotel Admin
+    Route::middleware(['permission:adminhtl'])->group(function () {
+        Route::get('/hotel/admin', [ReimburseController::class, 'hotelAdmin'])->name('hotel.admin');
+        Route::get('/hotel/report', [ReimburseController::class, 'hotelAdminReport'])->name('hotel.report');
+        Route::delete('/hotel/admin/delete/{id}', [ReimburseController::class, 'hotelAdminDelete'])->name('hotel-admin.delete');
+    });
+
     // My Ticket
     Route::get('/ticket', [ReimburseController::class, 'ticket'])->name('ticket');
     Route::get('/ticket/form', [ReimburseController::class, 'ticketCreate'])->name('ticket.form');
@@ -203,6 +210,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/ticket/approval', [ReimburseController::class, 'ticketApproval'])->name('ticket.approval');
     Route::get('/ticket/approval/detail/{id}', [ReimburseController::class, 'ticketApprovalDetail'])->name('ticket.approval.detail');
     Route::put('/ticket/status/change/{id}', [ReimburseController::class, 'updatestatusTicket'])->name('change.status.ticket');
+
+    //Ticket Admin
+    Route::middleware(['permission:admintkt'])->group(function () {
+        Route::get('/ticket/admin', [ReimburseController::class, 'ticketAdmin'])->name('ticket.admin');
+        Route::get('/ticket/report', [ReimburseController::class, 'ticketAdminReport'])->name('ticket.report');
+        Route::delete('/ticket/admin/delete/{id}', [ReimburseController::class, 'ticketAdminDelete'])->name('ticket-admin.delete');
+    });
 
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');
