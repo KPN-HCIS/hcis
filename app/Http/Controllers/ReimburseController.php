@@ -268,29 +268,35 @@ class ReimburseController extends Controller
                 $query->whereIn('group_company', $permissionGroupCompanies);
             });
         }
-        //dd($permissionGroupCompanies);
 
-        // Cek apakah ada nilai start_date dan end_date dalam request
-        if ($request->has(['start_date', 'end_date'])) {
-            $startDate = $request->input('start_date');
-            $endDate = $request->input('end_date');
+        if (request()->get('start_date') == '') {
+        } else {
+            if ($request->has(['start_date', 'end_date'])) {
+                $startDate = $request->input('start_date');
+                $endDate = $request->input('end_date');
 
-            // Tambahkan kondisi whereBetween pada query
-            $query->whereBetween('start_date', [$startDate, $endDate]);
+                $query->whereBetween('start_date', [$startDate, $endDate]);
+            }
+        }
+
+        if (request()->get('from_date') == '') {
+        } else {
+            if ($request->has(['from_date', 'until_date'])) {
+                $fromDate = $request->input('from_date');
+                $untilDate = Carbon::parse($request->input('until_date'))->addDay();
+
+                $query->whereBetween('created_at', [$fromDate, $untilDate]);
+            }
         }
 
         if (request()->get('stat') == '-') {
-            // Jika status adalah '-', tidak perlu melakukan filter.
         } else {
-            // Periksa apakah ada parameter status yang diberikan
             if ($request->has('stat') && $request->input('stat') !== '') {
                 $status = $request->input('stat');
-                // Tambahkan kondisi where untuk status jika ada status yang valid
                 $query->where('ca_status', $status);
             }
         }
 
-        // Eksekusi query untuk mendapatkan data yang difilter
         $ca_transactions = $query->get();
 
         foreach ($ca_transactions as $transaction) {
@@ -2842,8 +2848,12 @@ class ReimburseController extends Controller
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $fromDate = $request->input('from_date');
+        $untilDate = Carbon::parse($request->input('until_date'))->addDay();
+        $stat = $request->input('stat');
+        // dd($startDate, $endDate, $fromDate, $untilDate, $stat);
 
-        return Excel::download(new CashAdvancedExport($startDate, $endDate), 'cash_advanced.xlsx');
+        return Excel::download(new CashAdvancedExport($startDate, $endDate, $fromDate, $untilDate, $stat), 'cash_advanced.xlsx');
     }
 
     public function ticketDelete($key)

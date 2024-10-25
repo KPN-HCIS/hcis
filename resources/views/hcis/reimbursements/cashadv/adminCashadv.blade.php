@@ -86,10 +86,22 @@
                     <div class="card-body">
                         <form action="{{ route('cashadvanced.admin') }}" method="GET">
                             <div class="input-group">
-                                <label class="col-form-label">Start Date : </label>
-                                <input type="date" class="form-control mx-2" id="start_date" name="start_date" placeholder="Start Date" title="Start Date" value="{{ $startDate }}">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButton">
+                                        {{ request()->get('from_date') || request()->get('until_date') ? 'by Create Date' : 'by Start Date' }}
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="updateDropdownText(this, 'start_date')">by Start Date</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="updateDropdownText(this, 'create_date')">by Create Date</a></li>
+                                    </ul>
+                                </div>
+
+                                <input type="date" class="form-control mx-2" style="{{ request()->get('from_date') || request()->get('until_date') ? 'display: none' : 'display: block' }}" id="start_date" name="start_date" placeholder="Start Date" title="Start Date" value="{{ request()->get('start_date') }}">
+                                <input type="date" class="form-control mx-2" style="{{ request()->get('from_date') || request()->get('until_date') ? 'display: block' : 'display: none' }}" id="from_date" name="from_date" placeholder="From Date" title="From Date" value="{{ request()->get('from_date') }}">
                                 <label class="col-form-label"> - </label>
-                                <input type="date" class="form-control mx-2" id="end_date" name="end_date" placeholder="End Date" title="End Date" value="{{ $endDate }}">
+                                <input type="date" class="form-control mx-2" style="{{ request()->get('from_date') || request()->get('until_date') ? 'display: none' : 'display: block' }}" id="end_date" name="end_date" placeholder="End Date" title="End Date" value="{{ request()->get('end_date') }}">
+                                <input type="date" class="form-control mx-2" style="{{ request()->get('from_date') || request()->get('until_date') ? 'display: block' : 'display: none' }}" id="until_date" name="until_date" placeholder="Until Date" title="Until Date" value="{{ request()->get('until_date') }}">
+
                                 <select class="form-select mx-2" aria-label="Status" id="stat" name="stat">
                                     <option value="-" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All Status</option>
                                     <option value="Refund" {{ request()->get('stat') == 'Refund' ? 'selected' : '' }}>Refund</option>
@@ -281,6 +293,28 @@
 @endsection
 @push('scripts')
     <script>
+        function updateDropdownText(element, type) {
+            document.getElementById('dropdownButton').textContent = element.textContent;
+
+            if (type === 'start_date') {
+                document.getElementById('start_date').style.display = 'block';
+                document.getElementById('end_date').style.display = 'block';
+                document.getElementById('from_date').style.display = 'none';
+                document.getElementById('until_date').style.display = 'none';
+                document.getElementById('from_date').value = '';
+                document.getElementById('until_date').value = '';
+            } else if (type === 'create_date') {
+                document.getElementById('start_date').style.display = 'none';
+                document.getElementById('end_date').style.display = 'none';
+                document.getElementById('from_date').style.display = 'block';
+                document.getElementById('until_date').style.display = 'block';
+                document.getElementById('start_date').value = '';
+                document.getElementById('end_date').value = '';
+            }
+        }
+    </script>
+
+    <script>
         // Periksa apakah ada pesan sukses
         var successMessage = "{{ session('success') }}";
 
@@ -299,6 +333,9 @@
 
             const startDate = document.getElementById("start_date").value;
             const endDate = document.getElementById("end_date").value;
+            const fromDate = document.getElementById("from_date").value;
+            const untilDate = document.getElementById("until_date").value;
+            const stat = document.getElementById("stat").value;
 
             // Create a form element
             const form = document.createElement("form");
@@ -315,8 +352,26 @@
             endDateInput.name = "end_date";
             endDateInput.value = endDate;
 
+            const fromDateInput = document.createElement("input");
+            fromDateInput.type = "hidden";
+            fromDateInput.name = "from_date";
+            fromDateInput.value = fromDate;
+
+            const untilDateInput = document.createElement("input");
+            untilDateInput.type = "hidden";
+            untilDateInput.name = "until_date";
+            untilDateInput.value = untilDate;
+
+            const statInput = document.createElement("input");
+            statInput.type = "hidden";
+            statInput.name = "stat";
+            statInput.value = stat;
+
             form.appendChild(startDateInput);
             form.appendChild(endDateInput);
+            form.appendChild(fromDateInput);
+            form.appendChild(untilDateInput);
+            form.appendChild(statInput);
 
             // Append the form to the body and submit it
             document.body.appendChild(form);

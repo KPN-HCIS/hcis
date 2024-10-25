@@ -17,11 +17,17 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
 {
     protected $startDate;
     protected $endDate;
+    protected $fromDate;
+    protected $untilDate;
+    protected $stat;
 
-    public function __construct($startDate, $endDate)
+    public function __construct($startDate, $endDate, $fromDate, $untilDate, $stat)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->fromDate = $fromDate;
+        $this->untilDate = $untilDate;
+        $this->stat = $stat;
     }
 
     public function collection()
@@ -85,6 +91,14 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
 
         if ($this->startDate && $this->endDate) {
             $query->whereBetween('ca_transactions.start_date', [$this->startDate, $this->endDate]);
+        }
+        if ($this->fromDate && $this->untilDate) {
+            // Gunakan elseif untuk memastikan hanya salah satu rentang tanggal yang dipakai
+            $query->whereBetween('ca_transactions.created_at', [$this->fromDate, $this->untilDate]);
+        }
+        if ($this->stat) {
+            // Gunakan elseif untuk memastikan hanya salah satu rentang tanggal yang dipakai
+            $query->where('ca_transactions.ca_status', [$this->stat]);
         }
 
         return $query->get();
