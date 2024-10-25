@@ -90,37 +90,15 @@
                                         name="medical_type[]" multiple required>
                                         {{-- <option value="" selected>--- Choose Medical Type ---</option> --}}
                                         @foreach ($medical_type as $type)
-                                            <option value="{{ $type->name }}">
-                                                {{ $type->name }}
-                                            </option>
+                                            <option value="{{ $type->name }}">{{ $type->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
+
                             {{-- Dynamic Forms --}}
+                            <div id="balanceContainer" class="row"></div>
                             <div id="dynamicForms" class="row"></div>
-                            <div id="balanceForm" class="row"></div>
-                            <div class="row">
-                                @foreach ($medicalBalances as $type)
-                                    @php
-                                        // Find the corresponding balance from medicalBalances based on medical type
-                                        $balance =
-                                            $medicalBalances->where('medical_type', $type->medical_type)->first()
-                                                ->balance ?? 0;
-                                    @endphp
-                                    <div class="col-md-3 mb-3">
-                                        <label for="{{ $type->medical_type }}"
-                                            class="form-label">{{ $type->medical_type }}</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">Rp</span>
-                                            <input type="text" class="form-control currency-input"
-                                                id="{{ $type->medical_type }}"
-                                                name="medical_costs[{{ $type->medical_type }}]"
-                                                value="{{ $balance }}">
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
 
                             <div class="row mb-2">
                                 <div class="col-md-12 mt-2">
@@ -166,6 +144,7 @@
     <script src="{{ asset('/js/medical/medical.js') }}"></script>
     <script>
         var medicalTypeData = @json($medical_type);
+        var typeToBalanceMap = @json($balanceData);
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -181,16 +160,56 @@
                     }
 
                     let hasInvalidCosts = false;
+                    let exceededPlafond = false;
+                    let exceededType = '';
+
                     document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
                         let value = input.value.replace(/\D/g,
                             ""); // Remove non-digit characters
-                        let parsedValue = parseInt(value, 10) || 0;
+                        let parsedValue = parseInt(value, 10) || 0; // Get the numeric value
 
-                        if (parsedValue === 0) {
-                            hasInvalidCosts = true;
+                        // Get the plafond value for this medical type directly
+                        let plafondInput = document.getElementById(
+                            `medical_plafond_${type}`);
+                        let plafondValue = plafondInput.value; // Directly take the value
+
+                        // Remove any formatting like dots (for thousands) from the plafondValue
+                        let plafondNumber = parseInt(plafondValue.replace(/\./g, ''), 10) ||
+                            0; // Remove periods
+
+                        if (parsedValue <= 0) {
+                            hasInvalidCosts =
+                                true; // Invalid if the value is zero or negative
+                            return; // Skip further checks if invalid
+                        }
+
+                        // Check if the plafond is negative
+                        if (plafondNumber < 0) {
+                            if (parsedValue > 0) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
+                        } else {
+
+                            if (parsedValue > plafondNumber) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
                         }
                     });
 
+                    // Show alert if the plafond is exceeded
+                    if (exceededPlafond) {
+                        Swal.fire({
+                            title: "Plafond Exceeded",
+                            text: `The cost for ${exceededType} exceeds the available plafond.`,
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                        return; // Prevent form submission
+                    }
                     // If invalid costs exist, show a simple alert and stop submission
                     if (hasInvalidCosts) {
                         Swal.fire({
@@ -220,12 +239,13 @@
                     <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
                 </tr>
                 ${Object.entries(medicalCosts).map(([type, cost]) => `
-                                                                    <tr>
-                                                                            <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
-                                                                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                                                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
-                                                                        </tr>
-                                                                    `).join('')}
+                                                                                                                              <tr>
+                                                                                                                                <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                                                                                                <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                                                                                                <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                                                                                                </tr>
+                                                                                                                                `).join('')}
+
                     </table>
                 `;
 
@@ -283,16 +303,56 @@
                     }
 
                     let hasInvalidCosts = false;
+                    let exceededPlafond = false;
+                    let exceededType = ''; // To store which type exceeded the plafond
                     document.querySelectorAll('[name^="medical_costs["]').forEach(input => {
+                        let type = input.name.match(/\[(.*?)\]/)[1];
                         let value = input.value.replace(/\D/g,
                             ""); // Remove non-digit characters
-                        let parsedValue = parseInt(value, 10) || 0;
+                        let parsedValue = parseInt(value, 10) || 0; // Get the numeric value
 
-                        if (parsedValue === 0) {
-                            hasInvalidCosts = true;
+                        // Get the plafond value for this medical type directly
+                        let plafondInput = document.getElementById(
+                            `medical_plafond_${type}`);
+                        let plafondValue = plafondInput.value; // Directly take the value
+
+                        // Remove any formatting like dots (for thousands) from the plafondValue
+                        let plafondNumber = parseInt(plafondValue.replace(/\./g, ''), 10) ||
+                            0; // Remove periods
+
+                        // Check if the cost is valid (must be greater than 0)
+                        if (parsedValue <= 0) {
+                            hasInvalidCosts =
+                                true; // Invalid if the value is zero or negative
+                            return; // Skip further checks if invalid
+                        }
+
+                        // Check if the plafond is negative
+                        if (plafondNumber < 0) {
+                            // If input is positive, show alert immediately
+                            if (parsedValue > 0) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
+                        } else {
+                            // Check if input exceeds plafond directly
+                            if (parsedValue > plafondNumber) {
+                                exceededPlafond = true;
+                                exceededType = type;
+                            }
                         }
                     });
-
+                    // Show alert if the plafond is exceeded
+                    if (exceededPlafond) {
+                        Swal.fire({
+                            title: "Plafond Exceeded",
+                            text: `The cost for ${exceededType} exceeds the available plafond.`,
+                            icon: "error",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#AB2F2B",
+                        });
+                        return; // Prevent form submission
+                    }
                     // If invalid costs exist, show a simple alert and stop submission
                     if (hasInvalidCosts) {
                         Swal.fire({
