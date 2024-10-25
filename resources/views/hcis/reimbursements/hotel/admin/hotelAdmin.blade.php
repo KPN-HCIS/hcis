@@ -152,32 +152,24 @@
                                             {{-- <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
                                 <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }} --}}
                                             <td class="text-center">
-                                                @if ($transaction->approval_status == 'Draft')
-                                                    <a href="{{ route('hotel.edit', encrypt($transaction->id)) }}"
-                                                        class="btn btn-sm rounded-pill btn-outline-warning"
-                                                        title="Edit"><i class="ri-edit-box-line"></i></a>
-
-                                                    <form action="{{ route('hotel.delete', encrypt($transaction->id)) }}"
-                                                        method="POST" style="display:inline;"
-                                                        id="deleteForm_{{ $transaction->no_htl }}">
-                                                        @csrf
-                                                        {{-- Hidden input to store `no_htl` --}}
-                                                        <input type="hidden" id="no_sppd_{{ $transaction->no_htl }}"
-                                                            value="{{ $transaction->no_htl }}">
-                                                        <button
-                                                            class="btn btn-sm rounded-pill btn-outline-danger delete-button"
-                                                            title="Delete" data-id="{{ $transaction->no_htl }}">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <a href="{{ route('hotel.export', ['id' => $transaction->id]) }}"
-                                                        class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
-                                                        <i class="bi bi-download"></i>
-                                                    </a>
+                                                <a href="{{ route('hotel.export', ['id' => $transaction->id]) }}"
+                                                    class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                                <form action="{{ route('hotel.delete.admin', encrypt($transaction->id)) }}"
+                                                    method="POST" style="display:inline;"
+                                                    id="deleteForm_{{ $transaction->no_htl }}">
+                                                    @csrf
+                                                    {{-- Hidden input to store `no_htl` --}}
+                                                    <input type="hidden" id="no_sppd_{{ $transaction->no_htl }}"
+                                                        value="{{ $transaction->no_htl }}">
+                                                    <button class="btn btn-sm rounded-pill btn-outline-danger delete-button"
+                                                        title="Delete" data-id="{{ $transaction->no_htl }}">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </form>
                                             </td>
-                                    @endif
-                                    </tr>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>

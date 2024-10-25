@@ -75,7 +75,7 @@
         <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
     </div>
     <h5 class="center">HOTEL BOOKING FORM</h5>
-    <h5 class="center">No. {{ $hotel->no_sppd }}</h5>
+    <h5 class="center">No. {{ $hotel->no_htl }}</h5>
 
     <table>
         <tr>
@@ -116,7 +116,7 @@
             <tr>
                 <td class="label">Total Room</td>
                 <td class="colon">:</td>
-                <td class="value">{{ $hotel->jmlkmr_htl }} Kamar</td>
+                <td class="value">{{ $hotel->jmlkmr_htl }} Room</td>
             </tr>
             <tr>
                 <td class="label">Bed Type</td>

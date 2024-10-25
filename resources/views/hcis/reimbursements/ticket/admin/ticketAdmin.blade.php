@@ -25,9 +25,10 @@
                     </ol>
                 </div>
             </div>
-            <div class="col-md-6 mt-4 mb-2 text-end">
-                <a href="{{ route('ticket.form') }}" class="btn btn-primary rounded-pill shadow"><i
-                    class="bi bi-plus-circle"></i> Add Ticket</a>
+            <div class="col-md-6 mb-2 mt-3 d-flex justify-content-center justify-content-md-end align-items-center">
+                <a href="{{ '' }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
+                </a>
             </div>
         </div>
         @include('hcis.reimbursements.businessTrip.modal')
@@ -39,7 +40,7 @@
                         @php
                             $currentFilter = $filter;
                         @endphp
-                          <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <h3>Ticket Data</h3>
                             <div class="input-group" style="width: 30%;">
                                 <div class="input-group-prepend">
@@ -52,7 +53,7 @@
                             </div>
                         </div>
 
-                        <form method="GET" action="{{ route('ticket') }}">
+                        <form method="GET" action="{{ route('ticket.admin') }}">
                             <button type="submit" name="filter" value="request"
                                 class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                 Request
@@ -70,18 +71,10 @@
                                         <th>No</th>
                                         <th>No. SPPD</th>
                                         <th>No. Ticket</th>
+                                        <th>Requestor Name</th>
                                         <th>Total Tickets</th>
                                         <th>Purposes</th>
-                                        {{-- <th>Ticket Type</th> --}}
-                                        {{-- <th>Requestor</th> --}}
-                                        {{-- <th>Transportation Type</th> --}}
-                                        {{-- <th>Passengers Name</th> --}}
                                         <th>From/To</th>
-                                        {{-- <th>To</th> --}}
-                                        {{-- <th>Departure</th> --}}
-                                        {{-- <th>Departure Time</th> --}}
-                                        {{-- <th>Homecoming</th> --}}
-                                        {{-- <th>Homecoming Time</th> --}}
                                         <th>Details</th>
                                         <th>Status</th>
                                         <th>Actions</th>
@@ -95,8 +88,8 @@
                                             <td>{{ $transaction->no_tkt }}</td>
                                             <td style="text-align: left">
                                                 {{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
+                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td>{{ $transaction->jns_dinas_tkt }}</td>
-                                            {{-- <td>{{ $transaction->np_tkt }}</td> --}}
                                             <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
                                             <td class="text-info">
                                                 <a class="text-info btn-detail" data-toggle="modal"
@@ -157,40 +150,30 @@
                                                         ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') &&
                                                             isset($ticketApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
                                                     title="Click to see rejection reason" @endif
-                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
+                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Name ?? 'Unknown' }}"
                                                     @elseif ($transaction->approval_status == 'Pending L2')
-                                                    title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L1') title="L1 Manager: {{ $managerL1Names ?? 'Unknown' }}"
-                                                    @elseif($transaction->approval_status == 'Declaration L2') title="L2 Manager: {{ $managerL2Names ?? 'Unknown' }}" @endif>
+                                                    title="L2 Manager: {{ $managerL2Name ?? 'Unknown' }}" @endif>
                                                     {{ $transaction->approval_status == 'Approved' ? 'Approved' : $transaction->approval_status }}
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                @if ($transaction->approval_status == 'Draft')
-                                                    <a href="{{ route('ticket.edit', encrypt($transaction->id)) }}"
-                                                        class="btn btn-sm rounded-pill btn-outline-warning" title="Edit">
-                                                        <i class="ri-edit-box-line"></i>
-                                                    </a>
-                                                    <form action="{{ route('ticket.delete', encrypt($transaction->id)) }}"
-                                                        method="POST" style="display:inline;"
-                                                        id="deleteForm_{{ $transaction->no_tkt }}">
-                                                        @csrf
-                                                        <input type="hidden" id="no_sppd_{{ $transaction->no_tkt }}"
-                                                            value="{{ $transaction->no_tkt }}">
-                                                        <button
-                                                            class="btn btn-sm rounded-pill btn-outline-danger delete-button"
-                                                            title="Delete" data-id="{{ $transaction->no_tkt }}">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <a href="{{ route('ticket.export', ['id' => $transaction->id]) }}"
-                                                        class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
-                                                        <i class="bi bi-download"></i>
-                                                    </a>
+                                                <a href="{{ route('ticket.export', ['id' => $transaction->id]) }}"
+                                                    class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                                <form action="{{ route('ticket.delete.admin', encrypt($transaction->id)) }}"
+                                                    method="POST" style="display:inline;"
+                                                    id="deleteForm_{{ $transaction->no_tkt }}">
+                                                    @csrf
+                                                    <input type="hidden" id="no_sppd_{{ $transaction->no_tkt }}"
+                                                        value="{{ $transaction->no_tkt }}">
+                                                    <button class="btn btn-sm rounded-pill btn-outline-danger delete-button"
+                                                        title="Delete" data-id="{{ $transaction->no_tkt }}">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </form>
                                             </td>
-                                    @endif
-                                    </tr>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                                 @if (session('message'))

@@ -2501,6 +2501,23 @@ class ReimburseController extends Controller
         ]);
     }
 
+    public function hotelDeleteAdmin($key)
+    {
+        // Find the hotel record by its primary key
+        $model = Hotel::findByRouteKey($key);
+
+        if ($model) {
+            // Retrieve the no_htl value of the hotel to delete all hotels with the same no_htl
+            $noHtl = $model->no_htl;
+
+            // Delete all hotels with the same no_htl
+            Hotel::where('no_htl', $noHtl)->delete();
+        }
+
+        // Redirect after deletion
+        return redirect()->intended(route('hotel.admin', absolute: false))->with('success', 'All related hotels deleted successfully');
+    }
+
 
     public function ticket(Request $request)
     {
@@ -3216,19 +3233,18 @@ class ReimburseController extends Controller
 
     public function ticketAdmin(Request $request)
     {
-        $userId = Auth::user();
         $parentLink = 'Reimbursement';
         $link = 'Ticket (Admin)';
 
-        // Base query for filtering
-        $query = Tiket::where('user_id', $userId->id)->orderBy('created_at', 'desc');
+        // Base query for filtering without user-specific filtering
+        $query = Tiket::orderBy('created_at', 'desc');
 
         // Get the filter value, default to 'request' if not provided
         $filter = $request->input('filter', 'request');
 
-        // Apply filter to the query
+        // Apply filter to the query based on the selected status
         if ($filter === 'request') {
-            $statusFilter = ['Pending L1', 'Pending L2', 'Approved', 'Draft'];
+            $statusFilter = ['Pending L1', 'Pending L2', 'Approved'];
         } elseif ($filter === 'rejected') {
             $statusFilter = ['Rejected'];
         }
@@ -3236,14 +3252,11 @@ class ReimburseController extends Controller
         // Apply status filter to the query
         $query->whereIn('approval_status', $statusFilter);
 
-        // Log::info('Filtered Query:', ['query' => $query->toSql(), 'bindings' => $query->getBindings()]);
-
         // Get the filtered tickets
         $ticketsFilter = $query->get();
 
         // Fetch latest ticket IDs
         $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
-            ->where('user_id', $userId->id)
             ->groupBy('no_tkt')
             ->pluck('id');
 
@@ -3254,9 +3267,9 @@ class ReimburseController extends Controller
             ->orderBy('created_at', 'desc')
             ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
-        // Get all tickets for user
-        $tickets = Tiket::where('user_id', $userId->id)
-            ->with('businessTrip')
+
+        // Get all tickets
+        $tickets = Tiket::with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -3274,27 +3287,28 @@ class ReimburseController extends Controller
             })
             ->get();
 
-        // Log ticket approvals
-        Log::info('Ticket Approvals:', $ticketApprovals->toArray());
-
         // Key ticket approvals by ticket ID
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
-
-        // Group transactions by 'no_tkt'
         $ticketsGroups = $tickets->groupBy('no_tkt');
-
-        // Fetch employee data
-        $employeeIds = $tickets->pluck('user_id')->unique();
-        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
         $employeeName = Employee::pluck('fullname', 'employee_id');
 
-        // Fetch manager IDs from employee data
-        $managerL1Ids = $employees->pluck('manager_l1_id')->unique();
-        $managerL2Ids = $employees->pluck('manager_l2_id')->unique();
+        // Fetch employee data and manager names for transactions
+        foreach ($transactions as $transaction) {
+            // Fetch the employee for the current transaction
+            $employee = Employee::find($transaction->user_id);
 
-        // Fetch manager names
-        $managerL1Names = Employee::whereIn('employee_id', $managerL1Ids)->pluck('fullname');
-        $managerL2Names = Employee::whereIn('employee_id', $managerL2Ids)->pluck('fullname');
+            // If the employee exists, fetch their manager names
+            if ($employee) {
+                $managerL1Id = $employee->manager_l1_id;
+                $managerL2Id = $employee->manager_l2_id;
+
+                $managerL1 = Employee::where('employee_id', $managerL1Id)->first();
+                $managerL2 = Employee::where('employee_id', $managerL2Id)->first();
+
+                $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
+                $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+            }
+        }
 
         // Count tickets grouped by 'no_tkt'
         $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
@@ -3305,20 +3319,29 @@ class ReimburseController extends Controller
         return view('hcis.reimbursements.ticket.admin.ticketAdmin', [
             'link' => $link,
             'parentLink' => $parentLink,
-            'userId' => $userId,
             'transactions' => $transactions,
             'ticketCounts' => $ticketCounts,
             'tickets' => $tickets,
             'ticket' => $ticket,
             'ticketsGroups' => $ticketsGroups,
-            'managerL1Names' => $managerL1Names,
-            'managerL2Names' => $managerL2Names,
+            'managerL1Name' => $managerL1Name ?? 'Unknown',
+            'managerL2Name' => $managerL2Name ?? 'Unknown',
             'ticketApprovals' => $ticketApprovals,
             'employeeName' => $employeeName,
             'filter' => $filter,
             'ticketsFilter' => $ticketsFilter,
         ]);
     }
+
+    public function ticketDeleteAdmin($key)
+    {
+        $model = Tiket::findByRouteKey($key);
+        Tiket::where('no_tkt', $model->no_tkt)->delete();
+
+        // Redirect to the ticket page with a success message
+        return redirect()->route('ticket.admin')->with('success', 'Tickets has been deleted');
+    }
+
 
     private function getRomanMonth($month)
     {
