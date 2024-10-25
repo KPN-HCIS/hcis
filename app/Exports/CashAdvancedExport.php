@@ -172,7 +172,7 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
 
             // Tambahkan baris subtotal setelah data kategori
             $data->push([
-                'Type_CA' => "Total $categoryNumber",
+                'Type_CA' => "Total $categoryName",
                 'Unit' => '',
                 'Created At' => '',
                 'Date Required' => '',
