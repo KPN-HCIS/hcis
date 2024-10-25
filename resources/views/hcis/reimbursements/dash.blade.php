@@ -95,7 +95,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            @if (auth()->user()->hasRole('superadmin'))
+            {{-- @if (auth()->user()->hasRole('superadmin')) --}}
             <div class="col">
                 <a href="{{ route('medical') }}">
                     <div class="card" style="height: 200px">
@@ -225,7 +225,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col--> --}}
-            @endif
+            {{-- @endif --}}
 
 
         </div> <!-- end row -->
