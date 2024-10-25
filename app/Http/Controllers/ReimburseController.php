@@ -2460,17 +2460,12 @@ class ReimburseController extends Controller
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
 
-        // Initialize arrays to hold manager names
-        $managerL1Names = [];
-        $managerL2Names = [];
-
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
 
             // If the employee exists, fetch their manager names
             if ($employee) {
-                // dd($employee->manager_l1_id, $employee->manager_l2_id);
                 $managerL1Id = $employee->manager_l1_id;
                 $managerL2Id = $employee->manager_l2_id;
 
