@@ -42,10 +42,10 @@ class ApprovalReimburseController extends Controller
         $ca_transactions_dec = CATransaction::with('employee')->where('sett_id', $employeeId)->where('approval_sett', 'Pending')->get();
         $ca_transactions_ext = CATransaction::with('employee')->where('extend_id', $employeeId)->where('approval_extend', 'Pending')->get();
 
-        $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
+        $fullnames = Employee::whereIn('employee_id', $ca_transactions_ext->pluck('status_id'))
             ->pluck('fullname', 'employee_id');
 
-        $extendData = ca_extend::whereIn('ca_id', $ca_transactions->pluck('id'))
+        $extendData = ca_extend::whereIn('ca_id', $ca_transactions_ext->pluck('id'))
             ->get(['ca_id', 'ext_end_date', 'ext_total_days', 'reason_extend']);
 
         $extendTime = $extendData->keyBy('ca_id')->map(function ($item) {

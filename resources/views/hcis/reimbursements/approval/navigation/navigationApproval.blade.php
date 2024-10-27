@@ -1,7 +1,7 @@
 <div class="row g-2 mb-3 justify-content-start">
     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active btn btn-outline-primary rounded-pill shadow w-100 position-relative" id="pills-perdiem-tab"
+            <button class="active btn btn-outline-primary mb-2 rounded-pill shadow w-100 position-relative" id="pills-perdiem-tab"
                 data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
                 role="tab" aria-controls="pills-perdiem"
                 aria-selected="true">Cash Advanced
@@ -11,16 +11,22 @@
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link btn btn-outline-primary rounded-pill shadow w-100 position-relative mx-3" id="pills-transport-tab" data-bs-toggle="pill"
+            <button class="btn btn-outline-primary mb-2 rounded-pill shadow w-100 position-relative mx-3" id="pills-transport-tab" data-bs-toggle="pill"
                 data-bs-target="#pills-transport" type="button" role="tab"
                 aria-controls="pills-transport" aria-selected="false">Deklarasi Cash Advanced
+                @if ( $pendingDECCount >= 1 )
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingCACount }}</span>
+                @endif
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link btn btn-outline-primary rounded-pill shadow w-100 position-relative mx-4" id="pills-accomodation-tab"
+            <button class="btn btn-outline-primary mb-2 rounded-pill shadow w-100 position-relative mx-4" id="pills-accomodation-tab"
                 data-bs-toggle="pill" data-bs-target="#pills-accomodation"
                 type="button" role="tab" aria-controls="pills-accomodation"
                 aria-selected="false">Extend Cash Advanced
+                @if ( $pendingEXCount >= 1 )
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingCACount }}</span>
+                @endif
             </button>
         </li>
     </ul>

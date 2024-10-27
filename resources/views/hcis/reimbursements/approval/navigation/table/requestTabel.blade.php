@@ -52,6 +52,9 @@
 
 <script>
     $(document).ready(function() {
-        $('.scheduleTable').DataTable();
+        $('.scheduleTable').DataTable({
+            // dom: '<"row mt-2 justify-content-between"<"col-md-auto me-auto"l><"col-md-auto ms-auto"f>>t<"row mt-2 justify-content-between"<"col-md-auto me-auto"i><"col-md-auto ms-auto"p>>',
+            // l - length, f - search, t - table, i - info, p - pagination
+        });
     });
 </script>

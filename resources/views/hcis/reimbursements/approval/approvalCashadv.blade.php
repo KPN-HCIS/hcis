@@ -2,6 +2,11 @@
 
 @section('css')
 <style>
+    th {
+        color: white !important;
+        text-align: center;
+    }
+
     .table {
         border-collapse: separate;
         width: 100%;
@@ -15,10 +20,10 @@
         position: sticky !important;
         top: 0 !important;
         z-index: 2 !important;
-        background-color: #fff !important;
+        background-color: #AB2F2B !important;
         border-bottom: 2px solid #ddd !important;
         padding-right: 6px;
-        box-shadow: inset 2px 0 0 #fff;
+        /* box-shadow: inset 2px 0 0 #fff; */
     }
 
     .table tbody td {
@@ -33,7 +38,7 @@
         position: sticky !important;
         left: 0 !important;
         z-index: 3 !important;
-        background-color: #fff !important;
+        background-color: #ab2f2b !important;
         border-right: 2px solid #ddd !important;
         padding-right: 10px;
         box-shadow: inset 2px 0 0 #fff;
