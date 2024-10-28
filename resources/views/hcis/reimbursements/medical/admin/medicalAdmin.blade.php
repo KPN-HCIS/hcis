@@ -73,9 +73,48 @@
                         class="btn btn-outline-success rounded-pill btn-action me-1">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                     </a>
+                    <a href="{{ route('medical-form.add-admin', encrypt($employee_id)) }}" class="btn btn-primary rounded-pill">
+                        <i class="bi bi-plus-circle"></i> Add Medical
+                    </a>
                 </div>
             @endif
         </div>
+
+        @if (request()->routeIs('medical.confirmation'))
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <form action="{{ route('medical.confirmation') }}" method="GET">
+                                <div class="container-fluid p-2">
+                                    <div class="row align-items-end g-1">
+                                        <div class="col-12 col-md-5">
+                                            <label class="form-label">Unit Location:</label>
+                                            <select class="form-select select2" aria-label="Status" id="stat"
+                                                name="stat">
+                                                <option value="" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
+                                                    Location</option>
+                                                @foreach ($locations as $location)
+                                                    <option value="{{ $location->area }}"
+                                                        {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
+                                                        {{ $location->area . ' (' . $location->company_name . ')' }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12 col-md-2">
+                                            <button class="btn btn-primary w-100" type="submit">Filter</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="row">
             <div class="card shadow-none p-1 py-3 px-2">
                 @if (request()->routeIs('medical.detail'))
