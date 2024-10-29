@@ -145,9 +145,9 @@
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
                                             <td>{{ $transaction->no_sppd }}</td>
                                             <td>{{ $transaction->no_tkt }}</td>
+                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td style="text-align: left">
                                                 {{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
-                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td>{{ $transaction->jns_dinas_tkt }}</td>
                                             <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
                                             <td class="text-info">

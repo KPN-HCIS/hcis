@@ -117,7 +117,7 @@
                                         <th>Total Tickets</th>
                                         <th>Purposes</th>
                                         {{-- <th>Ticket Type</th> --}}
-                                        {{-- <th>Requestor</th> --}}
+                                        <th>Requestor</th>
                                         {{-- <th>Transportation Type</th> --}}
                                         {{-- <th>Passengers Name</th> --}}
                                         <th>From/To</th>
@@ -140,7 +140,7 @@
                                             <td style="text-align: left">
                                                 {{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
                                             <td>{{ $transaction->jns_dinas_tkt }}</td>
-                                            {{-- <td>{{ $transaction->np_tkt }}</td> --}}
+                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
                                             <td class="text-info">
                                                 <a class="text-info btn-detail" data-toggle="modal"
@@ -149,7 +149,7 @@
                                                         $ticket[$transaction->no_tkt]->map(function ($ticket) {
                                                             return [
                                                                 // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
-                                                                'No. SPPD' => $ticket->no_sppd,
+                                                                'No. SPPD' => $ticket->no_sppd ?? '-',
                                                                 'No. Ticket' => $ticket->no_tkt,
                                                                 'Passengers Name' => $ticket->np_tkt,
                                                                 'Unit' => $ticket->unit,
