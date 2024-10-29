@@ -87,348 +87,291 @@
         @include('hcis.reimbursements.approval.navigation.navigationAll')
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <form class="date-range mb-2" method="GET" action="{{ route('businessTrip-filterDate.approval') }}">
-                <div class="row align-items-end">
-                    <h3 class="card-title">SPPD Data</h3>
-
-                    {{-- <div class="col-md-5">
-                        <label for="start-date" class="mb-2">Departure Date:</label>
-                        <input type="date" id="start-date" name="start-date" class="form-control"
-                            value="{{ request()->query('start-date') }}">
+    @include('hcis.reimbursements.businessTrip.modal')
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h3 class="card-title">{{ $link }}</h3>
                     </div>
-                    <div class="col-md-5">
-                        <label for="end-date" class="mb-2">To:</label>
-                        <input type="date" id="end-date" name="end-date" class="form-control"
-                            value="{{ request()->query('end-date') }}">
-                    </div>
-                    <div class="col-md-2 mt-2">
-                        <button type="submit" class="btn btn-primary rounded-pill w-100">Find</button>
-                    </div> --}}
+                    @php
+                        $currentFilter = request('filter', 'all');
+                    @endphp
+                    @include('hcis.reimbursements.businessTrip.navigation.navigationApproval')
                 </div>
-            </form>
-            @include('hcis.reimbursements.businessTrip.modal')
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card shadow mb-4">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h3 class="card-title">{{ $link }}</h3>
-                                {{-- <div class="input-group" style="width: 30%;">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-white border-dark-subtle"><i
-                                                class="ri-search-line"></i></span>
-                                    </div>
-                                    <input type="text" name="customsearch" id="customsearch"
-                                        class="form-control w-  border-dark-subtle border-left-0" placeholder="Search.."
-                                        aria-label="search" aria-describedby="search">
-                                </div> --}}
-                            </div>
-                            @php
-                                $currentFilter = request('filter', 'all');
-                            @endphp
-                            @include('hcis.reimbursements.businessTrip.navigation.navigationApproval')
-                            {{-- <form method="GET" action="{{ route('businessTrip.approval') }}">
-                                <button type="submit" name="filter" value="all"
-                                    class="btn {{ $currentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
-                                    All
-                                </button>
+            </div>
+        </div>
 
-                                <button type="submit" name="filter" value="request"
-                                    class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
-                                    Request
-                                    @if ($requestCount >= 1)
-                                        <span
-                                            class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-circle">{{ $requestCount }}</span>
-                                    @endif
-                                </button>
-
-                                <button type="submit" name="filter" value="declaration"
-                                    class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3 position-relative">
-                                    Declaration
-                                    @if ($declarationCount >= 1)
-                                        <span
-                                            class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-circle">{{ $declarationCount }}</span>
-                                    @endif
-                                </button>
-                            </form> --}}
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-light rounded-4 border-0 shadow" style="border-radius: 1rem;">
+                    <div class="modal-body text-center p-5" style="padding: 2rem;">
+                        <div class="mb-4">
+                            <i class="bi bi-check-circle-fill" style="font-size: 100px; color: #AB2F2B !important;"></i>
                         </div>
+                        <h4 class="mb-3 fw-bold" style="font-size: 32px; color: #AB2F2B !important;">Success!</h4>
+                        <p class="mb-4" id="successModalBody" style="font-size: 20px;">
+                            <!-- The success message will be inserted here -->
+                        </p>
+                        <button type="button" class="btn btn-outline-primary rounded-pill px-4"
+                            data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
+            </div>
+        </div>
+        <!-- Detail Modal -->
+        <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
+                        <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 id="detailTypeHeader" class="mb-3"></h6>
+                        <div id="detailContent"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-primary rounded-pill"
+                            data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <!-- Success Modal -->
-                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content bg-light rounded-4 border-0 shadow" style="border-radius: 1rem;">
-                            <div class="modal-body text-center p-5" style="padding: 2rem;">
-                                <div class="mb-4">
-                                    <i class="bi bi-check-circle-fill"
-                                        style="font-size: 100px; color: #AB2F2B !important;"></i>
-                                </div>
-                                <h4 class="mb-3 fw-bold" style="font-size: 32px; color: #AB2F2B !important;">Success!</h4>
-                                <p class="mb-4" id="successModalBody" style="font-size: 20px;">
-                                    <!-- The success message will be inserted here -->
-                                </p>
-                                <button type="button" class="btn btn-outline-primary rounded-pill px-4"
-                                    data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Detail Modal -->
-                <div class="modal fade" id="detailModal" tabindex="-1" role="dialog"
-                    aria-labelledby="detailModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header bg-primary">
-                                <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
-                                <button type="button" class="btn-close btn-close-white" data-dismiss="modal"
-                                    aria-label="Close">
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <h6 id="detailTypeHeader" class="mb-3"></h6>
-                                <div id="detailContent"></div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-outline-primary rounded-pill"
-                                    data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
+        <script>
+            window.addEventListener('resize', function() {
+                document.body.style.display = 'none';
+                document.body.offsetHeight; // Force a reflow
+                document.body.style.display = '';
+            });
 
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-                <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
-                <script>
-                    window.addEventListener('resize', function() {
-                        document.body.style.display = 'none';
-                        document.body.offsetHeight; // Force a reflow
-                        document.body.style.display = '';
+            document.addEventListener('DOMContentLoaded', function() {
+                const forms = document.querySelectorAll('.status-form');
+                forms.forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        const action = this.querySelector('input[name="status_approval"]').value;
+                        const confirmMessage = action === 'Rejected' ?
+                            'Are you sure you want to reject this?' :
+                            'Are you sure you want to confirm this?';
+
+                        if (confirm(confirmMessage)) {
+                            const formData = new FormData(this);
+                            fetch(this.action, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Update the success modal content
+                                        document.getElementById('successModalBody').textContent =
+                                            data.message;
+
+                                        // Show the success modal
+                                        var successModal = new bootstrap.Modal(document
+                                            .getElementById('successModal'));
+                                        successModal.show();
+
+                                        // Reload the page after modal is closed
+                                        document.getElementById('successModal').addEventListener(
+                                            'hidden.bs.modal',
+                                            function() {
+                                                window.location.reload();
+                                            });
+                                    } else {
+                                        alert('An error occurred. Please try again.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('An error occurred. Please try again.');
+                                });
+                        }
                     });
+                });
+            });
+            //    let table = new DataTable('#defaultTable');
 
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const forms = document.querySelectorAll('.status-form');
-                        forms.forEach(form => {
-                            form.addEventListener('submit', function(e) {
-                                e.preventDefault();
-                                const action = this.querySelector('input[name="status_approval"]').value;
-                                const confirmMessage = action === 'Rejected' ?
-                                    'Are you sure you want to reject this?' :
-                                    'Are you sure you want to confirm this?';
+            function getDate() {
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1; // January is 0!
+                var yyyy = today.getFullYear();
 
-                                if (confirm(confirmMessage)) {
-                                    const formData = new FormData(this);
-                                    fetch(this.action, {
-                                            method: 'POST',
-                                            body: formData,
-                                            headers: {
-                                                'X-Requested-With': 'XMLHttpRequest'
-                                            }
-                                        })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.success) {
-                                                // Update the success modal content
-                                                document.getElementById('successModalBody').textContent =
-                                                    data.message;
+                if (dd < 10) {
+                    dd = '0' + dd;
+                }
+                if (mm < 10) {
+                    mm = '0' + mm;
+                }
 
-                                                // Show the success modal
-                                                var successModal = new bootstrap.Modal(document
-                                                    .getElementById('successModal'));
-                                                successModal.show();
+                // Correct date format for input fields
+                var formattedToday = yyyy + '-' + mm + '-' + dd;
+                console.log(formattedToday);
 
-                                                // Reload the page after modal is closed
-                                                document.getElementById('successModal').addEventListener(
-                                                    'hidden.bs.modal',
-                                                    function() {
-                                                        window.location.reload();
-                                                    });
-                                            } else {
-                                                alert('An error occurred. Please try again.');
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('Error:', error);
-                                            alert('An error occurred. Please try again.');
-                                        });
+                var startDateElement = document.getElementById("start-date");
+                var endDateElement = document.getElementById("end-date");
+
+                // Only set the value if it's not already set
+                if (!startDateElement.value) {
+                    startDateElement.value = formattedToday;
+                }
+                if (!endDateElement.value) {
+                    endDateElement.value = formattedToday;
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    getDate();
+                });
+
+                document.getElementById('recordsPerPage').addEventListener('change', function() {
+                    const perPage = this.value;
+                    const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+                    window.location.search = `?per_page=${perPage}&page=${currentPage}`;
+                });
+
+                function confirmDelete(id) {
+                    if (confirm("Are you sure you want to delete this item?")) {
+                        document.getElementById('deleteForm_' + id).submit();
+                    }
+                }
+
+            }
+
+            // Ensure the DOM is fully loaded before manipulating it
+            document.addEventListener('DOMContentLoaded', function() {
+                getDate();
+            });
+
+            function confirmDelete(id) {
+                if (confirm("Are you sure you want to delete this item?")) {
+                    document.getElementById('deleteForm_' + id).submit();
+                }
+            }
+
+            $(document).ready(function() {
+                $('.btn-detail').click(function() {
+                    var ca = $(this).data('ca');
+                    var tiket = $(this).data('tiket');
+                    var hotel = $(this).data('hotel');
+                    var taksi = $(this).data('taksi');
+
+                    function createTableHtml(data, title) {
+                        var tableHtml = '<h5>' + title + '</h5>';
+                        tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+                        var isArray = Array.isArray(data) && data.length > 0;
+
+                        // Assuming all objects in the data array have the same keys, use the first object to create headers
+                        if (isArray) {
+                            for (var key in data[0]) {
+                                if (data[0].hasOwnProperty(key)) {
+                                    tableHtml += '<th>' + key + '</th>';
                                 }
-                            });
-                        });
-                    });
-                    //    let table = new DataTable('#defaultTable');
-
-                    function getDate() {
-                        var today = new Date();
-                        var dd = today.getDate();
-                        var mm = today.getMonth() + 1; // January is 0!
-                        var yyyy = today.getFullYear();
-
-                        if (dd < 10) {
-                            dd = '0' + dd;
-                        }
-                        if (mm < 10) {
-                            mm = '0' + mm;
-                        }
-
-                        // Correct date format for input fields
-                        var formattedToday = yyyy + '-' + mm + '-' + dd;
-                        console.log(formattedToday);
-
-                        var startDateElement = document.getElementById("start-date");
-                        var endDateElement = document.getElementById("end-date");
-
-                        // Only set the value if it's not already set
-                        if (!startDateElement.value) {
-                            startDateElement.value = formattedToday;
-                        }
-                        if (!endDateElement.value) {
-                            endDateElement.value = formattedToday;
-                        }
-
-                        document.addEventListener('DOMContentLoaded', function() {
-                            getDate();
-                        });
-
-                        document.getElementById('recordsPerPage').addEventListener('change', function() {
-                            const perPage = this.value;
-                            const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
-                            window.location.search = `?per_page=${perPage}&page=${currentPage}`;
-                        });
-
-                        function confirmDelete(id) {
-                            if (confirm("Are you sure you want to delete this item?")) {
-                                document.getElementById('deleteForm_' + id).submit();
+                            }
+                        } else if (typeof data === 'object') {
+                            // If data is a single object, create headers from its keys
+                            for (var key in data) {
+                                if (data.hasOwnProperty(key)) {
+                                    tableHtml += '<th>' + key + '</th>';
+                                }
                             }
                         }
 
+                        tableHtml += '</tr></thead><tbody>';
+
+                        // Loop through each item in the array and create a row for each
+                        if (isArray) {
+                            data.forEach(function(row) {
+                                tableHtml += '<tr>';
+                                for (var key in row) {
+                                    if (row.hasOwnProperty(key)) {
+                                        tableHtml += '<td>' + row[key] + '</td>';
+                                    }
+                                }
+                                tableHtml += '</tr>';
+                            });
+                        } else if (typeof data === 'object') {
+                            // If data is a single object, create a single row
+                            tableHtml += '<tr>';
+                            for (var key in data) {
+                                if (data.hasOwnProperty(key)) {
+                                    tableHtml += '<td>' + data[key] + '</td>';
+                                }
+                            }
+                            tableHtml += '</tr>';
+                        }
+
+                        tableHtml += '</tbody></table>';
+                        return tableHtml;
                     }
 
-                    // Ensure the DOM is fully loaded before manipulating it
-                    document.addEventListener('DOMContentLoaded', function() {
-                        getDate();
-                    });
+                    // $('#detailTypeHeader').text('Detail Information');
+                    $('#detailContent').empty();
 
-                    function confirmDelete(id) {
-                        if (confirm("Are you sure you want to delete this item?")) {
-                            document.getElementById('deleteForm_' + id).submit();
+                    try {
+                        var content = '';
+
+                        if (ca && ca !== 'undefined') {
+                            var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
+                            content += createTableHtml(caData, 'CA Detail');
                         }
+                        if (tiket && tiket !== 'undefined') {
+                            var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
+                            content += createTableHtml(tiketData, 'Ticket Detail');
+                        }
+                        if (hotel && hotel !== 'undefined') {
+                            var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
+                            content += createTableHtml(hotelData, 'Hotel Detail');
+                        }
+                        if (taksi && taksi !== 'undefined') {
+                            var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
+                            content += createTableHtml(taksiData, 'Taxi Detail');
+                        }
+
+                        if (content !== '') {
+                            $('#detailContent').html(content);
+                        } else {
+                            $('#detailContent').html('<p>No detail information available.</p>');
+                        }
+
+                        $('#detailModal').modal('show');
+                    } catch (e) {
+                        $('#detailContent').html('<p>Error loading data</p>');
                     }
+                });
 
-                    $(document).ready(function() {
-                        $('.btn-detail').click(function() {
-                            var ca = $(this).data('ca');
-                            var tiket = $(this).data('tiket');
-                            var hotel = $(this).data('hotel');
-                            var taksi = $(this).data('taksi');
-
-                            function createTableHtml(data, title) {
-                                var tableHtml = '<h5>' + title + '</h5>';
-                                tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
-                                var isArray = Array.isArray(data) && data.length > 0;
-
-                                // Assuming all objects in the data array have the same keys, use the first object to create headers
-                                if (isArray) {
-                                    for (var key in data[0]) {
-                                        if (data[0].hasOwnProperty(key)) {
-                                            tableHtml += '<th>' + key + '</th>';
-                                        }
-                                    }
-                                } else if (typeof data === 'object') {
-                                    // If data is a single object, create headers from its keys
-                                    for (var key in data) {
-                                        if (data.hasOwnProperty(key)) {
-                                            tableHtml += '<th>' + key + '</th>';
-                                        }
-                                    }
-                                }
-
-                                tableHtml += '</tr></thead><tbody>';
-
-                                // Loop through each item in the array and create a row for each
-                                if (isArray) {
-                                    data.forEach(function(row) {
-                                        tableHtml += '<tr>';
-                                        for (var key in row) {
-                                            if (row.hasOwnProperty(key)) {
-                                                tableHtml += '<td>' + row[key] + '</td>';
-                                            }
-                                        }
-                                        tableHtml += '</tr>';
-                                    });
-                                } else if (typeof data === 'object') {
-                                    // If data is a single object, create a single row
-                                    tableHtml += '<tr>';
-                                    for (var key in data) {
-                                        if (data.hasOwnProperty(key)) {
-                                            tableHtml += '<td>' + data[key] + '</td>';
-                                        }
-                                    }
-                                    tableHtml += '</tr>';
-                                }
-
-                                tableHtml += '</tbody></table>';
-                                return tableHtml;
-                            }
-
-                            // $('#detailTypeHeader').text('Detail Information');
-                            $('#detailContent').empty();
-
-                            try {
-                                var content = '';
-
-                                if (ca && ca !== 'undefined') {
-                                    var caData = typeof ca === 'string' ? JSON.parse(ca) : ca;
-                                    content += createTableHtml(caData, 'CA Detail');
-                                }
-                                if (tiket && tiket !== 'undefined') {
-                                    var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
-                                    content += createTableHtml(tiketData, 'Ticket Detail');
-                                }
-                                if (hotel && hotel !== 'undefined') {
-                                    var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
-                                    content += createTableHtml(hotelData, 'Hotel Detail');
-                                }
-                                if (taksi && taksi !== 'undefined') {
-                                    var taksiData = typeof taksi === 'string' ? JSON.parse(taksi) : taksi;
-                                    content += createTableHtml(taksiData, 'Taxi Detail');
-                                }
-
-                                if (content !== '') {
-                                    $('#detailContent').html(content);
-                                } else {
-                                    $('#detailContent').html('<p>No detail information available.</p>');
-                                }
-
-                                $('#detailModal').modal('show');
-                            } catch (e) {
-                                $('#detailContent').html('<p>Error loading data</p>');
-                            }
-                        });
-
-                        $('#detailModal').on('hidden.bs.modal', function() {
-                            $('body').removeClass('modal-open').css({
-                                overflow: '',
-                                padding: ''
-                            });
-                            $('.modal-backdrop').remove();
-                        });
+                $('#detailModal').on('hidden.bs.modal', function() {
+                    $('body').removeClass('modal-open').css({
+                        overflow: '',
+                        padding: ''
                     });
+                    $('.modal-backdrop').remove();
+                });
+            });
 
 
 
-                    $(document).ready(function() {
-                        var table = $('#yourTableId').DataTable({
-                            "pageLength": 10 // Set default page length
-                        });
-                        // Set to 10 entries per page
-                        $('#dt-length-0').val(10);
+            $(document).ready(function() {
+                var table = $('#yourTableId').DataTable({
+                    "pageLength": 10 // Set default page length
+                });
+                // Set to 10 entries per page
+                $('#dt-length-0').val(10);
 
-                        // Trigger the change event to apply the selected value
-                        $('#dt-length-0').trigger('change');
-                    });
-                </script>
-            @endsection
+                // Trigger the change event to apply the selected value
+                $('#dt-length-0').trigger('change');
+            });
+        </script>
+    @endsection
