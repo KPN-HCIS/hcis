@@ -807,9 +807,9 @@
                                 $detailPenginapan = $caDetail['detail_penginapan'] ?? [];
                                 $detailLainnya = $caDetail['detail_lainnya'] ?? [];
 
-                                $formattedTotalCashAdvanced = number_format($ca->total_ca, 0, ',', '.');
-                                $formattedTotalReal = number_format($ca->total_real, 0, ',', '.');
-                                $formattedTotalCost = number_format($ca->total_cost, 0, ',', '.');
+                                $formattedTotalCashAdvanced = number_format($ca->total_ca ?? 0, 0, ',', '.');
+                                $formattedTotalReal = number_format($ca->total_real ?? 0, 0, ',', '.');
+                                $formattedTotalCost = number_format($ca->total_cost ?? 0, 0, ',', '.');
                             @endphp
                             <div class="row">
                                 <div class="col-md-4 mb-2">

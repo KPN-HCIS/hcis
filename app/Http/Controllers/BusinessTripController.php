@@ -20,6 +20,7 @@ use App\Models\ListPerdiem;
 use App\Models\TiketApproval;
 use App\Models\HotelApproval;
 use App\Models\TaksiApproval;
+use App\Models\HealthCoverage;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Support\Facades\DB;
@@ -1138,7 +1139,6 @@ class BusinessTripController extends Controller
             $ca->total_ca = '0';
             $ca->total_real = (int) str_replace('.', '', $request->totalca);
             $ca->total_cost = -1 * (int) str_replace('.', '', $ca->total_real);
-
         } else {
             $ca->total_real = $total_real;
             $ca->total_cost = $total_ca - $total_real;
@@ -1631,7 +1631,6 @@ class BusinessTripController extends Controller
             }
 
             return response()->download($zipFilePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
             Log::error("Error in export function: " . $e->getMessage());
             Log::error("Stack trace: " . $e->getTraceAsString());
@@ -1868,7 +1867,6 @@ class BusinessTripController extends Controller
             }
 
             return response()->download($zipFilePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
             Log::error("Error in export function: " . $e->getMessage());
             Log::error("Stack trace: " . $e->getTraceAsString());
@@ -2777,7 +2775,6 @@ class BusinessTripController extends Controller
                 $ca->total_ca = '0';
                 $ca->total_real = (int) str_replace('.', '', $request->totalca);
                 $ca->total_cost = -1 * (int) str_replace('.', '', $ca->total_real);
-
             } else {
                 $ca->total_real = $total_real;
                 $ca->total_cost = $total_ca - $total_real;
@@ -2939,10 +2936,12 @@ class BusinessTripController extends Controller
 
     public function approval(Request $request)
     {
+        $userId = Auth::id();
         $user = Auth::user();
-        $filter = $request->input('filter', 'all');
+        $employeeId = auth()->user()->employee_id;
+        $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
 
-        $query = BusinessTrip::where(function ($query) use ($user) {
+        $bt_all = BusinessTrip::where(function ($query) use ($user) {
             $query->where(function ($q) use ($user) {
                 $q->where('manager_l1_id', $user->employee_id)
                     ->whereIn('status', ['Pending L1', 'Declaration L1']);
@@ -2950,34 +2949,10 @@ class BusinessTripController extends Controller
                 $q->where('manager_l2_id', $user->employee_id)
                     ->whereIn('status', ['Pending L2', 'Declaration L2']);
             });
-        });
+        })->orderBy('created_at', 'desc')
+            ->get();
 
-        if ($filter === 'request') {
-            $query->where(function ($q) use ($user) {
-                $q->where(function ($subQ) use ($user) {
-                    $subQ->where('manager_l1_id', $user->employee_id)
-                        ->where('status', 'Pending L1');
-                })->orWhere(function ($subQ) use ($user) {
-                    $subQ->where('manager_l2_id', $user->employee_id)
-                        ->where('status', 'Pending L2');
-                });
-            });
-        } elseif ($filter === 'declaration') {
-            $query->where(function ($q) use ($user) {
-                $q->where(function ($subQ) use ($user) {
-                    $subQ->where('manager_l1_id', $user->employee_id)
-                        ->where('status', 'Declaration L1');
-                })->orWhere(function ($subQ) use ($user) {
-                    $subQ->where('manager_l2_id', $user->employee_id)
-                        ->where('status', 'Declaration L2');
-                });
-            });
-        }
-
-        $sppd = $query->orderBy('created_at', 'desc')->get();
-
-        // Count only "Request" status (Pending L1 and L2)
-        $requestCount = BusinessTrip::where(function ($query) use ($user) {
+        $bt_request = BusinessTrip::where(function ($query) use ($user) {
             $query->where(function ($q) use ($user) {
                 $q->where('manager_l1_id', $user->employee_id)
                     ->where('status', 'Pending L1');
@@ -2985,10 +2960,10 @@ class BusinessTripController extends Controller
                 $q->where('manager_l2_id', $user->employee_id)
                     ->where('status', 'Pending L2');
             });
-        })->count();
+        })->orderBy('created_at', 'desc')
+            ->get();
 
-        // Count only "Declaration" status (Declaration L1 and L2)
-        $declarationCount = BusinessTrip::where(function ($query) use ($user) {
+        $bt_declaration = BusinessTrip::where(function ($query) use ($user) {
             $query->where(function ($q) use ($user) {
                 $q->where('manager_l1_id', $user->employee_id)
                     ->where('status', 'Declaration L1');
@@ -2996,10 +2971,102 @@ class BusinessTripController extends Controller
                 $q->where('manager_l2_id', $user->employee_id)
                     ->where('status', 'Declaration L2');
             });
+        })->orderBy('created_at', 'desc')
+            ->get();
+
+        // Count only "Request" status (Pending L1 and L2)
+        $requestCount = $bt_request->count();
+        $declarationCount = $bt_declaration->count();
+        $totalBTCount = $requestCount + $declarationCount;
+        $totalPendingCount = CATransaction::where(function ($query) use ($employeeId) {
+            $query->where('status_id', $employeeId)->where('approval_status', 'Pending')
+                ->orWhere('sett_id', $employeeId)->where('approval_sett', 'Pending')
+                ->orWhere('extend_id', $employeeId)->where('approval_extend', 'Pending');
+        })->count();
+        $ticketNumbers = Tiket::where('tkt_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_tkt')->unique();
+        $transactions_tkt = Tiket::whereIn('no_tkt', $ticketNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $totalTKTCount = $transactions_tkt->filter(function ($ticket) use ($employee) {
+            $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
+            return ($ticket->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) ||
+                ($ticket->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id);
         })->count();
 
+        $hotelNumbers = Hotel::where('hotel_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_htl')->unique();
+
+        // Fetch all tickets using the latestTicketIds
+        $transactions_htl = Hotel::whereIn('no_htl', $hotelNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Filter tickets based on manager and approval status
+        $hotels = $transactions_htl->filter(function ($hotel) use ($employee) {
+            // Get the employee who owns the ticket
+            $ticketOwnerEmployee = Employee::where('id', $hotel->user_id)->first();
+
+            if ($hotel->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) {
+                return true;
+            } elseif ($hotel->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id) {
+                return true;
+            }
+            return false;
+        });
+
+        $totalHTLCount = $hotels->count();
+
+        // Check if the user has approval rights
+        $hasApprovalRights = DB::table('master_bisnisunits')
+            ->where('approval_medical', $employee->employee_id)
+            ->where('nama_bisnis', $employee->group_company)
+            ->exists();
+
+        if ($hasApprovalRights) {
+            $medicalGroup = HealthCoverage::select(
+                'no_medic',
+                'date',
+                'period',
+                'hospital_name',
+                'patient_name',
+                'disease',
+                DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance_verif ELSE 0 END) as maternity_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance_verif ELSE 0 END) as inpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance_verif ELSE 0 END) as outpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance_verif ELSE 0 END) as glasses_balance_verif'),
+                'status'
+            )
+                ->whereNotNull('verif_by')   // Only include records where verif_by is not null
+                ->whereNotNull('balance_verif')
+                ->where('status', 'Pending')
+                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Add usage_id for each medical record without filtering by employee_id
+            $medical = $medicalGroup->map(function ($item) {
+                // Fetch the usage_id based on no_medic (for any employee)
+                $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
+                $item->usage_id = $usageId;
+
+                // Calculate total per no_medic
+                $item->total_per_no_medic = $item->maternity_balance_verif + $item->inpatient_balance_verif + $item->outpatient_balance_verif + $item->glasses_balance_verif;
+
+                return $item;
+            });
+        } else {
+            $medical = collect(); // Empty collection if user doesn't have approval rights
+        }
+
+        $totalMDCCount = $medical->count();
+
         // Collect all SPPD numbers from the BusinessTrip instances
-        $sppdNos = $sppd->pluck('no_sppd');
+        $sppdNos = $bt_all->pluck('no_sppd');
 
         // Retrieve related data based on the collected SPPD numbers
         $caTransactions = ca_transaction::whereIn('no_sppd', $sppdNos)
@@ -3013,7 +3080,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Approval';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.btApproval', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'filter', 'requestCount', 'declarationCount'));
+        return view('hcis.reimbursements.businessTrip.btApproval', compact('bt_all', 'bt_request', 'bt_declaration', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'requestCount', 'declarationCount', 'totalBTCount', 'totalPendingCount', 'totalTKTCount', 'totalHTLCount', 'totalMDCCount'));
     }
     public function approvalDetail($id)
     {
@@ -3193,7 +3260,6 @@ class BusinessTripController extends Controller
                     $approval_vt->save();
                 }
             }
-
         } elseif ($employeeId == $businessTrip->manager_l1_id) {
             $statusValue = 'Pending L2';
             $layer = 1;
@@ -3831,5 +3897,4 @@ class BusinessTripController extends Controller
         ];
         return $romanMonths[$month];
     }
-
 }

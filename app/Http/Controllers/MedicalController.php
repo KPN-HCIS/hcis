@@ -12,6 +12,10 @@ use App\Models\Company;
 use App\Models\Location;
 use App\Models\MasterPlafond;
 use App\Models\MasterBusinessUnit;
+use App\Models\CATransaction;
+use App\Models\BusinessTrip;
+use App\Models\Hotel;
+use App\Models\Tiket;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -576,6 +580,7 @@ class MedicalController extends Controller
     public function medicalApproval()
     {
         // Fetch all dependents, no longer filtered by employee_id
+        $user = Auth::user();
         $family = Dependents::orderBy('date_of_birth', 'desc')->get();
         $employeeId = auth()->user()->employee_id;
         $employee = Employee::where('employee_id', $employeeId)->first();
@@ -622,14 +627,72 @@ class MedicalController extends Controller
             $medical = collect(); // Empty collection if user doesn't have approval rights
         }
 
+        $totalMDCCount = $medical->count();
+
         // Fetch medical plans for all employees
         $medical_plan = HealthPlan::orderBy('period', 'desc')->get();
         $master_medical = MasterMedical::where('active', 'T')->get();
 
+        $totalMDCCount = $medical->count();
+
+        $totalPendingCount = CATransaction::where(function ($query) use ($employeeId) {
+            $query->where('status_id', $employeeId)->where('approval_status', 'Pending')
+                ->orWhere('sett_id', $employeeId)->where('approval_sett', 'Pending')
+                ->orWhere('extend_id', $employeeId)->where('approval_extend', 'Pending');
+        })->count();
+
+        $totalBTCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L1', 'Declaration L1']);
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L2', 'Declaration L2']);
+            });
+        })->count();
+
+        $hotelNumbers = Hotel::where('hotel_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_htl')->unique();
+
+        // Fetch all tickets using the latestTicketIds
+        $transactions_htl = Hotel::whereIn('no_htl', $hotelNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Filter tickets based on manager and approval status
+        $hotels = $transactions_htl->filter(function ($hotel) use ($employee) {
+            // Get the employee who owns the ticket
+            $ticketOwnerEmployee = Employee::where('id', $hotel->user_id)->first();
+
+            if ($hotel->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) {
+                return true;
+            } elseif ($hotel->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id) {
+                return true;
+            }
+            return false;
+        });
+
+        $totalHTLCount = $hotels->count();
+
+        $ticketNumbers = Tiket::where('tkt_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_tkt')->unique();
+        $transactions_tkt = Tiket::whereIn('no_tkt', $ticketNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $totalTKTCount = $transactions_tkt->filter(function ($ticket) use ($employee) {
+            $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
+            return ($ticket->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) ||
+                ($ticket->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id);
+        })->count();
+
         $parentLink = 'Reimbursement';
         $link = 'Medical Approval';
 
-        return view('hcis.reimbursements.medical.approval.medicalApproval', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'master_medical'));
+        return view('hcis.reimbursements.medical.approval.medicalApproval', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'master_medical', 'totalBTCount', 'totalPendingCount', 'totalHTLCount', 'totalTKTCount', 'totalMDCCount'));
     }
 
 

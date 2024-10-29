@@ -16,6 +16,7 @@ use App\Models\Location;
 use App\Models\Employee;
 use App\Models\MatrixApproval;
 use App\Models\ListPerdiem;
+use App\Models\HealthCoverage;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
@@ -2199,6 +2200,7 @@ class ReimburseController extends Controller
         $user = Auth::user();
         $userId = $user->id;
         $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
+        $employeeId = auth()->user()->employee_id;
 
         $parentLink = 'Approval';
         $link = 'Hotel Approval';
@@ -2214,7 +2216,6 @@ class ReimburseController extends Controller
             ->with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
-        // dd($transactions);
 
         // Filter tickets based on manager and approval status
         $hotels = $transactions->filter(function ($hotel) use ($employee) {
@@ -2228,6 +2229,81 @@ class ReimburseController extends Controller
             }
             return false;
         });
+
+        $totalHTLCount = $hotels->count();
+
+        $ticketNumbers = Tiket::where('tkt_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_tkt')->unique();
+        $transactions_tkt = Tiket::whereIn('no_tkt', $ticketNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $totalTKTCount = $transactions_tkt->filter(function ($ticket) use ($employee) {
+            $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
+            return ($ticket->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) ||
+                ($ticket->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id);
+        })->count();
+
+        $totalPendingCount = CATransaction::where(function ($query) use ($employeeId) {
+            $query->where('status_id', $employeeId)->where('approval_status', 'Pending')
+                ->orWhere('sett_id', $employeeId)->where('approval_sett', 'Pending')
+                ->orWhere('extend_id', $employeeId)->where('approval_extend', 'Pending');
+        })->count();
+
+        $totalBTCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L1', 'Declaration L1']);
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L2', 'Declaration L2']);
+            });
+        })->count();
+
+        // Check if the user has approval rights
+        $hasApprovalRights = DB::table('master_bisnisunits')
+            ->where('approval_medical', $employee->employee_id)
+            ->where('nama_bisnis', $employee->group_company)
+            ->exists();
+
+        if ($hasApprovalRights) {
+            $medicalGroup = HealthCoverage::select(
+                'no_medic',
+                'date',
+                'period',
+                'hospital_name',
+                'patient_name',
+                'disease',
+                DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance_verif ELSE 0 END) as maternity_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance_verif ELSE 0 END) as inpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance_verif ELSE 0 END) as outpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance_verif ELSE 0 END) as glasses_balance_verif'),
+                'status'
+            )
+                ->whereNotNull('verif_by')   // Only include records where verif_by is not null
+                ->whereNotNull('balance_verif')
+                ->where('status', 'Pending')
+                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Add usage_id for each medical record without filtering by employee_id
+            $medical = $medicalGroup->map(function ($item) {
+                // Fetch the usage_id based on no_medic (for any employee)
+                $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
+                $item->usage_id = $usageId;
+
+                // Calculate total per no_medic
+                $item->total_per_no_medic = $item->maternity_balance_verif + $item->inpatient_balance_verif + $item->outpatient_balance_verif + $item->glasses_balance_verif;
+
+                return $item;
+            });
+        } else {
+            $medical = collect(); // Empty collection if user doesn't have approval rights
+        }
+
+        $totalMDCCount = $medical->count();
 
         // Group tickets by `no_tkt` and get the first entry for each group
         $hotelGroups = $hotels->groupBy('no_htl')->map(function ($group) {
@@ -2262,6 +2338,11 @@ class ReimburseController extends Controller
             'hotelCounts' => $hotelCounts,
             'hotels' => $hotels,
             'hotel' => $hotel,
+            'totalPendingCount' => $totalPendingCount,
+            'totalBTCount' => $totalBTCount,
+            'totalTKTCount' => $totalTKTCount,
+            'totalHTLCount' => $totalHTLCount,
+            'totalMDCCount' => $totalMDCCount,
             'managerL1Names' => $managerL1Names,
             'managerL2Names' => $managerL2Names,
         ]);
@@ -2480,7 +2561,6 @@ class ReimburseController extends Controller
 
                 $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
                 $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
-
             }
         }
 
@@ -3023,6 +3103,7 @@ class ReimburseController extends Controller
         $user = Auth::user();
         $userId = $user->id;
         $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
+        $employeeId = auth()->user()->employee_id;
 
         $parentLink = 'Approval';
         $link = 'Ticket Approval';
@@ -3038,7 +3119,7 @@ class ReimburseController extends Controller
             ->with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
-        // dd($transactions);
+
 
         // Filter tickets based on manager and approval status
         $tickets = $transactions->filter(function ($ticket) use ($employee) {
@@ -3078,6 +3159,93 @@ class ReimburseController extends Controller
             return [$key => ['total' => $group->count()]];
         });
 
+        $totalTKTCount = $tickets->count();
+
+        $totalPendingCount = CATransaction::where(function ($query) use ($employeeId) {
+            $query->where('status_id', $employeeId)->where('approval_status', 'Pending')
+                ->orWhere('sett_id', $employeeId)->where('approval_sett', 'Pending')
+                ->orWhere('extend_id', $employeeId)->where('approval_extend', 'Pending');
+        })->count();
+
+        $totalBTCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L1', 'Declaration L1']);
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L2', 'Declaration L2']);
+            });
+        })->count();
+
+        $hotelNumbers = Hotel::where('hotel_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_htl')->unique();
+
+        // Fetch all tickets using the latestTicketIds
+        $transactions_htl = Hotel::whereIn('no_htl', $hotelNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Filter tickets based on manager and approval status
+        $hotels = $transactions_htl->filter(function ($hotel) use ($employee) {
+            // Get the employee who owns the ticket
+            $ticketOwnerEmployee = Employee::where('id', $hotel->user_id)->first();
+
+            if ($hotel->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) {
+                return true;
+            } elseif ($hotel->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id) {
+                return true;
+            }
+            return false;
+        });
+
+        $totalHTLCount = $hotels->count();
+
+        // Check if the user has approval rights
+        $hasApprovalRights = DB::table('master_bisnisunits')
+            ->where('approval_medical', $employee->employee_id)
+            ->where('nama_bisnis', $employee->group_company)
+            ->exists();
+
+        if ($hasApprovalRights) {
+            $medicalGroup = HealthCoverage::select(
+                'no_medic',
+                'date',
+                'period',
+                'hospital_name',
+                'patient_name',
+                'disease',
+                DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance_verif ELSE 0 END) as maternity_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance_verif ELSE 0 END) as inpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance_verif ELSE 0 END) as outpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance_verif ELSE 0 END) as glasses_balance_verif'),
+                'status'
+            )
+                ->whereNotNull('verif_by')   // Only include records where verif_by is not null
+                ->whereNotNull('balance_verif')
+                ->where('status', 'Pending')
+                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Add usage_id for each medical record without filtering by employee_id
+            $medical = $medicalGroup->map(function ($item) {
+                // Fetch the usage_id based on no_medic (for any employee)
+                $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
+                $item->usage_id = $usageId;
+
+                // Calculate total per no_medic
+                $item->total_per_no_medic = $item->maternity_balance_verif + $item->inpatient_balance_verif + $item->outpatient_balance_verif + $item->glasses_balance_verif;
+
+                return $item;
+            });
+        } else {
+            $medical = collect(); // Empty collection if user doesn't have approval rights
+        }
+
+        $totalMDCCount = $medical->count();
+
         return view('hcis.reimbursements.ticket.ticketApproval', [
             'link' => $link,
             'parentLink' => $parentLink,
@@ -3086,6 +3254,11 @@ class ReimburseController extends Controller
             'ticketCounts' => $ticketCounts,
             'tickets' => $tickets,
             'ticket' => $ticket,
+            'totalPendingCount' => $totalPendingCount,
+            'totalBTCount' => $totalBTCount,
+            'totalTKTCount' => $totalTKTCount,
+            'totalMDCCount' => $totalMDCCount,
+            'totalHTLCount' => $totalHTLCount,
             'managerL1Names' => $managerL1Names,
             'managerL2Names' => $managerL2Names,
         ]);

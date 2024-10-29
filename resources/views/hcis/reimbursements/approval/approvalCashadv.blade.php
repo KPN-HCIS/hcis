@@ -39,7 +39,7 @@
         left: 0 !important;
         z-index: 3 !important;
         background-color: #ab2f2b !important;
-        border-right: 2px solid #ddd !important;
+        border-right: 2px solid #AB2F2B !important;
         padding-right: 10px;
         box-shadow: inset 2px 0 0 #fff;
     }
