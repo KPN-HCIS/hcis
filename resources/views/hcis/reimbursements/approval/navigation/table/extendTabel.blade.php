@@ -19,7 +19,7 @@
         <tbody>
             @foreach($ca_transactions_ext as $transaction)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
+                    <td style="text-align: center;">{{ $loop->iteration }}</td>
                     <td style="background-color: white;" class="sticky-col">{{ $transaction->no_ca }}</td>
                     @if($transaction->type_ca == 'dns')
                         <td>Business Trip</td>
