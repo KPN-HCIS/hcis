@@ -196,8 +196,8 @@
                 <a href="{{ route('home-trip') }}">
                     <div class="card" style="height: 200px">
                         <div class="card-body">
-                            <img src="{{ asset('images/menu/bt.png') }}" alt="logo"
-                                style="width: 100px; height: 100px;">
+                            <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
+                                style="width: 100px; height: 100px; border-radius: 100px;">
                             <h5 class="my-3">Home Trip</h5>
                         </div> <!-- end card-body-->
                     </div> <!-- end card-->
@@ -229,11 +229,23 @@
 
 
         </div> <!-- end row -->
-        <div style="display: flex; align-items: center; margin: 20px 0;">
-            <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
-            <span style="padding: 0 20px; font-weight: bold;">Admin</span>
-            <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
-        </div>
+
+        {{-- HR ADMIN --}}
+        @if (auth()->check() &&
+                (auth()->user()->can('reportca_hcis') ||
+                    auth()->user()->can('adminbt') ||
+                    auth()->user()->can('admin_medic') ||
+                    auth()->user()->can('adminht') ||
+                    auth()->user()->can('admintkt') ||
+                    auth()->user()->can('adminhtl')))
+            <div style="display: flex; align-items: center; margin: 20px 0;">
+                <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
+                <span style="padding: 0 20px; font-weight: bold;">Admin</span>
+                <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
+            </div>
+        @endif
+        {{-- END HR ADMIN --}}
+
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 row-cols-xxl-8 text-center">
             @if (auth()->check())
                 @can('reportca_hcis')
@@ -284,7 +296,8 @@
                         <a href="{{ route('home-trip.admin') }}">
                             <div class="card" style="height: 200px">
                                 <div class="card-body">
-                                    <img src="{{ asset('images/menu/bt.png') }}" alt="logo">
+                                    <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
+                                        style="width: 100px; height: 100px; border-radius: 100px;">
                                     <h5 class="my-3">Home Trip (Admin)</h5>
                                 </div> <!-- end card-body-->
                             </div> <!-- end card-->
