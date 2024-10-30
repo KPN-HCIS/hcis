@@ -36,7 +36,7 @@
                                     'No. CA' => $caTransactions[$n->no_sppd]->no_ca,
                                     'No. SPPD' => $caTransactions[$n->no_sppd]->no_sppd,
                                     'Unit' => $caTransactions[$n->no_sppd]->unit,
-                                    'Destination' => $sppd->where('no_sppd', $n->no_sppd)->first()->tujuan,
+                                    'Destination' => $bt_all->where('no_sppd', $n->no_sppd)->first()->tujuan,
                                     'CA Total' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_ca, 0, ',', '.'),
                                     'Total Real' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_real, 0, ',', '.'),
                                     'Total Cost' => 'Rp ' . number_format($caTransactions[$n->no_sppd]->total_cost, 0, ',', '.'),

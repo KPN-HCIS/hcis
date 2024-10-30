@@ -1,5 +1,5 @@
-<div class="row g-2 mb-3 justify-content-start">
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+<div class="row g-2 mb-2 justify-content-start">
+    <ul class="nav nav-pills mb-0" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="active btn btn-outline-primary mb-2 rounded-pill shadow w-100 position-relative" id="pills-perdiem-tab"
                 data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
@@ -15,7 +15,7 @@
                 data-bs-target="#pills-transport" type="button" role="tab"
                 aria-controls="pills-transport" aria-selected="false">Deklarasi Cash Advanced
                 @if ( $pendingDECCount >= 1 )
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingCACount }}</span>
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingDECCount }}</span>
                 @endif
             </button>
         </li>
@@ -25,7 +25,7 @@
                 type="button" role="tab" aria-controls="pills-accomodation"
                 aria-selected="false">Extend Cash Advanced
                 @if ( $pendingEXCount >= 1 )
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingCACount }}</span>
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingEXCount }}</span>
                 @endif
             </button>
         </li>

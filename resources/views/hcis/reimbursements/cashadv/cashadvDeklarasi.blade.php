@@ -109,7 +109,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white border-dark-subtle"><i class="ri-search-line"></i></span>
                                 </div>
-                                <input type="text" name="customsearch" id="customsearch" class="form-control w-  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search" >
+                                <input type="text" name="customsearch" id="customsearch" class="form-control w-  border-dark-subtle border-left-0" placeholder="Search.." aria-label="search" aria-describedby="search" >
                             </div>
                         </div>
                         @include('hcis.reimbursements.cashadv.navigation.navigationCashadv')

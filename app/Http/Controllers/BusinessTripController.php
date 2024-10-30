@@ -2951,6 +2951,7 @@ class BusinessTripController extends Controller
             });
         })->orderBy('created_at', 'desc')
             ->get();
+        // $sppd_all = BusinessTrip::orderBy('created_at', 'desc')->get();
 
         $bt_request = BusinessTrip::where(function ($query) use ($user) {
             $query->where(function ($q) use ($user) {

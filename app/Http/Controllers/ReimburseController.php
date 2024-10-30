@@ -2520,7 +2520,7 @@ class ReimburseController extends Controller
         $transactions = Hotel::whereIn('id', $latestHotelIds)
             ->with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
-            ->whereIn('approval_status', $statusFilter)
+            ->where('approval_status', '!=', 'Draft')
             ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
             ->get();
 
@@ -2562,6 +2562,8 @@ class ReimburseController extends Controller
 
                 $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
                 $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+
+                // dd($managerL1Name, $managerL1Name);
             }
         }
 
@@ -3427,15 +3429,10 @@ class ReimburseController extends Controller
 
         // Buat query untuk mendapatkan transaksi terbaru
         $transactions = Tiket::orderBy('created_at', 'desc')
+            ->where('approval_status', '!=', 'Draft')
             ->with('businessTrip')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                 $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
-            })
-            ->when($filter === 'request', function ($query) {
-                $query->whereIn('approval_status', ['Pending L1', 'Pending L2', 'Approved']);
-            })
-            ->when($filter === 'rejected', function ($query) {
-                $query->whereIn('approval_status', ['Rejected']);
             })
             ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();

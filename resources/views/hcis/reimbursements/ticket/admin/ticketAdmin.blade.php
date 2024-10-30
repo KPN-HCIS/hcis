@@ -123,7 +123,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-white w-border-dark-subtle"><i class="ri-search-line"></i></span>
                                 </div>
-                                <input type="text" name="customsearch" id="customsearch" class="form-control w-border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search" >
+                                <input type="text" name="customsearch" id="customsearch" class="form-control w-border-dark-subtle border-left-0" placeholder="Search.." aria-label="search" aria-describedby="search" >
                                 {{-- &nbsp;&nbsp;&nbsp; --}}
                             </div>
                         </div>
@@ -150,9 +150,9 @@
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
                                             <td>{{ $transaction->no_sppd }}</td>
                                             <td>{{ $transaction->no_tkt }}</td>
+                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td style="text-align: left">
                                                 {{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
-                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td>{{ $transaction->jns_dinas_tkt }}</td>
                                             <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
                                             <td class="text-info">
@@ -393,7 +393,10 @@
                     $('#tableContainer').html(tableHtml);
 
                     // 3. Inisialisasi DataTable setelah tabel ada di DOM
-                    $('.scheduleTable').DataTable();
+                    $('.scheduleTable').DataTable({
+                        paging: false,
+                        searching: false,
+                    });
                 });
 
 
