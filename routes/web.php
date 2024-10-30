@@ -193,6 +193,8 @@ Route::middleware('auth')->group(function () {
     //Hotel Admin
     Route::middleware(['permission:adminhtl'])->group(function () {
         Route::get('/hotel/admin', [ReimburseController::class, 'hotelAdmin'])->name('hotel.admin');
+        Route::post('/hotel/admin/booking/{id}', [ReimburseController::class, 'hotelBookingAdmin'])->name('hotel.admin-booking');
+        Route::get('/hotel/excel', [ReimburseController::class, 'exportHotelAdminExcel'])->name('hotel.excel');
         Route::get('/hotel/report', [ReimburseController::class, 'hotelAdminReport'])->name('hotel.report');
         Route::post('/hotel/admin/delete/{id}', [ReimburseController::class, 'hotelDeleteAdmin'])->name('hotel.delete.admin');
     });

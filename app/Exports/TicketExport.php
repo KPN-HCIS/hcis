@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Tiket;
+use App\Models\Employee;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -24,22 +25,34 @@ class TicketExport implements FromCollection, WithHeadings, WithStyles, WithEven
 
     public function collection()
     {
+        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee', 'manager']);
+        $htl_employee = $query->orderBy('created_at', 'desc')->get();
+
         $ticketData = Tiket::where('approval_status', '!=', 'Draft')
             ->whereBetween('tgl_brkt_tkt', [$this->startDate, $this->endDate])
             ->get();
 
+        foreach ($htl_employee as $transaction) {
+            $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
+            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
+            $transaction->ManagerName = $transaction->manager ? $transaction->manager->fullname : '';
+        }
+
         $combinedData = [];
         $index = 1; // Inisialisasi index dimulai dari 1
+        // dd($transaction);
 
         foreach ($ticketData as $item) {
+            $manager = Employee::where('employee_id', $transaction->manager_l1_id)->first();
+            // dd($manager->fullname);
             $combinedData[] = [
                 'number' => $index,
-                'User' => 'Nama User',
-                'Atasan' => 'Atasan',
+                'User' => $transaction->fullname,
+                'Atasan' => $manager ? $manager->fullname : 'Unknown',
                 'Status' => $item->approval_status ?? 'Unknown',
                 'Dinas' => $item->jns_dinas_tkt,
                 'NoSPPD' => $item->no_sppd === "-" ? $item->no_tkt : $item->no_sppd,
-                'PT' => 'PT',
+                'PT' => $transaction->company_name . ', ' . $transaction->contribution_level_code,
                 'KodeBook' => $item->booking_code,
                 'HargaTiket' => $item->tkt_price,
                 'From' => $item->dari_tkt,

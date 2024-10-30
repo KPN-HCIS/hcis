@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CashAdvancedExport;
 use App\Exports\TicketExport;
+use App\Exports\HotelExport;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
 
@@ -2495,32 +2496,18 @@ class ReimburseController extends Controller
         // Create a base query without user-specific filtering
         $query = Hotel::orderBy('created_at', 'desc');
 
-        // Get the filter value, default to 'request' if not provided
-        $filter = $request->input('filter', 'request');
-
-        // Apply filter to the query based on the selected status
-        if ($filter === 'request') {
-            $statusFilter = ['Pending L1', 'Pending L2', 'Approved'];
-        } elseif ($filter === 'rejected') {
-            $statusFilter = ['Rejected'];
-        }
-
-        // Apply the status filter to the query
-        $query->whereIn('approval_status', $statusFilter);
-
-        // Get the filtered hotel records
-        $hotelFilter = $query->get();
-
-        // Fetch latest hotel entries grouped by 'no_htl'
-        $latestHotelIds = Hotel::selectRaw('MAX(id) as id')
-            ->groupBy('no_htl')
-            ->pluck('id');
+        // Cek apakah filter tanggal ada
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        // $filter = $request->input('filter', 'request');
 
         // Fetch the hotel transactions using the latest ids
-        $transactions = Hotel::whereIn('id', $latestHotelIds)
-            ->with('employee', 'hotelApproval')
+        $transactions = Hotel::with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
             ->where('approval_status', '!=', 'Draft')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereRaw("DATE(tgl_masuk_htl) BETWEEN ? AND ?", [$startDate, $endDate]);
+            })
             ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
             ->get();
 
@@ -2533,17 +2520,6 @@ class ReimburseController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('no_htl');
-
-        $hotelIds = $hotels->pluck('id');
-
-        // Fetch hotel approval details using the hotel IDs
-        $hotelApprovals = HotelApproval::whereIn('htl_id', $hotelIds)
-            ->where(function ($query) {
-                $query->where('approval_status', 'Rejected')
-                    ->orWhere('approval_status', 'Declaration Rejected');
-            })
-            ->get()
-            ->keyBy('htl_id');
 
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
@@ -2584,10 +2560,44 @@ class ReimburseController extends Controller
             'hotelGroups' => $hotelGroups,
             'managerL1Name' => $managerL1Name,
             'managerL2Name' => $managerL2Name,
-            'hotelApprovals' => $hotelApprovals,
+            // 'hotelApprovals' => $hotelApprovals,
             'employeeName' => $employeeName,
-            'filter' => $filter,
+            // 'filter' => $filter,
         ]);
+    }
+
+    public function hotelBookingAdmin(Request $req, $id)
+    {
+        // dd($id);
+        $userId = Auth::id();
+        $employeeId = auth()->user()->employee_id;
+        // Ambil tiket berdasarkan ID yang diterima
+        $model = Hotel::where('id', $id)->firstOrFail();
+        $hotels = Hotel::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+
+        // Jika tombol booking hotel ditekan
+        if ($req->has('action_htl_book')) {
+            // Validasi input dari form
+            $req->validate([
+                'booking_code' => 'required|string|max:255',
+                'booking_price' => 'required|numeric|min:0',
+            ]);
+
+            // Update data hotel dengan kode dan harga hotel
+            $model->booking_code = $req->input('booking_code');
+            $model->booking_price = $req->input('booking_price');
+            $model->save();
+
+            return redirect()->route('hotel.admin')->with('success', 'hotel booking updated successfully.');
+        }
+    }
+
+    public function exportHotelAdminExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return Excel::download(new HotelExport($startDate, $endDate), 'hotel_report.xlsx');
     }
 
     public function hotelDeleteAdmin($key)
@@ -3528,29 +3538,6 @@ class ReimburseController extends Controller
 
             return redirect()->route('ticket.admin')->with('success', 'Ticket booking updated successfully.');
         }
-
-        // Jika tombol reject ditekan
-        if ($req->input('action_ca_reject')) {
-            $caApprovals = ca_approval::where('ca_id', $id)->get();
-            if ($caApprovals->isNotEmpty()) {
-                foreach ($caApprovals as $caApproval) {
-                    $caApproval->approval_status = 'Rejected';
-                    $caApproval->approved_at = now();
-                    $caApproval->reject_info = $req->input('reject_info');
-                    $caApproval->save();
-                }
-            }
-
-            $caTransaction = ca_transaction::where('id', $id)->first();
-            if ($caTransaction) {
-                $caTransaction->approval_status = 'Rejected';
-                $caTransaction->save();
-            }
-
-            return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be sent to the employee.');
-        }
-
-        return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Approved, Thanks for Approving.');
     }
 
 

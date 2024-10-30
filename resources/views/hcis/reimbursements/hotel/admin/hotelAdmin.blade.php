@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Hotel'])
+    @extends('layouts_.vertical', ['page_title' => 'Hotel (Admin)'])
 
 @section('css')
     <style>
@@ -67,63 +67,64 @@
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="row">
-            <div class="col-md-6 mt-3">
-                <div class="page-title-box d-flex align-items-center">
-                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
-                        <li class="breadcrumb-item" style="font-size: 25px; display: flex; align-items: center;">
-                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
-                                <i class="bi bi-arrow-left"></i>
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            {{ $parentLink }}
-                        </li>
-                        <li class="breadcrumb-item">
-                            {{ $link }}
-                        </li>
-                    </ol>
+            <div class="col-12">
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item">{{ $parentLink }}</li>
+                            <li class="breadcrumb-item active">{{ $link }}</li>
+                        </ol>
+                    </div>
+                    <a href="{{ route('reimbursements') }}" class="page-title"><i class="ri-arrow-left-circle-line"></i></a>
+                    {{-- <button type="button" class="page-title btn btn-warning rounded-pill">Back</button> --}}
                 </div>
             </div>
-            <div class="col-md-6 mb-2 mt-3 d-flex justify-content-center justify-content-md-end align-items-center">
-                <a href="{{ '' }}" class="btn btn-outline-success rounded-pill btn-action me-1">
-                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
-                </a>
-            </div>
         </div>
-        @include('hcis.reimbursements.businessTrip.modal')
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        @php
-                            $currentFilter = $filter;
-                        @endphp
+                        <form action="{{ route('hotel.admin') }}" method="GET">
+                            <div class="input-group">
+                                <label class="col-form-label">Check in Date : </label>
 
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h3>Hotel Data</h3>
+                                <input type="date" class="form-control mx-2" id="start_date" name="start_date" placeholder="Start Date" title="Start Date" value="{{ request()->get('start_date') }}">
+                                <label class="col-form-label"> - </label>
+                                <input type="date" class="form-control mx-2" id="end_date" name="end_date" placeholder="End Date" title="End Date" value="{{ request()->get('end_date') }}">
+
+                                <div class="input-group-append mx-2">
+                                    <button class="btn btn-primary" type="submit">Filter</button>
+                                </div>
+                                <div class="input-group-append">
+                                    @if (isset($_GET['start_date']) && $_GET['start_date'] !== '')
+                                        <button style="display: block" class="btn btn-success w-100" type="button" onclick="redirectToExportExcel()">
+                                            <i class="ri-file-excel-2-line"></i> Export
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="card-title">{{ $link }}</h3>
                             <div class="input-group" style="width: 30%;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text bg-white border-dark-subtle"><i
-                                            class="ri-search-line"></i></span>
+                                    <span class="input-group-text bg-white w-border-dark-subtle"><i class="ri-search-line"></i></span>
                                 </div>
-                                <input type="text" name="customsearch" id="customsearch"
-                                    class="form-control w-  border-dark-subtle border-left-0" placeholder="Search.."
-                                    aria-label="search" aria-describedby="search">
+                                <input type="text" name="customsearch" id="customsearch" class="form-control w-border-dark-subtle border-left-0" placeholder="Search.." aria-label="search" aria-describedby="search" >
+                                {{-- &nbsp;&nbsp;&nbsp; --}}
                             </div>
                         </div>
-                        {{-- <form method="GET" action="{{ route('hotel.admin') }}">
-                            <button type="submit" name="filter" value="request"
-                                class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                Request
-                            </button>
-                            <button type="submit" name="filter" value="rejected"
-                                class="btn {{ $filter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
-                                Rejected
-                            </button>
-                        </form> --}}
                         <div class="table-responsive">
-                            <table class="table table-sm table-hover dt-responsive nowrap" id="defaultTable" width="100%"
+                            <table class="table table-sm table-hover dt-responsive nowrap mt-2" id="defaultTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
@@ -137,7 +138,7 @@
                                         <th>Details</th>
                                         <th>Status</th>
                                         {{-- <th>Start Date</th>
-                                  <th>End Date</th> --}}
+                                        <th>End Date</th> --}}
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -209,8 +210,13 @@
 
                                             </td>
                                             {{-- <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
-                                <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }} --}}
+                                            <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }} --}}
                                             <td class="text-center">
+                                                <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-bs-toggle="modal" data-bs-target="#bookingModal"
+                                                        data-no-id="{{ $transaction->id }}"
+                                                        data-no-htl="{{ $transaction->no_htl }}">
+                                                    <i class="bi bi-ticket-perforated"></i>
+                                                </button>
                                                 <a href="{{ route('hotel.export', ['id' => $transaction->id]) }}"
                                                     class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
                                                     <i class="bi bi-download"></i>
@@ -239,71 +245,7 @@
         </div>
     </div>
 
-    <!-- Rejection Reason Modal -->
-    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <h5 class="modal-title text-white" id="rejectReasonModalLabel">Rejection Information</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <strong>Rejected by</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span id="rejectedBy"></span>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-4">
-                            <strong>Rejection reason</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span id="rejectionReason"></span>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-4">
-                            <strong>Rejection date</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span id="rejectionDate"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary rounded-pill"
-                        data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detail Modal -->
-    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
-                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h6 id="detailTypeHeader" class="mb-3"></h6>
-                    <div id="detailContent"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary rounded-pill"
-                        data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('hcis.reimbursements.hotel.navigation.modalHotel')
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -337,25 +279,6 @@
                 return `${day}/${month}/${year} ${hours}:${minutes}`;
             }
 
-            window.showRejectInfo = function(transactionId) {
-                var hotelApprovals = {!! json_encode($hotelApprovals) !!};
-                var employeeName = {!! json_encode($employeeName) !!}; // Add this line
-
-                var approval = hotelApprovals[transactionId];
-                if (approval) {
-                    var rejectedBy = employeeName[approval.employee_id] || 'N/A'; // Retrieve fullname
-                    document.getElementById('rejectedBy').textContent = ': ' + rejectedBy;
-                    document.getElementById('rejectionReason').textContent = ': ' + (approval.reject_info ||
-                        'N/A');
-                    var rejectionDate = approval.approved_at ? formatDate(approval.approved_at) : 'N/A';
-                    document.getElementById('rejectionDate').textContent = ': ' + rejectionDate;
-
-                    rejectModal.show();
-                } else {
-                    console.error('Approval information not found for transaction ID:', transactionId);
-                }
-            };
-
             // Add event listener for modal hidden event
             document.getElementById('rejectReasonModal').addEventListener('hidden.bs.modal', function() {
                 console.log('Modal closed');
@@ -379,10 +302,13 @@
 
                 function createTableHtml(data, title) {
                     var tableHtml = '<h5>' + title + '</h5>';
-                    tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+                    tableHtml += `<div class="table-responsive">
+                                    <table class="table table-sm scheduleTable">
+                                        <thead>
+                                            <tr>`;
                     var isArray = Array.isArray(data) && data.length > 0;
 
-                    // Assuming all objects in the data array have the same keys, use the first object to create headers
+                    // Create headers
                     if (isArray) {
                         for (var key in data[0]) {
                             if (data[0].hasOwnProperty(key)) {
@@ -390,7 +316,6 @@
                             }
                         }
                     } else if (typeof data === 'object') {
-                        // If data is a single object, create headers from its keys
                         for (var key in data) {
                             if (data.hasOwnProperty(key)) {
                                 tableHtml += '<th>' + key + '</th>';
@@ -400,7 +325,7 @@
 
                     tableHtml += '</tr></thead><tbody>';
 
-                    // Loop through each item in the array and create a row for each
+                    // Create rows
                     if (isArray) {
                         data.forEach(function(row) {
                             tableHtml += '<tr>';
@@ -412,7 +337,6 @@
                             tableHtml += '</tr>';
                         });
                     } else if (typeof data === 'object') {
-                        // If data is a single object, create a single row
                         tableHtml += '<tr>';
                         for (var key in data) {
                             if (data.hasOwnProperty(key)) {
@@ -422,9 +346,28 @@
                         tableHtml += '</tr>';
                     }
 
-                    tableHtml += '</tbody></table>';
+                    tableHtml += '</tbody></table></div>';
                     return tableHtml;
                 }
+
+                // Saat menggunakan fungsi createTableHtml dan menginisialisasi DataTable
+                $(document).ready(function() {
+                    var data = [ /* array atau objek data */ ];
+                    var title = "Table Title";
+
+                    // 1. Generate HTML tabel
+                    var tableHtml = createTableHtml(data, title);
+
+                    // 2. Masukkan tabel ke dalam DOM
+                    $('#tableContainer').html(tableHtml);
+
+                    // 3. Inisialisasi DataTable setelah tabel ada di DOM
+                    $('.scheduleTable').DataTable({
+                        paging: false,
+                        searching: false,
+                    });
+                });
+
 
                 // $('#detailTypeHeader').text('Detail Information');
                 $('#detailContent').empty();
@@ -455,6 +398,46 @@
                     padding: ''
                 });
                 $('.modal-backdrop').remove();
+            });
+        });
+
+        function redirectToExportExcel() {
+            const route = "{{ route('hotel.excel') }}";
+
+            const startDate = document.getElementById("start_date").value;
+            const endDate = document.getElementById("end_date").value;
+
+            // Create a form element
+            const form = document.createElement("form");
+            form.method = "GET";
+            form.action = route;
+
+            const startDateInput = document.createElement("input");
+            startDateInput.type = "hidden";
+            startDateInput.name = "start_date";
+            startDateInput.value = startDate;
+
+            const endDateInput = document.createElement("input");
+            endDateInput.type = "hidden";
+            endDateInput.name = "end_date";
+            endDateInput.value = endDate;
+
+            form.appendChild(startDateInput);
+            form.appendChild(endDateInput);
+
+            // Append the form to the body and submit it
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        const bookButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+        bookButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const htlNumber = this.getAttribute('data-no-htl');
+                const idNumber = this.getAttribute('data-no-id');
+
+                document.getElementById('book_no_htl').textContent = htlNumber;
+                document.getElementById('book_no_id').value = idNumber; // Mengisi input no_id
             });
         });
     </script>
