@@ -34,6 +34,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CashAdvancedExport;
+use App\Exports\TicketExport;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
 
@@ -3419,45 +3420,37 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Ticket (Admin)';
 
-        // Base query for filtering without user-specific filtering
-        $query = Tiket::orderBy('created_at', 'desc');
-
-        // Get the filter value, default to 'request' if not provided
+        // Cek apakah filter tanggal ada
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $filter = $request->input('filter', 'request');
 
-        // Apply filter to the query based on the selected status
-        if ($filter === 'request') {
-            $statusFilter = ['Pending L1', 'Pending L2', 'Approved'];
-        } elseif ($filter === 'rejected') {
-            $statusFilter = ['Rejected'];
-        }
-
-        // Apply status filter to the query
-        $query->whereIn('approval_status', $statusFilter);
-
-        // Get the filtered tickets
-        $ticketsFilter = $query->get();
-
-        // Fetch latest ticket IDs
-        $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
-            ->groupBy('no_tkt')
-            ->pluck('id');
-
-        // Get transactions with the latest ticket IDs
-        $transactions = Tiket::whereIn('id', $latestTicketIds)
+        // Buat query untuk mendapatkan transaksi terbaru
+        $transactions = Tiket::orderBy('created_at', 'desc')
             ->with('businessTrip')
-            ->whereIn('approval_status', $statusFilter) // Apply the same filter to transactions
-            ->orderBy('created_at', 'desc')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
+            })
+            ->when($filter === 'request', function ($query) {
+                $query->whereIn('approval_status', ['Pending L1', 'Pending L2', 'Approved']);
+            })
+            ->when($filter === 'rejected', function ($query) {
+                $query->whereIn('approval_status', ['Rejected']);
+            })
             ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
 
-        // Get all tickets
+        // Ambil data tiket terbaru
         $tickets = Tiket::with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
 
         // Group tickets by 'no_tkt'
-        $ticket = $tickets->groupBy('no_tkt');
+        $ticketsGroups = $tickets->groupBy('no_tkt');
+
+        $ticket = $ticketsGroups->mapWithKeys(function ($group, $key) {
+            return [$key => $group];
+        });
 
         // Get ticket IDs
         $tiketIds = $tickets->pluck('id');
@@ -3472,10 +3465,9 @@ class ReimburseController extends Controller
 
         // Key ticket approvals by ticket ID
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
-        $ticketsGroups = $tickets->groupBy('no_tkt');
-        $employeeName = Employee::pluck('fullname', 'employee_id');
 
         // Fetch employee data and manager names for transactions
+        $employeeName = Employee::pluck('fullname', 'employee_id');
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
@@ -3512,8 +3504,65 @@ class ReimburseController extends Controller
             'ticketApprovals' => $ticketApprovals,
             'employeeName' => $employeeName,
             'filter' => $filter,
-            'ticketsFilter' => $ticketsFilter,
         ]);
+    }
+
+    public function ticketBookingAdmin(Request $req, $id)
+    {
+        $userId = Auth::id();
+        $employeeId = auth()->user()->employee_id;
+
+        // Ambil tiket berdasarkan ID yang diterima
+        $model = Tiket::where('id', $id)->firstOrFail();
+        $tickets = Tiket::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+
+        // Jika tombol booking ticket ditekan
+        if ($req->has('action_tkt_book')) {
+            // Validasi input dari form
+            $req->validate([
+                'booking_code' => 'required|string|max:255',
+                'booking_price' => 'required|numeric|min:0',
+            ]);
+
+            // Update data tiket dengan kode dan harga tiket
+            $model->booking_code = $req->input('booking_code');
+            $model->tkt_price = $req->input('booking_price');
+            $model->save();
+
+            return redirect()->route('ticket.admin')->with('success', 'Ticket booking updated successfully.');
+        }
+
+        // Jika tombol reject ditekan
+        if ($req->input('action_ca_reject')) {
+            $caApprovals = ca_approval::where('ca_id', $id)->get();
+            if ($caApprovals->isNotEmpty()) {
+                foreach ($caApprovals as $caApproval) {
+                    $caApproval->approval_status = 'Rejected';
+                    $caApproval->approved_at = now();
+                    $caApproval->reject_info = $req->input('reject_info');
+                    $caApproval->save();
+                }
+            }
+
+            $caTransaction = ca_transaction::where('id', $id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_status = 'Rejected';
+                $caTransaction->save();
+            }
+
+            return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be sent to the employee.');
+        }
+
+        return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Approved, Thanks for Approving.');
+    }
+
+
+    public function exportTicketAdminExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return Excel::download(new TicketExport($startDate, $endDate), 'ticket_report.xlsx');
     }
 
     public function ticketDeleteAdmin($key)

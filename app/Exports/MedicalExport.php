@@ -36,9 +36,9 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
         $medicalGroup = [];
 
         $healthCoverageQuery = HealthCoverage::query();
-        if (!empty($this->start_date)) {
-            $healthCoverageQuery->whereBetween('created_at', [$this->start_date, $this->end_date]);
-        }
+        // if (!empty($this->start_date)) {
+        //     $healthCoverageQuery->whereBetween('created_at', [$this->start_date, $this->end_date]);
+        // }
 
         $master_medical = MasterMedical::all();
 
