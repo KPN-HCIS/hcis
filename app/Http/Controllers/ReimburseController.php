@@ -2519,7 +2519,7 @@ class ReimburseController extends Controller
         $transactions = Hotel::whereIn('id', $latestHotelIds)
             ->with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
-            ->whereIn('approval_status', $statusFilter)
+            ->where('approval_status', '!=', 'Draft')
             ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
             ->get();
 
@@ -2561,6 +2561,8 @@ class ReimburseController extends Controller
 
                 $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
                 $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+
+                // dd($managerL1Name, $managerL1Name);
             }
         }
 
@@ -3446,7 +3448,7 @@ class ReimburseController extends Controller
         // Get transactions with the latest ticket IDs
         $transactions = Tiket::whereIn('id', $latestTicketIds)
             ->with('businessTrip')
-            ->whereIn('approval_status', $statusFilter) // Apply the same filter to transactions
+            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions
             ->orderBy('created_at', 'desc')
             ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
