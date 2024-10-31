@@ -26,13 +26,13 @@ class TicketExport implements FromCollection, WithHeadings, WithStyles, WithEven
     public function collection()
     {
         $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee', 'manager']);
-        $htl_employee = $query->orderBy('created_at', 'desc')->get();
+        $tkt_employee = $query->orderBy('created_at', 'desc')->get();
 
         $ticketData = Tiket::where('approval_status', '!=', 'Draft')
             ->whereBetween('tgl_brkt_tkt', [$this->startDate, $this->endDate])
             ->get();
 
-        foreach ($htl_employee as $transaction) {
+        foreach ($tkt_employee as $transaction) {
             $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
             $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
             $transaction->ManagerName = $transaction->manager ? $transaction->manager->fullname : '';
@@ -59,11 +59,11 @@ class TicketExport implements FromCollection, WithHeadings, WithStyles, WithEven
                 'To' => $item->ke_tkt,
                 'Name' => $item->np_tkt,
                 'NoTLP' => $item->tlp_tkt,
-                'TglBrkt1' => $item->tgl_brkt_tkt . ', ' . $item->jam_brkt_tkt,
+                'TglBrkt1' => \Carbon\Carbon::parse($item->tgl_brkt_tkt)->format('d-F-Y') . ', ' . $item->jam_brkt_tkt,
                 'JenisTKT' => $item->type_tkt,
                 'Name2' => $item->type_tkt === 'Round Trip' ? $item->np_tkt : '',
                 'NoTLP2' => $item->type_tkt === 'Round Trip' ? $item->tlp_tkt : '',
-                'TglBrkt2' => $item->type_tkt === 'Round Trip' ? $item->tgl_plg_tkt . ', ' . $item->jam_plg_tkt : '',
+                'TglBrkt2' => $item->type_tkt === 'Round Trip' ? \Carbon\Carbon::parse($item->tgl_plg_tkt)->format('d-F-Y') . ', ' . $item->jam_plg_tkt : '',
                 'ket' => $item->ket_tkt,
             ];
             $index++; // Tambahkan satu ke index setiap iterasi loop
@@ -77,7 +77,7 @@ class TicketExport implements FromCollection, WithHeadings, WithStyles, WithEven
     {
         return [
             // Tambahan judul kolom grup dengan kolom kosong di baris pertama
-            ['No', 'User', 'Atasan', 'Status', 'Dinas/Cuti', 'No SPPD/Ticket', 'PT', 'Booking Code', 'Ticket Price', 'Destination', '', 'Detail Keberangkatan', '', '', 'Ticket Type', 'Detail Kepulangan', '', 'Note'],
+            ['No', 'User', 'Atasan', 'Status', 'Dinas/Cuti', 'No SPPD/Ticket', 'PT', 'Booking Code', 'Ticket Price', 'Destination', '', 'Departure Details', '', '', 'Ticket Type', 'Return Details', '', '', 'Note'],
             // Header kolom data
             ['', '', '', '', '', '', '', '', '', 'From', 'To', 'Name', 'Phone Number', 'Departure Date', '', 'Name', 'Phone Number', 'Departure Date', '']
         ];
