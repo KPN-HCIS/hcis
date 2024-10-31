@@ -1,24 +1,20 @@
-@extends('layouts_.vertical', ['page_title' => 'Ticket (Admin)'])
+@extends('layouts_.vertical', ['page_title' => 'Hotel'])
 
 @section('css')
-    @vite([
-        'node_modules/select2/dist/css/select2.min.css',
-        'node_modules/daterangepicker/daterangepicker.css',
-        'node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.css',
-        'node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
-        'node_modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
-        'node_modules/flatpickr/dist/flatpickr.min.css'
-    ])
     <style>
         th {
             color: white !important;
             text-align: center;
         }
 
+        #dt-length-0 {
+            margin-bottom: 10px;
+        }
+
         .table {
             border-collapse: separate;
             width: 100%;
-            position: relative;
+            /* position: relative; */
             overflow: auto;
         }
 
@@ -29,9 +25,9 @@
             top: 0 !important;
             z-index: 2 !important;
             background-color: #AB2F2B !important;
-            border-bottom: 2px solid #AB2F2B !important;
+            border-bottom: 2px solid #ddd !important;
             padding-right: 6px;
-            box-shadow: inset 2px 0 0 #AB2F2B;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
         .table tbody td {
@@ -47,9 +43,9 @@
             left: 0 !important;
             z-index: 3 !important;
             background-color: #AB2F2B !important;
-            border-right: 2px solid #AB2F2B !important;
+            border-right: 2px solid #ddd !important;
             padding-right: 10px;
-            box-shadow: inset 2px 0 0 #AB2F2B;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
         .table td.sticky-col {
@@ -71,121 +67,112 @@
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="row">
-            <div class="col-12">
-                <div class="page-title-box">
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item">{{ $parentLink }}</li>
-                            <li class="breadcrumb-item active">{{ $link }}</li>
-                        </ol>
-                    </div>
-                    <a href="{{ route('reimbursements') }}" class="page-title"><i class="ri-arrow-left-circle-line"></i></a>
-                    {{-- <button type="button" class="page-title btn btn-warning rounded-pill">Back</button> --}}
+            <div class="col-md-6 mt-3">
+                <div class="page-title-box d-flex align-items-center">
+                    <ol class="breadcrumb mb-0" style="display: flex; align-items: center; padding-left: 0;">
+                        <li class="breadcrumb-item" style="font-size: 25px; display: flex; align-items: center;">
+                            <a href="/reimbursements" style="text-decoration: none;" class="text-primary">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $parentLink }}
+                        </li>
+                        <li class="breadcrumb-item">
+                            {{ $link }}
+                        </li>
+                    </ol>
                 </div>
             </div>
+            <div class="col-md-6 mb-2 mt-3 d-flex justify-content-center justify-content-md-end align-items-center">
+                <a href="{{ '' }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                    <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
+                </a>
+            </div>
         </div>
+        @include('hcis.reimbursements.businessTrip.modal')
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <form action="{{ route('ticket.admin') }}" method="GET">
-                            <div class="input-group">
-                                <label class="col-form-label">Departure Date : </label>
+                        @php
+                            $currentFilter = $filter;
+                        @endphp
 
-                                <input type="date" class="form-control mx-2" id="start_date" name="start_date" placeholder="Start Date" title="Start Date" value="{{ request()->get('start_date') }}">
-                                <label class="col-form-label"> - </label>
-                                <input type="date" class="form-control mx-2" id="end_date" name="end_date" placeholder="End Date" title="End Date" value="{{ request()->get('end_date') }}">
-
-                                <div class="input-group-append mx-2">
-                                    <button class="btn btn-primary" type="submit">Filter</button>
-                                </div>
-                                <div class="input-group-append">
-                                    @if (isset($_GET['start_date']) && $_GET['start_date'] !== '')
-                                        <button style="display: block" class="btn btn-success w-100" type="button" onclick="redirectToExportExcel()">
-                                            <i class="ri-file-excel-2-line"></i> Export
-                                        </button>
-                                    @endif
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card shadow mb-4">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="card-title">{{ $link }}</h3>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h3>Hotel Data</h3>
                             <div class="input-group" style="width: 30%;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text bg-white w-border-dark-subtle"><i class="ri-search-line"></i></span>
+                                    <span class="input-group-text bg-white border-dark-subtle"><i
+                                            class="ri-search-line"></i></span>
                                 </div>
-                                <input type="text" name="customsearch" id="customsearch" class="form-control w-border-dark-subtle border-left-0" placeholder="Search.." aria-label="search" aria-describedby="search" >
-                                {{-- &nbsp;&nbsp;&nbsp; --}}
+                                <input type="text" name="customsearch" id="customsearch"
+                                    class="form-control w-  border-dark-subtle border-left-0" placeholder="Search.."
+                                    aria-label="search" aria-describedby="search">
                             </div>
                         </div>
+                        {{-- <form method="GET" action="{{ route('hotel.admin') }}">
+                            <button type="submit" name="filter" value="request"
+                                class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                Request
+                            </button>
+                            <button type="submit" name="filter" value="rejected"
+                                class="btn {{ $filter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
+                                Rejected
+                            </button>
+                        </form> --}}
                         <div class="table-responsive">
-                            <table class="table table-sm table-hover dt-responsive nowrap mt-2" id="defaultTable" width="100%"
+                            <table class="table table-sm table-hover dt-responsive nowrap" id="defaultTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th>No</th>
-                                        <th>No. SPPD</th>
-                                        <th>No. Ticket</th>
-                                        <th>Requestor Name</th>
-                                        <th>Total Tickets</th>
-                                        <th>Purposes</th>
-                                        <th>From/To</th>
+                                        <th>No SPPD</th>
+                                        <th style="text-align: left">No Hotel</th>
+                                        <th>Requestor</th>
+                                        <th>Hotel Name</th>
+                                        <th>Location</th>
+                                        <th style="text-align: left">Total Hotel</th>
                                         <th>Details</th>
                                         <th>Status</th>
-                                        <th class="text-center">Actions</th>
+                                        {{-- <th>Start Date</th>
+                                  <th>End Date</th> --}}
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($transactions as $transaction)
                                         <tr>
                                             <td style="text-align: center">{{ $loop->index + 1 }}</td>
-                                            <td>{{ $transaction->no_sppd }}</td>
-                                            <td>{{ $transaction->no_tkt }}</td>
+                                            <td style="text-align: left">{{ $transaction->no_sppd }}</td>
+                                            <td style="text-align: left">{{ $transaction->no_htl }}</td>
                                             <td>{{ $transaction->employee->fullname }}</td>
+                                            <td>{{ $transaction->nama_htl }}</td>
+                                            <td>{{ $transaction->lokasi_htl }}</td>
                                             <td style="text-align: left">
-                                                {{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
-                                            <td>{{ $transaction->jns_dinas_tkt }}</td>
-                                            <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
-                                            <td class="text-info">
+                                                {{ $hotelCounts[$transaction->no_htl]['total'] ?? 1 }} Hotels</td>
+                                            <td style="text-align: left">
                                                 <a class="text-info btn-detail" data-toggle="modal"
                                                     data-target="#detailModal" style="cursor: pointer"
-                                                    data-tiket="{{ json_encode(
-                                                        $ticket[$transaction->no_tkt]->map(function ($ticket) {
+                                                    data-hotel="{{ json_encode(
+                                                        $hotel[$transaction->no_htl]->map(function ($hotel) {
                                                             return [
-                                                                // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
-                                                                'No. SPPD' => $ticket->no_sppd,
-                                                                'No. Ticket' => $ticket->no_tkt,
-                                                                'Passengers Name' => $ticket->np_tkt,
-                                                                'Unit' => $ticket->unit,
-                                                                'Gender' => $ticket->jk_tkt,
-                                                                'NIK' => $ticket->noktp_tkt,
-                                                                'Phone No.' => $ticket->tlp_tkt,
-                                                                'Transport Type.' => $ticket->jenis_tkt,
-                                                                'From' => $ticket->dari_tkt,
-                                                                'To' => $ticket->ke_tkt,
-                                                                'Information' => $ticket->ket_tkt ?? 'No Data',
-                                                                'Purposes' => $ticket->jns_dinas_tkt,
-                                                                'Ticket Type' => $ticket->type_tkt,
-                                                                'Departure Date' => date('d-M-Y', strtotime($ticket->tgl_brkt_tkt)),
-                                                                'Time' => !empty($ticket->jam_brkt_tkt) ? date('H:i', strtotime($ticket->jam_brkt_tkt)) : 'No Data',
-                                                                'Return Date' => isset($ticket->tgl_plg_tkt) ? date('d-M-Y', strtotime($ticket->tgl_plg_tkt)) : 'No Data',
-                                                                'Return Time' => !empty($ticket->jam_plg_tkt) ? date('H:i', strtotime($ticket->jam_plg_tkt)) : 'No Data',
+                                                                'No. Hotel' => $hotel->no_htl,
+                                                                'No. SPPD' => $hotel->no_sppd,
+                                                                'Unit' => $hotel->unit,
+                                                                'Hotel Name' => $hotel->nama_htl,
+                                                                'Location' => $hotel->lokasi_htl,
+                                                                'Room' => $hotel->jmlkmr_htl,
+                                                                'Bed' => $hotel->bed_htl,
+                                                                'Check In' => date('d-M-Y', strtotime($hotel->tgl_masuk_htl)),
+                                                                'Check Out' => date('d-M-Y', strtotime($hotel->tgl_keluar_htl)),
+                                                                'Total Days' => $hotel->total_hari,
                                                             ];
                                                         }),
                                                     ) }}">
-                                                    <u>Details</u>
-                                                </a>
+                                                    <u>Details</u></a>
                                             </td>
-
                                             <td style="align-content: center">
                                                 <span
                                                     class="badge rounded-pill bg-{{ $transaction->approval_status == 'Approved' ||
@@ -209,36 +196,34 @@
                                                                     : (in_array($transaction->approval_status, ['Doc Accepted'])
                                                                         ? 'info'
                                                                         : 'secondary')))) }}"
-                                                    style="font-size: 12px; padding: 0.5rem 1rem; cursor: {{ ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') && isset($ticketApprovals[$transaction->id]) ? 'pointer' : 'default' }};"
+                                                    style="font-size: 12px; padding: 0.5rem 1rem; cursor: {{ ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') && isset($hotelApprovals[$transaction->id]) ? 'pointer' : 'default' }};"
                                                     @if (
                                                         ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') &&
-                                                            isset($ticketApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
+                                                            isset($hotelApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
                                                     title="Click to see rejection reason" @endif
                                                     @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Name ?? 'Unknown' }}"
                                                     @elseif ($transaction->approval_status == 'Pending L2')
                                                     title="L2 Manager: {{ $managerL2Name ?? 'Unknown' }}" @endif>
                                                     {{ $transaction->approval_status == 'Approved' ? 'Approved' : $transaction->approval_status }}
                                                 </span>
+
                                             </td>
+                                            {{-- <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
+                                <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }} --}}
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-bs-toggle="modal" data-bs-target="#bookingModal"
-                                                        data-no-id="{{ $transaction->id }}"
-                                                        data-no-tkt="{{ $transaction->no_tkt }}">
-                                                    <i class="bi bi-ticket-perforated"></i>
-                                                </button>
-                                                <a href="{{ route('ticket.export', ['id' => $transaction->id]) }}"
+                                                <a href="{{ route('hotel.export', ['id' => $transaction->id]) }}"
                                                     class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
                                                     <i class="bi bi-download"></i>
                                                 </a>
-                                                <form
-                                                    action="{{ route('ticket.delete.admin', encrypt($transaction->id)) }}"
+                                                <form action="{{ route('hotel.delete.admin', encrypt($transaction->id)) }}"
                                                     method="POST" style="display:inline;"
-                                                    id="deleteForm_{{ $transaction->no_tkt }}">
+                                                    id="deleteForm_{{ $transaction->no_htl }}">
                                                     @csrf
-                                                    <input type="hidden" id="no_sppd_{{ $transaction->no_tkt }}"
-                                                        value="{{ $transaction->no_tkt }}">
+                                                    {{-- Hidden input to store `no_htl` --}}
+                                                    <input type="hidden" id="no_sppd_{{ $transaction->no_htl }}"
+                                                        value="{{ $transaction->no_htl }}">
                                                     <button class="btn btn-sm rounded-pill btn-outline-danger delete-button"
-                                                        title="Delete" data-id="{{ $transaction->no_tkt }}">
+                                                        title="Delete" data-id="{{ $transaction->no_htl }}">
                                                         <i class="ri-delete-bin-line"></i>
                                                     </button>
                                                 </form>
@@ -254,25 +239,75 @@
         </div>
     </div>
 
-    @include('hcis.reimbursements.ticket.navigation.modalTicket')
+    <!-- Rejection Reason Modal -->
+    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-white" id="rejectReasonModalLabel">Rejection Information</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Rejected by</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="rejectedBy"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <strong>Rejection reason</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="rejectionReason"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <strong>Rejection date</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span id="rejectionDate"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary rounded-pill"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h4 class="modal-title text-white" id="detailModalLabel">Detail Information</h4>
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="detailTypeHeader" class="mb-3"></h6>
+                    <div id="detailContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary rounded-pill"
+                        data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
-@endsection
-@section('script')
-    {{-- @vite(['resources/js/pages/demo.form-advanced.js']) --}}
-
-    <!-- Include jQuery -->
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
-
-    <!-- Include Bootstrap Date Range Picker -->
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
-    <script src="{{ asset('/js/cashAdvanced/adminPage.js') }}"></script>
-@endsection
-@push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {
@@ -303,10 +338,10 @@
             }
 
             window.showRejectInfo = function(transactionId) {
-                var ticketApprovals = {!! json_encode($ticketApprovals) !!};
+                var hotelApprovals = {!! json_encode($hotelApprovals) !!};
                 var employeeName = {!! json_encode($employeeName) !!}; // Add this line
 
-                var approval = ticketApprovals[transactionId];
+                var approval = hotelApprovals[transactionId];
                 if (approval) {
                     var rejectedBy = employeeName[approval.employee_id] || 'N/A'; // Retrieve fullname
                     document.getElementById('rejectedBy').textContent = ': ' + rejectedBy;
@@ -328,18 +363,26 @@
         });
 
         $(document).ready(function() {
+            var table = $('#yourTableId').DataTable({
+                "pageLength": 10 // Set default page length
+            });
+            // Set to 10 entries per page
+            $('#dt-length-0').val(10);
+
+            // Trigger the change event to apply the selected value
+            $('#dt-length-0').trigger('change');
+        });
+
+        $(document).ready(function() {
             $('.btn-detail').click(function() {
-                var tiket = $(this).data('tiket');
+                var hotel = $(this).data('hotel');
 
                 function createTableHtml(data, title) {
                     var tableHtml = '<h5>' + title + '</h5>';
-                    tableHtml += `<div class="table-responsive">
-                                    <table class="table table-sm scheduleTable">
-                                        <thead>
-                                            <tr>`;
+                    tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
                     var isArray = Array.isArray(data) && data.length > 0;
 
-                    // Create headers
+                    // Assuming all objects in the data array have the same keys, use the first object to create headers
                     if (isArray) {
                         for (var key in data[0]) {
                             if (data[0].hasOwnProperty(key)) {
@@ -347,6 +390,7 @@
                             }
                         }
                     } else if (typeof data === 'object') {
+                        // If data is a single object, create headers from its keys
                         for (var key in data) {
                             if (data.hasOwnProperty(key)) {
                                 tableHtml += '<th>' + key + '</th>';
@@ -356,7 +400,7 @@
 
                     tableHtml += '</tr></thead><tbody>';
 
-                    // Create rows
+                    // Loop through each item in the array and create a row for each
                     if (isArray) {
                         data.forEach(function(row) {
                             tableHtml += '<tr>';
@@ -368,6 +412,7 @@
                             tableHtml += '</tr>';
                         });
                     } else if (typeof data === 'object') {
+                        // If data is a single object, create a single row
                         tableHtml += '<tr>';
                         for (var key in data) {
                             if (data.hasOwnProperty(key)) {
@@ -377,28 +422,9 @@
                         tableHtml += '</tr>';
                     }
 
-                    tableHtml += '</tbody></table></div>';
+                    tableHtml += '</tbody></table>';
                     return tableHtml;
                 }
-
-                // Saat menggunakan fungsi createTableHtml dan menginisialisasi DataTable
-                $(document).ready(function() {
-                    var data = [ /* array atau objek data */ ];
-                    var title = "Table Title";
-
-                    // 1. Generate HTML tabel
-                    var tableHtml = createTableHtml(data, title);
-
-                    // 2. Masukkan tabel ke dalam DOM
-                    $('#tableContainer').html(tableHtml);
-
-                    // 3. Inisialisasi DataTable setelah tabel ada di DOM
-                    $('.scheduleTable').DataTable({
-                        paging: false,
-                        searching: false,
-                    });
-                });
-
 
                 // $('#detailTypeHeader').text('Detail Information');
                 $('#detailContent').empty();
@@ -406,9 +432,9 @@
                 try {
                     var content = '';
 
-                    if (tiket && tiket !== 'undefined') {
-                        var tiketData = typeof tiket === 'string' ? JSON.parse(tiket) : tiket;
-                        content += createTableHtml(tiketData, 'Ticket Detail');
+                    if (hotel && hotel !== 'undefined') {
+                        var hotelData = typeof hotel === 'string' ? JSON.parse(hotel) : hotel;
+                        content += createTableHtml(hotelData, 'Hotel Detail');
                     }
 
                     if (content !== '') {
@@ -431,56 +457,5 @@
                 $('.modal-backdrop').remove();
             });
         });
-
-        $(document).ready(function() {
-            var table = $('#yourTableId').DataTable({
-                "pageLength": 10 // Set default page length
-            });
-            // Set to 10 entries per page
-            $('#dt-length-0').val(10);
-
-            // Trigger the change event to apply the selected value
-            $('#dt-length-0').trigger('change');
-        });
-
-        function redirectToExportExcel() {
-            const route = "{{ route('ticket.excel') }}";
-
-            const startDate = document.getElementById("start_date").value;
-            const endDate = document.getElementById("end_date").value;
-
-            // Create a form element
-            const form = document.createElement("form");
-            form.method = "GET";
-            form.action = route;
-
-            const startDateInput = document.createElement("input");
-            startDateInput.type = "hidden";
-            startDateInput.name = "start_date";
-            startDateInput.value = startDate;
-
-            const endDateInput = document.createElement("input");
-            endDateInput.type = "hidden";
-            endDateInput.name = "end_date";
-            endDateInput.value = endDate;
-
-            form.appendChild(startDateInput);
-            form.appendChild(endDateInput);
-
-            // Append the form to the body and submit it
-            document.body.appendChild(form);
-            form.submit();
-        }
-
-        const bookButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
-        bookButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const tktNumber = this.getAttribute('data-no-tkt');
-                const idNumber = this.getAttribute('data-no-id');
-
-                document.getElementById('book_no_tkt').textContent = tktNumber;
-                document.getElementById('book_no_id').value = idNumber; // Mengisi input no_id
-            });
-        });
     </script>
-@endpush
+@endsection

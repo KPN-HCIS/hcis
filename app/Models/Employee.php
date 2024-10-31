@@ -178,4 +178,8 @@ class Employee extends Model
     {
         return $this->belongsTo(Employee::class, 'sett_id', 'employee_id');
     }
+    public function manager()
+    {
+        return $this->belongsTo(Employee::class, 'fullname', 'manager_l1_id');
+    }
 }

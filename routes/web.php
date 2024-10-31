@@ -193,6 +193,8 @@ Route::middleware('auth')->group(function () {
     //Hotel Admin
     Route::middleware(['permission:adminhtl'])->group(function () {
         Route::get('/hotel/admin', [ReimburseController::class, 'hotelAdmin'])->name('hotel.admin');
+        Route::post('/hotel/admin/booking/{id}', [ReimburseController::class, 'hotelBookingAdmin'])->name('hotel.admin-booking');
+        Route::get('/hotel/excel', [ReimburseController::class, 'exportHotelAdminExcel'])->name('hotel.excel');
         Route::get('/hotel/report', [ReimburseController::class, 'hotelAdminReport'])->name('hotel.report');
         Route::post('/hotel/admin/delete/{id}', [ReimburseController::class, 'hotelDeleteAdmin'])->name('hotel.delete.admin');
     });
@@ -214,6 +216,8 @@ Route::middleware('auth')->group(function () {
     //Ticket Admin
     Route::middleware(['permission:admintkt'])->group(function () {
         Route::get('/ticket/admin', [ReimburseController::class, 'ticketAdmin'])->name('ticket.admin');
+        Route::post('/ticket/admin/booking/{id}', [ReimburseController::class, 'ticketBookingAdmin'])->name('ticket.admin-booking');
+        Route::get('/ticket/excel', [ReimburseController::class, 'exportTicketAdminExcel'])->name('ticket.excel');
         Route::get('/ticket/report', [ReimburseController::class, 'ticketAdminReport'])->name('ticket.report');
         Route::post('/ticket/admin/delete/{id}', [ReimburseController::class, 'ticketDeleteAdmin'])->name('ticket.delete.admin');
     });

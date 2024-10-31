@@ -34,6 +34,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CashAdvancedExport;
+use App\Exports\TicketExport;
+use App\Exports\HotelExport;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
 
@@ -2494,32 +2496,18 @@ class ReimburseController extends Controller
         // Create a base query without user-specific filtering
         $query = Hotel::orderBy('created_at', 'desc');
 
-        // Get the filter value, default to 'request' if not provided
-        $filter = $request->input('filter', 'request');
-
-        // Apply filter to the query based on the selected status
-        if ($filter === 'request') {
-            $statusFilter = ['Pending L1', 'Pending L2', 'Approved'];
-        } elseif ($filter === 'rejected') {
-            $statusFilter = ['Rejected'];
-        }
-
-        // Apply the status filter to the query
-        $query->whereIn('approval_status', $statusFilter);
-
-        // Get the filtered hotel records
-        $hotelFilter = $query->get();
-
-        // Fetch latest hotel entries grouped by 'no_htl'
-        $latestHotelIds = Hotel::selectRaw('MAX(id) as id')
-            ->groupBy('no_htl')
-            ->pluck('id');
+        // Cek apakah filter tanggal ada
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        // $filter = $request->input('filter', 'request');
 
         // Fetch the hotel transactions using the latest ids
-        $transactions = Hotel::whereIn('id', $latestHotelIds)
-            ->with('employee', 'hotelApproval')
+        $transactions = Hotel::with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
             ->where('approval_status', '!=', 'Draft')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereRaw("DATE(tgl_masuk_htl) BETWEEN ? AND ?", [$startDate, $endDate]);
+            })
             ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
             ->get();
 
@@ -2532,17 +2520,6 @@ class ReimburseController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('no_htl');
-
-        $hotelIds = $hotels->pluck('id');
-
-        // Fetch hotel approval details using the hotel IDs
-        $hotelApprovals = HotelApproval::whereIn('htl_id', $hotelIds)
-            ->where(function ($query) {
-                $query->where('approval_status', 'Rejected')
-                    ->orWhere('approval_status', 'Declaration Rejected');
-            })
-            ->get()
-            ->keyBy('htl_id');
 
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
@@ -2583,10 +2560,44 @@ class ReimburseController extends Controller
             'hotelGroups' => $hotelGroups,
             'managerL1Name' => $managerL1Name,
             'managerL2Name' => $managerL2Name,
-            'hotelApprovals' => $hotelApprovals,
+            // 'hotelApprovals' => $hotelApprovals,
             'employeeName' => $employeeName,
-            'filter' => $filter,
+            // 'filter' => $filter,
         ]);
+    }
+
+    public function hotelBookingAdmin(Request $req, $id)
+    {
+        // dd($id);
+        $userId = Auth::id();
+        $employeeId = auth()->user()->employee_id;
+        // Ambil tiket berdasarkan ID yang diterima
+        $model = Hotel::where('id', $id)->firstOrFail();
+        $hotels = Hotel::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+
+        // Jika tombol booking hotel ditekan
+        if ($req->has('action_htl_book')) {
+            // Validasi input dari form
+            $req->validate([
+                'booking_code' => 'required|string|max:255',
+                'booking_price' => 'required|numeric|min:0',
+            ]);
+
+            // Update data hotel dengan kode dan harga hotel
+            $model->booking_code = $req->input('booking_code');
+            $model->booking_price = $req->input('booking_price');
+            $model->save();
+
+            return redirect()->route('hotel.admin')->with('success', 'hotel booking updated successfully.');
+        }
+    }
+
+    public function exportHotelAdminExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return Excel::download(new HotelExport($startDate, $endDate), 'hotel_report.xlsx');
     }
 
     public function hotelDeleteAdmin($key)
@@ -3421,45 +3432,32 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Ticket (Admin)';
 
-        // Base query for filtering without user-specific filtering
-        $query = Tiket::orderBy('created_at', 'desc');
-
-        // Get the filter value, default to 'request' if not provided
+        // Cek apakah filter tanggal ada
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $filter = $request->input('filter', 'request');
 
-        // Apply filter to the query based on the selected status
-        if ($filter === 'request') {
-            $statusFilter = ['Pending L1', 'Pending L2', 'Approved'];
-        } elseif ($filter === 'rejected') {
-            $statusFilter = ['Rejected'];
-        }
-
-        // Apply status filter to the query
-        $query->whereIn('approval_status', $statusFilter);
-
-        // Get the filtered tickets
-        $ticketsFilter = $query->get();
-
-        // Fetch latest ticket IDs
-        $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
-            ->groupBy('no_tkt')
-            ->pluck('id');
-
-        // Get transactions with the latest ticket IDs
-        $transactions = Tiket::whereIn('id', $latestTicketIds)
+        // Buat query untuk mendapatkan transaksi terbaru
+        $transactions = Tiket::orderBy('created_at', 'desc')
+            ->where('approval_status', '!=', 'Draft')
             ->with('businessTrip')
-            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions
-            ->orderBy('created_at', 'desc')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
+            })
             ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
 
-        // Get all tickets
+        // Ambil data tiket terbaru
         $tickets = Tiket::with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
 
         // Group tickets by 'no_tkt'
-        $ticket = $tickets->groupBy('no_tkt');
+        $ticketsGroups = $tickets->groupBy('no_tkt');
+
+        $ticket = $ticketsGroups->mapWithKeys(function ($group, $key) {
+            return [$key => $group];
+        });
 
         // Get ticket IDs
         $tiketIds = $tickets->pluck('id');
@@ -3474,10 +3472,9 @@ class ReimburseController extends Controller
 
         // Key ticket approvals by ticket ID
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
-        $ticketsGroups = $tickets->groupBy('no_tkt');
-        $employeeName = Employee::pluck('fullname', 'employee_id');
 
         // Fetch employee data and manager names for transactions
+        $employeeName = Employee::pluck('fullname', 'employee_id');
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
@@ -3514,8 +3511,42 @@ class ReimburseController extends Controller
             'ticketApprovals' => $ticketApprovals,
             'employeeName' => $employeeName,
             'filter' => $filter,
-            'ticketsFilter' => $ticketsFilter,
         ]);
+    }
+
+    public function ticketBookingAdmin(Request $req, $id)
+    {
+        $userId = Auth::id();
+        $employeeId = auth()->user()->employee_id;
+
+        // Ambil tiket berdasarkan ID yang diterima
+        $model = Tiket::where('id', $id)->firstOrFail();
+        $tickets = Tiket::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+
+        // Jika tombol booking ticket ditekan
+        if ($req->has('action_tkt_book')) {
+            // Validasi input dari form
+            $req->validate([
+                'booking_code' => 'required|string|max:255',
+                'booking_price' => 'required|numeric|min:0',
+            ]);
+
+            // Update data tiket dengan kode dan harga tiket
+            $model->booking_code = $req->input('booking_code');
+            $model->tkt_price = $req->input('booking_price');
+            $model->save();
+
+            return redirect()->route('ticket.admin')->with('success', 'Ticket booking updated successfully.');
+        }
+    }
+
+
+    public function exportTicketAdminExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return Excel::download(new TicketExport($startDate, $endDate), 'ticket_report.xlsx');
     }
 
     public function ticketDeleteAdmin($key)
