@@ -2493,57 +2493,77 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Hotel (Admin)';
 
-        // Create a base query without user-specific filtering
-        $query = Hotel::orderBy('created_at', 'desc');
-
-        // Cek apakah filter tanggal ada
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        // $filter = $request->input('filter', 'request');
 
-        // Fetch the hotel transactions using the latest ids
-        $transactions = Hotel::with('employee', 'hotelApproval')
-            ->orderBy('created_at', 'desc')
+        $permissionLocations = $this->permissionLocations;
+        $permissionCompanies = $this->permissionCompanies;
+        $permissionGroupCompanies = $this->permissionGroupCompanies;
+
+        $transactions = Hotel::orderBy('created_at', 'desc')
             ->where('approval_status', '!=', 'Draft')
+            ->with('businessTrip')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                 $query->whereRaw("DATE(tgl_masuk_htl) BETWEEN ? AND ?", [$startDate, $endDate]);
-            })
-            ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
+            });
+
+        // Apply permission filters
+        if (!empty($permissionLocations)) {
+            $transactions->whereHas('employee', function ($query) use ($permissionLocations) {
+                $query->whereIn('work_area_code', $permissionLocations);
+            });
+        }
+
+        if (!empty($permissionCompanies)) {
+            $transactions->whereIn('contribution_level_code', $permissionCompanies);
+        }
+
+        if (!empty($permissionGroupCompanies)) {
+            $transactions->whereHas('employee', function ($query) use ($permissionGroupCompanies) {
+                $query->whereIn('group_company', $permissionGroupCompanies);
+            });
+        }
+
+        $transactions = $transactions->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
             ->get();
 
-        // Fetch all hotel transactions, removing the user ID filter
-        $hotels = Hotel::with('employee', 'hotelApproval')
+        // Fetch all hotel transactions of the user
+        $hotels = Hotel::with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
-
-        $hotel = Hotel::with('employee', 'hotelApproval')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy('no_htl');
 
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
 
-        foreach ($transactions as $transaction) {
-            // Fetch the employee for the current transaction
-            $employee = Employee::find($transaction->user_id);
+        $hotel = $hotelGroups->mapWithKeys(function ($group, $key) {
+            return [$key => $group];
+        });
 
-            // If the employee exists, fetch their manager names
-            if ($employee) {
-                $managerL1Id = $employee->manager_l1_id;
-                $managerL2Id = $employee->manager_l2_id;
+        $hotelIds = $hotels->pluck('id');
 
-                $managerL1 = Employee::where('employee_id', $managerL1Id)->first();
-                $managerL2 = Employee::where('employee_id', $managerL2Id)->first();
+        // Fetch hotel approval details using the hotel IDs
+        $hotelApprovals = HotelApproval::whereIn('htl_id', $hotelIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
+        Log::info('Hotel Approvals:', $hotelApprovals->toArray());
 
-                $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
-                $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+        $hotelApprovals = $hotelApprovals->keyBy('htl_id');
 
-                // dd($managerL1Name, $managerL1Name);
-            }
-        }
-
+        // Fetch employee data
+        $employeeIds = $hotels->pluck('user_id')->unique();
+        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
         $employeeName = Employee::pluck('fullname', 'employee_id');
+
+        // Fetch manager IDs from the employees data
+        $managerL1Ids = $employees->pluck('manager_l1_id')->unique();
+        $managerL2Ids = $employees->pluck('manager_l2_id')->unique();
+
+        // Fetch manager names
+        $managerL1Name = Employee::whereIn('employee_id', $managerL1Ids)->pluck('fullname');
+        $managerL2Name = Employee::whereIn('employee_id', $managerL2Ids)->pluck('fullname');
 
         // Count grouped hotel entries
         $hotelCounts = $hotels->groupBy('no_htl')->mapWithKeys(function ($group, $key) {
@@ -2560,11 +2580,11 @@ class ReimburseController extends Controller
             'hotelGroups' => $hotelGroups,
             'managerL1Name' => $managerL1Name,
             'managerL2Name' => $managerL2Name,
-            // 'hotelApprovals' => $hotelApprovals,
+            'hotelApprovals' => $hotelApprovals,
             'employeeName' => $employeeName,
-            // 'filter' => $filter,
         ]);
     }
+
 
     public function hotelBookingAdmin(Request $req, $id)
     {
@@ -2591,7 +2611,6 @@ class ReimburseController extends Controller
             return redirect()->route('hotel.admin')->with('success', 'hotel booking updated successfully.');
         }
     }
-
     public function exportHotelAdminExcel(Request $request)
     {
         $startDate = $request->input('start_date');
@@ -3437,14 +3456,38 @@ class ReimburseController extends Controller
         $endDate = $request->input('end_date');
         $filter = $request->input('filter', 'request');
 
+        // Get permissions
+        $permissionLocations = $this->permissionLocations;
+        $permissionCompanies = $this->permissionCompanies;
+        $permissionGroupCompanies = $this->permissionGroupCompanies;
+
         // Buat query untuk mendapatkan transaksi terbaru
         $transactions = Tiket::orderBy('created_at', 'desc')
             ->where('approval_status', '!=', 'Draft')
             ->with('businessTrip')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                 $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
-            })
-            ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
+            });
+
+        // Apply permission filters
+        if (!empty($permissionLocations)) {
+            $transactions->whereHas('employee', function ($query) use ($permissionLocations) {
+                $query->whereIn('work_area_code', $permissionLocations);
+            });
+        }
+
+        if (!empty($permissionCompanies)) {
+            $transactions->whereIn('contribution_level_code', $permissionCompanies);
+        }
+
+        if (!empty($permissionGroupCompanies)) {
+            $transactions->whereHas('employee', function ($query) use ($permissionGroupCompanies) {
+                $query->whereIn('group_company', $permissionGroupCompanies);
+            });
+        }
+
+        // Get filtered transactions
+        $transactions = $transactions->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
 
         // Ambil data tiket terbaru
@@ -3513,7 +3556,6 @@ class ReimburseController extends Controller
             'filter' => $filter,
         ]);
     }
-
     public function ticketBookingAdmin(Request $req, $id)
     {
         $userId = Auth::id();
