@@ -2551,19 +2551,27 @@ class ReimburseController extends Controller
         Log::info('Hotel Approvals:', $hotelApprovals->toArray());
 
         $hotelApprovals = $hotelApprovals->keyBy('htl_id');
+        $managerL1Name = 'Unknown';
+        $managerL2Name = 'Unknown';
 
-        // Fetch employee data
-        $employeeIds = $hotels->pluck('user_id')->unique();
-        $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
+        // Fetch employee data and manager names for transactions
         $employeeName = Employee::pluck('fullname', 'employee_id');
+        foreach ($transactions as $transaction) {
+            // Fetch the employee for the current transaction
+            $employee = Employee::find($transaction->user_id);
 
-        // Fetch manager IDs from the employees data
-        $managerL1Ids = $employees->pluck('manager_l1_id')->unique();
-        $managerL2Ids = $employees->pluck('manager_l2_id')->unique();
+            // If the employee exists, fetch their manager names
+            if ($employee) {
+                $managerL1Id = $employee->manager_l1_id;
+                $managerL2Id = $employee->manager_l2_id;
 
-        // Fetch manager names
-        $managerL1Name = Employee::whereIn('employee_id', $managerL1Ids)->pluck('fullname');
-        $managerL2Name = Employee::whereIn('employee_id', $managerL2Ids)->pluck('fullname');
+                $managerL1 = Employee::where('employee_id', $managerL1Id)->first();
+                $managerL2 = Employee::where('employee_id', $managerL2Id)->first();
+
+                $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
+                $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+            }
+        }
 
         // Count grouped hotel entries
         $hotelCounts = $hotels->groupBy('no_htl')->mapWithKeys(function ($group, $key) {
@@ -3515,6 +3523,8 @@ class ReimburseController extends Controller
 
         // Key ticket approvals by ticket ID
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
+        $managerL1Name = 'Unknown';
+        $managerL2Name = 'Unknown';
 
         // Fetch employee data and manager names for transactions
         $employeeName = Employee::pluck('fullname', 'employee_id');
