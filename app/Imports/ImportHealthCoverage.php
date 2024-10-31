@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\HealthCoverage;
+use App\Models\HealthPlan;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -34,7 +35,7 @@ class ImportHealthCoverage implements ToModel
             $formattedDate = $date ? $date->format('Y-m-d') : null;
         }
 
-        return new HealthCoverage([
+        $healthCoverage = new HealthCoverage([
             'usage_id' => Str::uuid(),
             'employee_id' => $row[1],
             'no_medic' => $row[2],
@@ -50,7 +51,39 @@ class ImportHealthCoverage implements ToModel
             'balance_uncoverage' => $row[12],
             'balance_verif' => $row[13],
             'status' => $row[14],
+            'submission_type' => 'F',
             'created_by' => $userId,
         ]);
+        // dd($healthCoverage);
+
+        // Perform your calculations or validation here
+        $this->performCalculations($healthCoverage);
+
+        return $healthCoverage;
+    }
+
+    private function performCalculations(HealthCoverage $healthCoverage)
+    {
+        $healthPlan = HealthPlan::where('employee_id', $healthCoverage->employee_id)
+            ->where('medical_type', $healthCoverage->medical_type)
+            ->first();
+
+        if ($healthPlan) {
+            $healthPlan->balance -= $healthCoverage->balance;
+            $healthCoverage->balance_uncoverage = max($healthCoverage->balance_uncoverage, abs($healthPlan->balance));
+            $healthPlan->save();
+        }
+
+        // Perform your other calculations or validation here
+        $this->calculateBalance($healthCoverage);
+    }
+
+    private function calculateBalance(HealthCoverage $healthCoverage)
+    {
+        // Your balance calculation logic here
+        // For example:
+        // $healthCoverage->balance = $healthCoverage->balance_uncoverage - $healthCoverage->balance_verif;
+        // dd($healthCoverage);
+        $healthCoverage->save();
     }
 }

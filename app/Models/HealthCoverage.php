@@ -39,6 +39,7 @@ class HealthCoverage extends Model
         'created_by',
         'status',
         'medical_proof',
+        'submission_type',
         'created_by',
     ];
 

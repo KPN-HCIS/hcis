@@ -1279,7 +1279,7 @@ class MedicalController extends Controller
         $userId = Auth::id();
         // Validasi file yang diunggah
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
+            'file' => 'required|mimes:xlsx,xls',
         ]);
 
         // Mengimpor data menggunakan Maatwebsite Excel
@@ -1288,7 +1288,7 @@ class MedicalController extends Controller
             $request->file('file')
         );
 
-        return redirect()->route('medical.admin')->with('success', 'Transaction successfully added From Excell.');
+        return redirect()->route('medical.report')->with('success', 'Transaction successfully added From Excell.');
     }
 
     public function exportAdminExcel(Request $request)
