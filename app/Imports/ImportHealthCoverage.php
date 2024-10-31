@@ -8,31 +8,30 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
+use App\Exceptions\ImportDataInvalidException;
 
 class ImportHealthCoverage implements ToModel
 {
-    /**
-     * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
     public function model(array $row)
     {
         $userId = Auth::id();
 
-        if (!is_numeric($row[1])) {
-            // Jika tidak valid, skip row ini
-            return null;
+        // Check if required fields are numeric
+        if (!is_numeric($row[1]) || !is_numeric($row[11]) || !is_numeric($row[12]) || !is_numeric($row[13])) {
+            throw new ImportDataInvalidException("Invalid data format detected. Import canceled.");
         }
 
+        // Validate and format date
         if (is_numeric($row[7])) {
             $excelDate = intval($row[7]);
             $dateTime = Date::excelToDateTimeObject($excelDate);
             $formattedDate = $dateTime->format('Y-m-d');
         } else {
-            // Jika text biasa
             $date = \DateTime::createFromFormat('d/m/Y', $row[7]);
-            $formattedDate = $date ? $date->format('Y-m-d') : null;
+            if (!$date) {
+                throw new ImportDataInvalidException("Invalid date format detected. Import canceled.");
+            }
+            $formattedDate = $date->format('Y-m-d');
         }
 
         $healthCoverage = new HealthCoverage([
