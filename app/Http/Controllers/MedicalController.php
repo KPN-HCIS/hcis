@@ -1277,19 +1277,29 @@ class MedicalController extends Controller
     public function importAdminExcel(Request $request)
     {
         $userId = Auth::id();
-        // Validasi file yang diunggah
+
+        // Validate the uploaded file
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
 
-        // Mengimpor data menggunakan Maatwebsite Excel
-        Excel::import(
-            new ImportHealthCoverage,
-            $request->file('file')
-        );
+        try {
+            // Attempt to import data
+            Excel::import(
+                new ImportHealthCoverage,
+                $request->file('file')
+            );
 
-        return redirect()->route('medical.admin')->with('success', 'Transaction successfully added From Excell.');
+            return redirect()->route('medical.admin')->with('success', 'Transaction successfully added from Excel.');
+        } catch (\App\Exceptions\ImportDataInvalidException $e) {
+            // Catch custom exception and redirect back with error message
+            return redirect()->route('medical.admin')->withErrors(['import_error' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            // Catch any other unexpected exceptions and redirect with a generic error message
+            return redirect()->route('medical.admin')->withErrors(['import_error' => 'An error occurred during import. Please check the file format.']);
+        }
     }
+
 
     public function exportAdminExcel(Request $request)
     {
