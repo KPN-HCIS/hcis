@@ -2500,9 +2500,16 @@ class ReimburseController extends Controller
         $permissionCompanies = $this->permissionCompanies;
         $permissionGroupCompanies = $this->permissionGroupCompanies;
 
-        $transactions = Hotel::orderBy('created_at', 'desc')
+        // Fetch latest hotel entries grouped by 'no_htl'
+        $latestHotelIds = Hotel::selectRaw('MAX(id) as id')
+            ->groupBy('no_htl')
+            ->pluck('id');
+
+        // Fetch the hotel transactions using the latest ids
+        $transactions = Hotel::whereIn('id', $latestHotelIds)
+            ->with('employee', 'hotelApproval')
+            ->orderBy('created_at', 'desc')
             ->where('approval_status', '!=', 'Draft')
-            ->with('businessTrip')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                 $query->whereRaw("DATE(tgl_masuk_htl) BETWEEN ? AND ?", [$startDate, $endDate]);
             });
@@ -2524,20 +2531,17 @@ class ReimburseController extends Controller
             });
         }
 
-        $transactions = $transactions->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
-            ->get();
+        $transactions = $transactions->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')->get();
 
-        // Fetch all hotel transactions of the user
-        $hotels = Hotel::with('businessTrip')
+        // Fetch all hotel transactions, removing the user ID filter
+        $hotels = Hotel::with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Group transactions by hotel number
-        $hotelGroups = $hotels->groupBy('no_htl');
-
-        $hotel = $hotelGroups->mapWithKeys(function ($group, $key) {
-            return [$key => $group];
-        });
+        $hotel = Hotel::with('employee', 'hotelApproval')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('no_htl');
 
         $hotelIds = $hotels->pluck('id');
 
@@ -2547,15 +2551,12 @@ class ReimburseController extends Controller
                 $query->where('approval_status', 'Rejected')
                     ->orWhere('approval_status', 'Declaration Rejected');
             })
-            ->get();
-        Log::info('Hotel Approvals:', $hotelApprovals->toArray());
+            ->get()
+            ->keyBy('htl_id');
 
-        $hotelApprovals = $hotelApprovals->keyBy('htl_id');
-        $managerL1Name = 'Unknown';
-        $managerL2Name = 'Unknown';
+        // Group transactions by hotel number
+        $hotelGroups = $hotels->groupBy('no_htl');
 
-        // Fetch employee data and manager names for transactions
-        $employeeName = Employee::pluck('fullname', 'employee_id');
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
@@ -2572,6 +2573,8 @@ class ReimburseController extends Controller
                 $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
             }
         }
+
+        $employeeName = Employee::pluck('fullname', 'employee_id');
 
         // Count grouped hotel entries
         $hotelCounts = $hotels->groupBy('no_htl')->mapWithKeys(function ($group, $key) {
@@ -2590,6 +2593,7 @@ class ReimburseController extends Controller
             'managerL2Name' => $managerL2Name,
             'hotelApprovals' => $hotelApprovals,
             'employeeName' => $employeeName,
+            // 'filter' => $filter,
         ]);
     }
 
@@ -3459,23 +3463,29 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Ticket (Admin)';
 
-        // Cek apakah filter tanggal ada
+        // Base query for filtering without user-specific filtering
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        $filter = $request->input('filter', 'request');
 
-        // Get permissions
         $permissionLocations = $this->permissionLocations;
         $permissionCompanies = $this->permissionCompanies;
         $permissionGroupCompanies = $this->permissionGroupCompanies;
 
-        // Buat query untuk mendapatkan transaksi terbaru
-        $transactions = Tiket::orderBy('created_at', 'desc')
-            ->where('approval_status', '!=', 'Draft')
+        // Fetch latest ticket IDs
+        $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
+            ->groupBy('no_tkt')
+            ->pluck('id');
+
+        // Get transactions with the latest ticket IDs
+        $transactions = Tiket::whereIn('id', $latestTicketIds)
             ->with('businessTrip')
+            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions
+            ->orderBy('created_at', 'desc')
+
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                 $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
             });
+
 
         // Apply permission filters
         if (!empty($permissionLocations)) {
@@ -3494,21 +3504,16 @@ class ReimburseController extends Controller
             });
         }
 
-        // Get filtered transactions
         $transactions = $transactions->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
 
-        // Ambil data tiket terbaru
+        // Get all tickets
         $tickets = Tiket::with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
 
         // Group tickets by 'no_tkt'
-        $ticketsGroups = $tickets->groupBy('no_tkt');
-
-        $ticket = $ticketsGroups->mapWithKeys(function ($group, $key) {
-            return [$key => $group];
-        });
+        $ticket = $tickets->groupBy('no_tkt');
 
         // Get ticket IDs
         $tiketIds = $tickets->pluck('id');
@@ -3523,11 +3528,10 @@ class ReimburseController extends Controller
 
         // Key ticket approvals by ticket ID
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
-        $managerL1Name = 'Unknown';
-        $managerL2Name = 'Unknown';
+        $ticketsGroups = $tickets->groupBy('no_tkt');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
 
         // Fetch employee data and manager names for transactions
-        $employeeName = Employee::pluck('fullname', 'employee_id');
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
@@ -3563,9 +3567,9 @@ class ReimburseController extends Controller
             'managerL2Name' => $managerL2Name ?? 'Unknown',
             'ticketApprovals' => $ticketApprovals,
             'employeeName' => $employeeName,
-            'filter' => $filter,
         ]);
     }
+
     public function ticketBookingAdmin(Request $req, $id)
     {
         $userId = Auth::id();
