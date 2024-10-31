@@ -37,6 +37,60 @@ use App\Models\ca_approval;
 
 class BusinessTripController extends Controller
 {
+    protected $groupCompanies;
+    protected $companies;
+    protected $locations;
+    protected $permissionGroupCompanies;
+    protected $permissionCompanies;
+    protected $permissionLocations;
+    protected $roles;
+
+    public function __construct()
+    {
+        // $this->category = 'Goals';
+        $this->roles = Auth()->user()->roles;
+
+        $restrictionData = [];
+        if (!is_null($this->roles) && $this->roles->isNotEmpty()) {
+            $restrictionData = json_decode($this->roles->first()->restriction, true);
+        }
+
+        $this->permissionGroupCompanies = $restrictionData['group_company'] ?? [];
+        $this->permissionCompanies = $restrictionData['contribution_level_code'] ?? [];
+        $this->permissionLocations = $restrictionData['work_area_code'] ?? [];
+
+        $groupCompanyCodes = $restrictionData['group_company'] ?? [];
+
+        $this->groupCompanies = Location::select('company_name')
+            ->when(!empty($groupCompanyCodes), function ($query) use ($groupCompanyCodes) {
+                return $query->whereIn('company_name', $groupCompanyCodes);
+            })
+            ->orderBy('company_name')->distinct()->pluck('company_name');
+
+        $workAreaCodes = $restrictionData['work_area_code'] ?? [];
+
+        $this->locations = Location::select('company_name', 'area', 'work_area')
+            ->when(!empty($workAreaCodes) || !empty($groupCompanyCodes), function ($query) use ($workAreaCodes, $groupCompanyCodes) {
+                return $query->where(function ($query) use ($workAreaCodes, $groupCompanyCodes) {
+                    if (!empty($workAreaCodes)) {
+                        $query->whereIn('work_area', $workAreaCodes);
+                    }
+                    if (!empty($groupCompanyCodes)) {
+                        $query->orWhereIn('company_name', $groupCompanyCodes);
+                    }
+                });
+            })
+            ->orderBy('area')
+            ->get();
+
+        $companyCodes = $restrictionData['contribution_level_code'] ?? [];
+
+        $this->companies = Company::select('contribution_level', 'contribution_level_code')
+            ->when(!empty($companyCodes), function ($query) use ($companyCodes) {
+                return $query->whereIn('contribution_level_code', $companyCodes);
+            })
+            ->orderBy('contribution_level_code')->get();
+    }
     public function businessTrip(Request $request)
     {
         $user = Auth::user();
@@ -2554,6 +2608,26 @@ class BusinessTripController extends Controller
             $query->whereIn('status', ['Rejected', 'Declaration Rejected']);
         }
 
+        $permissionLocations = $this->permissionLocations;
+        $permissionCompanies = $this->permissionCompanies;
+        $permissionGroupCompanies = $this->permissionGroupCompanies;
+
+        if (!empty($permissionLocations)) {
+            $query->whereHas('employee', function ($query) use ($permissionLocations) {
+                $query->whereIn('work_area_code', $permissionLocations);
+            });
+        }
+
+        if (!empty($permissionCompanies)) {
+            $query->whereIn('contribution_level_code', $permissionCompanies);
+        }
+
+        if (!empty($permissionGroupCompanies)) {
+            $query->whereHas('employee', function ($query) use ($permissionGroupCompanies) {
+                $query->whereIn('group_company', $permissionGroupCompanies);
+            });
+        }
+
         $sppd = $query->get();
 
         // Collect all SPPD numbers from the BusinessTrip instances
@@ -2613,6 +2687,26 @@ class BusinessTripController extends Controller
             $query->whereIn('status', ['Return/Refund']);
         } elseif ($filter === 'rejected') {
             $query->whereIn('status', ['Rejected', 'Declaration Rejected']);
+        }
+
+        $permissionLocations = $this->permissionLocations;
+        $permissionCompanies = $this->permissionCompanies;
+        $permissionGroupCompanies = $this->permissionGroupCompanies;
+
+        if (!empty($permissionLocations)) {
+            $query->whereHas('employee', function ($query) use ($permissionLocations) {
+                $query->whereIn('work_area_code', $permissionLocations);
+            });
+        }
+
+        if (!empty($permissionCompanies)) {
+            $query->whereIn('contribution_level_code', $permissionCompanies);
+        }
+
+        if (!empty($permissionGroupCompanies)) {
+            $query->whereHas('employee', function ($query) use ($permissionGroupCompanies) {
+                $query->whereIn('group_company', $permissionGroupCompanies);
+            });
         }
 
         $sppd = $query->get();
