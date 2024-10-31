@@ -26,44 +26,46 @@ class HotelExport implements FromCollection, WithHeadings, WithStyles, WithEvent
 
     public function collection()
     {
-        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee', 'manager']);
-        $htl_employee = $query->orderBy('created_at', 'desc')->get();
-
         $hotelData = Hotel::where('approval_status', '!=', 'Draft')
             ->whereBetween('tgl_masuk_htl', [$this->startDate, $this->endDate])
-            ->get();
-
-        foreach ($htl_employee as $transaction) {
-            $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
-            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
-            $transaction->ManagerName = $transaction->manager ? $transaction->manager->fullname : '';
-        }
+            ->get()
+            ->groupBy('no_tkt');
 
         $combinedData = [];
         $index = 1;
 
-        foreach ($hotelData as $item) {
-            $approval = HotelApproval::where('employee_id', $transaction->manager_l1_id)->first();
-            $manager = Employee::where('employee_id', $transaction->manager_l1_id)->first();
-            // dd($manager->fullname);
-            $combinedData[] = [
-                'number' => $index,
-                'User' => $transaction->fullname,
-                'Atasan' => $manager ? $manager->fullname : 'Unknown',
-                'Status' => $item->approval_status ?? 'Unknown',
-                'NoSPPD' => $item->no_sppd === "-" ? $item->no_htl : $item->no_sppd,
-                'PT' => $transaction->company_name . ', ' . $transaction->contribution_level_code,
-                'KodeBook' => $item->booking_code,
-                'HargaTiket' => $item->booking_price,
-                'HotelName' => $item->nama_htl,
-                'HotelLocation' => $item->lokasi_htl,
-                'RoomCount' => $item->jmlkmr_htl,
-                'BedType' => $item->bed_htl,
-                'CheckIn' => \Carbon\Carbon::parse($item->tgl_masuk_htl)->format('d-F-Y'),
-                'CheckOut' => \Carbon\Carbon::parse($item->tgl_keluar_htl)->format('d-F-Y'),
-                'TotalDays' => $item->total_hari,
-            ];
-            $index++; // Tambahkan satu ke index setiap iterasi loop
+        foreach ($hotelData as $noTiket => $item) {
+            foreach ($item as $items) {
+                $employee = Employee::where('id', $items->user_id)->first();
+                if ($items->approval_status == 'Approved' || $items->approval_status == 'Rejected') {
+                    $approval = HotelApproval::where('htl_id', $items->id)->orderBy('layer', 'desc')->first();
+                    if ($approval) {
+                        $manager = Employee::where('employee_id', $approval->employee_id)->first();
+                    }
+                } elseif ($items->approval_status == 'Pending L1') {
+                    $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+                } elseif ($items->approval_status == 'Pending L2') {
+                    $manager = Employee::where('employee_id', $employee->manager_l2_id)->first();
+                }
+                $combinedData[] = [
+                    'number' => $index,
+                    'User' => $employee->fullname,
+                    'Atasan' => $manager ? $manager->fullname : 'Unknown',
+                    'Status' => $items->approval_status ?? 'Unknown',
+                    'NoSPPD' => $items->no_sppd === "-" ? $items->no_htl : $items->no_sppd,
+                    'PT' => $employee->company_name . ', ' . $employee->contribution_level_code,
+                    'KodeBook' => $items->booking_code,
+                    'HargaTiket' => $items->booking_price,
+                    'HotelName' => $items->nama_htl,
+                    'HotelLocation' => $items->lokasi_htl,
+                    'RoomCount' => $items->jmlkmr_htl,
+                    'BedType' => $items->bed_htl,
+                    'CheckIn' => \Carbon\Carbon::parse($items->tgl_masuk_htl)->format('d-F-Y'),
+                    'CheckOut' => \Carbon\Carbon::parse($items->tgl_keluar_htl)->format('d-F-Y'),
+                    'TotalDays' => $items->total_hari,
+                ];
+            }
+            $index++;
         }
 
         return collect($combinedData);

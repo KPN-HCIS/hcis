@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Tiket;
+use App\Models\TiketApproval;
 use App\Models\Employee;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -25,47 +26,49 @@ class TicketExport implements FromCollection, WithHeadings, WithStyles, WithEven
 
     public function collection()
     {
-        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee', 'manager']);
-        $tkt_employee = $query->orderBy('created_at', 'desc')->get();
-
         $ticketData = Tiket::where('approval_status', '!=', 'Draft')
             ->whereBetween('tgl_brkt_tkt', [$this->startDate, $this->endDate])
-            ->get();
-
-        foreach ($tkt_employee as $transaction) {
-            $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
-            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
-            $transaction->ManagerName = $transaction->manager ? $transaction->manager->fullname : '';
-        }
+            ->get()
+            ->groupBy('no_tkt');
 
         $combinedData = [];
-        $index = 1; // Inisialisasi index dimulai dari 1
-        // dd($transaction);
+        $index = 1;
 
-        foreach ($ticketData as $item) {
-            $manager = Employee::where('employee_id', $transaction->manager_l1_id)->first();
-            // dd($manager->fullname);
-            $combinedData[] = [
-                'number' => $index,
-                'User' => $transaction->fullname,
-                'Atasan' => $manager ? $manager->fullname : 'Unknown',
-                'Status' => $item->approval_status ?? 'Unknown',
-                'Dinas' => $item->jns_dinas_tkt,
-                'NoSPPD' => $item->no_sppd === "-" ? $item->no_tkt : $item->no_sppd,
-                'PT' => $transaction->company_name . ', ' . $transaction->contribution_level_code,
-                'KodeBook' => $item->booking_code,
-                'HargaTiket' => $item->tkt_price,
-                'From' => $item->dari_tkt,
-                'To' => $item->ke_tkt,
-                'Name' => $item->np_tkt,
-                'NoTLP' => $item->tlp_tkt,
-                'TglBrkt1' => \Carbon\Carbon::parse($item->tgl_brkt_tkt)->format('d-F-Y') . ', ' . $item->jam_brkt_tkt,
-                'JenisTKT' => $item->type_tkt,
-                'Name2' => $item->type_tkt === 'Round Trip' ? $item->np_tkt : '',
-                'NoTLP2' => $item->type_tkt === 'Round Trip' ? $item->tlp_tkt : '',
-                'TglBrkt2' => $item->type_tkt === 'Round Trip' ? \Carbon\Carbon::parse($item->tgl_plg_tkt)->format('d-F-Y') . ', ' . $item->jam_plg_tkt : '',
-                'ket' => $item->ket_tkt,
-            ];
+        foreach ($ticketData as $noTiket => $item) {
+            foreach ($item as $items) {
+                $employee = Employee::where('id', $items->user_id)->first();
+                if ($items->approval_status == 'Approved' || $items->approval_status == 'Rejected') {
+                    $approval = TiketApproval::where('tkt_id', $items->id)->orderBy('layer', 'desc')->first();
+                    if ($approval) {
+                        $manager = Employee::where('employee_id', $approval->employee_id)->first();
+                    }
+                } elseif ($items->approval_status == 'Pending L1') {
+                    $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+                } elseif ($items->approval_status == 'Pending L2') {
+                    $manager = Employee::where('employee_id', $employee->manager_l2_id)->first();
+                }
+                $combinedData[] = [
+                    'number' => $index,
+                    'User' => $employee->fullname,
+                    'Atasan' => $manager ? $manager->fullname : 'Unknown',
+                    'Status' => $items->approval_status ?? 'Unknown',
+                    'Dinas' => $items->jns_dinas_tkt,
+                    'NoSPPD' => $items->no_sppd === "-" ? $items->no_tkt : $items->no_sppd,
+                    'PT' => $employee->company_name . ', ' . $employee->contribution_level_code,
+                    'KodeBook' => $items->booking_code,
+                    'HargaTiket' => $items->tkt_price,
+                    'From' => $items->dari_tkt,
+                    'To' => $items->ke_tkt,
+                    'Name' => $items->np_tkt,
+                    'NoTLP' => $items->tlp_tkt,
+                    'TglBrkt1' => \Carbon\Carbon::parse($items->tgl_brkt_tkt)->format('d-F-Y') . ', ' . $items->jam_brkt_tkt,
+                    'JenisTKT' => $items->type_tkt,
+                    'Name2' => $items->type_tkt === 'Round Trip' ? $items->np_tkt : '',
+                    'NoTLP2' => $items->type_tkt === 'Round Trip' ? $items->tlp_tkt : '',
+                    'TglBrkt2' => $items->type_tkt === 'Round Trip' ? \Carbon\Carbon::parse($items->tgl_plg_tkt)->format('d-F-Y') . ', ' . $items->jam_plg_tkt : '',
+                    'ket' => $items->ket_tkt,
+                ];
+            }
             $index++; // Tambahkan satu ke index setiap iterasi loop
         }
 
