@@ -112,7 +112,7 @@
                                     aria-label="search" aria-describedby="search">
                             </div>
                         </div>
-                        <form method="GET" action="{{ route('hotel.admin') }}">
+                        {{-- <form method="GET" action="{{ route('hotel.admin') }}">
                             <button type="submit" name="filter" value="request"
                                 class="btn {{ $filter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                 Request
@@ -121,7 +121,7 @@
                                 class="btn {{ $filter === 'rejected' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm me-1 mb-3">
                                 Rejected
                             </button>
-                        </form>
+                        </form> --}}
                         <div class="table-responsive">
                             <table class="table table-sm table-hover dt-responsive nowrap" id="defaultTable" width="100%"
                                 cellspacing="0">
