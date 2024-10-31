@@ -110,7 +110,7 @@
                 text: "{{ session('success') }}",
                 icon: "success",
                 confirmButtonColor: "#9a2a27",
-                confirmButtonText: 'Ok'
+                confirmButtonText: 'OK'
             });
         });
     </script>
@@ -127,6 +127,7 @@
                         {{ $error }}
                     @endforeach
                 `,
+                confirmButtonColor: "#9a2a27",
                 confirmButtonText: 'Ok'
             });
         });
