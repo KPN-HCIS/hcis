@@ -825,6 +825,7 @@ class ReimburseController extends Controller
                 'detail_e' => $detail_e,
                 'relation_e' => $relation_e,
             ];
+            dd($detail_ca);
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
             $model->no_sppd = $req->bisnis_numb_ent;
@@ -1163,6 +1164,7 @@ class ReimburseController extends Controller
                 'detail_e' => $detail_e,
                 'relation_e' => $relation_e,
             ];
+            // dd($detail_ca);
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
         }
