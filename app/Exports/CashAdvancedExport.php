@@ -222,7 +222,8 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
 
     public function headings(): array
     {
-        return [
+        // Base headings
+        $headings = [
             'No',
             'Unit',
             'Submitted Date',
@@ -234,24 +235,24 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
             'Company',
             'Employee ID',
             'Employee Name',
-            'Dept Head',
-            'Div Head',
-            'Doc No',
-            'Assignment',
-            'Total CA',
-            'Total Settlement',
-            'Balance',
-            'Request Status',
-            'Settlement Status',
-            'Extend Status',
-            'Days',
-            'Overdue',
-            'Current',
-            '< 7 Days',
-            '7 - 14 Days',
-            '15 - 30 Days',
-            '> 30 Days',
+            'Patient Name',
+            'Div',
+            'Desease',
+            'Status',
+            'Type',
+            'Account Detail',
+            'No Invoice',
+            'Medical Type',
+            'Amount',
+            'Amount Uncoverage',
+            'Amount Verify',
+            'PT',
+            'Cost Center',
+            'Job Level',
+            'Group Company',
         ];
+
+        return $headings;
     }
 
     public function styles(Worksheet $sheet)
@@ -288,10 +289,10 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $highestRow = $sheet->getHighestRow();
-                $highestColumn = $sheet->getHighestColumn();
+                $highestRow = $sheet->getHighestRow(); // Get highest row number
+                $highestColumn = $sheet->getHighestColumn(); // Get highest column letter
 
-                // Terapkan border untuk seluruh area data
+                // Apply border to the entire data range
                 $sheet->getStyle('A1:' . $highestColumn . $highestRow)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
@@ -300,10 +301,10 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
                     ],
                 ]);
 
-                // Mengatur lebar kolom otomatis
-                $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
+                // Adjust column widths automatically
+                $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // Get highest column index
                 for ($col = 1; $col <= $highestColumnIndex; $col++) {
-                    $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+                    $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col); // Convert to letter
                     $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
                 }
 
@@ -354,6 +355,7 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
                 foreach ($mergeRanges as $range) {
                     $sheet->mergeCells($range);
                 }
+                $sheet->getStyle('B1:B' . $highestRow)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
             },
         ];
     }

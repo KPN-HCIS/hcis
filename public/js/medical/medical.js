@@ -1,32 +1,33 @@
-//medical table
-$("#example").DataTable({
-    responsive: {
-        details: {
-            type: "column",
-            target: "tr",
-        },
-    },
-    columnDefs: [
-        {
-            className: "control",
-            orderable: false,
-            targets: 0,
-        },
-        {
-            responsivePriority: 1,
-            targets: 0,
-        },
-        {
-            responsivePriority: 4,
-            targets: 3,
-        },
-    ],
-    order: [1, "asc"],
-    pageLength: 5,
-    lengthMenu: [5, 10, 25, 50],
+//Medical Form JS
+$(document).ready(function () {
+    // Handle change event on medical type selection
+    $("#medical_type").on("change", function () {
+        var selectedTypes = $(this).val();
+        var balanceContainer = $("#balanceContainer");
+        balanceContainer.empty(); // Clear previous balances
+
+        if (selectedTypes && selectedTypes.length > 0) {
+            selectedTypes.forEach(function (type) {
+                var balance = typeToBalanceMap[type] || 0; // Default to 0 if not found
+                var balanceGroup = `
+                <div class="col-md-3 mb-3">
+                    <label for="${type}" class="form-label">${type} Plafond</label>
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        <input type="text" id="medical_plafond_${type}" class="form-control bg-light" value="${formatCurrency(balance)}" readonly>
+                    </div>
+                </div>
+                `;
+                balanceContainer.append(balanceGroup); // Append the balance input dynamically
+            });
+        }
+    });
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat("id-ID").format(value); // Format number as currency
+    }
 });
 
-//Medical Form JS
 $(document).ready(function () {
     var typeToNameMap = {};
     medicalTypeData.forEach(function (type) {

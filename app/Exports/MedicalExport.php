@@ -36,9 +36,9 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
         $medicalGroup = [];
 
         $healthCoverageQuery = HealthCoverage::query();
-        if (!empty($this->start_date)) {
-            $healthCoverageQuery->whereBetween('created_at', [$this->start_date, $this->end_date]);
-        }
+        // if (!empty($this->start_date)) {
+        //     $healthCoverageQuery->whereBetween('created_at', [$this->start_date, $this->end_date]);
+        // }
 
         $master_medical = MasterMedical::all();
 
@@ -102,9 +102,9 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
                         'NoRek' => $transaction->bank_name .  ' - ' . $transaction->bank_account_number,
                         'NoInvoice' => $item->no_invoice,
                         'MedicalType' => $item->medical_type,
-                        'Balance' => $item->balance,
-                        'BalanceUncoverage' => $item->balance_uncoverage,
-                        'BalanceVerify' => $item->balance_verif,
+                        'Amount' => $item->balance,
+                        'AmountUncoverage' => $item->balance_uncoverage,
+                        'AmountVerify' => $item->balance_verif,
                         'PT' => $transaction->company_name,
                         'CostCenter' => $transaction->contribution_level_code,
                         'JobLevel' => $transaction->job_level,
@@ -135,9 +135,9 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
             'Account Detail',
             'No Invoice',
             'Medical Type',
-            'Balance',
-            'Balance Uncoverage',
-            'Balance Verify',
+            'Amount',
+            'Amount Uncoverage',
+            'Amount Verify',
             'PT',
             'Cost Center',
             'Job Level',

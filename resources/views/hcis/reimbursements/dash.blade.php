@@ -95,7 +95,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            @if (auth()->user()->hasRole('superadmin'))
+            {{-- @if (auth()->user()->hasRole('superadmin')) --}}
             <div class="col">
                 <a href="{{ route('medical') }}">
                     <div class="card" style="height: 200px">
@@ -106,130 +106,27 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            <div class="col">
-                <a href="{{ route('businessTrip') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="{{ asset('images/menu/bt.png') }}" alt="logo"
-                                style="width: 100px; height: 100px;">
-                            <h5 class="my-3">Business Trip</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div> <!-- end col-->
-            {{-- <div class="col-md-3">
-            </div> <!-- end col--> --}}
-            {{-- <div class="col">
-                <a href="{{ route('businessTrip.approval') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="/images/menu/bt.png" alt="logo" style="width: 100px; height: 100px;">
-                            <h5 class="my-3">Business Trip (Approval)</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div> <!-- end col-->
-            --}}
-            {{-- @if (auth()->check())
-                @can('adminbt')
-                    <div class="col">
-                        <a href="{{ route('businessTrip.admin') }}">
-                            <div class="card" style="height: 200px">
-                                <div class="card-body">
-                                    <img src="/images/menu/bt.png" alt="logo" style="width: 100px; height: 100px;">
-                                    <h5 class="my-3">Business Trip (Admin)</h5>
-                                </div> <!-- end card-body-->
-                            </div> <!-- end card-->
-                        </a>
-                    </div> <!-- end col-->
-                @endcan
-            @endif --}}
-            {{-- </div> --}}
-
-            {{-- <div class="col-md-3">
-                <a href="{{ '' }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="{{ asset('images/menu/bt.png') }}" alt="logo"
-                                style="width: 100px; height: 100px;">
-                            <h5 class="my-3">Home Trip</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div><!-- end col--> --}}
-
-            <div class="col">
-                <a href="{{ route('ticket') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="{{ asset('images/menu/tkt.png') }}" alt="logo"
-                                style="width: 100px; height: 100px;">
-                            <h5 class="my-3">Ticket</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div>
-            {{-- <div class="col-md-3">
-                <a href="{{ route('ticket.approval') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="/images/menu/tkt.png" alt="logo" style="width: 100px; height: 100px;">
-                            <h5 class="my-3">Tiket Approval</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div> --}}
-
-            <div class="col">
-                <a href="{{ route('hotel') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="{{ asset('images/menu/ht.png') }}" alt="logo"
-                                style="width: 100px; height: 100px;">
-                            <h5 class="my-3">Hotel</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div>
-
-            <div class="col-md-3">
-                <a href="{{ route('home-trip') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="{{ asset('images/menu/bt.png') }}" alt="logo"
-                                style="width: 100px; height: 100px;">
-                            <h5 class="my-3">Home Trip</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div><!-- end col-->
-
-            {{-- <div class="col-md-3">
-                <a href="{{ route('hotel.approval') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="/images/menu/ht.png" alt="logo" style="width: 100px; height: 100px;">
-                            <h5 class="my-3">Hotel Approval</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div> --}}
-
-            {{-- <div class="col-md-3">
-                <a href="{{ route('approval') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="/images/menu/cashadv.png" alt="logo">
-                            <h4 class="my-3">Approval</h4>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div> <!-- end col--> --}}
-            @endif
+            
 
 
         </div> <!-- end row -->
-        <hr><br>
+
+        {{-- HR ADMIN --}}
+        @if (auth()->check() &&
+                (auth()->user()->can('reportca_hcis') ||
+                    auth()->user()->can('adminbt') ||
+                    auth()->user()->can('admin_medic') ||
+                    auth()->user()->can('adminht') ||
+                    auth()->user()->can('admintkt') ||
+                    auth()->user()->can('adminhtl')))
+            <div style="display: flex; align-items: center; margin: 20px 0;">
+                <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
+                <span style="padding: 0 20px; font-weight: bold;">Admin</span>
+                <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
+            </div>
+        @endif
+        {{-- END HR ADMIN --}}
+
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 row-cols-xxl-8 text-center">
             @if (auth()->check())
                 @can('reportca_hcis')
@@ -280,8 +177,37 @@
                         <a href="{{ route('home-trip.admin') }}">
                             <div class="card" style="height: 200px">
                                 <div class="card-body">
-                                    <img src="{{ asset('images/menu/bt.png') }}" alt="logo">
+                                    <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
+                                        style="width: 100px; height: 100px; border-radius: 100px;">
                                     <h5 class="my-3">Home Trip (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('admintkt')
+                    <div class="col-md-3">
+                        <a href="{{ route('ticket.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/tkt.png') }}" alt="logo">
+                                    <h5 class="my-3">Ticket (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('adminhtl')
+                    <div class="col-md-3">
+                        <a href="{{ route('hotel.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/ht.png') }}" alt="logo">
+                                    <h5 class="my-3">Hotel (Admin)</h5>
                                 </div> <!-- end card-body-->
                             </div> <!-- end card-->
                         </a>

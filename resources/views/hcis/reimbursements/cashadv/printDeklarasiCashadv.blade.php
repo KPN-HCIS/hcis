@@ -428,9 +428,9 @@
     @endif
 
     <div style="page-break-after:always;">
-        <table border=0 style="width: 100%; font-size: 11px;">
+        <table border=0 style="width: 20%; font-size: 11px;">
             <tr>
-                <td style="width: 20%; vertical-align: top;">
+                <td style="vertical-align: top;">
                     <table class="table-approve" style="width: 100%; text-align: center; display: inline-table;">
                         <tr>
                             <th>Submitted By</th>
@@ -449,7 +449,7 @@
                         </tr>
                     </table>
                 </td>
-                <td style="width: 60%; vertical-align: top;">
+                {{-- <td style="width: 60%; vertical-align: top;">
                     <table class="table-approve" style="width: 100%; text-align: center; display: inline-table;">
                         <tr>
                             <th colspan="3">Verifikasi</th>
@@ -475,7 +475,7 @@
                             <td><br></td>
                         </tr>
                     </table>
-                </td>
+                </td> --}}
             </tr>
         </table>
 
@@ -488,7 +488,17 @@
                         </tr>
                         <tr>
                             @foreach ($approval as $role)
-                                <td style="width: 20%;">{{ $role->role_name }}</td>
+                                <td style="width: 20%;">
+                                    @if ($role->role_name == 'Dept Head')
+                                        Approval 1
+                                    @elseif ($role->role_name == 'Div Head')
+                                        Approval 2
+                                    @elseif ($role->role_name == 'Director')
+                                        Approval 3
+                                    @else
+                                        {{ $role->role_name }}
+                                    @endif
+                                </td>
                             @endforeach
                         </tr>
                         <tr>
@@ -1025,12 +1035,18 @@
             <td class="colon">:</td>
             <td class="value">Rp. {{ number_format($transactions->total_cost, 0, ',', '.' )}}</td>
         </tr>
-        @if($transactions->total_cost>0)
-        <tr>
-            <td class="label"><b>Transfer To</b></td>
-            <td class="colon">:</td>
-            <td class="value">{{ $transactions->companies->contribution_level }} / {{ $transactions->companies->account_number }}</td>
-        </tr>
+        @if($transactions->total_cost > 0)
+            <tr>
+                <td class="label"><b>Transfer To</b></td>
+                <td class="colon">:</td>
+                <td class="value">{{ $transactions->companies->contribution_level }} / {{ $transactions->companies->account_number }}</td>
+            </tr>
+        @elseif($transactions->total_cost < 0)
+            <tr>
+                <td class="label">Transfer To</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $transactions->employee->bank_name }} - {{ $transactions->employee->bank_account_number }} - {{ $transactions->employee->bank_account_name }}</td>
+            </tr>
         @endif
     </table>
 

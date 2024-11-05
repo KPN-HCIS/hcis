@@ -3,6 +3,11 @@
 @section('css')
     @vite(['node_modules/select2/dist/css/select2.min.css', 'node_modules/daterangepicker/daterangepicker.css', 'node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.css', 'node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css', 'node_modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css', 'node_modules/flatpickr/dist/flatpickr.min.css'])
     <style>
+        th {
+            color: white !important;
+            text-align: center;
+        }
+
         .table {
             border-collapse: separate;
             width: 100%;
@@ -16,10 +21,10 @@
             position: sticky !important;
             top: 0 !important;
             z-index: 2 !important;
-            background-color: #fff !important;
-            border-bottom: 2px solid #ddd !important;
+            background-color: #AB2F2B !important;
+            border-bottom: 2px solid #AB2F2B !important;
             padding-right: 6px;
-            box-shadow: inset 2px 0 0 #fff;
+            box-shadow: inset 2px 0 0 #AB2F2B;
         }
 
         .table tbody td {
@@ -34,10 +39,10 @@
             position: sticky !important;
             left: 0 !important;
             z-index: 3 !important;
-            background-color: #fff !important;
-            border-right: 2px solid #ddd !important;
+            background-color: #AB2F2B !important;
+            border-right: 2px solid #AB2F2B !important;
             padding-right: 10px;
-            box-shadow: inset 2px 0 0 #fff;
+            box-shadow: inset 2px 0 0 #AB2F2B;
         }
 
         .table td.sticky-col {
@@ -67,9 +72,9 @@
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
-                    <a href="{{ route('reimbursements') }}" class="mb-2 me-4 page-title"><i class="ri-arrow-left-circle-line"></i></a>
-                    <a href="{{ route('medical.confirmation') }}" class="mb-2 btn btn-primary"><i class="bi bi-card-checklist"></i> Confirmation</a>
-                    <a href="{{ route('medical.report') }}" class="mb-2 btn btn-primary"><i class="bi bi-file-earmark-post"></i> Report</a>
+                    <a href="{{ route('reimbursements') }}" class="mb-2 mt-2 me-4 page-title"><i class="ri-arrow-left-circle-line"></i></a>
+                    <a href="{{ route('medical.confirmation') }}" class="mb-2 mt-2 me-1 btn btn-primary"><i class="bi bi-card-checklist"></i> Confirmation</a>
+                    <a href="{{ route('medical.report') }}" class="mb-2 mt-2 btn btn-primary"><i class="bi bi-file-earmark-post"></i> Report</a>
                 </div>
             </div>
         </div>
@@ -120,7 +125,7 @@
                             <h3 class="card-title">{{ $link }}</h3>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
+                            <table class="table table-sm dt-responsive nowrap mt-2" id="scheduleTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">
@@ -153,7 +158,7 @@
                                                     </td>
                                                 @endforeach
                                                 <td class="text-center">
-                                                    <a href="{{ route('medical.detail', $med_employees->getRouteKey()) }}"
+                                                    <a href="{{ route('medical.detail', encrypt($med_employees->employee_id)) }}"
                                                         class="btn btn-outline-warning" title="Edit">
                                                         <i class="ri-edit-box-line"></i>
                                                     </a>

@@ -75,42 +75,21 @@
                 </div>
             </li>
             @endif
-            @if(session('system') == 'kpnpm')
-                {{-- <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarEmail" aria-expanded="false" aria-controls="sidebarEmail" class="side-nav-link">
-                        <i class="ri-star-line"></i>
-                        <span> Goals </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="sidebarEmail">
-                        <ul class="side-nav-second-level">
-                            <li>
-                                <a href="{{ route('goals') }}">My Goals</a>
-                            </li>
-                            @if(auth()->user()->isApprover())
-                            <li>
-                                <a href="{{ route('team-goals') }}">Team Goals</a>
-                            </li>
-                            @endif
-                        </ul>
-                    </div>
-                </li> --}}
-            @elseif(session('system') == 'kpnreimburse')
-                <li class="side-nav-item">
-                    <a href="{{ route('reimbursements') }}"  aria-controls="sidebarEmail" class="side-nav-link">
-                        <i class="ri-star-line"></i>
-                        <span> Reimbursements </span>
-                    </a>
-                </li>
-            @endif
-            {{-- @if (auth()->user()->isApprover())
+            
             <li class="side-nav-item">
-                <a href="{{ url('/reports') }}" class="side-nav-link">
-                    <i class="ri-file-chart-line"></i>
-                    <span> Reports </span>
+                <a href="{{ route('reimbursements') }}"  aria-controls="sidebarEmail" class="side-nav-link">
+                    <i class="ri-star-line"></i>
+                    <span> Reimbursement </span>
                 </a>
             </li>
-            @endif --}}
+
+            <li class="side-nav-item">
+                <a href="{{ route('travel') }}"  aria-controls="sidebarEmail" class="side-nav-link">
+                    <i class="ri-star-line"></i>
+                    <span> Travel </span>
+                </a>
+            </li>
+
             <li class="side-nav-item">
                 <a href="{{ url('/guides') }}" class="side-nav-link">
                     <i class="ri-file-text-line"></i>

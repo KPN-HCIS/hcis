@@ -10,6 +10,11 @@
         'node_modules/flatpickr/dist/flatpickr.min.css'
     ])
     <style>
+        th {
+            color: white !important;
+            text-align: center;
+        }
+
         .table {
             border-collapse: separate;
             width: 100%;
@@ -23,10 +28,10 @@
             position: sticky !important;
             top: 0 !important;
             z-index: 2 !important;
-            background-color: #fff !important;
-            border-bottom: 2px solid #ddd !important;
+            background-color: #AB2F2B !important;
+            border-bottom: 2px solid #AB2F2B !important;
             padding-right: 6px;
-            box-shadow: inset 2px 0 0 #fff;
+            box-shadow: inset 2px 0 0 #AB2F2B;
         }
 
         .table tbody td {
@@ -41,10 +46,10 @@
             position: sticky !important;
             left: 0 !important;
             z-index: 3 !important;
-            background-color: #fff !important;
-            border-right: 2px solid #ddd !important;
+            background-color: #AB2F2B !important;
+            border-right: 2px solid #AB2F2B !important;
             padding-right: 10px;
-            box-shadow: inset 2px 0 0 #fff;
+            box-shadow: inset 2px 0 0 #AB2F2B;
         }
 
         .table td.sticky-col {
@@ -137,7 +142,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-sm dt-responsive nowrap" id="scheduleTable" width="100%"
+                            <table class="table table-sm dt-responsive nowrap mt-2" id="scheduleTable" width="100%"
                                 cellspacing="0">
                                 <thead class="thead-light">
                                     <tr class="text-center">

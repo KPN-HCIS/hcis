@@ -16,6 +16,7 @@ use App\Models\Location;
 use App\Models\Employee;
 use App\Models\MatrixApproval;
 use App\Models\ListPerdiem;
+use App\Models\HealthCoverage;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
@@ -33,6 +34,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CashAdvancedExport;
+use App\Exports\TicketExport;
+use App\Exports\HotelExport;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
 
@@ -99,6 +102,15 @@ class ReimburseController extends Controller
         $userId = Auth::id();
 
         return view('hcis.reimbursements.dash', [
+            'userId' => $userId,
+        ]);
+    }
+    function travel()
+    {
+
+        $userId = Auth::id();
+
+        return view('hcis.reimbursements.travel', [
             'userId' => $userId,
         ]);
     }
@@ -920,7 +932,7 @@ class ReimburseController extends Controller
                     $employee_id = $data_matrix_approval->employee_id;
                 }
 
-                if ($employee_id !=  null) {
+                if ($employee_id != null) {
                     $model_approval = new ca_approval;
                     $model_approval->ca_id = $uuid;
                     $model_approval->role_name = $data_matrix_approval->desc;
@@ -1257,7 +1269,7 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
-                if ($employee_id !=  null) {
+                if ($employee_id != null) {
                     $model_approval = new ca_approval;
                     $model_approval->ca_id = $req->no_id;
                     $model_approval->role_name = $data_matrix_approval->desc;
@@ -1344,7 +1356,7 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
-                if ($employee_id !=  null) {
+                if ($employee_id != null) {
                     $model_approval = new ca_extend;
                     $model_approval->ca_id = $req->no_id;
                     $model_approval->role_name = $data_matrix_approval->desc;
@@ -1749,7 +1761,7 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
-                if ($employee_id !=  null) {
+                if ($employee_id != null) {
                     $model_approval = new ca_sett_approval;
                     $model_approval->ca_id = $req->no_id;
                     $model_approval->role_name = $data_matrix_approval->desc;
@@ -2201,6 +2213,7 @@ class ReimburseController extends Controller
         $user = Auth::user();
         $userId = $user->id;
         $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
+        $employeeId = auth()->user()->employee_id;
 
         $parentLink = 'Approval';
         $link = 'Hotel Approval';
@@ -2216,7 +2229,6 @@ class ReimburseController extends Controller
             ->with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
-        // dd($transactions);
 
         // Filter tickets based on manager and approval status
         $hotels = $transactions->filter(function ($hotel) use ($employee) {
@@ -2230,6 +2242,81 @@ class ReimburseController extends Controller
             }
             return false;
         });
+
+        $totalHTLCount = $hotels->count();
+
+        $ticketNumbers = Tiket::where('tkt_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_tkt')->unique();
+        $transactions_tkt = Tiket::whereIn('no_tkt', $ticketNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $totalTKTCount = $transactions_tkt->filter(function ($ticket) use ($employee) {
+            $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
+            return ($ticket->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) ||
+                ($ticket->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id);
+        })->count();
+
+        $totalPendingCount = CATransaction::where(function ($query) use ($employeeId) {
+            $query->where('status_id', $employeeId)->where('approval_status', 'Pending')
+                ->orWhere('sett_id', $employeeId)->where('approval_sett', 'Pending')
+                ->orWhere('extend_id', $employeeId)->where('approval_extend', 'Pending');
+        })->count();
+
+        $totalBTCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L1', 'Declaration L1']);
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L2', 'Declaration L2']);
+            });
+        })->count();
+
+        // Check if the user has approval rights
+        $hasApprovalRights = DB::table('master_bisnisunits')
+            ->where('approval_medical', $employee->employee_id)
+            ->where('nama_bisnis', $employee->group_company)
+            ->exists();
+
+        if ($hasApprovalRights) {
+            $medicalGroup = HealthCoverage::select(
+                'no_medic',
+                'date',
+                'period',
+                'hospital_name',
+                'patient_name',
+                'disease',
+                DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance_verif ELSE 0 END) as maternity_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance_verif ELSE 0 END) as inpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance_verif ELSE 0 END) as outpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance_verif ELSE 0 END) as glasses_balance_verif'),
+                'status'
+            )
+                ->whereNotNull('verif_by')   // Only include records where verif_by is not null
+                ->whereNotNull('balance_verif')
+                ->where('status', 'Pending')
+                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Add usage_id for each medical record without filtering by employee_id
+            $medical = $medicalGroup->map(function ($item) {
+                // Fetch the usage_id based on no_medic (for any employee)
+                $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
+                $item->usage_id = $usageId;
+
+                // Calculate total per no_medic
+                $item->total_per_no_medic = $item->maternity_balance_verif + $item->inpatient_balance_verif + $item->outpatient_balance_verif + $item->glasses_balance_verif;
+
+                return $item;
+            });
+        } else {
+            $medical = collect(); // Empty collection if user doesn't have approval rights
+        }
+
+        $totalMDCCount = $medical->count();
 
         // Group tickets by `no_tkt` and get the first entry for each group
         $hotelGroups = $hotels->groupBy('no_htl')->map(function ($group) {
@@ -2264,6 +2351,11 @@ class ReimburseController extends Controller
             'hotelCounts' => $hotelCounts,
             'hotels' => $hotels,
             'hotel' => $hotel,
+            'totalPendingCount' => $totalPendingCount,
+            'totalBTCount' => $totalBTCount,
+            'totalTKTCount' => $totalTKTCount,
+            'totalHTLCount' => $totalHTLCount,
+            'totalMDCCount' => $totalMDCCount,
             'managerL1Names' => $managerL1Names,
             'managerL2Names' => $managerL2Names,
         ]);
@@ -2405,6 +2497,135 @@ class ReimburseController extends Controller
 
         // Redirect to the hotel approval page
         return redirect('/hotel/approval')->with('success', 'Request approved successfully');
+    }
+
+    public function hotelAdmin(Request $request)
+    {
+        $parentLink = 'Reimbursement';
+        $link = 'Hotel (Admin)';
+
+        // Create a base query without user-specific filtering
+        $query = Hotel::orderBy('created_at', 'desc');
+
+        // Cek apakah filter tanggal ada
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        // $filter = $request->input('filter', 'request');
+
+        // Fetch the hotel transactions using the latest ids
+        $transactions = Hotel::with('employee', 'hotelApproval')
+            ->orderBy('created_at', 'desc')
+            ->where('approval_status', '!=', 'Draft')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereRaw("DATE(tgl_masuk_htl) BETWEEN ? AND ?", [$startDate, $endDate]);
+            })
+            ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
+            ->get();
+
+        // Fetch all hotel transactions, removing the user ID filter
+        $hotels = Hotel::with('employee', 'hotelApproval')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $hotel = Hotel::with('employee', 'hotelApproval')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('no_htl');
+
+        // Group transactions by hotel number
+        $hotelGroups = $hotels->groupBy('no_htl');
+
+        foreach ($transactions as $transaction) {
+            // Fetch the employee for the current transaction
+            $employee = Employee::find($transaction->user_id);
+
+            // If the employee exists, fetch their manager names
+            if ($employee) {
+                $managerL1Id = $employee->manager_l1_id;
+                $managerL2Id = $employee->manager_l2_id;
+
+                $managerL1 = Employee::where('employee_id', $managerL1Id)->first();
+                $managerL2 = Employee::where('employee_id', $managerL2Id)->first();
+
+                $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
+                $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+
+                // dd($managerL1Name, $managerL1Name);
+            }
+        }
+
+        $employeeName = Employee::pluck('fullname', 'employee_id');
+
+        // Count grouped hotel entries
+        $hotelCounts = $hotels->groupBy('no_htl')->mapWithKeys(function ($group, $key) {
+            return [$key => ['total' => $group->count()]];
+        });
+
+        return view('hcis.reimbursements.hotel.admin.hotelAdmin', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'transactions' => $transactions,
+            'hotelCounts' => $hotelCounts,
+            'hotels' => $hotels,
+            'hotel' => $hotel,
+            'hotelGroups' => $hotelGroups,
+            'managerL1Name' => $managerL1Name,
+            'managerL2Name' => $managerL2Name,
+            // 'hotelApprovals' => $hotelApprovals,
+            'employeeName' => $employeeName,
+            // 'filter' => $filter,
+        ]);
+    }
+
+    public function hotelBookingAdmin(Request $req, $id)
+    {
+        // dd($id);
+        $userId = Auth::id();
+        $employeeId = auth()->user()->employee_id;
+        // Ambil tiket berdasarkan ID yang diterima
+        $model = Hotel::where('id', $id)->firstOrFail();
+        $hotels = Hotel::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+
+        // Jika tombol booking hotel ditekan
+        if ($req->has('action_htl_book')) {
+            // Validasi input dari form
+            $req->validate([
+                'booking_code' => 'required|string|max:255',
+                'booking_price' => 'required|numeric|min:0',
+            ]);
+
+            // Update data hotel dengan kode dan harga hotel
+            $model->booking_code = $req->input('booking_code');
+            $model->booking_price = $req->input('booking_price');
+            $model->save();
+
+            return redirect()->route('hotel.admin')->with('success', 'hotel booking updated successfully.');
+        }
+    }
+
+    public function exportHotelAdminExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return Excel::download(new HotelExport($startDate, $endDate), 'hotel_report.xlsx');
+    }
+
+    public function hotelDeleteAdmin($key)
+    {
+        // Find the hotel record by its primary key
+        $model = Hotel::findByRouteKey($key);
+
+        if ($model) {
+            // Retrieve the no_htl value of the hotel to delete all hotels with the same no_htl
+            $noHtl = $model->no_htl;
+
+            // Delete all hotels with the same no_htl
+            Hotel::where('no_htl', $noHtl)->delete();
+        }
+
+        // Redirect after deletion
+        return redirect()->intended(route('hotel.admin', absolute: false))->with('success', 'All related hotels deleted successfully');
     }
 
 
@@ -2906,6 +3127,7 @@ class ReimburseController extends Controller
         $user = Auth::user();
         $userId = $user->id;
         $employee = Employee::where('id', $userId)->first();  // Authenticated user's employee record
+        $employeeId = auth()->user()->employee_id;
 
         $parentLink = 'Approval';
         $link = 'Ticket Approval';
@@ -2921,7 +3143,7 @@ class ReimburseController extends Controller
             ->with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
-        // dd($transactions);
+
 
         // Filter tickets based on manager and approval status
         $tickets = $transactions->filter(function ($ticket) use ($employee) {
@@ -2961,6 +3183,93 @@ class ReimburseController extends Controller
             return [$key => ['total' => $group->count()]];
         });
 
+        $totalTKTCount = $tickets->count();
+
+        $totalPendingCount = CATransaction::where(function ($query) use ($employeeId) {
+            $query->where('status_id', $employeeId)->where('approval_status', 'Pending')
+                ->orWhere('sett_id', $employeeId)->where('approval_sett', 'Pending')
+                ->orWhere('extend_id', $employeeId)->where('approval_extend', 'Pending');
+        })->count();
+
+        $totalBTCount = BusinessTrip::where(function ($query) use ($user) {
+            $query->where(function ($q) use ($user) {
+                $q->where('manager_l1_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L1', 'Declaration L1']);
+            })->orWhere(function ($q) use ($user) {
+                $q->where('manager_l2_id', $user->employee_id)
+                    ->whereIn('status', ['Pending L2', 'Declaration L2']);
+            });
+        })->count();
+
+        $hotelNumbers = Hotel::where('hotel_only', 'Y')
+            ->where('approval_status', '!=', 'Draft')
+            ->pluck('no_htl')->unique();
+
+        // Fetch all tickets using the latestTicketIds
+        $transactions_htl = Hotel::whereIn('no_htl', $hotelNumbers)
+            ->with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Filter tickets based on manager and approval status
+        $hotels = $transactions_htl->filter(function ($hotel) use ($employee) {
+            // Get the employee who owns the ticket
+            $ticketOwnerEmployee = Employee::where('id', $hotel->user_id)->first();
+
+            if ($hotel->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) {
+                return true;
+            } elseif ($hotel->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id) {
+                return true;
+            }
+            return false;
+        });
+
+        $totalHTLCount = $hotels->count();
+
+        // Check if the user has approval rights
+        $hasApprovalRights = DB::table('master_bisnisunits')
+            ->where('approval_medical', $employee->employee_id)
+            ->where('nama_bisnis', $employee->group_company)
+            ->exists();
+
+        if ($hasApprovalRights) {
+            $medicalGroup = HealthCoverage::select(
+                'no_medic',
+                'date',
+                'period',
+                'hospital_name',
+                'patient_name',
+                'disease',
+                DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance_verif ELSE 0 END) as maternity_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance_verif ELSE 0 END) as inpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance_verif ELSE 0 END) as outpatient_balance_verif'),
+                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance_verif ELSE 0 END) as glasses_balance_verif'),
+                'status'
+            )
+                ->whereNotNull('verif_by')   // Only include records where verif_by is not null
+                ->whereNotNull('balance_verif')
+                ->where('status', 'Pending')
+                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Add usage_id for each medical record without filtering by employee_id
+            $medical = $medicalGroup->map(function ($item) {
+                // Fetch the usage_id based on no_medic (for any employee)
+                $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
+                $item->usage_id = $usageId;
+
+                // Calculate total per no_medic
+                $item->total_per_no_medic = $item->maternity_balance_verif + $item->inpatient_balance_verif + $item->outpatient_balance_verif + $item->glasses_balance_verif;
+
+                return $item;
+            });
+        } else {
+            $medical = collect(); // Empty collection if user doesn't have approval rights
+        }
+
+        $totalMDCCount = $medical->count();
+
         return view('hcis.reimbursements.ticket.ticketApproval', [
             'link' => $link,
             'parentLink' => $parentLink,
@@ -2969,6 +3278,11 @@ class ReimburseController extends Controller
             'ticketCounts' => $ticketCounts,
             'tickets' => $tickets,
             'ticket' => $ticket,
+            'totalPendingCount' => $totalPendingCount,
+            'totalBTCount' => $totalBTCount,
+            'totalTKTCount' => $totalTKTCount,
+            'totalMDCCount' => $totalMDCCount,
+            'totalHTLCount' => $totalHTLCount,
             'managerL1Names' => $managerL1Names,
             'managerL2Names' => $managerL2Names,
         ]);
@@ -3123,6 +3437,138 @@ class ReimburseController extends Controller
 
         return redirect('/ticket/approval')->with('success', 'Request approved successfully');
     }
+
+    public function ticketAdmin(Request $request)
+    {
+        $parentLink = 'Reimbursement';
+        $link = 'Ticket (Admin)';
+
+        // Cek apakah filter tanggal ada
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $filter = $request->input('filter', 'request');
+
+        // Buat query untuk mendapatkan transaksi terbaru
+        $transactions = Tiket::orderBy('created_at', 'desc')
+            ->where('approval_status', '!=', 'Draft')
+            ->with('businessTrip')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
+            })
+            ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
+            ->get();
+
+        // Ambil data tiket terbaru
+        $tickets = Tiket::with('businessTrip')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Group tickets by 'no_tkt'
+        $ticketsGroups = $tickets->groupBy('no_tkt');
+
+        $ticket = $ticketsGroups->mapWithKeys(function ($group, $key) {
+            return [$key => $group];
+        });
+
+        // Get ticket IDs
+        $tiketIds = $tickets->pluck('id');
+
+        // Get ticket approvals
+        $ticketApprovals = TiketApproval::whereIn('tkt_id', $tiketIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get();
+
+        // Key ticket approvals by ticket ID
+        $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
+
+        // Fetch employee data and manager names for transactions
+        $employeeName = Employee::pluck('fullname', 'employee_id');
+        foreach ($transactions as $transaction) {
+            // Fetch the employee for the current transaction
+            $employee = Employee::find($transaction->user_id);
+
+            // If the employee exists, fetch their manager names
+            if ($employee) {
+                $managerL1Id = $employee->manager_l1_id;
+                $managerL2Id = $employee->manager_l2_id;
+
+                $managerL1 = Employee::where('employee_id', $managerL1Id)->first();
+                $managerL2 = Employee::where('employee_id', $managerL2Id)->first();
+
+                $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
+                $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+            }
+        }
+
+        // Count tickets grouped by 'no_tkt'
+        $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
+            return [$key => ['total' => $group->count()]];
+        });
+
+        // Return the view with all the data
+        return view('hcis.reimbursements.ticket.admin.ticketAdmin', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'transactions' => $transactions,
+            'ticketCounts' => $ticketCounts,
+            'tickets' => $tickets,
+            'ticket' => $ticket,
+            'ticketsGroups' => $ticketsGroups,
+            'managerL1Name' => $managerL1Name ?? 'Unknown',
+            'managerL2Name' => $managerL2Name ?? 'Unknown',
+            'ticketApprovals' => $ticketApprovals,
+            'employeeName' => $employeeName,
+            'filter' => $filter,
+        ]);
+    }
+
+    public function ticketBookingAdmin(Request $req, $id)
+    {
+        $userId = Auth::id();
+        $employeeId = auth()->user()->employee_id;
+
+        // Ambil tiket berdasarkan ID yang diterima
+        $model = Tiket::where('id', $id)->firstOrFail();
+        $tickets = Tiket::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+
+        // Jika tombol booking ticket ditekan
+        if ($req->has('action_tkt_book')) {
+            // Validasi input dari form
+            $req->validate([
+                'booking_code' => 'required|string|max:255',
+                'booking_price' => 'required|numeric|min:0',
+            ]);
+
+            // Update data tiket dengan kode dan harga tiket
+            $model->booking_code = $req->input('booking_code');
+            $model->tkt_price = $req->input('booking_price');
+            $model->save();
+
+            return redirect()->route('ticket.admin')->with('success', 'Ticket booking updated successfully.');
+        }
+    }
+
+
+    public function exportTicketAdminExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        return Excel::download(new TicketExport($startDate, $endDate), 'ticket_report.xlsx');
+    }
+
+    public function ticketDeleteAdmin($key)
+    {
+        $model = Tiket::findByRouteKey($key);
+        Tiket::where('no_tkt', $model->no_tkt)->delete();
+
+        // Redirect to the ticket page with a success message
+        return redirect()->route('ticket.admin')->with('success', 'Tickets has been deleted');
+    }
+
 
     private function getRomanMonth($month)
     {

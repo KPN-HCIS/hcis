@@ -4,14 +4,14 @@
         <thead class="thead-light">
             <tr class="text-center">
                 <th>No</th>
-                <th class="sticky-col-header" style="background-color: white">Cash Advance No</th>
+                <th class="sticky-col-header" style="background-color: #ab2f2b">Cash Advance No</th>
                 <th>Type</th>
                 <th>Requestor</th>
                 <th>Company</th>
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Extend End Date</th>
-                <th>Reason</th>
+                <th style="width: 1%">Reason</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -19,7 +19,7 @@
         <tbody>
             @foreach($ca_transactions_ext as $transaction)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
+                    <td style="text-align: center;">{{ $loop->iteration }}</td>
                     <td style="background-color: white;" class="sticky-col">{{ $transaction->no_ca }}</td>
                     @if($transaction->type_ca == 'dns')
                         <td>Business Trip</td>
@@ -33,7 +33,7 @@
                     <td>{{ \Carbon\Carbon::parse($transaction->start_date)->format('d-m-Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($transaction->end_date)->format('d-m-Y') }}</td>
                     <td>{{ $extendTime[$transaction->id]['ext_end_date'] }}</td>
-                    <td>{{ $extendTime[$transaction->id]['reason_extend'] }}</td>
+                    <td style="width: 1px">{{ $extendTime[$transaction->id]['reason_extend'] }}</td>
                     <td>
                         <p class="badge text-bg-{{ $transaction->approval_extend == 'Approved' ? 'success' : ($transaction->approval_extend == 'Declaration' ? 'info' : ($transaction->approval_extend == 'Pending' ? 'warning' : ($transaction->approval_extend == 'Rejected' ? 'danger' : ($transaction->approval_extend == 'Draft' ? 'secondary' : 'success')))) }}"
                              title="Waiting Approve by: {{ isset($fullnames[$transaction->extend_id]) ? $fullnames[$transaction->extend_id] : 'Unknown Employee' }}">
@@ -59,9 +59,3 @@
         </tbody>
     </table>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $('.scheduleTable').DataTable();
-    });
-</script>

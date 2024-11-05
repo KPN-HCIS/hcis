@@ -69,14 +69,54 @@
 
             @if (request()->routeIs('medical.detail'))
                 <div class="col-md-6 mb-2 d-flex justify-content-center justify-content-md-end align-items-center">
-                    <a href="{{ route('exportmed-detail.excel', $employee_id) }}" class="btn btn-outline-success rounded-pill btn-action me-1">
+                    <a href="{{ route('exportmed-detail.excel', $employee_id) }}"
+                        class="btn btn-outline-success rounded-pill btn-action me-1">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
+                    </a>
+                    <a href="{{ route('medical-form.add-admin', encrypt($employee_id)) }}" class="btn btn-primary rounded-pill">
+                        <i class="bi bi-plus-circle"></i> Add Medical
                     </a>
                 </div>
             @endif
         </div>
+
+        @if (request()->routeIs('medical.confirmation'))
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <form action="{{ route('medical.confirmation') }}" method="GET">
+                                <div class="container-fluid p-2">
+                                    <div class="row align-items-end g-1">
+                                        <div class="col-12 col-md-5">
+                                            <label class="form-label">Unit Location:</label>
+                                            <select class="form-select select2" aria-label="Status" id="stat"
+                                                name="stat">
+                                                <option value="" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
+                                                    Location</option>
+                                                @foreach ($locations as $location)
+                                                    <option value="{{ $location->area }}"
+                                                        {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
+                                                        {{ $location->area . ' (' . $location->company_name . ')' }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12 col-md-2">
+                                            <button class="btn btn-primary w-100" type="submit">Filter</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="row">
-            <div class="card shadow-none p-1 py-3">
+            <div class="card shadow-none p-1 py-3 px-2">
                 @if (request()->routeIs('medical.detail'))
                     <div class="d-flex justify-content-center">
                         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -87,13 +127,13 @@
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
-                                    aria-selected="false">Plafon Medical</button>
+                                    data-bs-target="#pills-profile" type="button" role="tab"
+                                    aria-controls="pills-profile" aria-selected="false">Plafon Medical</button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact"
-                                    aria-selected="false">Family Data</button>
+                                    data-bs-target="#pills-contact" type="button" role="tab"
+                                    aria-controls="pills-contact" aria-selected="false">Family Data</button>
                             </li>
                         </ul>
                     </div>
@@ -160,6 +200,40 @@
     </div>
 
     <script src="{{ asset('/js/medical/medical.js') }}"></script>
+    <script>
+        var isConfirmationRoute = @json(request()->routeIs('medical.confirmation'));
+        //medical table
+        $("#example").DataTable({
+            responsive: {
+                details: {
+                    type: "column",
+                    target: "tr",
+                },
+            },
+            columnDefs: [{
+                    className: "control",
+                    orderable: false,
+                    targets: 0,
+                },
+                {
+                    className: "none", // This will hide Disease and the 4 dynamic columns
+                    targets: isConfirmationRoute ? [9, 10, 11, 12, 13] : [8, 9, 10, 11, 12],
+                },
+                {
+                    responsivePriority: 1,
+                    targets: 0,
+                },
+
+                {
+                    responsivePriority: 4,
+                    targets: 3,
+                },
+            ],
+            order: [1, "asc"],
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {

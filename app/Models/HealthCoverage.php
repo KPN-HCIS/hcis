@@ -28,6 +28,7 @@ class HealthCoverage extends Model
         'medical_type',
         'balance',
         'balance_uncoverage',
+        'balance_uncoverage_company',
         'balance_verif',
         'verif_by',
         'approved_by',
@@ -38,6 +39,7 @@ class HealthCoverage extends Model
         'created_by',
         'status',
         'medical_proof',
+        'submission_type',
         'created_by',
     ];
 

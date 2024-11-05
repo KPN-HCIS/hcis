@@ -1,6 +1,65 @@
 @extends('layouts_.vertical', ['page_title' => 'Hotel'])
 
 @section('css')
+    <style>
+        th {
+            color: white !important;
+            text-align: center;
+        }
+
+        #dt-length-0 {
+            margin-bottom: 10px;
+        }
+
+        .table {
+            border-collapse: separate;
+            width: 100%;
+            /* position: relative; */
+            overflow: auto;
+        }
+
+        .table thead th {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            background-color: #AB2F2B !important;
+            border-bottom: 2px solid #ddd !important;
+            padding-right: 6px;
+            /* box-shadow: inset 2px 0 0 #fff; */
+        }
+
+        .table tbody td {
+            background-color: #fff !important;
+            padding-right: 10px;
+            position: relative;
+        }
+
+        .table th.sticky-col-header {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 3 !important;
+            background-color: #AB2F2B !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            /* box-shadow: inset 2px 0 0 #fff; */
+        }
+
+        .table td.sticky-col {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 6px 0 0 #fff;
+        }
+    </style>
 @endsection
 
 @section('content')

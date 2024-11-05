@@ -1,6 +1,65 @@
 @extends('layouts_.vertical', ['page_title' => 'Ticket'])
 
 @section('css')
+    <style>
+        th {
+            color: white !important;
+            text-align: center;
+        }
+
+        #dt-length-0 {
+            margin-bottom: 10px;
+        }
+
+        .table {
+            border-collapse: separate;
+            width: 100%;
+            /* position: relative; */
+            overflow: auto;
+        }
+
+        .table thead th {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            background-color: #AB2F2B !important;
+            border-bottom: 2px solid #ddd !important;
+            padding-right: 6px;
+            /* box-shadow: inset 2px 0 0 #fff; */
+        }
+
+        .table tbody td {
+            background-color: #fff !important;
+            padding-right: 10px;
+            position: relative;
+        }
+
+        .table th.sticky-col-header {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 3 !important;
+            background-color: #AB2F2B !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            /* box-shadow: inset 2px 0 0 #fff; */
+        }
+
+        .table td.sticky-col {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 6px 0 0 #fff;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -39,7 +98,8 @@
                             <h3 class="card-title">{{ $link }}</h3>
                             <div class="input-group" style="width: 30%;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text bg-white border-dark-subtle"><i class="ri-search-line"></i></span>
+                                    <span class="input-group-text bg-white border-dark-subtle"><i
+                                            class="ri-search-line"></i></span>
                                 </div>
                                 <input type="text" name="customsearch" id="customsearch"
                                     class="form-control  border-dark-subtle border-left-0" placeholder="Search.."
@@ -57,7 +117,7 @@
                                         <th>Total Tickets</th>
                                         <th>Purposes</th>
                                         {{-- <th>Ticket Type</th> --}}
-                                        {{-- <th>Requestor</th> --}}
+                                        <th>Requestor</th>
                                         {{-- <th>Transportation Type</th> --}}
                                         {{-- <th>Passengers Name</th> --}}
                                         <th>From/To</th>
@@ -80,7 +140,7 @@
                                             <td style="text-align: left">
                                                 {{ $ticketCounts[$transaction->no_tkt]['total'] ?? 1 }} Tickets</td>
                                             <td>{{ $transaction->jns_dinas_tkt }}</td>
-                                            {{-- <td>{{ $transaction->np_tkt }}</td> --}}
+                                            <td>{{ $transaction->employee->fullname }}</td>
                                             <td>{{ $transaction->dari_tkt . '/' . $transaction->ke_tkt }}</td>
                                             <td class="text-info">
                                                 <a class="text-info btn-detail" data-toggle="modal"
@@ -89,7 +149,7 @@
                                                         $ticket[$transaction->no_tkt]->map(function ($ticket) {
                                                             return [
                                                                 // 'No. Ticket' => $ticket->no_tkt ?? 'No Data',
-                                                                'No. SPPD' => $ticket->no_sppd,
+                                                                'No. SPPD' => $ticket->no_sppd ?? '-',
                                                                 'No. Ticket' => $ticket->no_tkt,
                                                                 'Passengers Name' => $ticket->np_tkt,
                                                                 'Unit' => $ticket->unit,

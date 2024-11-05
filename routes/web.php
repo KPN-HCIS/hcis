@@ -107,9 +107,9 @@ Route::middleware('auth')->group(function () {
     // Tasks
     Route::get('/tasks', [TaskController::class, 'task'])->name('tasks');
 
-    // My Reimbursement
+    // My Menu
     Route::get('/reimbursements', [ReimburseController::class, 'reimbursements'])->name('reimbursements');
-
+    Route::get('/travel', [ReimburseController::class, 'travel'])->name('travel');
 
     // My Cash Advanced
     Route::get('/cashadvanced', [ReimburseController::class, 'cashadvanced'])->name('cashadvanced');
@@ -190,6 +190,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/hotel/approval/detail/{id}', [ReimburseController::class, 'hotelApprovalDetail'])->name('hotel.approval.detail');
     Route::put('/hotel/status/change/{id}', [ReimburseController::class, 'updatestatusHotel'])->name('change.status.hotel');
 
+    //Hotel Admin
+    Route::middleware(['permission:adminhtl'])->group(function () {
+        Route::get('/hotel/admin', [ReimburseController::class, 'hotelAdmin'])->name('hotel.admin');
+        Route::post('/hotel/admin/booking/{id}', [ReimburseController::class, 'hotelBookingAdmin'])->name('hotel.admin-booking');
+        Route::get('/hotel/excel', [ReimburseController::class, 'exportHotelAdminExcel'])->name('hotel.excel');
+        Route::get('/hotel/report', [ReimburseController::class, 'hotelAdminReport'])->name('hotel.report');
+        Route::post('/hotel/admin/delete/{id}', [ReimburseController::class, 'hotelDeleteAdmin'])->name('hotel.delete.admin');
+    });
+
     // My Ticket
     Route::get('/ticket', [ReimburseController::class, 'ticket'])->name('ticket');
     Route::get('/ticket/form', [ReimburseController::class, 'ticketCreate'])->name('ticket.form');
@@ -203,6 +212,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/ticket/approval', [ReimburseController::class, 'ticketApproval'])->name('ticket.approval');
     Route::get('/ticket/approval/detail/{id}', [ReimburseController::class, 'ticketApprovalDetail'])->name('ticket.approval.detail');
     Route::put('/ticket/status/change/{id}', [ReimburseController::class, 'updatestatusTicket'])->name('change.status.ticket');
+
+    //Ticket Admin
+    Route::middleware(['permission:admintkt'])->group(function () {
+        Route::get('/ticket/admin', [ReimburseController::class, 'ticketAdmin'])->name('ticket.admin');
+        Route::post('/ticket/admin/booking/{id}', [ReimburseController::class, 'ticketBookingAdmin'])->name('ticket.admin-booking');
+        Route::get('/ticket/excel', [ReimburseController::class, 'exportTicketAdminExcel'])->name('ticket.excel');
+        Route::get('/ticket/report', [ReimburseController::class, 'ticketAdminReport'])->name('ticket.report');
+        Route::post('/ticket/admin/delete/{id}', [ReimburseController::class, 'ticketDeleteAdmin'])->name('ticket.delete.admin');
+    });
 
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');
@@ -261,6 +279,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/medical/report', [MedicalController::class, 'medicalReportAdmin'])->name('medical.report');
         Route::get('/medical/confirmation', [MedicalController::class, 'medicalAdminConfirmation'])->name('medical.confirmation');
         Route::get('/medical/detail/{key}', [MedicalController::class, 'medicalAdminDetail'])->name('medical.detail');
+        Route::get('/medical/detail/form-add-detail/{employee_id}', [MedicalController::class, 'medicalAdminDetailForm'])->name('medical-form.add-admin');
+        Route::post('/medical/detail/form-add-detail/post/{employee_id}', [MedicalController::class, 'medicalAdminDetailCreate'])->name('medical-form.post-admin');
 
         Route::post('/medical/import-excel/', [MedicalController::class, 'importAdminExcel'])->name('import.medical');
         Route::get('/exportmed/excel', [MedicalController::class, 'exportAdminExcel'])->name('exportmed.excel');

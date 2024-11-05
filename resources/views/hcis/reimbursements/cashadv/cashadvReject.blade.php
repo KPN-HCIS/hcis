@@ -2,6 +2,11 @@
 
 @section('css')
 <style>
+    th {
+        color: white !important;
+        text-align: center;
+    }
+
     .table {
         border-collapse: separate;
         width: 100%;
@@ -15,10 +20,10 @@
         position: sticky !important;
         top: 0 !important;
         z-index: 2 !important;
-        background-color: #fff !important;
-        border-bottom: 2px solid #ddd !important;
+        background-color: #AB2F2B !important;
+        border-bottom: 2px solid #AB2F2B !important;
         padding-right: 6px;
-        box-shadow: inset 2px 0 0 #fff;
+        box-shadow: inset 2px 0 0 #AB2F2B;
     }
 
     .table tbody td {
@@ -33,10 +38,10 @@
         position: sticky !important;
         left: 0 !important;
         z-index: 3 !important;
-        background-color: #fff !important;
-        border-right: 2px solid #ddd !important;
+        background-color: #AB2F2B !important;
+        border-right: 2px solid #AB2F2B !important;
         padding-right: 10px;
-        box-shadow: inset 2px 0 0 #fff;
+        box-shadow: inset 2px 0 0 #AB2F2B;
     }
 
     .table td.sticky-col {
@@ -104,7 +109,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text bg-white border-dark-subtle"><i class="ri-search-line"></i></span>
                             </div>
-                            <input type="text" name="customsearch" id="customsearch" class="form-control w-  border-dark-subtle border-left-0" placeholder="search.." aria-label="search" aria-describedby="search">
+                            <input type="text" name="customsearch" id="customsearch" class="form-control w-  border-dark-subtle border-left-0" placeholder="Search.." aria-label="search" aria-describedby="search">
                         </div>
                     </div>
                     @include('hcis.reimbursements.cashadv.navigation.navigationCashadv')
