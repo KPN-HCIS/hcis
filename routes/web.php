@@ -127,7 +127,6 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['permission:reportca_hcis'])->group(function () {
         Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
-        // Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
         Route::post('/cashadvanced/adupdate/{id}', [ReimburseController::class, 'cashadvancedAdminUpdate'])->name('cashadvanced.adupdate');
 
         Route::post('/cashadvanced/approval/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalAdmin'])->name('approvalAdmin.cashadvancedApprovedAdmin');
