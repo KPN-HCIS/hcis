@@ -809,11 +809,11 @@ class ReimburseController extends Controller
                             'company' => $company,
                             'purpose' => $purpose,
                             'relation_type' => array_filter([
-                                'Food' => in_array('food', $req->food_e_relation ?? [$key]),
-                                'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                                'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
-                                'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
-                                'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
+                                'Food' => !empty($req->food_e_relation[$key]) && $req->food_e_relation[$key] === 'food',
+                                'Transport' => !empty($req->transport_e_relation[$key]) && $req->transport_e_relation[$key] === 'transport',
+                                'Accommodation' => !empty($req->accommodation_e_relation[$key]) && $req->accommodation_e_relation[$key] === 'accommodation',
+                                'Gift' => !empty($req->gift_e_relation[$key]) && $req->gift_e_relation[$key] === 'gift',
+                                'Fund' => !empty($req->fund_e_relation[$key]) && $req->fund_e_relation[$key] === 'fund',
                             ], fn($checked) => $checked),
                         ];
                     }
@@ -825,7 +825,7 @@ class ReimburseController extends Controller
                 'detail_e' => $detail_e,
                 'relation_e' => $relation_e,
             ];
-            dd($detail_ca);
+            // dd($detail_ca);
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
             $model->no_sppd = $req->bisnis_numb_ent;
@@ -1143,19 +1143,26 @@ class ReimburseController extends Controller
             // Mengumpulkan detail relation
             if ($req->has('rname_e_relation')) {
                 foreach ($req->rname_e_relation as $key => $name) {
-                    $relation_e[] = [
-                        'name' => $name,
-                        'position' => $req->rposition_e_relation[$key],
-                        'company' => $req->rcompany_e_relation[$key],
-                        'purpose' => $req->rpurpose_e_relation[$key],
-                        'relation_type' => array_filter([
-                            'Food' => in_array('food', $req->food_e_relation ?? [$key]),
-                            'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
-                            'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
-                            'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
-                        ], fn($checked) => $checked),
-                    ];
+                    $position = $req->rposition_e_relation[$key];
+                    $company = $req->rcompany_e_relation[$key];
+                    $purpose = $req->rpurpose_e_relation[$key];
+
+                    // Memastikan semua data yang diperlukan untuk relation terisi
+                    if (!empty($name) && !empty($position) && !empty($company) && !empty($purpose)) {
+                        $relation_e[] = [
+                            'name' => $name,
+                            'position' => $position,
+                            'company' => $company,
+                            'purpose' => $purpose,
+                            'relation_type' => array_filter([
+                                'Food' => !empty($req->food_e_relation[$key]) && $req->food_e_relation[$key] === 'food',
+                                'Transport' => !empty($req->transport_e_relation[$key]) && $req->transport_e_relation[$key] === 'transport',
+                                'Accommodation' => !empty($req->accommodation_e_relation[$key]) && $req->accommodation_e_relation[$key] === 'accommodation',
+                                'Gift' => !empty($req->gift_e_relation[$key]) && $req->gift_e_relation[$key] === 'gift',
+                                'Fund' => !empty($req->fund_e_relation[$key]) && $req->fund_e_relation[$key] === 'fund',
+                            ], fn($checked) => $checked),
+                        ];
+                    }
                 }
             }
 
@@ -1164,7 +1171,7 @@ class ReimburseController extends Controller
                 'detail_e' => $detail_e,
                 'relation_e' => $relation_e,
             ];
-            // dd($detail_ca);
+            dd($detail_ca);
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
         }

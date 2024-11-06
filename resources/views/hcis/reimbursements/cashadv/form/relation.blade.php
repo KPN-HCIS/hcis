@@ -3,6 +3,9 @@
 @if (!empty($detailCA['relation_e']) && $detailCA['relation_e'][0]['name'] !== null)
     <div id="form-container-relation">
         @foreach($detailCA['relation_e'] as $relation)
+            @php
+                $initialCount = count($detailCA['relation_e']);
+            @endphp
             <div id="form-container-e-relation-{{ $loop->index + 1 }}" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
                 <p class="fs-4 text-primary" style="font-weight: bold; ">Relation Entertainment {{ $loop->index + 1 }}</p>
                 <div id="form-container-e-relation-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3">
@@ -15,7 +18,7 @@
                                 <div class="form-check">
                                     <input class="form-check-input"
                                         type="checkbox"
-                                        name="accommodation_e_relation[]"
+                                        name="accommodation_e_relation[{{ $loop->index }}]"
                                         id="accommodation_e_relation_{{ $loop->index + 1 }}"
                                         value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
@@ -23,7 +26,7 @@
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input"
-                                        name="transport_e_relation[]"
+                                        name="transport_e_relation[{{ $loop->index }}]"
                                         type="checkbox"
                                         id="transport_e_relation_{{ $loop->index + 1 }}"
                                         value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
@@ -32,7 +35,7 @@
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input"
-                                        name="gift_e_relation[]" type="checkbox"
+                                        name="gift_e_relation[{{ $loop->index }}]" type="checkbox"
                                         id="gift_e_relation_{{ $loop->index + 1 }}"
                                         value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
@@ -40,7 +43,7 @@
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input"
-                                        name="fund_e_relation[]" type="checkbox"
+                                        name="fund_e_relation[{{ $loop->index }}]" type="checkbox"
                                         id="fund_e_relation_{{ $loop->index + 1 }}"
                                         value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
@@ -48,7 +51,7 @@
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input"
-                                        name="food_e_relation[]" type="checkbox"
+                                        name="food_e_relation[{{ $loop->index }}]" type="checkbox"
                                         id="food_e_relation_{{ $loop->index + 1 }}"
                                         value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
@@ -102,6 +105,10 @@
             </div>
         @endforeach
     </div>
+    
+    <script>
+        let checkboxCount = {{ $initialCount }};
+    </script>    
 
     <div class="mt-3">
         <button class="btn btn-primary btn-sm" id="addMoreButtonRelation" onclick="addMoreFormRelationReq(event)">Add More</button>
@@ -119,41 +126,41 @@
                         <div class="form-check">
                             <input class="form-check-input"
                                 type="checkbox"
-                                name="accommodation_e_relation0"
-                                id="accommodation_e_relation_1"
+                                name="accommodation_e_relation[0]"
+                                id="accommodation_e_relation_0"
                                 value="accommodation">
                             <label class="form-check-label"
-                                for="accommodation_e_relation_1">Accommodation</label>
+                                for="accommodation_e_relation_0">Accommodation</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="transport_e_relation0"
+                                name="transport_e_relation[0]"
                                 type="checkbox"
-                                id="transport_e_relation_1"
+                                id="transport_e_relation_0"
                                 value="transport">
                             <label class="form-check-label"
-                                for="transport_e_relation_1">Transport</label>
+                                for="transport_e_relation_0">Transport</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="gift_e_relation0" type="checkbox"
-                                id="gift_e_relation_1" value="gift">
+                                name="gift_e_relation[0]" type="checkbox"
+                                id="gift_e_relation_0" value="gift">
                             <label class="form-check-label"
-                                for="gift_e_relation_1">Gift</label>
+                                for="gift_e_relation_0">Gift</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="fund_e_relation0" type="checkbox"
-                                id="fund_e_relation_1" value="fund">
+                                name="fund_e_relation[0]" type="checkbox"
+                                id="fund_e_relation_0" value="fund">
                             <label class="form-check-label"
-                                for="fund_e_relation_1">Fund</label>
+                                for="fund_e_relation_0">Fund</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="food_e_relation0" type="checkbox"
-                                id="food_e_relation_1" value="food">
+                                name="food_e_relation[0]" type="checkbox"
+                                id="food_e_relation_0" value="food">
                             <label class="form-check-label"
-                                for="food_e_relation_1">Food/Beverages/Souvenir</label>
+                                for="food_e_relation_0">Food/Beverages/Souvenir</label>
                         </div>
                     </div>
                     <div class="col-md-4 mb-2">
@@ -195,6 +202,10 @@
             </div>
         </div>
     </div>
+
+    <script>
+        let checkboxCount = 0;
+    </script> 
 
     <div class="mt-3">
         <button class="btn btn-primary btn-sm" id="addMoreButtonRelation" onclick="addMoreFormRelationReq(event)">Add More</button>
