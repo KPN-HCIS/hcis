@@ -804,6 +804,15 @@ class BusinessTripController extends Controller
             CATransaction::where('no_sppd', $oldNoSppd)->delete();
         }
 
+        if ($statusValue !== 'Draft') {
+            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new BusinessTripNotification($n));
+            }
+        }
+
         return redirect('/businessTrip')->with('success', 'Business trip updated successfully');
     }
 
