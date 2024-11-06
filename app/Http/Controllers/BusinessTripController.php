@@ -33,6 +33,8 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use App\Models\ca_approval;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BusinessTripNotification;
 
 
 class BusinessTripController extends Controller
@@ -2016,7 +2018,7 @@ class BusinessTripController extends Controller
         $managerL1 = $deptHeadManager->employee_id;
         $managerL2 = $deptHeadManager->manager_l1_id;
 
-        BusinessTrip::create([
+        $businessTrip = BusinessTrip::create([
             'id' => $bt->id,
             'user_id' => $userId,
             'jns_dinas' => $request->jns_dinas,
@@ -2375,6 +2377,15 @@ class BusinessTripController extends Controller
                     $model_approval->save();
                 }
                 $ca->save();
+            }
+        }
+
+        if ($statusValue !== 'Draft') {
+            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new BusinessTripNotification($businessTrip));
             }
         }
         return redirect()->route('businessTrip')->with('success', 'Request Successfully Added');
