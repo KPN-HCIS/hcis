@@ -25,8 +25,8 @@ function addMoreFormDetailDec(event) {
     newForm.style.backgroundColor = "#f8f8f8";
     newForm.innerHTML = `
             <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment ${formCountDetail}</p>
-            <div class="card-body bg-light p-2 mb-3">
-                <p class="fs-5 text-primary" style="font-weight: bold;">Penginapan Declaration</p>
+            <div id="form-container-e-detail-dec-${formCountDetail}" class="card-body bg-light p-2 mb-3">
+                <p class="fs-5 text-primary" style="font-weight: bold;">Detail Entertainment Declaration</p>
                 <div class="row">
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Entertainment Type</label>
@@ -101,8 +101,8 @@ function addMoreFormDetailReq(event) {
     newForm.style.backgroundColor = "#f8f8f8";
     newForm.innerHTML = `
             <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment ${formCountDetail}</p>
-            <div class="card-body bg-light p-2 mb-3">
-                <p class="fs-5 text-primary" style="font-weight: bold;">Penginapan Request</p>
+            <div id="form-container-e-detail-req-${formCountDetail}" class="card-body bg-light p-2 mb-3">
+                <p class="fs-5 text-primary" style="font-weight: bold;">Detail Entertainment Request</p>
                 <div class="row">
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Entertainment Type</label>

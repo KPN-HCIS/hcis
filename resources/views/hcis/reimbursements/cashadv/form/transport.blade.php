@@ -11,7 +11,7 @@
         newForm.style.backgroundColor = "#f8f8f8";
         newForm.innerHTML = `
                     <p class="fs-4 text-primary" style="font-weight: bold; ">Transport ${formCountTransport}</p>
-                    <div class="card-body bg-light p-2 mb-3">
+                    <div id="form-container-bt-transport-req-${formCountTransport}" class="card-body bg-light p-2 mb-3">
                         <p class="fs-5 text-primary" style="font-weight: bold;">Request Transport</p>
                         <div class="row">
                             <!-- Transport Date -->

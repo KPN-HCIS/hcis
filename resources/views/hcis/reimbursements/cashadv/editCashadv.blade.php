@@ -31,7 +31,7 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="cashadvancedForm" method="post"
+                        <form enctype="multipart/form-data" id="cashadvancedForm" method="post"
                             action="{{ route('cashadvanced.update', encrypt($transactions->id)) }}">@csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
