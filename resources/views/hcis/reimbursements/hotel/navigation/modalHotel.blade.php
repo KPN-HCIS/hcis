@@ -66,19 +66,19 @@
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="bookingModalLabel">Booking Detail - "<label id="book_no_htl"></label>"</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header bg-primary">
+                <h1 class="modal-title fs-5 text-white" id="bookingModalLabel">Booking Detail - <label id="book_no_htl" style="font-weight: bold"></label></h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="POST" action="" id="bookingForm">@csrf
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12 mb-2">
                             <label class="form-label" for="booking_code">Booking Code</label>
-                            <input name="booking_code" id="booking_code" class="form-control" required>
+                            <input name="booking_code" id="booking_code" class="form-control" placeholder="Write Booking Code ..." required>
                         </div>
                         <div class="col-md-12 mb-2">
-                            <label class="form-label" for="booking_price">Ticket Price</label>
+                            <label class="form-label" for="booking_price">Hotel Price</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Rp</span>
