@@ -31,7 +31,7 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form enctype="multipart/form-data" id="cashadvancedForm" method="post"
+                        <form id="cashadvancedForm" method="post"
                             action="{{ route('cashadvanced.update', encrypt($transactions->id)) }}">@csrf
                             <div class="row">
                                 <div class="col-md-6 mb-2">
@@ -150,7 +150,8 @@
                                     </select>
                                     <input type="hidden" name="ca_type" id="ca_type" value="{{ $transactions->type_ca }}">
                                 </div>
-                                <div class="col-md-6 mb-2">
+                                <div class="col-md-12 mb-2">
+                                    <div class="mb-2">
                                         <label class="form-label" for="bisnis_numb">Business Trip Number</label>
                                         <input type="text" name="bisnis_numb" id="bisnis_numb" class="form-control bg-light" value="{{ $transactions->no_sppd ?? 'Tidak ada Bussiness Trip Number' }}" readonly>
                                     </div>
@@ -436,50 +437,7 @@
                 } else {
                     totalDaysInput.value = 0; // Mengatur ke 0 jika tidak valid
                 }
-                calculateTotalCA();
             }
-
-            // function formatInput(input) {
-            //     let value = input.value.replace(/\./g, '');
-            //     value = parseFloat(value);
-            //     if (!isNaN(value)) {
-            //         // input.value = formatNumber(value);
-            //         input.value = formatNumber(Math.floor(value));
-            //     } else {
-            //         input.value = formatNumber(0);
-            //     }
-
-            //     calculateTotalCA();
-            // }
-
-            // function calculateTotalCA() {
-            //     const allowance = parseNumber(allowanceInput.value);
-            //     const transport = parseNumber(transportInput.value);
-            //     const accommodation = parseNumber(accommodationInput.value);
-            //     const other = parseNumber(otherInput.value);
-            //     const nominal_1 = parseNumber(nominal_1Input.value);
-            //     const nominal_2 = parseNumber(nominal_2Input.value);
-            //     const nominal_3 = parseNumber(nominal_3Input.value);
-            //     const nominal_4 = parseNumber(nominal_4Input.value);
-            //     const nominal_5 = parseNumber(nominal_5Input.value);
-
-            //     // Perbaiki penulisan caTypeInput.value
-            //     const ca_type = caTypeInput.value;
-
-            //     let totalca = 0;
-            //     if (ca_type === 'dns') {
-            //         totalca = allowance + transport + accommodation + other;
-            //     } else if (ca_type === 'ndns') {
-            //         totalca = transport + accommodation + other;
-            //         allowanceInput.value = 0;
-            //     } else if (ca_type === 'entr') {
-            //         totalca = nominal_1 + nominal_2 + nominal_3 + nominal_4 + nominal_5;
-            //         allowanceInput.value = 0;
-            //     }
-
-            //     // totalcaInput.value = formatNumber(totalca.toFixed(2));
-            //     totalcaInput.value = formatNumber(Math.floor(totalca));
-            // }
 
             // Menambahkan event listener untuk perubahan di input tanggal
             startDateInput.addEventListener('change', calculateTotalDays);

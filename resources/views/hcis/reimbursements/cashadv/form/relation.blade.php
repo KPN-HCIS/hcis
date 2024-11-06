@@ -107,7 +107,7 @@
     </div>
     
     <script>
-        let checkboxCount = {{ $initialCount }};
+        let checkboxCount = {{ $initialCount }} - 1;
     </script>    
 
     <div class="mt-3">

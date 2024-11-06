@@ -1171,7 +1171,6 @@ class ReimburseController extends Controller
                 'detail_e' => $detail_e,
                 'relation_e' => $relation_e,
             ];
-            dd($detail_ca);
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
         }
@@ -1267,7 +1266,7 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
-                if ($employee_id != null) {
+                if ($employee_id !=  null) {
                     $model_approval = new ca_approval;
                     $model_approval->ca_id = $req->no_id;
                     $model_approval->role_name = $data_matrix_approval->desc;
