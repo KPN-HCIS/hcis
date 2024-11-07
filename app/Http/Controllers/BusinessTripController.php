@@ -3641,7 +3641,12 @@ class BusinessTripController extends Controller
         } elseif ($employeeId == $businessTrip->manager_l1_id) {
             $statusValue = 'Declaration L2';
             $layer = 1;
-
+            $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            // dd($managerL2);
+            if ($managerL2) {
+                // Send email to L2
+                Mail::to($managerL2)->send(new BusinessTripNotification($businessTrip));
+            }
             // Handle CA approval for L1
             if ($businessTrip->ca == 'Ya') {
                 $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();

@@ -7,7 +7,7 @@
 <body>
     <h1>New Business Trip Request</h1>
     <p>A new business trip request has been submitted.</p>
-    <p><strong>Employee Name:</strong> {{ $businessTrip->no_sppd }}</p>
+    <p><strong>No. SPPD:</strong> {{ $businessTrip->no_sppd }}</p>
     <p><strong>Employee Name:</strong> {{ $businessTrip->nama }}</p>
     <p><strong>Trip Purpose:</strong> {{ $businessTrip->keperluan }}</p>
     <p><strong>Start Date:</strong> {{ $businessTrip->mulai }}</p>
