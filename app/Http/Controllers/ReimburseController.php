@@ -2613,7 +2613,8 @@ class ReimburseController extends Controller
         $employeeId = auth()->user()->employee_id;
         // Ambil tiket berdasarkan ID yang diterima
         $model = Hotel::where('id', $id)->firstOrFail();
-        $hotels = Hotel::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+        $no_htl = $model->no_htl;
+        $hotels = Hotel::where('no_htl', $no_htl)->with('businessTrip')->get();
 
         // Jika tombol booking hotel ditekan
         if ($req->has('action_htl_book')) {
@@ -2623,12 +2624,13 @@ class ReimburseController extends Controller
                 'booking_price' => 'required|numeric|min:0',
             ]);
 
-            // Update data hotel dengan kode dan harga hotel
-            $model->booking_code = $req->input('booking_code');
-            $model->booking_price = $req->input('booking_price');
-            $model->save();
+            foreach ($hotels as $hotel) {
+                $hotel->booking_code = $req->input('booking_code');
+                $hotel->booking_price = $req->input('booking_price');
+                $hotel->save();
+            }
 
-            return redirect()->route('hotel.admin')->with('success', 'hotel booking updated successfully.');
+            return redirect()->route('hotel.admin')->with('success', 'Hotel booking updated successfully.');
         }
     }
     public function exportHotelAdminExcel(Request $request)
@@ -3585,8 +3587,10 @@ class ReimburseController extends Controller
 
         // Ambil tiket berdasarkan ID yang diterima
         $model = Tiket::where('id', $id)->firstOrFail();
-        $tickets = Tiket::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+        $no_tkt = $model->no_tkt;
+        $tickets = Tiket::where('no_tkt', $no_tkt)->with('businessTrip')->get();
 
+        // dd($tickets);
         // Jika tombol booking ticket ditekan
         if ($req->has('action_tkt_book')) {
             // Validasi input dari form
@@ -3595,10 +3599,11 @@ class ReimburseController extends Controller
                 'booking_price' => 'required|numeric|min:0',
             ]);
 
-            // Update data tiket dengan kode dan harga tiket
-            $model->booking_code = $req->input('booking_code');
-            $model->tkt_price = $req->input('booking_price');
-            $model->save();
+            foreach ($tickets as $ticket) {
+                $ticket->booking_code = $req->input('booking_code');
+                $ticket->tkt_price = $req->input('booking_price');
+                $ticket->save();
+            }
 
             return redirect()->route('ticket.admin')->with('success', 'Ticket booking updated successfully.');
         }
