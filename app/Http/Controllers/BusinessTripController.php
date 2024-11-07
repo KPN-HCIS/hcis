@@ -1181,6 +1181,14 @@ class BusinessTripController extends Controller
                     $model_approval->save();
                 }
             }
+            if ($statusValue !== 'Declaration Draft') {
+                $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+                // dd($managerEmail);
+                if ($managerEmail) {
+                    // Send email to the manager
+                    Mail::to($managerEmail)->send(new BusinessTripNotification($n));
+                }
+            }
         }
 
         // Assign or update values to $ca model
@@ -1370,6 +1378,14 @@ class BusinessTripController extends Controller
                 $model_approval->approval_status = 'Pending';
 
                 $model_approval->save();
+            }
+        }
+        if ($statusValue !== 'Declaration Draft') {
+            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new BusinessTripNotification($n));
             }
         }
 
