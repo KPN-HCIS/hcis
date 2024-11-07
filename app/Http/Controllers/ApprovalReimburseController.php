@@ -328,6 +328,8 @@ class ApprovalReimburseController extends Controller
                     $caApproval->approval_status = 'Rejected';
                     $caApproval->approved_at = Carbon::now();
                     $caApproval->reject_info = $req->reject_info;
+                    $caApproval->by_admin = 'T';
+                    $caApproval->admin_id = Auth::id();
                     $caApproval->save();
                 }
             }
@@ -360,6 +362,8 @@ class ApprovalReimburseController extends Controller
                 foreach ($models as $model) {
                     $model->approval_status = 'Approved';
                     $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                    $model->by_admin = 'T';
+                    $model->admin_id = Auth::id();
                     $model->save();
                 }
 
@@ -375,6 +379,8 @@ class ApprovalReimburseController extends Controller
                 foreach ($models as $model) {
                     $model->approval_status = 'Approved';
                     $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                    $model->by_admin = 'T';
+                    $model->admin_id = Auth::id();
                     $model->save();
                 }
 
@@ -414,7 +420,7 @@ class ApprovalReimburseController extends Controller
             $transaction->formatted_end_date = Carbon::parse($transaction->end_date)->format('d-m-Y');
         }
 
-        return view('hcis.reimbursements.approval.approvalDeklarasiCashadv', [
+        return view('hcis.reimbursements.approval.approvalCashadv', [
             'pendingCACount' => $pendingCACount,
             'pendingDECCount' => $pendingDECCount,
             'pendingEXCount' => $pendingEXCount,
@@ -460,7 +466,7 @@ class ApprovalReimburseController extends Controller
         // Cek apakah ini sudah di-approve atau tidak
         if ($model->approval_status == 'Approved') {
             Alert::warning('Warning', 'This approval has already been approved.');
-            return redirect()->route('approval.cashadvancedDeklarasi');
+            return redirect()->route('approval.cashadvanced');
         }
 
         // Ambil semua approval yang terkait dengan ca_id
@@ -485,7 +491,7 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            return redirect()->route('approval.cashadvancedDeklarasi')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
+            return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
 
         // Cek jika tombol approve ditekan
@@ -534,7 +540,7 @@ class ApprovalReimburseController extends Controller
             }
         }
 
-        return redirect()->route('approval.cashadvancedDeklarasi')->with('success', 'Transaction Approved, Thanks for Approving.');
+        return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Approved, Thanks for Approving.');
     }
 
     public function cashadvancedActionDeklarasiAdmin(Request $req, $ca_id)
@@ -550,10 +556,11 @@ class ApprovalReimburseController extends Controller
         }
 
         // Ambil semua approval yang terkait dengan ca_id
-        $approvals = ca_sett_approval::where('ca_id', $ca_id)
+        $caApprovalsSett = ca_sett_approval::where('ca_id', $ca_id)
             ->where('approval_status', 'Pending')
             ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
             ->get();
+        // dd($caApprovalsSett);
 
         if ($req->input('action_ca_reject')) {
             $caApprovalsSett = ca_sett_approval::where('ca_id', $ca_id)->get();
@@ -562,6 +569,8 @@ class ApprovalReimburseController extends Controller
                     $caApprovalSett->approval_status = 'Rejected';
                     $caApprovalSett->approved_at = Carbon::now();
                     $caApprovalSett->reject_info = $req->reject_info;
+                    $caApprovalSett->by_admin = 'T';
+                    $caApprovalSett->admin_id = Auth::id();
                     $caApprovalSett->save();
                 }
             }
@@ -580,7 +589,7 @@ class ApprovalReimburseController extends Controller
             $nextApproval = null;
 
             // Mencari layer berikutnya yang lebih tinggi
-            foreach ($approvals as $approval) {
+            foreach ($caApprovalsSett as $approval) {
                 if ($approval->layer > $model->layer && $approval->employee_id <> $model->employee_id) {
                     $nextApproval = $approval;
                     break;
@@ -594,6 +603,8 @@ class ApprovalReimburseController extends Controller
                 foreach ($models as $model) {
                     $model->approval_status = 'Approved';
                     $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                    $model->by_admin = 'T';
+                    $model->admin_id = Auth::id();
                     $model->save();
                 }
 
@@ -609,13 +620,15 @@ class ApprovalReimburseController extends Controller
                 foreach ($models as $model) {
                     $model->approval_status = 'Approved';
                     $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                    $model->by_admin = 'T';
+                    $model->admin_id = Auth::id();
                     $model->save();
                 }
 
                 // Update status_id pada ca_transaction ke employee_id layer berikutnya
                 $caTransaction = ca_transaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
-                    $caTransaction->status_id = $nextApproval->employee_id;
+                    $caTransaction->sett_id = $nextApproval->employee_id;
                     $caTransaction->save();
                 }
             }
@@ -692,7 +705,7 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            return redirect()->route('approval.cashadvancedExtend')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
+            return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
 
         // Cek jika tombol approve ditekan
@@ -725,7 +738,7 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->save();
                 }
 
-                return redirect()->route('approval.cashadvancedExtend');
+                return redirect()->route('approval.cashadvanced');
             } else {
                 // Jika ada layer yang lebih tinggi, update status layer saat ini dan alihkan ke layer berikutnya
                 $model->approval_status = 'Approved';
@@ -739,7 +752,7 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->save();
                 }
 
-                return redirect()->route('approval.cashadvancedExtend')->with('success', 'Extend Approved, Thanks for Approving.');
+                return redirect()->route('approval.cashadvanced')->with('success', 'Extend Approved, Thanks for Approving.');
             }
         }
     }

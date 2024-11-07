@@ -1645,11 +1645,11 @@ class ReimburseController extends Controller
                         'company' => $req->rcompany_e_relation[$key],
                         'purpose' => $req->rpurpose_e_relation[$key],
                         'relation_type' => array_filter([
-                            'Food' => in_array('food', $req->food_e_relation ?? [$key]),
-                            'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
-                            'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
-                            'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
+                            'Food' => !empty($req->food_e_relation[$key]) && $req->food_e_relation[$key] === 'food',
+                                'Transport' => !empty($req->transport_e_relation[$key]) && $req->transport_e_relation[$key] === 'transport',
+                                'Accommodation' => !empty($req->accommodation_e_relation[$key]) && $req->accommodation_e_relation[$key] === 'accommodation',
+                                'Gift' => !empty($req->gift_e_relation[$key]) && $req->gift_e_relation[$key] === 'gift',
+                                'Fund' => !empty($req->fund_e_relation[$key]) && $req->fund_e_relation[$key] === 'fund',
                         ], fn($checked) => $checked),
                     ];
                 }
