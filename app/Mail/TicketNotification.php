@@ -13,39 +13,50 @@ class TicketNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $noSppd;
+    public $noTktList;
+    public $namaPenumpang;
+    public $dariTkt;
+    public $keTkt;
+    public $tglBrktTkt;
+    public $jamBrktTkt;
+    public $approvalStatus;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(array $data)
     {
-        //
+        $this->noSppd = $data['noSppd'];
+        $this->noTktList = $data['noTkt'];
+        $this->namaPenumpang = $data['namaPenumpang'];
+        $this->dariTkt = $data['dariTkt'];
+        $this->keTkt = $data['keTkt'];
+        $this->tglBrktTkt = $data['tglBrktTkt'];
+        $this->jamBrktTkt = $data['jamBrktTkt'];
+        $this->approvalStatus = $data['approvalStatus'];
     }
 
-    /**
-     * Get the message envelope.
-     */
+    public function build()
+    {
+        return $this->subject('New Ticket Request')
+            ->view('hcis.reimbursements.businessTrip.email.tktNotification');
+    }
+
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Ticket Notification',
+            subject: 'Ticket Request Notification',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'hcis.reimbursements.businessTrip.email.tktNotification',
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

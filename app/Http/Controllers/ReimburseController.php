@@ -2983,6 +2983,14 @@ class ReimburseController extends Controller
             'tkt_only' => 'Y',
         ];
 
+        $noKtp = [];
+        $npTkt = [];
+        $dariTkt = [];
+        $keTkt = [];
+        $tglBrktTkt = [];
+        $jamBrktTkt = [];
+        $noTktList = [];
+
         foreach ($ticketData['noktp_tkt'] as $key => $value) {
             // Only process if the required fields are filled
             if (!empty($ticketData['noktp_tkt'][$key]) && !empty($ticketData['jk_tkt'][$key]) && !empty($ticketData['np_tkt'][$key])) {
@@ -3014,6 +3022,14 @@ class ReimburseController extends Controller
                 $tiket->tkt_only = 'Y';
                 // dd($req->all());
                 $tiket->save();
+
+                $noKtp[] = $ticketData['noktp_tkt'][$key];
+                $npTkt[] = $ticketData['np_tkt'][$key];
+                $dariTkt[] = $ticketData['dari_tkt'][$key];
+                $keTkt[] = $ticketData['ke_tkt'][$key];
+                $tglBrktTkt[] = $ticketData['tgl_brkt_tkt'][$key];
+                $jamBrktTkt[] = $ticketData['jam_brkt_tkt'][$key];
+                $noTktList[] = $tiket->no_tkt;
             }
         }
 
@@ -3022,6 +3038,26 @@ class ReimburseController extends Controller
         if ($bt && $tiket->approval_status == 'Pending L1') {
             $bt->tiket = 'Ya';
             $bt->save();
+        }
+
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            // dd($managerEmail);
+            // // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new TicketNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noTkt' => $noTktList,
+                    'namaPenumpang' => $npTkt,
+                    'dariTkt' => $dariTkt,
+                    'keTkt' => $keTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'approvalStatus' => $statusValue,
+                ]));
+            }
         }
 
         return redirect()->route('ticket')->with('success', 'The ticket request has been input successfully.');
@@ -3103,7 +3139,7 @@ class ReimburseController extends Controller
 
     public function ticketUpdate(Request $req)
     {
-        // Get all existing tickets for this business trip
+        $userId = Auth::id();
         $ticketIds = $req->input('ticket_ids', []);
         $existingTickets = Tiket::where('id', $ticketIds)->get()->keyBy('id');
         // dd($req->all());
@@ -3119,8 +3155,15 @@ class ReimburseController extends Controller
         }
 
         $existingNoTkt = $existingTickets->first()->no_tkt ?? null;
-        // dd($existingNoTkt);
-        // dd($req->noktp_tkt);
+
+        // Arrays to collect all ticket data
+        $noTktList = [];
+        $npTkt = [];
+        $dariTkt = [];
+        $keTkt = [];
+        $tglBrktTkt = [];
+        $jamBrktTkt = [];
+
         foreach ($req->noktp_tkt as $key => $value) {
             if (!empty($value)) {
                 $ticketData = [
@@ -3159,6 +3202,7 @@ class ReimburseController extends Controller
                         $firstNoTkt = generateTicketNumber($req->jns_dinas_tkt);
                     }
 
+                    $ticketData['no_tkt'] = $firstNoTkt;
                     // Create a new ticket entry
                     $newTiket = Tiket::create(array_merge($ticketData, [
                         'id' => (string) Str::uuid(),
@@ -3170,10 +3214,15 @@ class ReimburseController extends Controller
 
                 // Track the processed ticket IDs
                 $processedTicketIds[] = $newTiket->id;
-                // dd($processedTicketIds);
+                // Collect ticket data for email
+                $noTktList[] = $ticketData['no_tkt'];
+                $npTkt[] = $ticketData['np_tkt'];
+                $dariTkt[] = $ticketData['dari_tkt'];
+                $keTkt[] = $ticketData['ke_tkt'];
+                $tglBrktTkt[] = $ticketData['tgl_brkt_tkt'];
+                $jamBrktTkt[] = $ticketData['jam_brkt_tkt'];
             }
         }
-        // dd([$existingNoTkt, $processedTicketIds]);
 
         // Soft delete tickets that are no longer in the request
         Tiket::where('no_tkt', $existingNoTkt)
@@ -3186,6 +3235,24 @@ class ReimburseController extends Controller
             $bt->save();
         }
 
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+
+            if ($managerEmail) {
+                // Send email to the manager with all ticket details
+                Mail::to($managerEmail)->send(new TicketNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noTkt' => $noTktList,  // all ticket numbers
+                    'namaPenumpang' => $npTkt,  // all passengers
+                    'dariTkt' => $dariTkt,  // all departure locations
+                    'keTkt' => $keTkt,  // all destination locations
+                    'tglBrktTkt' => $tglBrktTkt,  // all departure dates
+                    'jamBrktTkt' => $jamBrktTkt,  // all departure times
+                    'approvalStatus' => $statusValue,
+                ]));
+            }
+        }
 
         return redirect()->route('ticket')->with('success', 'The ticket request has been updated successfully.');
     }
