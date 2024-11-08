@@ -38,6 +38,9 @@ use App\Exports\TicketExport;
 use App\Exports\HotelExport;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\HotelNotification;
+use App\Mail\TicketNotification;
 
 class ReimburseController extends Controller
 {
@@ -1953,6 +1956,13 @@ class ReimburseController extends Controller
             'approval_status' => $statusValue,
         ];
 
+        $namaHtl = [];
+        $lokasiHtl = [];
+        $tglMasukHtl = [];
+        $tglKeluarHtl = [];
+        $totalHari = [];
+        $noHtlList = [];
+
         foreach ($hotelData['nama_htl'] as $key => $value) {
             // Only process if required fields are filled
             if (!empty($hotelData['nama_htl'][$key]) && !empty($hotelData['lokasi_htl'][$key]) && !empty($hotelData['tgl_masuk_htl'][$key])) {
@@ -1975,6 +1985,13 @@ class ReimburseController extends Controller
                 $model->created_by = $userId;
                 // dd($statusValue);
                 $model->save();
+
+                $namaHtl[] = $hotelData['nama_htl'][$key];
+                $lokasiHtl[] = $hotelData['lokasi_htl'][$key];
+                $tglMasukHtl[] = $hotelData['tgl_masuk_htl'][$key];
+                $tglKeluarHtl[] = $hotelData['tgl_keluar_htl'][$key];
+                $totalHari[] = $hotelData['total_hari'][$key];
+                $noHtlList[] = $model->no_htl; // Collect each no_htl
             }
         }
 
@@ -1984,6 +2001,26 @@ class ReimburseController extends Controller
             // Update the 'hotel' field to 'Ya'
             $bt->hotel = 'Ya';
             $bt->save();
+        }
+
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            // dd($managerEmail);
+            // // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'approvalStatus' => $statusValue,
+                ]));
+            }
         }
         return redirect('/hotel')->with('success', 'Hotel request input successfully');
     }
@@ -2056,6 +2093,7 @@ class ReimburseController extends Controller
 
     public function hotelUpdate(Request $req, $key)
     {
+        $userId = Auth::id();
         $hotelIds = $req->input('hotel_ids', []); // Get the array of existing hotel IDs
         $existingHotels = Hotel::whereIn('id', $hotelIds)->get()->keyBy('id'); // Load existing hotels into a collection
 
@@ -2071,7 +2109,13 @@ class ReimburseController extends Controller
 
         // Get the no_htl from the first existing hotel record
         $existingNoHtl = $existingHotels->first()->no_htl ?? null;
-        // dd($existingNoHtl);
+        // Initialize arrays to store hotel information for the email notification
+        $noHtlList = [];
+        $namaHtl = [];
+        $lokasiHtl = [];
+        $tglMasukHtl = [];
+        $tglKeluarHtl = [];
+        $totalHari = [];
 
         // Loop through hotel data
         foreach ($req->nama_htl as $index => $value) {
@@ -2127,6 +2171,33 @@ class ReimburseController extends Controller
                         $updateBusinessTrip = true;
                     }
                 }
+                // Collect data for email
+                $noHtlList[] = $existingNoHtl;
+                $namaHtl[] = $req->nama_htl[$index];
+                $lokasiHtl[] = $req->lokasi_htl[$index];
+                $tglMasukHtl[] = $req->tgl_masuk_htl[$index];
+                $tglKeluarHtl[] = $req->tgl_keluar_htl[$index];
+                $totalHari[] = $req->total_hari[$index];
+            }
+        }
+
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            // dd($managerEmail);
+            // // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'approvalStatus' => $statusValue,
+                ]));
             }
         }
 
@@ -2143,13 +2214,6 @@ class ReimburseController extends Controller
         Hotel::where('no_htl', $existingNoHtl)
             ->whereNotIn('id', $processedHotelIds)
             ->delete();
-
-        // Show success or warning message
-        // if (count($processedHotelIds) > 0) {
-        //     Alert::success('Success', "Hotels updated successfully");
-        // } else {
-        //     Alert::warning('Warning', "No hotels were updated.");
-        // }
 
         return redirect('/hotel')->with('success', 'Hotel request updated successfully');
     }
@@ -2464,7 +2528,27 @@ class ReimburseController extends Controller
 
         // Handle approval scenarios
         if ($hotel->approval_status == 'Pending L1') {
+            // Update approval status to 'Pending L2'
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Pending L2']);
+
+            // Retrieve the layer 2 manager's ID and email
+            $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
+            // dd($managerId);
+            $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+
+            if ($managerEmail) {
+                // Send email notification to layer 2 manager
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $hotel->no_sppd,
+                    'noHtl' => [$hotel->no_htl], // Wrap in array
+                    'namaHtl' => [$hotel->nama_htl], // Wrap in array
+                    'lokasiHtl' => [$hotel->lokasi_htl], // Wrap in array
+                    'tglMasukHtl' => [$hotel->tgl_masuk_htl], // Wrap in array
+                    'tglKeluarHtl' => [$hotel->tgl_keluar_htl], // Wrap in array
+                    'totalHari' => [$hotel->total_hari], // Wrap in array
+                    'approvalStatus' => 'Pending L2',
+                ]));
+            }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
         } else {
