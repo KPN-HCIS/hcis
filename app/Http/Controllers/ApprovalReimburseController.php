@@ -244,7 +244,7 @@ class ApprovalReimburseController extends Controller
                 }
             }
             // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
-            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            $caTransaction = CATransaction::where('id', $ca_id)->first();
             if ($caTransaction) {
                 $caTransaction->approval_status = 'Rejected';
                 $caTransaction->save();
@@ -277,7 +277,7 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Update status_id pada ca_transaction
-                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->approval_status = 'Approved'; // Set ke ID user layer tertinggi
                     // $caTransaction->approval_sett = 'On Progress';
@@ -299,7 +299,7 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Update status_id pada ca_transaction ke employee_id layer berikutnya
-                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->status_id = $nextApproval->employee_id;
                     $caTransaction->save();
@@ -348,7 +348,7 @@ class ApprovalReimburseController extends Controller
                 }
             }
             // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
-            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            $caTransaction = CATransaction::where('id', $ca_id)->first();
             if ($caTransaction) {
                 $caTransaction->approval_status = 'Rejected';
                 $caTransaction->save();
@@ -382,12 +382,13 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Update approval_status pada ca_transaction
-                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->approval_status = 'Approved'; // Set ke Approved untuk transaksi
                     $caTransaction->save();
 
                     $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    // dd($CANotificationLayer);
                     if ($CANotificationLayer) {
                         // Kirim email ke pengguna transaksi (employee pada layer terakhir)
                         Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, $caTransaction));
@@ -405,7 +406,7 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Update status_id pada ca_transaction ke employee_id layer berikutnya
-                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->status_id = $nextApproval->employee_id;
                     $caTransaction->save();
@@ -512,7 +513,7 @@ class ApprovalReimburseController extends Controller
                     $caApprovalSett->save();
                 }
             }
-            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            $caTransaction = CATransaction::where('id', $ca_id)->first();
             if ($caTransaction) {
                 $caTransaction->approval_sett = 'Rejected';
                 $caTransaction->save();
@@ -544,12 +545,13 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Update status_id pada ca_transaction
-                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->approval_sett = 'Approved'; // Set ke ID user layer tertinggi
                     $caTransaction->save();
 
                     $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    dd($CANotificationLayer);
                     if ($CANotificationLayer) {
                         // Kirim email ke pengguna transaksi (employee pada layer terakhir)
                         Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, $caTransaction));
@@ -565,7 +567,7 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Update status_id pada ca_transaction ke employee_id layer berikutnya
-                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->sett_id = $nextApproval->employee_id;
                     $caTransaction->save();
@@ -615,7 +617,7 @@ class ApprovalReimburseController extends Controller
                 }
             }
             // ->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
-            $caTransaction = ca_transaction::where('id', $ca_id)->first();
+            $caTransaction = CATransaction::where('id', $ca_id)->first();
             if ($caTransaction) {
                 $caTransaction->approval_sett = 'Rejected';
                 $caTransaction->save();
@@ -649,7 +651,7 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Update approval_sett pada ca_transaction
-                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->approval_sett = 'Approved'; // Set ke Approved untuk transaksi
                     $caTransaction->save();
@@ -672,16 +674,15 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Update status_id pada ca_transaction ke employee_id layer berikutnya
-                $caTransaction = ca_transaction::where('id', $ca_id)->first();
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
                 if ($caTransaction) {
                     $caTransaction->sett_id = $nextApproval->employee_id;
                     $caTransaction->save();
                 }
 
-                // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
+            
                 $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
                 if ($CANotificationLayer) {
-                    // Send email ke manager di layer berikutnya
                     Mail::to($CANotificationLayer)->send(new CashAdvancedNotification($nextApproval, $caTransaction));
                 }
             }
@@ -752,7 +753,7 @@ class ApprovalReimburseController extends Controller
         // Cek jika tombol reject ditekan
         if ($req->input('action_ca_reject')) {
             ca_extend::where('ca_id', $id)->update(['approval_status' => 'Rejected', 'approved_at' => Carbon::now()]);
-            $caTransaction = ca_transaction::where('id', $id)->first();
+            $caTransaction = CATransaction::where('id', $id)->first();
             if ($caTransaction) {
                 $caTransaction->approval_extend = 'Rejected';
                 $caTransaction->save();
@@ -781,7 +782,7 @@ class ApprovalReimburseController extends Controller
                 $model->save();
 
                 // Update status_id pada ca_transaction
-                $caTransaction = ca_transaction::where('id', $id)->first();
+                $caTransaction = CATransaction::where('id', $id)->first();
                 if ($caTransaction) {
                     $caTransaction->approval_extend = 'Approved'; // Set ke ID user layer tertinggi
                     $caTransaction->start_date = $req->input('ext_start_date');
@@ -799,7 +800,7 @@ class ApprovalReimburseController extends Controller
                 $model->save();
 
                 // Update status_id pada ca_transaction ke employee_id layer berikutnya
-                $caTransaction = ca_transaction::where('id', $id)->first();
+                $caTransaction = CATransaction::where('id', $id)->first();
                 if ($caTransaction) {
                     $caTransaction->extend_id = $nextApproval->employee_id;
                     $caTransaction->save();

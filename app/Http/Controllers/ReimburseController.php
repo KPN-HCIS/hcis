@@ -40,6 +40,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CashAdvancedNotification;
+use App\Mail\HotelNotification;
+use App\Mail\TicketNotification;
 
 class ReimburseController extends Controller
 {
@@ -947,7 +949,7 @@ class ReimburseController extends Controller
         $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
         if ($CANotificationLayer) {
             // Kirim email ke pengguna transaksi (employee pada layer terakhir)
-            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, null, $model));
+            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, $model ));
         }
 
         return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
@@ -1292,7 +1294,7 @@ class ReimburseController extends Controller
         $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
         if ($CANotificationLayer) {
             // Kirim email ke pengguna transaksi (employee pada layer terakhir)
-            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, null, $model));
+            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, $model));
         }
         return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
     }
@@ -1788,6 +1790,12 @@ class ReimburseController extends Controller
         $model->declaration_at = Carbon::now();
         $model->save();
 
+        $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+        if ($CANotificationLayer) {
+            // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, $model));
+        }
+
         return redirect()->route('cashadvancedDeklarasi')->with('success', 'Transaction successfully added waiting for Approval.');
     }
 
@@ -1973,6 +1981,8 @@ class ReimburseController extends Controller
             'tgl_keluar_htl' => $req->tgl_keluar_htl,
             'total_hari' => $req->total_hari,
             'approval_status' => $statusValue,
+            'no_htl' => $noSppdHtl,
+            'no_sppd' => $req->bisnis_numb,
         ];
 
         foreach ($hotelData['nama_htl'] as $key => $value) {
@@ -1995,8 +2005,20 @@ class ReimburseController extends Controller
                 $model->approval_status = $statusValue;
                 $model->hotel_only = 'Y';
                 $model->created_by = $userId;
-                // dd($statusValue);
                 $model->save();
+
+                // $hotelModels[] = $model;
+                // dd($hotelModels);
+                // dd($hotelData);
+
+                if ($statusValue == 'Pending L1') {
+                    $employee = Employee::where('id', $userId)->first();
+                    $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
+                    if ($HTLNotificationSubmit) {
+                        // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+                        Mail::to($HTLNotificationSubmit)->send(new HotelNotification($hotelData));
+                    }
+                }
             }
         }
 
@@ -2078,17 +2100,17 @@ class ReimburseController extends Controller
 
     public function hotelUpdate(Request $req, $key)
     {
+        $userId = Auth::id();
         $hotelIds = $req->input('hotel_ids', []); // Get the array of existing hotel IDs
         $existingHotels = Hotel::whereIn('id', $hotelIds)->get()->keyBy('id'); // Load existing hotels into a collection
 
         $processedHotelIds = [];
         $updateBusinessTrip = false;
 
-        // Determine approval status based on the action
         if ($req->has('action_draft')) {
-            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+            $statusValue = 'Draft';  
         } elseif ($req->has('action_submit')) {
-            $statusValue = 'Pending L1';  // When "Submit" is clicked
+            $statusValue = 'Pending L1';
         }
 
         // Get the no_htl from the first existing hotel record
@@ -2115,6 +2137,7 @@ class ReimburseController extends Controller
                     'approval_status' => $statusValue,
                     'jns_dinas_htl' => $req->jns_dinas_htl,
                     'hotel_only' => 'Y',
+                    'no_htl' => $existingNoHtl,
                 ];
 
                 // Check if hotel ID exists to decide if it's an update or a new entry
@@ -2152,7 +2175,18 @@ class ReimburseController extends Controller
             }
         }
 
-        // Update BusinessTrip if status changed to "Pending L1" for any hotel
+        if ($statusValue == 'Pending L1') {
+            $employee = Employee::where('id', $userId)->first();
+            $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
+            // dd($hotelData);  
+            $allHotels = Hotel::where('no_htl', $existingNoHtl)->get()->toArray();
+// dd($allHotels);
+            if ($HTLNotificationSubmit) {
+                // Pass all hotels to the notification email
+                Mail::to($HTLNotificationSubmit)->send(new HotelNotification($allHotels));
+            }
+        }
+
         if ($updateBusinessTrip) {
             $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
             if ($bt) {
@@ -2160,18 +2194,9 @@ class ReimburseController extends Controller
                 $bt->save();
             }
         }
-        // dd([$hotelIds, $processedHotelIds]);
-        // Delete hotels with the same no_htl but not in the processedHotelIds
         Hotel::where('no_htl', $existingNoHtl)
             ->whereNotIn('id', $processedHotelIds)
             ->delete();
-
-        // Show success or warning message
-        // if (count($processedHotelIds) > 0) {
-        //     Alert::success('Success', "Hotels updated successfully");
-        // } else {
-        //     Alert::warning('Warning', "No hotels were updated.");
-        // }
 
         return redirect('/hotel')->with('success', 'Hotel request updated successfully');
     }

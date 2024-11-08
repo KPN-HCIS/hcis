@@ -28,7 +28,7 @@ class CashAdvancedNotification extends Mailable
             $this->nextApproval = $nextApproval;
         }
 
-        if ($caTransaction instanceof ca_transaction) {
+        if ($caTransaction instanceof CATransaction) {
             $this->caTransaction = $caTransaction;
         }
 
@@ -40,7 +40,7 @@ class CashAdvancedNotification extends Mailable
     public function build()
     {
         return $this->subject('New Business Trip Request')
-                ->view('hcis.reimbursements.approval.email.caNotification');
+            ->view('hcis.reimbursements.approval.email.caNotification-bak');
     }
 
     /**
@@ -59,7 +59,7 @@ class CashAdvancedNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'hcis.reimbursements.approval.email.caNotification',
+            view: 'hcis.reimbursements.approval.email.caNotification-bak',
         );
     }
 
