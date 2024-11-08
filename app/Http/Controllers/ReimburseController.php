@@ -38,6 +38,8 @@ use App\Exports\TicketExport;
 use App\Exports\HotelExport;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CashAdvancedNotification;
 
 class ReimburseController extends Controller
 {
@@ -942,6 +944,12 @@ class ReimburseController extends Controller
         $model->created_by = $userId;
         $model->save();
 
+        $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+        if ($CANotificationLayer) {
+            // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, null, $model));
+        }
+
         return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
     }
     function cashadvancedEdit($key)
@@ -1280,6 +1288,12 @@ class ReimburseController extends Controller
             }
         }
         $model->save();
+        // dd($model);
+        $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+        if ($CANotificationLayer) {
+            // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(null, null, $model));
+        }
         return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
     }
     public function cashadvancedExtend(Request $req)

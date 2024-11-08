@@ -564,8 +564,13 @@
                         var dateText = document.createElement('p');
 
                         if ("{{ $approval->approval_status }}" === "Approved") {
-                            dateText.textContent = `{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})`;
-                            buttonCol.appendChild(dateText);
+                            if ("{{ $approval->by_admin }}" === "T") {
+                                dateText.textContent = "{{ $approval->approval_status }} By Admin ({{ $approval->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                                buttonCol.appendChild(dateText);
+                            } else {
+                                dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                                buttonCol.appendChild(dateText);
+                            }
                         } else if (previousLayerApproved) {
                             // Form Data
                             var dataNoIdInput = document.createElement('input');
@@ -682,8 +687,15 @@
                         var dateText = document.createElement('p');
 
                         if ("{{ $approval->approval_status }}" === "Approved") {
-                            dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
-                            buttonCol.appendChild(dateText);
+                            if ("{{ $approval->by_admin }}" === "T") {
+                                dateText.textContent = "{{ $approval->approval_status }} By Admin ({{ $approval->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                                buttonCol.appendChild(dateText);
+                            } else {
+                                dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                                buttonCol.appendChild(dateText);
+                            }
+                            // dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                            // buttonCol.appendChild(dateText);
                         } else if (previousLayerApproved) {
                             dateText.textContent = 'Something Wrong, This form just for Approve Declaration';
                             buttonCol.appendChild(dateText);
