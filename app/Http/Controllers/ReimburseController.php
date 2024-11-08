@@ -2528,24 +2528,40 @@ class ReimburseController extends Controller
 
         // Handle approval scenarios
         if ($hotel->approval_status == 'Pending L1') {
-            // Update approval status to 'Pending L2'
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Pending L2']);
 
-            // Retrieve the layer 2 manager's ID and email
             $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
-            // dd($managerId);
             $managerEmail = Employee::where('employee_id', $managerId)->value('email');
 
             if ($managerEmail) {
-                // Send email notification to layer 2 manager
+                // Initialize arrays to collect details for multiple hotels
+                $noHtlList = [];
+                $namaHtl = [];
+                $lokasiHtl = [];
+                $tglMasukHtl = [];
+                $tglKeluarHtl = [];
+                $totalHari = [];
+
+                // Collect details for each hotel with the same no_htl
+                $hotels = Hotel::where('no_htl', $noHtl)->get();
+                foreach ($hotels as $htl) {
+                    $noHtlList[] = $htl->no_htl;
+                    $namaHtl[] = $htl->nama_htl;
+                    $lokasiHtl[] = $htl->lokasi_htl;
+                    $tglMasukHtl[] = $htl->tgl_masuk_htl;
+                    $tglKeluarHtl[] = $htl->tgl_keluar_htl;
+                    $totalHari[] = $htl->total_hari;
+                }
+
+                // Send email with all hotel details
                 Mail::to($managerEmail)->send(new HotelNotification([
                     'noSppd' => $hotel->no_sppd,
-                    'noHtl' => [$hotel->no_htl], // Wrap in array
-                    'namaHtl' => [$hotel->nama_htl], // Wrap in array
-                    'lokasiHtl' => [$hotel->lokasi_htl], // Wrap in array
-                    'tglMasukHtl' => [$hotel->tgl_masuk_htl], // Wrap in array
-                    'tglKeluarHtl' => [$hotel->tgl_keluar_htl], // Wrap in array
-                    'totalHari' => [$hotel->total_hari], // Wrap in array
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
                     'approvalStatus' => 'Pending L2',
                 ]));
             }
