@@ -3,6 +3,8 @@
 namespace App\Mail;
 
 use App\Models\BusinessTrip;
+use App\Models\Hotel;
+use App\Models\Tiket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -15,17 +17,41 @@ class BusinessTripNotification extends Mailable
     use Queueable, SerializesModels;
 
     public $businessTrip;
+    public $hotelDetails;
+    public $ticketDetails;
+    public $taksiDetails;
+    public $caDetails;
 
-    public function __construct(BusinessTrip $businessTrip)
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(BusinessTrip $businessTrip, $hotelDetails = null, $ticketDetails = null, $taksiDetails = null, $caDetails = null)
     {
         $this->businessTrip = $businessTrip;
+        $this->hotelDetails = $hotelDetails;
+        $this->ticketDetails = $ticketDetails;
+        $this->taksiDetails = $taksiDetails;
+        $this->caDetails = $caDetails;
     }
 
+    /**
+     * Build the message.
+     */
     public function build()
     {
-        return $this->subject('New Business Trip Request')
-                    ->view('hcis.reimbursements.businessTrip.email.btNotification');
+        return $this->view('hcis.reimbursements.businessTrip.email.btNotification')
+            ->with([
+                'businessTrip' => $this->businessTrip,
+                'hotelDetails' => $this->hotelDetails, // Use the passed hotel details
+                'ticketDetails' => $this->ticketDetails, // Use the passed ticket details
+                'taksiDetails' => $this->taksiDetails, // Use the passed ticket details
+                'caDetails' => $this->caDetails, // Use the passed ticket details
+            ]);
     }
+
+    /**
+     * Get the email envelope.
+     */
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -33,6 +59,9 @@ class BusinessTripNotification extends Mailable
         );
     }
 
+    /**
+     * Get the email content.
+     */
     public function content(): Content
     {
         return new Content(
@@ -42,8 +71,6 @@ class BusinessTripNotification extends Mailable
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

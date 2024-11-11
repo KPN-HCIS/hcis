@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Hotel Request Notification</title>
 </head>
+
 <body>
     <h1>New Hotel Request Notification</h1>
 
@@ -22,6 +24,8 @@
         <hr>
     @endforeach
 
-    <p>Please review and process the request accordingly.</p>
+    <p>Thank you,</p>
+    <p>HC System</p>
 </body>
+
 </html>
