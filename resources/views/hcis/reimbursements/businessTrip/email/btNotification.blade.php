@@ -27,7 +27,6 @@
             <thead>
                 <tr>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Category</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Details</th>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Total Days</th>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Amount (Rp)</th>
                 </tr>
@@ -36,8 +35,7 @@
                 <!-- Perdiem Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Perdiem</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">10 Days</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_perdiem'] ?? 0 }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_perdiem'] ?? 0 }} Days</td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_perdiem'] ?? 0, 0, ',', '.') }}</td>
                 </tr>
@@ -45,8 +43,7 @@
                 <!-- Transport Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Transport</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">-</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_transport'] ?? 0 }}
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_transport'] ?? 0 }} Days
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_transport'] ?? 0, 0, ',', '.') }}</td>
@@ -55,8 +52,7 @@
                 <!-- Accommodation Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Accommodation</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">-</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_accommodation'] ?? 0 }}
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_accommodation'] ?? 0 }} Days
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_accommodation'] ?? 0, 0, ',', '.') }}</td>
@@ -65,8 +61,7 @@
                 <!-- Others Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Others</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">-</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_others'] ?? 0 }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_others'] ?? 0 }} Days</td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_others'] ?? 0, 0, ',', '.') }}</td>
                 </tr>

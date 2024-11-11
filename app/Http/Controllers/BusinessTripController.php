@@ -805,11 +805,50 @@ class BusinessTripController extends Controller
         }
 
         if ($statusValue !== 'Draft') {
+            // Get manager email
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            // dd($managerEmail);
+
             if ($managerEmail) {
-                // Send email to the manager
-                Mail::to($managerEmail)->send(new BusinessTripNotification($n));
+                $detail_ca = isset($detail_ca) ? $detail_ca : [];
+                $caDetails = [
+                    'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),
+                    'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                    'total_days_transport' => count($detail_ca['detail_transport'] ?? []),
+                    'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
+
+                    'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'total_days')),
+                    'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                    'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
+                    'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+                ];
+
+                // Fetch ticket and hotel details with proper conditions
+                $ticketDetails = Tiket::where('no_sppd', $n->no_sppd)
+                    ->where(function ($query) {
+                        $query->where('tkt_only', '!=', 'Y')
+                            ->orWhereNull('tkt_only'); // This handles the case where tkt_only is null
+                    })
+                    ->get();
+
+                $hotelDetails = Hotel::where('no_sppd', $n->no_sppd)
+                    ->where(function ($query) {
+                        $query->where('hotel_only', '!=', 'Y')
+                            ->orWhereNull('hotel_only'); // This handles the case where hotel_only is null
+                    })
+                    ->get();
+
+                $taksiDetails = Taksi::where('no_sppd', $n->no_sppd)->first();
+
+                // Send an email with the detailed business trip information
+                Mail::to($managerEmail)->send(new BusinessTripNotification(
+                    $n,
+                    $hotelDetails,  // Pass hotel details
+                    $ticketDetails,
+                    $taksiDetails,
+                    $caDetails,
+                ));
             }
         }
 
@@ -2410,18 +2449,19 @@ class BusinessTripController extends Controller
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
 
             if ($managerEmail) {
+                $detail_ca = isset($detail_ca) ? $detail_ca : [];
                 $caDetails = [
-                    'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'], 'total_days')),
-                    'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'], 'nominal')),
+                    'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),
+                    'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
 
-                    'total_days_transport' => count($detail_ca['detail_transport']),
-                    'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'], 'nominal')),
+                    'total_days_transport' => count($detail_ca['detail_transport'] ?? []),
+                    'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
 
-                    'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'], 'total_days')),
-                    'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'], 'nominal')),
+                    'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'total_days')),
+                    'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
 
-                    'total_days_others' => count($detail_ca['detail_lainnya']),
-                    'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'], 'nominal')),
+                    'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
+                    'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
                 ];
                 // Fetch ticket and hotel details with proper conditions
                 $ticketDetails = Tiket::where('no_sppd', $businessTrip->no_sppd)
