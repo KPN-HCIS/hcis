@@ -3605,6 +3605,42 @@ class ReimburseController extends Controller
         // If not rejected, proceed with normal approval process
         if ($ticket->approval_status == 'Pending L1') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
+            $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
+            $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            if ($managerEmail) {
+                // Initialize arrays to collect details for multiple hotels
+                $noTktList = [];
+                $npTkt = [];
+                $dariTkt = [];
+                $keTkt = [];
+                $tglBrktTkt = [];
+                $jamBrktTkt = [];
+
+                // Collect details for each hotel with the same no_htl
+                $tickets = Tiket::where('no_tkt', $noTkt)->get();
+                // dd($tickets);
+                foreach ($tickets as $tkt) {
+                    $noTktList[] = $tkt->no_tkt;
+                    $npTkt[] = $tkt->np_tkt;
+                    $dariTkt[] = $tkt->dari_tkt;
+                    $keTkt[] = $tkt->ke_tkt;
+                    $tglBrktTkt[] = $tkt->tgl_brkt_tkt;
+                    $jamBrktTkt[] = $tkt->jam_brkt_tkt;
+                }
+
+                // Send email with all hotel details
+                Mail::to($managerEmail)->send(new TicketNotification([
+                    'noSppd' => $ticket->no_sppd,
+                    'noTkt' => $noTktList,
+                    'namaPenumpang' => $npTkt,
+                    'dariTkt' => $dariTkt,
+                    'keTkt' => $keTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'approvalStatus' => 'Pending L2',
+                ]));
+            }
+
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
         } else {
