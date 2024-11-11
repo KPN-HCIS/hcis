@@ -8,7 +8,7 @@
 
 <body>
     <h1>New Business Trip Request</h1>
-    <p>A new business trip request has been submitted.</p>
+    <p>Dear Sir/Madam: <b>{{ $managerName }}</b></p><br>
     <p><strong>No. SPPD:</strong> {{ $businessTrip->no_sppd }}</p>
     <p><strong>Employee Name:</strong> {{ $businessTrip->nama }}</p>
     <p><strong>Start Date:</strong> {{ $businessTrip->mulai }}</p>

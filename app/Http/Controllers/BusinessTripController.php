@@ -807,6 +807,7 @@ class BusinessTripController extends Controller
         if ($statusValue !== 'Draft') {
             // Get manager email
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerL1)->pluck('fullname')->first();
 
             if ($managerEmail) {
                 $detail_ca = isset($detail_ca) ? $detail_ca : [];
@@ -848,6 +849,7 @@ class BusinessTripController extends Controller
                     $ticketDetails,
                     $taksiDetails,
                     $caDetails,
+                    $managerName
                 ));
             }
         }
@@ -2447,6 +2449,7 @@ class BusinessTripController extends Controller
         if ($statusValue !== 'Draft') {
             // Get manager email
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerL1)->pluck('fullname')->first();
 
             if ($managerEmail) {
                 $detail_ca = isset($detail_ca) ? $detail_ca : [];
@@ -2488,6 +2491,7 @@ class BusinessTripController extends Controller
                     $ticketDetails,
                     $taksiDetails,
                     $caDetails,
+                    $managerName,
                 ));
             }
         }
@@ -3473,10 +3477,53 @@ class BusinessTripController extends Controller
             $statusValue = 'Pending L2';
             $layer = 1;
             $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+
+            $managerName = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('fullname')->first();
+
             // dd($managerL2);
             if ($managerL2) {
-                // Send email to L2
-                Mail::to($managerL2)->send(new BusinessTripNotification($businessTrip));
+                $ca = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
+                $detail_ca = $ca ? json_decode($ca->detail_ca, true) : [];
+                $caDetails = [
+                    'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),
+                    'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                    'total_days_transport' => count($detail_ca['detail_transport'] ?? []),
+                    'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
+
+                    'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'total_days')),
+                    'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                    'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
+                    'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+                ];
+                // Fetch ticket and hotel details with proper conditions
+                $ticketDetails = Tiket::where('no_sppd', $businessTrip->no_sppd)
+                    ->where(function ($query) {
+                        $query->where('tkt_only', '!=', 'Y')
+                            ->orWhereNull('tkt_only'); // This handles the case where tkt_only is null
+                    })
+                    ->get();
+
+                $hotelDetails = Hotel::where('no_sppd', $businessTrip->no_sppd)
+                    ->where(function ($query) {
+                        $query->where('hotel_only', '!=', 'Y')
+                            ->orWhereNull('hotel_only'); // This handles the case where hotel_only is null
+                    })
+                    ->get();
+
+                $taksiDetails = Taksi::where('no_sppd', $businessTrip->no_sppd)->first();
+                // dd($taksiDetails);
+
+                // Send an email with the detailed business trip information
+                Mail::to($managerL2)->send(new BusinessTripNotification(
+                    $businessTrip,
+                    $hotelDetails,  // Pass hotel details
+                    $ticketDetails,
+                    $taksiDetails,
+                    $caDetails,
+                    $managerName,
+                ));
             }
 
             if ($businessTrip->hotel == 'Ya') {
