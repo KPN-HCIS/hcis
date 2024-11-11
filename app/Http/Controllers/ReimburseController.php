@@ -2006,6 +2006,8 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+
             // dd($managerEmail);
             // // dd($managerEmail);
             if ($managerEmail) {
@@ -2019,6 +2021,7 @@ class ReimburseController extends Controller
                     'tglKeluarHtl' => $tglKeluarHtl,
                     'totalHari' => $totalHari,
                     'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
                 ]));
             }
         }
@@ -2184,6 +2187,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             // dd($managerEmail);
             // // dd($managerEmail);
             if ($managerEmail) {
@@ -2197,6 +2201,7 @@ class ReimburseController extends Controller
                     'tglKeluarHtl' => $tglKeluarHtl,
                     'totalHari' => $totalHari,
                     'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
                 ]));
             }
         }
@@ -2532,6 +2537,7 @@ class ReimburseController extends Controller
 
             $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
             $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            $managerName = Employee::where('employee_id', $managerId)->value('fullname');
 
             if ($managerEmail) {
                 // Initialize arrays to collect details for multiple hotels
@@ -2562,6 +2568,7 @@ class ReimburseController extends Controller
                     'tglMasukHtl' => $tglMasukHtl,
                     'tglKeluarHtl' => $tglKeluarHtl,
                     'totalHari' => $totalHari,
+                    'managerName' => $managerName,
                     'approvalStatus' => 'Pending L2',
                 ]));
             }
@@ -2990,6 +2997,9 @@ class ReimburseController extends Controller
         $tglBrktTkt = [];
         $jamBrktTkt = [];
         $noTktList = [];
+        $tglPlgTkt = [];
+        $jamPlgTkt = [];
+        $tipeTkt = [];
 
         foreach ($ticketData['noktp_tkt'] as $key => $value) {
             // Only process if the required fields are filled
@@ -3027,9 +3037,12 @@ class ReimburseController extends Controller
                 $npTkt[] = $ticketData['np_tkt'][$key];
                 $dariTkt[] = $ticketData['dari_tkt'][$key];
                 $keTkt[] = $ticketData['ke_tkt'][$key];
+                $tipeTkt[] = $ticketData['type_tkt'][$key];
                 $tglBrktTkt[] = $ticketData['tgl_brkt_tkt'][$key];
                 $jamBrktTkt[] = $ticketData['jam_brkt_tkt'][$key];
                 $noTktList[] = $tiket->no_tkt;
+                $tglPlgTkt[] = $ticketData['tgl_plg_tkt'][$key];
+                $jamPlgTkt[] = $ticketData['jam_plg_tkt'][$key];
             }
         }
 
@@ -3043,6 +3056,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             // dd($managerEmail);
             // // dd($managerEmail);
             if ($managerEmail) {
@@ -3056,6 +3070,10 @@ class ReimburseController extends Controller
                     'tglBrktTkt' => $tglBrktTkt,
                     'jamBrktTkt' => $jamBrktTkt,
                     'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
+                    'tipeTkt' => $tipeTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
                 ]));
             }
         }
@@ -3163,6 +3181,9 @@ class ReimburseController extends Controller
         $keTkt = [];
         $tglBrktTkt = [];
         $jamBrktTkt = [];
+        $tglPlgTkt = [];
+        $jamPlgTkt = [];
+        $tipeTkt = [];
 
         foreach ($req->noktp_tkt as $key => $value) {
             if (!empty($value)) {
@@ -3219,8 +3240,11 @@ class ReimburseController extends Controller
                 $npTkt[] = $ticketData['np_tkt'];
                 $dariTkt[] = $ticketData['dari_tkt'];
                 $keTkt[] = $ticketData['ke_tkt'];
+                $tipeTkt[] = $ticketData['type_tkt'];
                 $tglBrktTkt[] = $ticketData['tgl_brkt_tkt'];
                 $jamBrktTkt[] = $ticketData['jam_brkt_tkt'];
+                $tglPlgTkt[] = $ticketData['tgl_plg_tkt'];
+                $jamPlgTkt[] = $ticketData['jam_plg_tkt'];
             }
         }
 
@@ -3238,6 +3262,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
             $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
 
             if ($managerEmail) {
                 // Send email to the manager with all ticket details
@@ -3246,10 +3271,14 @@ class ReimburseController extends Controller
                     'noTkt' => $noTktList,  // all ticket numbers
                     'namaPenumpang' => $npTkt,  // all passengers
                     'dariTkt' => $dariTkt,  // all departure locations
-                    'keTkt' => $keTkt,  // all destination locations
-                    'tglBrktTkt' => $tglBrktTkt,  // all departure dates
-                    'jamBrktTkt' => $jamBrktTkt,  // all departure times
+                    'keTkt' => $keTkt,
+                    'tipeTkt' => $tipeTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
                     'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
                 ]));
             }
         }
@@ -3607,6 +3636,8 @@ class ReimburseController extends Controller
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
             $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
             $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+
             if ($managerEmail) {
                 // Initialize arrays to collect details for multiple hotels
                 $noTktList = [];
@@ -3615,6 +3646,9 @@ class ReimburseController extends Controller
                 $keTkt = [];
                 $tglBrktTkt = [];
                 $jamBrktTkt = [];
+                $tglPlgTkt = [];
+                $jamPlgTkt = [];
+                $tipeTkt = [];
 
                 // Collect details for each hotel with the same no_htl
                 $tickets = Tiket::where('no_tkt', $noTkt)->get();
@@ -3626,6 +3660,9 @@ class ReimburseController extends Controller
                     $keTkt[] = $tkt->ke_tkt;
                     $tglBrktTkt[] = $tkt->tgl_brkt_tkt;
                     $jamBrktTkt[] = $tkt->jam_brkt_tkt;
+                    $tglPlgTkt[] = $tkt->tgl_plg_tkt;
+                    $jamPlgTkt[] = $tkt->jam_plg_tkt;
+                    $tipeTkt[] = $tkt->type_tkt;
                 }
 
                 // Send email with all hotel details
@@ -3637,6 +3674,10 @@ class ReimburseController extends Controller
                     'keTkt' => $keTkt,
                     'tglBrktTkt' => $tglBrktTkt,
                     'jamBrktTkt' => $jamBrktTkt,
+                    'tipeTkt' => $tipeTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'managerName' => $managerName,
                     'approvalStatus' => 'Pending L2',
                 ]));
             }

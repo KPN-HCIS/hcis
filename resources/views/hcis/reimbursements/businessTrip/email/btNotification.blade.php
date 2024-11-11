@@ -16,7 +16,7 @@
     <p><strong>Type of Service:</strong> {{ ucwords(strtolower($businessTrip->jns_dinas)) }}</p>
     <p><strong>Location:</strong> {{ $businessTrip->tujuan }}</p>
     <p><strong>Trip Purpose:</strong> {{ $businessTrip->keperluan }}</p>
-    <p><strong>PT:</strong> {{ $businessTrip->bb_perusahaan }}</p>
+    <p><strong>PT :</strong> {{ $businessTrip->bb_perusahaan }}</p>
     <hr>
     <p><strong>Cash Advance:</strong>
         {{ $businessTrip->ca === 'Ya' ? 'Yes' : ($businessTrip->ca === 'Tidak' ? 'No' : $businessTrip->ca) }}

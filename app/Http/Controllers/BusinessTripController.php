@@ -3482,7 +3482,7 @@ class BusinessTripController extends Controller
 
             // dd($managerL2);
             if ($managerL2) {
-                $ca = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
+                $ca = CATransaction::where('no_sppd', $businessTrip->no_sppd)->orWhere('caonly', '!=', 'Y')->first();
                 $detail_ca = $ca ? json_decode($ca->detail_ca, true) : [];
                 $caDetails = [
                     'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),

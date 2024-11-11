@@ -9,7 +9,7 @@
 
 <body>
     <h2>Ticket Request Notification</h2>
-    <p>A new ticket request has been submitted.</p>
+    <p>Dear Sir/Madam: <b>{{ $managerName }}</b></p><br>
 
     <p><strong>No SPPD:</strong> {{ $noSppd }}</p>
     <p><strong>Approval Status:</strong> {{ $approvalStatus }}</p>
@@ -20,9 +20,16 @@
         <p><strong>Ticket Number:</strong> {{ $noTkt }}</p>
         <p><strong>Passenger Name:</strong> {{ $namaPenumpang[$index] }}</p>
         <p><strong>Departure:</strong> {{ $dariTkt[$index] }} - {{ $keTkt[$index] }}</p>
-        <p><strong>Departure Date & Time:</strong> {{ $tglBrktTkt[$index] }} at {{ $jamBrktTkt[$index] }}</p>
-        <hr>
+        <p><strong>Ticket Type:</strong> {{ $tipeTkt[$index] }}</p>
+        <p><strong>Departure Date & Time:</strong> {{ $tglBrktTkt[$index] }} at {{ $jamBrktTkt[$index] }} WIB</p>
+        @if ($tipeTkt[$index] == 'Round Trip')
+            <p><strong>Return Date & Time:</strong> {{ $tglPlgTkt[$index] }} at {{ $jamPlgTkt[$index] }} WIB</p>
+        @endif
     @endforeach
+
+    <hr>
+    <p>For approval or rejection of the Business Trip, you can choose the following links: <a href="#">Approve</a>
+        / <a href="#">Reject</a></p>
 
     <p>Thank you,</p>
     <p>HC System</p>

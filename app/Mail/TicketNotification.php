@@ -18,9 +18,13 @@ class TicketNotification extends Mailable
     public $namaPenumpang;
     public $dariTkt;
     public $keTkt;
+    public $tipeTkt;
     public $tglBrktTkt;
     public $jamBrktTkt;
+    public $tglPlgTkt;
+    public $jamPlgTkt;
     public $approvalStatus;
+    public $managerName;
 
     /**
      * Create a new message instance.
@@ -32,9 +36,13 @@ class TicketNotification extends Mailable
         $this->namaPenumpang = $data['namaPenumpang'];
         $this->dariTkt = $data['dariTkt'];
         $this->keTkt = $data['keTkt'];
+        $this->tipeTkt = $data['tipeTkt'];
         $this->tglBrktTkt = $data['tglBrktTkt'];
         $this->jamBrktTkt = $data['jamBrktTkt'];
+        $this->tglPlgTkt = $data['tglPlgTkt'];
+        $this->jamPlgTkt = $data['jamPlgTkt'];
         $this->approvalStatus = $data['approvalStatus'];
+        $this->managerName = $data['managerName'];
     }
 
     public function build()
