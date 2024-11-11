@@ -78,7 +78,7 @@
     </p>
     @if ($businessTrip->tiket === 'Ya')
         <p><strong><u>Ticket Details:</u></strong></p>
-        <table style="width: 100%; border-collapse: collapse;">
+        <table style="border-collapse: collapse;">
             <thead>
                 <tr>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">#</th>
@@ -122,7 +122,7 @@
 
     @if ($businessTrip->hotel === 'Ya')
         <p><strong><u>Hotel Details:</u></strong></p>
-        <table style="width: 100%; border-collapse: collapse;">
+        <table style="border-collapse: collapse;">
             <thead>
                 <tr>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">#</th>
@@ -155,7 +155,7 @@
         {{ $businessTrip->taksi === 'Ya' ? 'Yes' : ($businessTrip->taksi === 'Tidak' ? 'No' : $businessTrip->taksi) }}
     </p>
     @if ($businessTrip->taksi === 'Ya' && $taksiDetails)
-        <table style="width: 100%; border-collapse: collapse;">
+        <table style="border-collapse: collapse;">
             <thead>
                 <tr>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Detail</th>
