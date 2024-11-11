@@ -15,17 +15,40 @@
     <p><strong>Approval Status:</strong> {{ $approvalStatus }}</p>
 
     <h3>Ticket Details</h3>
-    @foreach ($noTktList as $index => $noTkt)
-        <p><strong>Ticket #{{ $index + 1 }}</strong></p>
-        <p><strong>Ticket Number:</strong> {{ $noTkt }}</p>
-        <p><strong>Passenger Name:</strong> {{ $namaPenumpang[$index] }}</p>
-        <p><strong>Departure:</strong> {{ $dariTkt[$index] }} - {{ $keTkt[$index] }}</p>
-        <p><strong>Ticket Type:</strong> {{ $tipeTkt[$index] }}</p>
-        <p><strong>Departure Date & Time:</strong> {{ $tglBrktTkt[$index] }} at {{ $jamBrktTkt[$index] }} WIB</p>
-        @if ($tipeTkt[$index] == 'Round Trip')
-            <p><strong>Return Date & Time:</strong> {{ $tglPlgTkt[$index] }} at {{ $jamPlgTkt[$index] }} WIB</p>
-        @endif
-    @endforeach
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">#</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Ticket Number</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Passenger Name</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Departure</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Ticket Type</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Departure Date & Time</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Return Date & Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($noTktList as $index => $noTkt)
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $index + 1 }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $noTkt }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $namaPenumpang[$index] }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $dariTkt[$index] }} - {{ $keTkt[$index] }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $tipeTkt[$index] }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $tglBrktTkt[$index] }} at
+                        {{ $jamBrktTkt[$index] }} WIB</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">
+                        @if ($tipeTkt[$index] == 'Round Trip')
+                            {{ $tglPlgTkt[$index] }} at {{ $jamPlgTkt[$index] }} WIB
+                        @else
+                            -
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
 
     <hr>
     <p>For approval or rejection of the Business Trip, you can choose the following links: <a href="#">Approve</a>

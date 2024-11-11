@@ -23,7 +23,7 @@
     </p>
     @if ($businessTrip->ca === 'Ya')
         <p><strong><u>CA Details:</u></strong></p>
-        <table style="width: 100%; border-collapse: collapse;">
+        <table style="border-collapse: collapse;">
             <thead>
                 <tr>
                     <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Category</th>
@@ -35,7 +35,8 @@
                 <!-- Perdiem Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Perdiem</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_perdiem'] ?? 0 }} Days</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_perdiem'] ?? 0 }} Days
+                    </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_perdiem'] ?? 0, 0, ',', '.') }}</td>
                 </tr>
@@ -43,7 +44,8 @@
                 <!-- Transport Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Transport</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_transport'] ?? 0 }} Days
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_transport'] ?? 0 }}
+                        Days
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_transport'] ?? 0, 0, ',', '.') }}</td>
@@ -52,7 +54,8 @@
                 <!-- Accommodation Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Accommodation</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_accommodation'] ?? 0 }} Days
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_accommodation'] ?? 0 }}
+                        Days
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_accommodation'] ?? 0, 0, ',', '.') }}</td>
@@ -61,7 +64,8 @@
                 <!-- Others Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Others</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_others'] ?? 0 }} Days</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_others'] ?? 0 }} Days
+                    </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_others'] ?? 0, 0, ',', '.') }}</td>
                 </tr>
@@ -74,23 +78,43 @@
     </p>
     @if ($businessTrip->tiket === 'Ya')
         <p><strong><u>Ticket Details:</u></strong></p>
-        <ul>
-            @foreach ($ticketDetails as $index => $ticket)
-                <li>
-                    <p><strong>Ticket #{{ $index + 1 }}</strong></p>
-                    <p><strong>Passenger Name:</strong> {{ $ticket->np_tkt }}</p>
-                    <p><strong>Transport Type:</strong> {{ $ticket->jenis_tkt }}</p>
-                    <p><strong>From:</strong> {{ $ticket->dari_tkt }}</p>
-                    <p><strong>To:</strong> {{ $ticket->ke_tkt }}</p>
-                    <p><strong>Ticket Type:</strong> {{ $ticket->type_tkt }}</p>
-                    <p><strong>Departure:</strong> {{ $ticket->tgl_brkt_tkt }} at {{ $ticket->jam_brkt_tkt }}</p>
-                    @if ($ticket->type_tkt == 'Round Trip')
-                        <p><strong>Return:</strong> {{ $ticket->tgl_plg_tkt }} at {{ $ticket->jam_plg_tkt }}</p>
-                    @endif
-                </li>
-            @endforeach
-        </ul>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">#</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Passenger Name</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Transport Type</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">From</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">To</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Ticket Type</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Departure</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Return</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($ticketDetails as $index => $ticket)
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $index + 1 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->np_tkt }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->jenis_tkt }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->dari_tkt }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->ke_tkt }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->type_tkt }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->tgl_brkt_tkt }} at
+                            {{ $ticket->jam_brkt_tkt }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">
+                            @if ($ticket->type_tkt == 'Round Trip')
+                                {{ $ticket->tgl_plg_tkt }} at {{ $ticket->jam_plg_tkt }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     @endif
+
 
     <p><strong>Hotel:</strong>
         {{ $businessTrip->hotel === 'Ya' ? 'Yes' : ($businessTrip->hotel === 'Tidak' ? 'No' : $businessTrip->hotel) }}
@@ -98,29 +122,63 @@
 
     @if ($businessTrip->hotel === 'Ya')
         <p><strong><u>Hotel Details:</u></strong></p>
-        <ul>
-            @foreach ($hotelDetails as $index => $hotel)
-                <li>
-                    <p><strong>Hotel #{{ $index + 1 }}</strong></p>
-                    <p><strong>Hotel Name:</strong> {{ $hotel->nama_htl }}</p>
-                    <p><strong>No. Hotel:</strong> {{ $hotel->no_htl }}</p>
-                    <p><strong>Location:</strong> {{ $hotel->lokasi_htl }}</p>
-                    <p><strong>Check-in:</strong> {{ $hotel->tgl_masuk_htl }}</p>
-                    <p><strong>Check-out:</strong> {{ $hotel->tgl_keluar_htl }}</p>
-                    <p><strong>Total Days:</strong> {{ $hotel->total_hari }}</p>
-                </li>
-            @endforeach
-        </ul>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">#</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Hotel Name</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">No. Hotel</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Location</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Check-in</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Check-out</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Total Nights</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($hotelDetails as $index => $hotel)
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $index + 1 }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->nama_htl }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->no_htl }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->lokasi_htl }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->tgl_masuk_htl }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->tgl_keluar_htl }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->total_hari }} Nights</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     @endif
+
 
     <p><strong>Voucher Taxi:</strong>
         {{ $businessTrip->taksi === 'Ya' ? 'Yes' : ($businessTrip->taksi === 'Tidak' ? 'No' : $businessTrip->taksi) }}
     </p>
     @if ($businessTrip->taksi === 'Ya' && $taksiDetails)
-        <p><strong><u>Taxi Details:</u></strong></p>
-        <p><strong>Total Voucher:</strong> {{ $taksiDetails->no_vt }}</p>
-        <p><strong>Keeper Voucher:</strong> Rp. {{ number_format($taksiDetails->keeper_vt, 0, ',', '.') }}</p>
-        <p><strong>Nominal Voucher:</strong> Rp. {{ number_format($taksiDetails->nominal_vt, 0, ',', '.') }}</p>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Detail</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>Total Voucher</strong></td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $taksiDetails->no_vt }} Voucher</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>Keeper Voucher</strong></td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">Rp.
+                        {{ number_format($taksiDetails->keeper_vt, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>Nominal Voucher</strong></td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">Rp.
+                        {{ number_format($taksiDetails->nominal_vt, 0, ',', '.') }}</td>
+                </tr>
+            </tbody>
+        </table>
     @endif
 
     <hr>
