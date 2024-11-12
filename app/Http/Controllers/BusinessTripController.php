@@ -3866,6 +3866,19 @@ class BusinessTripController extends Controller
                     $approval_vt->save();
                 }
             }
+            // Update the status in the BusinessTrip table
+            $businessTrip->update(['status' => $statusValue]);
+
+            // Record the approval or rejection in the BTApproval table
+            $approval->bt_id = $businessTrip->id;
+            $approval->layer = $layer;
+            $approval->approval_status = $statusValue;
+            $approval->approved_at = now();
+            $approval->reject_info = null;
+            $approval->employee_id = $employeeId;
+
+            // Save the approval record
+            $approval->save();
         } elseif ($action == 'Pending L2') {
             $statusValue = 'Pending L2';
             $layer = 1;
