@@ -2629,7 +2629,7 @@ class BusinessTripController extends Controller
                     'status' => 'Pending L2'
                 ]);
 
-                $rejectionLink = route('reject.business.trip', [
+                $rejectionLink = route('reject.link', [
                     'id' => urlencode($businessTrip->id),
                     'manager_id' => $businessTrip->manager_l1_id,
                     'status' => 'Rejected'
@@ -3531,6 +3531,7 @@ class BusinessTripController extends Controller
             'perdiem' => $perdiem,
         ]);
     }
+
     public function updateStatus($id, Request $request)
     {
         $user = Auth::user();
@@ -3901,6 +3902,204 @@ class BusinessTripController extends Controller
         return redirect('/businessTrip/approval')->with('success', 'Request updated successfully');
     }
 
+    public function rejectLink(Request $request, $id, $manager_id, $status)
+    {
+        $n = BusinessTrip::find($id);
+        $userId = Auth::id();
+        $employee_data = Employee::where('id', $n->user_id)->first();
+        // dd($employee_data);
+        $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
+
+        // Initialize caDetail with an empty array if it's null
+        $caDetail = $ca ? json_decode($ca->detail_ca, true) : [];
+        $declareCa = $ca ? json_decode($ca->declare_ca, true) : [];
+
+        // Safely access nominalPerdiem with default '0' if caDetail is empty
+        $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
+        $nominalPerdiemDeclare = isset($declareCa['detail_perdiem'][0]['nominal']) ? $declareCa['detail_perdiem'][0]['nominal'] : '0';
+
+        $hasCaData = $ca !== null;
+        // Retrieve the taxi data for the specific BusinessTrip
+        $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
+
+        // Retrieve all hotels for the specific BusinessTrip
+        $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare hotel data for the view
+        $hotelData = [];
+        foreach ($hotels as $index => $hotel) {
+            $hotelData[] = [
+                'nama_htl' => $hotel->nama_htl,
+                'lokasi_htl' => $hotel->lokasi_htl,
+                'jmlkmr_htl' => $hotel->jmlkmr_htl,
+                'bed_htl' => $hotel->bed_htl,
+                'tgl_masuk_htl' => $hotel->tgl_masuk_htl,
+                'tgl_keluar_htl' => $hotel->tgl_keluar_htl,
+                'total_hari' => $hotel->total_hari,
+                'more_htl' => ($index < count($hotels) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve all tickets for the specific BusinessTrip
+        $tickets = Tiket::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare ticket data for the view
+        $ticketData = [];
+        foreach ($tickets as $index => $ticket) {
+            $ticketData[] = [
+                'noktp_tkt' => $ticket->noktp_tkt,
+                'dari_tkt' => $ticket->dari_tkt,
+                'ke_tkt' => $ticket->ke_tkt,
+                'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                'jenis_tkt' => $ticket->jenis_tkt,
+                'type_tkt' => $ticket->type_tkt,
+                'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'ket_tkt' => $ticket->ket_tkt,
+                'more_tkt' => ($index < count($tickets) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve locations and companies data for the dropdowns
+        $locations = Location::orderBy('id')->get();
+        $companies = Company::orderBy('contribution_level')->get();
+
+        $parentLink = 'Business Trip Approval';
+        $link = 'Approval Details';
+
+        return view('hcis.reimbursements.businessTrip.btReject', [
+            'n' => $n,
+            'hotelData' => $hotelData,
+            'taksiData' => $taksi, // Pass the taxi data
+            'ticketData' => $ticketData,
+            'employee_data' => $employee_data,
+            'companies' => $companies,
+            'locations' => $locations,
+            'caDetail' => $caDetail,
+            'declareCa' => $declareCa,
+            'ca' => $ca,
+            'nominalPerdiem' => $nominalPerdiem,
+            'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
+            'hasCaData' => $hasCaData,
+            'parentLink' => $parentLink,
+            'link' => $link,
+            'manager_id' => $manager_id,
+            'status' => $status,
+        ]);
+    }
+
+
+    public function rejectFromLink($id, $manager_id, $status, Request $request)
+    {
+        $approval = new BTApproval();
+        $approval->id = (string) Str::uuid();
+        // dd($id, $status, $manager_id);
+        // Find the business trip by ID
+        $businessTrip = BusinessTrip::findOrFail($id);
+        $employeeId = $manager_id;
+        // Determine the new status and layer based on the action and manager's role
+        $oldStatus = $status;
+// dd($request->reject_info);
+        $statusValue = 'Rejected';
+        if ($oldStatus == 'Pending L1') {
+            $layer = 1;
+        } elseif ($oldStatus == 'Pending L2') {
+            $layer = 2;
+        } else {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+        if ($businessTrip->ca == 'Ya') {
+            $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
+            if ($caTransaction && $caTransaction->caonly != 'Y') {
+                // Update CA approval status for L1 or L2 as Rejected
+                ca_approval::updateOrCreate(
+                    ['ca_id' => $caTransaction->id, 'employee_id' => $employeeId, 'layer' => $layer],
+                    ['approval_status' => $statusValue, 'approved_at' => now(), 'reject_info' => $request->reject_info] // Save rejection info
+                );
+
+                $caTransaction->update(['approval_status' => 'Rejected']);
+            }
+        }
+        if ($businessTrip->tiket == 'Ya') {
+            $tikets = Tiket::where('no_sppd', $businessTrip->no_sppd)->get();
+            foreach ($tikets as $tiket) {
+                if ($tiket->tkt_only != 'Y') {
+                    // Update each tiket record with the new approval status
+                    $tiket->update([
+                        'approval_status' => $statusValue,
+                    ]);
+
+                    // Record the rejection in TiketApproval
+                    $approval_tkt = new TiketApproval();
+                    $approval_tkt->id = (string) Str::uuid(); // Generate a UUID for the approval record
+                    $approval_tkt->tkt_id = $tiket->id;
+                    $approval_tkt->employee_id = $employeeId;
+                    $approval_tkt->layer = $layer;
+                    $approval_tkt->approval_status = $statusValue;
+                    $approval_tkt->approved_at = now();
+                    $approval_tkt->reject_info = $request->reject_info;
+                    $approval_tkt->save();
+                }
+            }
+        }
+
+        if ($businessTrip->hotel == 'Ya') {
+            $hotels = Hotel::where('no_sppd', $businessTrip->no_sppd)->get();
+            foreach ($hotels as $hotel) {
+                if ($hotel->hotel_only != 'Y') {
+                    // Update each hotel record with the new approval status
+                    $hotel->update([
+                        'approval_status' => $statusValue,
+                    ]);
+
+                    // Record the rejection in HotelApproval
+                    $approval_htl = new HotelApproval();
+                    $approval_htl->id = (string) Str::uuid(); // Generate a UUID for the approval record
+                    $approval_htl->htl_id = $hotel->id;
+                    $approval_htl->employee_id = $employeeId;
+                    $approval_htl->layer = $layer;
+                    $approval_htl->approval_status = $statusValue;
+                    $approval_htl->approved_at = now();
+                    $approval_htl->reject_info = $request->reject_info;
+                    $approval_htl->save();
+                }
+            }
+        }
+
+        if ($businessTrip->taksi == 'Ya') {
+            $taksi = Taksi::where('no_sppd', $businessTrip->no_sppd)->first();
+            if ($taksi) {
+                // Update the existing hotel record with the new approval status
+                $taksi->update([
+                    'approval_status' => $statusValue,
+                ]);
+                $approval_vt = new TaksiApproval();
+                $approval_vt->id = (string) Str::uuid(); // Generate a UUID for the approval record
+                $approval_vt->vt_id = $taksi->id;
+                $approval_vt->employee_id = $employeeId; // Assuming the logged-in user's employee ID is needed
+                $approval_vt->layer = $layer; // Set layer to 2 for rejected cases
+                $approval_vt->approval_status = $statusValue;
+                $approval_vt->approved_at = now();
+                $approval_vt->reject_info = $request->reject_info;
+                $approval_vt->save();
+            }
+        }
+        // Update the status in the BusinessTrip table
+        $businessTrip->update(['status' => $statusValue]);
+
+        // Record the approval or rejection in the BTApproval table
+        $approval->bt_id = $businessTrip->id;
+        $approval->layer = $layer;
+        $approval->approval_status = $statusValue;
+        $approval->approved_at = now();
+        $approval->reject_info = $request->reject_info;
+        $approval->employee_id = $employeeId;
+
+        // Save the approval record
+        $approval->save();
+    }
+
     public function approveFromLink($id, $manager_id, $status)
     {
         $user = Auth::user();
@@ -3914,115 +4113,11 @@ class BusinessTripController extends Controller
         // Determine the new status and layer based on the action and manager's role
         $oldStatus = $businessTrip->status;
         $action = $status;
-        // dd($id, $manager_id, $oldStatus, $action);
-        if ($action == 'Rejected') {
-            $statusValue = 'Rejected';
-            if ($oldStatus == 'Pending L1') {
-                $layer = 1;
-            } elseif ($oldStatus == 'Pending L2') {
-                $layer = 2;
-            } else {
-                return redirect()->back()->with('error', 'Unauthorized action.');
-            }
-            if ($businessTrip->ca == 'Ya') {
-                $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
-                if ($caTransaction && $caTransaction->caonly != 'Y') {
-                    // Update CA approval status for L1 or L2 as Rejected
-                    ca_approval::updateOrCreate(
-                        ['ca_id' => $caTransaction->id, 'employee_id' => $employeeId, 'layer' => $layer],
-                        ['approval_status' => $statusValue, 'approved_at' => now(), 'reject_info' => null] // Save rejection info
-                    );
-
-                    $caTransaction->update(['approval_status' => 'Rejected']);
-                }
-            }
-            if ($businessTrip->tiket == 'Ya') {
-                $tikets = Tiket::where('no_sppd', $businessTrip->no_sppd)->get();
-                foreach ($tikets as $tiket) {
-                    if ($tiket->tkt_only != 'Y') {
-                        // Update each tiket record with the new approval status
-                        $tiket->update([
-                            'approval_status' => $statusValue,
-                        ]);
-
-                        // Record the rejection in TiketApproval
-                        $approval_tkt = new TiketApproval();
-                        $approval_tkt->id = (string) Str::uuid(); // Generate a UUID for the approval record
-                        $approval_tkt->tkt_id = $tiket->id;
-                        $approval_tkt->employee_id = $employeeId;
-                        $approval_tkt->role_id = $user->role_id;
-                        $approval_tkt->role_name = $user->role_name;
-                        $approval_tkt->layer = $layer;
-                        $approval_tkt->approval_status = $statusValue;
-                        $approval_tkt->approved_at = now();
-                        $approval_tkt->reject_info = null;
-                        $approval_tkt->save();
-                    }
-                }
-            }
-
-            if ($businessTrip->hotel == 'Ya') {
-                $hotels = Hotel::where('no_sppd', $businessTrip->no_sppd)->get();
-                foreach ($hotels as $hotel) {
-                    if ($hotel->hotel_only != 'Y') {
-                        // Update each hotel record with the new approval status
-                        $hotel->update([
-                            'approval_status' => $statusValue,
-                        ]);
-
-                        // Record the rejection in HotelApproval
-                        $approval_htl = new HotelApproval();
-                        $approval_htl->id = (string) Str::uuid(); // Generate a UUID for the approval record
-                        $approval_htl->htl_id = $hotel->id;
-                        $approval_htl->employee_id = $employeeId;
-                        $approval_htl->role_id = $user->role_id;
-                        $approval_htl->role_name = $user->role_name;
-                        $approval_htl->layer = $layer;
-                        $approval_htl->approval_status = $statusValue;
-                        $approval_htl->approved_at = now();
-                        $approval_htl->reject_info = null;
-                        $approval_htl->save();
-                    }
-                }
-            }
-
-            if ($businessTrip->taksi == 'Ya') {
-                $taksi = Taksi::where('no_sppd', $businessTrip->no_sppd)->first();
-                if ($taksi) {
-                    // Update the existing hotel record with the new approval status
-                    $taksi->update([
-                        'approval_status' => $statusValue,
-                    ]);
-                    $approval_vt = new TaksiApproval();
-                    $approval_vt->id = (string) Str::uuid(); // Generate a UUID for the approval record
-                    $approval_vt->vt_id = $taksi->id;
-                    $approval_vt->employee_id = $employeeId; // Assuming the logged-in user's employee ID is needed
-                    $approval_vt->role_id = $user->role_id; // Assuming role_id is in the user data
-                    $approval_vt->role_name = $user->role_name; // Assuming role_name is in the user data
-                    $approval_vt->layer = $layer; // Set layer to 2 for rejected cases
-                    $approval_vt->approval_status = $statusValue;
-                    $approval_vt->approved_at = now();
-                    $approval_vt->reject_info = null;
-                    $approval_vt->save();
-                }
-            }
-            // Update the status in the BusinessTrip table
-            $businessTrip->update(['status' => $statusValue]);
-
-            // Record the approval or rejection in the BTApproval table
-            $approval->bt_id = $businessTrip->id;
-            $approval->layer = $layer;
-            $approval->approval_status = $statusValue;
-            $approval->approved_at = now();
-            $approval->reject_info = null;
-            $approval->employee_id = $employeeId;
-
-            // Save the approval record
-            $approval->save();
-        } elseif ($action == 'Pending L2') {
+        if ($status == 'Pending L2') {
             $statusValue = 'Pending L2';
             $layer = 1;
             $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            // dd($managerL2, $status);
 
             $managerName = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('fullname')->first();
 
@@ -4066,7 +4161,7 @@ class BusinessTripController extends Controller
                     'status' => 'Approved',
                 ]);
 
-                $rejectionLink = route('reject.business.trip', [
+                $rejectionLink = route('reject.link', [
                     'id' => urlencode($businessTrip->id),
                     'manager_id' => $businessTrip->manager_l2_id,
                     'status' => 'Rejected',
@@ -4171,7 +4266,21 @@ class BusinessTripController extends Controller
                     }
                 }
             }
-        } elseif ($action == 'Approved') {
+            // Update the status in the BusinessTrip table
+            $businessTrip->update(['status' => $statusValue]);
+
+            // Record the approval or rejection in the BTApproval table
+            $approval->bt_id = $businessTrip->id;
+            $approval->layer = $layer;
+            $approval->approval_status = $statusValue;
+            $approval->approved_at = now();
+            $approval->reject_info = null;
+            $approval->employee_id = $employeeId;
+
+            // Save the approval record
+            $approval->save();
+
+        } elseif ($status == 'Approved') {
             $statusValue = 'Approved';
             $layer = 2;
             if ($businessTrip->hotel == 'Ya') {
@@ -4261,7 +4370,6 @@ class BusinessTripController extends Controller
             } else {
                 return redirect()->back()->with('error', 'Unauthorized action.');
             }
-
             // Update the status in the BusinessTrip table
             $businessTrip->update(['status' => $statusValue]);
 
@@ -4419,6 +4527,7 @@ class BusinessTripController extends Controller
         // Redirect back to the previous page with a success message
         return redirect('/businessTrip/approval')->with('success', 'Request updated successfully');
     }
+
 
     public function approveFromLinkDeklarasi($id, Request $request)
     {
