@@ -1244,13 +1244,13 @@ class BusinessTripController extends Controller
                 )->pluck('fullname')->first();
 
                 if ($managerEmail) {
-                    $approvalLink = route('approve.business.trip', [
+                    $approvalLink = route('approve.business.trip.declare', [
                         'id' => urlencode($n->id),
                         'manager_id' => $n->manager_l1_id,
                         'status' => 'Declaration L2'
                     ]);
 
-                    $rejectionLink = route('reject.business.trip', [
+                    $rejectionLink = route('reject.business.trip.declare', [
                         'id' => urlencode($n->id),
                         'manager_id' => $n->manager_l1_id,
                         'status' => 'Declaration Rejected'
@@ -1506,13 +1506,13 @@ class BusinessTripController extends Controller
             )->pluck('fullname')->first();
 
             if ($managerEmail) {
-                $approvalLink = route('approve.business.trip', [
+                $approvalLink = route('approve.business.trip.declare', [
                     'id' => urlencode($n->id),
                     'manager_id' => $n->manager_l1_id,
                     'status' => 'Declaration L2'
                 ]);
 
-                $rejectionLink = route('reject.business.trip', [
+                $rejectionLink = route('reject.business.trip.declare', [
                     'id' => urlencode($n->id),
                     'manager_id' => $n->manager_l1_id,
                     'status' => 'Declaration Rejected'
@@ -4279,6 +4279,148 @@ class BusinessTripController extends Controller
     }
 
     public function updateStatusDeklarasi($id, Request $request)
+    {
+        $user = Auth::user();
+        $employeeId = $user->employee_id;
+        $approval = new BTApproval();
+        $approval->id = (string) Str::uuid();
+
+        // Find the business trip by ID
+        $businessTrip = BusinessTrip::findOrFail($id);
+        $rejectInfo = $request->input('reject_info');
+        // Determine the new status and layer based on the action and manager's role
+        $action = $request->input('status_approval');
+        if ($action == 'Declaration Rejected') {
+            $statusValue = 'Declaration Rejected';
+            if ($employeeId == $businessTrip->manager_l1_id) {
+                $layer = 1;
+            } elseif ($employeeId == $businessTrip->manager_l2_id) {
+                $layer = 2;
+            } else {
+                return redirect()->back()->with('error', 'Unauthorized action.');
+            }
+            if ($businessTrip->ca == 'Ya') {
+                $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($caTransaction && $caTransaction->caonly != 'Y') {
+                    // Update rejection info for the current layer
+                    ca_sett_approval::updateOrCreate(
+                        ['ca_id' => $caTransaction->id, 'employee_id' => $employeeId, 'layer' => $layer],
+                        ['approval_status' => 'Rejected', 'approved_at' => now(), 'reject_info' => $rejectInfo]
+                    );
+
+                    // Update all records with the same ca_id to 'Rejected' status
+                    ca_sett_approval::where('ca_id', $caTransaction->id)
+                        ->update(['approval_status' => 'Rejected']);
+
+                    // Update the main CA transaction approval status
+                    $caTransaction->update(['approval_sett' => 'Rejected']);
+                }
+            }
+        } elseif ($employeeId == $businessTrip->manager_l1_id) {
+            $statusValue = 'Declaration L2';
+            $layer = 1;
+            $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            // dd($managerL2);
+            if ($managerL2) {
+                // Send email to L2
+                Mail::to($managerL2)->send(new BusinessTripNotification($businessTrip));
+            }
+            // Handle CA approval for L1
+            if ($businessTrip->ca == 'Ya') {
+                $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($caTransaction) {
+                    // Update CA approval status for L1
+                    ca_sett_approval::where('ca_id', $caTransaction->id)
+                        ->where('employee_id', $employeeId)
+                        ->where('layer', $layer)
+                        ->where('approval_status', '!=', 'Rejected')  // Only update if status isn't "Declaration Rejected"
+                        ->updateOrCreate(
+                            ['ca_id' => $caTransaction->id, 'employee_id' => $employeeId, 'layer' => $layer],
+                            ['approval_status' => 'Approved', 'approved_at' => now()]
+                        );
+
+                    // Find the next approver (Layer 2) from ca_approval
+                    $nextApproval = ca_sett_approval::where('ca_id', $caTransaction->id)
+                        ->where('layer', $layer + 1)
+                        ->first();
+
+                    if ($nextApproval) {
+                        $updateCa = CATransaction::where('id', $caTransaction->id)->first();
+                        $updateCa->sett_id = $nextApproval->employee_id;
+                        $updateCa->save();
+                    } else {
+                        // No next layer, so mark as Approved
+                        $caTransaction->update(['approval_sett' => 'Approved']);
+                    }
+                }
+            }
+        } elseif ($employeeId == $businessTrip->manager_l2_id) {
+            $statusValue = 'Declaration Approved';
+            $layer = 2;
+
+            // Handle CA approval for L2
+            if ($businessTrip->ca == 'Ya') {
+                $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
+                if ($caTransaction) {
+                    // Update CA approval status for L2
+                    ca_sett_approval::where('ca_id', $caTransaction->id)
+                        ->where('employee_id', $employeeId)
+                        ->where('layer', $layer)
+                        ->where('approval_status', '!=', 'Rejected')  // Only update if status isn't "Declaration Rejected"
+                        ->updateOrCreate(
+                            ['ca_id' => $caTransaction->id, 'employee_id' => $employeeId, 'layer' => $layer],
+                            ['approval_status' => 'Approved', 'approved_at' => now()]
+                        );
+
+                    // Find the next approver (Layer 3) explicitly
+                    $nextApproval = ca_sett_approval::where('ca_id', $caTransaction->id)
+                        ->where('layer', $layer + 1) // This will ensure it gets the immediate next layer (3)
+                        ->first();
+
+                    if ($nextApproval) {
+                        $updateCa = CATransaction::where('id', $caTransaction->id)->first();
+                        $updateCa->sett_id = $nextApproval->employee_id;
+                        $updateCa->save();
+                    } else {
+                        // No next layer, so mark as Approved
+                        $caTransaction->update(['approval_sett' => 'Approved']);
+                    }
+                }
+            }
+        } else {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        // Update the status in the BusinessTrip table
+        $businessTrip->update(['status' => $statusValue]);
+
+        // Record the approval or rejection in the BTApproval table
+        $approval->bt_id = $businessTrip->id;
+        $approval->layer = $layer;
+        $approval->approval_status = $statusValue;
+        $approval->approved_at = now();
+        $approval->reject_info = $rejectInfo;
+        $approval->employee_id = $employeeId;
+
+        // Save the approval record
+        $approval->save();
+
+        $message = $statusValue === 'Declaration Rejected'
+            ? 'The request has been successfully Rejected.'
+            : 'The request has been successfully Accepted.';
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+        }
+
+        // Redirect back to the previous page with a success message
+        return redirect('/businessTrip/approval')->with('success', 'Request updated successfully');
+    }
+
+    public function approveFromLinkDeklarasi($id, Request $request)
     {
         $user = Auth::user();
         $employeeId = $user->employee_id;
