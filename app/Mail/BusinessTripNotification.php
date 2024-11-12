@@ -22,18 +22,31 @@ class BusinessTripNotification extends Mailable
     public $taksiDetails;
     public $caDetails;
     public $managerName;
+    public $approvalLink;
+    public $rejectionLink;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(BusinessTrip $businessTrip, $hotelDetails = null, $ticketDetails = null, $taksiDetails = null, $caDetails = null, $managerName = null)
-    {
+    public function __construct(
+        BusinessTrip $businessTrip,
+        $hotelDetails = null,
+        $ticketDetails = null,
+        $taksiDetails = null,
+        $caDetails = null,
+        $managerName = null,
+        $approvalLink = null,
+        $rejectionLink = null,
+    ) {
         $this->businessTrip = $businessTrip;
         $this->hotelDetails = $hotelDetails;
         $this->ticketDetails = $ticketDetails;
         $this->taksiDetails = $taksiDetails;
         $this->caDetails = $caDetails;
         $this->managerName = $managerName;
+        $this->approvalLink = $approvalLink;
+        $this->rejectionLink = $rejectionLink;
+
     }
 
     /**
@@ -49,6 +62,8 @@ class BusinessTripNotification extends Mailable
                 'taksiDetails' => $this->taksiDetails,
                 'caDetails' => $this->caDetails,
                 'managerName' => $this->managerName,
+                'approvalLink' => $this->approvalLink,
+                'rejectionLink' => $this->rejectionLink,
             ]);
     }
 

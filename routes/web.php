@@ -353,6 +353,12 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/confirm/declaration/{id}', [BusinessTripController::class, 'updateStatusDeklarasi'])->name('confirm.deklarasi');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
+    //LINK APPROVAL
+    Route::get('approve/{id}/{manager_id}/{status}', [BusinessTripController::class, 'approveFromLink'])->name('approve.business.trip');
+    Route::get('reject/{id}/{manager_id}/{status}', [BusinessTripController::class, 'approveFromLink'])->name('reject.business.trip');
+
+
+
     //PDF BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');
     Route::get('/businessTrip/export/{id}/{types?}', [BusinessTripController::class, 'export'])->name('export');
