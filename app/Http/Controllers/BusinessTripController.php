@@ -848,7 +848,7 @@ class BusinessTripController extends Controller
                     'status' => 'Pending L2'
                 ]);
 
-                $rejectionLink = route('reject.business.trip', [
+                $rejectionLink = route('reject.link', [
                     'id' => urlencode($n->id),
                     'manager_id' => $n->manager_l1_id,
                     'status' => 'Rejected'
@@ -3679,7 +3679,7 @@ class BusinessTripController extends Controller
                     'status' => 'Approved',
                 ]);
 
-                $rejectionLink = route('reject.business.trip', [
+                $rejectionLink = route('reject.link', [
                     'id' => urlencode($businessTrip->id),
                     'manager_id' => $businessTrip->manager_l2_id,
                     'status' => 'Rejected',
@@ -4367,8 +4367,6 @@ class BusinessTripController extends Controller
                         }
                     }
                 }
-            } else {
-                return redirect()->back()->with('error', 'Unauthorized action.');
             }
             // Update the status in the BusinessTrip table
             $businessTrip->update(['status' => $statusValue]);
