@@ -4000,7 +4000,7 @@ class BusinessTripController extends Controller
         $employeeId = $manager_id;
         // Determine the new status and layer based on the action and manager's role
         $oldStatus = $status;
-// dd($request->reject_info);
+        // dd($request->reject_info);
         $statusValue = 'Rejected';
         if ($oldStatus == 'Pending L1') {
             $layer = 1;
@@ -4667,6 +4667,15 @@ class BusinessTripController extends Controller
 
         // Redirect back to the previous page with a success message
         return redirect('/businessTrip/approval')->with('success', 'Request updated successfully');
+    }
+
+    public function rejectDeclarationLink()
+    {
+        //view reject
+    }
+    public function rejectDeclarationFromLink()
+    {
+        //reject process
     }
 
     public function ApprovalDeklarasi($id)

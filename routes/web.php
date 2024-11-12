@@ -362,7 +362,9 @@ Route::middleware('auth')->group(function () {
 
      //LINK APPROVAL Declarations
     Route::get('approve/declaration/{id}/{manager_id}/{status}', [BusinessTripController::class, 'approveFromLinkDeklarasi'])->name('approve.business.trip.declare');
-    Route::get('reject/declaration/{id}/{manager_id}/{status}', [BusinessTripController::class, 'approveFromLinkDeklarasi'])->name('reject.business.trip.declare');
+
+    Route::get('businessTrip/declaration/rejection/{id}/{manager_id}/{status}', [BusinessTripController::class, 'rejectDeclarationLink'])->name('reject.link.declaration');
+    Route::post('reject/declaration/{id}/{manager_id}/{status}', [BusinessTripController::class, 'rejectDeclarationFromLink'])->name('reject.business.trip.declaration');
 
 
 
