@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\ca_approval;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BusinessTripNotification;
+use App\Mail\DeclarationNotification;
 
 
 class BusinessTripController extends Controller
@@ -1237,10 +1238,73 @@ class BusinessTripController extends Controller
             }
             if ($statusValue !== 'Declaration Draft') {
                 $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-                // dd($managerEmail);
+                $managerName = Employee::where(
+                    'employee_id',
+                    $managerL1
+                )->pluck('fullname')->first();
+
                 if ($managerEmail) {
+                    $approvalLink = route('approve.business.trip', [
+                        'id' => urlencode($n->id),
+                        'manager_id' => $n->manager_l1_id,
+                        'status' => 'Declaration L2'
+                    ]);
+
+                    $rejectionLink = route('reject.business.trip', [
+                        'id' => urlencode($n->id),
+                        'manager_id' => $n->manager_l1_id,
+                        'status' => 'Declaration Rejected'
+                    ]);
+                    $caTrans = CATransaction::where('no_sppd', $n->no_sppd)
+                        ->where(function ($query) {
+                            $query->where('caonly', '!=', 'Y')
+                                ->orWhereNull('caonly');
+                        })
+                        ->first();
+                    $caTrans->detail_ca = json_decode($caTrans->detail_ca, true);
+                    $detail_ca = isset($caTrans->detail_ca) ? $caTrans->detail_ca : [];
+                    // dd( $detail_ca, $caTrans);
+
+                    // dd($caTrans, $n->no_sppd);
+                    $caDetails = [
+                        'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),
+                        'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                        'total_days_transport' => count($detail_ca['detail_transport'] ?? []),
+                        'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
+
+                        'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'total_days')),
+                        'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                        'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
+                        'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+                    ];
+                    // dd($caDetails,   $detail_ca );
+
+                    $declare_ca = isset($declare_ca) ? $declare_ca : [];
+                    $caDeclare = [
+                        'total_days_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'total_days')),
+                        'total_amount_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                        'total_days_transport' => count($declare_ca['detail_transport'] ?? []),
+                        'total_amount_transport' => array_sum(array_column($declare_ca['detail_transport'] ?? [], 'nominal')),
+
+                        'total_days_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'total_days')),
+                        'total_amount_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                        'total_days_others' => count($declare_ca['detail_lainnya'] ?? []),
+                        'total_amount_others' => array_sum(array_column($declare_ca['detail_lainnya'] ?? [], 'nominal')),
+                    ];
+
                     // Send email to the manager
-                    Mail::to($managerEmail)->send(new BusinessTripNotification($n));
+                    Mail::to($managerEmail)->send(new DeclarationNotification(
+                        $n,
+                        $caDetails,
+                        $caDeclare,
+                        $managerName,
+                        $approvalLink,
+                        $rejectionLink,
+                    ));
                 }
             }
         }
@@ -1436,10 +1500,73 @@ class BusinessTripController extends Controller
         }
         if ($statusValue !== 'Declaration Draft') {
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            // dd($managerEmail);
+            $managerName = Employee::where(
+                'employee_id',
+                $managerL1
+            )->pluck('fullname')->first();
+
             if ($managerEmail) {
+                $approvalLink = route('approve.business.trip', [
+                    'id' => urlencode($n->id),
+                    'manager_id' => $n->manager_l1_id,
+                    'status' => 'Declaration L2'
+                ]);
+
+                $rejectionLink = route('reject.business.trip', [
+                    'id' => urlencode($n->id),
+                    'manager_id' => $n->manager_l1_id,
+                    'status' => 'Declaration Rejected'
+                ]);
+                $caTrans = CATransaction::where('no_sppd', $n->no_sppd)
+                    ->where(function ($query) {
+                        $query->where('caonly', '!=', 'Y')
+                            ->orWhereNull('caonly');
+                    })
+                    ->first();
+                $caTrans->detail_ca = json_decode($caTrans->detail_ca, true);
+                $detail_ca = isset($caTrans->detail_ca) ? $caTrans->detail_ca : [];
+                // dd( $detail_ca, $caTrans);
+
+                // dd($caTrans, $n->no_sppd);
+                $caDetails = [
+                    'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),
+                    'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                    'total_days_transport' => count($detail_ca['detail_transport'] ?? []),
+                    'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
+
+                    'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'total_days')),
+                    'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                    'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
+                    'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+                ];
+                // dd($caDetails,   $detail_ca );
+
+                $declare_ca = isset($declare_ca) ? $declare_ca : [];
+                $caDeclare = [
+                    'total_days_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'total_days')),
+                    'total_amount_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                    'total_days_transport' => count($declare_ca['detail_transport'] ?? []),
+                    'total_amount_transport' => array_sum(array_column($declare_ca['detail_transport'] ?? [], 'nominal')),
+
+                    'total_days_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'total_days')),
+                    'total_amount_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                    'total_days_others' => count($declare_ca['detail_lainnya'] ?? []),
+                    'total_amount_others' => array_sum(array_column($declare_ca['detail_lainnya'] ?? [], 'nominal')),
+                ];
+
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new BusinessTripNotification($n));
+                Mail::to($managerEmail)->send(new DeclarationNotification(
+                    $n,
+                    $caDetails,
+                    $caDeclare,
+                    $managerName,
+                    $approvalLink,
+                    $rejectionLink,
+                ));
             }
         }
 
