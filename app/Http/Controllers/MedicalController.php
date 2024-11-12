@@ -17,6 +17,7 @@ use App\Models\BusinessTrip;
 use App\Models\Hotel;
 use App\Models\Tiket;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Log;
 use App\Imports\ImportHealthCoverage;
 use App\Exports\MedicalExport;
 use App\Exports\MedicalDetailExport;
+use App\Mail\MedicalNotification;
 
 
 class MedicalController extends Controller
@@ -244,7 +246,7 @@ class MedicalController extends Controller
                 continue;
             }
 
-            HealthCoverage::create([
+            $healthCoverage = HealthCoverage::create([
                 'usage_id' => (string) Str::uuid(),
                 'employee_id' => $employee_id,
                 'no_medic' => $no_medic,
@@ -262,6 +264,12 @@ class MedicalController extends Controller
                 'status' => $statusValue,
                 'medical_proof' => $medical_proof_path,
             ]);
+        
+            $CANotificationLayer = Employee::where('employee_id', $employee_id)->pluck('email')->first();
+            if ($CANotificationLayer) {
+                // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+                Mail::to($CANotificationLayer)->send(new MedicalNotification( $healthCoverage));
+            }
         }
 
         return redirect()->route('medical')->with('success', 'Medical successfully added.');
