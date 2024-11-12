@@ -841,6 +841,17 @@ class BusinessTripController extends Controller
                     ->get();
 
                 $taksiDetails = Taksi::where('no_sppd', $n->no_sppd)->first();
+                $approvalLink = route('approve.business.trip', [
+                    'id' => urlencode($n->id),
+                    'manager_id' => $n->manager_l1_id,
+                    'status' => 'Pending L2'
+                ]);
+
+                $rejectionLink = route('reject.business.trip', [
+                    'id' => urlencode($n->id),
+                    'manager_id' => $n->manager_l1_id,
+                    'status' => 'Rejected'
+                ]);
 
                 // Send an email with the detailed business trip information
                 Mail::to($managerEmail)->send(new BusinessTripNotification(
@@ -849,7 +860,9 @@ class BusinessTripController extends Controller
                     $ticketDetails,
                     $taksiDetails,
                     $caDetails,
-                    $managerName
+                    $managerName,
+                    $approvalLink,
+                    $rejectionLink,
                 ));
             }
         }
