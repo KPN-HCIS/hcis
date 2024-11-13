@@ -1,3 +1,4 @@
+<script src="{{ asset('/js/btCashAdvanced/perdiemDeklarasi.js') }}"></script>
 <script>
     function addMoreFormPerdiemDec(event) {
         event.preventDefault();
@@ -103,8 +104,6 @@
         handleDateChange();
     }
 </script>
-
-<script src="{{ asset('/js/btCashAdvanced/perdiem.js') }}"></script>
 
 @if (!empty($detailCA['detail_perdiem']) && $detailCA['detail_perdiem'][0]['start_date'] !== null)
     {{-- Form Edit --}}

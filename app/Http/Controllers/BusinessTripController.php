@@ -967,10 +967,6 @@ class BusinessTripController extends Controller
             $statusValue = 'Declaration L1';  // When "Submit" is clicked
         }
         // dd($statusValue);
-        // Update the status field in the BusinessTrip record
-        $n->update([
-            'status' => $statusValue,
-        ]);
 
         // Store old SPPD number for later use
         $oldNoSppd = $n->no_sppd;
@@ -1018,7 +1014,7 @@ class BusinessTripController extends Controller
             $newNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
             $newNoCa = "$prefix$currentYearShort$newNumber";
 
-            $ca->id = (string) Str::uuid();
+            $caId = $ca->id = (string) Str::uuid();
             $ca->no_ca = $newNoCa;
             $ca->unit = $request->divisi;
             $ca->contribution_level_code = $request->bb_perusahaan;
@@ -1181,268 +1177,152 @@ class BusinessTripController extends Controller
 
             $model->sett_id = $managerL1;
 
-            // Only proceed with approval process if not 'Declaration Draft'
-            if ($statusValue !== 'Declaration Draft') {
-                $cek_director_id = Employee::select([
-                    'dsg.department_level2',
-                    'dsg2.director_flag',
-                    DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1) AS department_director"),
-                    'dsg2.designation_name',
-                    'dsg2.job_code',
-                    'emp.fullname',
-                    'emp.employee_id',
-                ])
-                    ->leftJoin('designations as dsg', 'dsg.job_code', '=', 'employees.designation_code')
-                    ->leftJoin('designations as dsg2', 'dsg2.department_code', '=', DB::raw("SUBSTRING_INDEX(SUBSTRING_INDEX(dsg.department_level2, '(', -1), ')', 1)"))
-                    ->leftJoin('employees as emp', 'emp.designation_code', '=', 'dsg2.job_code')
-                    ->where('employees.designation_code', '=', $employee->designation_code)
-                    ->where('dsg2.director_flag', '=', 'F')
-                    ->get();
+        }
+        if ($ca) {
+            // Assign or update values to $ca model
+            $ca->user_id = $userId;
+            $ca->no_sppd = $oldNoSppd;
+            $ca->user_id = $userId;
+            $caId = $ca->id;
 
-                $director_id = "";
+            // Update approval_status based on the status value from the request
+            if ($statusValue === 'Declaration L1') {
+                $ca->approval_sett = 'Pending';
+                $caStatus = $ca->approval_sett = 'Pending';
+            } elseif ($statusValue === 'Declaration Draft') {
+                $ca->approval_sett = 'Draft';
+                $caStatus = $ca->approval_sett = 'Draft';
+            } else {
+                $ca->approval_sett = $statusValue;
+            }
 
-                if ($cek_director_id->isNotEmpty()) {
-                    $director_id = $cek_director_id->first()->employee_id;
-                }
+            $ca->declaration_at = Carbon::now();
 
-                $total_ca = str_replace('.', '', $request->totalca);
-                $data_matrix_approvals = MatrixApproval::where('modul', 'dns')
-                    ->where('group_company', 'like', '%' . $employee->group_company . '%')
-                    ->where('contribution_level_code', 'like', '%' . $request->bb_perusahaan . '%')
-                    ->whereRaw(
-                        '? BETWEEN CAST(SUBSTRING_INDEX(condt, "-", 1) AS UNSIGNED) AND CAST(SUBSTRING_INDEX(condt, "-", -1) AS UNSIGNED)',
-                        [$total_ca]
-                    )
-                    ->get();
+            $total_real = (int) str_replace('.', '', $request->totalca);
+            // // dd($total_real);
+            $total_ca = $ca->total_ca;
+            if ($ca->detail_ca === null) {
+                $ca->total_ca = '0';
+                $ca->total_real = (int) str_replace('.', '', $request->totalca);
+                $ca->total_cost = -1 * (int) str_replace('.', '', $ca->total_real);
+            } else {
+                $ca->total_real = $total_real;
+                $ca->total_cost = $total_ca - $total_real;
+            }
 
-                foreach ($data_matrix_approvals as $data_matrix_approval) {
-                    if ($data_matrix_approval->employee_id == "cek_L1") {
-                        $employee_id = $managerL1;
-                    } else if ($data_matrix_approval->employee_id == "cek_L2") {
-                        $employee_id = $managerL2;
-                    } else if ($data_matrix_approval->employee_id == "cek_director") {
-                        $employee_id = $director_id;
-                    } else {
-                        $employee_id = $data_matrix_approval->employee_id;
+            // Initialize arrays for details
+            $detail_perdiem = [];
+            $detail_transport = [];
+            $detail_penginapan = [];
+            $detail_lainnya = [];
+
+            // Populate detail_perdiem
+            if ($request->has('start_bt_perdiem')) {
+                foreach ($request->start_bt_perdiem as $key => $startDate) {
+                    $endDate = $request->end_bt_perdiem[$key] ?? '';
+                    $totalDays = $request->total_days_bt_perdiem[$key] ?? '';
+                    $location = $request->location_bt_perdiem[$key] ?? '';
+                    $other_location = $request->other_location_bt_perdiem[$key] ?? '';
+                    $companyCode = $request->company_bt_perdiem[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
+
+                    if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_perdiem[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'location' => $location,
+                            'other_location' => $other_location,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
                     }
-
-                    $model_approval = new ca_sett_approval;
-                    $model_approval->ca_id = $request->no_id;
-                    $model_approval->role_name = $data_matrix_approval->desc;
-                    $model_approval->employee_id = $employee_id;
-                    $model_approval->layer = $data_matrix_approval->layer;
-                    $model_approval->approval_status = $caStatus;
-
-                    $model_approval->save();
                 }
             }
-            if ($statusValue !== 'Declaration Draft') {
-                $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-                $managerName = Employee::where(
-                    'employee_id',
-                    $managerL1
-                )->pluck('fullname')->first();
+            // dd($detail_perdiem);
 
-                if ($managerEmail) {
-                    $approvalLink = route('approve.business.trip.declare', [
-                        'id' => urlencode($n->id),
-                        'manager_id' => $n->manager_l1_id,
-                        'status' => 'Declaration L2'
-                    ]);
+            // Populate detail_transport
+            if ($request->has('tanggal_bt_transport')) {
+                foreach ($request->tanggal_bt_transport as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_transport[$key] ?? '';
+                    $companyCode = $request->company_bt_transport[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
 
-                    $rejectionLink = route('reject.business.trip.declare', [
-                        'id' => urlencode($n->id),
-                        'manager_id' => $n->manager_l1_id,
-                        'status' => 'Declaration Rejected'
-                    ]);
-                    $caTrans = CATransaction::where('no_sppd', $n->no_sppd)
-                        ->where(function ($query) {
-                            $query->where('caonly', '!=', 'Y')
-                                ->orWhereNull('caonly');
-                        })
-                        ->first();
-                    $caTrans->detail_ca = json_decode($caTrans->detail_ca, true);
-                    $detail_ca = isset($caTrans->detail_ca) ? $caTrans->detail_ca : [];
-                    // dd( $detail_ca, $caTrans);
-
-                    // dd($caTrans, $n->no_sppd);
-                    $caDetails = [
-                        'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),
-                        'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
-
-                        'total_days_transport' => count($detail_ca['detail_transport'] ?? []),
-                        'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
-
-                        'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'total_days')),
-                        'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
-
-                        'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
-                        'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
-                    ];
-                    // dd($caDetails,   $detail_ca );
-
-                    $declare_ca = isset($declare_ca) ? $declare_ca : [];
-                    $caDeclare = [
-                        'total_days_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'total_days')),
-                        'total_amount_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'nominal')),
-
-                        'total_days_transport' => count($declare_ca['detail_transport'] ?? []),
-                        'total_amount_transport' => array_sum(array_column($declare_ca['detail_transport'] ?? [], 'nominal')),
-
-                        'total_days_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'total_days')),
-                        'total_amount_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'nominal')),
-
-                        'total_days_others' => count($declare_ca['detail_lainnya'] ?? []),
-                        'total_amount_others' => array_sum(array_column($declare_ca['detail_lainnya'] ?? [], 'nominal')),
-                    ];
-
-                    // Send email to the manager
-                    Mail::to($managerEmail)->send(new DeclarationNotification(
-                        $n,
-                        $caDetails,
-                        $caDeclare,
-                        $managerName,
-                        $approvalLink,
-                        $rejectionLink,
-                    ));
+                    if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_transport[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                        ];
+                    }
                 }
             }
-        }
 
-        // Assign or update values to $ca model
-        $ca->no_sppd = $oldNoSppd;
-        $ca->user_id = $userId;
-        // Update approval_status based on the status value from the request
-        if ($statusValue === 'Declaration L1') {
-            $ca->approval_sett = 'Pending';
-        } elseif ($statusValue === 'Declaration Draft') {
-            $ca->approval_sett = 'Draft';
-        } else {
-            $ca->approval_sett = $statusValue;
-        }
+            // Populate detail_penginapan
+            if ($request->has('start_bt_penginapan')) {
+                foreach ($request->start_bt_penginapan as $key => $startDate) {
+                    $endDate = $request->end_bt_penginapan[$key] ?? '';
+                    $totalDays = $request->total_days_bt_penginapan[$key] ?? '';
+                    $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
+                    $companyCode = $request->company_bt_penginapan[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
+                    $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
-        $ca->declaration_at = Carbon::now();
-
-        $total_real = (int) str_replace('.', '', $request->totalca);
-        // // dd($total_real);
-        $total_ca = $ca->total_ca;
-        if ($ca->detail_ca === null) {
-            $ca->total_ca = '0';
-            $ca->total_real = (int) str_replace('.', '', $request->totalca);
-            $ca->total_cost = -1 * (int) str_replace('.', '', $ca->total_real);
-        } else {
-            $ca->total_real = $total_real;
-            $ca->total_cost = $total_ca - $total_real;
-        }
-
-        // Initialize arrays for details
-        $detail_perdiem = [];
-        $detail_transport = [];
-        $detail_penginapan = [];
-        $detail_lainnya = [];
-
-        // Populate detail_perdiem
-        if ($request->has('start_bt_perdiem')) {
-            foreach ($request->start_bt_perdiem as $key => $startDate) {
-                $endDate = $request->end_bt_perdiem[$key] ?? '';
-                $totalDays = $request->total_days_bt_perdiem[$key] ?? '';
-                $location = $request->location_bt_perdiem[$key] ?? '';
-                $other_location = $request->other_location_bt_perdiem[$key] ?? '';
-                $companyCode = $request->company_bt_perdiem[$key] ?? '';
-                $nominal = str_replace('.', '', $request->nominal_bt_perdiem[$key] ?? '0');
-
-                if (!empty($startDate) && !empty($endDate) && !empty($companyCode) && !empty($nominal)) {
-                    $detail_perdiem[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'location' => $location,
-                        'other_location' => $other_location,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
+                        $detail_penginapan[] = [
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'total_days' => $totalDays,
+                            'hotel_name' => $hotelName,
+                            'company_code' => $companyCode,
+                            'nominal' => $nominal,
+                            'totalPenginapan' => $totalPenginapan,
+                        ];
+                    }
                 }
             }
-        }
-        // dd($detail_perdiem);
 
-        // Populate detail_transport
-        if ($request->has('tanggal_bt_transport')) {
-            foreach ($request->tanggal_bt_transport as $key => $tanggal) {
-                $keterangan = $request->keterangan_bt_transport[$key] ?? '';
-                $companyCode = $request->company_bt_transport[$key] ?? '';
-                $nominal = str_replace('.', '', $request->nominal_bt_transport[$key] ?? '0');
+            // Populate detail_lainnya
+            if ($request->has('tanggal_bt_lainnya')) {
+                foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
+                    $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
-                if (!empty($tanggal) && !empty($companyCode) && !empty($nominal)) {
-                    $detail_transport[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                    ];
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_lainnya[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                            'totalLainnya' => $totalLainnya,
+                        ];
+                    }
                 }
             }
-        }
-
-        // Populate detail_penginapan
-        if ($request->has('start_bt_penginapan')) {
-            foreach ($request->start_bt_penginapan as $key => $startDate) {
-                $endDate = $request->end_bt_penginapan[$key] ?? '';
-                $totalDays = $request->total_days_bt_penginapan[$key] ?? '';
-                $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
-                $companyCode = $request->company_bt_penginapan[$key] ?? '';
-                $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
-                $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
-
-                if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
-                    $detail_penginapan[] = [
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'total_days' => $totalDays,
-                        'hotel_name' => $hotelName,
-                        'company_code' => $companyCode,
-                        'nominal' => $nominal,
-                        'totalPenginapan' => $totalPenginapan,
-                    ];
-                }
+            // Save the details
+            $declare_ca = [
+                'detail_perdiem' => $detail_perdiem,
+                'detail_transport' => $detail_transport,
+                'detail_penginapan' => $detail_penginapan,
+                'detail_lainnya' => $detail_lainnya,
+            ];
+            if ($request->hasFile('prove_declare')) {
+                $file = $request->file('prove_declare');
+                $path = $file->store('public/proofs'); // Store in 'public/proofs' directory
+                $ca->prove_declare = $path;
             }
+
+            $ca->declare_ca = json_encode($declare_ca);
+            $model = $ca;
+
+            $model->sett_id = $managerL1;
         }
-
-        // Populate detail_lainnya
-        if ($request->has('tanggal_bt_lainnya')) {
-            foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
-                $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
-                $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
-                $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
-
-                if (!empty($tanggal) && !empty($nominal)) {
-                    $detail_lainnya[] = [
-                        'tanggal' => $tanggal,
-                        'keterangan' => $keterangan,
-                        'nominal' => $nominal,
-                        'totalLainnya' => $totalLainnya,
-                    ];
-                }
-            }
-        }
-        // Save the details
-        $declare_ca = [
-            'detail_perdiem' => $detail_perdiem,
-            'detail_transport' => $detail_transport,
-            'detail_penginapan' => $detail_penginapan,
-            'detail_lainnya' => $detail_lainnya,
-        ];
-        if ($request->hasFile('prove_declare')) {
-            $file = $request->file('prove_declare');
-            $path = $file->store('public/proofs'); // Store in 'public/proofs' directory
-            $ca->prove_declare = $path;
-        }
-
-        $ca->declare_ca = json_encode($declare_ca);
-        $model = $ca;
-
-        $model->sett_id = $managerL1;
-
+        $ca->save();
+        // Update the status field in the BusinessTrip record
+        $n->update([
+            'status' => $statusValue,
+        ]);
         // Only proceed with approval process if not 'Declaration Draft'
         if ($statusValue !== 'Declaration Draft') {
             $cek_director_id = Employee::select([
@@ -1489,16 +1369,14 @@ class BusinessTripController extends Controller
                 }
 
                 $model_approval = new ca_sett_approval;
-                $model_approval->ca_id = $request->no_id;
+                $model_approval->ca_id = $caId;
                 $model_approval->role_name = $data_matrix_approval->desc;
                 $model_approval->employee_id = $employee_id;
                 $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = 'Pending';
+                $model_approval->approval_status = $caStatus;
 
                 $model_approval->save();
             }
-        }
-        if ($statusValue !== 'Declaration Draft') {
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             $managerName = Employee::where(
                 'employee_id',
@@ -1512,7 +1390,7 @@ class BusinessTripController extends Controller
                     'status' => 'Declaration L2'
                 ]);
 
-                $rejectionLink = route('reject.business.trip.declare', [
+                $rejectionLink = route('reject.link.declaration', [
                     'id' => urlencode($n->id),
                     'manager_id' => $n->manager_l1_id,
                     'status' => 'Declaration Rejected'
@@ -1523,8 +1401,7 @@ class BusinessTripController extends Controller
                             ->orWhereNull('caonly');
                     })
                     ->first();
-                $caTrans->detail_ca = json_decode($caTrans->detail_ca, true);
-                $detail_ca = isset($caTrans->detail_ca) ? $caTrans->detail_ca : [];
+                $detail_ca = isset($caTrans) && isset($caTrans->detail_ca) ? json_decode($caTrans->detail_ca, true) : [];
                 // dd( $detail_ca, $caTrans);
 
                 // dd($caTrans, $n->no_sppd);
@@ -1570,7 +1447,7 @@ class BusinessTripController extends Controller
             }
         }
 
-        $ca->save();
+
         return redirect('/businessTrip')->with('success', 'Declaration created successfully');
     }
 
@@ -3999,7 +3876,8 @@ class BusinessTripController extends Controller
         $businessTrip = BusinessTrip::findOrFail($id);
         $employeeId = $manager_id;
         // Determine the new status and layer based on the action and manager's role
-        $oldStatus = $status;
+        $oldStatus = $businessTrip->status;
+        // dd($oldStatus);
         // dd($request->reject_info);
         $statusValue = 'Rejected';
         if ($oldStatus == 'Pending L1') {
@@ -4111,8 +3989,6 @@ class BusinessTripController extends Controller
         $employeeId = $manager_id;
 
         // Determine the new status and layer based on the action and manager's role
-        $oldStatus = $businessTrip->status;
-        $action = $status;
         if ($status == 'Pending L2') {
             $statusValue = 'Pending L2';
             $layer = 1;
@@ -4527,52 +4403,85 @@ class BusinessTripController extends Controller
     }
 
 
-    public function approveFromLinkDeklarasi($id, Request $request)
+    public function approveFromLinkDeklarasi($id, $manager_id, $status)
     {
-        $user = Auth::user();
-        $employeeId = $user->employee_id;
+        $employeeId = $manager_id;
         $approval = new BTApproval();
         $approval->id = (string) Str::uuid();
 
         // Find the business trip by ID
         $businessTrip = BusinessTrip::findOrFail($id);
-        $rejectInfo = $request->input('reject_info');
-        // Determine the new status and layer based on the action and manager's role
-        $action = $request->input('status_approval');
-        if ($action == 'Declaration Rejected') {
-            $statusValue = 'Declaration Rejected';
-            if ($employeeId == $businessTrip->manager_l1_id) {
-                $layer = 1;
-            } elseif ($employeeId == $businessTrip->manager_l2_id) {
-                $layer = 2;
-            } else {
-                return redirect()->back()->with('error', 'Unauthorized action.');
-            }
-            if ($businessTrip->ca == 'Ya') {
-                $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
-                if ($caTransaction && $caTransaction->caonly != 'Y') {
-                    // Update rejection info for the current layer
-                    ca_sett_approval::updateOrCreate(
-                        ['ca_id' => $caTransaction->id, 'employee_id' => $employeeId, 'layer' => $layer],
-                        ['approval_status' => 'Rejected', 'approved_at' => now(), 'reject_info' => $rejectInfo]
-                    );
 
-                    // Update all records with the same ca_id to 'Rejected' status
-                    ca_sett_approval::where('ca_id', $caTransaction->id)
-                        ->update(['approval_status' => 'Rejected']);
-
-                    // Update the main CA transaction approval status
-                    $caTransaction->update(['approval_sett' => 'Rejected']);
-                }
-            }
-        } elseif ($employeeId == $businessTrip->manager_l1_id) {
+        if ($employeeId == $businessTrip->manager_l1_id) {
             $statusValue = 'Declaration L2';
             $layer = 1;
             $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('fullname')->first();
+
             // dd($managerL2);
             if ($managerL2) {
-                // Send email to L2
-                Mail::to($managerL2)->send(new BusinessTripNotification($businessTrip));
+                $approvalLink = route('approve.business.trip.declare', [
+                    'id' => urlencode($businessTrip->id),
+                    'manager_id' => $businessTrip->manager_l2_id,
+                    'status' => 'Declaration Approved'
+                ]);
+
+                $rejectionLink = route('reject.link.declaration', [
+                    'id' => urlencode($businessTrip->id),
+                    'manager_id' => $businessTrip->manager_l2_id,
+                    'status' => 'Declaration Rejected'
+                ]);
+
+                $caTrans = CATransaction::where('no_sppd', $businessTrip->no_sppd)
+                    ->where(function ($query) {
+                        $query->where('caonly', '!=', 'Y')
+                            ->orWhereNull('caonly');
+                    })
+                    ->first();
+                $detail_ca = isset($caTrans) && isset($caTrans->detail_ca) ? json_decode($caTrans->detail_ca, true) : [];
+                $declare_ca = isset($caTrans) && isset($caTrans->declare_ca) ? json_decode($caTrans->declare_ca, true) : [];
+                // dd( $detail_ca, $caTrans);
+
+                // dd($caTrans, $n->no_sppd);
+                $caDetails = [
+                    'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),
+                    'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                    'total_days_transport' => count($detail_ca['detail_transport'] ?? []),
+                    'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
+
+                    'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'total_days')),
+                    'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                    'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
+                    'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+                ];
+                // dd($caDetails,   $detail_ca );
+
+                $declare_ca = isset($declare_ca) ? $declare_ca : [];
+                $caDeclare = [
+                    'total_days_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'total_days')),
+                    'total_amount_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                    'total_days_transport' => count($declare_ca['detail_transport'] ?? []),
+                    'total_amount_transport' => array_sum(array_column($declare_ca['detail_transport'] ?? [], 'nominal')),
+
+                    'total_days_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'total_days')),
+                    'total_amount_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                    'total_days_others' => count($declare_ca['detail_lainnya'] ?? []),
+                    'total_amount_others' => array_sum(array_column($declare_ca['detail_lainnya'] ?? [], 'nominal')),
+                ];
+
+                // Send email to the manager
+                Mail::to($managerL2)->send(new DeclarationNotification(
+                    $businessTrip,
+                    $caDetails,
+                    $caDeclare,
+                    $managerName,
+                    $approvalLink,
+                    $rejectionLink,
+                ));
             }
             // Handle CA approval for L1
             if ($businessTrip->ca == 'Ya') {
@@ -4648,34 +4557,142 @@ class BusinessTripController extends Controller
         $approval->layer = $layer;
         $approval->approval_status = $statusValue;
         $approval->approved_at = now();
-        $approval->reject_info = $rejectInfo;
         $approval->employee_id = $employeeId;
 
         // Save the approval record
         $approval->save();
+    }
 
-        $message = $statusValue === 'Declaration Rejected'
-            ? 'The request has been successfully Rejected.'
-            : 'The request has been successfully Accepted.';
+    public function rejectDeclarationLink(Request $request, $id, $manager_id, $status)
+    {
+        $n = BusinessTrip::find($id);
+        $userId = Auth::id();
+        $employee_data = Employee::where('id', $n->user_id)->first();
+        // dd($employee_data);
+        $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => $message
-            ]);
+        // Initialize caDetail with an empty array if it's null
+        $caDetail = $ca ? json_decode($ca->detail_ca, true) : [];
+        $declareCa = $ca ? json_decode($ca->declare_ca, true) : [];
+
+        // Safely access nominalPerdiem with default '0' if caDetail is empty
+        $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
+        $nominalPerdiemDeclare = isset($declareCa['detail_perdiem'][0]['nominal']) ? $declareCa['detail_perdiem'][0]['nominal'] : '0';
+
+        $hasCaData = $ca !== null;
+        // Retrieve the taxi data for the specific BusinessTrip
+        $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
+
+        // Retrieve all hotels for the specific BusinessTrip
+        $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
+
+        // Prepare hotel data for the view
+        $hotelData = [];
+        foreach ($hotels as $index => $hotel) {
+            $hotelData[] = [
+                'nama_htl' => $hotel->nama_htl,
+                'lokasi_htl' => $hotel->lokasi_htl,
+                'jmlkmr_htl' => $hotel->jmlkmr_htl,
+                'bed_htl' => $hotel->bed_htl,
+                'tgl_masuk_htl' => $hotel->tgl_masuk_htl,
+                'tgl_keluar_htl' => $hotel->tgl_keluar_htl,
+                'total_hari' => $hotel->total_hari,
+                'more_htl' => ($index < count($hotels) - 1) ? 'Ya' : 'Tidak'
+            ];
         }
 
-        // Redirect back to the previous page with a success message
-        return redirect('/businessTrip/approval')->with('success', 'Request updated successfully');
-    }
+        // Retrieve all tickets for the specific BusinessTrip
+        $tickets = Tiket::where('no_sppd', $n->no_sppd)->get();
 
-    public function rejectDeclarationLink()
-    {
-        //view reject
+        // Prepare ticket data for the view
+        $ticketData = [];
+        foreach ($tickets as $index => $ticket) {
+            $ticketData[] = [
+                'noktp_tkt' => $ticket->noktp_tkt,
+                'dari_tkt' => $ticket->dari_tkt,
+                'ke_tkt' => $ticket->ke_tkt,
+                'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                'jenis_tkt' => $ticket->jenis_tkt,
+                'type_tkt' => $ticket->type_tkt,
+                'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'ket_tkt' => $ticket->ket_tkt,
+                'more_tkt' => ($index < count($tickets) - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // Retrieve locations and companies data for the dropdowns
+        $locations = Location::orderBy('id')->get();
+        $companies = Company::orderBy('contribution_level')->get();
+
+        $parentLink = 'Business Trip Approval';
+        $link = 'Approval Details';
+
+        return view('hcis.reimbursements.businessTrip.btRejectDeclaration', [
+            'n' => $n,
+            'hotelData' => $hotelData,
+            'taksiData' => $taksi, // Pass the taxi data
+            'ticketData' => $ticketData,
+            'employee_data' => $employee_data,
+            'companies' => $companies,
+            'locations' => $locations,
+            'caDetail' => $caDetail,
+            'declareCa' => $declareCa,
+            'ca' => $ca,
+            'nominalPerdiem' => $nominalPerdiem,
+            'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
+            'hasCaData' => $hasCaData,
+            'parentLink' => $parentLink,
+            'manager_id' => $manager_id,
+            'status' => $status,
+            'link' => $link,
+        ]);
     }
-    public function rejectDeclarationFromLink()
+    public function rejectDeclarationFromLink(Request $request, $id, $manager_id, $status)
     {
-        //reject process
+        $employeeId = $manager_id;
+        $approval = new BTApproval();
+        $approval->id = (string) Str::uuid();
+
+        // Find the business trip by ID
+        $businessTrip = BusinessTrip::findOrFail($id);
+        $rejectInfo = $request->reject_info;
+
+        // Determine the new status and layer based on the action and manager's role
+        $oldStatus = $businessTrip->status;
+        $statusValue = 'Declaration Rejected';
+        if ($oldStatus == 'Declaration L1') {
+            $layer = 1;
+        } elseif ($oldStatus == 'Declaration L2') {
+            $layer = 2;
+        } else {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();
+        // dd($caTransaction->id);
+        // dd( $caTransaction, $caTransaction->caonly != 'Y');
+        if ($caTransaction && $caTransaction->caonly != 'Y') {
+            // Update all records with the same ca_id to 'Rejected' status
+            ca_sett_approval::where('ca_id', $caTransaction->id)
+                ->update(['approval_status' => 'Rejected', 'reject_info' => $rejectInfo, 'approved_at' => now()]);
+
+            // Update the main CA transaction approval status
+            $caTransaction->update(['approval_sett' => 'Rejected']);
+        }
+
+        // Update the status in the BusinessTrip table
+        $businessTrip->update(['status' => $statusValue]);
+
+        // Record the approval or rejection in the BTApproval table
+        $approval->bt_id = $businessTrip->id;
+        $approval->layer = $layer;
+        $approval->approval_status = $statusValue;
+        $approval->approved_at = now();
+        $approval->reject_info = $rejectInfo;
+        $approval->employee_id = $employeeId;
+        $approval->save();
     }
 
     public function ApprovalDeklarasi($id)
