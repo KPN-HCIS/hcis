@@ -342,7 +342,7 @@
             @if (!isset($detailCA['detail_perdiem'][$index]))
                 <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
                     <p class="fs-4 text-primary" style="font-weight: bold;">Perdiem {{ $loop->index + 1 }}</p>
-                    <div class="card-body bg-light p-2 mb-3">
+                    <div id="form-container-bt-perdiem-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3">
                         <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
                         <div class="row">
                             <!-- Company Code -->
