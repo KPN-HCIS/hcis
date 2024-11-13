@@ -23,9 +23,11 @@ class CashAdvancedNotification extends Mailable
     public $model;
     public $textNotification;
     public $declaration;
+    public $linkApprove;
+    public $linkReject;
     protected $base64Image;
     
-    public function __construct($nextApproval = null, $caTransaction = null, $textNotification, $declaration = null)
+    public function __construct($nextApproval = null, $caTransaction = null, $textNotification, $declaration = null, $linkApprove = null, $linkReject = null)
     {
         $path = public_path('images/kop.jpg');  
         $type = pathinfo($path, PATHINFO_EXTENSION);  
@@ -49,6 +51,14 @@ class CashAdvancedNotification extends Mailable
 
         if ($declaration != null) {
             $this->declaration = $declaration;
+        }
+
+        if ($linkApprove != null) {
+            $this->linkApprove = $linkApprove;
+        }
+
+        if ($linkReject != null) {
+            $this->linkReject = $linkReject;
         }
     }
 

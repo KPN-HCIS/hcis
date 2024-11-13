@@ -68,6 +68,16 @@ Route::get('/test-email', function () {
     return view('email.reminderschedule', compact('messages', 'name'));
 });
 
+Route::get('/approval/cashadvanced/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalEmail'])
+    ->name('approval.email');
+
+Route::post('/approval/cashadvanced/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalEmail'])  
+    ->name('approval.email.reject');
+
+Route::get('/page/{key}', [ApprovalReimburseController::class, 'blankApproval'])->name('blank.page');
+
+Route::get('/page', [ApprovalReimburseController::class, 'blankApproval'])->name('blank.pageUn');
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');

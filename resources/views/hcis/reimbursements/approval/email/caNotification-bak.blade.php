@@ -17,7 +17,6 @@
         }
 
         .header img {
-            width: 100%;
             height: auto;
             margin-bottom: 20px;
         }
@@ -114,9 +113,7 @@
 </head>
     <body>
         <div class="header">
-            {{-- {{dd(substr($base64Image, 0, 100));}} --}}
-            {{-- <img src="{{ $base64Image }}" alt="Kop Surat" style="max-width: 100%; height: auto;">  
-            <img src="{{ asset('images/kop.jpg') }}" alt="Kop Surat" style="max-width: 100%; height: auto;">   --}}
+            <img src="https://stag-corp.kpndownstream.com/images/logo/logo-kpn-red.png" alt="Kop Surat" style="max-width: 20%; height: auto;">
         </div>
 
         @if ($nextApproval)
@@ -172,7 +169,7 @@
                     <td class="label">CA Type</td>
                     <td class="colon">:</td>
                     <td class="value">
-                        @if($caTransaction->type_ca === 'ent')  
+                        @if($caTransaction->type_ca === 'entr')  
                             Entertaiment  
                         @elseif($caTransaction->type_ca === 'dns')  
                             Business Trip  
@@ -185,7 +182,7 @@
                 </tr>
             </table>
             
-            @if($caTransaction->type_ca === 'ent')  
+            @if($caTransaction->type_ca === 'entr')  
                 @if ($declaration == "Declaration")
                     <table class="table-approve" style="width: 80%;">
                         <tr>
@@ -557,7 +554,9 @@
             @endif  
             <br>
 
-            <p>Untuk Menyetujui atau Menolak Perjalanan Dinas tersebut dapat memilih link berikut : <a href="">Approve</a>/<a href="">Reject</a></p>
+            @if ($linkApprove)
+                <p>Untuk Menyetujui atau Menolak Perjalanan Dinas tersebut dapat memilih link berikut : <a href="{{ $linkApprove }}">Approve</a>/<a href="{{ $linkReject }}">Reject</a></p>
+            @endif
             <br>
 
             <p>Apabila ada pertanyaan, dapat menghubungi : </p>

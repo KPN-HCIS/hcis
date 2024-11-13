@@ -935,13 +935,27 @@ class ReimburseController extends Controller
 
             $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             if ($CANotificationLayer) {
-                $textNotification = "{{$model->employee->fullname}} mengajukan Cash Advanced dengan detail sebagai berikut:";
+                $textNotification = "{$model->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
 
+                $linkApprove = route('approval.email', [
+                    'id' => $model->id, 
+                    'employeeId' => $nextApproval->employee_id,
+                    'action' => 'approve',
+                ]);   
+                $linkReject = route('blank.page', [  
+                    'key' => encrypt($model->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller  
+                    'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini  
+                    'autoOpen' => 'reject'  
+                ]);  
+                
                 Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
                     $nextApproval, 
-                    $model,
+                    $model, 
                     $textNotification,
-                ));
+                    null, 
+                    $linkApprove,
+                    $linkReject,
+                ));  
             }
         }
 
@@ -1291,7 +1305,25 @@ class ReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "{$model->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification($nextApproval, $model, $textNotification));
+                $linkApprove = route('approval.email', [
+                    'id' => $model->id, 
+                    'employeeId' => $nextApproval->employee_id,
+                    'action' => 'approve',
+                ]);   
+                $linkReject = route('blank.page', [  
+                    'key' => encrypt($model->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller  
+                    'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini  
+                    'autoOpen' => 'reject'  
+                ]);  
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    $nextApproval, 
+                    $model, 
+                    $textNotification,
+                    null, 
+                    $linkApprove,
+                    $linkReject,
+                ));  
             }
         }
         $model->save();
@@ -1391,12 +1423,26 @@ class ReimburseController extends Controller
                     $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
                     if ($CANotificationLayer) {
                         $textNotification = "{$model->employee->fullname} mengajuan Extend Dinas dengan detail Berikut :";
-
+    
+                        $linkApprove = route('approval.email', [
+                            'id' => $model->id, 
+                            'employeeId' => $nextApproval->employee_id,
+                            'action' => 'approve',
+                        ]);   
+                        $linkReject = route('blank.page', [  
+                            'key' => encrypt($model->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller  
+                            'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini  
+                            'autoOpen' => 'reject'  
+                        ]);  
+                        
                         Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
                             $nextApproval, 
                             $model, 
                             $textNotification,
-                        ));
+                            null, 
+                            $linkApprove,
+                            $linkReject,
+                        ));  
                     }
 
                 }
@@ -1807,13 +1853,26 @@ class ReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "{$model->employee->fullname} mengajukan Declaration Cash Advanced dengan detail Berikut :";
                 $declaration = "Declaration";
-                // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+
+                $linkApprove = route('approval.email', [
+                    'id' => $model->id, 
+                    'employeeId' => $nextApproval->employee_id,
+                    'action' => 'approve',
+                ]);   
+                $linkReject = route('blank.page', [  
+                    'key' => encrypt($model->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller  
+                    'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini  
+                    'autoOpen' => 'reject'  
+                ]);  
+                
                 Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
                     $nextApproval, 
-                    $model,
+                    $model, 
                     $textNotification,
-                    $declaration,
-                ));
+                    $declaration, 
+                    $linkApprove,
+                    $linkReject,
+                ));  
             }
         }
         $model->declaration_at = Carbon::now();
