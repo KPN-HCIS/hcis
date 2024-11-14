@@ -114,11 +114,11 @@
         {{-- HR ADMIN --}}
         @if (auth()->check() &&
                 (auth()->user()->can('reportca_hcis') ||
-                    auth()->user()->can('adminbt') ||
-                    auth()->user()->can('admin_medic') ||
-                    auth()->user()->can('adminht') ||
-                    auth()->user()->can('admintkt') ||
-                    auth()->user()->can('adminhtl')))
+                    auth()->user()->can('report_hcis_bt') ||
+                    auth()->user()->can('report_hcis_md') ||
+                    auth()->user()->can('report_hcis_ht') ||
+                    auth()->user()->can('report_hcis_tkt') ||
+                    auth()->user()->can('report_hcis_htl')))
             <div style="display: flex; align-items: center; margin: 20px 0;">
                 <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
                 <span style="padding: 0 20px; font-weight: bold;">Admin</span>
@@ -144,7 +144,7 @@
             @endif
 
             @if (auth()->check())
-                @can('adminbt')
+                @can('report_hcis_bt')
                     <div class="col-md-3">
                         <a href="{{ route('businessTrip.admin') }}">
                             <div class="card" style="height: 200px">
@@ -158,7 +158,7 @@
                 @endcan
             @endif
             @if (auth()->check())
-                @can('admin_medic')
+                @can('report_hcis_md')
                     <div class="col-md-3">
                         <a href="{{ route('medical.admin') }}">
                             <div class="card" style="height: 200px">
@@ -172,7 +172,7 @@
                 @endcan
             @endif
             @if (auth()->check())
-                @can('adminht')
+                @can('report_hcis_ht')
                     <div class="col-md-3">
                         <a href="{{ route('home-trip.admin') }}">
                             <div class="card" style="height: 200px">
@@ -187,7 +187,7 @@
                 @endcan
             @endif
             @if (auth()->check())
-                @can('admintkt')
+                @can('report_hcis_tkt')
                     <div class="col-md-3">
                         <a href="{{ route('ticket.admin') }}">
                             <div class="card" style="height: 200px">
@@ -201,7 +201,7 @@
                 @endcan
             @endif
             @if (auth()->check())
-                @can('adminhtl')
+                @can('report_hcis_htl')
                     <div class="col-md-3">
                         <a href="{{ route('hotel.admin') }}">
                             <div class="card" style="height: 200px">
