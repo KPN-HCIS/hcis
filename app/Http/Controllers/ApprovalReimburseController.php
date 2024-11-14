@@ -317,7 +317,7 @@ class ApprovalReimburseController extends Controller
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
 
-                    $linkApprove = route('approval.email', [
+                    $linkApprove = route('approval.email.aproved', [
                         'id' => $caTransaction->id, 
                         'employeeId' => $nextApproval->employee_id,
                         'action' => 'approve',
@@ -449,7 +449,7 @@ class ApprovalReimburseController extends Controller
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
 
-                    $linkApprove = route('approval.email', [
+                    $linkApprove = route('approval.email.aproved', [
                         'id' => $caTransaction->id, 
                         'employeeId' => $nextApproval->employee_id,
                         'action' => 'approve',
@@ -581,7 +581,7 @@ class ApprovalReimburseController extends Controller
                 $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();  
                 if ($CANotificationLayer) {  
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";  
-                    $linkApprove = route('approval.email', [
+                    $linkApprove = route('approval.email.aproved', [
                         'id' => $caTransaction->id, 
                         'employeeId' => $nextApproval->employee_id,
                         'action' => 'approve',
@@ -770,7 +770,7 @@ class ApprovalReimburseController extends Controller
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Declaration Cash Advanced dengan detail sebagai berikut:";
                     $declaration = "Declaration";
 
-                    $linkApprove = route('approval.email', [
+                    $linkApprove = route('approval.email.approveddec', [
                         'id' => $caTransaction->id, 
                         'employeeId' => $nextApproval->employee_id,
                         'action' => 'approve',
@@ -794,6 +794,146 @@ class ApprovalReimburseController extends Controller
         }
 
         return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Approved, Thanks for Approving.');
+    }
+
+    function cashadvancedActionDeklarasiEmail(Request $req, $ca_id, $employeeId)
+    {
+        // $userId = Auth::id();
+        // $employeeId = auth()->user()->employee_id;
+        $model = ca_sett_approval::where('ca_id', $ca_id)->where('employee_id', $employeeId)->firstOrFail();
+
+        // Cek apakah ini sudah di-approve atau tidak
+        if ($model->approval_status == 'Approved') {
+            if ($req->input('action_ca_reject')) {
+                return redirect()->route('blank.pageUn')->with('error', 'Reject Failed, Approval already been Approved.');
+            } else {
+                return redirect()->route('blank.pageUn')->with('success', 'This approval has already been approved.');
+            }
+        }
+
+        // Ambil semua approval yang terkait dengan ca_id
+        $approvals = ca_sett_approval::where('ca_id', $ca_id)
+            ->where('approval_status', 'Pending')
+            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+            ->get();
+
+        $action = $req->query('action');
+
+        // Cek jika tombol reject ditekan
+        if ($req->input('action_ca_reject')) {
+            if ($model->approval_status == 'Approved') {
+                dd($model);
+                
+            } else {
+                $caApprovalsSett = ca_sett_approval::where('ca_id', $ca_id)->get();
+                if ($caApprovalsSett->isNotEmpty()) {
+                    foreach ($caApprovalsSett as $caApprovalSett) {
+                        $caApprovalSett->approval_status = 'Rejected';
+                        $caApprovalSett->approved_at = Carbon::now();
+                        $caApprovalSett->reject_info = $req->reject_info;
+                        $caApprovalSett->save();
+                    }
+                }
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->approval_sett = 'Rejected';
+                    $caTransaction->save();
+                }
+
+                return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
+            }
+        }
+        
+        // Cek jika tombol approve ditekan
+        if ($action === 'approve') {
+            $nextApproval = null;
+
+            // Mencari layer berikutnya yang lebih tinggi
+            foreach ($approvals as $approval) {
+                if ($approval->layer > $model->layer && $approval->employee_id <> $model->employee_id) {
+                    $nextApproval = $approval;
+                    break;
+                }
+            }
+            // Jika tidak ada layer yang lebih tinggi (berarti ini adalah layer tertinggi)
+            if (!$nextApproval) {
+                // Set status ke Approved untuk layer tertinggi
+                $models = ca_sett_approval::where('ca_id', $ca_id)->where('employee_id', $employeeId)->get();
+                foreach ($models as $model) {
+                    $model->approval_status = 'Approved';
+                    $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                    $model->save();
+                }
+
+                // Update status_id pada ca_transaction
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->approval_sett = 'Approved'; // Set ke ID user layer tertinggi
+                    $caTransaction->save();
+
+                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    if ($CANotificationLayer) {
+                        $textNotification = "Request Declaration Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
+                        $declaration = "Declaration";
+                        
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            null, 
+                            $caTransaction, 
+                            $textNotification,
+                            $declaration, 
+                            null,
+                            null,
+                        ));  
+                    }
+                }
+
+                return redirect()->route('blank.pageUn')->with('success', 'Transaction Approved, Thanks for Approving.');
+            } else {
+                // Jika ada layer yang lebih tinggi, update status layer saat ini dan alihkan ke layer berikutnya
+                $models = ca_sett_approval::where('ca_id', $ca_id)->where('employee_id', $employeeId)->get();
+                foreach ($models as $model) {
+                    $model->approval_status = 'Approved';
+                    $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                    $model->save();
+                }
+
+                // Update status_id pada ca_transaction ke employee_id layer berikutnya
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->sett_id = $nextApproval->employee_id;
+                    $caTransaction->save();
+                }
+
+                // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
+                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // dd($CANotificationLayer);
+                if ($CANotificationLayer) {
+                    $textNotification = "{$caTransaction->employee->fullname} mengajukan Declaration Cash Advanced dengan detail sebagai berikut:";
+                    $declaration = "Declaration";
+
+                    $linkApprove = route('approval.email.approveddec', [
+                        'id' => $caTransaction->id, 
+                        'employeeId' => $nextApproval->employee_id,
+                        'action' => 'approve',
+                    ]);   
+                    $linkReject = route('blank.page', [  
+                        'key' => encrypt($caTransaction->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller  
+                        'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini  
+                        'autoOpen' => 'reject'  
+                    ]);  
+                    
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        $nextApproval, 
+                        $caTransaction, 
+                        $textNotification,
+                        $declaration, 
+                        $linkApprove,
+                        $linkReject,
+                    ));  
+                }
+                return redirect()->route('blank.pageUn')->with('success', 'Transaction Approved, Thanks for Approving.');
+            }
+        }
     }
 
     public function cashadvancedActionDeklarasiAdmin(Request $req, $ca_id)
@@ -906,7 +1046,7 @@ class ApprovalReimburseController extends Controller
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Declaration Cash Advanced dengan detail sebagai berikut:";
                     $declaration = "Declaration";
 
-                    $linkApprove = route('approval.email', [
+                    $linkApprove = route('approval.email.approveddec', [
                         'id' => $caTransaction->id, 
                         'employeeId' => $nextApproval->employee_id,
                         'action' => 'approve',
@@ -1067,7 +1207,7 @@ class ApprovalReimburseController extends Controller
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Extend Cash Advanced dengan detail sebagai berikut:";
 
-                    $linkApprove = route('approval.email', [
+                    $linkApprove = route('approval.email.aproved', [
                         'id' => $caTransaction->id, 
                         'employeeId' => $nextApproval->employee_id,
                         'action' => 'approve',

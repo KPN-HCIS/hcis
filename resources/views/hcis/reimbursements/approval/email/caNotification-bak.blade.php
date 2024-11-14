@@ -556,6 +556,8 @@
 
             @if ($linkApprove)
                 <p>Untuk Menyetujui atau Menolak Perjalanan Dinas tersebut dapat memilih link berikut : <a href="{{ $linkApprove }}">Approve</a>/<a href="{{ $linkReject }}">Reject</a></p>
+            @else 
+                <p>Cash Advanced yang telah di Approve bisa di lihat pada lampiran</p>
             @endif
             <br>
 

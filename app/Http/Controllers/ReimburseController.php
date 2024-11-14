@@ -937,7 +937,7 @@ class ReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "{$model->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
 
-                $linkApprove = route('approval.email', [
+                $linkApprove = route('approval.email.dec', [
                     'id' => $model->id, 
                     'employeeId' => $nextApproval->employee_id,
                     'action' => 'approve',

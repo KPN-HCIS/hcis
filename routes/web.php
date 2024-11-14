@@ -68,11 +68,17 @@ Route::get('/test-email', function () {
     return view('email.reminderschedule', compact('messages', 'name'));
 });
 
-Route::get('/approval/cashadvanced/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalEmail'])
+Route::get('/approval/cashadvanced/approve/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalEmail'])
+    ->name('approval.email.aproved');
+
+Route::post('/approval/cashadvanced/reject/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalEmail'])
     ->name('approval.email');
 
-Route::post('/approval/cashadvanced/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalEmail'])  
-    ->name('approval.email.reject');
+Route::get('/approval/cashadvancedDec/approved/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiEmail'])
+->name('approval.email.approveddec');
+
+Route::post('/approval/cashadvancedDec/reject/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiEmail'])
+    ->name('approval.email.dec');
 
 Route::get('/page/{key}', [ApprovalReimburseController::class, 'blankApproval'])->name('blank.page');
 

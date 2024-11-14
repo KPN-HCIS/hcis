@@ -62,7 +62,9 @@
                             <h1 class="modal-title text-center text-white fs-5" id="modalRejectLabel">Reject - <label id="reject_no_ca"></label></h1>  
                             <button type="button" class="btn-close btn-close-white" id="closeModalButton" aria-label="Close"></button>  
                         </div>  
-                        <form method="POST" action="{{ route('approval.email', ['id' => $transactions->id, 'employeeId' => $transactions->status_id]) }}">  
+                        <form method="POST" action="{{ $transactions->approval_status == 'Approved'   
+                            ? route('approval.email.dec', ['id' => $transactions->id, 'employeeId' => $transactions->status_id])   
+                            : route('approval.email', ['id' => $transactions->id, 'employeeId' => $transactions->status_id]) }}">  
                             @csrf  
                             <div class="modal-body">
                                 <div class="row mb-3">  
@@ -141,6 +143,24 @@
                 });  
             </script>  
         @endif  
+
+        @if (session('error'))  
+            <script>  
+                document.addEventListener('DOMContentLoaded', function () {  
+                    Swal.fire({  
+                        title: "Error!",  
+                        text: "{{ session('error') }}",  
+                        icon: "error",  
+                        confirmButtonColor: "#9a2a27",  
+                        confirmButtonText: 'Ok'  
+                    }).then((result) => {  
+                        if (result.isConfirmed) {  
+                            window.close();  
+                        }  
+                    });  
+                });  
+            </script>  
+        @endif 
 
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>  
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>  

@@ -35,10 +35,11 @@ class CashAdvancedNotification extends Mailable
         $this->base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);  
 
         // dd($model->no_ca);
-        if ($nextApproval instanceof ca_approval) {  
-            $this->nextApproval = $nextApproval;  
-        } elseif ($nextApproval instanceof ca_sett_approval) {  
+        
+        if ($nextApproval instanceof ca_sett_approval || $declaration !== null) {  
             $this->nextApproval = $nextApproval;
+        } elseif ($nextApproval instanceof ca_approval) {  
+            $this->nextApproval = $nextApproval;  
         } elseif ($nextApproval instanceof ca_extend) {  
             $this->nextApproval = $nextApproval;
         } 
