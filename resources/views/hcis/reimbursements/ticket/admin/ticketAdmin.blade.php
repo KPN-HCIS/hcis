@@ -79,7 +79,7 @@
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
-                    <a href="{{ route('reimbursements') }}" class="page-title"><i class="ri-arrow-left-circle-line"></i></a>
+                    <a href="{{ route('travel') }}" class="page-title"><i class="ri-arrow-left-circle-line"></i></a>
                     {{-- <button type="button" class="page-title btn btn-warning rounded-pill">Back</button> --}}
                 </div>
             </div>
