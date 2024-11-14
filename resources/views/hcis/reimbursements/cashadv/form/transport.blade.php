@@ -32,7 +32,7 @@
                             </div>
                             <div class="col-md-4 mb-2">
                                 <label class="form-label">Amount</label>
-                                <div class="input-group">
+                                <div class="input-group mb-3">
                                     <div class="input-group-append">
                                         <span class="input-group-text">Rp</span>
                                     </div>
@@ -49,12 +49,14 @@
                             </div>
 
                             <!-- Information -->
-                            <div class="col-md-12">
-                                <label class="form-label">Information</label>
-                                <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                            <div class="col-md-12 mb-2">
+                                <div class="mb-2">
+                                    <label class="form-label">Information</label>
+                                    <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                                </div>
                             </div>
                         </div>
-                        <div class="row mt-2">
+                        <div class="row mt-3">
                             <div class="d-flex justify-start w-100">
                                 <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormTransport(${formCountTransport}, event)">Reset</button>
                                 <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormTransport(${formCountTransport}, event)">Delete</button>
@@ -97,7 +99,7 @@
                         </div>
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Amount</label>
-                            <div class="input-group">
+                            <div class="input-group mb-3">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
                                 </div>
@@ -114,12 +116,15 @@
                         </div>
 
                         <!-- Information -->
-                        <div class="col-md-12">
-                            <label class="form-label">Information</label>
-                            <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport['keterangan']}}</textarea>
+                        <div class="col-md-12 mb-2">
+                            <div class="mb-2">
+                                <label class="form-label">Information</label>
+                                <textarea name="keterangan_bt_transport[]" class="form-control">{{$transport['keterangan']}}</textarea>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mt-2">
+                    <br>
+                    <div class="row mt-3">
                         <div class="d-flex justify-start w-100">
                             <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormTransport({{ $loop->index + 1 }}, event)">Reset</button>
                             <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormTransport({{ $loop->index + 1 }}, event)">Delete</button>
@@ -171,7 +176,7 @@
                     </div>
                     <div class="col-md-4 mb-2">
                         <label class="form-label">Amount</label>
-                        <div class="input-group">
+                        <div class="input-group mb-3">
                             <div class="input-group-append">
                                 <span class="input-group-text">Rp</span>
                             </div>
@@ -188,13 +193,15 @@
                     </div>
 
                     <!-- Information -->
-                    <div class="col-md-12">
-                        <label class="form-label">Information</label>
-                        <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                    <div class="col-md-12 mb-2">
+                        <div class="mb-2">
+                            <label class="form-label">Information</label>
+                            <textarea name="keterangan_bt_transport[]" class="form-control"></textarea>
+                        </div>
                     </div>
                 </div>
                 <br>
-                <div class="row mt-2">
+                <div class="row mt-3">
                     <div class="d-flex justify-start w-100">
                         <button class="btn btn-outline-warning mr-2 btn-sm" style="margin-right: 10px" onclick="clearFormTransport(1, event)">Reset</button>
                         <button class="btn btn-outline-primary mr-2 btn-sm" onclick="removeFormTransport(1, event)">Delete</button>
@@ -221,4 +228,3 @@
         </div>
     </div>
 @endif
-

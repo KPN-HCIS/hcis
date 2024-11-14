@@ -5,7 +5,7 @@
         @foreach ($detailCA['detail_e'] as $detail)
             <div id="form-container-e-detail-{{ $loop->index + 1 }}" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
                 <p class="fs-4 text-primary" style="font-weight: bold; ">Detail Entertainment {{ $loop->index + 1 }}</p>
-                <div id="form-container-e-detail-req-1" class="card-body bg-light p-2 mb-3">
+                <div id="form-container-e-detail-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3">
                     <p class="fs-5 text-primary" style="font-weight: bold;">Detail Entertainment Request</p>
                     <div class="row">
                         <div class="col-md-6 mb-2">

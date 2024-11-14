@@ -153,8 +153,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/extend', [ReimburseController::class, 'cashadvancedExtend'])->name('cashadvanced.extend');
 
     // My Cash Advanced
-    Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
-    Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
+    // Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
+    // Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
     Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
     Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
 

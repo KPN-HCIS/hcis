@@ -337,24 +337,20 @@ class ReimburseController extends Controller
     }
     public function cashadvancedAdminUpdate(Request $request, $id)
     {
-        $request->validate([
-            'ca_status' => 'required|string',
-        ]);
-
-        // Temukan transaksi berdasarkan ID
         $ca_transaction = CATransaction::find($id);
 
         if (!$ca_transaction) {
             return redirect()->back()->with('error', 'Transaction not found.');
         }
 
-        // Update field ca_status berdasarkan value yang dipilih di modal
-        $ca_transaction->ca_status = $request->input('ca_status');
+        $caStatus = $request->input('ca_status') ?? '-';
+        $ca_transaction->date_required = $request->input('date_required');
+        $ca_transaction->ca_paid_date = $request->input('ca_paid_date');
+        $ca_transaction->ca_status = $caStatus; 
         $ca_transaction->paid_date = $request->input('paid_date');
         
         $ca_transaction->save();
 
-        // Redirect kembali dengan pesan sukses
         return redirect()->back()->with('success', 'Transaction status updated successfully.')
             ->with('refresh', true);
     }
@@ -820,11 +816,11 @@ class ReimburseController extends Controller
                             'company' => $company,
                             'purpose' => $purpose,
                             'relation_type' => array_filter([
-                                'Food' => in_array('food', $req->food_e_relation ?? [$key]),
-                                'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                                'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
-                                'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
-                                'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
+                                'Food' => !empty($req->food_e_relation[$key]) && $req->food_e_relation[$key] === 'food',
+                                'Transport' => !empty($req->transport_e_relation[$key]) && $req->transport_e_relation[$key] === 'transport',
+                                'Accommodation' => !empty($req->accommodation_e_relation[$key]) && $req->accommodation_e_relation[$key] === 'accommodation',
+                                'Gift' => !empty($req->gift_e_relation[$key]) && $req->gift_e_relation[$key] === 'gift',
+                                'Fund' => !empty($req->fund_e_relation[$key]) && $req->fund_e_relation[$key] === 'fund',
                             ], fn($checked) => $checked),
                         ];
                     }
@@ -836,6 +832,7 @@ class ReimburseController extends Controller
                 'detail_e' => $detail_e,
                 'relation_e' => $relation_e,
             ];
+            // dd($detail_ca);
             $model->detail_ca = json_encode($detail_ca);
             $model->declare_ca = json_encode($detail_ca);
             $model->no_sppd = $req->bisnis_numb_ent;
@@ -1153,19 +1150,26 @@ class ReimburseController extends Controller
             // Mengumpulkan detail relation
             if ($req->has('rname_e_relation')) {
                 foreach ($req->rname_e_relation as $key => $name) {
-                    $relation_e[] = [
-                        'name' => $name,
-                        'position' => $req->rposition_e_relation[$key],
-                        'company' => $req->rcompany_e_relation[$key],
-                        'purpose' => $req->rpurpose_e_relation[$key],
-                        'relation_type' => array_filter([
-                            'Food' => in_array('food', $req->food_e_relation ?? [$key]),
-                            'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
-                            'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
-                            'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
-                        ], fn($checked) => $checked),
-                    ];
+                    $position = $req->rposition_e_relation[$key];
+                    $company = $req->rcompany_e_relation[$key];
+                    $purpose = $req->rpurpose_e_relation[$key];
+
+                    // Memastikan semua data yang diperlukan untuk relation terisi
+                    if (!empty($name) && !empty($position) && !empty($company) && !empty($purpose)) {
+                        $relation_e[] = [
+                            'name' => $name,
+                            'position' => $position,
+                            'company' => $company,
+                            'purpose' => $purpose,
+                            'relation_type' => array_filter([
+                                'Food' => !empty($req->food_e_relation[$key]) && $req->food_e_relation[$key] === 'food',
+                                'Transport' => !empty($req->transport_e_relation[$key]) && $req->transport_e_relation[$key] === 'transport',
+                                'Accommodation' => !empty($req->accommodation_e_relation[$key]) && $req->accommodation_e_relation[$key] === 'accommodation',
+                                'Gift' => !empty($req->gift_e_relation[$key]) && $req->gift_e_relation[$key] === 'gift',
+                                'Fund' => !empty($req->fund_e_relation[$key]) && $req->fund_e_relation[$key] === 'fund',
+                            ], fn($checked) => $checked),
+                        ];
+                    }
                 }
             }
 
@@ -1269,7 +1273,7 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
-                if ($employee_id != null) {
+                if ($employee_id !=  null) {
                     $model_approval = new ca_approval;
                     $model_approval->ca_id = $req->no_id;
                     $model_approval->role_name = $data_matrix_approval->desc;
@@ -1642,19 +1646,26 @@ class ReimburseController extends Controller
 
             if ($req->has('rname_e_relation')) {
                 foreach ($req->rname_e_relation as $key => $name) {
-                    $relation_e[] = [
-                        'name' => $name,
-                        'position' => $req->rposition_e_relation[$key],
-                        'company' => $req->rcompany_e_relation[$key],
-                        'purpose' => $req->rpurpose_e_relation[$key],
-                        'relation_type' => array_filter([
-                            'Food' => in_array('food', $req->food_e_relation ?? [$key]),
-                            'Transport' => in_array('transport', $req->transport_e_relation ?? [$key]),
-                            'Accommodation' => in_array('accommodation', $req->accommodation_e_relation ?? [$key]),
-                            'Gift' => in_array('gift', $req->gift_e_relation ?? [$key]),
-                            'Fund' => in_array('fund', $req->fund_e_relation ?? [$key]),
-                        ], fn($checked) => $checked),
-                    ];
+                    $position = $req->rposition_e_relation[$key];
+                    $company = $req->rcompany_e_relation[$key];
+                    $purpose = $req->rpurpose_e_relation[$key];
+
+                    // Memastikan semua data yang diperlukan untuk relation terisi
+                    if (!empty($name) && !empty($position) && !empty($company) && !empty($purpose)) {
+                        $relation_e[] = [
+                            'name' => $name,
+                            'position' => $position,
+                            'company' => $company,
+                            'purpose' => $purpose,
+                            'relation_type' => array_filter([
+                                'Food' => !empty($req->food_e_relation[$key]) && $req->food_e_relation[$key] === 'food',
+                                'Transport' => !empty($req->transport_e_relation[$key]) && $req->transport_e_relation[$key] === 'transport',
+                                'Accommodation' => !empty($req->accommodation_e_relation[$key]) && $req->accommodation_e_relation[$key] === 'accommodation',
+                                'Gift' => !empty($req->gift_e_relation[$key]) && $req->gift_e_relation[$key] === 'gift',
+                                'Fund' => !empty($req->fund_e_relation[$key]) && $req->fund_e_relation[$key] === 'fund',
+                            ], fn($checked) => $checked),
+                        ];
+                    }
                 }
             }
 
@@ -2504,23 +2515,45 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Hotel (Admin)';
 
-        // Create a base query without user-specific filtering
-        $query = Hotel::orderBy('created_at', 'desc');
-
-        // Cek apakah filter tanggal ada
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        // $filter = $request->input('filter', 'request');
+
+        $permissionLocations = $this->permissionLocations;
+        $permissionCompanies = $this->permissionCompanies;
+        $permissionGroupCompanies = $this->permissionGroupCompanies;
+
+        // Fetch latest hotel entries grouped by 'no_htl'
+        $latestHotelIds = Hotel::selectRaw('MAX(id) as id')
+            ->groupBy('no_htl')
+            ->pluck('id');
 
         // Fetch the hotel transactions using the latest ids
-        $transactions = Hotel::with('employee', 'hotelApproval')
+        $transactions = Hotel::whereIn('id', $latestHotelIds)
+            ->with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
             ->where('approval_status', '!=', 'Draft')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                 $query->whereRaw("DATE(tgl_masuk_htl) BETWEEN ? AND ?", [$startDate, $endDate]);
-            })
-            ->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')
-            ->get();
+            });
+
+        // Apply permission filters
+        if (!empty($permissionLocations)) {
+            $transactions->whereHas('employee', function ($query) use ($permissionLocations) {
+                $query->whereIn('work_area_code', $permissionLocations);
+            });
+        }
+
+        if (!empty($permissionCompanies)) {
+            $transactions->whereIn('contribution_level_code', $permissionCompanies);
+        }
+
+        if (!empty($permissionGroupCompanies)) {
+            $transactions->whereHas('employee', function ($query) use ($permissionGroupCompanies) {
+                $query->whereIn('group_company', $permissionGroupCompanies);
+            });
+        }
+
+        $transactions = $transactions->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')->get();
 
         // Fetch all hotel transactions, removing the user ID filter
         $hotels = Hotel::with('employee', 'hotelApproval')
@@ -2531,6 +2564,17 @@ class ReimburseController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('no_htl');
+
+        $hotelIds = $hotels->pluck('id');
+
+        // Fetch hotel approval details using the hotel IDs
+        $hotelApprovals = HotelApproval::whereIn('htl_id', $hotelIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected')
+                    ->orWhere('approval_status', 'Declaration Rejected');
+            })
+            ->get()
+            ->keyBy('htl_id');
 
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
@@ -2549,8 +2593,6 @@ class ReimburseController extends Controller
 
                 $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
                 $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
-
-                // dd($managerL1Name, $managerL1Name);
             }
         }
 
@@ -2571,11 +2613,12 @@ class ReimburseController extends Controller
             'hotelGroups' => $hotelGroups,
             'managerL1Name' => $managerL1Name,
             'managerL2Name' => $managerL2Name,
-            // 'hotelApprovals' => $hotelApprovals,
+            'hotelApprovals' => $hotelApprovals,
             'employeeName' => $employeeName,
             // 'filter' => $filter,
         ]);
     }
+
 
     public function hotelBookingAdmin(Request $req, $id)
     {
@@ -2602,7 +2645,6 @@ class ReimburseController extends Controller
             return redirect()->route('hotel.admin')->with('success', 'hotel booking updated successfully.');
         }
     }
-
     public function exportHotelAdminExcel(Request $request)
     {
         $startDate = $request->input('start_date');
@@ -3443,32 +3485,57 @@ class ReimburseController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Ticket (Admin)';
 
-        // Cek apakah filter tanggal ada
+        // Base query for filtering without user-specific filtering
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        $filter = $request->input('filter', 'request');
 
-        // Buat query untuk mendapatkan transaksi terbaru
-        $transactions = Tiket::orderBy('created_at', 'desc')
-            ->where('approval_status', '!=', 'Draft')
+        $permissionLocations = $this->permissionLocations;
+        $permissionCompanies = $this->permissionCompanies;
+        $permissionGroupCompanies = $this->permissionGroupCompanies;
+
+        // Fetch latest ticket IDs
+        $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
+            ->groupBy('no_tkt')
+            ->pluck('id');
+
+        // Get transactions with the latest ticket IDs
+        $transactions = Tiket::whereIn('id', $latestTicketIds)
             ->with('businessTrip')
+            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions
+            ->orderBy('created_at', 'desc')
+
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                 $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
-            })
-            ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
+            });
+
+
+        // Apply permission filters
+        if (!empty($permissionLocations)) {
+            $transactions->whereHas('employee', function ($query) use ($permissionLocations) {
+                $query->whereIn('work_area_code', $permissionLocations);
+            });
+        }
+
+        if (!empty($permissionCompanies)) {
+            $transactions->whereIn('contribution_level_code', $permissionCompanies);
+        }
+
+        if (!empty($permissionGroupCompanies)) {
+            $transactions->whereHas('employee', function ($query) use ($permissionGroupCompanies) {
+                $query->whereIn('group_company', $permissionGroupCompanies);
+            });
+        }
+
+        $transactions = $transactions->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
 
-        // Ambil data tiket terbaru
+        // Get all tickets
         $tickets = Tiket::with('businessTrip')
             ->orderBy('created_at', 'desc')
             ->get();
 
         // Group tickets by 'no_tkt'
-        $ticketsGroups = $tickets->groupBy('no_tkt');
-
-        $ticket = $ticketsGroups->mapWithKeys(function ($group, $key) {
-            return [$key => $group];
-        });
+        $ticket = $tickets->groupBy('no_tkt');
 
         // Get ticket IDs
         $tiketIds = $tickets->pluck('id');
@@ -3483,9 +3550,10 @@ class ReimburseController extends Controller
 
         // Key ticket approvals by ticket ID
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
+        $ticketsGroups = $tickets->groupBy('no_tkt');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
 
         // Fetch employee data and manager names for transactions
-        $employeeName = Employee::pluck('fullname', 'employee_id');
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
@@ -3521,7 +3589,6 @@ class ReimburseController extends Controller
             'managerL2Name' => $managerL2Name ?? 'Unknown',
             'ticketApprovals' => $ticketApprovals,
             'employeeName' => $employeeName,
-            'filter' => $filter,
         ]);
     }
 

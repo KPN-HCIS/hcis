@@ -47,7 +47,7 @@
         }
 
         td {
-            padding: 5px;
+            padding: 1px;
             vertical-align: top;
         }
 
@@ -80,7 +80,7 @@
         .table-approve th,
         .table-approve td {
             border: 1px solid black;
-            padding: 8px;
+            padding: 1px;
             text-align: center;
         }
 
@@ -89,7 +89,7 @@
         }
 
         .table-approve th {
-            background-color: #c6e0b4;
+            background-color: #d4d4d4;
         }
 
         .table-approve .total-row {
@@ -147,7 +147,7 @@
             <td class="value">{{ $transactions->employee->bank_name }} - {{ $transactions->employee->bank_account_number }} - {{ $transactions->employee->bank_account_name }}</td>
         </tr>
         <tr>
-            <td class="label">Division/Dept</td>
+            <td class="label">Dept</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->employee->unit }}</td>
         </tr>
@@ -191,11 +191,11 @@
             <td class="colon">:</td>
             <td class="value">{{ $transactions->ca_needs }}</td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td class="label">Status</td>
             <td class="colon">:</td>
             <td class="value">{{ $transactions->approval_status }}</td>
-        </tr>
+        </tr> --}}
     </table>
 
     @php
@@ -260,16 +260,17 @@
                         {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
                     @endif
                 </td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
                 </td>
+                
             </tr>
             <tr>
                 <td>Transport</td>
                 <td>
                     -
                 </td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
@@ -282,7 +283,7 @@
                         {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Night
                     @endif
                 </td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
@@ -291,13 +292,13 @@
                 <td>
                     -
                 </td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td>Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
             </tr>
         </table>
     @elseif ( $transactions->type_ca == 'ndns' )
@@ -318,13 +319,13 @@
                 <td>
                     {{ $transactions->total_days }} Days
                 </td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}
                 </td>
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td>Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
             </tr>
         </table>
     @elseif ( $transactions->type_ca == 'entr' )
@@ -345,18 +346,17 @@
                 <td>
                     {{ $transactions->total_days }} Days
                 </td>
-                <td>
+                <td style="text-align: right;">
                     Rp. {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
                 </td>
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td>Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
+                <td style="text-align: right;">Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
             </tr>
         </table>
     @endif
 
-    <br>
     <div style="page-break-after:always;">
         <table border=0 style="width: 20%; font-size: 11px;">
             <tr>
@@ -379,33 +379,6 @@
                         </tr>
                     </table>
                 </td>
-                {{-- <td style="width: 60%; vertical-align: top;">
-                    <table class="table-approve" style="width: 100%; text-align: center; display: inline-table;">
-                        <tr>
-                            <th colspan="3">Verifikasi</th>
-                        </tr>
-                        <tr>
-                            <td style="width: 33%"><br></td>
-                            <td style="width: 33%"><br></td>
-                            <td style="width: 33%"><br></td>
-                        </tr>
-                        <tr>
-                            <td><br><br><br><br><br></td>
-                            <td><br><br><br><br><br></td>
-                            <td><br><br><br><br><br></td>
-                        </tr>
-                        <tr>
-                            <td><br></td>
-                            <td><br></td>
-                            <td><br></td>
-                        </tr>
-                        <tr>
-                            <td><br></td>
-                            <td><br></td>
-                            <td><br></td>
-                        </tr>
-                    </table>
-                </td> --}}
             </tr>
         </table>
 
@@ -436,6 +409,7 @@
                                 <td>
                                     @if($role->approval_status =='Approved')
                                         <br><img src="{{ public_path('images/approved_64.png')}}" alt="logo">
+                                        {{-- <br><img src="{{ asset('images/approved_64.png')}}" alt="logo"> --}}
                                     @else
                                         <br><br><br><br><br>
                                     @endif
@@ -461,7 +435,7 @@
     </div>
 
     <div>
-        <h2 style="text-align: center">Lampiran Cash Advanced</h2>
+        <h2 style="text-align: center">Cash Advanced Attachment</h2>
         @if ( $transactions->type_ca == 'dns' )
             @if (count($detailCA['detail_perdiem']) > 0 && !empty($detailCA['detail_perdiem'][0]['company_code']))
                 <table class="table-approve">
@@ -469,12 +443,12 @@
                         <th colspan="6"><b>Perdiem Plan :</b></th>
                     </tr>
                     <tr class="head-row">
-                        <td>Start Date</td>
-                        <td>End Date</td>
+                        <td style="width:12%">Start Date</td>
+                        <td style="width:12%">End Date</td>
                         <td>Office Location</td>
                         <td>Company Code</td>
                         <td>Total Days</td>
-                        <td>Amount</td>
+                        <td style="width:20%">Amount</td>
                     </tr>
 
                     @foreach($detailCA['detail_perdiem'] as $perdiem)
@@ -511,10 +485,10 @@
                         <th colspan="4"><b>Transport Plan :</b></th>
                     </tr>
                     <tr class="head-row">
-                        <td>Date</td>
+                        <td style="width:12%">Date</td>
                         <td>Information</td>
-                        <td>Company Code</td>
-                        <td>Amount</td>
+                        <td style="width:16%">Company Code</td>
+                        <td style="width:20%">Amount</td>
                     </tr>
 
                     @foreach($detailCA['detail_transport'] as $transport)
@@ -542,12 +516,12 @@
                         <th colspan="6"><b>Accomodation Plan :</b></th>
                     </tr>
                     <tr class="head-row">
-                        <td>Start Date</td>
-                        <td>End Date</td>
+                        <td style="width:12%">Start Date</td>
+                        <td style="width:12%">End Date</td>
                         <td>Hotel Name</td>
                         <td>Company Code</td>
                         <td>Total Nights</td>
-                        <td>Amount</td>
+                        <td style="width:20%">Amount</td>
                     </tr>
 
                     @foreach($detailCA['detail_penginapan'] as $perdiem)
@@ -578,9 +552,9 @@
                         <th colspan="3"><b>Others Plan :</b></th>
                     </tr>
                     <tr class="head-row">
-                        <td>Date</td>
+                        <td style="width:12%">Date</td>
                         <td>Information</td>
-                        <td>Amount</td>
+                        <td style="width:20%">Amount</td>
                     </tr>
 
                     @foreach($detailCA['detail_lainnya'] as $perdiem)
@@ -605,9 +579,9 @@
                     <th colspan="3"><b>Detail Non Bussiness Trip :</b></th>
                 </tr>
                 <tr class="head-row">
-                    <td>Date</td>
+                    <td style="width:12%">Date</td>
                     <td>Information</td>
-                    <td>Amount</td>
+                    <td style="width:20%">Amount</td>
                 </tr>
 
                 @foreach($detailCA as $item)
@@ -631,9 +605,9 @@
                         <th colspan="3"><b>Detail Entertain :</b></th>
                     </tr>
                     <tr class="head-row">
-                        <td>Type</td>
+                        <td style="width:23%">Type</td>
                         <td>Information</td>
-                        <td>Amount</td>
+                        <td style="width:20%">Amount</td>
                     </tr>
 
                     @foreach($detailCA['detail_e'] as $detail)

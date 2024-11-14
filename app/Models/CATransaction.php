@@ -23,6 +23,7 @@ class CATransaction extends Model
         'start_date',
         'end_date',
         'date_required',
+        'ca_paid_date',
         'detail_ca',
         'total_ca',
         'total_real',
