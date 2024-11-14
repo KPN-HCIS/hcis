@@ -294,7 +294,7 @@ class BusinessTripController extends Controller
         }
 
         // Retrieve locations and companies data for the dropdowns
-        $locations = Location::orderBy('id')->get();
+        $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level')->get();
 
         return view('hcis.reimbursements.businessTrip.editFormBt', [
@@ -935,7 +935,7 @@ class BusinessTripController extends Controller
         }
 
         // Retrieve locations and companies data for the dropdowns
-        $locations = Location::orderBy('id')->get();
+        $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level')->get();
 
         return view('hcis.reimbursements.businessTrip.deklarasi', [
@@ -2022,7 +2022,7 @@ class BusinessTripController extends Controller
     {
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
-        $locations = Location::orderBy('id')->get();
+        $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level')->get();
         $employees = Employee::orderBy('ktp')->get();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
@@ -2968,7 +2968,7 @@ class BusinessTripController extends Controller
         }
 
         // Retrieve locations and companies data for the dropdowns
-        $locations = Location::orderBy('id')->get();
+        $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level')->get();
 
         $parentLink = 'Business Trip Admin';
@@ -3384,7 +3384,7 @@ class BusinessTripController extends Controller
         }
 
         // Retrieve locations and companies data for the dropdowns
-        $locations = Location::orderBy('id')->get();
+        $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level')->get();
         // dd($taksi->toArray());
 
@@ -3839,7 +3839,7 @@ class BusinessTripController extends Controller
         }
 
         // Retrieve locations and companies data for the dropdowns
-        $locations = Location::orderBy('id')->get();
+        $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level')->get();
 
         $parentLink = 'Business Trip Approval';
@@ -4623,7 +4623,7 @@ class BusinessTripController extends Controller
         }
 
         // Retrieve locations and companies data for the dropdowns
-        $locations = Location::orderBy('id')->get();
+        $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level')->get();
 
         $parentLink = 'Business Trip Approval';
