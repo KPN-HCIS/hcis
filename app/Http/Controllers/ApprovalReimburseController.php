@@ -352,6 +352,7 @@ class ApprovalReimburseController extends Controller
 
         // Cek apakah ini sudah di-approve atau tidak
         if ($model->approval_status == 'Approved') {
+            dd($model);
             return redirect()->route('blank.pageUn')->with('success', 'This approval has already been approved.');
         }
 
@@ -1229,6 +1230,151 @@ class ApprovalReimburseController extends Controller
                 }
 
                 return redirect()->route('approval.cashadvanced')->with('success', 'Extend Approved, Thanks for Approving.');
+            }
+        }
+    }
+
+    function cashadvancedActionExtendEmail(Request $req, $ca_id, $employeeId)
+    {
+        // $userId = Auth::id();
+        // $employeeId = auth()->user()->employee_id;
+        $model = ca_extend::where('ca_id', $ca_id)->where('employee_id', $employeeId)->firstOrFail();
+
+        // Cek apakah ini sudah di-approve atau tidak
+        if ($model->approval_extend == 'Approved') {
+            if ($req->input('action_ca_reject')) {
+                return redirect()->route('blank.pageUn')->with('error', 'Reject Failed, Approval already been Approved.');
+            } else {
+                return redirect()->route('blank.pageUn')->with('success', 'This approval has already been approved.');
+            }
+        }
+
+        // Ambil semua approval yang terkait dengan ca_id
+        $approvals = ca_extend::where('ca_id', $ca_id)
+            ->where('approval_status', 'Pending')
+            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
+            ->get();
+
+        $action = $req->query('action');
+
+        // Cek jika tombol reject ditekan
+        if ($req->input('action_ca_reject')) {
+            $caApprovalsExt = ca_extend::where('ca_id', $ca_id)->get();
+            if ($caApprovalsExt->isNotEmpty()) {
+                foreach ($caApprovalsExt as $caApprovalExt) {
+                    $caApprovalExt->approval_status = 'Rejected';
+                    $caApprovalExt->approved_at = Carbon::now();
+                    $caApprovalExt->reject_info = $req->reject_info;
+                    $caApprovalExt->save();
+                }
+            }
+            $caTransaction = CATransaction::where('id', $ca_id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_extend = 'Rejected';
+                $caTransaction->save();
+            }
+
+            return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
+        }
+        
+        // Cek jika tombol approve ditekan
+        if ($action === 'approve') {
+            $nextApproval = null;
+
+            // Mencari layer berikutnya yang lebih tinggi
+            foreach ($approvals as $approval) {
+                if ($approval->layer > $model->layer && $approval->employee_id <> $model->employee_id) {
+                    $nextApproval = $approval;
+                    break;
+                }
+            }
+            // Jika tidak ada layer yang lebih tinggi (berarti ini adalah layer tertinggi)
+            if (!$nextApproval) {
+                // Set status ke Approved untuk layer tertinggi
+                $models = ca_extend::where('ca_id', $ca_id)->where('employee_id', $employeeId)->get();
+                foreach ($models as $model) {
+                    $model->approval_status = 'Approved';
+                    $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                    $model->save();
+                }
+
+                // Update status_id pada ca_transaction
+                $extendData = ca_extend::where('ca_id', $ca_id)  
+                    ->where('layer', '4')  
+                    ->where('approval_status', 'Approved')  
+                    ->orderBy('created_at', 'desc') // Mengurutkan berdasarkan created_at secara menurun  
+                    ->first();
+                // dd($extendData);
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->approval_extend = 'Approved'; // Set ke ID user layer tertinggi
+                    // $caTransaction->start_date = $extendData->start_date;
+                    $caTransaction->end_date = $extendData->ext_end_date;
+                    $caTransaction->total_days = $extendData->ext_total_days;
+                    $caTransaction->reason_extend = $extendData->ext_reason;
+                    $caTransaction->save();
+
+                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    if ($CANotificationLayer) {
+                        $textNotification = "Request Extend Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
+                        $declaration = "Extend";
+                        
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            null, 
+                            $caTransaction, 
+                            $textNotification,
+                            $declaration, 
+                            null,
+                            null,
+                        ));  
+                    }
+                }
+
+                return redirect()->route('blank.pageUn')->with('success', 'Transaction Approved, Thanks for Approving.');
+            } else {
+                // Jika ada layer yang lebih tinggi, update status layer saat ini dan alihkan ke layer berikutnya
+                $models = ca_extend::where('ca_id', $ca_id)->where('employee_id', $employeeId)->get();
+                foreach ($models as $model) {
+                    $model->approval_status = 'Approved';
+                    $model->approved_at = Carbon::now(); // Simpan waktu approval sekarang
+                    $model->save();
+                }
+
+                // Update status_id pada ca_transaction ke employee_id layer berikutnya
+                $caTransaction = CATransaction::where('id', $ca_id)->first();
+                if ($caTransaction) {
+                    $caTransaction->extend_id = $nextApproval->employee_id;
+                    $caTransaction->save();
+                }
+
+                // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
+                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // dd($CANotificationLayer);
+                if ($CANotificationLayer) {
+                    $textNotification = "{$caTransaction->employee->fullname} mengajukan Extend Cash Advanced dengan detail sebagai berikut:";
+                    $declaration = "Extend";
+
+                    $linkApprove = route('approval.email.approvedext', [
+                        'id' => $caTransaction->id, 
+                        'employeeId' => $nextApproval->employee_id,
+                        'action' => 'approve',
+                    ]);   
+                    $linkReject = route('blank.page', [  
+                        'key' => encrypt($caTransaction->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller  
+                        'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini  
+                        'autoOpen' => 'reject'  
+                    ]);  
+                    
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        $nextApproval, 
+                        $caTransaction, 
+                        $textNotification,
+                        $declaration, 
+                        $linkApprove,
+                        $linkReject,
+                    ));  
+                }
+                return redirect()->route('blank.pageUn')->with('success', 'Transaction Approved, Thanks for Approving.');
             }
         }
     }

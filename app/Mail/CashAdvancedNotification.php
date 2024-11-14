@@ -36,13 +36,13 @@ class CashAdvancedNotification extends Mailable
 
         // dd($model->no_ca);
         
-        if ($nextApproval instanceof ca_sett_approval || $declaration !== null) {  
+        if ($nextApproval instanceof ca_extend || $declaration == 'Extend') {  
+            $this->nextApproval = $nextApproval;
+        } elseif ($nextApproval instanceof ca_sett_approval || $declaration == 'Declaration') {  
             $this->nextApproval = $nextApproval;
         } elseif ($nextApproval instanceof ca_approval) {  
             $this->nextApproval = $nextApproval;  
-        } elseif ($nextApproval instanceof ca_extend) {  
-            $this->nextApproval = $nextApproval;
-        } 
+        }
 
         if ($caTransaction instanceof CATransaction) {
             $this->caTransaction = $caTransaction;

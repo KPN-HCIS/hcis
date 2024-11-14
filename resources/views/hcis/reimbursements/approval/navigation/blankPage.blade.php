@@ -28,13 +28,13 @@
 </head>  
 <body>  
     <div class="container">  
-        <h1 class="mt-5">Hello! This is a blank page</h1>  
+        {{-- <h1 class="mt-5">Hello! This is a blank page</h1>   --}}
         {{-- @php
             $detailCA = json_decode($transactions->detail_ca, true) ?? [];
         @endphp --}}
 
         @if ($transactions)  
-            <button id="rejectButton" type="button" class="btn mb-2 btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalReject"  
+            <button id="rejectButton" type="button" class="btn mb-2 btn-primary btn-pill px-4 me-2" style="display: none" data-bs-toggle="modal" data-bs-target="#modalReject"  
                 data-no-id="{{ $transactions->id }}"  
                 data-no-ca="{{ $transactions->no_ca }}"  
                 data-name="{{ $transactions->employee->fullname }}"  
@@ -62,9 +62,13 @@
                             <h1 class="modal-title text-center text-white fs-5" id="modalRejectLabel">Reject - <label id="reject_no_ca"></label></h1>  
                             <button type="button" class="btn-close btn-close-white" id="closeModalButton" aria-label="Close"></button>  
                         </div>  
-                        <form method="POST" action="{{ $transactions->approval_status == 'Approved'   
-                            ? route('approval.email.dec', ['id' => $transactions->id, 'employeeId' => $transactions->status_id])   
-                            : route('approval.email', ['id' => $transactions->id, 'employeeId' => $transactions->status_id]) }}">  
+                        <form method="POST" action="{{   
+                            $transactions->approval_extend == 'Pending'   
+                                ? route('approval.email.ext', ['id' => $transactions->id, 'employeeId' => $transactions->status_id])   
+                                : ($transactions->approval_status == 'Approved'   
+                                    ? route('approval.email.dec', ['id' => $transactions->id, 'employeeId' => $transactions->status_id])   
+                                    : route('approval.email', ['id' => $transactions->id, 'employeeId' => $transactions->status_id]))   
+                        }}">  
                             @csrf  
                             <div class="modal-body">
                                 <div class="row mb-3">  

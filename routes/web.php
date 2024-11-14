@@ -75,10 +75,16 @@ Route::post('/approval/cashadvanced/reject/email/{id}/{employeeId}', [ApprovalRe
     ->name('approval.email');
 
 Route::get('/approval/cashadvancedDec/approved/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiEmail'])
-->name('approval.email.approveddec');
+    ->name('approval.email.approveddec');
 
 Route::post('/approval/cashadvancedDec/reject/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiEmail'])
     ->name('approval.email.dec');
+
+Route::get('/approval/cashadvancedExt/approved/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionExtendEmail'])
+    ->name('approval.email.approvedext');
+
+Route::post('/approval/cashadvancedExt/reject/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionExtendEmail'])
+    ->name('approval.email.ext');
 
 Route::get('/page/{key}', [ApprovalReimburseController::class, 'blankApproval'])->name('blank.page');
 
