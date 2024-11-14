@@ -2028,6 +2028,19 @@ class ReimburseController extends Controller
         return redirect('/hotel')->with('success', 'Hotel request input successfully');
     }
 
+    public function approveHotelFromLink($id, $manager_id, $status)
+    {
+        //approval hotel link
+    }
+    public function rejectHotelLink($id, $manager_id, $status)
+    {
+        //rejection view hotel link
+    }
+    public function rejectHotelFromLink($id, $manager_id, $status)
+    {
+        //reject process from hotel link
+    }
+
     public function hotelEdit($key)
     {
         $userId = Auth::id();
