@@ -195,6 +195,11 @@ class MedicalController extends Controller
             'T'
         )->get();
 
+        $hasGlasses = HealthCoverage::where('employee_id', $employee_id)
+            ->where('period', $currentYear)
+            ->where('medical_type', 'Glasses')
+            ->count() >= 1;
+        // dd($isGlasses);
         $medicalBalances = HealthPlan::where('employee_id', $employee_id)
             ->where('period', $currentYear)
             ->get();
@@ -212,7 +217,7 @@ class MedicalController extends Controller
         $parentLink = 'Medical';
         $link = 'Add Medical Coverage Usage';
 
-        return view('hcis.reimbursements.medical.form.medicalForm', compact('diseases', 'medical_type', 'families', 'parentLink', 'link', 'employee_name', 'balanceData'));
+        return view('hcis.reimbursements.medical.form.medicalForm', compact('diseases', 'medical_type', 'families', 'parentLink', 'link', 'employee_name', 'balanceData', 'hasGlasses'));
     }
 
     public function medicalCreate(Request $request)
@@ -279,6 +284,11 @@ class MedicalController extends Controller
             'T'
         )->get();
 
+        $hasGlasses = HealthCoverage::where('employee_id', $employee_id)
+            ->where('period', $currentYear)
+            ->where('medical_type', 'Glasses')
+            ->count() >= 1;
+
         $medicalBalances = HealthPlan::where('employee_id', $employee_id)
             ->whereYear('period', $currentYear)
             ->get();
@@ -306,7 +316,7 @@ class MedicalController extends Controller
         $parentLink = 'Medical';
         $link = 'Edit Medical Coverage Usage';
 
-        return view('hcis.reimbursements.medical.form.medicalEditForm', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes', 'balanceData'));
+        return view('hcis.reimbursements.medical.form.medicalEditForm', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes', 'balanceData', 'hasGlasses'));
     }
 
     public function medicalUpdate(Request $request, $id)

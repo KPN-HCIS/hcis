@@ -94,10 +94,12 @@
                                         name="medical_type[]" multiple required>
                                         {{-- <option value="" selected>--- Choose Medical Type ---</option> --}}
                                         @foreach ($medical_type as $type)
-                                            <option value="{{ $type->name }}"
-                                                @if ($selectedMedicalTypes->contains($type->name)) selected @endif>
-                                                {{ $type->name }}
-                                            </option>
+                                            @if (!$hasGlasses || $type->name !== 'Glasses')
+                                                <option value="{{ $type->name }}"
+                                                    @if ($selectedMedicalTypes->contains($type->name)) selected @endif>
+                                                    {{ $type->name }}
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -247,12 +249,12 @@
                 <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
             </tr>
             ${Object.entries(medicalCosts).map(([type, cost]) => `
-                                                                                                          <tr>
-                                                                                                            <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
-                                                                                                            <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                                                                                            <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
-                                                                                                            </tr>
-                                                                                                            `).join('')}
+                                                                                                              <tr>
+                                                                                                                <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                                                                                <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                                                                                <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                                                                                </tr>
+                                                                                                                `).join('')}
 
                 </table>
             `;
