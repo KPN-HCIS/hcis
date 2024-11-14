@@ -213,6 +213,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/ticket/approval/detail/{id}', [ReimburseController::class, 'ticketApprovalDetail'])->name('ticket.approval.detail');
     Route::put('/ticket/status/change/{id}', [ReimburseController::class, 'updatestatusTicket'])->name('change.status.ticket');
 
+    //LINK APPROVAL TICKETS
+    Route::get('approve/ticket/{id}/{manager_id}/{status}', [ReimburseController::class, 'approveTicketFromLink'])->name('approve.ticket');
+
+    Route::get('ticket/rejection/{id}/{manager_id}/{status}', [ReimburseController::class, 'rejectTicketLink'])->name('reject.ticket.link');
+    Route::post('reject/ticket/{id}/{manager_id}/{status}', [ReimburseController::class, 'rejectTicketFromLink'])->name('reject.ticket');
+
     //Ticket Admin
     Route::middleware(['permission:admintkt'])->group(function () {
         Route::get('/ticket/admin', [ReimburseController::class, 'ticketAdmin'])->name('ticket.admin');
@@ -353,7 +359,7 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/confirm/declaration/{id}', [BusinessTripController::class, 'updateStatusDeklarasi'])->name('confirm.deklarasi');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
-    //LINK APPROVAL
+    //LINK APPROVAL BT
     Route::get('approve/{id}/{manager_id}/{status}', [BusinessTripController::class, 'approveFromLink'])->name('approve.business.trip');
 
     Route::get('businessTrip/rejection/{id}/{manager_id}/{status}', [BusinessTripController::class, 'rejectLink'])->name('reject.link');

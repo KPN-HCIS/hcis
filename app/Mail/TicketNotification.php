@@ -26,6 +26,9 @@ class TicketNotification extends Mailable
     public $approvalStatus;
     public $managerName;
 
+    public $approvalLink;
+    public $rejectionLink;
+
     /**
      * Create a new message instance.
      */
@@ -43,6 +46,8 @@ class TicketNotification extends Mailable
         $this->jamPlgTkt = $data['jamPlgTkt'];
         $this->approvalStatus = $data['approvalStatus'];
         $this->managerName = $data['managerName'];
+        $this->approvalLink = $data['approvalLink'];
+        $this->rejectionLink = $data['rejectionLink'];
     }
 
     public function build()
