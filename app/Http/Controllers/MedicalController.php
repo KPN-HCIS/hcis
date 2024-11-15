@@ -1169,7 +1169,7 @@ class MedicalController extends Controller
         if ($request->has('stat') && $request->input('stat') !== '') {
             $status = $request->input('stat');
             $query->whereHas('employee', function ($q) use ($status) {
-                $q->where('office_area', $status);
+                $q->where('work_area_code', $status);
             });
             $hasFilter = true;
         }

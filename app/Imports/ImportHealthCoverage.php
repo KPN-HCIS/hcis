@@ -15,7 +15,7 @@ class ImportHealthCoverage implements ToModel
     public function model(array $row)
     {
         $userId = Auth::id();
-
+        
         // Check if required fields are numeric
         if (!is_numeric($row[1]) || !is_numeric($row[11]) || !is_numeric($row[12]) || !is_numeric($row[13])) {
             throw new ImportDataInvalidException("Invalid data format detected. Import canceled.");
@@ -49,7 +49,7 @@ class ImportHealthCoverage implements ToModel
             'balance' => $row[11],
             'balance_uncoverage' => $row[12],
             'balance_verif' => $row[13],
-            'status' => $row[14],
+            'status' => 'Done',
             'submission_type' => 'F',
             'created_by' => $userId,
         ]);

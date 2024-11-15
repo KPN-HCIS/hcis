@@ -249,6 +249,20 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
+            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            if ($CANotificationLayer) {  
+                $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    null, 
+                    $caTransaction, 
+                    $textNotification,
+                    null, 
+                    null,
+                    null,
+                ));  
+            }
+
             return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
 
@@ -327,6 +341,8 @@ class ApprovalReimburseController extends Controller
                         'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini  
                         'autoOpen' => 'reject'  
                     ]);  
+
+                    // $pdfContent = $this->cashadvancedDownload (encrypt($caTransaction->id));
                     
                     Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
                         $nextApproval, 
@@ -380,6 +396,20 @@ class ApprovalReimburseController extends Controller
             if ($caTransaction) {
                 $caTransaction->approval_status = 'Rejected';
                 $caTransaction->save();
+            }
+
+            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            if ($CANotificationLayer) {  
+                $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    null, 
+                    $caTransaction, 
+                    $textNotification,
+                    null, 
+                    null,
+                    null,
+                ));  
             }
 
             return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
@@ -510,6 +540,20 @@ class ApprovalReimburseController extends Controller
             if ($caTransaction) {
                 $caTransaction->approval_status = 'Rejected';
                 $caTransaction->save();
+            }
+
+            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            if ($CANotificationLayer) {  
+                $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    null, 
+                    $caTransaction, 
+                    $textNotification,
+                    null, 
+                    null,
+                    null,
+                ));  
             }
 
             return redirect()->route('cashadvanced.admin')->with('success', 'Transaction Rejected, Rejection will be send to the employee.')
@@ -703,6 +747,20 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
+            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            if ($CANotificationLayer) {  
+                $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    null, 
+                    $caTransaction, 
+                    $textNotification,
+                    null, 
+                    null,
+                    null,
+                ));  
+            }
+
             return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
 
@@ -822,27 +880,36 @@ class ApprovalReimburseController extends Controller
 
         // Cek jika tombol reject ditekan
         if ($req->input('action_ca_reject')) {
-            if ($model->approval_status == 'Approved') {
-                dd($model);
-                
-            } else {
-                $caApprovalsSett = ca_sett_approval::where('ca_id', $ca_id)->get();
-                if ($caApprovalsSett->isNotEmpty()) {
-                    foreach ($caApprovalsSett as $caApprovalSett) {
-                        $caApprovalSett->approval_status = 'Rejected';
-                        $caApprovalSett->approved_at = Carbon::now();
-                        $caApprovalSett->reject_info = $req->reject_info;
-                        $caApprovalSett->save();
-                    }
+            $caApprovalsSett = ca_sett_approval::where('ca_id', $ca_id)->get();
+            if ($caApprovalsSett->isNotEmpty()) {
+                foreach ($caApprovalsSett as $caApprovalSett) {
+                    $caApprovalSett->approval_status = 'Rejected';
+                    $caApprovalSett->approved_at = Carbon::now();
+                    $caApprovalSett->reject_info = $req->reject_info;
+                    $caApprovalSett->save();
                 }
-                $caTransaction = CATransaction::where('id', $ca_id)->first();
-                if ($caTransaction) {
-                    $caTransaction->approval_sett = 'Rejected';
-                    $caTransaction->save();
-                }
-
-                return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
             }
+            $caTransaction = CATransaction::where('id', $ca_id)->first();
+            if ($caTransaction) {
+                $caTransaction->approval_sett = 'Rejected';
+                $caTransaction->save();
+            }
+
+            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            if ($CANotificationLayer) {  
+                $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    null, 
+                    $caTransaction, 
+                    $textNotification,
+                    null, 
+                    null,
+                    null,
+                ));  
+            }
+
+            return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
         
         // Cek jika tombol approve ditekan
@@ -973,6 +1040,20 @@ class ApprovalReimburseController extends Controller
             if ($caTransaction) {
                 $caTransaction->approval_sett = 'Rejected';
                 $caTransaction->save();
+            }
+
+            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            if ($CANotificationLayer) {  
+                $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    null, 
+                    $caTransaction, 
+                    $textNotification,
+                    null, 
+                    null,
+                    null,
+                ));  
             }
 
             return redirect()->route('cashadvanced.admin')->with('success', 'Transaction Rejected, Rejection will be send to the employee.')
@@ -1141,6 +1222,20 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
+            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            if ($CANotificationLayer) {  
+                $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    null, 
+                    $caTransaction, 
+                    $textNotification,
+                    null, 
+                    null,
+                    null,
+                ));  
+            }
+
             return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
         }
 
@@ -1272,6 +1367,20 @@ class ApprovalReimburseController extends Controller
             if ($caTransaction) {
                 $caTransaction->approval_extend = 'Rejected';
                 $caTransaction->save();
+            }
+
+            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            if ($CANotificationLayer) {  
+                $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
+                
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    null, 
+                    $caTransaction, 
+                    $textNotification,
+                    null, 
+                    null,
+                    null,
+                ));  
             }
 
             return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
