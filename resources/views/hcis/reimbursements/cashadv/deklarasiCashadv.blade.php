@@ -317,7 +317,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Total Cash Advanced Request</label>
+                            <label class="form-label">Total Cash Advanced</label>
                             <div class="input-group">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
@@ -328,7 +328,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Total Cash Advanced Deklarasi</label>
+                            <label class="form-label">Total Declaration</label>
                             <div class="input-group">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>
@@ -339,7 +339,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 mb-2" >
-                            <label class="form-label">Total Cash Advanced Balance</label>
+                            <label class="form-label">Balance</label>
                             <div class="input-group">
                                 <div class="input-group-append">
                                     <span class="input-group-text">Rp</span>

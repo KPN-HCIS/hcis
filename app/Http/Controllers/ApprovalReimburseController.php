@@ -649,7 +649,8 @@ class ApprovalReimburseController extends Controller
             }
         }
 
-        return redirect()->route('cashadvanced.admin')->with('success', 'Transaction approved successfully.')
+        return redirect()->route('cashadvanced.admin')
+            ->with('success', 'Transaction approved successfully.')
             ->with('refresh', true);
     }
 

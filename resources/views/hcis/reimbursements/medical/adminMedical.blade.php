@@ -93,8 +93,8 @@
                                             <option value="" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
                                                 Location</option>
                                             @foreach ($locations as $location)
-                                                <option value="{{ $location->area }}"
-                                                    {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
+                                                <option value="{{ $location->work_area }}"
+                                                    {{ $location->work_area == request()->get('stat') ? 'selected' : '' }}>
                                                     {{ $location->area . ' (' . $location->company_name . ')' }}
                                                 </option>
                                             @endforeach

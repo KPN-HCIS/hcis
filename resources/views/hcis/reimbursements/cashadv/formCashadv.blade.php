@@ -59,6 +59,17 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-2">
+                                    <label class="form-label" for="ca_type">CA Type</label>
+                                    <select name="ca_type" id="ca_type" class="form-control" onchange="toggleDivs()">
+                                        <option value="">-</option>
+                                        <option value="dns">Business Trip</option>
+                                        <option value="ndns">Non Business Trip</option>
+                                        <option value="entr">Entertainment</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
                                     <label class="form-label" for="name">Costing Company</label>
                                     <select class="form-control select2" id="companyFilter" name="companyFilter" required>
                                         <option value="">Select Company...</option>
@@ -119,6 +130,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label" for="start">CA Date Required</label>
+                                    <span class="ri-information-line" title="If there are changes, please contact the AR&AP team" onclick="showPopup(this)"></span>
                                     <input type="date" name="ca_required" id="ca_required" class="form-control"
                                         placeholder="mm/dd/yyyy" required>
                                 </div>
@@ -128,15 +140,7 @@
                                         <input type="date" name="ca_decla" id="ca_decla" class="form-control bg-light" placeholder="mm/dd/yyyy" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label" for="ca_type">CA Type</label>
-                                    <select name="ca_type" id="ca_type" class="form-control" onchange="toggleDivs()">
-                                        <option value="">-</option>
-                                        <option value="dns">Business Trip</option>
-                                        <option value="ndns">Non Business Trip</option>
-                                        <option value="entr">Entertainment</option>
-                                    </select>
-                                </div>
+                                
                             </div>
                             <div class="col-md-6 mb-2" id="div_bisnis_numb_dns" style="display: none;">
                                 <label class="form-label" for="name">Business Trip Number</label>
@@ -287,7 +291,7 @@
                         <div class="p-3 col-md d-md-flex justify-content-end text-center">
                             <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                             <a href="{{ route('cashadvanced') }}" type="button" class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
-                            <button type="submit" name="action_ca_draft" value="Draft" class="btn mb-2 btn-secondary btn-pill px-4 me-2 submit-button-draft">Draft</button>
+                            <button type="submit" name="action_ca_draft" value="Draft" class="btn mb-2 btn-secondary btn-pill px-4 me-2 submit-button">Draft</button>
                             <button type="submit" name="action_ca_submit" value="Pending" class="btn mb-2 btn-primary btn-pill px-4 me-2 submit-button">Submit</button>
                         </div>
                     </div>
@@ -302,6 +306,22 @@
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
+    <script>
+        document.getElementById('start_date').addEventListener('input', function () {
+            const startDate = new Date(this.value);
+            const caRequiredField = document.getElementById('ca_required');
+
+            caRequiredField.value = '';
+            
+            if (startDate) {
+                startDate.setDate(startDate.getDate() - 2);
+                const minDate = startDate.toISOString().split('T')[0];
+                caRequiredField.setAttribute('min', minDate);
+                caRequiredField.value = minDate;
+            }
+        });
+        
+    </script>
     <script>
         function cleanNumber(value) {
             return parseFloat(value.replace(/\./g, '').replace(/,/g, '')) || 0;
@@ -435,25 +455,6 @@
             endDateInput.addEventListener('change', calculateTotalDays);
         });
 
-        // document.getElementById('end_date').addEventListener('change', function() {
-        //     const endDate = new Date(this.value);
-        //     const declarationEstimateDate = new Date(endDate);
-        //     declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 3);
-
-        //     // Mengecek apakah tanggal jatuh pada akhir pekan
-        //     const dayOfWeek = declarationEstimateDate.getDay();
-        //     if (dayOfWeek === 6) { // Sabtu
-        //         declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 2); // Tambah 2 hari untuk ke Senin
-        //     } else if (dayOfWeek === 0) { // Minggu
-        //         declarationEstimateDate.setDate(declarationEstimateDate.getDate() + 1); // Tambah 1 hari untuk ke Senin
-        //     }
-
-        //     const year = declarationEstimateDate.getFullYear();
-        //     const month = String(declarationEstimateDate.getMonth() + 1).padStart(2, '0');
-        //     const day = String(declarationEstimateDate.getDate()).padStart(2, '0');
-
-        //     document.getElementById('ca_decla').value = `${year}-${month}-${day}`;
-        // });
         document.getElementById('end_date').addEventListener('change', function() {
             const holidays = {!! json_encode($holiday) !!};
             const endDate = new Date(this.value);
@@ -517,6 +518,16 @@
 
             document.querySelectorAll('input[name="total_days_bt_perdiem[]"]').forEach(function(input) {
                 calculateTotalDaysPerdiem(input);
+            });
+        }
+
+        function showPopup(element) {
+            const message = element.getAttribute("title");
+            Swal.fire({
+                icon: 'info',
+                title: 'Information',
+                text: message,
+                confirmButtonText: 'OK'
             });
         }
     </script>

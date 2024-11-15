@@ -853,7 +853,7 @@ class MedicalController extends Controller
         } else {
             if ($request->has('stat') && $request->input('stat') !== '') {
                 $status = $request->input('stat');
-                $query->where('office_area', $status);
+                $query->where('work_area_code', $status);
                 $hasFilter = true;
             }
         }
@@ -1228,9 +1228,9 @@ class MedicalController extends Controller
 
         // Get employee IDs from both 'employee_id' and 'rejected_by'
         $employeeIds = $rejectMedic->pluck('employee_id')->merge($rejectMedic->pluck('rejected_by'))->unique();
-
+        $status = $request->input('stat');
         $employees = Employee::whereIn('employee_id', $employeeIds)
-            ->where('office_area', 'Jonggol Office - Jakarta')
+            ->where('work_area_code', $status)
             ->pluck('fullname', 'employee_id');
 
         // Now map the full names to the respective HealthCoverage records

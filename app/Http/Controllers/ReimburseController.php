@@ -109,6 +109,15 @@ class ReimburseController extends Controller
             'userId' => $userId,
         ]);
     }
+    function travel()
+    {
+
+        $userId = Auth::id();
+
+        return view('hcis.reimbursements.travel', [
+            'userId' => $userId,
+        ]);
+    }
     public function cashadvanced()
     {
         $userId = Auth::id();
@@ -231,7 +240,7 @@ class ReimburseController extends Controller
             ->where('approval_status', '<>', 'Rejected')
             ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
             ->get();
-
+        
         foreach ($ca_approvals as $approval) {
             $approval->ReqName = $approval->statusReqEmployee ? $approval->statusReqEmployee->fullname : '';
         }
@@ -324,22 +333,20 @@ class ReimburseController extends Controller
     }
     public function cashadvancedAdminUpdate(Request $request, $id)
     {
-        $request->validate([
-            'ca_status' => 'required|string',
-        ]);
-
-        // Temukan transaksi berdasarkan ID
         $ca_transaction = CATransaction::find($id);
 
         if (!$ca_transaction) {
             return redirect()->back()->with('error', 'Transaction not found.');
         }
 
-        // Update field ca_status berdasarkan value yang dipilih di modal
-        $ca_transaction->ca_status = $request->input('ca_status');
+        $caStatus = $request->input('ca_status') ?? '-';
+        $ca_transaction->date_required = $request->input('date_required');
+        $ca_transaction->ca_paid_date = $request->input('ca_paid_date');
+        $ca_transaction->ca_status = $caStatus; 
+        $ca_transaction->paid_date = $request->input('paid_date');
+        
         $ca_transaction->save();
 
-        // Redirect kembali dengan pesan sukses
         return redirect()->back()->with('success', 'Transaction status updated successfully.')
             ->with('refresh', true);
     }
@@ -355,7 +362,7 @@ class ReimburseController extends Controller
             ->where(function ($query) {
                 $query->where('approval_status', 'Approved');
             })
-            ->where('end_date', '<=', $today)
+            // ->where('end_date', '<=', $today)
             ->where('ca_status', '!=', 'Done')
             ->get();
 
@@ -1715,19 +1722,26 @@ class ReimburseController extends Controller
 
             if ($req->has('rname_e_relation')) {
                 foreach ($req->rname_e_relation as $key => $name) {
-                    $relation_e[] = [
-                        'name' => $name,
-                        'position' => $req->rposition_e_relation[$key],
-                        'company' => $req->rcompany_e_relation[$key],
-                        'purpose' => $req->rpurpose_e_relation[$key],
-                        'relation_type' => array_filter([
-                            'Food' => !empty($req->food_e_relation[$key]) && $req->food_e_relation[$key] === 'food',
+                    $position = $req->rposition_e_relation[$key];
+                    $company = $req->rcompany_e_relation[$key];
+                    $purpose = $req->rpurpose_e_relation[$key];
+
+                    // Memastikan semua data yang diperlukan untuk relation terisi
+                    if (!empty($name) && !empty($position) && !empty($company) && !empty($purpose)) {
+                        $relation_e[] = [
+                            'name' => $name,
+                            'position' => $position,
+                            'company' => $company,
+                            'purpose' => $purpose,
+                            'relation_type' => array_filter([
+                                'Food' => !empty($req->food_e_relation[$key]) && $req->food_e_relation[$key] === 'food',
                                 'Transport' => !empty($req->transport_e_relation[$key]) && $req->transport_e_relation[$key] === 'transport',
                                 'Accommodation' => !empty($req->accommodation_e_relation[$key]) && $req->accommodation_e_relation[$key] === 'accommodation',
                                 'Gift' => !empty($req->gift_e_relation[$key]) && $req->gift_e_relation[$key] === 'gift',
                                 'Fund' => !empty($req->fund_e_relation[$key]) && $req->fund_e_relation[$key] === 'fund',
-                        ], fn($checked) => $checked),
-                    ];
+                            ], fn($checked) => $checked),
+                        ];
+                    }
                 }
             }
 

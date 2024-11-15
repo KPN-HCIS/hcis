@@ -129,9 +129,9 @@ Route::middleware('auth')->group(function () {
     // Tasks
     Route::get('/tasks', [TaskController::class, 'task'])->name('tasks');
 
-    // My Reimbursement
+    // My Menu
     Route::get('/reimbursements', [ReimburseController::class, 'reimbursements'])->name('reimbursements');
-
+    Route::get('/travel', [ReimburseController::class, 'travel'])->name('travel');
 
     // My Cash Advanced
     Route::get('/cashadvanced', [ReimburseController::class, 'cashadvanced'])->name('cashadvanced');
@@ -148,7 +148,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
 
     Route::middleware(['permission:reportca_hcis'])->group(function () {
-        Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
         Route::get('/cashadvanced/admin', [ReimburseController::class, 'cashadvancedAdmin'])->name('cashadvanced.admin');
         Route::post('/cashadvanced/adupdate/{id}', [ReimburseController::class, 'cashadvancedAdminUpdate'])->name('cashadvanced.adupdate');
 
@@ -176,8 +175,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cashadvanced/extend', [ReimburseController::class, 'cashadvancedExtend'])->name('cashadvanced.extend');
 
     // My Cash Advanced
-    Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
-    Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
+    // Route::get('/exportca/excel', [ReimburseController::class, 'exportExcel'])->name('exportca.excel');
+    // Route::get('/filter-ca-transactions', [ReimburseController::class, 'filterCaTransactions'])->name('filter.ca.transactions');
     Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');
     Route::post('/cashadvanced/deklarasi/submit/{id}', [ReimburseController::class, 'cashadvancedDeclare'])->name('cashadvanced.declare');
 
@@ -213,7 +212,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/hotel/status/change/{id}', [ReimburseController::class, 'updatestatusHotel'])->name('change.status.hotel');
 
     //Hotel Admin
-    Route::middleware(['permission:adminhtl'])->group(function () {
+    Route::middleware(['permission:report_hcis_htl'])->group(function () {
         Route::get('/hotel/admin', [ReimburseController::class, 'hotelAdmin'])->name('hotel.admin');
         Route::post('/hotel/admin/booking/{id}', [ReimburseController::class, 'hotelBookingAdmin'])->name('hotel.admin-booking');
         Route::get('/hotel/excel', [ReimburseController::class, 'exportHotelAdminExcel'])->name('hotel.excel');
@@ -236,7 +235,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/ticket/status/change/{id}', [ReimburseController::class, 'updatestatusTicket'])->name('change.status.ticket');
 
     //Ticket Admin
-    Route::middleware(['permission:admintkt'])->group(function () {
+    Route::middleware(['permission:report_hcis_tkt'])->group(function () {
         Route::get('/ticket/admin', [ReimburseController::class, 'ticketAdmin'])->name('ticket.admin');
         Route::post('/ticket/admin/booking/{id}', [ReimburseController::class, 'ticketBookingAdmin'])->name('ticket.admin-booking');
         Route::get('/ticket/excel', [ReimburseController::class, 'exportTicketAdminExcel'])->name('ticket.excel');
@@ -296,7 +295,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/medical/export-excel/', [MedicalController::class, 'medicalForm'])->name('export.medical');
 
     //Medical Admin
-    Route::middleware(['permission:admin_medic'])->group(function () {
+    Route::middleware(['permission:report_hcis_md'])->group(function () {
         Route::get('/medical/admin', [MedicalController::class, 'medicalAdmin'])->name('medical.admin');
         Route::get('/medical/report', [MedicalController::class, 'medicalReportAdmin'])->name('medical.report');
         Route::get('/medical/confirmation', [MedicalController::class, 'medicalAdminConfirmation'])->name('medical.confirmation');
@@ -323,7 +322,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/taksi/form/add', [TaksiController::class, 'taksiFormAdd'])->name('taksi.form.add');
     Route::post('/taksi/form/post', [TaksiController::class, 'taksiCreate'])->name('taksi.form.post');
 
-    Route::middleware(['permission:adminbt'])->group(function () {
+    Route::middleware(['permission:report_hcis_bt'])->group(function () {
         //ADMIN BT
         Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin'])->name('businessTrip.admin');
         Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin'])->name('businessTrip-filterDate.admin');
@@ -383,7 +382,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/businessTrip/export/admin/{id}/{types?}', [BusinessTripController::class, 'exportAdmin'])->name('export.admin');
 
     //ADMIN Home Trip
-    Route::middleware(['permission:adminht'])->group(function () {
+    Route::middleware(['permission:report_hcis_ht'])->group(function () {
 
         Route::get('/home-trip/admin', [HomeTripController::class, 'homeTrip'])->name('home-trip.admin');
     });

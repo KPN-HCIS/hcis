@@ -27,6 +27,7 @@ class ca_transaction extends Model
         'start_date',
         'end_date',
         'date_required',
+        'ca_paid_date',
         'detail_ca',
         'total_ca',
         'total_real',
@@ -34,6 +35,7 @@ class ca_transaction extends Model
         'approval_status',
         'approval_sett',
         'approval_extend',
+        'paid_date',
         'ca_status'
     ];
 

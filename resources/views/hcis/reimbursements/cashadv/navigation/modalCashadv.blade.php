@@ -120,7 +120,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="statusModalLabel">Update Cash Advanced Status</h5>
+                    <h5 class="modal-title" id="statusModalLabel">Update Cash Advanced</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="{{ route('cashadvanced.adupdate', ':id') }}" method="POST">@csrf
@@ -129,12 +129,24 @@
                             {{-- <input type="text" class="form-control" id="transaction-id-display" readonly> --}}
                             <input type="hidden" name="transaction_id" id="transaction_id">
                         <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Status : </label>
+                            <label for="date_required">CA Date Required :</label>
+                            <input type="date" id="date_required" name="date_required" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="ca_paid_date">CA Paid Date :</label>
+                            <input type="date" id="ca_paid_date" name="ca_paid_date" class="form-control">
+                        </div>
+                        <div class="mb-3" id="status-container" style="display: none;">
+                            <label for="recipient-name" class="col-form-label">Status :</label>
                             <select class="form-select" name="ca_status" id="ca_status">
                                 <option value="On Progress">On Progress</option>
                                 <option value="Refund">Refund</option>
                                 <option value="Done">Done</option>
                             </select>
+                        </div>
+                        <div class="mb-3" id="paid-date-container" style="display: none;">
+                            <label for="paid_date">Declaration Paid Date :</label>
+                            <input type="date" id="paid_date" name="paid_date" class="form-control">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -387,8 +399,9 @@
                     form.reportValidity(); // Show validation messages if invalid
                     return; // Exit if the form is not valid
                 }
-
+                const totalAwal = document.getElementById('totalca_deklarasi').value || '0';
                 const totalCA = document.getElementById('totalca').value || '0';
+                const totalReal = document.getElementById('totalca_real').value || '0';
 
                 let inputSummary = '';
 
@@ -431,6 +444,16 @@
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalCA}</td>
                             </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Cash Advanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalAwal}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Balanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalReal}</td>
+                            </tr>
                         </table>
                     `;
 
@@ -462,6 +485,16 @@
                                 <td style="width: 60%"><strong>Total Declaration</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Cash Advanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalAwal}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Balanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalReal}</td>
                             </tr>
                         </table>
                     `;
@@ -495,6 +528,16 @@
                                 <td style="width: 60%"><strong>Total Declaration</strong></td>
                                 <td>:</td>
                                 <td><b>Rp.</b> ${totalCA}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Total Cash Advanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalAwal}</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 60%"><strong>Balanced</strong></td>
+                                <td>:</td>
+                                <td><b>Rp.</b> ${totalReal}</td>
                             </tr>
                         </table>
                     `;
@@ -554,6 +597,7 @@
 
                 const form = document.getElementById('cashadvancedForm');
                 const caType = document.getElementById('ca_type').value; // Get the value from the hidden input
+                const isDraft = button.value === "Draft";
 
                 // Check if the form is valid before proceeding
                 if (!form.checkValidity()) {
@@ -694,13 +738,13 @@
 
                 // Show SweetAlert confirmation with the input summary
                 Swal.fire({
-                    title: "Do you want to submit this request?",
+                    title: isDraft ? "Do you want to save this request as a draft?" : "Do you want to submit this request?",
                     html: `You won't be able to revert this!<br><br>${inputSummary}`,
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#AB2F2B",
                     cancelButtonColor: "#CCCCCC",
-                    confirmButtonText: "Yes, submit it!"
+                    confirmButtonText: isDraft ? "Yes" : "Yes, submit it!"
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Create a hidden input field to hold the action value

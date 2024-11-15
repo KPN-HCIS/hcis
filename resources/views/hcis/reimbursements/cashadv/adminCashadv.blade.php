@@ -154,10 +154,10 @@
                                         <th>Start Date</th>
                                         <th>End Date</th>
                                         <th>Total CA</th>
-                                        <th>Total Settlement</th>
+                                        <th>Total Declaration</th>
                                         <th>Balance</th>
                                         <th>Request</th>
-                                        <th>Settlement</th>
+                                        <th>Declaration</th>
                                         <th>Status CA</th>
                                         <th>Actions</th>
                                         <th>Export</th>
@@ -203,10 +203,11 @@
                                             <td>
                                                 <p class="badge text-bg-{{ $ca_transaction->ca_status == 'Done' ? 'success' :
                                                 ($ca_transaction->ca_status == 'Refund' ? 'danger' :
-                                                ($ca_transaction->ca_status == 'On Progress' ? 'secondary' : 'default')) }}">
+                                                ($ca_transaction->ca_status == 'On Progress' ? 'secondary' : 'default')) }}" title="{{$ca_transaction->paid_date}}">
                                                     {{ $ca_transaction->ca_status }}
                                                 </p>
                                             </td>
+                                            <!-- Button Action -->
                                             <td class="text-left">
                                                 @if(($ca_transaction->approval_status == 'Pending') ||
                                                     ($ca_transaction->approval_status == 'Approved' &&
@@ -239,15 +240,20 @@
                                                         <i class="bi bi-list-check"></i>
                                                     </button>
                                                 @endif
-                                                @if($ca_transaction->approval_sett=='Approved' && $ca_transaction->ca_status<>'Done')
+                                                @if($ca_transaction->approval_status=='Approved' && $ca_transaction->ca_status<>'Done')
                                                     <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" title="Status Update" data-bs-target="#statusModal"
                                                         data-id="{{ $ca_transaction->id }}"
                                                         data-status="{{ $ca_transaction->ca_status }}"
-                                                        data-no="{{ $ca_transaction->no_ca }}">
+                                                        data-no="{{ $ca_transaction->no_ca }}"
+                                                        data-appsett="{{ $ca_transaction->approval_sett }}"
+                                                        data-datereq="{{ $ca_transaction->date_required }}"
+                                                        data-capaiddate="{{ $ca_transaction->ca_paid_date }}"
+                                                        data-paiddate="{{ $ca_transaction->paid_date }}">
                                                         <i class="ri-file-edit-line"></i>
                                                     </button>
                                                 @endif
                                             </td>
+                                            <!-- Button Export -->
                                             <td class="text-center">
                                                 @if($ca_transaction->approval_status != 'Draft' && $ca_transaction->approval_status != 'Rejected')
                                                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"  data-bs-target="#exportModal"
@@ -259,6 +265,7 @@
                                                     </button>
                                                 @endif
                                             </td>
+                                            <!-- Button Delete -->
                                             <td class="text-center">
                                                 <form action="{{ route('cashadvanced.delete', $ca_transaction->id) }}" method="POST" style="display:inline;">
                                                     @csrf
@@ -318,21 +325,27 @@
             }
         }
     </script>
+    @if (session('success') && session('refresh'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var successMessage = "{{ session('success') }}";
 
-    <script>
-        // Periksa apakah ada pesan sukses
-        var successMessage = "{{ session('success') }}";
-
-        // Jika ada pesan sukses, tampilkan sebagai alert
-        if (successMessage) {
-            Swal.fire({
-                title: "Success!",
-                text: successMessage,
-                icon: "success",
-                confirmButtonColor: "#9a2a27",
-                confirmButtonText: "Ok",
+                // Show the success message in a SweetAlert popup
+                Swal.fire({
+                    title: "Success!",
+                    text: successMessage,
+                    icon: "success",
+                    confirmButtonColor: "#9a2a27",
+                    confirmButtonText: "Ok",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        //window.location.reload();
+                    }
+                });
             });
-        }
+        </script>
+    @endif
+    <script>
         function redirectToExportExcel() {
             const route = "{{ route('exportca.excel') }}";
 
@@ -462,6 +475,10 @@
                 // Ambil data-id dan data-status dari tombol tersebut
                 var transactionId = button.getAttribute("data-id");
                 var transactionStatus = button.getAttribute("data-status");
+                var appSett = button.getAttribute("data-appsett");
+                var dateReq = button.getAttribute("data-datereq");
+                var caPaidDate = button.getAttribute("data-capaiddate");
+                var paidDate = button.getAttribute("data-paiddate");
 
                 // Temukan form di dalam modal dan update action-nya
                 var form = statusModal.querySelector("form");
@@ -475,6 +492,23 @@
                 // Pilih status yang sesuai di dropdown
                 var statusSelect = form.querySelector("#ca_status");
                 statusSelect.value = transactionStatus;
+
+                var date_required = form.querySelector("#date_required");
+                date_required.value = dateReq;
+                
+                var ca_paid_date = form.querySelector("#ca_paid_date");
+                ca_paid_date.value = caPaidDate;
+
+                var paidDateInput = form.querySelector("#paid_date");
+                paid_date.value = paidDate;
+
+                if (appSett === "Approved") {
+                    statusSelect.parentElement.style.display = "block";
+                    paidDateInput.parentElement.style.display = "block";
+                } else {
+                    statusSelect.parentElement.style.display = "none";
+                    paidDateInput.parentElement.style.display = "none";
+                }
 
                 // Update opsi dropdown berdasarkan status yang dipilih
                 updateStatusOptions(transactionStatus, statusSelect);
@@ -898,12 +932,12 @@
 
     </script>
 
-    @if (session('refresh'))
+    {{-- @if (session('refresh'))
         <script>
             // Refresh the page after 1 seconds
             setTimeout(function(){
                 window.location.reload();
             }, 1000);
         </script>
-    @endif
+    @endif --}}
 @endpush
