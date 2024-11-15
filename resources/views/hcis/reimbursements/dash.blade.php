@@ -1,7 +1,7 @@
 @extends('layouts_.vertical', ['page_title' => 'Reimbursements'])
 
 @section('css')
-</style> --}}
+</style>
     <style>
         .menu-card {
             text-decoration: none;

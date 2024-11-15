@@ -65,7 +65,7 @@
                     </li>
                 </ol>
             </div>
-            @include('hcis.reimbursements.medical.navigation.modalMedical')
+            @include('hcis.reimbursements.businessTrip.modal')
 
             @if (request()->routeIs('medical.detail'))
                 <div class="col-md-6 mb-2 d-flex justify-content-center justify-content-md-end align-items-center">
@@ -95,8 +95,8 @@
                                                 <option value="" {{ request()->get('stat') == '-' ? 'selected' : '' }}>All
                                                     Location</option>
                                                 @foreach ($locations as $location)
-                                                    <option value="{{ $location->area }}"
-                                                        {{ $location->area == request()->get('stat') ? 'selected' : '' }}>
+                                                    <option value="{{ $location->work_area }}"
+                                                        {{ $location->work_area == request()->get('stat') ? 'selected' : '' }}>
                                                         {{ $location->area . ' (' . $location->company_name . ')' }}
                                                     </option>
                                                 @endforeach

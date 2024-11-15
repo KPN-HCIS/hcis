@@ -845,7 +845,7 @@ class MedicalController extends Controller
         } else {
             if ($request->has('stat') && $request->input('stat') !== '') {
                 $status = $request->input('stat');
-                $query->where('office_area', $status);
+                $query->where('work_area_code', $status);
                 $hasFilter = true;
             }
         }
@@ -1161,7 +1161,7 @@ class MedicalController extends Controller
         if ($request->has('stat') && $request->input('stat') !== '') {
             $status = $request->input('stat');
             $query->whereHas('employee', function ($q) use ($status) {
-                $q->where('office_area', $status);
+                $q->where('work_area_code', $status);
             });
             $hasFilter = true;
         }
@@ -1220,9 +1220,9 @@ class MedicalController extends Controller
 
         // Get employee IDs from both 'employee_id' and 'rejected_by'
         $employeeIds = $rejectMedic->pluck('employee_id')->merge($rejectMedic->pluck('rejected_by'))->unique();
-
+        $status = $request->input('stat');
         $employees = Employee::whereIn('employee_id', $employeeIds)
-            ->where('office_area', 'Jonggol Office - Jakarta')
+            ->where('work_area_code', $status)
             ->pluck('fullname', 'employee_id');
 
         // Now map the full names to the respective HealthCoverage records
@@ -1290,7 +1290,7 @@ class MedicalController extends Controller
                 $request->file('file')
             );
 
-            return redirect()->route('medical.admin')->with('success', 'Transaction successfully added from Excel.');
+            return redirect()->route('medical.report')->with('success', 'Transaction successfully added from Excel.');
         } catch (\App\Exceptions\ImportDataInvalidException $e) {
             // Catch custom exception and redirect back with error message
             return redirect()->route('medical.admin')->withErrors(['import_error' => $e->getMessage()]);

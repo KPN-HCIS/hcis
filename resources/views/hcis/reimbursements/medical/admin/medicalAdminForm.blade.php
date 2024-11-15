@@ -129,7 +129,7 @@
                                                     $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png';
                                                 }
                                             @endphp
-
+                                            
                                             <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
                                                 style="text-decoration: none;">
                                                 <img src="{{ $imageSrc }}" alt="{{ $fileExtension }} file"
