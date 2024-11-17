@@ -276,6 +276,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/export/report-emp', [ExportExcelController::class, 'exportreportemp'])->name('export.reportemp');
 
     Route::post('/export', [ExportExcelController::class, 'export'])->name('export');
+    Route::get('/download-template', function () {
+        // Logika untuk mengunduh template Excel
+        return response()->download(public_path('files/template_import_mdc.xlsx'));
+    })->name('download-template');
     Route::post('/admin-export', [ExportExcelController::class, 'exportAdmin'])->name('admin.export');
     Route::post('/notInitiatedReport', [ExportExcelController::class, 'notInitiated'])->name('team-goals.notInitiated');
     Route::post('/initiatedReport', [ExportExcelController::class, 'initiated'])->name('team-goals.initiated');

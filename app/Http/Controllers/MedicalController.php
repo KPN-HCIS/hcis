@@ -264,11 +264,11 @@ class MedicalController extends Controller
                 'status' => $statusValue,
                 'medical_proof' => $medical_proof_path,
             ]);
-        
+
             $CANotificationLayer = Employee::where('employee_id', $employee_id)->pluck('email')->first();
             if ($CANotificationLayer) {
                 // Kirim email ke pengguna transaksi (employee pada layer terakhir)
-                Mail::to($CANotificationLayer)->send(new MedicalNotification( $healthCoverage));
+                Mail::to($CANotificationLayer)->send(new MedicalNotification($healthCoverage));
             }
         }
 
@@ -905,14 +905,17 @@ class MedicalController extends Controller
         $link = 'Medical Data Employee';
         $userId = Auth::id();
         $companies = Company::orderBy('contribution_level')->get();
-        $locations = Location::orderBy('area')->get();
-        $unit = MasterBusinessUnit::get();
 
         $currentYear = date('Y');
 
         $med_employee = collect();
         $hasFilter = false;
         $medicalGroup = [];
+
+        $userRole = auth()->user()->roles->first();
+        $roleRestriction = json_decode($userRole->restriction, true);
+        $restrictedWorkAreas = $roleRestriction['work_area_code'] ?? [];
+        $restrictedGroupCompanies = $roleRestriction['group_company'] ?? [];
 
         $healthCoverageQuery = HealthCoverage::query();
 
@@ -940,6 +943,15 @@ class MedicalController extends Controller
             }
         }
 
+        if (request()->get('unit') == '') {
+        } else {
+            if ($request->has('unit') && $request->input('unit') !== '') {
+                $unit = $request->input('unit');
+                $query->where('work_area_code', $unit);
+                $hasFilter = true;
+            }
+        }
+
         if (request()->get('customsearch') == '') {
         } else {
             if ($request->has('customsearch') && $request->input('customsearch') !== '') {
@@ -947,6 +959,21 @@ class MedicalController extends Controller
                 $query->where('fullname', 'LIKE', '%' . $customsearch . '%');
                 $hasFilter = true;
             }
+        }
+
+        if (!empty($restrictedWorkAreas)) {
+            // Tambahkan filter whereIn pada work_area_code jika ada restriction
+            $query->whereIn('work_area_code', $restrictedWorkAreas);
+            // dd($restrictedWorkAreas);
+            $locations = Location::orderBy('area')->whereIn('work_area', $restrictedWorkAreas)->get();
+        } else {
+            $locations = Location::orderBy('area')->get();
+        }
+
+        if (!empty($restrictedGroupCompanies)) {
+            $unit = MasterBusinessUnit::whereIn('nama_bisnis', $restrictedGroupCompanies)->get();
+        } else {
+            $unit = MasterBusinessUnit::get(); // Jika tidak ada restriction, ambil semua
         }
 
         if ($hasFilter) {
@@ -983,6 +1010,9 @@ class MedicalController extends Controller
             'balances' => $balances, // Kirim balances ke view
             'unit' => $unit,
             'medicalGroup' => $medicalGroup,
+            'userRole' => $userRole,
+            'roleRestriction' => $roleRestriction,
+            'restrictedWorkAreas' => $restrictedWorkAreas,
         ]);
     }
 
@@ -1313,10 +1343,11 @@ class MedicalController extends Controller
     {
         $stat = $request->input('stat');
         $customSearch = $request->input('customsearch');
-        $start_date = $request->input('start_date');
-        $end_date = $request->input('end_date');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $unit = $request->input('unit');
 
-        return Excel::download(new MedicalExport($stat, $customSearch, $start_date, $end_date), 'medical_report.xlsx');
+        return Excel::download(new MedicalExport($stat, $customSearch, $endDate, $startDate, $unit), 'medical_report.xlsx');
     }
 
     public function exportDetailExcel($employee_id)
