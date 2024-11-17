@@ -265,11 +265,11 @@ class MedicalController extends Controller
                 'medical_proof' => $medical_proof_path,
             ]);
 
-            $CANotificationLayer = Employee::where('employee_id', $employee_id)->pluck('email')->first();
-            if ($CANotificationLayer) {
-                // Kirim email ke pengguna transaksi (employee pada layer terakhir)
-                Mail::to($CANotificationLayer)->send(new MedicalNotification($healthCoverage));
-            }
+            // $CANotificationLayer = Employee::where('employee_id', $employee_id)->pluck('email')->first();
+            // if ($CANotificationLayer) {
+            //     // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+            //     Mail::to($CANotificationLayer)->send(new MedicalNotification($healthCoverage));
+            // }
         }
 
         return redirect()->route('medical')->with('success', 'Medical successfully added.');
@@ -582,7 +582,7 @@ class MedicalController extends Controller
         HealthCoverage::where('no_medic', $noMedic)->delete();
 
         // Redirect back with a success message
-        return redirect()->route('medical')->with('success', 'Medical Deleted');
+        return redirect()->route('medical.confirmation')->with('success', 'Medical Deleted');
     }
 
     public function medicalApproval()
@@ -840,7 +840,17 @@ class MedicalController extends Controller
         $link = 'Medical Data Employee';
         $userId = Auth::id();
         $companies = Company::orderBy('contribution_level')->get();
-        $locations = Location::orderBy('area')->get();
+
+        $userRole = auth()->user()->roles->first();
+        $roleRestriction = json_decode($userRole->restriction, true);
+        $restrictedWorkAreas = $roleRestriction['work_area_code'] ?? [];
+        $restrictedGroupCompanies = $roleRestriction['group_company'] ?? [];
+
+        if (!empty($restrictedWorkAreas)) {
+            $locations = Location::orderBy('area')->whereIn('work_area', $restrictedWorkAreas)->get();
+        } else {
+            $locations = Location::orderBy('area')->get();
+        }
 
         $currentYear = date('Y');
 
@@ -862,7 +872,12 @@ class MedicalController extends Controller
         } else {
             if ($request->has('customsearch') && $request->input('customsearch') !== '') {
                 $customsearch = $request->input('customsearch');
-                $query->where('fullname', 'LIKE', '%' . $customsearch . '%');
+                if (!empty($restrictedWorkAreas)) {
+                    $query->where('fullname', 'LIKE', '%' . $customsearch . '%')
+                        ->where('work_area_code', $restrictedWorkAreas);
+                } else {
+                    $query->where('fullname', 'LIKE', '%' . $customsearch . '%');
+                }
                 $hasFilter = true;
             }
         }
@@ -1189,68 +1204,69 @@ class MedicalController extends Controller
     public function medicalAdminConfirmation(Request $request)
     {
         // Ambil data dependents, medical, dan medical_plan berdasarkan employee_id
-        $locations = Location::orderBy('area')->get();
         $family = Dependents::orderBy('date_of_birth', 'desc')->get();
         $medical = HealthCoverage::orderBy('created_at', 'desc')->get();
+        $userRole = auth()->user()->roles->first();
+        $roleRestriction = json_decode($userRole->restriction, true);
+
+        $restrictedWorkAreas = $roleRestriction['work_area_code'] ?? [];
+        $restrictedGroupCompanies = $roleRestriction['group_company'] ?? [];
+
+        $locations = !empty($restrictedWorkAreas)
+            ? Location::orderBy('area')->whereIn('work_area', $restrictedWorkAreas)->get()
+            : Location::orderBy('area')->get();
+
         $hasFilter = false;
         $query = HealthCoverage::query();
         $medical_plan = HealthPlan::orderBy('period', 'desc')->get();
 
-        if ($request->has('stat') && $request->input('stat') !== '') {
+        if ($request->has('stat') && $request->input('stat') !== null) {
             $status = $request->input('stat');
-            $query->whereHas('employee', function ($q) use ($status) {
-                $q->where('work_area_code', $status);
-            });
-            $hasFilter = true;
+
+            if ($status !== '-') {
+                // Jika nilai 'stat' bukan '-', filter berdasarkan work_area_code
+                $query->whereHas('employee', function ($q) use ($status) {
+                    $q->where('work_area_code', $status);
+                });
+                $hasFilter = true;
+            }
         }
 
-        if ($hasFilter) {
-            $medicalGroup = $query->select(
-                'no_medic',
-                'date',
-                'employee_id',
-                'period',
-                'hospital_name',
-                'patient_name',
-                'disease',
-                DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance ELSE 0 END) as maternity_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
-                'status',
-                DB::raw('MAX(created_at) as latest_created_at')
-            )
-                ->where('status', '!=', 'Draft')
-                ->where('status', '!=', 'Done')
-                ->whereNull('verif_by')
-                ->whereNull('balance_verif')
-                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'employee_id')
-                ->orderBy('latest_created_at', 'desc')
-                ->get();
-        } else {
-            $medicalGroup = HealthCoverage::select(
-                'no_medic',
-                'date',
-                'employee_id',
-                'period',
-                'hospital_name',
-                'patient_name',
-                'disease',
-                DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance ELSE 0 END) as maternity_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
-                DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
-                'status',
-                DB::raw('MAX(created_at) as latest_created_at')
-            )
-                ->where('status', '!=', 'Draft')
-                ->where('status', '!=', 'Done')
-                ->whereNull('verif_by')
-                ->whereNull('balance_verif')
-                ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'employee_id')
-                ->orderBy('latest_created_at', 'desc')
-                ->get();
+        if (!$hasFilter && !empty($restrictedWorkAreas)) {
+            $query->whereHas('employee', function ($q) use ($restrictedWorkAreas) {
+                $q->whereIn('work_area_code', $restrictedWorkAreas);
+            });
         }
+
+        $medicalGroup = $query->select(
+            'no_medic',
+            'date',
+            'employee_id',
+            'period',
+            'hospital_name',
+            'patient_name',
+            'disease',
+            DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance ELSE 0 END) as maternity_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
+            DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
+            'status',
+            DB::raw('MAX(created_at) as latest_created_at')
+        )
+            ->where('status', '!=', 'Draft')
+            ->where('status', '!=', 'Done')
+            ->whereNull('verif_by')
+            ->whereNull('balance_verif')
+            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'employee_id')
+            ->orderBy('latest_created_at', 'desc')
+            ->get();
+
+        // Proses data untuk ditampilkan di view
+        $medical = $medicalGroup->map(function ($item) {
+            $usageId = HealthCoverage::where('no_medic', $item->no_medic)->value('usage_id');
+            $item->usage_id = $usageId;
+            return $item;
+        });
 
         $rejectMedic = HealthCoverage::where('status', 'Rejected')  // Filter for rejected status
             ->get()
