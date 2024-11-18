@@ -32,11 +32,11 @@
                                 </tr>
                                 <tr>
                                     <th>Start Date</th>
-                                    <td>: {{ $n->mulai }}</td>
+                                    <td>: {{ \Carbon\Carbon::parse($n->mulai)->format('d M Y') }}</td>
                                 </tr>
                                 <tr>
                                     <th>End Date</th>
-                                    <td>: {{ $n->kembali }}</td>
+                                    <td>: {{ \Carbon\Carbon::parse($n->kembali)->format('d M Y') }}</td>
                                 </tr>
                             </tbody>
                         </table>

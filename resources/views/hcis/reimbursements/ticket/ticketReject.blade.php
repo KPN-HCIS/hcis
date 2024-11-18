@@ -44,12 +44,12 @@
                                 </tr>
                                 <tr>
                                     <th>Depature Date/Time</th>
-                                    <td>: {{ $tickets->tgl_brkt_tkt }} / {{ $tickets->jam_brkt_tkt }} WIB </td>
+                                    <td>: {{ \Carbon\Carbon::parse($tickets->tgl_brkt_tkt)->format('d M Y') }} / {{ \Carbon\Carbon::parse($tickets->jam_brkt_tkt)->format('H:i') }} WIB </td>
                                 </tr>
                                 @if ($tickets->type_tkt == 'Round Trip')
                                     <tr>
                                         <th>Return Date/Time</th>
-                                        <td>: {{ $tickets->tgl_plg_tkt }} / {{ $tickets->jam_plg_tkt }} WIB </td>
+                                        <td>: {{ \Carbon\Carbon::parse($tickets->tgl_plg_tkt)->format('d M Y') }} / {{ \Carbon\Carbon::parse($tickets->jam_plg_tkt)->format('H:i') }} WIB </td>
                                     </tr>
                                 @endif
                                 <tr>

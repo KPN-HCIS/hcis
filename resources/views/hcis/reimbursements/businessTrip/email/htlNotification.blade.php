@@ -22,7 +22,7 @@
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Location</th>
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Check-in Date</th>
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Check-out Date</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Total Days</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Total Nights</th>
             </tr>
         </thead>
         <tbody>
@@ -32,8 +32,12 @@
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $noHtl }}</td>
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $namaHtl[$index] }}</td>
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $lokasiHtl[$index] }}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $tglMasukHtl[$index] }}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $tglKeluarHtl[$index] }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">
+                        {{ \Carbon\Carbon::parse($tglMasukHtl[$index])->format('d M Y') }}
+                    </td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">
+                        {{ \Carbon\Carbon::parse($tglKeluarHtl[$index])->format('d M Y') }}
+                    </td>
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $totalHari[$index] }}</td>
                 </tr>
             @endforeach
@@ -42,8 +46,8 @@
 
 
     <hr>
-    <p>For approval or rejection of the Business Trip, you can choose the following links: <a href="#">Approve</a>
-        / <a href="#">Reject</a></p>
+    <p>For approval or rejection of the Business Trip, you can choose the following links:</p>
+    <p><a href="{{ $approvalLink }}">Approve</a> / <a href="{{ $rejectionLink }}">Reject</a></p>
 
     <p>Thank you,</p>
     <p>HC System</p>

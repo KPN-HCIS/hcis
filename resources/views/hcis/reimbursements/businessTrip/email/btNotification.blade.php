@@ -11,8 +11,8 @@
     <p>Dear Sir/Madam: <b>{{ $managerName }}</b></p><br>
     <p><strong>No. SPPD:</strong> {{ $businessTrip->no_sppd }}</p>
     <p><strong>Employee Name:</strong> {{ $businessTrip->nama }}</p>
-    <p><strong>Start Date:</strong> {{ $businessTrip->mulai }}</p>
-    <p><strong>End Date:</strong> {{ $businessTrip->kembali }}</p>
+    <p><strong>Start Date:</strong> {{ \Carbon\Carbon::parse($businessTrip->mulai)->format('d M Y') }}</p>
+    <p><strong>End Date:</strong> {{ \Carbon\Carbon::parse($businessTrip->kembali)->format('d M Y') }}</p>
     <p><strong>Type of Service:</strong> {{ ucwords(strtolower($businessTrip->jns_dinas)) }}</p>
     <p><strong>Location:</strong> {{ $businessTrip->tujuan }}</p>
     <p><strong>Trip Purpose:</strong> {{ $businessTrip->keperluan }}</p>
@@ -100,8 +100,10 @@
                         <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->dari_tkt }}</td>
                         <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->ke_tkt }}</td>
                         <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->type_tkt }}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $ticket->tgl_brkt_tkt }} at
-                            {{ $ticket->jam_brkt_tkt }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">
+                            {{ \Carbon\Carbon::parse($ticket->tgl_brkt_tkt)->format('d M Y') }} at
+                            {{ \Carbon\Carbon::parse($ticket->jam_brkt_tkt)->format('H:i') }} WIB
+                        </td>
                         <td style="border: 1px solid #ddd; padding: 8px;">
                             @if ($ticket->type_tkt == 'Round Trip')
                                 {{ $ticket->tgl_plg_tkt }} at {{ $ticket->jam_plg_tkt }}
@@ -141,8 +143,12 @@
                         <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->nama_htl }}</td>
                         <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->no_htl }}</td>
                         <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->lokasi_htl }}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->tgl_masuk_htl }}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->tgl_keluar_htl }}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">
+                            {{ \Carbon\Carbon::parse($hotel->tgl_masuk_htl)->format('d M Y') }}
+                        </td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">
+                            {{ \Carbon\Carbon::parse($hotel->tgl_keluar_htl)->format('d M Y') }}
+                        </td>
                         <td style="border: 1px solid #ddd; padding: 8px;">{{ $hotel->total_hari }} Nights</td>
                     </tr>
                 @endforeach

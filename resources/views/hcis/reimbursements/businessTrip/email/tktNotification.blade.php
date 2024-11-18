@@ -35,11 +35,14 @@
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $namaPenumpang[$index] }}</td>
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $dariTkt[$index] }} - {{ $keTkt[$index] }}</td>
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $tipeTkt[$index] }}</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $tglBrktTkt[$index] }} at
-                        {{ $jamBrktTkt[$index] }} WIB</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">
+                        {{ \Carbon\Carbon::parse($tglBrktTkt[$index])->format('d M Y') }} at
+                        {{ \Carbon\Carbon::parse($jamBrktTkt[$index])->format('H:i') }} WIB
+                    </td>
                     <td style="border: 1px solid #ddd; padding: 8px;">
                         @if ($tipeTkt[$index] == 'Round Trip')
-                            {{ $tglPlgTkt[$index] }} at {{ $jamPlgTkt[$index] }} WIB
+                            {{ \Carbon\Carbon::parse($tglPlgTkt[$index])->format('d M Y') }} at
+                            {{ \Carbon\Carbon::parse($jamPlgTkt[$index])->format('H:i') }} WIB
                         @else
                             -
                         @endif

@@ -23,6 +23,8 @@ class HotelNotification extends Mailable
     public $noHtlList;
     public $approvalStatus;
     public $managerName;
+    public $approvalLink;
+    public $rejectionLink;
 
     public function __construct(array $data)
     {
@@ -35,6 +37,8 @@ class HotelNotification extends Mailable
         $this->totalHari = $data['totalHari'];
         $this->approvalStatus = $data['approvalStatus'];
         $this->managerName = $data['managerName'];
+        $this->approvalLink = $data['approvalLink'];
+        $this->rejectionLink = $data['rejectionLink'];
     }
 
     public function build()

@@ -8,8 +8,7 @@
         </div>
 
         <div class="card-body">
-            <form
-                action="{{ route('reject.business.trip', ['id' => $n->id, 'manager_id' => $manager_id, 'status' => $n->status]) }}"
+            <form action="{{ route('reject.hotel', ['id' => $id, 'manager_id' => $manager_id, 'status' => $status]) }}"
                 method="POST" id="rejectionForm">
                 @csrf
                 {{-- @method('GET') --}}
@@ -18,26 +17,32 @@
                     <div class="col-12">
                         <table class="table table-borderless">
                             <tbody>
+                                {{-- @foreach ($hotels as $ticket) --}}
                                 <tr>
                                     <th class="w-25">No. SPPD</th>
-                                    <td>: {{ $n->no_sppd }}</td>
+                                    <td>: {{ $hotels->no_sppd ?? '' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>No. Ticket</th>
+                                    <td>: {{ $hotels->no_htl }}</td>
                                 </tr>
                                 <tr>
                                     <th>Employee Name</th>
-                                    <td>: {{ $n->nama }}</td>
+                                    <td>: {{ $employeeName }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Destination</th>
-                                    <td>: {{ $n->tujuan }}</td>
+                                    <th>Check In Date</th>
+                                    <td>: {{ \Carbon\Carbon::parse($hotels->tgl_masuk_htl)->format('d M Y') }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Start Date</th>
-                                    <td>: {{ \Carbon\Carbon::parse($n->mulai)->format('d M Y') }}</td>
+                                    <th>Check Out Date</th>
+                                    <td>: {{ \Carbon\Carbon::parse($hotels->tgl_keluar_htl)->format('d M Y') }}</td>
                                 </tr>
                                 <tr>
-                                    <th>End Date</th>
-                                    <td>: {{ \Carbon\Carbon::parse($n->kembali)->format('d M Y') }}</td>
+                                    <th>Total Nights/Hotels</th>
+                                    <td>: {{ $hotels->total_hari }} Nights / {{ $hotelsTotal }} Hotels</td>
                                 </tr>
+                                {{-- @endforeach --}}
                             </tbody>
                         </table>
                     </div>
