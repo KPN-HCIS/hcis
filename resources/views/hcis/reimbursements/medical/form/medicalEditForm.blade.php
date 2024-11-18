@@ -41,12 +41,15 @@
                                     <label for="patient_name" class="form-label">Patient Name</label>
                                     <select class="form-select form-select-sm select2" id="patient_name" name="patient_name"
                                         required>
-                                        <option value="" disabled selected>--- Choose Patient ---</option>
-                                        <option value="{{ $employee_name->fullname }}">
+                                        <option value="" disabled {{ !isset($selected_patient) ? 'selected' : '' }}>
+                                            --- Choose Patient ---</option>
+                                        <option value="{{ $employee_name->fullname }}"
+                                            {{ isset($selected_patient) && $selected_patient === $employee_name->fullname ? 'selected' : '' }}>
                                             {{ $employee_name->fullname }} (Me)
                                         </option>
                                         @foreach ($families as $family)
-                                            <option value="{{ $family->name }}" {{ $family->name ? 'selected' : '' }}>
+                                            <option value="{{ $family->name }}"
+                                                {{ isset($selected_patient) && $selected_patient === $family->name ? 'selected' : '' }}>
                                                 {{ $family->name }} ({{ $family->relation_type }})
                                             </option>
                                         @endforeach
@@ -249,12 +252,12 @@
                 <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
             </tr>
             ${Object.entries(medicalCosts).map(([type, cost]) => `
-                                                                                                              <tr>
-                                                                                                                <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
-                                                                                                                <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                                                                                                <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
-                                                                                                                </tr>
-                                                                                                                `).join('')}
+                                                                                                                  <tr>
+                                                                                                                    <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                                                                                                                    <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                                                                                                                    <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                                                                                                                    </tr>
+                                                                                                                    `).join('')}
 
                 </table>
             `;

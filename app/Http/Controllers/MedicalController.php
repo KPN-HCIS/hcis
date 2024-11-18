@@ -279,6 +279,7 @@ class MedicalController extends Controller
         $currentYear = now()->year;
         // Fetch the HealthCoverage record by ID
         $medic = HealthCoverage::findOrFail($id);
+        $selected_patient = $medic->patient_name;
         $medical_type = MasterMedical::orderBy('id', 'desc')->where(
             'active',
             'T'
@@ -316,7 +317,7 @@ class MedicalController extends Controller
         $parentLink = 'Medical';
         $link = 'Edit Medical Coverage Usage';
 
-        return view('hcis.reimbursements.medical.form.medicalEditForm', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes', 'balanceData', 'hasGlasses'));
+        return view('hcis.reimbursements.medical.form.medicalEditForm', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes', 'balanceData', 'hasGlasses', 'selected_patient'));
     }
 
     public function medicalUpdate(Request $request, $id)
