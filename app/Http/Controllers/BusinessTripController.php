@@ -4302,10 +4302,71 @@ class BusinessTripController extends Controller
             $statusValue = 'Declaration L2';
             $layer = 1;
             $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('fullname')->first();
+
+            $approvalLink = route('approve.business.trip.declare', [
+                'id' => urlencode($businessTrip->id),
+                'manager_id' => $businessTrip->manager_l2_id,
+                'status' => 'Declaration Approved'
+            ]);
+
+            $rejectionLink = route('reject.link.declaration', [
+                'id' => urlencode($businessTrip->id),
+                'manager_id' => $businessTrip->manager_l2_id,
+                'status' => 'Declaration Rejected'
+            ]);
+
+            $caTrans = CATransaction::where('no_sppd', $businessTrip->no_sppd)
+                ->where(function ($query) {
+                    $query->where('caonly', '!=', 'Y')
+                        ->orWhereNull('caonly');
+                })
+                ->first();
+            $detail_ca = isset($caTrans) && isset($caTrans->detail_ca) ? json_decode($caTrans->detail_ca, true) : [];
+            $declare_ca = isset($caTrans) && isset($caTrans->declare_ca) ? json_decode($caTrans->declare_ca, true) : [];
+            // dd( $detail_ca, $caTrans);
+
+            // dd($caTrans, $n->no_sppd);
+            $caDetails = [
+                'total_days_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'total_days')),
+                'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                'total_days_transport' => count($detail_ca['detail_transport'] ?? []),
+                'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
+
+                'total_days_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'total_days')),
+                'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
+                'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+            ];
+            // dd($caDetails,   $detail_ca );
+
+            $declare_ca = isset($declare_ca) ? $declare_ca : [];
+            $caDeclare = [
+                'total_days_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'total_days')),
+                'total_amount_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'nominal')),
+
+                'total_days_transport' => count($declare_ca['detail_transport'] ?? []),
+                'total_amount_transport' => array_sum(array_column($declare_ca['detail_transport'] ?? [], 'nominal')),
+
+                'total_days_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'total_days')),
+                'total_amount_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'nominal')),
+
+                'total_days_others' => count($declare_ca['detail_lainnya'] ?? []),
+                'total_amount_others' => array_sum(array_column($declare_ca['detail_lainnya'] ?? [], 'nominal')),
+            ];
             // dd($managerL2);
             if ($managerL2) {
                 // Send email to L2
-                Mail::to($managerL2)->send(new BusinessTripNotification($businessTrip));
+                Mail::to($managerL2)->send(new DeclarationNotification(
+                    $businessTrip,
+                    $caDetails,
+                    $caDeclare,
+                    $managerName,
+                    $approvalLink,
+                    $rejectionLink,
+                ));
             }
             // Handle CA approval for L1
             if ($businessTrip->ca == 'Ya') {
@@ -4386,17 +4447,6 @@ class BusinessTripController extends Controller
 
         // Save the approval record
         $approval->save();
-
-        $message = $statusValue === 'Declaration Rejected'
-            ? 'The request has been successfully Rejected.'
-            : 'The request has been successfully Accepted.';
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => $message
-            ]);
-        }
 
         // Redirect back to the previous page with a success message
         return redirect('/businessTrip/approval')->with('success', 'Request updated successfully');
