@@ -3,6 +3,13 @@
 @section('css')
     <!-- Sertakan CSS Bootstrap jika diperlukan -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css">
+    <style>
+        input[type="date"][readonly] {
+            pointer-events: all;
+            background-color: #fff; /* Pastikan tampilan tetap seperti input normal */
+            cursor: pointer;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -306,6 +313,14 @@
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
+    <script>
+        // Disable manual typing on input fields
+        document.querySelectorAll('input[type="date"]').forEach(function (input) {
+            input.addEventListener('keydown', function (e) {
+                e.preventDefault(); // Prevent manual typing
+            });
+        });
+    </script>
     <script>
         document.getElementById('start_date').addEventListener('input', function () {
             const startDate = new Date(this.value);

@@ -431,7 +431,7 @@ class ReimburseController extends Controller
             ->where(function ($query) {
                 $query->where('ca_status', 'Done');
             })
-            ->where('end_date', '<=', $today)
+            // ->where('end_date', '<=', $today)
             ->get();
 
         $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
@@ -450,17 +450,17 @@ class ReimburseController extends Controller
             ->where('approval_sett', '=', '')
             ->count();
 
-        foreach ($ca_transactions as $transaction) {
-            if (
-                $transaction->end_date <= $today &&
-                $transaction->approval_status == 'Approved' &&
-                $transaction->approval_sett == 'On Progress'
-            ) {
+        // foreach ($ca_transactions as $transaction) {
+        //     if (
+        //         $transaction->end_date <= $today &&
+        //         $transaction->approval_status == 'Approved' &&
+        //         $transaction->approval_sett == 'On Progress'
+        //     ) {
 
-                $transaction->approval_sett = 'Waiting for Declaration';
-            }
-            $transaction->save();
-        }
+        //         $transaction->approval_sett = 'Waiting for Declaration';
+        //     }
+        //     $transaction->save();
+        // }
 
         return view('hcis.reimbursements.cashadv.cashadvDone', [
             'deklarasiCACount' => $deklarasiCACount,
