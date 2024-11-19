@@ -806,6 +806,7 @@ class BusinessTripController extends Controller
 
         if ($statusValue !== 'Draft') {
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
@@ -1183,6 +1184,7 @@ class BusinessTripController extends Controller
             }
             if ($statusValue !== 'Declaration Draft') {
                 $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+                $managerEmail = "eriton.dewa@kpn-corp.com";
                 // dd($managerEmail);
                 if ($managerEmail) {
                     // Send email to the manager
@@ -1382,6 +1384,7 @@ class BusinessTripController extends Controller
         }
         if ($statusValue !== 'Declaration Draft') {
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
@@ -2407,6 +2410,7 @@ class BusinessTripController extends Controller
 
         if ($statusValue !== 'Draft') {
             $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
@@ -3395,6 +3399,7 @@ class BusinessTripController extends Controller
             $statusValue = 'Pending L2';
             $layer = 1;
             $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            $managerL2 = "eriton.dewa@kpn-corp.com";
             // dd($managerL2);
             if ($managerL2) {
                 // Send email to L2
@@ -3642,6 +3647,7 @@ class BusinessTripController extends Controller
             $statusValue = 'Declaration L2';
             $layer = 1;
             $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            $managerL2 = "eriton.dewa@kpn-corp.com";
             // dd($managerL2);
             if ($managerL2) {
                 // Send email to L2
