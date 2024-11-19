@@ -540,7 +540,7 @@
                                     <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
                                     <a href="{{ route('approval.cashadvanced') }}" type="button"
                                         class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
-                                    <button type="button" class="btn mb-2 btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalReject"
+                                    <button id="rejectButton" type="button" class="btn mb-2 btn-primary btn-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#modalReject"
                                             data-no-id="{{ $transactions->id }}"
                                             data-no-ca="{{ $transactions->no_ca }}"
                                             data-start-date="{{ $transactions->start_date }}"
@@ -683,6 +683,16 @@
                 document.getElementById('reject_no_ca').textContent = caNumber;
                 document.getElementById('reject_no_id').value = idNumber; // Mengisi input no_id
             });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('autoOpen') === 'reject') {
+                const rejectButton = document.getElementById('rejectButton');
+                if (rejectButton) {
+                    rejectButton.click();
+                }
+            }
         });
 
     </script>

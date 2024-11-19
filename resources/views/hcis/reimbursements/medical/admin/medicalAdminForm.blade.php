@@ -123,14 +123,14 @@
                                                 $imageSrc = '';
                                                 if (in_array($fileExtension, ['pdf'])) {
                                                     $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your PDF icon
-                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                                                    $imageSrc = Storage::url($medic->medical_proof); // Image files should display their own thumbnail
+                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'PNG'])) {
+                                                    $imageSrc = asset($medic->medical_proof); // Image files should display their own thumbnail
                                                 } else {
                                                     $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png';
                                                 }
                                             @endphp
-                                            
-                                            <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
+
+                                            <a href="{{ asset($medic->medical_proof) }}" target="_blank"
                                                 style="text-decoration: none;">
                                                 <img src="{{ $imageSrc }}" alt="{{ $fileExtension }} file"
                                                     class="file-icon" style="width: 50px; height: 50px;">

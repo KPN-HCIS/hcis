@@ -52,7 +52,6 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
                 DB::raw("DATE_FORMAT(ca_transactions.start_date, '%d-%M-%Y') as formatted_start_date"),
                 DB::raw("DATE_FORMAT(ca_transactions.end_date, '%d-%M-%Y') as formatted_end_date"),
                 DB::raw("DATE_FORMAT(ca_transactions.declare_estimate, '%d-%M-%Y') as formatted_declare_estimate"),
-                DB::raw("DATE_FORMAT(ca_transactions.declaration_at, '%d-%M-%Y') as formatted_declaration_at"),
                 'ca_transactions.contribution_level_code',
                 'employees.employee_id',
                 'employees.fullname as employee_name',
@@ -148,7 +147,6 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
                     'Start Date' => $row->formatted_start_date,
                     'End Date' => $row->formatted_end_date,
                     'Declare Estimate' => $row->formatted_declare_estimate,
-                    'Declare Date' => $row->formatted_declaration_at,
                     'Level Code' => $row->contribution_level_code,
                     'Employee ID' => $row->employee_id,
                     'Employee Name' => $row->employee_name,
@@ -181,7 +179,6 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
                 'Start Date' => '',
                 'End Date' => '',
                 'Declare Estimate' => '',
-                'Declare Date' => '',
                 'Level Code' => '',
                 'Employee ID' => '',
                 'Employee Name' => '',
@@ -204,7 +201,6 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
             'Start Date' => '',
             'End Date' => '',
             'Declare Estimate' => '',
-            'Declare Date' => '',
             'Level Code' => '',
             'Employee ID' => '',
             'Employee Name' => '',
@@ -225,15 +221,9 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
         // Base headings
         $headings = [
             'No',
-            'Unit',
-            'Submitted Date',
-            'Paid Date',
-            'Start Date',
-            'End Date',
-            'Est. Settlement Date',
-            'Settlement Date',
-            'Company',
-            'Employee ID',
+            'NIK',
+            'Tanggal Transaksi',
+            'Tanggal Pengajuan',
             'Employee Name',
             'Patient Name',
             'Div',
@@ -308,53 +298,6 @@ class CashAdvancedExport implements FromCollection, WithHeadings, WithStyles, Wi
                     $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
                 }
 
-                // Array untuk menampung nomor baris yang perlu dicetak tebal (kategori dan total)
-                $boldRows = [];
-                $mergeRanges = [];
-
-                // Dapatkan seluruh baris dan tandai baris kategori dan total sebagai tebal
-                $dataRows = $this->collection();
-                foreach ($dataRows as $index => $row) {
-                    // Cari baris kategori atau total dan tambahkan ke array
-                    if (in_array($row['Type_CA'], ['I', 'II', 'III'])) {
-                        // Kategori header, merge A:D
-                        $boldRows[] = $index + 2;
-                        $mergeRanges[] = "C{$boldRows[count($boldRows) - 1]}:AB{$boldRows[count($boldRows) - 1]}";
-                    } elseif (stripos($row['Type_CA'], 'Total') !== false) {
-                        // Jika baris adalah subtotal
-                        if ($row['Type_CA'] !== 'Total Employee Advanced') {
-                            // Merge untuk subtotal per kategori, hanya A:C
-                            $boldRows[] = $index + 2;
-                            $mergeRanges[] = "A{$boldRows[count($boldRows) - 1]}:O{$boldRows[count($boldRows) - 1]}";
-                            $mergeRanges[] = "S{$boldRows[count($boldRows) - 1]}:AB{$boldRows[count($boldRows) - 1]}";
-                        } else {
-                            // Untuk total keseluruhan (Total Employee Advanced), merge cells sampai kolom 'C'
-                            $boldRows[] = $index + 2;
-                            $mergeRanges[] = "A{$boldRows[count($boldRows) - 1]}:O{$boldRows[count($boldRows) - 1]}";
-                            $mergeRanges[] = "S{$boldRows[count($boldRows) - 1]}:AB{$boldRows[count($boldRows) - 1]}";
-                        }
-                    }
-                }
-
-                // Terapkan gaya tebal ke setiap baris kategori dan total
-                foreach ($boldRows as $rowNumber) {
-                    $sheet->getStyle("A{$rowNumber}:F{$rowNumber}")->applyFromArray([
-                        'font' => [
-                            'bold' => true,
-                        ],
-                    ]);
-
-                    $sheet->getStyle("P{$rowNumber}:R{$rowNumber}")->applyFromArray([
-                        'font' => [
-                            'bold' => true,
-                        ],
-                    ]);
-                }
-
-                // Lakukan merge cells untuk setiap range yang telah ditentukan
-                foreach ($mergeRanges as $range) {
-                    $sheet->mergeCells($range);
-                }
                 $sheet->getStyle('B1:B' . $highestRow)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
             },
         ];

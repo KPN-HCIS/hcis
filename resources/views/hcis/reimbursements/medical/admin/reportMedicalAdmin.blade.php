@@ -93,15 +93,28 @@
                                         <input type="date" class="form-control" id="end_date" name="end_date" placeholder="End Date" value="{{ request()->get('end_date') }}" title="End Date">
                                     </div>
 
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-md-2">
                                         <label class="form-label">Business Units :</label>
-                                        <select class="form-select select2" aria-label="Status" id="stat"
-                                            name="stat">
+                                        <select class="form-select select2" aria-label="Status" id="stat" name="stat">
                                             <option value="" {{ request()->get('stat') == '-' ? 'selected' : '' }}>- Select Bussiness Unit -</option>
                                             @foreach ($unit as $units)
-                                                <option value="{{ $units->nama_bisnis }}"
-                                                    {{ $units->nama_bisnis == request()->get('stat') ? 'selected' : '' }}>
+                                                <option value="{{ $units->nama_bisnis }}" {{ $units->nama_bisnis == request()->get('stat') ? 'selected' : '' }}>
                                                     {{ $units->nama_bisnis }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 col-md-2">
+                                        <label class="form-label">Unit Location:</label>
+                                        <select class="form-select select2" aria-label="Status" id="unit"
+                                            name="unit">
+                                            <option value="" {{ request()->get('unit') == '-' ? 'selected' : '' }}>All
+                                                Location</option>
+                                            @foreach ($locations as $location)
+                                                <option value="{{ $location->work_area }}"
+                                                    {{ $location->work_area == request()->get('unit') ? 'selected' : '' }}>
+                                                    {{ $location->area . ' (' . $location->company_name . ')' }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -117,8 +130,11 @@
                                         <button class="btn btn-primary w-100" type="submit">Filter</button>
                                     </div>
 
-                                    <div class="col-12 col-md-2">
-                                        @if (isset($_GET['stat']) && $_GET['stat'] !== '' || isset($_GET['customsearch']) && $_GET['customsearch'] !== '')
+                                    <div class="col-12 col-md-1">
+                                        @if (isset($_GET['stat']) && $_GET['stat'] !== ''
+                                            || isset($_GET['customsearch']) && $_GET['customsearch'] !== ''
+                                            || isset($_GET['unit']) && $_GET['unit'] !== ''
+                                            || (isset($_GET['start_date']) && $_GET['start_date'] !== '' && isset($_GET['end_date']) && $_GET['end_date'] !== ''))
                                             <button style="display: block" class="btn btn-success w-100" type="button" onclick="redirectToExportExcel()">
                                                 Export <i class="ri-file-excel-2-line"></i>
                                             </button>
@@ -244,6 +260,9 @@
             // Ambil nilai dari input
             const stat = document.getElementById("stat").value;
             const customSearch = document.getElementById("customsearch").value;
+            const endDate = document.getElementById("end_date").value;
+            const startDate = document.getElementById("start_date").value;
+            const unit = document.getElementById("unit").value;
 
             // Buat elemen form
             const form = document.createElement("form");
@@ -261,9 +280,28 @@
             customSearchInput.name = "customsearch";
             customSearchInput.value = customSearch;
 
+            const startDateInput = document.createElement("input");
+            startDateInput.type = "hidden";
+            startDateInput.name = "start_date";
+            startDateInput.value = startDate;
+
+            const endDateInput = document.createElement("input");
+            endDateInput.type = "hidden";
+            endDateInput.name = "end_date";
+            endDateInput.value = endDate;
+
+            const unitInput = document.createElement("input");
+            unitInput.type = "hidden";
+            unitInput.name = "unit";
+            unitInput.value = unit;
+
+
             // Tambahkan input ke form
             form.appendChild(statInput);
             form.appendChild(customSearchInput);
+            form.appendChild(startDateInput);
+            form.appendChild(endDateInput);
+            form.appendChild(unitInput);
 
             // Tambahkan form ke body dan kirim
             document.body.appendChild(form);

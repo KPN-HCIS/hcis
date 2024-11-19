@@ -38,6 +38,10 @@ use App\Exports\TicketExport;
 use App\Exports\HotelExport;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CashAdvancedNotification;
+use App\Mail\HotelNotification;
+use App\Mail\TicketNotification;
 
 class ReimburseController extends Controller
 {
@@ -135,15 +139,7 @@ class ReimburseController extends Controller
             ->count();
         // dd($pendingCACount);
         $today = Carbon::today();
-
-        // Mengambil data karyawan yang sedang login
         $employee_data = Employee::where('id', $userId)->first();
-
-        // Mendapatkan transaksi CA yang terkait dengan user yang sedang login
-        // $ca_transactions = CATransaction::with('employee')->where('user_id', $userId)->get();
-
-        // Mengambil fullname dari employee berdasarkan status_id
-        // $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))->pluck('fullname', 'employee_id');
 
         $disableCACount = CATransaction::where('user_id', $userId)
             ->where(function ($query) {
@@ -244,7 +240,7 @@ class ReimburseController extends Controller
             ->where('approval_status', '<>', 'Rejected')
             ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
             ->get();
-        
+
         foreach ($ca_approvals as $approval) {
             $approval->ReqName = $approval->statusReqEmployee ? $approval->statusReqEmployee->fullname : '';
         }
@@ -346,9 +342,9 @@ class ReimburseController extends Controller
         $caStatus = $request->input('ca_status') ?? '-';
         $ca_transaction->date_required = $request->input('date_required');
         $ca_transaction->ca_paid_date = $request->input('ca_paid_date');
-        $ca_transaction->ca_status = $caStatus; 
+        $ca_transaction->ca_status = $caStatus;
         $ca_transaction->paid_date = $request->input('paid_date');
-        
+
         $ca_transaction->save();
 
         return redirect()->back()->with('success', 'Transaction status updated successfully.')
@@ -940,9 +936,33 @@ class ReimburseController extends Controller
                     // Simpan data ke database
                     $model_approval->save();
                 }
+            }
 
-                // Simpan data ke database
-                $model_approval->save();
+            $nextApproval = ca_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
+
+            $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            if ($CANotificationLayer) {
+                $textNotification = "{$model->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
+
+                $linkApprove = route('approval.email.approveddec', [
+                    'id' => $model->id,
+                    'employeeId' => $nextApproval->employee_id,
+                    'action' => 'approve',
+                ]);
+                $linkReject = route('blank.page', [
+                    'key' => encrypt($model->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller
+                    'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini
+                    'autoOpen' => 'reject'
+                ]);
+
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    $nextApproval,
+                    $model,
+                    $textNotification,
+                    null,
+                    $linkApprove,
+                    $linkReject,
+                ));
             }
         }
 
@@ -1285,8 +1305,36 @@ class ReimburseController extends Controller
                     $model_approval->save();
                 }
             }
+
+            $nextApproval = ca_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
+
+            $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            if ($CANotificationLayer) {
+                $textNotification = "{$model->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
+
+                $linkApprove = route('approval.email.aproved', [
+                    'id' => $model->id,
+                    'employeeId' => $nextApproval->employee_id,
+                    'action' => 'approve',
+                ]);
+                $linkReject = route('blank.page', [
+                    'key' => encrypt($model->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller
+                    'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini
+                    'autoOpen' => 'reject'
+                ]);
+
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    $nextApproval,
+                    $model,
+                    $textNotification,
+                    null,
+                    $linkApprove,
+                    $linkReject,
+                ));
+            }
         }
         $model->save();
+
         return redirect()->route('cashadvanced')->with('success', 'Transaction successfully added waiting for Approval.');
     }
     public function cashadvancedExtend(Request $req)
@@ -1377,6 +1425,34 @@ class ReimburseController extends Controller
                     // Simpan data ke database
                     $model_approval->save();
                 }
+            }
+
+            $nextApproval = ca_extend::where('ca_id', $id)->where('employee_id', $managerL1)->firstOrFail();
+
+            $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            if ($CANotificationLayer) {
+                $textNotification = "{$model->employee->fullname} mengajuan Extend Dinas dengan detail Berikut :";
+                $declaration = "Extend";
+
+                $linkApprove = route('approval.email.approvedext', [
+                    'id' => $model->id,
+                    'employeeId' => $nextApproval->employee_id,
+                    'action' => 'approve',
+                ]);
+                $linkReject = route('blank.page', [
+                    'key' => encrypt($model->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller
+                    'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini
+                    'autoOpen' => 'reject'
+                ]);
+
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    $nextApproval,
+                    $model,
+                    $textNotification,
+                    $declaration,
+                    $linkApprove,
+                    $linkReject,
+                ));
             }
 
             $model->save();
@@ -1784,6 +1860,33 @@ class ReimburseController extends Controller
                     $model_approval->save();
                 }
             }
+            $nextApproval = ca_sett_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
+
+            $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            if ($CANotificationLayer) {
+                $textNotification = "{$model->employee->fullname} mengajukan Declaration Cash Advanced dengan detail Berikut :";
+                $declaration = "Declaration";
+
+                $linkApprove = route('approval.email.aproved', [
+                    'id' => $model->id,
+                    'employeeId' => $nextApproval->employee_id,
+                    'action' => 'approve',
+                ]);
+                $linkReject = route('blank.page', [
+                    'key' => encrypt($model->id),  // Ganti 'id' dengan 'key' sesuai dengan parameter di controller
+                    'userId' => $nextApproval->employee->id, // Jika perlu, masukkan ID pengguna di sini
+                    'autoOpen' => 'reject'
+                ]);
+
+                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                    $nextApproval,
+                    $model,
+                    $textNotification,
+                    $declaration,
+                    $linkApprove,
+                    $linkReject,
+                ));
+            }
         }
         $model->declaration_at = Carbon::now();
         $model->save();
@@ -1973,6 +2076,8 @@ class ReimburseController extends Controller
             'tgl_keluar_htl' => $req->tgl_keluar_htl,
             'total_hari' => $req->total_hari,
             'approval_status' => $statusValue,
+            'no_htl' => $noSppdHtl,
+            'no_sppd' => $req->bisnis_numb,
         ];
 
         foreach ($hotelData['nama_htl'] as $key => $value) {
@@ -1995,8 +2100,20 @@ class ReimburseController extends Controller
                 $model->approval_status = $statusValue;
                 $model->hotel_only = 'Y';
                 $model->created_by = $userId;
-                // dd($statusValue);
                 $model->save();
+
+                // $hotelModels[] = $model;
+                // dd($hotelModels);
+                // dd($hotelData);
+
+                if ($statusValue == 'Pending L1') {
+                    $employee = Employee::where('id', $userId)->first();
+                    $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
+                    if ($HTLNotificationSubmit) {
+                        // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+                        Mail::to($HTLNotificationSubmit)->send(new HotelNotification($hotelData));
+                    }
+                }
             }
         }
 
@@ -2078,17 +2195,17 @@ class ReimburseController extends Controller
 
     public function hotelUpdate(Request $req, $key)
     {
+        $userId = Auth::id();
         $hotelIds = $req->input('hotel_ids', []); // Get the array of existing hotel IDs
         $existingHotels = Hotel::whereIn('id', $hotelIds)->get()->keyBy('id'); // Load existing hotels into a collection
 
         $processedHotelIds = [];
         $updateBusinessTrip = false;
 
-        // Determine approval status based on the action
         if ($req->has('action_draft')) {
-            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+            $statusValue = 'Draft';
         } elseif ($req->has('action_submit')) {
-            $statusValue = 'Pending L1';  // When "Submit" is clicked
+            $statusValue = 'Pending L1';
         }
 
         // Get the no_htl from the first existing hotel record
@@ -2115,6 +2232,7 @@ class ReimburseController extends Controller
                     'approval_status' => $statusValue,
                     'jns_dinas_htl' => $req->jns_dinas_htl,
                     'hotel_only' => 'Y',
+                    'no_htl' => $existingNoHtl,
                 ];
 
                 // Check if hotel ID exists to decide if it's an update or a new entry
@@ -2152,7 +2270,18 @@ class ReimburseController extends Controller
             }
         }
 
-        // Update BusinessTrip if status changed to "Pending L1" for any hotel
+        if ($statusValue == 'Pending L1') {
+            $employee = Employee::where('id', $userId)->first();
+            $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
+            // dd($hotelData);
+            $allHotels = Hotel::where('no_htl', $existingNoHtl)->get()->toArray();
+            // dd($allHotels);
+            if ($HTLNotificationSubmit) {
+                // Pass all hotels to the notification email
+                Mail::to($HTLNotificationSubmit)->send(new HotelNotification($allHotels));
+            }
+        }
+
         if ($updateBusinessTrip) {
             $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
             if ($bt) {
@@ -2160,18 +2289,9 @@ class ReimburseController extends Controller
                 $bt->save();
             }
         }
-        // dd([$hotelIds, $processedHotelIds]);
-        // Delete hotels with the same no_htl but not in the processedHotelIds
         Hotel::where('no_htl', $existingNoHtl)
             ->whereNotIn('id', $processedHotelIds)
             ->delete();
-
-        // Show success or warning message
-        // if (count($processedHotelIds) > 0) {
-        //     Alert::success('Success', "Hotels updated successfully");
-        // } else {
-        //     Alert::warning('Warning', "No hotels were updated.");
-        // }
 
         return redirect('/hotel')->with('success', 'Hotel request updated successfully');
     }
@@ -2627,7 +2747,8 @@ class ReimburseController extends Controller
         $employeeId = auth()->user()->employee_id;
         // Ambil tiket berdasarkan ID yang diterima
         $model = Hotel::where('id', $id)->firstOrFail();
-        $hotels = Hotel::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+        $no_htl = $model->no_htl;
+        $hotels = Hotel::where('no_htl', $no_htl)->with('businessTrip')->get();
 
         // Jika tombol booking hotel ditekan
         if ($req->has('action_htl_book')) {
@@ -2637,12 +2758,13 @@ class ReimburseController extends Controller
                 'booking_price' => 'required|numeric|min:0',
             ]);
 
-            // Update data hotel dengan kode dan harga hotel
-            $model->booking_code = $req->input('booking_code');
-            $model->booking_price = $req->input('booking_price');
-            $model->save();
+            foreach ($hotels as $hotel) {
+                $hotel->booking_code = $req->input('booking_code');
+                $hotel->booking_price = $req->input('booking_price');
+                $hotel->save();
+            }
 
-            return redirect()->route('hotel.admin')->with('success', 'hotel booking updated successfully.');
+            return redirect()->route('hotel.admin')->with('success', 'Hotel booking updated successfully.');
         }
     }
     public function exportHotelAdminExcel(Request $request)
@@ -3599,8 +3721,10 @@ class ReimburseController extends Controller
 
         // Ambil tiket berdasarkan ID yang diterima
         $model = Tiket::where('id', $id)->firstOrFail();
-        $tickets = Tiket::where('id', $id)->with('businessTrip')->orderBy('created_at', 'desc')->get();
+        $no_tkt = $model->no_tkt;
+        $tickets = Tiket::where('no_tkt', $no_tkt)->with('businessTrip')->get();
 
+        // dd($tickets);
         // Jika tombol booking ticket ditekan
         if ($req->has('action_tkt_book')) {
             // Validasi input dari form
@@ -3609,10 +3733,11 @@ class ReimburseController extends Controller
                 'booking_price' => 'required|numeric|min:0',
             ]);
 
-            // Update data tiket dengan kode dan harga tiket
-            $model->booking_code = $req->input('booking_code');
-            $model->tkt_price = $req->input('booking_price');
-            $model->save();
+            foreach ($tickets as $ticket) {
+                $ticket->booking_code = $req->input('booking_code');
+                $ticket->tkt_price = $req->input('booking_price');
+                $ticket->save();
+            }
 
             return redirect()->route('ticket.admin')->with('success', 'Ticket booking updated successfully.');
         }

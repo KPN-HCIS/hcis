@@ -598,8 +598,13 @@
                         var dateText = document.createElement('p');
 
                         if ("{{ $approval->approval_status }}" === "Approved") {
-                            dateText.textContent = `{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})`;
-                            buttonCol.appendChild(dateText);
+                            if ("{{ $approval->by_admin }}" === "T") {
+                                dateText.textContent = "{{ $approval->approval_status }} By Admin ({{ $approval->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                                buttonCol.appendChild(dateText);
+                            } else {
+                                dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                                buttonCol.appendChild(dateText);
+                            }
                         } else if (previousLayerApproved) {
                             // Form Data
                             var dataNoIdInput = document.createElement('input');
@@ -623,7 +628,7 @@
                             approveButton.type = 'submit';
                             approveButton.name = 'action_ca_approve';
                             approveButton.value = 'Approve';
-                            approveButton.className = 'btn btn-sm btn-success btn-pill px-1';
+                            approveButton.className = 'btn btn-sm btn-success btn-pill px-1 me-1';
                             approveButton.textContent = 'Approve';
                             approveButton.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
 
@@ -632,8 +637,8 @@
 
                             form.querySelector('#data_no_id').value = "{{ $approval->id }}";
 
-                            buttonCol.appendChild(rejectButton);
                             buttonCol.appendChild(approveButton);
+                            buttonCol.appendChild(rejectButton);
                         } else {
                             // Jika layer sebelumnya tidak disetujui, layer ini tidak menampilkan tombol
                             dateText.textContent = 'Waiting for previous approval';
@@ -716,8 +721,15 @@
                         var dateText = document.createElement('p');
 
                         if ("{{ $approval->approval_status }}" === "Approved") {
-                            dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
-                            buttonCol.appendChild(dateText);
+                            if ("{{ $approval->by_admin }}" === "T") {
+                                dateText.textContent = "{{ $approval->approval_status }} By Admin ({{ $approval->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                                buttonCol.appendChild(dateText);
+                            } else {
+                                dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                                buttonCol.appendChild(dateText);
+                            }
+                            // dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
+                            // buttonCol.appendChild(dateText);
                         } else if (previousLayerApproved) {
                             dateText.textContent = 'Something Wrong, This form just for Approve Declaration';
                             buttonCol.appendChild(dateText);
@@ -754,12 +766,17 @@
                         var dateTextDec = document.createElement('p');
 
                         if ("{{ $approval_sett->approval_status }}" === "Approved") {
-                            dateTextDec.textContent = "{{ $approval_sett->approval_status }} ({{ \Carbon\Carbon::parse($approval_sett->approved_at)->format('d-M-y') }})";
-                            buttonColDec.appendChild(dateTextDec);
+                            if ("{{ $approval_sett->by_admin }}" === "T") {
+                                dateTextDec.textContent = "{{ $approval_sett->approval_status }} By Admin ({{ $approval_sett->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval_sett->approved_at)->format('d-M-y') }})";
+                                buttonColDec.appendChild(dateTextDec);
+                            } else {
+                                dateTextDec.textContent = "{{ $approval_sett->approval_status }} ({{ \Carbon\Carbon::parse($approval_sett->approved_at)->format('d-M-y') }})";
+                                buttonColDec.appendChild(dateTextDec);
+                            }
                         } else if (previousLayerApprovedDec) {
                             var rejectButtonDec = document.createElement('button');
                             rejectButtonDec.type = 'button'; // Mengubah type menjadi 'button'
-                            rejectButtonDec.className = 'btn btn-sm btn-primary btn-pill px-1 me-1'; // Mengatur class sesuai yang diinginkan
+                            rejectButtonDec.className = 'btn btn-sm btn-primary btn-pill px-1 me-1 mb-2';
                             rejectButtonDec.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
                             rejectButtonDec.setAttribute('data-bs-target', '#modalRejectDec'); // Menambahkan atribut data-bs-target
                             rejectButtonDec.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
@@ -774,7 +791,7 @@
                             approveButtonDec.type = 'submit';
                             approveButtonDec.name = 'action_ca_approve';
                             approveButtonDec.value = 'Approve';
-                            approveButtonDec.className = 'btn btn-sm btn-success btn-pill px-1';
+                            approveButtonDec.className = 'btn btn-sm btn-success btn-pill px-1 me-1 mb-2';
                             approveButtonDec.textContent = 'Approve';
                             approveButtonDec.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
 
@@ -783,8 +800,8 @@
 
                             form.querySelector('#data_no_id').value = "{{ $approval_sett->id }}";
 
-                            buttonColDec.appendChild(rejectButtonDec);
                             buttonColDec.appendChild(approveButtonDec);
+                            buttonColDec.appendChild(rejectButtonDec);
                         } else {
                             dateTextDec.textContent = 'Waiting for previous approval';
                             buttonColDec.appendChild(dateTextDec);

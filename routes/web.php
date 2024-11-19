@@ -68,6 +68,28 @@ Route::get('/test-email', function () {
     return view('email.reminderschedule', compact('messages', 'name'));
 });
 
+Route::get('/approval/cashadvanced/approve/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalEmail'])
+    ->name('approval.email.aproved');
+
+Route::post('/approval/cashadvanced/reject/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalEmail'])
+    ->name('approval.email');
+
+Route::get('/approval/cashadvancedDec/approved/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiEmail'])
+    ->name('approval.email.approveddec');
+
+Route::post('/approval/cashadvancedDec/reject/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiEmail'])
+    ->name('approval.email.dec');
+
+Route::get('/approval/cashadvancedExt/approved/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionExtendEmail'])
+    ->name('approval.email.approvedext');
+
+Route::post('/approval/cashadvancedExt/reject/email/{id}/{employeeId}', [ApprovalReimburseController::class, 'cashadvancedActionExtendEmail'])
+    ->name('approval.email.ext');
+
+Route::get('/page/{key}', [ApprovalReimburseController::class, 'blankApproval'])->name('blank.page');
+
+Route::get('/page', [ApprovalReimburseController::class, 'blankApproval'])->name('blank.pageUn');
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
@@ -254,6 +276,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/export/report-emp', [ExportExcelController::class, 'exportreportemp'])->name('export.reportemp');
 
     Route::post('/export', [ExportExcelController::class, 'export'])->name('export');
+    Route::get('/download-template', function () {
+        // Logika untuk mengunduh template Excel
+        return response()->download(public_path('files/template_import_mdc.xlsx'));
+    })->name('download-template');
     Route::post('/admin-export', [ExportExcelController::class, 'exportAdmin'])->name('admin.export');
     Route::post('/notInitiatedReport', [ExportExcelController::class, 'notInitiated'])->name('team-goals.notInitiated');
     Route::post('/initiatedReport', [ExportExcelController::class, 'initiated'])->name('team-goals.initiated');

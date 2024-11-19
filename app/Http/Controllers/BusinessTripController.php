@@ -33,6 +33,8 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use ZipArchive;
 use Illuminate\Support\Facades\Log;
 use App\Models\ca_approval;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BusinessTripNotification;
 
 
 class BusinessTripController extends Controller
@@ -802,6 +804,15 @@ class BusinessTripController extends Controller
             CATransaction::where('no_sppd', $oldNoSppd)->delete();
         }
 
+        if ($statusValue !== 'Draft') {
+            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new BusinessTripNotification($n));
+            }
+        }
+
         return redirect('/businessTrip')->with('success', 'Business trip updated successfully');
     }
 
@@ -1170,6 +1181,14 @@ class BusinessTripController extends Controller
                     $model_approval->save();
                 }
             }
+            if ($statusValue !== 'Declaration Draft') {
+                $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+                // dd($managerEmail);
+                if ($managerEmail) {
+                    // Send email to the manager
+                    Mail::to($managerEmail)->send(new BusinessTripNotification($n));
+                }
+            }
         }
 
         // Assign or update values to $ca model
@@ -1359,6 +1378,14 @@ class BusinessTripController extends Controller
                 $model_approval->approval_status = 'Pending';
 
                 $model_approval->save();
+            }
+        }
+        if ($statusValue !== 'Declaration Draft') {
+            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new BusinessTripNotification($n));
             }
         }
 
@@ -2016,7 +2043,7 @@ class BusinessTripController extends Controller
         $managerL1 = $deptHeadManager->employee_id;
         $managerL2 = $deptHeadManager->manager_l1_id;
 
-        BusinessTrip::create([
+        $businessTrip = BusinessTrip::create([
             'id' => $bt->id,
             'user_id' => $userId,
             'jns_dinas' => $request->jns_dinas,
@@ -2375,6 +2402,15 @@ class BusinessTripController extends Controller
                     $model_approval->save();
                 }
                 $ca->save();
+            }
+        }
+
+        if ($statusValue !== 'Draft') {
+            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new BusinessTripNotification($businessTrip));
             }
         }
         return redirect()->route('businessTrip')->with('success', 'Request Successfully Added');
@@ -3358,6 +3394,12 @@ class BusinessTripController extends Controller
         } elseif ($employeeId == $businessTrip->manager_l1_id) {
             $statusValue = 'Pending L2';
             $layer = 1;
+            $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            // dd($managerL2);
+            if ($managerL2) {
+                // Send email to L2
+                Mail::to($managerL2)->send(new BusinessTripNotification($businessTrip));
+            }
 
             if ($businessTrip->hotel == 'Ya') {
                 $hotel = Hotel::where('no_sppd', $businessTrip->no_sppd)->first();
@@ -3599,7 +3641,12 @@ class BusinessTripController extends Controller
         } elseif ($employeeId == $businessTrip->manager_l1_id) {
             $statusValue = 'Declaration L2';
             $layer = 1;
-
+            $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            // dd($managerL2);
+            if ($managerL2) {
+                // Send email to L2
+                Mail::to($managerL2)->send(new BusinessTripNotification($businessTrip));
+            }
             // Handle CA approval for L1
             if ($businessTrip->ca == 'Ya') {
                 $caTransaction = CATransaction::where('no_sppd', $businessTrip->no_sppd)->first();

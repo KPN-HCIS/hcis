@@ -81,7 +81,7 @@
                                         type="checkbox"
                                         name="accommodation_e_relation[{{ $loop->index }}]"
                                         id="accommodation_e_relation_{{ $loop->index + 1 }}"
-                                        value="accommodation" {{ isset($relation_dec['relation_type']['Accommodation']) && $relation_dec['relation_type']['Accommodation'] ? 'checked' : '' }}>
+                                        value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
                                         for="accommodation_e_relation_{{ $loop->index + 1 }}">Accommodation</label>
                                 </div>
@@ -90,7 +90,7 @@
                                         name="transport_e_relation[{{ $loop->index }}]"
                                         type="checkbox"
                                         id="transport_e_relation_{{ $loop->index + 1 }}"
-                                        value="transport" {{ isset($relation_dec['relation_type']['Transport']) && $relation_dec['relation_type']['Transport'] ? 'checked' : '' }}>
+                                        value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
                                         for="transport_e_relation_{{ $loop->index + 1 }}">Transport</label>
                                 </div>
@@ -98,7 +98,7 @@
                                     <input class="form-check-input"
                                         name="gift_e_relation[{{ $loop->index }}]" type="checkbox"
                                         id="gift_e_relation_{{ $loop->index + 1 }}"
-                                        value="gift" {{ isset($relation_dec['relation_type']['Gift']) && $relation_dec['relation_type']['Gift'] ? 'checked' : '' }}>
+                                        value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
                                         for="gift_e_relation_{{ $loop->index + 1 }}">Gift</label>
                                 </div>
@@ -106,7 +106,7 @@
                                     <input class="form-check-input"
                                         name="fund_e_relation[{{ $loop->index }}]" type="checkbox"
                                         id="fund_e_relation_{{ $loop->index + 1 }}"
-                                        value="fund" {{ isset($relation_dec['relation_type']['Fund']) && $relation_dec['relation_type']['Fund'] ? 'checked' : '' }}>
+                                        value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
                                         for="fund_e_relation_{{ $loop->index + 1 }}">Fund</label>
                                 </div>
@@ -114,7 +114,7 @@
                                     <input class="form-check-input"
                                         name="food_e_relation[{{ $loop->index }}]" type="checkbox"
                                         id="food_e_relation_{{ $loop->index + 1 }}"
-                                        value="food" {{ isset($relation_dec['relation_type']['Food']) && $relation_dec['relation_type']['Food'] ? 'checked' : '' }}>
+                                        value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
                                         for="food_e_relation_{{ $loop->index + 1 }}">Food/Beverages/Souvenir</label>
                                 </div>
@@ -177,43 +177,43 @@
                                 <input class="form-check-input"
                                     type="checkbox"
                                     name="accommodation_e_relation[{{ $loop->index }}]"
-                                    id="accommodation_e_relation_1"
-                                    value="accommodation" {{ isset($relation_dec['relation_type']['Accommodation']) && $relation_dec['relation_type']['Accommodation'] ? 'checked' : '' }}>
+                                    id="accommodation_e_relation_{{ $loop->index + 1 }}"
+                                    value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="accommodation_e_relation_1">Accommodation</label>
+                                    for="accommodation_e_relation_{{ $loop->index + 1 }}">Accommodation</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input"
                                     name="transport_e_relation[{{ $loop->index }}]"
                                     type="checkbox"
-                                    id="transport_e_relation_1"
-                                    value="transport" {{ isset($relation_dec['relation_type']['Transport']) && $relation_dec['relation_type']['Transport'] ? 'checked' : '' }}>
+                                    id="transport_e_relation_{{ $loop->index + 1 }}"
+                                    value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="transport_e_relation_1">Transport</label>
+                                    for="transport_e_relation_{{ $loop->index + 1 }}">Transport</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input"
                                     name="gift_e_relation[{{ $loop->index }}]" type="checkbox"
-                                    id="gift_e_relation_1"
-                                    value="gift" {{ isset($relation_dec['relation_type']['Gift']) && $relation_dec['relation_type']['Gift'] ? 'checked' : '' }}>
+                                    id="gift_e_relation_{{ $loop->index + 1 }}"
+                                    value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="gift_e_relation_1">Gift</label>
+                                    for="gift_e_relation_{{ $loop->index + 1 }}">Gift</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input"
                                     name="fund_e_relation[{{ $loop->index }}]" type="checkbox"
-                                    id="fund_e_relation_1"
-                                    value="fund" {{ isset($relation_dec['relation_type']['Fund']) && $relation_dec['relation_type']['Fund'] ? 'checked' : '' }}>
+                                    id="fund_e_relation_{{ $loop->index + 1 }}"
+                                    value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="fund_e_relation_1">Fund</label>
+                                    for="fund_e_relation_{{ $loop->index + 1 }}">Fund</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input"
                                     name="food_e_relation[{{ $loop->index }}]" type="checkbox"
-                                    id="food_e_relation_1"
-                                    value="food" {{ isset($relation_dec['relation_type']['Food']) && $relation_dec['relation_type']['Food'] ? 'checked' : '' }}>
+                                    id="food_e_relation_{{ $loop->index + 1 }}"
+                                    value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="food_e_relation_1">Food/Beverages/Souvenir</label>
+                                    for="food_e_relation_{{ $loop->index + 1 }}">Food/Beverages/Souvenir</label>
                             </div>
                         </div>
                         <div class="col-md-4 mb-2">
@@ -263,6 +263,10 @@
         @endforeach
     </div>
 
+    <script>
+        let checkboxCount = {{ $initialCount }} - 1;
+    </script>    
+
     <div class="mt-3">
         <button class="btn btn-primary btn-sm" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>
     </div>
@@ -270,6 +274,9 @@
     <div id="form-container-relation">
         @foreach ($declareCA['relation_e'] as $index => $relation_dec)
             @if (!isset($detailCA['relation_e'][$index]))
+                @php
+                    $initialCount = count($detailCA['relation_e']);
+                @endphp
                 <div id="form-container-e-relation-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
                     <p class="fs-4 text-primary" style="font-weight: bold; ">Relation Entertainment {{ $loop->index + 1 }}</p>
                     <div class="row">
@@ -279,44 +286,44 @@
                             <div class="form-check">
                                 <input class="form-check-input"
                                     type="checkbox"
-                                    name="accommodation_e_relation[1]"
-                                    id="accommodation_e_relation_1"
-                                    value="accommodation" {{ isset($relation_dec['relation_type']['Accommodation']) && $relation_dec['relation_type']['Accommodation'] ? 'checked' : '' }}>
+                                    name="accommodation_e_relation[{{ $loop->index }}]"
+                                    id="accommodation_e_relation_{{ $loop->index + 1 }}"
+                                    value="accommodation" {{ isset($relation['relation_type']['Accommodation']) && $relation['relation_type']['Accommodation'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="accommodation_e_relation_1">Accommodation</label>
+                                    for="accommodation_e_relation_{{ $loop->index + 1 }}">Accommodation</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input"
-                                    name="transport_e_relation[1]"
+                                    name="transport_e_relation[{{ $loop->index }}]"
                                     type="checkbox"
-                                    id="transport_e_relation_1"
-                                    value="transport" {{ isset($relation_dec['relation_type']['Transport']) && $relation_dec['relation_type']['Transport'] ? 'checked' : '' }}>
+                                    id="transport_e_relation_{{ $loop->index + 1 }}"
+                                    value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="transport_e_relation_1">Transport</label>
+                                    for="transport_e_relation_{{ $loop->index + 1 }}">Transport</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input"
-                                    name="gift_e_relation[1]" type="checkbox"
-                                    id="gift_e_relation_1"
-                                    value="gift" {{ isset($relation_dec['relation_type']['Gift']) && $relation_dec['relation_type']['Gift'] ? 'checked' : '' }}>
+                                    name="gift_e_relation[{{ $loop->index }}]" type="checkbox"
+                                    id="gift_e_relation_{{ $loop->index + 1 }}"
+                                    value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="gift_e_relation_1">Gift</label>
+                                    for="gift_e_relation_{{ $loop->index + 1 }}">Gift</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input"
-                                    name="fund_e_relation[1]" type="checkbox"
-                                    id="fund_e_relation_1"
-                                    value="fund" {{ isset($relation_dec['relation_type']['Fund']) && $relation_dec['relation_type']['Fund'] ? 'checked' : '' }}>
+                                    name="fund_e_relation[{{ $loop->index }}]" type="checkbox"
+                                    id="fund_e_relation_{{ $loop->index + 1 }}"
+                                    value="fund" {{ isset($relation['relation_type']['Fund']) && $relation['relation_type']['Fund'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="fund_e_relation_1">Fund</label>
+                                    for="fund_e_relation_{{ $loop->index + 1 }}">Fund</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input"
-                                    name="food_e_relation[1]" type="checkbox"
-                                    id="food_e_relation_1"
-                                    value="food" {{ isset($relation_dec['relation_type']['Food']) && $relation_dec['relation_type']['Food'] ? 'checked' : '' }}>
+                                    name="food_e_relation[{{ $loop->index }}]" type="checkbox"
+                                    id="food_e_relation_{{ $loop->index + 1 }}"
+                                    value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="food_e_relation_1">Food/Beverages/Souvenir</label>
+                                    for="food_e_relation_{{ $loop->index + 1 }}">Food/Beverages/Souvenir</label>
                             </div>
                         </div>
                         <div class="col-md-4 mb-2">
@@ -365,6 +372,10 @@
             @endif
         @endforeach
     </div>
+
+    <script>
+        let checkboxCount = {{ $initialCount }} - 1;
+    </script>  
 
     <div class="mt-3">
         <button class="btn btn-primary btn-sm" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>
@@ -382,41 +393,41 @@
                         <div class="form-check">
                             <input class="form-check-input"
                                 type="checkbox"
-                                name="accommodation_e_relation[1]"
-                                id="accommodation_e_relation_1"
+                                name="accommodation_e_relation[0]"
+                                id="accommodation_e_relation_0"
                                 value="accommodation">
                             <label class="form-check-label"
-                                for="accommodation_e_relation_1">Accommodation</label>
+                                for="accommodation_e_relation_0">Accommodation</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="transport_e_relation[1]"
+                                name="transport_e_relation[0]"
                                 type="checkbox"
-                                id="transport_e_relation_1"
+                                id="transport_e_relation_0"
                                 value="transport">
                             <label class="form-check-label"
-                                for="transport_e_relation_1">Transport</label>
+                                for="transport_e_relation_0">Transport</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="gift_e_relation[1]" type="checkbox"
-                                id="gift_e_relation_1" value="gift">
+                                name="gift_e_relation[0]" type="checkbox"
+                                id="gift_e_relation_0" value="gift">
                             <label class="form-check-label"
-                                for="gift_e_relation_1">Gift</label>
+                                for="gift_e_relation_0">Gift</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="fund_e_relation[1]" type="checkbox"
-                                id="fund_e_relation_1" value="fund">
+                                name="fund_e_relation[0]" type="checkbox"
+                                id="fund_e_relation_0" value="fund">
                             <label class="form-check-label"
-                                for="fund_e_relation_1">Fund</label>
+                                for="fund_e_relation_0">Fund</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="food_e_relation[1]" type="checkbox"
-                                id="food_e_relation_1" value="food">
+                                name="food_e_relation[0]" type="checkbox"
+                                id="food_e_relation_0" value="food">
                             <label class="form-check-label"
-                                for="food_e_relation_1">Food/Beverages/Souvenir</label>
+                                for="food_e_relation_0">Food/Beverages/Souvenir</label>
                         </div>
                     </div>
                     <div class="col-md-4 mb-2">
@@ -458,6 +469,10 @@
             </div>
         </div>
     </div>
+
+    <script>
+        let checkboxCount = 0;
+    </script> 
 
     <div class="mt-3">
         <button class="btn btn-primary btn-sm" id="addMoreButtonRelation" onclick="addMoreFormRelationDec(event)">Add More</button>

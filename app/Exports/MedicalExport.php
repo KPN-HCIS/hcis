@@ -8,6 +8,7 @@ use App\Models\MasterDisease;
 use App\Models\HealthPlan;
 use App\Models\HealthCoverage;
 use App\Models\MasterMedical;
+use App\Models\MasterBusinessUnit;
 use App\Models\Company;
 use App\Models\Location;
 use FontLib\Table\Type\fpgm;
@@ -23,100 +24,105 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
 {
     protected $stat;
     protected $customSearch;
+    protected $startDate;
+    protected $endDate;
+    protected $unit;
 
-    public function __construct($stat, $customSearch)
+    public function __construct($stat, $customSearch, $startDate, $endDate, $unit)
     {
         $this->stat = $stat;
         $this->customSearch = $customSearch;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+        $this->unit = $unit;
     }
 
     public function collection()
     {
+
         $currentYear = date('Y');
-        $medicalGroup = [];
+        $userRole = auth()->user()->roles->first();
+        $roleRestriction = json_decode($userRole->restriction, true);
 
-        $healthCoverageQuery = HealthCoverage::query();
-        // if (!empty($this->start_date)) {
-        //     $healthCoverageQuery->whereBetween('created_at', [$this->start_date, $this->end_date]);
-        // }
+        $restrictedWorkAreas = $roleRestriction['work_area_code'] ?? [];
+        $restrictedGroupCompanies = $roleRestriction['group_company'] ?? [];
 
-        $master_medical = MasterMedical::all();
+        // Query Employee dengan filter work_area_code jika ada restriction
+        $employeeQuery = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
 
-        $medicalGroup = $healthCoverageQuery->get()->groupBy('employee_id');
+        if (!empty($restrictedWorkAreas)) {
+            $employeeQuery->whereIn('work_area_code', $restrictedWorkAreas);
+        }
+        if (!empty($restrictedGroupCompanies)) {
+            $employeeQuery->whereIn('group_company', $restrictedGroupCompanies);
+        }
 
-        $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
-
+        // Filter tambahan
         if (!empty($this->stat)) {
-            $query->where('group_company', $this->stat);
+            $employeeQuery->where('group_company', $this->stat);
         }
         if (!empty($this->customSearch)) {
-            $query->where('fullname', 'like', '%' . $this->customSearch . '%');
+            $employeeQuery->where('fullname', 'like', '%' . $this->customSearch . '%');
+        }
+        if (!empty($this->startDate) && !empty($this->endDate)) {
+            $employeeQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
         }
 
-        $med_employee = $query->orderBy('created_at', 'desc')->get();
+        if (!empty($this->unit)) {
+            $employeeQuery->where('work_area_code', $this->unit);
+        }
+
+        $employees = $employeeQuery->orderBy('created_at', 'desc')->get();
+
+        // Query HealthCoverage berdasarkan Employee ID
+        $employeeIds = $employees->pluck('employee_id');
+        $healthCoverages = HealthCoverage::whereIn('employee_id', $employeeIds)
+            ->where('status', '!=', 'Draft')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $medical_plans = HealthPlan::where('period', $currentYear)->get();
-
         $balances = [];
         foreach ($medical_plans as $plan) {
             $balances[$plan->employee_id][$plan->medical_type] = $plan->balance;
         }
 
-        foreach ($med_employee as $transaction) {
-            $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
-            $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
-
-            $employeeMedicalPlan = $medical_plans->where('employee_id', $transaction->employee_id)->first();
-            $transaction->period = $employeeMedicalPlan ? $employeeMedicalPlan->period : '-';
-
-            if (isset($medicalGroup[$transaction->employee_id])) {
-                $transaction->medical_coverage = $medicalGroup[$transaction->employee_id];
-            }
-        }
-
-        // Buat array untuk menyimpan hasil gabungan dari kedua kode
+        // Gabungkan Data
         $combinedData = [];
+        foreach ($employees as $employee) {
+            $employeeCoverages = $healthCoverages->where('employee_id', $employee->employee_id);
 
-        // Ambil semua employee_id dari kode pertama
-        foreach ($med_employee as $transaction) {
-            // Jalankan kode kedua untuk setiap employee_id
-            $medicalGroup = HealthCoverage::where('employee_id', $transaction->employee_id)
-                ->where('status', '!=', 'Draft')
-                ->orderBy('created_at', 'desc')
-                ->get();
-
-            // Loop hasil dari kode kedua dan tambahkan ke hasil gabungan
-            foreach ($medicalGroup as $item) {
-                if ($item->status == 'Done') {
+            foreach ($employeeCoverages as $coverage) {
+                if ($coverage->status == 'Done') {
                     $combinedData[] = [
                         'number' => count($combinedData) + 1,
-                        'NIK' => $transaction->kk,
-                        'Transaction Date' => \Carbon\Carbon::parse($item->date)->format('d-F-Y'),
-                        'Submission Date' => \Carbon\Carbon::parse($item->created_at)->format('d-F-Y'),
-                        'Name' => $transaction->fullname,
-                        'Patient Name' => $item->patient_name,
-                        'Gorup' => $transaction->designation_name,
-                        'Disease' => $item->disease,
-                        'Status' => $item->status,
-                        'Reimburse',
-                        'NoRek' => $transaction->bank_name .  ' - ' . $transaction->bank_account_number,
-                        'NoInvoice' => $item->no_invoice,
-                        'MedicalType' => $item->medical_type,
-                        'Amount' => $item->balance,
-                        'AmountUncoverage' => $item->balance_uncoverage,
-                        'AmountVerify' => $item->balance_verif,
-                        'PT' => $transaction->company_name,
-                        'CostCenter' => $transaction->contribution_level_code,
-                        'JobLevel' => $transaction->job_level,
-                        'GroupCompany' => $transaction->group_company,
+                        'NIK' => $employee->kk,
+                        'Transaction Date' => \Carbon\Carbon::parse($coverage->date)->format('d-F-Y'),
+                        'Submission Date' => \Carbon\Carbon::parse($coverage->created_at)->format('d-F-Y'),
+                        'Name' => $employee->fullname,
+                        'Patient Name' => $coverage->patient_name,
+                        'Group' => $employee->designation_name,
+                        'Disease' => $coverage->disease,
+                        'Status' => $coverage->status,
+                        'Reimburse' => '',
+                        'NoRek' => $employee->bank_name . ' - ' . $employee->bank_account_number,
+                        'NoInvoice' => $coverage->no_invoice,
+                        'MedicalType' => $coverage->medical_type,
+                        'Amount' => $coverage->balance,
+                        'AmountUncoverage' => $coverage->balance_uncoverage,
+                        'AmountVerify' => $coverage->balance_verif,
+                        'PT' => $employee->company_name,
+                        'CostCenter' => $employee->contribution_level_code,
+                        'JobLevel' => $employee->job_level,
+                        'GroupCompany' => $employee->group_company,
                     ];
                 }
             }
         }
 
-        // Return hasil gabungan dari kedua kode
         return collect($combinedData);
     }
+
 
     public function headings(): array
     {
