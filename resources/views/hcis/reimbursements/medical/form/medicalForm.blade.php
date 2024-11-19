@@ -51,7 +51,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4 mb-2">
-                                    <label for="nama" class="form-label">Hospital Name</label>
+                                    <label for="nama" class="form-label">Hospital/Clinic Name</label>
                                     <input type="text" class="form-control form-control-sm" id="hospital_name"
                                         name="hospital_name" placeholder="ex: RS. Murni Teguh" required>
                                 </div>
@@ -90,10 +90,12 @@
                                         name="medical_type[]" multiple required>
                                         {{-- <option value="" selected>--- Choose Medical Type ---</option> --}}
                                         @foreach ($medical_type as $type)
-                                            @if (!$hasGlasses || $type->name !== 'Glasses')
+                                        @if (!$hasGlasses || $type->name !== 'Glasses') <!-- Existing condition for 'Glasses' -->
+                                            @if ($type->name !== 'Maternity' || $isMarried) <!-- Exclude 'Maternity' if not married -->
                                                 <option value="{{ $type->name }}">{{ $type->name }}</option>
                                             @endif
-                                        @endforeach
+                                        @endif
+                                    @endforeach
                                     </select>
                                 </div>
                             </div>

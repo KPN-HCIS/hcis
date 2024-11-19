@@ -152,7 +152,7 @@
 
                             <div id="additional-fields" class="row mb-3" style="display: none;">
                                 <div class="col-md-12">
-                                    <label for="additional-fields-title" class="mb-3">Business Trip Needs</label>
+                                    <label for="additional-fields-title" class="mb-3">Business Trip Needs (hasdjhajdhsadhahdahhdahdhas)</label>
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-check">
