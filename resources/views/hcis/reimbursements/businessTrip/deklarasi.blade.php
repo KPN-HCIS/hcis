@@ -85,12 +85,14 @@
                                         <tr>
                                             <th>Estimated Declaration</th>
                                             <td class="block">:</td>
-                                            <td>{{ isset($ca->declare_estimate) ? date('d M Y', strtotime($ca->declare_estimate)) : '-' }}</td>
+                                            <td>{{ isset($ca->declare_estimate) ? date('d M Y', strtotime($ca->declare_estimate)) : '-' }}
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Date Required</th>
                                             <td class="block">:</td>
-                                            <td>{{ isset($ca->date_required) ? date('d M Y', strtotime($ca->date_required)) : '-' }}</td>
+                                            <td>{{ isset($ca->date_required) ? date('d M Y', strtotime($ca->date_required)) : '-' }}
+                                            </td>
                                         </tr>
 
                                         <tr>
@@ -233,20 +235,37 @@
                                             use Illuminate\Support\Facades\Storage;
                                         @endphp
 
-                                        <div class="col-md-8 mt-2">
+                                        <div class="col-md-12 mt-2 mb-2">
                                             <label for="prove_declare" class="form-label">Upload Proof</label>
                                             <div class="d-flex align-items-center">
                                                 <input type="file" id="prove_declare" name="prove_declare"
                                                     accept="image/*,application/pdf" class="form-control me-2">
-
-                                                @if (isset($ca->prove_declare) && $ca->prove_declare)
-                                                    <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
-                                                        class="btn btn-primary rounded-pill">
-                                                        View
-                                                    </a>
-                                                @endif
                                             </div>
                                         </div>
+                                        @if (isset($ca->prove_declare) && $ca->prove_declare)
+                                            @php
+                                                // Get the file extension
+                                                $fileExtension = pathinfo($ca->prove_declare, PATHINFO_EXTENSION);
+                                                // Set the image based on the file type
+                                                $imageSrc = '';
+                                                if (in_array($fileExtension, ['pdf'])) {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your PDF icon
+                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                                    $imageSrc = Storage::url($ca->prove_declare); // Image files should display their own thumbnail
+                                                } else {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/file.png'; // Replace with the path to your default icon
+                                                }
+                                            @endphp
+                                            <div class="file-preview text-left">
+                                                <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
+                                                    style="text-decoration: none;">
+                                                    <img src="{{ $imageSrc }}" alt="{{ $fileExtension }} file"
+                                                        class="file-icon" style="width: 50px; height: 50px;">
+                                                    <div style="margin-top: 5px;"><u>View Proof</u></div>
+                                                </a>
+                                            {{-- @else
+                                                <div class="text-danger">No proof uploaded</div> --}}
+                                        @endif
 
                                         {{-- <input type="hidden" name="status" value="Declaration L1" id="status"> --}}
                                         <input type="hidden" name="no_id" value="{{ $ca->id ?? 0 }}">
@@ -359,7 +378,7 @@
             });
         });
     </script>
-      <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.draft-button').forEach(button => {
                 button.addEventListener('click', (event) => {
