@@ -36,6 +36,7 @@ use App\Models\ca_approval;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BusinessTripNotification;
 use App\Mail\DeclarationNotification;
+use App\Mail\RefundNotification;
 
 
 class BusinessTripController extends Controller
@@ -3013,7 +3014,7 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         $companies = Company::orderBy('contribution_level')->get();
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
-
+        $accNum = Company::where('contribution_level_code', $n->bb_perusahaan)->pluck('account_number')->first();
         // Initialize default values
 
         if ($ca) {
@@ -3040,8 +3041,73 @@ class BusinessTripController extends Controller
             }
 
             // Validate if the total cost is negative and status is 'Return/Refund'
-            if ($ca->total_cost < 0 && $request->input('accept_status') === 'Return/Refund') {
+            if ($ca->total_cost <= 0 && $request->input('accept_status') === 'Return/Refund') {
                 return redirect()->back()->with('error', 'Cannot set status to Return/Refund when the total cost is negative.');
+            } elseif ($ca->total_cost > 0 && $request->input('accept_status') === 'Return/Refund') {
+                $employeeEmail = Employee::where('id', $n->user_id)->pluck('email')->first();
+                $employeeName = Employee::where(
+                    'id',
+                    $n->user_id
+                )->pluck('fullname')->first();
+
+                if ($employeeEmail) {
+                    $caTrans = CATransaction::where('no_sppd', $n->no_sppd)
+                        ->where(function ($query) {
+                            $query->where('caonly', '!=', 'Y')
+                                ->orWhereNull('caonly');
+                        })
+                        ->first();
+                    // dd($caTrans);
+                    $detail_ca = isset($caTrans) && isset($caTrans->detail_ca) ? json_decode($caTrans->detail_ca, true) : [];
+
+                    $caDetails = [
+                        'total_amount_perdiem' => array_sum(array_column($detail_ca['detail_perdiem'] ?? [], 'nominal')),
+                        'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
+                        'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
+                        'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+                    ];
+                    // dd($caDetails,   $detail_ca );
+
+                    $declare_ca = isset($caTrans) && isset($caTrans->declare_ca) ? json_decode($caTrans->declare_ca, true) : [];
+                    // $caDeclare = [
+                    //     'total_amount_perdiem' => array_sum(array_column($declare_ca['detail_perdiem'] ?? [], 'nominal')),
+                    //     'total_amount_transport' => array_sum(array_column($declare_ca['detail_transport'] ?? [], 'nominal')),
+                    //     'total_amount_accommodation' => array_sum(array_column($declare_ca['detail_penginapan'] ?? [], 'nominal')),
+                    //     'total_amount_others' => array_sum(array_column($declare_ca['detail_lainnya'] ?? [], 'nominal')),
+                    // ];
+
+                    // Calculate the new totals from the updated request data
+
+                    $newDeclareCa = [
+                        'total_amount_perdiem' => array_sum(array_map(function ($nominal) {
+                            return (int) str_replace('.', '', $nominal);
+                        }, $request->input('nominal_bt_perdiem', []))),
+                        'total_amount_transport' => array_sum(array_map(function ($nominal) {
+                            return (int) str_replace('.', '', $nominal);
+                        }, $request->input('nominal_bt_transport', []))),
+                        'total_amount_accommodation' => array_sum(array_map(function ($nominal) {
+                            return (int) str_replace('.', '', $nominal);
+                        }, $request->input('nominal_bt_penginapan', []))),
+                        'total_amount_others' => array_sum(array_map(function ($nominal) {
+                            return (int) str_replace('.', '', $nominal);
+                        }, $request->input('nominal_bt_lainnya', []))),
+                    ];
+
+                    $selisih = array_sum($caDetails) - array_sum($newDeclareCa);
+                    // dd($newDeclareCa, $selisih);
+
+                    // dd($caDeclare);
+
+                    // Send email to the manager
+                    Mail::to($employeeEmail)->send(new RefundNotification(
+                        $n,
+                        $caDetails,
+                        $newDeclareCa,
+                        $employeeName,
+                        $accNum,
+                        $selisih,
+                    ));
+                }
             }
 
             $ca->save();

@@ -44,8 +44,7 @@
                 <!-- Transport Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Transport</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_transport'] ?? 0 }}
-                        Days
+                    <td style="border: 1px solid #ddd; padding: 8px;">-
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_transport'] ?? 0, 0, ',', '.') }}</td>
@@ -64,7 +63,7 @@
                 <!-- Others Row -->
                 <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;">Others</td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_others'] ?? 0 }} Days
+                    <td style="border: 1px solid #ddd; padding: 8px;">-
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                         {{ number_format($caDetails['total_amount_others'] ?? 0, 0, ',', '.') }}</td>
