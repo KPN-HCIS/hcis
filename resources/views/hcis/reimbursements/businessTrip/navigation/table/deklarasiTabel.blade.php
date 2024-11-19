@@ -8,10 +8,10 @@
                 <th>Destination</th>
                 <th>Start</th>
                 <th>End</th>
-                <th>CA</th>
-                <th>Ticket</th>
-                <th>Hotel</th>
-                <th>Taxi</th>
+                <th style="text-align: center;">CA</th>
+                <th style="text-align: center;">Ticket</th>
+                <th style="text-align: center;">Hotel</th>
+                <th style="text-align: center;">Taxi</th>
                 <th>Status</th>
                 <th style="width: 80px">Action</th>
             </tr>
@@ -112,7 +112,6 @@
                                     'No. SPPD' => $taksi[$n->no_sppd]->no_sppd,
                                     'Unit' => $taksi[$n->no_sppd]->unit,
                                     'Nominal' => 'Rp ' . number_format($taksi[$n->no_sppd]->nominal_vt, 0, ',', '.'),
-                                    'Keeper Voucher' => 'Rp' . number_format($taksi[$n->no_sppd]->keeper_vt, 0, ',', '.'),
                                 ]) }}"><u>Details<u></a>
                         @else
                             -

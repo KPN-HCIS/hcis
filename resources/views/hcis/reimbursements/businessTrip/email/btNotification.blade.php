@@ -174,11 +174,6 @@
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $taksiDetails->no_vt }} Voucher</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>Keeper Voucher</strong></td>
-                    <td style="border: 1px solid #ddd; padding: 8px;">Rp.
-                        {{ number_format($taksiDetails->keeper_vt, 0, ',', '.') }}</td>
-                </tr>
-                <tr>
                     <td style="border: 1px solid #ddd; padding: 8px;"><strong>Nominal Voucher</strong></td>
                     <td style="border: 1px solid #ddd; padding: 8px;">Rp.
                         {{ number_format($taksiDetails->nominal_vt, 0, ',', '.') }}</td>
