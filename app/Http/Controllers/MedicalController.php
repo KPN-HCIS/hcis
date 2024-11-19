@@ -227,7 +227,21 @@ class MedicalController extends Controller
         $medical_proof_path = null;
         if ($request->hasFile('medical_proof')) {
             $file = $request->file('medical_proof');
-            $medical_proof_path = $file->store('public/storage/proofs');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $upload_path = 'uploads/proofs/' . $employee_id;
+            $full_path = public_path($upload_path);
+
+            // Check if the folder exists, if not, create it
+            if (!is_dir($full_path)) {
+                mkdir($full_path, 0755, true);
+            }
+
+            $file->move($full_path, $filename);
+
+            $medical_proof_path = $upload_path . '/' . $filename;
+        } else {
+            $medical_proof_path = $request->existing_prove_declare;
         }
 
         $medical_costs = $request->input('medical_costs', []);

@@ -118,7 +118,7 @@
                                         accept="image/*,application/pdf" class="form-control me-2">
 
                                     @if (isset($medic->medical_proof) && $medic->medical_proof)
-                                        <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
+                                        <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" target="_blank"
                                             class="btn btn-primary rounded-pill">
                                             View
                                         </a>
