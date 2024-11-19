@@ -244,15 +244,20 @@ class BusinessTripController extends Controller
         // Initialize caDetail with an empty array if it's null
         $caDetail = $ca ? json_decode($ca->detail_ca, true) : [];
 
-        // Safely access nominalPerdiem with default '0' if caDetail is empty
-        // $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';
-
         // Retrieve the taxi data for the specific BusinessTrip
         $taksi = Taksi::where('no_sppd', $n->no_sppd)->first();
 
         // Retrieve all hotels for the specific BusinessTrip
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $job_level = Employee::where('id', $userId)->pluck('job_level')->first();
+
+        if ($job_level) {
+            // Extract numeric part of the job level
+            $numericPart = intval(preg_replace('/[^0-9]/', '', $job_level));
+            $isAllowed = $numericPart >= 8;
+        }
+
         $parentLink = 'Business Trip';
         $link = 'Business Trip Edit';
 
@@ -312,6 +317,7 @@ class BusinessTripController extends Controller
             'perdiem' => $perdiem,
             'parentLink' => $parentLink,
             'link' => $link,
+            'isAllowed' => $isAllowed,
         ]);
     }
 
@@ -2027,6 +2033,14 @@ class BusinessTripController extends Controller
         $employees = Employee::orderBy('ktp')->get();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $job_level = Employee::where('id', $userId)->pluck('job_level')->first();
+
+        if ($job_level) {
+            // Extract numeric part of the job level
+            $numericPart = intval(preg_replace('/[^0-9]/', '', $job_level));
+            $isAllowed = $numericPart >= 8;
+        }
+
         $parentLink = 'Business Trip';
         $link = 'Business Trip Request';
         return view(
@@ -2040,6 +2054,7 @@ class BusinessTripController extends Controller
                 'perdiem' => $perdiem,
                 'parentLink' => $parentLink,
                 'link' => $link,
+                'isAllowed' => $isAllowed,
             ]
         );
     }

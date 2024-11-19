@@ -238,7 +238,13 @@
 
                             <div id="additional-fields" class="row mb-3" style="display: none;">
                                 <div class="col-md-12">
-                                    <label for="additional-fields-title" class="mb-3">Business Trip Needs</label>
+                                    <label for="additional-fields-title" class="mb-3">
+                                        Business Trip Needs <br>
+                                        @if ($isAllowed)
+                                            <span class="text-info fst-italic">* Your job
+                                                level is above 8. No perdiem is required for your job level</span>
+                                        @endif
+                                    </label>
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-check">
@@ -542,7 +548,7 @@
             });
         });
     </script>
-      <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.draft-button').forEach(button => {
                 button.addEventListener('click', (event) => {
