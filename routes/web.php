@@ -211,6 +211,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/hotel/approval/detail/{id}', [ReimburseController::class, 'hotelApprovalDetail'])->name('hotel.approval.detail');
     Route::put('/hotel/status/change/{id}', [ReimburseController::class, 'updatestatusHotel'])->name('change.status.hotel');
 
+    //LINK APPROVAL Hotel
+    Route::get('approve/hotel/{id}/{manager_id}/{status}', [ReimburseController::class, 'approveHotelFromLink'])->name('approve.hotel');
+
+    Route::get('hotel/rejection/{id}/{manager_id}/{status}', [ReimburseController::class, 'rejectHotelLink'])->name('reject.hotel.link');
+    Route::post('reject/hotel/{id}/{manager_id}/{status}', [ReimburseController::class, 'rejectHotelFromLink'])->name('reject.hotel');
+
+
     //Hotel Admin
     Route::middleware(['permission:report_hcis_htl'])->group(function () {
         Route::get('/hotel/admin', [ReimburseController::class, 'hotelAdmin'])->name('hotel.admin');
@@ -233,6 +240,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/ticket/approval', [ReimburseController::class, 'ticketApproval'])->name('ticket.approval');
     Route::get('/ticket/approval/detail/{id}', [ReimburseController::class, 'ticketApprovalDetail'])->name('ticket.approval.detail');
     Route::put('/ticket/status/change/{id}', [ReimburseController::class, 'updatestatusTicket'])->name('change.status.ticket');
+
+    //LINK APPROVAL TICKETS
+    Route::get('approve/ticket/{id}/{manager_id}/{status}', [ReimburseController::class, 'approveTicketFromLink'])->name('approve.ticket');
+
+    Route::get('ticket/rejection/{id}/{manager_id}/{status}', [ReimburseController::class, 'rejectTicketLink'])->name('reject.ticket.link');
+    Route::post('reject/ticket/{id}/{manager_id}/{status}', [ReimburseController::class, 'rejectTicketFromLink'])->name('reject.ticket');
 
     //Ticket Admin
     Route::middleware(['permission:report_hcis_tkt'])->group(function () {
@@ -377,6 +390,21 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
     Route::put('businessTrip/status/confirm/declaration/{id}', [BusinessTripController::class, 'updateStatusDeklarasi'])->name('confirm.deklarasi');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
+
+    //LINK APPROVAL BT
+    Route::get('approve/{id}/{manager_id}/{status}', [BusinessTripController::class, 'approveFromLink'])->name('approve.business.trip');
+
+    Route::get('businessTrip/rejection/{id}/{manager_id}/{status}', [BusinessTripController::class, 'rejectLink'])->name('reject.link');
+    Route::post('reject/{id}/{manager_id}/{status}', [BusinessTripController::class, 'rejectFromLink'])->name('reject.business.trip');
+
+
+    //LINK APPROVAL Declarations
+    Route::get('approve/declaration/{id}/{manager_id}/{status}', [BusinessTripController::class, 'approveFromLinkDeklarasi'])->name('approve.business.trip.declare');
+
+    Route::get('businessTrip/declaration/rejection/{id}/{manager_id}/{status}', [BusinessTripController::class, 'rejectDeclarationLink'])->name('reject.link.declaration');
+    Route::post('reject/declaration/{id}/{manager_id}/{status}', [BusinessTripController::class, 'rejectDeclarationFromLink'])->name('reject.business.trip.declaration');
+
+
 
     //PDF BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');

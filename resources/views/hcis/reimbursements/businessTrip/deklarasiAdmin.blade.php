@@ -253,6 +253,31 @@
                                         @php
                                             use Illuminate\Support\Facades\Storage;
                                         @endphp
+                                        <label for="" class="form-label">Uploaded Proof</label>
+                                        @if (isset($ca->prove_declare) && $ca->prove_declare)
+                                            @php
+                                                // Get the file extension
+                                                $fileExtension = pathinfo($ca->prove_declare, PATHINFO_EXTENSION);
+                                                // Set the image based on the file type
+                                                $imageSrc = '';
+                                                if (in_array($fileExtension, ['pdf'])) {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your PDF icon
+                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                                    $imageSrc = Storage::url($ca->prove_declare); // Image files should display their own thumbnail
+                                                } else {
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/file.png'; // Replace with the path to your default icon
+                                                }
+                                            @endphp
+                                            <div class="file-preview text-left">
+                                                <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
+                                                    style="text-decoration: none;">
+                                                    <img src="{{ $imageSrc }}" alt="{{ $fileExtension }} file"
+                                                        class="file-icon" style="width: 50px; height: 50px;">
+                                                    <div style="margin-top: 5px;"><u>View Proof</u></div>
+                                                </a>
+                                            @else
+                                                <div class="text-danger">No proof uploaded</div>
+                                        @endif
 
                                         {{-- <input type="hidden" name="status" value="Declaration L1" id="status"> --}}
                                         <input type="hidden" name="no_id" value="{{ $ca->id ?? 0 }}">
@@ -261,11 +286,6 @@
                                             value="{{ $perdiem->amount ?? 0 }}" readonly>
                                         {{-- <input type="hidden" name="status" value="Declaration L1" id="status"> --}}
                                         <div class="d-flex justify-content-end mt-3">
-                                            @if (isset($ca->prove_declare) && $ca->prove_declare)
-                                                <a href="{{ Storage::url($ca->prove_declare) }}" target="_blank"
-                                                    class="btn btn-outline-primary rounded-pill"
-                                                    style="margin-right: 20px;">View</a>
-                                            @endif
                                             <button type="submit"
                                                 class="btn btn-primary rounded-pill submit-button">Submit</button>
                                         </div>

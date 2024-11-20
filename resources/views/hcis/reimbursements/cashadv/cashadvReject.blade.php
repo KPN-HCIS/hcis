@@ -129,7 +129,7 @@
                                     <th>Balance</th>
                                     <th>Status</th>
                                     <th style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Reason</th>
-
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -196,7 +196,11 @@
                                     </td>
                                     {{-- {{dd($reason)}} --}}
                                     <td>{{ $reason[$ca_transaction->id] ?? '-' }}</td>
-
+                                    <td>
+                                        @if ($ca_transaction->approval_status == 'Rejected')
+                                            <a href="{{ route('cashadvanced.edit', encrypt($ca_transaction->id)) }}" class="btn btn-outline-warning" title="Edit" ><i class="ri-edit-box-line"></i></a>
+                                        @endif
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>

@@ -427,7 +427,7 @@ class ReimburseController extends Controller
             ->where(function ($query) {
                 $query->where('ca_status', 'Done');
             })
-            ->where('end_date', '<=', $today)
+            // ->where('end_date', '<=', $today)
             ->get();
 
         $fullnames = Employee::whereIn('employee_id', $ca_transactions->pluck('status_id'))
@@ -446,17 +446,17 @@ class ReimburseController extends Controller
             ->where('approval_sett', '=', '')
             ->count();
 
-        foreach ($ca_transactions as $transaction) {
-            if (
-                $transaction->end_date <= $today &&
-                $transaction->approval_status == 'Approved' &&
-                $transaction->approval_sett == 'On Progress'
-            ) {
+        // foreach ($ca_transactions as $transaction) {
+        //     if (
+        //         $transaction->end_date <= $today &&
+        //         $transaction->approval_status == 'Approved' &&
+        //         $transaction->approval_sett == 'On Progress'
+        //     ) {
 
-                $transaction->approval_sett = 'Waiting for Declaration';
-            }
-            $transaction->save();
-        }
+        //         $transaction->approval_sett = 'Waiting for Declaration';
+        //     }
+        //     $transaction->save();
+        // }
 
         return view('hcis.reimbursements.cashadv.cashadvDone', [
             'deklarasiCACount' => $deklarasiCACount,
@@ -2080,6 +2080,13 @@ class ReimburseController extends Controller
             'no_sppd' => $req->bisnis_numb,
         ];
 
+        $namaHtl = [];
+        $lokasiHtl = [];
+        $tglMasukHtl = [];
+        $tglKeluarHtl = [];
+        $totalHari = [];
+        $noHtlList = [];
+
         foreach ($hotelData['nama_htl'] as $key => $value) {
             // Only process if required fields are filled
             if (!empty($hotelData['nama_htl'][$key]) && !empty($hotelData['lokasi_htl'][$key]) && !empty($hotelData['tgl_masuk_htl'][$key])) {
@@ -2114,8 +2121,16 @@ class ReimburseController extends Controller
                         Mail::to($HTLNotificationSubmit)->send(new HotelNotification($hotelData));
                     }
                 }
+                $namaHtl[] = $hotelData['nama_htl'][$key];
+                $lokasiHtl[] = $hotelData['lokasi_htl'][$key];
+                $tglMasukHtl[] = $hotelData['tgl_masuk_htl'][$key];
+                $tglKeluarHtl[] = $hotelData['tgl_keluar_htl'][$key];
+                $totalHari[] = $hotelData['total_hari'][$key];
+                $noHtlList[] = $model->no_htl; // Collect each no_htl
             }
         }
+
+        // dd($model->id);
 
         // Update BusinessTrip record if applicable
         $bt = BusinessTrip::where('no_sppd', $req->bisnis_numb)->first();
@@ -2124,7 +2139,173 @@ class ReimburseController extends Controller
             $bt->hotel = 'Ya';
             $bt->save();
         }
+
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+
+            $approvalLink = route('approve.hotel', [
+                'id' => urlencode($model->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.hotel.link', [
+                'id' => urlencode($model->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+            // dd($managerEmail);
+            // // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+        }
         return redirect('/hotel')->with('success', 'Hotel request input successfully');
+    }
+
+    public function approveHotelFromLink($id, $manager_id, $status)
+    {
+        $employeeId = $manager_id;
+
+        // Find the hotel by ID
+        $hotel = Hotel::findOrFail($id);
+        $noHtl = $hotel->no_htl;
+
+        // Handle approval scenarios
+        if ($hotel->approval_status == 'Pending L1') {
+            Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Pending L2']);
+
+            $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
+            $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            $managerName = Employee::where('employee_id', $managerId)->value('fullname');
+
+            $approvalLink = route('approve.hotel', [
+                'id' => urlencode($hotel->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.hotel.link', [
+                'id' => urlencode($hotel->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Initialize arrays to collect details for multiple hotels
+                $noHtlList = [];
+                $namaHtl = [];
+                $lokasiHtl = [];
+                $tglMasukHtl = [];
+                $tglKeluarHtl = [];
+                $totalHari = [];
+
+                // Collect details for each hotel with the same no_htl
+                $hotels = Hotel::where('no_htl', $noHtl)->get();
+                foreach ($hotels as $htl) {
+                    $noHtlList[] = $htl->no_htl;
+                    $namaHtl[] = $htl->nama_htl;
+                    $lokasiHtl[] = $htl->lokasi_htl;
+                    $tglMasukHtl[] = $htl->tgl_masuk_htl;
+                    $tglKeluarHtl[] = $htl->tgl_keluar_htl;
+                    $totalHari[] = $htl->total_hari;
+                }
+
+                // Send email with all hotel details
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $hotel->no_sppd,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                    'approvalStatus' => 'Pending L2',
+                ]));
+            }
+        } elseif ($hotel->approval_status == 'Pending L2') {
+            Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
+        }
+        // Log the approval into the hotel_approvals table for all hotels with the same no_htl
+        $hotels = Hotel::where('no_htl', $noHtl)->get();
+        foreach ($hotels as $hotel) {
+            $approval = new HotelApproval();
+            $approval->id = (string) Str::uuid();
+            $approval->htl_id = $hotel->id;
+            $approval->employee_id = $employeeId;
+            $approval->layer = $hotel->approval_status == 'Pending L2' ? 1 : 2;
+            $approval->approval_status = $hotel->approval_status;
+            $approval->approved_at = now();
+            $approval->save();
+        }
+    }
+    public function rejectHotelLink($id, $manager_id, $status)
+    {
+        $hotel = Hotel::where('id', $id)->first();
+        // dd($id, $hotel);
+        $userId = $hotel->user_id;
+
+        $employeeName = Employee::where('id', $userId)->pluck('fullname')->first();
+        $noHtl = $hotel->no_htl;
+        $hotels = Hotel::where('no_htl', $noHtl)->first();
+        $hotelsTotal = Hotel::where('no_htl', $noHtl)->count();
+
+        return view('hcis.reimbursements.hotel.hotelReject', [
+            'userId' => $userId,
+            'id' => $id,
+            'manager_id' => $manager_id,
+            'status' => $status,
+            'hotels' => $hotels,
+            'employeeName' => $employeeName,
+            'hotelsTotal' => $hotelsTotal,
+        ]);
+    }
+    public function rejectHotelFromLink(Request $request, $id, $manager_id, $status)
+    {
+        $employeeId = $manager_id;
+
+        $rejectInfo = $request->reject_info;
+        $hotel = Hotel::findOrFail($id);
+        $noHtl = $hotel->no_htl;
+        // Get the current approval status before updating it
+        $currentApprovalStatus = $hotel->approval_status;
+
+        Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Rejected']);
+
+        // Log the rejection into the hotel_approvals table for all hotels with the same no_htl
+        $hotels = Hotel::where('no_htl', $noHtl)->get();
+        foreach ($hotels as $hotel) {
+            $rejection = new HotelApproval();
+            $rejection->id = (string) Str::uuid();
+            $rejection->htl_id = $hotel->id;
+            $rejection->employee_id = $employeeId;
+
+            // Determine the correct layer based on the hotel's approval status BEFORE rejection
+            $rejection->layer = $currentApprovalStatus == 'Pending L2' ? 2 : 1;
+
+            $rejection->approval_status = 'Rejected';
+            $rejection->approved_at = now();
+            $rejection->reject_info = $rejectInfo;
+            $rejection->save();
+        }
     }
 
     public function hotelEdit($key)
@@ -2193,11 +2374,21 @@ class ReimburseController extends Controller
     }
 
 
-    public function hotelUpdate(Request $req, $key)
+    public function hotelUpdate(Request $req, $id)
     {
         $userId = Auth::id();
-        $hotelIds = $req->input('hotel_ids', []); // Get the array of existing hotel IDs
-        $existingHotels = Hotel::whereIn('id', $hotelIds)->get()->keyBy('id'); // Load existing hotels into a collection
+        $hotelIds = $req->input('hotel_ids', []);
+        $decryptedId = Crypt::decryptString($id);
+
+        // Check if it's serialized, then unserialize
+        if (@unserialize($decryptedId) !== false || $decryptedId === 'b:0;') {
+            $decryptedId = unserialize($decryptedId);
+        }
+        $existingHotels = Hotel::whereIn('id', $hotelIds)->get()->keyBy('id');
+        $existingHotel = Hotel::where('id', $decryptedId)->first();
+        $noHtl = $existingHotel ? $existingHotel->no_htl : null;
+
+        // dd($existingHotel, $noHtl);
 
         $processedHotelIds = [];
         $updateBusinessTrip = false;
@@ -2209,8 +2400,14 @@ class ReimburseController extends Controller
         }
 
         // Get the no_htl from the first existing hotel record
-        $existingNoHtl = $existingHotels->first()->no_htl ?? null;
-        // dd($existingNoHtl);
+
+        // dd($noHtl);
+        $noHtlList = [];
+        $namaHtl = [];
+        $lokasiHtl = [];
+        $tglMasukHtl = [];
+        $tglKeluarHtl = [];
+        $totalHari = [];
 
         // Loop through hotel data
         foreach ($req->nama_htl as $index => $value) {
@@ -2235,38 +2432,65 @@ class ReimburseController extends Controller
                     'no_htl' => $existingNoHtl,
                 ];
 
-                // Check if hotel ID exists to decide if it's an update or a new entry
-                if ($hotelId && isset($existingHotels[$hotelId])) {
-                    $existingHotel = $existingHotels[$hotelId];
-                    $hotelData['user_id'] = $existingHotel->user_id;
-
-                    // Check if status is changing to "Pending L1"
-                    if ($existingHotel->approval_status != 'Pending L1' && $hotelData['approval_status'] == 'Pending L1') {
-                        $updateBusinessTrip = true;
-                    }
-
-                    // Update existing hotel record
+                if (isset($req->hotel_ids[$index]) && isset($existingHotels[$req->hotel_ids[$index]])) {
+                    $existingHotel = $existingHotels[$req->hotel_ids[$index]];
                     $existingHotel->update($hotelData);
-                    $processedHotelIds[] = $hotelId; // Keep track of processed hotel IDs
+                    $processedHotelIds[] = $existingHotel->id;
                 } else {
-                    // If hotel ID doesn't exist, create a new hotel record
-                    // Use the existing no_htl from the first hotel
-                    $newHotel = Hotel::create(array_merge($hotelData, [
-                        'id' => (string) Str::uuid(), // Auto-generated UUID
-                        'no_htl' => $existingNoHtl, // Use the existing no_htl
-                        'user_id' => Auth::id(),
-                        'created_by' => Auth::id(),
-                        'hotel_only' => 'Y',
-                    ]));
-
-                    // dd($newHotel);
-                    $processedHotelIds[] = $newHotel->id; // Keep track of processed hotel IDs
-
-                    // Check if the new hotel is created with "Pending L1" status
-                    if ($hotelData['approval_status'] == 'Pending L1') {
-                        $updateBusinessTrip = true;
+                    if ($noHtl) {
+                        $hotelData['no_htl'] = $noHtl;  // Use old no_htl for new entry
                     }
+                    // If no existing hotel, create a new one with the same no_htl
+                    $newHotel = Hotel::create(array_merge($hotelData, [
+                        'id' => (string) Str::uuid(),
+                        'user_id' => $userId,
+                        'created_by' => $userId,
+                    ]));
+                    $processedHotelIds[] = $newHotel->id;  // Keep track of processed hotel IDs
                 }
+                // Collect data for email
+                $noHtlList[] = $noHtl;
+                $namaHtl[] = $req->nama_htl[$index];
+                $lokasiHtl[] = $req->lokasi_htl[$index];
+                $tglMasukHtl[] = $req->tgl_masuk_htl[$index];
+                $tglKeluarHtl[] = $req->tgl_keluar_htl[$index];
+                $totalHari[] = $req->total_hari[$index];
+            }
+        }
+
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            // dd($managerEmail);
+            // // dd($managerEmail);
+            $approvalLink = route('approve.hotel', [
+                'id' => urlencode($processedHotelIds[0]),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.hotel.link', [
+                'id' => urlencode($processedHotelIds[0]),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
             }
         }
 
@@ -2289,7 +2513,9 @@ class ReimburseController extends Controller
                 $bt->save();
             }
         }
-        Hotel::where('no_htl', $existingNoHtl)
+        // dd([$hotelIds, $processedHotelIds]);
+        // Delete hotels with the same no_htl but not in the processedHotelIds
+        Hotel::where('no_htl', $noHtl)
             ->whereNotIn('id', $processedHotelIds)
             ->delete();
 
@@ -2607,6 +2833,58 @@ class ReimburseController extends Controller
         // Handle approval scenarios
         if ($hotel->approval_status == 'Pending L1') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Pending L2']);
+
+            $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
+            $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            $managerName = Employee::where('employee_id', $managerId)->value('fullname');
+
+            $approvalLink = route('approve.hotel', [
+                'id' => urlencode($hotel->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.hotel.link', [
+                'id' => urlencode($hotel->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Initialize arrays to collect details for multiple hotels
+                $noHtlList = [];
+                $namaHtl = [];
+                $lokasiHtl = [];
+                $tglMasukHtl = [];
+                $tglKeluarHtl = [];
+                $totalHari = [];
+
+                // Collect details for each hotel with the same no_htl
+                $hotels = Hotel::where('no_htl', $noHtl)->get();
+                foreach ($hotels as $htl) {
+                    $noHtlList[] = $htl->no_htl;
+                    $namaHtl[] = $htl->nama_htl;
+                    $lokasiHtl[] = $htl->lokasi_htl;
+                    $tglMasukHtl[] = $htl->tgl_masuk_htl;
+                    $tglKeluarHtl[] = $htl->tgl_keluar_htl;
+                    $totalHari[] = $htl->total_hari;
+                }
+
+                // Send email with all hotel details
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $hotel->no_sppd,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                    'approvalStatus' => 'Pending L2',
+                ]));
+            }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
         } else {
@@ -3025,6 +3303,17 @@ class ReimburseController extends Controller
             'tkt_only' => 'Y',
         ];
 
+        $noKtp = [];
+        $npTkt = [];
+        $dariTkt = [];
+        $keTkt = [];
+        $tglBrktTkt = [];
+        $jamBrktTkt = [];
+        $noTktList = [];
+        $tglPlgTkt = [];
+        $jamPlgTkt = [];
+        $tipeTkt = [];
+
         foreach ($ticketData['noktp_tkt'] as $key => $value) {
             // Only process if the required fields are filled
             if (!empty($ticketData['noktp_tkt'][$key]) && !empty($ticketData['jk_tkt'][$key]) && !empty($ticketData['np_tkt'][$key])) {
@@ -3056,6 +3345,17 @@ class ReimburseController extends Controller
                 $tiket->tkt_only = 'Y';
                 // dd($req->all());
                 $tiket->save();
+
+                $noKtp[] = $ticketData['noktp_tkt'][$key];
+                $npTkt[] = $ticketData['np_tkt'][$key];
+                $dariTkt[] = $ticketData['dari_tkt'][$key];
+                $keTkt[] = $ticketData['ke_tkt'][$key];
+                $tipeTkt[] = $ticketData['type_tkt'][$key];
+                $tglBrktTkt[] = $ticketData['tgl_brkt_tkt'][$key];
+                $jamBrktTkt[] = $ticketData['jam_brkt_tkt'][$key];
+                $noTktList[] = $tiket->no_tkt;
+                $tglPlgTkt[] = $ticketData['tgl_plg_tkt'][$key];
+                $jamPlgTkt[] = $ticketData['jam_plg_tkt'][$key];
             }
         }
 
@@ -3066,7 +3366,195 @@ class ReimburseController extends Controller
             $bt->save();
         }
 
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($tiket->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($tiket->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+            // // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new TicketNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noTkt' => $noTktList,
+                    'namaPenumpang' => $npTkt,
+                    'dariTkt' => $dariTkt,
+                    'keTkt' => $keTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'approvalStatus' => $statusValue,
+                    'tipeTkt' => $tipeTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+        }
+
         return redirect()->route('ticket')->with('success', 'The ticket request has been input successfully.');
+    }
+
+    public function approveTicketFromLink($id, $manager_id, $status)
+    {
+        $employeeId = $manager_id;
+
+        // Find the ticket by ID
+        $ticket = Tiket::findOrFail($id);
+        $noTkt = $ticket->no_tkt;
+
+        // dd($ticket->approval_status);
+        // If not rejected, proceed with normal approval process
+        if ($ticket->approval_status == 'Pending L1') {
+            Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
+            $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
+            $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($ticket->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($ticket->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Initialize arrays to collect details for multiple hotels
+                $noTktList = [];
+                $npTkt = [];
+                $dariTkt = [];
+                $keTkt = [];
+                $tglBrktTkt = [];
+                $jamBrktTkt = [];
+                $tglPlgTkt = [];
+                $jamPlgTkt = [];
+                $tipeTkt = [];
+
+                // Collect details for each hotel with the same no_htl
+                $tickets = Tiket::where('no_tkt', $noTkt)->get();
+                // dd($tickets);
+                foreach ($tickets as $tkt) {
+                    $noTktList[] = $tkt->no_tkt;
+                    $npTkt[] = $tkt->np_tkt;
+                    $dariTkt[] = $tkt->dari_tkt;
+                    $keTkt[] = $tkt->ke_tkt;
+                    $tglBrktTkt[] = $tkt->tgl_brkt_tkt;
+                    $jamBrktTkt[] = $tkt->jam_brkt_tkt;
+                    $tglPlgTkt[] = $tkt->tgl_plg_tkt;
+                    $jamPlgTkt[] = $tkt->jam_plg_tkt;
+                    $tipeTkt[] = $tkt->type_tkt;
+                }
+
+                // Send email with all hotel details
+                Mail::to($managerEmail)->send(new TicketNotification([
+                    'noSppd' => $ticket->no_sppd,
+                    'noTkt' => $noTktList,
+                    'namaPenumpang' => $npTkt,
+                    'dariTkt' => $dariTkt,
+                    'keTkt' => $keTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'tipeTkt' => $tipeTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'managerName' => $managerName,
+                    'approvalStatus' => 'Pending L2',
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+
+        } elseif ($ticket->approval_status == 'Pending L2') {
+            Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
+        }
+
+        // Log the approval into the tkt_approvals table for all tickets with the same no_tkt
+        $tickets = Tiket::where('no_tkt', $noTkt)->get();
+        foreach ($tickets as $ticket) {
+            $approval = new TiketApproval();
+            $approval->id = (string) Str::uuid();
+            $approval->tkt_id = $ticket->id;
+            $approval->employee_id = $employeeId;
+            $approval->layer = $ticket->approval_status == 'Pending L2' ? 1 : 2;
+            $approval->approval_status = $ticket->approval_status;
+            $approval->approved_at = now();
+            $approval->save();
+        }
+    }
+
+    public function rejectTicketLink($id, $manager_id, $status)
+    {
+        $ticket = Tiket::where('id', $id)->first();
+
+        $userId = $ticket->user_id;
+        // dd($userId);
+        $employeeName = Employee::where('id', $userId)->pluck('fullname')->first();
+        $noTkt = $ticket->no_tkt;
+        $tickets = Tiket::where('no_tkt', $noTkt)->first();
+        $ticketsTotal = Tiket::where('no_tkt', $noTkt)->count();
+        // dd($tickets);
+
+        return view('hcis.reimbursements.ticket.ticketReject', [
+            'userId' => $userId,
+            'id' => $id,
+            'manager_id' => $manager_id,
+            'status' => $status,
+            'tickets' => $tickets,
+            'employeeName' => $employeeName,
+            'ticketsTotal' => $ticketsTotal,
+        ]);
+    }
+    public function rejectTicketFromLink(Request $request, $id, $manager_id, $status)
+    {
+        $employeeId = $manager_id;
+
+        // Find the ticket by ID
+        $ticket = Tiket::findOrFail($id);
+        $noTkt = $ticket->no_tkt;
+
+        $rejectInfo = $request->reject_info;
+
+        // Get the current approval status before updating it
+        $currentApprovalStatus = $ticket->approval_status;
+
+        // Update all tickets with the same no_tkt to 'Rejected'
+        Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Rejected']);
+
+        // Log the rejection into the tkt_approvals table for all tickets with the same no_tkt
+        $tickets = Tiket::where('no_tkt', $noTkt)->get();
+        foreach ($tickets as $ticket) {
+            $rejection = new TiketApproval();
+            $rejection->id = (string) Str::uuid();
+            $rejection->tkt_id = $ticket->id;
+            $rejection->employee_id = $employeeId;
+
+            // Determine the correct layer based on the ticket's approval status BEFORE rejection
+            if ($currentApprovalStatus == 'Pending L2') {
+                $rejection->layer = 2; // Layer 2 if ticket was at L2
+            } else {
+                $rejection->layer = 1; // Otherwise, it's Layer 1
+            }
+
+            $rejection->approval_status = 'Rejected';
+            $rejection->approved_at = now();
+            $rejection->reject_info = $rejectInfo;
+            $rejection->save();
+        }
     }
 
 
@@ -3143,14 +3631,16 @@ class ReimburseController extends Controller
         ]);
     }
 
-    public function ticketUpdate(Request $req)
+    public function ticketUpdate(Request $req, $id)
     {
-        // Get all existing tickets for this business trip
+        $userId = Auth::id();
         $ticketIds = $req->input('ticket_ids', []);
-        $existingTickets = Tiket::where('id', $ticketIds)->get()->keyBy('id');
+        // dd($ticketIds);
+        $existingTickets = Tiket::where('id', $id)->get()->keyBy('id');
         // dd($req->all());
         // dd($existingTickets);
-
+        $noTkt = Tiket::where('id', $id)->pluck('no_tkt')->first();
+        // dd($noTkt);
         $processedTicketIds = [];
         $firstNoTkt = null;
 
@@ -3161,8 +3651,18 @@ class ReimburseController extends Controller
         }
 
         $existingNoTkt = $existingTickets->first()->no_tkt ?? null;
-        // dd($existingNoTkt);
-        // dd($req->noktp_tkt);
+
+        // Arrays to collect all ticket data
+        $noTktList = [];
+        $npTkt = [];
+        $dariTkt = [];
+        $keTkt = [];
+        $tglBrktTkt = [];
+        $jamBrktTkt = [];
+        $tglPlgTkt = [];
+        $jamPlgTkt = [];
+        $tipeTkt = [];
+
         foreach ($req->noktp_tkt as $key => $value) {
             if (!empty($value)) {
                 $ticketData = [
@@ -3189,33 +3689,34 @@ class ReimburseController extends Controller
 
                 if (isset($existingTickets[$value])) {
                     $existingTicket = $existingTickets[$value];
-                    // dd($ticketData);
+                    $ticketData['no_tkt'] = $existingTicket->no_tkt; // Use the same no_tkt
                     $existingTicket->update($ticketData);
+                    $processedTicketIds[] = $existingTicket->id;
                 } else {
-                    if (is_null($firstNoTkt) && $existingTickets->isNotEmpty()) {
-                        $firstNoTkt = $existingTickets->first()->no_tkt;
-                    }
-
-                    // If there's still no firstNoTkt, generate a new one
-                    if (is_null($firstNoTkt)) {
-                        $firstNoTkt = generateTicketNumber($req->jns_dinas_tkt);
-                    }
-
-                    // Create a new ticket entry
+                    // If no existing ticket, use the existing no_tkt from the first ticket
+                    $existingTicket = $existingTickets->first();
+                    $ticketData['no_tkt'] = $existingTicket->no_tkt;
+                    // dd($ticketData['no_tkt']);
                     $newTiket = Tiket::create(array_merge($ticketData, [
                         'id' => (string) Str::uuid(),
-                        'no_tkt' => $firstNoTkt,
                         'noktp_tkt' => $value,
                         'tkt_only' => 'Y',
                     ]));
+                    $processedTicketIds[] = $newTiket->id;
                 }
 
-                // Track the processed ticket IDs
-                $processedTicketIds[] = $newTiket->id;
-                // dd($processedTicketIds);
+                // Collect ticket data for email
+                $noTktList[] = $ticketData['no_tkt'];
+                $npTkt[] = $ticketData['np_tkt'];
+                $dariTkt[] = $ticketData['dari_tkt'];
+                $keTkt[] = $ticketData['ke_tkt'];
+                $tipeTkt[] = $ticketData['type_tkt'];
+                $tglBrktTkt[] = $ticketData['tgl_brkt_tkt'];
+                $jamBrktTkt[] = $ticketData['jam_brkt_tkt'];
+                $tglPlgTkt[] = $ticketData['tgl_plg_tkt'];
+                $jamPlgTkt[] = $ticketData['jam_plg_tkt'];
             }
         }
-        // dd([$existingNoTkt, $processedTicketIds]);
 
         // Soft delete tickets that are no longer in the request
         Tiket::where('no_tkt', $existingNoTkt)
@@ -3228,6 +3729,52 @@ class ReimburseController extends Controller
             $bt->save();
         }
 
+        $ticketIdToUse = null;
+
+        // Always use the first valid ID from the processed tickets, ensuring it's a ticket that exists in the final state.
+        if (!empty($processedTicketIds)) {
+            $ticketIdToUse = $processedTicketIds[0];  // Use the first updated/created ticket ID
+        } elseif (!empty($existingTickets)) {
+            // As a fallback, use the first existing ticket ID if no processed IDs were created
+            $ticketIdToUse = $existingTickets->first()->id;
+        }
+
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($ticketIdToUse),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($ticketIdToUse),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Send email to the manager with all ticket details
+                Mail::to($managerEmail)->send(new TicketNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noTkt' => $noTktList,  // all ticket numbers
+                    'namaPenumpang' => $npTkt,  // all passengers
+                    'dariTkt' => $dariTkt,  // all departure locations
+                    'keTkt' => $keTkt,
+                    'tipeTkt' => $tipeTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+        }
 
         return redirect()->route('ticket')->with('success', 'The ticket request has been updated successfully.');
     }
@@ -3580,6 +4127,67 @@ class ReimburseController extends Controller
         // If not rejected, proceed with normal approval process
         if ($ticket->approval_status == 'Pending L1') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
+            $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
+            $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($ticket->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($ticket->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Initialize arrays to collect details for multiple hotels
+                $noTktList = [];
+                $npTkt = [];
+                $dariTkt = [];
+                $keTkt = [];
+                $tglBrktTkt = [];
+                $jamBrktTkt = [];
+                $tglPlgTkt = [];
+                $jamPlgTkt = [];
+                $tipeTkt = [];
+
+                // Collect details for each hotel with the same no_htl
+                $tickets = Tiket::where('no_tkt', $noTkt)->get();
+                // dd($tickets);
+                foreach ($tickets as $tkt) {
+                    $noTktList[] = $tkt->no_tkt;
+                    $npTkt[] = $tkt->np_tkt;
+                    $dariTkt[] = $tkt->dari_tkt;
+                    $keTkt[] = $tkt->ke_tkt;
+                    $tglBrktTkt[] = $tkt->tgl_brkt_tkt;
+                    $jamBrktTkt[] = $tkt->jam_brkt_tkt;
+                    $tglPlgTkt[] = $tkt->tgl_plg_tkt;
+                    $jamPlgTkt[] = $tkt->jam_plg_tkt;
+                    $tipeTkt[] = $tkt->type_tkt;
+                }
+
+                // Send email with all hotel details
+                Mail::to($managerEmail)->send(new TicketNotification([
+                    'noSppd' => $ticket->no_sppd,
+                    'noTkt' => $noTktList,
+                    'namaPenumpang' => $npTkt,
+                    'dariTkt' => $dariTkt,
+                    'keTkt' => $keTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'tipeTkt' => $tipeTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'managerName' => $managerName,
+                    'approvalStatus' => 'Pending L2',
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
         } else {

@@ -65,6 +65,7 @@
                     </li>
                 </ol>
             </div>
+            @include('hcis.reimbursements.medical.navigation.modalMedical')
             @include('hcis.reimbursements.businessTrip.modal')
 
             @if (request()->routeIs('medical.detail'))
