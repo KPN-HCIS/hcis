@@ -13,18 +13,17 @@ class MedicalNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct()
+    public $healthCoverage;
+
+    public function __construct($healthCoverage)
     {
-        //
+        $this->healthCoverage = $healthCoverage;
     }
 
     public function build()
     {
         return $this->subject('New Business Trip Request')
-            ->view('hcis.reimbursements.approval.email.htlNotification');
+            ->view('hcis.reimbursements.medical.approval.email.mdcNotification');
     }
     public function envelope(): Envelope
     {
@@ -39,7 +38,7 @@ class MedicalNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'hcis.reimbursements.approval.email.htlNotification',
+            view: 'hcis.reimbursements.medical.approval.email.mdcNotification',
         );
     }
 

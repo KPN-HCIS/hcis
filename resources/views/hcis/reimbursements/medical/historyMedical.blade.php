@@ -54,10 +54,15 @@
                               };
                           @endphp
                           <span class="badge rounded-pill {{ $badgeClass }} text-center"
-                              style="font-size: 12px; padding: 0.5rem 1rem; cursor: pointer;"
-                              @if ($item->status == 'Rejected' && isset($rejectMedic[$item->no_medic])) onclick="showRejectInfo('{{ $item->no_medic }}')"
-                                  title="Click to see rejection reason" @endif>
-                              {{ $item->status }}
+                                style="font-size: 12px; padding: 0.5rem 1rem; cursor: pointer;"
+                                @if ($item->status == 'Rejected' && isset($rejectMedic[$item->no_medic])) onclick="showRejectInfo('{{ $item->no_medic }}')"
+                                    title="Click to see rejection reason"
+                                @elseif ($item->status == 'Done')
+                                    title="{{ 'Approved GA by - '.$item->approved_by_fullname.' ' }}"
+                                @else
+                                    title="{{ $item->verif_by == null && $item->balance_verif == null ? 'Waiting for Admin GA to confirmation' : 'Pending GA - '.implode(', ', $gaFullname->toArray()).' ' }}"
+                                @endif>
+                                {{ $item->status }}
                           </span>
                       </td>
                       <td class="text-center">

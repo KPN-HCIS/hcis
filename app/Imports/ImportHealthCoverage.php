@@ -4,11 +4,15 @@ namespace App\Imports;
 
 use App\Models\HealthCoverage;
 use App\Models\HealthPlan;
+use App\Models\MasterMedical;
+use App\Models\Employee;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use App\Exceptions\ImportDataInvalidException;
+use App\Mail\MedicalNotification;
 
 class ImportHealthCoverage implements ToModel
 {
@@ -38,19 +42,37 @@ class ImportHealthCoverage implements ToModel
 
     public function model(array $row)
     {
-        if ($row[0] == 'No' && $row[1] == 'EmployeeID' && $row[2] == 'No Invoice') {
+        if ($row[0] == 'No' && $row[1] == 'Employee ID' && $row[2] == 'No Invoice') {
             return null;
         }
 
         $userId = Auth::id();
+        $employeeId = Employee::where('id', $userId)->first();
         $newNoMedic = $this->generateNoMedic(); // Call the generateNoMedic() function
+        $MedicType = MasterMedical::get();
+        $isValidData = false;
+        $expectedTypes = [];
 
-        // Check if required fields are numeric
-        if (!is_numeric($row[1]) || !is_numeric($row[11]) || !is_numeric($row[12]) || !is_numeric($row[13])) {
-            throw new ImportDataInvalidException("Invalid data format detected. Import canceled.");
+        foreach ($MedicType as $type) {
+            $expectedTypes[] = $type->name;
+            if ($type->name == $row[9]) {
+                $isValidData = true;
+                break;
+            }
         }
 
-        // Validate and format date
+        if (!$isValidData) {
+            $expectedTypesString = implode(", ", $expectedTypes);
+            throw new ImportDataInvalidException("Value '{$row[9]}' does not match any expected Type Value ({$expectedTypesString}). Import canceled.");
+        }
+
+        if (!is_numeric($row[1])) {
+            throw new ImportDataInvalidException("Invalid data format detected in column 1. Import canceled.");
+        }
+        if (!is_numeric($row[10])) {
+            throw new ImportDataInvalidException("Invalid data format detected in column 10. Import canceled.");
+        }
+
         if (is_numeric($row[6])) {
             $excelDate = intval($row[6]);
             $dateTime = Date::excelToDateTimeObject($excelDate);
@@ -76,11 +98,14 @@ class ImportHealthCoverage implements ToModel
             'period' => $row[8],
             'medical_type' => $row[9],
             'balance' => $row[10],
-            'balance_uncoverage' => $row[11],
-            'balance_verif' => $row[12],
+            'balance_uncoverage' => '0',
+            'balance_verif' => $row[10],
             'status' => 'Done',
             'submission_type' => 'F',
             'created_by' => $userId,
+            'verif_by' => $employeeId->employee_id,
+            'approved_by' => $employeeId->employee_id,
+            'created_at' => date('Y-m-d H:i:s'),
         ]);
         // dd($healthCoverage);
 
@@ -112,6 +137,12 @@ class ImportHealthCoverage implements ToModel
         // For example:
         // $healthCoverage->balance = $healthCoverage->balance_uncoverage - $healthCoverage->balance_verif;
         // dd($healthCoverage);
+        $MDCNotificationLayer = Employee::where('employee_id', $healthCoverage->employee_id)->pluck('email')->first();
+        if ($MDCNotificationLayer) {
+            // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+            Mail::to($MDCNotificationLayer)->send(new MedicalNotification($healthCoverage));
+        }
+
         $healthCoverage->save();
     }
 }

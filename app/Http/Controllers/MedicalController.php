@@ -49,23 +49,35 @@ class MedicalController extends Controller
             'hospital_name',
             'patient_name',
             'disease',
+            'verif_by',
+            'balance_verif',
+            'approved_by',
             DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance ELSE 0 END) as maternity_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
             'status',
             DB::raw('MAX(created_at) as latest_created_at')
-
         )
             ->where('employee_id', $employee_id)
-            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'verif_by', 'balance_verif', 'approved_by')
             ->orderBy('latest_created_at', 'desc')
             ->get();
 
         $medicalGroup->map(function ($item) {
+            $approvedEmployee = Employee::where('employee_id', $item->approved_by)->first();
+
+            $item->approved_by_fullname = $approvedEmployee ? $approvedEmployee->fullname : null;
             $item->total_per_no_medic = $item->maternity_total + $item->inpatient_total + $item->outpatient_total + $item->glasses_total;
             return $item;
         });
+
+        $bissnisUnit = Employee::where('employee_id', $employee_id)
+            ->pluck('group_company');
+        $gaApproval = MasterBusinessUnit::where('nama_bisnis', $bissnisUnit)
+            ->first();
+        $gaFullname = Employee::where('employee_id', $gaApproval->approval_medical)
+            ->pluck('fullname');
 
         $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
             ->where('status', 'Rejected')
@@ -184,7 +196,7 @@ class MedicalController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Medical';
 
-        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data', 'medicalGroup'));
+        return view('hcis.reimbursements.medical.medical', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'master_medical', 'formatted_data', 'medicalGroup', 'gaFullname'));
     }
 
     public function medicalForm()
@@ -278,11 +290,12 @@ class MedicalController extends Controller
                 'status' => $statusValue,
                 'medical_proof' => $medical_proof_path,
             ]);
+            // dd($employee_id);
 
-            // $CANotificationLayer = Employee::where('employee_id', $employee_id)->pluck('email')->first();
-            // if ($CANotificationLayer) {
+            // $MDCNotificationLayer = Employee::where('employee_id', $employee_id)->pluck('email')->first();
+            // if ($MDCNotificationLayer) {
             //     // Kirim email ke pengguna transaksi (employee pada layer terakhir)
-            //     Mail::to($CANotificationLayer)->send(new MedicalNotification($healthCoverage));
+            //     Mail::to($MDCNotificationLayer)->send(new MedicalNotification($healthCoverage));
             // }
         }
 
@@ -302,7 +315,7 @@ class MedicalController extends Controller
         )->get();
 
         $medicalBalances = HealthPlan::where('employee_id', $employee_id)
-            ->whereYear('period', $currentYear)
+            ->where('period', $currentYear)
             ->get();
         $balanceData = [];
         foreach ($medicalBalances as $balance) {
@@ -495,7 +508,7 @@ class MedicalController extends Controller
         $selectedDisease = $medic->disease;
 
         $medicalBalances = HealthPlan::where('employee_id', $medic->employee_id)
-            ->whereYear('period', $currentYear)
+            ->where('period', $currentYear)
             ->get();
         $balanceData = [];
         foreach ($medicalBalances as $balance) {
@@ -580,6 +593,13 @@ class MedicalController extends Controller
                         'balance_uncoverage' => $balance_diff_formatted,
                     ]);
                 }
+                // dd($existingCoverage);
+
+                // $MDCNotificationLayer = Employee::where('employee_id', $employee_id)->pluck('email')->first();
+                // if ($MDCNotificationLayer) {
+                //     // Kirim email ke pengguna transaksi (employee pada layer terakhir)
+                //     Mail::to($MDCNotificationLayer)->send(new MedicalNotification($healthCoverage));
+                // }
             } else {
                 Log::info("No existing coverage found for medical_type: $medical_type");
             }
@@ -1062,6 +1082,9 @@ class MedicalController extends Controller
             'hospital_name',
             'patient_name',
             'disease',
+            'verif_by',
+            'balance_verif',
+            'approved_by',
             DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance ELSE 0 END) as maternity_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
             DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
@@ -1072,14 +1095,24 @@ class MedicalController extends Controller
         )
             ->where('employee_id', $employee_id)
             ->where('status', '!=', 'Draft')
-            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status')
+            ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'verif_by', 'balance_verif', 'approved_by')
             ->orderBy('latest_created_at', 'desc')
             ->get();
 
         $medicalGroup->map(function ($item) {
+            $approvedEmployee = Employee::where('employee_id', $item->approved_by)->first();
+
+            $item->approved_by_fullname = $approvedEmployee ? $approvedEmployee->fullname : null;
             $item->total_per_no_medic = $item->maternity_total + $item->inpatient_total + $item->outpatient_total + $item->glasses_total;
             return $item;
         });
+
+        $bissnisUnit = Employee::where('employee_id', $employee_id)
+            ->pluck('group_company');
+        $gaApproval = MasterBusinessUnit::where('nama_bisnis', $bissnisUnit)
+            ->first();
+        $gaFullname = Employee::where('employee_id', $gaApproval->approval_medical)
+            ->pluck('fullname');
 
         $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
             ->where('status', 'Rejected')  // Filter for rejected status
@@ -1125,7 +1158,7 @@ class MedicalController extends Controller
         $link = 'Medical';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data', 'medicalGroup', 'gaFullname'));
     }
 
     public function medicalAdminDetailForm($key)
