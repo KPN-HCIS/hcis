@@ -93,7 +93,11 @@
         {{-- HR ADMIN --}}
         @if (auth()->check() &&
                 (auth()->user()->can('reportca_hcis') ||
-                    auth()->user()->can('report_hcis_md')))
+                    auth()->user()->can('report_hcis_bt') ||
+                    auth()->user()->can('report_hcis_md') ||
+                    auth()->user()->can('report_hcis_ht') ||
+                    auth()->user()->can('report_hcis_tkt') ||
+                    auth()->user()->can('report_hcis_htl')))
             <div style="display: flex; align-items: center; margin: 20px 0;">
                 <hr style="flex-grow: 1; border: none; border-top: 1px solid #ddd; margin: 0;">
                 <span style="padding: 0 20px; font-weight: bold;">Admin</span>
@@ -119,6 +123,20 @@
             @endif
 
             @if (auth()->check())
+                @can('report_hcis_bt')
+                    <div class="col-md-3">
+                        <a href="{{ route('businessTrip.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="/images/menu/bt.png" alt="logo">
+                                    <h5 class="my-3">Business Trip (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div>
+                @endcan
+            @endif
+            @if (auth()->check())
                 @can('report_hcis_md')
                     <div class="col-md-3">
                         <a href="{{ route('medical.admin') }}">
@@ -126,6 +144,49 @@
                                 <div class="card-body">
                                     <img src="{{ asset('images/menu/report.png') }}" alt="logo">
                                     <h5 class="my-3">Medical (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('report_hcis_ht')
+                    <div class="col-md-3">
+                        <a href="{{ route('home-trip.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
+                                        style="width: 100px; height: 100px; border-radius: 100px;">
+                                    <h5 class="my-3">Home Trip (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('report_hcis_tkt')
+                    <div class="col-md-3">
+                        <a href="{{ route('ticket.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/tkt.png') }}" alt="logo">
+                                    <h5 class="my-3">Ticket (Admin)</h5>
+                                </div> <!-- end card-body-->
+                            </div> <!-- end card-->
+                        </a>
+                    </div> <!-- end col-->
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('report_hcis_htl')
+                    <div class="col-md-3">
+                        <a href="{{ route('hotel.admin') }}">
+                            <div class="card" style="height: 200px">
+                                <div class="card-body">
+                                    <img src="{{ asset('images/menu/ht.png') }}" alt="logo">
+                                    <h5 class="my-3">Hotel (Admin)</h5>
                                 </div> <!-- end card-body-->
                             </div> <!-- end card-->
                         </a>

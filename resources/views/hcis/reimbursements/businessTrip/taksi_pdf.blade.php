@@ -103,9 +103,9 @@
             <td colspan="3"><b>Detail Voucher:</b></td>
         </tr>
         <tr>
-            <td class="label">Nominal Value</td>
+            <td class="label">Nominal Voucher</td>
             <td class="colon">:</td>
-            <td class="value">{{ $taksi->nominal_vt }}</td>
+            <td class="value">Rp {{ number_format($taksi->nominal_vt, 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td class="label">Needs</td>

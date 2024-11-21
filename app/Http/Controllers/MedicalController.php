@@ -209,11 +209,17 @@ class MedicalController extends Controller
             'T'
         )->get();
 
+        $isMarried = Employee::where('employee_id', $employee_id)
+        ->where('marital_status', 'Married')
+        ->exists();
+        // dd($isMarried);
+
         $hasGlasses = HealthCoverage::where('employee_id', $employee_id)
             ->where('period', $currentYear)
             ->where('medical_type', 'Glasses')
             ->count() >= 1;
         // dd($isGlasses);
+
         $medicalBalances = HealthPlan::where('employee_id', $employee_id)
             ->where('period', $currentYear)
             ->get();
@@ -231,7 +237,7 @@ class MedicalController extends Controller
         $parentLink = 'Medical';
         $link = 'Add Medical Coverage Usage';
 
-        return view('hcis.reimbursements.medical.form.medicalForm', compact('diseases', 'medical_type', 'families', 'parentLink', 'link', 'employee_name', 'balanceData', 'hasGlasses'));
+        return view('hcis.reimbursements.medical.form.medicalForm', compact('diseases', 'medical_type', 'families', 'parentLink', 'link', 'employee_name', 'balanceData', 'hasGlasses', 'isMarried'));
     }
 
     public function medicalCreate(Request $request)
@@ -320,6 +326,10 @@ class MedicalController extends Controller
             'T'
         )->get();
 
+        $isMarried = Employee::where('employee_id', $employee_id)
+        ->where('marital_status', 'Married')
+        ->exists();
+
         $hasGlasses = HealthCoverage::where('employee_id', $employee_id)
             ->where('period', $currentYear)
             ->where('medical_type', 'Glasses')
@@ -352,7 +362,7 @@ class MedicalController extends Controller
         $parentLink = 'Medical';
         $link = 'Edit Medical Coverage Usage';
 
-        return view('hcis.reimbursements.medical.form.medicalEditForm', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes', 'balanceData', 'hasGlasses', 'selected_patient'));
+        return view('hcis.reimbursements.medical.form.medicalEditForm', compact('selectedDisease', 'balanceMapping', 'medic', 'medical_type', 'diseases', 'families', 'parentLink', 'link', 'employee_name', 'medicGroup', 'selectedMedicalTypes', 'balanceData', 'hasGlasses', 'selected_patient', 'isMarried'));
     }
 
     public function medicalUpdate(Request $request, $id)
