@@ -249,7 +249,8 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             if ($CANotificationLayer) {  
                 $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
                 
@@ -296,7 +297,8 @@ class ApprovalReimburseController extends Controller
                     // $caTransaction->approval_sett = 'On Progress';
                     $caTransaction->save();
 
-                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                     if ($CANotificationLayer) {  
                         $textNotification = "Request Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
                         
@@ -327,7 +329,8 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
-                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
 
@@ -398,7 +401,8 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             if ($CANotificationLayer) {  
                 $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
                 
@@ -443,7 +447,8 @@ class ApprovalReimburseController extends Controller
                     // $caTransaction->approval_sett = 'On Progress';
                     $caTransaction->save();
 
-                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                     if ($CANotificationLayer) {
                         $textNotification = "Request Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
                         
@@ -476,7 +481,8 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
-                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
 
@@ -542,7 +548,8 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             if ($CANotificationLayer) {  
                 $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
                 
@@ -589,7 +596,8 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->approval_status = 'Approved'; // Set ke Approved untuk transaksi
                     $caTransaction->save();
 
-                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                     // dd($CANotificationLayer);
                     if ($CANotificationLayer) {
                         $textNotification = "Request Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
@@ -623,7 +631,8 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
-                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();  
+                // $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();  
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 if ($CANotificationLayer) {  
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";  
                     $linkApprove = route('approval.email.aproved', [
@@ -748,7 +757,8 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             if ($CANotificationLayer) {  
                 $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
                 
@@ -793,7 +803,8 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->approval_sett = 'Approved'; // Set ke ID user layer tertinggi
                     $caTransaction->save();
 
-                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first(); 
+                    // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first(); 
+                    $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                     if ($CANotificationLayer) {  
                         $textNotification = "Request Declaration Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
                         $declaration = "Declaration";
@@ -825,7 +836,8 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
-                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Declaration Cash Advanced dengan detail sebagai berikut:";
                     $declaration = "Declaration";
@@ -896,7 +908,8 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             if ($CANotificationLayer) {  
                 $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
                 
@@ -940,7 +953,8 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->approval_sett = 'Approved'; // Set ke ID user layer tertinggi
                     $caTransaction->save();
 
-                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                     if ($CANotificationLayer) {
                         $textNotification = "Request Declaration Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
                         $declaration = "Declaration";
@@ -974,7 +988,8 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
-                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 // dd($CANotificationLayer);
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Declaration Cash Advanced dengan detail sebagai berikut:";
@@ -1043,7 +1058,8 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             if ($CANotificationLayer) {  
                 $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
                 
@@ -1090,7 +1106,8 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->approval_sett = 'Approved'; // Set ke Approved untuk transaksi
                     $caTransaction->save();
                     
-                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                     if ($CANotificationLayer) {  
                         $textNotification = "Request Declaration Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
                         $declaration = "Declaration";
@@ -1124,7 +1141,8 @@ class ApprovalReimburseController extends Controller
                 }
 
             
-                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Declaration Cash Advanced dengan detail sebagai berikut:";
                     $declaration = "Declaration";
@@ -1223,7 +1241,8 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             if ($CANotificationLayer) {  
                 $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
                 
@@ -1271,7 +1290,8 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // dd($caTransaction);
-                $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 if ($CANotificationLayer) {  
                     $textNotification = "Request Declaration Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
                     
@@ -1300,7 +1320,8 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->save();
                 }
 
-                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Extend Cash Advanced dengan detail sebagai berikut:";
 
@@ -1370,7 +1391,8 @@ class ApprovalReimburseController extends Controller
                 $caTransaction->save();
             }
 
-            $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             if ($CANotificationLayer) {  
                 $textNotification = "Request Cash Advanced anda telah di Reject silahkan Bicarakan lebih lanjut dengan atasan anda :";
                 
@@ -1424,7 +1446,8 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->reason_extend = $extendData->ext_reason;
                     $caTransaction->save();
 
-                    $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    // $CANotificationLayer = Employee::where('id', $caTransaction->user_id)->pluck('email')->first();
+                    $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                     if ($CANotificationLayer) {
                         $textNotification = "Request Extend Cash Advanced anda telah di Approved silahkan cek kembali request anda atau bisa mendowload pengajuan anda pada lampiran email :";
                         $declaration = "Extend";
@@ -1458,7 +1481,8 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Mengambil email employee di layer berikutnya dan mengirimkan notifikasi
-                $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                // $CANotificationLayer = Employee::where('employee_id', $nextApproval->employee_id)->pluck('email')->first();
+                $CANotificationLayer = "eriton.dewa@kpn-corp.com";
                 // dd($CANotificationLayer);
                 if ($CANotificationLayer) {
                     $textNotification = "{$caTransaction->employee->fullname} mengajukan Extend Cash Advanced dengan detail sebagai berikut:";

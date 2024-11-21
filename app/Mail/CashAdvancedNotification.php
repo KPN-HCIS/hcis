@@ -33,7 +33,6 @@ class CashAdvancedNotification extends Mailable
         $type = pathinfo($path, PATHINFO_EXTENSION);  
         $data = file_get_contents($path);  
         $this->base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);  
-        $nextApproval = "eriton.dewa@kpn-corp.com";
 
         // dd($model->no_ca);
         
