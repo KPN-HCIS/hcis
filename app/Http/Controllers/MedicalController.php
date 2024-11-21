@@ -627,7 +627,7 @@ class MedicalController extends Controller
         HealthCoverage::where('no_medic', $noMedic)->delete();
 
         // Redirect back with a success message
-        return redirect()->route('medical.confirmation')->with('success', 'Medical Deleted');
+        return redirect()->back()->with('success', 'Medical Deleted');
     }
 
     public function medicalApproval()
@@ -1395,21 +1395,33 @@ class MedicalController extends Controller
             'file' => 'required|mimes:xlsx,xls',
         ]);
 
-        try {
-            // Attempt to import data
-            Excel::import(
-                new ImportHealthCoverage,
-                $request->file('file')
-            );
+        // Create instance of import class
+        $import = new ImportHealthCoverage();
 
-            return redirect()->route('medical.report')->with('success', 'Transaction successfully added from Excel.');
-        } catch (\App\Exceptions\ImportDataInvalidException $e) {
-            // Catch custom exception and redirect back with error message
-            return redirect()->route('medical.report')->withErrors(['import_error' => $e->getMessage()]);
-        } catch (\Exception $e) {
-            // Catch any other unexpected exceptions and redirect with a generic error message
-            return redirect()->route('medical.report')->withErrors(['import_error' => 'An error occurred during import. Please check the file format.']);
-        }
+        // Import the data
+        Excel::import($import, $request->file('file'));
+
+        // After import is complete, process the batched records and send emails
+        $import->afterImport();
+
+        // try {
+        //     // Create instance of import class
+        //     $import = new ImportHealthCoverage();
+
+        //     // Import the data
+        //     Excel::import($import, $request->file('file'));
+
+        //     // After import is complete, process the batched records and send emails
+        //     $import->afterImport();
+
+        //     return redirect()->route('medical.report')->with('success', 'Transaction successfully added from Excel.');
+        // } catch (\App\Exceptions\ImportDataInvalidException $e) {
+        //     // Catch custom exception and redirect back with error message
+        //     return redirect()->route('medical.report')->withErrors(['import_error' => $e->getMessage()]);
+        // } catch (\Exception $e) {
+        //     // Catch any other unexpected exceptions and redirect with a generic error message
+        //     return redirect()->route('medical.report')->withErrors(['import_error' => 'An error occurred during import. Please check the file format.']);
+        // }
     }
 
 

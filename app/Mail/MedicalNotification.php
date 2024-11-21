@@ -13,11 +13,11 @@ class MedicalNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $healthCoverage;
+    public $healthCoverages;
 
-    public function __construct($healthCoverage)
+    public function __construct($healthCoverages)
     {
-        $this->healthCoverage = $healthCoverage;
+        $this->healthCoverages = $healthCoverages;
     }
 
     public function build()

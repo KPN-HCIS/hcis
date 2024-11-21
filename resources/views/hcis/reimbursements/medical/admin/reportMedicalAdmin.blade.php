@@ -165,6 +165,7 @@
                                     <tr class="text-center">
                                         <th class="text-center">No</th>
                                         <th class="text-center">Submission Date</th>
+                                        <th class="text-center">No Medical</th>
                                         <th class="text-center">No Invoice</th>
                                         <th class="text-center">Hospital Name</th>
                                         <th class="text-center">PT</th>
@@ -176,6 +177,7 @@
                                             <th class="text-center">{{ $master_medicals->name }}</th>
                                         @endforeach
                                         <th class="text-center">Status</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -186,6 +188,7 @@
                                                     <tr>
                                                         <td class="text-center">{{ $loop->iteration }}</td>
                                                         <td class="text-start">{{ $medicalRecord->created_at }}</td>
+                                                        <td>{{ $medicalRecord->no_medic }}</td>
                                                         {{-- <td class="text-start">{{ \Carbon\Carbon::parse($medicalRecord->created_at)->format('d-M-y') }}</td> --}}
                                                         <td>{{ $medicalRecord->no_invoice }}</td>
                                                         <td>{{ $medicalRecord->hospital_name }}</td>
@@ -206,6 +209,18 @@
                                                             </td>
                                                         @endforeach
                                                         <td class="text-center">{{ $medicalRecord->status }}</td>
+                                                        <td class="text-center">
+                                                            <form id="deleteForm_{{ $medicalRecord->no_medic }}" method="POST"
+                                                                action="{{ route('medical-admin.delete', $medicalRecord->usage_id) }}" style="display: inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <input type="hidden" id="no_sppd_{{ $medicalRecord->no_medic }}" value="{{ $medicalRecord->no_medic }}">
+                                                                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill delete-button"
+                                                                    data-id="{{ $medicalRecord->no_medic }}">
+                                                                    <i class="bi bi-trash-fill"></i>
+                                                                </button>
+                                                            </form>
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             @endif

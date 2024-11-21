@@ -53,3 +53,31 @@
         });
     </script>
 @endif
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent form from submitting immediately
+
+                const transactionId = button.getAttribute('data-id');
+                const form = document.getElementById(`deleteForm_${transactionId}`);
+                const noSppd = document.getElementById(`no_sppd_${transactionId}`).value;
+
+                Swal.fire({
+                    title: `Do you want to delete this request?\n (${noSppd})`,
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#AB2F2B", // Confirm button color
+                    cancelButtonColor: "#CCCCCC", // Cancel button color
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // Only submit the form if the user confirms
+                    }
+                });
+            });
+        });
+    });
+</script>

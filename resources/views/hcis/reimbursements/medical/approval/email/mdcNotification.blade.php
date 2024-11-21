@@ -9,174 +9,147 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 11px;
+            line-height: 1.4;
         }
 
         .header {
             width: 100%;
             height: auto;
+            text-align: center;
         }
 
         .header img {
             height: auto;
             margin-bottom: 20px;
+            width: 20%; /* Default untuk desktop */
         }
 
-        .content {
-            padding: 0px;
+        /* Media query untuk mobile devices */
+        @media screen and (max-width: 768px) {
+            .header img {
+                width: 50%; /* Ukuran untuk mobile */
+            }
         }
 
         h5 {
-            font-size: 14px;
+            font-size: 13px;
             margin: 0;
             padding: 0;
+            margin-bottom: 10px;
         }
 
         p {
-            margin-top: 4px;
+            margin: 4px 0;
             padding: 2px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        td {
-            padding: 5px;
-            vertical-align: top;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .label {
-            width: 30%;
-        }
-
-        .colon {
-            width: 20px;
-            text-align: center;
-        }
-
-        .value {
-            width: 70%;
-        }
-
-        .section-title {
-            margin-top: 20px;
         }
 
         .table-approve {
             border-collapse: collapse;
             width: 100%;
+            margin-top: 8px;
+            font-size: 10px;
         }
 
         .table-approve th,
         .table-approve td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
+            border: 1px solid #ddd;
+            padding: 4px;
+            text-align: left;
+            vertical-align: top;
         }
 
         .table-approve .head-row {
             font-weight: bold;
+            background-color: #f5f5f5;
         }
 
         .table-approve th {
-            background-color: #c6e0b4;
+            background-color: #ab2f2b;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+            text-align: center;
         }
 
-        .table-approve .total-row {
-            text-align: left;
-        }
-        .approved {
-            color: green;
-        }
-        .pending {
-            color: yellow;
+        .table-wrapper {
+            overflow-x: auto;
+            max-width: 100%;
         }
 
-        footer {
-            position: fixed;
-            bottom: 0cm;
-            left: 0cm;
-            right: 0cm;
-            height: 2cm;
+        .col-small {
+            width: 40px;
+            white-space: nowrap;
+        }
+
+        .col-medium {
+            width: 80px;
+            white-space: nowrap;
+        }
+
+        .col-amount {
+            width: 70px;
             text-align: right;
-            line-height: 1.5cm;
-            font-size: 12px;
-            color: #555;
+        }
+
+        .col-date {
+            width: 70px;
+            white-space: nowrap;
         }
     </style>
 </head>
-    <body>
-        <h5>Reimburse Medical Notification</h5>
-        <p>Kepada Yth : Bapak/Ibu <strong>{{ $healthCoverage->employee->fullname }}</strong></p>
+<body>
+    <div class="header">
+        <img src="https://stag-corp.kpndownstream.com/images/logo/logo-kpn-red.png" alt="Kop Surat">
+    </div>
+    <h5>Reimburse Medical Notification</h5>
+    <p>Kepada Yth : Bapak/Ibu <strong>{{ $healthCoverages->first()->employee->fullname }}</strong></p>
 
-        <p>Pengajuan Plafon Medical anda telah di Import oleh Admin {{ $healthCoverage->employee_approve->fullname }} sebanyak </p>
-        <p>Dengan Detail Sebagai Berikut : </p>
-        <table class="table-approve" style="width: 80%;">
+    <p>Pengajuan Plafon Medical anda telah di Import oleh Admin <strong>{{ $healthCoverages->first()->employee_approve->fullname }}</strong> sebanyak {{ $healthCoverages->count() }} data.</p>
+    @if ($healthCoverages->contains(fn($item) => $item->balance_uncoverage != 0))
+        <p>Beberapa pengajuan Anda melebihi plafon yang tersedia, sehingga terdapat sebagian pengeluaran yang tidak ditanggung oleh plafon medical Anda.</p>
+    @endif
+    <p>Dengan Detail Sebagai Berikut : </p>
+
+    <div class="table-wrapper">
+        <table class="table-approve">
             <tr>
-                <th colspan="13"><b>Detail Reimburse Medical  :</b></th>
+                <th colspan="10"><b>Detail Reimburse Medical:</b></th>
             </tr>
             <tr class="head-row">
-                <td style="width: 5%">No</td>
-                <td>Employee ID</td>
-                <td>No Invoice</td>
-                <td>Hospital Name</td>
-                <td>Patient Name</td>
-                <td>Desease</td>
-                <td>Date</td>
-                <td>Coverage Detail</td>
-                <td>Period</td>
-                <td>Medical Type</td>
-                <td>Amount</td>
-                <td>Amount Uncoverage</td>
-                <td>Amount Verify</td>
+                <td class="col-small">No</td>
+                <td class="col-medium">No Invoice</td>
+                <td>Hospital</td>
+                <td>Patient</td>
+                <td class="col-medium">Disease</td>
+                <td class="col-date">Date</td>
+                <td class="col-medium">Type</td>
+                <td class="col-amount">Amount</td>
+                <td class="col-amount">Uncovered</td>
+                <td class="col-amount">Verified</td>
             </tr>
+            @foreach($healthCoverages as $index => $healthCoverage)
             <tr>
-                <td class="label">1</td>
-                <td>
-                    {{ $healthCoverage->employee_id }}
-                </td>
-                <td>
-                    {{ $healthCoverage->no_invoice }}
-                </td>
-                <td>
-                    {{ $healthCoverage->hospital_name }}
-                </td>
-                <td>
-                    {{ $healthCoverage->patient_name }}
-                </td>
-                <td>
-                    {{ $healthCoverage->disease }}
-                </td>
-                <td>
-                    {{ $healthCoverage->date }}
-                </td>
-                <td>
-                    {{ $healthCoverage->coverage_detail }}
-                </td>
-                <td>
-                    {{ $healthCoverage->period }}
-                </td>
-                <td>
-                    {{ $healthCoverage->medical_type }}
-                </td>
-                <td>
-                    {{ $healthCoverage->balance }}
-                </td>
-                <td>
-                    {{ $healthCoverage->balance_uncoverage }}
-                </td>
-                <td>
-                    {{ $healthCoverage->balance_verif }}
-                </td>
+                <td class="col-small">{{ $index + 1 }}</td>
+                <td class="col-medium">{{ $healthCoverage->no_invoice }}</td>
+                <td>{{ $healthCoverage->hospital_name }}</td>
+                <td>{{ $healthCoverage->patient_name }}</td>
+                <td class="col-medium">{{ $healthCoverage->disease }}</td>
+                <td class="col-date">{{ \Carbon\Carbon::parse($healthCoverage->date)->format('d/m/Y') }}</td>
+                <td class="col-medium">{{ $healthCoverage->medical_type }}</td>
+                <td class="col-amount">{{ number_format($healthCoverage->balance, 0, ',', '.') }}</td>
+                <td class="col-amount">{{ number_format($healthCoverage->balance_uncoverage, 0, ',', '.') }}</td>
+                <td class="col-amount">{{ number_format($healthCoverage->balance_verif, 0, ',', '.') }}</td>
+            </tr>
+            @endforeach
+            <tr>
+                <td colspan="7" style="text-align: right;"><strong>Total:</strong></td>
+                <td class="col-amount"><strong>{{ number_format($healthCoverages->sum('balance'), 0, ',', '.') }}</strong></td>
+                <td class="col-amount"><strong>{{ number_format($healthCoverages->sum('balance_uncoverage'), 0, ',', '.') }}</strong></td>
+                <td class="col-amount"><strong>{{ number_format($healthCoverages->sum('balance_verif'), 0, ',', '.') }}</strong></td>
             </tr>
         </table>
-        {{-- {{ var_dump($healthCoverage) }} --}}
-    </body>
+    </div>
+</body>
 </html>

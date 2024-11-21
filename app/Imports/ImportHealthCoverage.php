@@ -16,6 +16,8 @@ use App\Mail\MedicalNotification;
 
 class ImportHealthCoverage implements ToModel
 {
+    private $batchRecords = [];
+
     public function generateNoMedic()
     {
         $currentYear = date('y');
@@ -107,12 +109,31 @@ class ImportHealthCoverage implements ToModel
             'approved_by' => $employeeId->employee_id,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
-        // dd($healthCoverage);
 
-        // Perform your calculations or validation here
         $this->performCalculations($healthCoverage);
 
+        $this->batchRecords[] = $healthCoverage;
+
         return $healthCoverage;
+    }
+
+    public function afterImport()
+    {
+        // Group records by employee_id
+        $groupedRecords = collect($this->batchRecords)->groupBy('employee_id');
+        // dd($groupedRecords);
+
+        // Send one email per employee with all their records
+        foreach ($groupedRecords as $employeeId => $records) {
+            $email = Employee::where('employee_id', $employeeId)->pluck('email')->first();
+
+            if ($email) {
+                Mail::to($email)->send(new MedicalNotification($records));
+            }
+        }
+
+        // Clear the batch records
+        $this->batchRecords = [];
     }
 
     private function performCalculations(HealthCoverage $healthCoverage)
@@ -122,27 +143,30 @@ class ImportHealthCoverage implements ToModel
             ->first();
 
         if ($healthPlan) {
-            $healthPlan->balance -= $healthCoverage->balance;
-            $healthCoverage->balance_uncoverage = max($healthCoverage->balance_uncoverage, abs($healthPlan->balance));
+            $initialBalance = $healthPlan->balance;
+
+            if ($initialBalance > 0) {
+                $healthPlan->balance -= $healthCoverage->balance;
+            }
+
+            if ($initialBalance >= 0 && $healthCoverage->balance > $initialBalance) {
+                $healthCoverage->balance_uncoverage = $healthCoverage->balance - $initialBalance;
+            } elseif ($initialBalance < 0) {
+                $healthCoverage->balance_uncoverage = $healthCoverage->balance;
+            } else {
+                $healthCoverage->balance_uncoverage = 0;
+            }
+
             $healthPlan->save();
         }
 
-        // Perform your other calculations or validation here
+        $healthCoverage->save();
+
         $this->calculateBalance($healthCoverage);
     }
 
     private function calculateBalance(HealthCoverage $healthCoverage)
     {
-        // Your balance calculation logic here
-        // For example:
-        // $healthCoverage->balance = $healthCoverage->balance_uncoverage - $healthCoverage->balance_verif;
-        // dd($healthCoverage);
-        $MDCNotificationLayer = Employee::where('employee_id', $healthCoverage->employee_id)->pluck('email')->first();
-        if ($MDCNotificationLayer) {
-            // Kirim email ke pengguna transaksi (employee pada layer terakhir)
-            Mail::to($MDCNotificationLayer)->send(new MedicalNotification($healthCoverage));
-        }
-
         $healthCoverage->save();
     }
 }
