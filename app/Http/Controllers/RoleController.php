@@ -46,7 +46,7 @@ class RoleController extends Controller
         return view('pages.roles.assign', compact('roles', 'link', 'parentLink', 'active'));
     }
     function create() {    
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('group_name')->orderBy('display_name')->get();
 
         $locations = Location::select('company_name', 'area', 'work_area')->orderBy('area')->get();
 
@@ -108,7 +108,8 @@ class RoleController extends Controller
 
         $companies = Company::select('contribution_level', 'contribution_level_code')->orderBy('contribution_level_code')->get();
 
-        $permissions = Permission::orderBy('id')->pluck('id')->toArray();
+        // $permissions = Permission::orderBy('id')->pluck('id')->toArray();
+        $permissions = Permission::orderBy('group_name')->orderBy('display_name')->get();
 
         $permissionNames = Permission::leftJoin('role_has_permissions', function($join) use ($roleId) {
             $join->on('role_has_permissions.permission_id', '=', 'permissions.id')

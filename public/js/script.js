@@ -466,6 +466,7 @@ function getAssignmentData(id) {
 function getPermissionData(id) {
     const subContent = $("#subContent");
     // Send AJAX request to fetch and display report content
+    console.log("Selected Role ID:", id);
     $.ajax({
         url: "/admin/roles/get-permission", // Endpoint URL to fetch report content
         method: "GET",
