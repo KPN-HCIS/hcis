@@ -8,116 +8,108 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 11px;
+            line-height: 1.4;
         }
 
         .header {
             width: 100%;
             height: auto;
+            text-align: center;
         }
 
         .header img {
             height: auto;
             margin-bottom: 20px;
+            width: 20%; /* Default untuk desktop */
         }
 
-        .content {
-            padding: 0px;
+        /* Media query untuk mobile devices */
+        @media screen and (max-width: 768px) {
+            .header img {
+                width: 50%; /* Ukuran untuk mobile */
+            }
         }
 
         h5 {
-            font-size: 14px;
+            font-size: 13px;
             margin: 0;
             padding: 0;
+            margin-bottom: 10px;
         }
 
         p {
-            margin-top: 4px;
+            margin: 4px 0;
             padding: 2px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        td {
-            padding: 5px;
-            vertical-align: top;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .label {
-            width: 30%;
-        }
-
-        .colon {
-            width: 20px;
-            text-align: center;
-        }
-
-        .value {
-            width: 70%;
-        }
-
-        .section-title {
-            margin-top: 20px;
         }
 
         .table-approve {
             border-collapse: collapse;
             width: 100%;
+            margin-top: 8px;
+            font-size: 10px;
         }
 
         .table-approve th,
         .table-approve td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
+            border: 1px solid #ddd;
+            padding: 4px;
+            text-align: left;
+            vertical-align: top;
         }
 
         .table-approve .head-row {
             font-weight: bold;
+            background-color: #f5f5f5;
+        }
+
+        .table-approve .head-row td {
+            text-align: center;
         }
 
         .table-approve th {
-            background-color: #c6e0b4;
+            background-color: #ab2f2b;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+            text-align: center;
         }
 
-        .table-approve .total-row {
-            text-align: left;
-        }
-        .approved {
-            color: green;
-        }
-        .pending {
-            color: yellow;
+        .table-wrapper {
+            overflow-x: auto;
+            max-width: 100%;
         }
 
-        footer {
-            position: fixed;
-            bottom: 0cm;
-            left: 0cm;
-            right: 0cm;
-            height: 2cm;
+        .col-small {
+            width: 40px;
+            white-space: nowrap;
+        }
+
+        .col-medium {
+            width: 80px;
+            white-space: nowrap;
+        }
+
+        .col-amount {
+            width: 70px;
             text-align: right;
-            line-height: 1.5cm;
-            font-size: 12px;
-            color: #555;
+        }
+
+        .col-date {
+            width: 70px;
+            white-space: nowrap;
         }
     </style>
 </head>
     <body>
         <div class="header">
-            <img src="https://stag-corp.kpndownstream.com/images/logo/logo-kpn-red.png" alt="Kop Surat" style="max-width: 20%; height: auto;">
+            <img src="https://stag-corp.kpndownstream.com/images/logo/logo-kpn-red.png" alt="Kop Surat">
         </div>
-
+        <h5>Reimburse Cash Advanced Notification</h5>
         @if ($nextApproval)
-            <p>Kepada Yth : Bapak/Ibu <strong>{{ $nextApproval->employee->fullname }}</strong></p>    
+        {{-- {{dd($nextApproval)}} --}}
+            <p>Kepada Yth : Bapak/Ibu <strong>{{ $nextApproval->employee->fullname }}</strong></p>
             <br>
         @endif
 
@@ -169,20 +161,20 @@
                     <td class="label">CA Type</td>
                     <td class="colon">:</td>
                     <td class="value">
-                        @if($caTransaction->type_ca === 'entr')  
-                            Entertaiment  
-                        @elseif($caTransaction->type_ca === 'dns')  
-                            Business Trip  
-                        @elseif($caTransaction->type_ca === 'ndns')  
-                            Non Business Trip  
-                        @else  
-                            Unknown Type  
-                        @endif  
+                        @if($caTransaction->type_ca === 'entr')
+                            Entertaiment
+                        @elseif($caTransaction->type_ca === 'dns')
+                            Business Trip
+                        @elseif($caTransaction->type_ca === 'ndns')
+                            Non Business Trip
+                        @else
+                            Unknown Type
+                        @endif
                     </td>
                 </tr>
             </table>
-            
-            @if($caTransaction->type_ca === 'entr')  
+
+            @if($caTransaction->type_ca === 'entr')
                 @if ($declaration == "Declaration")
                     <table class="table-approve" style="width: 80%;">
                         <tr>
@@ -249,7 +241,7 @@
                         </tr>
                     </table>
                 @endif
-            @elseif($caTransaction->type_ca === 'dns')  
+            @elseif($caTransaction->type_ca === 'dns')
                 @if ($declaration == "Declaration")
                     @if (count($declareCA['detail_perdiem']) > 0 && !empty($declareCA['detail_perdiem'][0]['company_code']))
                         <table class="table-approve">
@@ -398,7 +390,7 @@
                                 <td>Company Code</td>
                                 <td>Total Days</td>
                             </tr>
-            
+
                             @foreach($detailCA['detail_perdiem'] as $perdiem)
                             <tr style="text-align: center">
                                 <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
@@ -420,7 +412,7 @@
                                     {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
                                 </td>
                             </tr>
-                        </table> 
+                        </table>
                     @endif
                     <table class="table-approve" style="width: 70%;">
                         <tr>
@@ -484,7 +476,7 @@
                         </tr>
                     </table>
                 @endif
-            @elseif($caTransaction->type_ca === 'ndns')  
+            @elseif($caTransaction->type_ca === 'ndns')
                 @if ($declaration == "Declaration")
                     <table class="table-approve" style="width: 80%;">
                         <tr>
@@ -551,19 +543,17 @@
                         </tr>
                     </table>
                 @endif
-            @endif  
+            @endif
             <br>
 
             @if ($linkApprove)
                 <p>Untuk Menyetujui atau Menolak Perjalanan Dinas tersebut dapat memilih link berikut : <a href="{{ $linkApprove }}"> Approve </a>/<a href="{{ $linkReject }}"> Reject </a></p>
-            @else 
+            @else
                 <p>Cash Advanced yang telah di Approve bisa di lihat pada lampiran</p>
             @endif
             <br>
 
-            <p>Apabila ada pertanyaan, dapat menghubungi : </p>
-            <p>Pak Hifni : muhammad.hifni@kpnplantation.com</p>
-            <p>Pak Hendro : hendro.fiktor@kpnplantation.com</p>
+            <p>Apabila ada pertanyaan, dapat menghubungi masing-masing bisnis unit </p>
             <br>
             <p><strong>----------------</strong></p>
             <p>Human Capital - KPN Corp</p>

@@ -805,13 +805,13 @@
 
                                             @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'JPG', 'JPEG', 'PNG']))
                                                 <!-- Tampilkan gambar -->
-                                                <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" target="_blank">
-                                                    <img id="existing-image" src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" alt="Proof Image" style="max-width: 200px;">
+                                                <a href="{{ asset($transactions->prove_declare) }}" target="_blank">
+                                                    <img id="existing-image" src="{{ asset($transactions->prove_declare) }}" alt="Proof Image" style="max-width: 200px;">
                                                 </a>
                                                 <p>Click on the image to view the full size</p>
                                             @elseif($extension == 'pdf')
                                                 <!-- Tampilkan tautan untuk PDF -->
-                                                <a id="existing-pdf" href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" target="_blank">
+                                                <a id="existing-pdf" href="{{ asset($transactions->prove_declare) }}" target="_blank">
                                                     <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File" style="max-width: 48px;">
                                                     <p>Click to view PDF</p>
                                                 </a>

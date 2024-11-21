@@ -1583,10 +1583,17 @@ class ReimburseController extends Controller
             $file = $req->file('prove_declare');
             $filename = time() . '_' . $file->getClientOriginalName();
 
-            $file->move(public_path('uploads/proofs'), $filename);
-            // $file->move('/home/hcis8257/public_html/apps/uploads/proofs', $filename);
+            $upload_path = 'uploads/proofs/' . $employee_data->employee_id;
+            $full_path = public_path($upload_path);
 
-            $model->prove_declare = $filename;
+            // Check if the folder exists, if not, create it
+            if (!is_dir($full_path)) {
+                mkdir($full_path, 0755, true);
+            }
+
+            $file->move($full_path, $filename);
+
+            $model->prove_declare = $upload_path . '/' . $filename;
         } else {
             $model->prove_declare = $req->existing_prove_declare;
         }
@@ -3478,7 +3485,6 @@ class ReimburseController extends Controller
                     'rejectionLink' => $rejectionLink,
                 ]));
             }
-
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
         }
@@ -4187,7 +4193,6 @@ class ReimburseController extends Controller
                     'rejectionLink' => $rejectionLink,
                 ]));
             }
-
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
         } else {

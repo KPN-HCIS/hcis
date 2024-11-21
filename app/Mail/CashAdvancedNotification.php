@@ -26,23 +26,16 @@ class CashAdvancedNotification extends Mailable
     public $linkApprove;
     public $linkReject;
     protected $base64Image;
-    
+
     public function __construct($nextApproval = null, $caTransaction = null, $textNotification, $declaration = null, $linkApprove = null, $linkReject = null)
     {
-        $path = public_path('images/kop.jpg');  
-        $type = pathinfo($path, PATHINFO_EXTENSION);  
-        $data = file_get_contents($path);  
-        $this->base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);  
-        $nextApproval = "eriton.dewa@kpn-corp.com";
-
-        // dd($model->no_ca);
-        
-        if ($nextApproval instanceof ca_extend || $declaration == 'Extend') {  
+        // dd($nextApproval);
+        if ($nextApproval instanceof ca_extend || $declaration == 'Extend') {
             $this->nextApproval = $nextApproval;
-        } elseif ($nextApproval instanceof ca_sett_approval || $declaration == 'Declaration') {  
+        } elseif ($nextApproval instanceof ca_sett_approval || $declaration == 'Declaration') {
             $this->nextApproval = $nextApproval;
-        } elseif ($nextApproval instanceof ca_approval) {  
-            $this->nextApproval = $nextApproval;  
+        } elseif ($nextApproval instanceof ca_approval) {
+            $this->nextApproval = $nextApproval;
         }
 
         if ($caTransaction instanceof CATransaction) {
@@ -67,10 +60,7 @@ class CashAdvancedNotification extends Mailable
     public function build()
     {
         return $this->subject('New Cash Advanced Trip Request')
-            ->view('hcis.reimbursements.approval.email.caNotification-bak')
-            ->with([  
-                'base64Image' => $this->base64Image,  
-            ]);
+            ->view('hcis.reimbursements.approval.email.caNotification-bak');
     }
 
     /**
