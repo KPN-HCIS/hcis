@@ -63,7 +63,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            
+
             <div class="col">
                 <a href="{{ route('businessTrip') }}">
                     <div class="card" style="height: 200px">
