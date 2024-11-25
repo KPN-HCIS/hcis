@@ -348,6 +348,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/medical/admin/form-update/{id}', [MedicalController::class, 'medicalAdminForm'])->name('medical-admin-form.edit');
         Route::put('/medical/admin/form-update/update/{id}', [MedicalController::class, 'medicalAdminUpdate'])->name('medical-admin-form.put');
         Route::delete('/medical/admin/delete/{id}', [MedicalController::class, 'medicalAdminDelete'])->name('medical-admin.delete');
+        Route::delete('/medical/admin/delete/report/{id}', [MedicalController::class, 'medicalReportAdminDelete'])->name('medicalReport-admin.delete');
     });
 
     //Medical Approval

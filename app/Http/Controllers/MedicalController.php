@@ -640,6 +640,42 @@ class MedicalController extends Controller
         return redirect()->back()->with('success', 'Medical Deleted');
     }
 
+    public function medicalReportAdminDelete($id)
+    {
+        // Ambil data HealthCoverage berdasarkan ID
+        $medical = HealthCoverage::findOrFail($id);
+
+        // Ambil nilai yang diperlukan dari record
+        $noMedic = $medical->no_medic;
+        $balanceVerif = $medical->balance_verif; // Misalnya: 999,999
+        $balanceUncoverage = $medical->balance_uncoverage; // Misalnya: 277,768
+        $employeeId = $medical->employee_id;
+        $period = $medical->period;
+        $medicalType = $medical->medical_type;
+
+        // Hitung hasil pengurangan balance_verif dengan balance_uncoverage
+        $adjustmentValue = $balanceVerif - $balanceUncoverage; // 999,999 - 277,768 = 722,231
+
+        // Cari data HealthPlan berdasarkan kriteria
+        $healthPlan = HealthPlan::where('employee_id', $employeeId)
+            ->where('period', $period)
+            ->where('medical_type', $medicalType)
+            ->first();
+
+        if ($healthPlan) {
+            // Tambahkan hasil pengurangan ke balance HealthPlan
+            $healthPlan->balance += $adjustmentValue; // 60,000,000 + 722,231 = 60,722,231
+            $healthPlan->save(); // Simpan perubahan ke database
+        }
+
+        // Soft delete pada data HealthCoverage
+        $medical->delete();
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->back()->with('success', 'Medical record deleted and balance adjusted successfully.');
+    }
+
+
     public function medicalApproval()
     {
         // Fetch all dependents, no longer filtered by employee_id
@@ -1413,6 +1449,8 @@ class MedicalController extends Controller
 
         // // After import is complete, process the batched records and send emails
         // $import->afterImport();
+
+        // return redirect()->route('medical.report')->with('success', 'Transaction successfully added from Excel.');
 
         try {
             // Create instance of import class

@@ -25,12 +25,12 @@ class CashAdvancedNotification extends Mailable
     public $declaration;
     public $linkApprove;
     public $linkReject;
-    protected $base64Image;
+    public $logoBase64;
 
-    public function __construct($nextApproval = null, $caTransaction = null, $textNotification, $declaration = null, $linkApprove = null, $linkReject = null)
+    public function __construct($nextApproval = null, $caTransaction = null, $textNotification, $declaration = null, $linkApprove = null, $linkReject = null, $logoBase64 = null)
     {
-        $nextApproval = "eriton.dewa@kpn-corp.com";
-
+        // $nextApproval = "eriton.dewa@kpn-corp.com";
+        $this->logoBase64 = $logoBase64;
         // dd($model->no_ca);
 
         if ($nextApproval instanceof ca_extend || $declaration == 'Extend') {

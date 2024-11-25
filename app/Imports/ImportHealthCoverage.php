@@ -121,14 +121,20 @@ class ImportHealthCoverage implements ToModel
     {
         // Group records by employee_id
         $groupedRecords = collect($this->batchRecords)->groupBy('employee_id');
-        // dd($groupedRecords);
+        // dd($base64Image);
 
         // Send one email per employee with all their records
         foreach ($groupedRecords as $employeeId => $records) {
             $email = Employee::where('employee_id', $employeeId)->pluck('email')->first();
 
             if ($email) {
-                Mail::to($email)->send(new MedicalNotification($records));
+                $imagePath = public_path('images/kop.jpg');
+                $imageContent = file_get_contents($imagePath);
+                $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+                Mail::to($email)->send(new MedicalNotification(
+                    $records,
+                    $base64Image,
+                ));
             }
         }
 
