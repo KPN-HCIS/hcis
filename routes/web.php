@@ -362,6 +362,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/businessTrip/export/{id}', [BusinessTripController::class, 'export'])->name('exportbt');
     //Search
     Route::get('/search/name', [SearchController::class, 'searchNik'])->name('searchNik');
+    Route::get('/search/passengers', [SearchController::class, 'searchPassenger'])->name('searchNik');
 
     //DEKLARASI BT
     Route::get('/businessTrip/declaration/{id}', [BusinessTripController::class, 'deklarasi'])->name('businessTrip.deklarasi');
@@ -400,8 +401,8 @@ Route::middleware('auth')->group(function () {
 
     //Home Trip
     Route::get('/home-trip', [HomeTripController::class, 'homeTrip'])->name('home-trip');
-    // Route::get('/home-trip/form-add', [HomeTripController::class, 'homeTripForm'])->name('home-trip-form.add');
-    // Route::post('/home-trip/form-add/post', [HomeTripController::class, 'homeTripCreate'])->name('home-trip-form.post');
+    Route::get('/home-trip/form-add', [HomeTripController::class, 'homeTripForm'])->name('home-trip-form.add');
+    Route::post('/home-trip/form-add/post', [HomeTripController::class, 'homeTripCreate'])->name('home-trip-form.post');
     // Route::get('/home-trip/form-update/{id}', [HomeTripController::class, 'homeTripFormUpdate'])->name('home-trip-form.edit');
     // Route::put('/home-trip/form-update/update/{id}', [HomeTripController::class, 'homeTripUpdate'])->name('home-trip-form.put');
     // Route::delete('/home-trip/delete/{id}', [HomeTripController::class, 'homeTripDelete'])->name('home-trip.delete');
