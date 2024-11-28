@@ -77,6 +77,10 @@ class HomeTripController extends Controller
         $employeeName = Employee::pluck('fullname', 'employee_id');
 
         $employeeIds = $tickets->pluck('user_id')->unique();
+
+        $managerL1Names = 'Unknown';
+        $managerL2Names = 'Unknown';
+
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);

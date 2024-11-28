@@ -293,7 +293,7 @@
             @if (auth()->check())
                 @can('report_hcis_ht')
                     <div class="col-md-3">
-                        <a href="{{ route('home-trip.admin') }}">
+                        <a href="{{ '' }}">
                             <div class="card" style="height: 200px">
                                 <div class="card-body">
                                     <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
