@@ -269,13 +269,13 @@ Route::middleware('auth')->group(function () {
 
 
     //Ticket Admin
-    Route::middleware(['permission:report_hcis_tkt'])->group(function () {
+    // Route::middleware(['permission:report_hcis_tkt'])->group(function () {
         Route::get('/ticket/admin', [ReimburseController::class, 'ticketAdmin'])->name('ticket.admin');
         Route::post('/ticket/admin/booking/{id}', [ReimburseController::class, 'ticketBookingAdmin'])->name('ticket.admin-booking');
         Route::get('/ticket/excel', [ReimburseController::class, 'exportTicketAdminExcel'])->name('ticket.excel');
         Route::get('/ticket/report', [ReimburseController::class, 'ticketAdminReport'])->name('ticket.report');
         Route::post('/ticket/admin/delete/{id}', [ReimburseController::class, 'ticketDeleteAdmin'])->name('ticket.delete.admin');
-    });
+    // });
 
     // My Goals
     Route::get('/goals', [MyGoalController::class, 'index'])->name('goals');
@@ -423,10 +423,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/businessTrip/export/admin/{id}/{types?}', [BusinessTripController::class, 'exportAdmin'])->name('export.admin');
 
     //ADMIN Home Trip
-    Route::middleware(['permission:report_hcis_ht'])->group(function () {
+    // Route::middleware(['permission:report_hcis_ht'])->group(function () {
 
-        Route::get('/home-trip/admin', [HomeTripController::class, 'homeTrip'])->name('home-trip.admin');
-    });
+        Route::get('/home-trip/admin', [HomeTripController::class, 'homeTripAdmin'])->name('home-trip.admin');
+        Route::get('/home-trip/admin/detail/{key}', [HomeTripController::class, 'homeTripAdminDetail'])->name('home-trip.detail');
+    // });
 
     //Home Trip
     Route::get('/home-trip', [HomeTripController::class, 'homeTrip'])->name('home-trip');

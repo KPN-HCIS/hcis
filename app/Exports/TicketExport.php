@@ -17,19 +17,31 @@ class TicketExport implements FromCollection, WithHeadings, WithStyles, WithEven
 {
     protected $startDate;
     protected $endDate;
+    protected $tktType;
 
-    public function __construct($startDate, $endDate)
+    public function __construct($startDate, $endDate, $tktType)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->tktType = $tktType;
     }
 
     public function collection()
     {
-        $ticketData = Tiket::where('approval_status', '!=', 'Draft')
-            ->whereBetween('tgl_brkt_tkt', [$this->startDate, $this->endDate])
-            ->get()
-            ->groupBy('no_tkt');
+        $query = Tiket::where('approval_status', '!=', 'Draft');  
+
+        // Add date filters if they are provided (not null)  
+        if ($this->startDate && $this->endDate) {  
+            $query->whereBetween('tgl_brkt_tkt', [$this->startDate, $this->endDate]);  
+        }  
+
+        // Add ticket type filter if it's provided (not the default value '-')  
+        if ($this->tktType && $this->tktType !== '-') {  
+            $query->where('jns_dinas_tkt', $this->tktType);  
+        }  
+
+        // Execute the query and group by ticket number  
+        $ticketData = $query->get()->groupBy('no_tkt');  
 
         $combinedData = [];
         $index = 1;

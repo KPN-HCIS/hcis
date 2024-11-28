@@ -4253,10 +4253,7 @@ class ReimburseController extends Controller
         // Base query for filtering without user-specific filtering
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-
-        $permissionLocations = $this->permissionLocations;
-        $permissionCompanies = $this->permissionCompanies;
-        $permissionGroupCompanies = $this->permissionGroupCompanies;
+        $tktType = $request->input('tkt_type');
 
         // Fetch latest ticket IDs
         $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
@@ -4264,14 +4261,18 @@ class ReimburseController extends Controller
             ->pluck('id');
 
         // Get transactions with the latest ticket IDs
-        $transactions = Tiket::whereIn('id', $latestTicketIds)
-            ->with('businessTrip')
-            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions
-            ->orderBy('created_at', 'desc')
-
-            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
-            });
+        $transactions = Tiket::whereIn('id', $latestTicketIds)  
+            ->with('businessTrip')  
+            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions  
+            ->orderBy('created_at', 'desc')  
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {  
+                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);  
+            })  
+            ->when($tktType, function ($query) use ($tktType) {  
+                if ($tktType !== '-') { // Pastikan - tidak dianggap sebagai tipe yang valid  
+                    $query->where('jns_dinas_tkt', $tktType);  
+                }  
+            });  
 
 
         // Apply permission filters
@@ -4391,8 +4392,9 @@ class ReimburseController extends Controller
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $tktType = $request->input('tkt_type');
 
-        return Excel::download(new TicketExport($startDate, $endDate), 'ticket_report.xlsx');
+        return Excel::download(new TicketExport($startDate, $endDate, $tktType), 'ticket_report.xlsx');
     }
 
     public function ticketDeleteAdmin($key)
