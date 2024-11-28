@@ -94,22 +94,20 @@
                       </td>
                       <td class="text-center">
                           @if ($item->approval_status == 'Draft')
-                              <form method="GET" action="/medical/form-update/{{ $item->usage_id }}"
+                              <form method="GET" action="/medical/form-update/{{ $item->id }}"
                                   style="display: inline-block;">
-                                  <button type="submit" class="btn btn-outline-warning rounded-pill my-1"
+                                  <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill my-1"
                                       data-toggle="tooltip" title="Edit">
                                       <i class="bi bi-pencil-square"></i>
                                   </button>
                               </form>
-                              <form id="deleteForm_{{ $item->no_medic }}" method="POST"
-                                  action="/medical/delete/{{ $item->usage_id }}" style="display: inline-block;">
+                              <form action="{{ route('home-trip.delete', encrypt($item->id)) }}" method="POST"
+                                  style="display:inline;" id="deleteForm_{{ $item->no_tkt }}">
                                   @csrf
-                                  @method('DELETE')
-                                  <input type="hidden" id="no_sppd_{{ $item->no_medic }}"
-                                      value="{{ $item->no_medic }}">
-                                  <button type="button" class="btn btn-outline-danger rounded-pill delete-button"
-                                      data-id="{{ $item->no_medic }}">
-                                      <i class="bi bi-trash-fill"></i>
+                                  <input type="hidden" id="no_sppd_{{ $item->no_tkt }}" value="{{ $item->no_tkt }}">
+                                  <button class="btn btn-sm rounded-pill btn-outline-danger delete-button"
+                                      title="Delete" data-id="{{ $item->no_tkt }}">
+                                      <i class="ri-delete-bin-line"></i>
                                   </button>
                               </form>
                           @else
@@ -118,15 +116,15 @@
                                   <i class="bi bi-download"></i>
                               </a>
                           @endif
-                          @if ($item->approval_status == 'Rejected')
-                              <form method="GET" action="/medical/form-update/{{ $item->usage_id }}"
+                          {{-- @if ($item->approval_status == 'Rejected')
+                              <form method="GET" action="/medical/form-update/{{ $item->id }}"
                                   style="display: inline-block;">
                                   <button type="submit" class="btn btn-outline-warning rounded-pill my-1"
                                       data-toggle="tooltip" title="Edit">
                                       <i class="bi bi-pencil-square"></i>
                                   </button>
                               </form>
-                          @endif
+                          @endif --}}
                       </td>
                   </tr>
               @endforeach

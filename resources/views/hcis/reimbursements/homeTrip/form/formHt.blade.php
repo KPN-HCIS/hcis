@@ -76,10 +76,14 @@
                                                         id="np_tkt_<?php echo $i; ?>" name="np_tkt[]" required>
                                                         <option value="" disabled selected>--- Choose Passengers ---
                                                         </option>
-                                                        <option value="{{ $employee_name->fullname }}">
-                                                            {{ $employee_name->fullname }} (Me)
-                                                        </option>
-                                                        @foreach ($families as $family)
+                                                        @if ($employeeInHomeTrip)
+                                                            <option value="{{ $employeeInHomeTrip->name }}">
+                                                                {{ $employeeInHomeTrip->name }} (Me)
+                                                            </option>
+                                                        @endif
+
+                                                        <!-- Loop through family members and display them if their quota > 0 -->
+                                                        @foreach ($familyMembers as $family)
                                                             <option value="{{ $family->name }}">
                                                                 {{ $family->name }} ({{ $family->relation_type }})
                                                             </option>
@@ -499,7 +503,7 @@
                                     results: results,
                                     pagination: {
                                         more: params.page * 30 < data
-                                        .total_count, // Adjust as needed
+                                            .total_count, // Adjust as needed
                                     },
                                 };
                             },

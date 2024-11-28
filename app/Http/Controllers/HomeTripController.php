@@ -6,6 +6,7 @@ use App\Mail\TicketNotification;
 use App\Models\BusinessTrip;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\HomeTrip;
 use App\Models\Location;
 use App\Models\Tiket;
 use App\Models\TiketApproval;
@@ -118,6 +119,8 @@ class HomeTripController extends Controller
     {
         $employee_id = Auth::user()->employee_id;
         $userId = Auth::user()->id;
+        $currentYear = now()->year;
+
         $families = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
         $parentLink = 'Reimbursement';
         $link = 'Home Trip';
@@ -130,10 +133,25 @@ class HomeTripController extends Controller
         $locations = Location::orderBy('area')->get();
         $employees = Employee::orderBy('ktp')->get();
 
+        $familyMembers = HomeTrip::where('employee_id', $employee_id)
+            ->where('period', $currentYear)
+            ->where('relation_type', '!=', 'employee')
+            ->where('quota', '>', 0) // Only include family members with a quota > 0
+            ->get();
+
+        $employeeInHomeTrip = HomeTrip::where('employee_id', $employee_id)
+            ->where('period', $currentYear)
+            ->where('quota', '>', 0)
+            ->where('relation_type', '=', 'employee')
+            ->first();
+
+        // dd($familyMembers);
         return view('hcis.reimbursements.homeTrip.form.formHt', [
             'link' => $link,
             'parentLink' => $parentLink,
             'families' => $families,
+            'familyMembers' => $familyMembers,
+            'employeeInHomeTrip' => $employeeInHomeTrip,
             'companies' => $companies,
             'locations' => $locations,
             'employee_data' => $employee_data,
@@ -291,6 +309,16 @@ class HomeTripController extends Controller
         //     }
         // }
         return redirect()->route('home-trip')->with('success', 'The ticket request has been input successfully.');
+    }
+
+    public function homeTripDelete($id)
+    {
+        $ticket = Tiket::findByRouteKey($id);
+        // dd($ticket);
+        Tiket::where('no_tkt', $ticket->no_tkt)->delete();
+
+        // Redirect to the ticket page with a success message
+        return redirect()->route('home-trip')->with('success', 'Home Trip has been deleted');
     }
 
     private function generateTicketNumber()

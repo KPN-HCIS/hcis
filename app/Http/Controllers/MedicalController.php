@@ -196,8 +196,8 @@ class MedicalController extends Controller
         )->get();
 
         $isMarried = Employee::where('employee_id', $employee_id)
-        ->where('marital_status', 'Married')
-        ->exists();
+            ->where('marital_status', 'Married')
+            ->exists();
         // dd($isMarried);
 
         $hasGlasses = HealthCoverage::where('employee_id', $employee_id)
@@ -292,8 +292,8 @@ class MedicalController extends Controller
         )->get();
 
         $isMarried = Employee::where('employee_id', $employee_id)
-        ->where('marital_status', 'Married')
-        ->exists();
+            ->where('marital_status', 'Married')
+            ->exists();
 
         $hasGlasses = HealthCoverage::where('employee_id', $employee_id)
             ->where('period', $currentYear)

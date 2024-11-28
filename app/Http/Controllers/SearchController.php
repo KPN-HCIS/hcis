@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dependents;
 use App\Models\Employee;
+use App\Models\HomeTrip;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,16 +31,23 @@ class SearchController extends Controller
     {
         $searchTerm = $request->input('searchTerm');
         $employee_id = Auth::user()->employee_id;
+        $currentYear = date('Y');
 
         // Fetch the authenticated employee's data and match the search term
-        $employee = Employee::select('fullname', DB::raw("'Me' as relation_type"))
+        $employee = HomeTrip::select('name as fullname', DB::raw("'Me' as relation_type"))
             ->where('employee_id', $employee_id)
-            ->where('fullname', 'LIKE', '%' . $searchTerm . '%')
-            ->get();
+            ->where('period', $currentYear)
+            ->where('relation_type', '=', 'employee')
+            ->where('quota', '>', 0) // Only include employee if they have a valid quota
+            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+            ->first();
 
-        // Fetch dependents that match the search term
-        $dependents = Dependents::select('name as fullname', 'relation_type')
+        // Fetch dependents that match the search term and have a valid quota
+        $dependents = HomeTrip::select('name as fullname', 'relation_type')
             ->where('employee_id', $employee_id)
+            ->where('period', $currentYear)
+            ->where('relation_type', '!=', 'employee')
+            ->where('quota', '>', 0) // Only include dependents with quota > 0
             ->where(function ($query) use ($searchTerm) {
                 $query->where('name', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('relation_type', 'LIKE', '%' . $searchTerm . '%');
@@ -48,7 +56,7 @@ class SearchController extends Controller
 
         // Return both datasets in a structured JSON response
         return response()->json([
-            'employee' => $employee,
+            'employee' => $employee ? [$employee] : [], // Return employee if found
             'dependents' => $dependents,
         ]);
     }
