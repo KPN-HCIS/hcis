@@ -94,7 +94,7 @@
                       </td>
                       <td class="text-center">
                           @if ($item->approval_status == 'Draft')
-                              <form method="GET" action="/medical/form-update/{{ $item->id }}"
+                              <form method="GET" action="{{ route('home-trip-form.edit', encrypt($item->id)) }}"
                                   style="display: inline-block;">
                                   <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill my-1"
                                       data-toggle="tooltip" title="Edit">

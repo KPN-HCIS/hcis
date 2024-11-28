@@ -123,8 +123,9 @@ class HomeTripController extends Controller
         $currentYear = now()->year;
 
         $families = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
-        $parentLink = 'Reimbursement';
-        $link = 'Home Trip';
+
+        $parentLink = 'Home Trip';
+        $link = 'Home Trip Request';
 
         $employee_data = Employee::where('employee_id', $employee_id)->first();
         $employee_name = Employee::select('fullname')
@@ -310,6 +311,88 @@ class HomeTripController extends Controller
         //     }
         // }
         return redirect()->route('home-trip')->with('success', 'The ticket request has been input successfully.');
+    }
+
+    public function homeTripFormUpdate($id)
+    {
+        $parentLink = 'Home Trip';
+        $link = 'Edit Home Trip';
+
+        $employee_id = Auth::user()->employee_id;
+        $userId = Auth::user()->id;
+        $currentYear = now()->year;
+
+        $ticket = Tiket::findByRouteKey($id);
+        $families = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
+
+        $employee_data = Employee::where('employee_id', $employee_id)->first();
+        $employee_name = Employee::select('fullname')
+            ->where('employee_id', $employee_id)
+            ->first();
+        $companies = Company::orderBy('contribution_level')->get();
+        $locations = Location::orderBy('area')->get();
+        $employees = Employee::orderBy('ktp')->get();
+
+        $familyMembers = HomeTrip::where('employee_id', $employee_id)
+            ->where('period', $currentYear)
+            ->where('relation_type', '!=', 'employee')
+            ->where('quota', '>', 0) // Only include family members with a quota > 0
+            ->get();
+
+        $employeeInHomeTrip = HomeTrip::where('employee_id', $employee_id)
+            ->where('period', $currentYear)
+            ->where('quota', '>', 0)
+            ->where('relation_type', '=', 'employee')
+            ->first();
+
+
+        if (!$ticket) {
+            return redirect()->route('ticket')->with('error', 'Ticket not found');
+        }
+
+        // Fetch all tickets associated with the same no_sppd for reference
+        $tickets = Tiket::where('no_tkt', $ticket->no_tkt)->get();
+
+        $transactions = $tickets;
+
+        $ticketData = [];
+        $ticketCount = $tickets->count();
+        foreach ($tickets as $index => $ticket) {
+            $ticketData[] = [
+                'id' => $ticket->id,
+                'noktp_tkt' => $ticket->noktp_tkt,
+                'tlp_tkt' => $ticket->tlp_tkt,
+                'jk_tkt' => $ticket->jk_tkt,
+                'np_tkt' => $ticket->np_tkt,
+                'dari_tkt' => $ticket->dari_tkt,
+                'ke_tkt' => $ticket->ke_tkt,
+                'tgl_brkt_tkt' => $ticket->tgl_brkt_tkt,
+                'jam_brkt_tkt' => $ticket->jam_brkt_tkt,
+                'jenis_tkt' => $ticket->jenis_tkt,
+                'type_tkt' => $ticket->type_tkt,
+                'tgl_plg_tkt' => $ticket->tgl_plg_tkt,
+                'jam_plg_tkt' => $ticket->jam_plg_tkt,
+                'ket_tkt' => $ticket->ket_tkt,
+                'more_tkt' => ($index < $ticketCount - 1) ? 'Ya' : 'Tidak'
+            ];
+        }
+
+        // dd($familyMembers);
+        return view('hcis.reimbursements.homeTrip.form.editFormHt', [
+            'link' => $link,
+            'parentLink' => $parentLink,
+            'families' => $families,
+            'familyMembers' => $familyMembers,
+            'employeeInHomeTrip' => $employeeInHomeTrip,
+            'companies' => $companies,
+            'locations' => $locations,
+            'employee_data' => $employee_data,
+            'employees' => $employees,
+            'employee_name' => $employee_name,
+            'transactions' => $transactions,
+            'ticketData' => $ticketData,
+            'ticket' => $ticket,
+        ]);
     }
 
     public function homeTripDelete($id)
