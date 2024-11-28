@@ -471,16 +471,35 @@
                             },
                             processResults: function(data, params) {
                                 params.page = params.page || 1;
+
+                                // Combine employee and dependents into a single results array
+                                const results = [];
+
+                                // Add the employee data first (if any)
+                                if (data.employee && data.employee.length > 0) {
+                                    data.employee.forEach(function(employee) {
+                                        results.push({
+                                            id: employee.fullname,
+                                            text: `${employee.fullname} (${employee.relation_type})`,
+                                        });
+                                    });
+                                }
+
+                                // Add dependents data next (if any)
+                                if (data.dependents && data.dependents.length > 0) {
+                                    data.dependents.forEach(function(dependent) {
+                                        results.push({
+                                            id: dependent.fullname,
+                                            text: `${dependent.fullname} (${dependent.relation_type})`,
+                                        });
+                                    });
+                                }
+
                                 return {
-                                    results: data.map(function(item) {
-                                        return {
-                                            id: item.name,
-                                            text: item.name + " - " + item
-                                                .relation_type,
-                                        };
-                                    }),
+                                    results: results,
                                     pagination: {
-                                        more: params.page * 30 < data.total_count,
+                                        more: params.page * 30 < data
+                                        .total_count, // Adjust as needed
                                     },
                                 };
                             },
