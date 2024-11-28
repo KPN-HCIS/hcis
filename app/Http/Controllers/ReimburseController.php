@@ -2702,6 +2702,9 @@ class ReimburseController extends Controller
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
 
+        $managerL1Name = 'Unknown';
+        $managerL2Name = 'Unknown';
+
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
@@ -3856,6 +3859,9 @@ class ReimburseController extends Controller
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
         $ticketsGroups = $tickets->groupBy('no_tkt');
         $employeeName = Employee::pluck('fullname', 'employee_id');
+
+        $managerL1Name = 'Unknown';
+        $managerL2Name = 'Unknown';
 
         // Fetch employee data and manager names for transactions
         foreach ($transactions as $transaction) {
