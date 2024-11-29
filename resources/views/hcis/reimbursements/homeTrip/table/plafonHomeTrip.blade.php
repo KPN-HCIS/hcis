@@ -5,28 +5,22 @@
             <tr>
                 <th rowspan="2" class="text-center sticky"
                     style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
-                <th colspan="{{ count($master_medical) }}" class="text-center">Type of Health Coverage</th>
+                <th colspan="{{ count($dependents_fam) + 1 }}" class="text-center">Family Member</th>
             </tr>
             <tr>
-                @foreach ($master_medical as $master_medicals)
-                    <th class="text-center">{{ $master_medicals->name }}</th>
+                <th class="text-center">{{ $fullname }}</th>
+                @foreach ($dependents_fam as $dependents_fams)
+                    <th class="text-center">{{ $dependents_fams->name }}</th>
                 @endforeach
             </tr>
         </thead>
         <tbody>
-            @foreach ($formatted_data as $period => $balances)
+            @foreach ($formatted_data as $period => $quotas)
                 <tr>
-                    <td class="text-center sticky bg-white" style="">{{ $period }}</td>
-                    @foreach ($master_medical as $master_medical_item)
-                        <td class="text-center">
-                            @if (isset($balances[$master_medical_item->name]))
-                                <span style="color: {{ $balances[$master_medical_item->name] < 0 ? 'red' : 'black' }}">
-                                    Rp. {{ number_format($balances[$master_medical_item->name], 0, ',', '.') }}
-                                </span>
-                            @else
-                                -
-                            @endif
-                        </td>
+                    <td class="text-center sticky bg-white">{{ $period }}</td>
+                    <td class="text-center">{{ $quotas['employee'] }}</td>
+                    @foreach ($dependents_fam as $dependent)
+                        <td class="text-center">{{ $quotas[$dependent->name] }}</td>
                     @endforeach
                 </tr>
             @endforeach

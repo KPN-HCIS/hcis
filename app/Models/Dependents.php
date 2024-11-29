@@ -12,4 +12,11 @@ class Dependents extends Model
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
     protected $table = 'dependents';
+
+    protected $fillable = [
+        'id',
+        'employee_id',
+        'name',
+        'relation_type',
+    ];
 }

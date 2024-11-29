@@ -133,7 +133,9 @@
                                         <th class="text-center">Employee ID</th>
                                         <th class="text-center">Name</th>
                                         <th class="text-center">Join Date</th>
+                                        <th class="text-center">Family Count</th>
                                         <th class="text-center">Period</th>
+                                        <th class="text-center">Ticket Count</th>
                                         <th class="text-center">Detail Plafond</th>
                                     </tr>
                                 </thead>
@@ -147,9 +149,9 @@
                                                 <td class="text-center">{{ $ht_employees->employee_id }}</td>
                                                 <td class="text-center">{{ $ht_employees->fullname }}</td>
                                                 <td class="text-center">{{ $ht_employees->date_of_joining }}</td>
-                                                <td class="text-center">
-                                                    {{-- {{ $ht_employees->period }} --}}
-                                                </td>
+                                                <td class="text-center">{{ $ht_employees->family_count }}</td>
+                                                <td class="text-center">{{ $ht_employees->latest_period }}</td>
+                                                <td class="text-center">{{ $ht_employees->ticket_count }}</td>
                                                 <td class="text-center">
                                                     <a href="{{ route('home-trip.detail', encrypt($ht_employees->employee_id)) }}"
                                                         class="btn btn-outline-warning" title="Edit">

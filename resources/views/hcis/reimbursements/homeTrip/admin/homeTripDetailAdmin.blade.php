@@ -1,10 +1,9 @@
-@extends('layouts_.vertical', ['page_title' => 'Medical (Admin)'])
+@extends('layouts_.vertical', ['page_title' => 'Home Trip'])
 
 @section('css')
     <style>
-        #example_filter {
+        .dt-length {
             margin-bottom: 20px;
-            /* Adjust as needed */
         }
 
         th {
@@ -12,39 +11,53 @@
             text-align: center;
         }
 
-        table {
-            white-space: nowrap;
+        .table {
+            border-collapse: separate;
             width: 100%;
+            /* position: relative; */
+            overflow: auto;
         }
 
-        tr.sticky {
-            position: sticky;
-            top: 0;
-            z-index: 1;
-            background: var(--stickyBackground);
+        .table thead th {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            background-color: #AB2F2B !important;
+            border-bottom: 2px solid #ddd !important;
+            padding-right: 6px;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
-        th.sticky,
-        td.sticky {
-            position: sticky;
-            left: 0;
-            background: var(--stickyBackground);
+        .table tbody td {
+            background-color: #fff !important;
+            padding-right: 10px;
+            position: relative;
         }
 
-        table.dataTable>tbody>tr.child ul.dtr-details {
-            width: 100%;
-            vertical-align: middle !important;
+        .table th.sticky-col-header {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 3 !important;
+            background-color: #AB2F2B !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            /* box-shadow: inset 2px 0 0 #fff; */
         }
 
-        table.dataTable>tbody>tr.child ul.dtr-details>li {
-            display: flex;
-            align-items: center !important;
-        }
-
-        table.dataTable>tbody>tr.child span.dtr-title {
-            min-width: 120px !important;
-            max-width: 120px !important;
-            text-wrap: wrap !important;
+        .table td.sticky-col {
+            position: -webkit-sticky !important;
+            /* For Safari */
+            position: sticky !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            background-color: #fff !important;
+            border-right: 2px solid #ddd !important;
+            padding-right: 10px;
+            box-shadow: inset 6px 0 0 #fff;
         }
     </style>
 @endsection
@@ -56,7 +69,7 @@
             <div class="col-md-6 mb-2 d-flex align-items-center">
                 <ol class="breadcrumb mb-0" style="align-items: center; padding-left: 0;">
                     <li class="breadcrumb-item" style="font-size: 18px;">
-                        <a href="/reimbursements">
+                        <a href="/travel">
                             {{ $parentLink }}
                         </a>
                     </li>
@@ -65,20 +78,18 @@
                     </li>
                 </ol>
             </div>
-            @include('hcis.reimbursements.medical.navigation.modalMedical')
             @include('hcis.reimbursements.businessTrip.modal')
 
+            <!-- Button Section -->
             <div class="col-md-6 mb-2 d-flex justify-content-center justify-content-md-end align-items-center">
-                <a href="{{ route('exportmed-detail.excel', $employee_id) }}"
-                    class="btn btn-outline-success rounded-pill btn-action me-1">
+                {{-- <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
-                </a>
-                <a href="{{ route('medical-form.add-admin', encrypt($employee_id)) }}" class="btn btn-primary rounded-pill">
-                    <i class="bi bi-plus-circle"></i> Add Medical
-                </a>
+                </a> --}}
+                {{-- <a href="{{ route('home-trip-form.add') }}" class="btn btn-primary rounded-pill">
+                    <i class="bi bi-plus-circle"></i> Add Home Trip
+                </a> --}}
             </div>
         </div>
-
         <div class="row">
             <div class="card shadow-none p-1 py-3 px-2">
                 <div class="d-flex justify-content-center">
@@ -90,138 +101,28 @@
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-profile" type="button" role="tab"
-                                aria-controls="pills-profile" aria-selected="false">Plafon Medical</button>
+                                data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+                                aria-selected="false">Plafon Home Trip</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-contact" type="button" role="tab"
-                                aria-controls="pills-contact" aria-selected="false">Family Data</button>
+                                data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact"
+                                aria-selected="false">Family Data</button>
                         </li>
                     </ul>
                 </div>
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                        {{-- @include('hcis.reimbursements.medical.admin.historyMedicalAdmin') --}}
+                        @include('hcis.reimbursements.homeTrip.table.historyHomeTrip')
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                        {{-- @include('hcis.reimbursements.medical.admin.plafonMedicalAdmin') --}}
+                        @include('hcis.reimbursements.homeTrip.table.plafonHomeTrip')
                     </div>
                     <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-                        @include('hcis.reimbursements.medical.admin.familyDataAdmin')
+                        @include('hcis.reimbursements.homeTrip.table.familyDataHomeTrip')
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Rejection Reason Modal -->
-    <div class="modal fade" id="rejectReasonModal" tabindex="-1" aria-labelledby="rejectReasonModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <h5 class="modal-title text-white" id="rejectReasonModalLabel">Rejection Information</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <strong>Rejected by</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span id="rejectedBy"></span>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-4">
-                            <strong>Rejection reason</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span id="rejectionReason"></span>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-4">
-                            <strong>Rejection date</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span id="rejectionDate"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary rounded-pill"
-                        data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="{{ asset('/js/medical/medical.js') }}"></script>
-    <script>
-        var isConfirmationRoute = @json(request()->routeIs('medical.confirmation'));
-        //medical table
-        $("#example").DataTable({
-            responsive: {
-                details: {
-                    type: "column",
-                    target: "tr",
-                },
-            },
-            columnDefs: [{
-                    className: "control",
-                    orderable: false,
-                    targets: 0,
-                },
-                {
-                    className: "none", // This will hide Disease and the 4 dynamic columns
-                    targets: isConfirmationRoute ? [9, 10, 11, 12, 13] : [8, 9, 10, 11, 12],
-                },
-                {
-                    responsivePriority: 1,
-                    targets: 0,
-                },
-
-                {
-                    responsivePriority: 4,
-                    targets: 3,
-                },
-            ],
-            order: [1, "asc"],
-            pageLength: 5,
-            lengthMenu: [5, 10, 25, 50],
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {
-                keyboard: true,
-                backdrop: 'static'
-            });
-
-            const closeButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
-            closeButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    rejectModal.hide();
-                });
-            });
-
-            function formatDate(dateTimeString) {
-                if (!dateTimeString) return 'N/A';
-                var date = new Date(dateTimeString);
-                var day = ('0' + date.getDate()).slice(-2);
-                var month = ('0' + (date.getMonth() + 1)).slice(-2);
-                var year = date.getFullYear();
-                var hours = ('0' + date.getHours()).slice(-2);
-                var minutes = ('0' + date.getMinutes()).slice(-2);
-                return `${day}/${month}/${year} ${hours}:${minutes}`;
-            }
-
-            document.getElementById('rejectReasonModal').addEventListener('hidden.bs.modal', function() {
-                // console.log('Modal closed');
-            });
-        });
-    </script>
 @endsection

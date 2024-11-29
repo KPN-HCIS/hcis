@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 // use App\Models\HomeTripApproval;
 use App\Models\MasterBusinessUnit;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\date_interval_create_from_string;
 
 class HomeTripController extends Controller
 {
@@ -30,6 +31,7 @@ class HomeTripController extends Controller
         $link = 'Home Trip';
 
         $employee_id = Auth::user()->employee_id;
+        $fullname = Employee::where('employee_id', $employee_id)->pluck('fullname')->first();
         $user_id = Auth::user()->id;
         $family = Dependents::orderBy('date_of_birth', 'asc')->where('employee_id', $employee_id)->get();
         // dd($transactions);
@@ -76,12 +78,15 @@ class HomeTripController extends Controller
 
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
         $employeeName = Employee::pluck('fullname', 'employee_id');
+        
+        $managerL1Names = 'Unknown';
+        $managerL2Names = 'Unknown';
 
         $employeeIds = $tickets->pluck('user_id')->unique();
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
-
+            // dd($employee);
             // If the employee exists, fetch their manager names
             if ($employee) {
                 $managerL1Id = $employee->manager_l1_id;
@@ -94,12 +99,28 @@ class HomeTripController extends Controller
                 $managerL2Names = $managerL2 ? $managerL2->fullname : 'Unknown';
             }
         }
+        
         $ticket = $tickets->groupBy('no_tkt');
 
         $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
             return [$key => ['total' => $group->count()]];
         });
 
+        $dependents_fam = Dependents::where('employee_id', $employee_id)->get();
+        $periods = HomeTrip::where('employee_id', $employee_id)->orderBy('period', 'desc')->pluck('period')->unique();
+
+        $formatted_data = $periods->mapWithKeys(function ($period) use ($employee_id, $dependents_fam) {
+            $data = ['employee' => HomeTrip::where('employee_id', $employee_id)->where('period', $period)->where('relation_type', 'Employee')->value('quota') ?? '-'];
+
+            foreach ($dependents_fam as $dependent) {
+                $data[$dependent->name] = HomeTrip::where('employee_id', $employee_id)
+                    ->where('period', $period)
+                    ->where('name', $dependent->name)
+                    ->value('quota') ?? '-';
+            }
+
+            return [$period => $data];
+        })->toArray();
 
         return view('hcis.reimbursements.homeTrip.homeTrip', compact(
             'parentLink',
@@ -113,7 +134,10 @@ class HomeTripController extends Controller
             'ticketCounts',
             'managerL1Names',
             'managerL2Names',
-            // 'ticketsGroups',
+            'dependents_fam',
+            'employee_id',
+            'formatted_data',
+            'fullname',
         ));
     }
     public function homeTripForm()
@@ -453,10 +477,10 @@ class HomeTripController extends Controller
 
     public function homeTripAdmin(Request $request)
     {
-        $employee_id = Auth::user()->employee_id;
-        $family = Dependents::orderBy('date_of_birth', 'asc')->where('employee_id', $employee_id)->get();
         $parentLink = 'Reimbursement';
         $link = 'Home Trip';
+        $employee_id = Auth::user()->employee_id;
+        $userId = Auth::user()->id;
 
         $userRole = auth()->user()->roles->first();
         $roleRestriction = json_decode($userRole->restriction, true);
@@ -499,13 +523,83 @@ class HomeTripController extends Controller
             }
         }
 
-        // Hanya jalankan query jika ada salah satu filter
-        if ($hasFilter) {
-            $ht_employee = $query->orderBy('created_at', 'desc')->get();
+        if ($hasFilter) {  
+            $ht_employee = $query->orderBy('created_at', 'desc')->where('homebase', '!=', '')->get();
+            foreach ($ht_employee as $ht_employees) {  
+                // Get family count
+                $ht_employees->family_count = Dependents::where('employee_id', $ht_employees->employee_id)->count() + 1;
+                
+                // Get total quota from HomeTrip table for this employee
+                $ht_employees->ticket_count = HomeTrip::where('employee_id', $ht_employees->employee_id)
+                    ->where('period', $currentYear)
+                    ->sum('quota');
+
+                $latestPeriod = HomeTrip::where('employee_id', $ht_employees->employee_id)  
+                    ->orderBy('period', 'desc')  
+                    ->value('period');  
+                $ht_employees->latest_period = $latestPeriod ? $latestPeriod : '-';  
+            }  
+        } 
+
+        // Auto Input ht_plan Start
+        $currentYear = date('Y');  
+        $employees_cast = Employee::where('homebase', '!=', '')->get();  
+
+        foreach ($employees_cast as $employee) {  
+            // Get joining date
+            $joiningDate = date_create($employee->date_of_joining);
+            
+            // Calculate the first January after 1 year of employment
+            $oneYearAfterJoining = date_create($employee->date_of_joining);
+            $oneYearAfterJoining->modify('+1 year');
+            $eligibleYear = (int)$oneYearAfterJoining->format('Y') + 1;
+            
+            // If eligible year is current year or past year and no record exists, create records
+            if ($eligibleYear <= $currentYear) {
+                // Get all dependents for this employee
+                $dependents = Dependents::where('employee_id', $employee->employee_id)->get();
+
+                // First create record for the employee
+                $existingHomeTrip = HomeTrip::where('employee_id', $employee->employee_id)  
+                    ->where('period', $currentYear)
+                    ->where('relation_type', 'Employee')
+                    ->first();  
+
+                if (!$existingHomeTrip) {  
+                    $homeTrip = new HomeTrip();  
+                    $homeTrip->id = Str::uuid();
+                    $homeTrip->employee_id = $employee->employee_id;  
+                    $homeTrip->name = $employee->fullname;  
+                    $homeTrip->relation_type = 'Employee';  
+                    $homeTrip->quota = '2';  
+                    $homeTrip->period = $currentYear;  
+                    $homeTrip->created_by = $userId;  
+                    $homeTrip->save();  
+                }   
+
+                // Then create records for each dependent
+                foreach ($dependents as $dependent) {
+                    $existingDependentTrip = HomeTrip::where('employee_id', $employee->employee_id)
+                        ->where('period', $currentYear)
+                        ->where('name', $dependent->name)
+                        ->where('relation_type', $dependent->relation_type)
+                        ->first();
+
+                    if (!$existingDependentTrip) {
+                        $dependentTrip = new HomeTrip();
+                        $dependentTrip->id = Str::uuid();
+                        $dependentTrip->employee_id = $employee->employee_id;
+                        $dependentTrip->name = $dependent->name;
+                        $dependentTrip->relation_type = $dependent->relation_type;
+                        $dependentTrip->quota = '2';
+                        $dependentTrip->period = $currentYear;
+                        $dependentTrip->created_by = $userId;
+                        $dependentTrip->save();
+                    }
+                }
+            }  
         }
-
-        // $medical_plans = HealthPlan::where('period', $currentYear)->get();
-
+        // Auto Input ht_plan End
 
         return view('hcis.reimbursements.homeTrip.admin.homeTripAdmin', compact( 
             'link', 
@@ -513,115 +607,108 @@ class HomeTripController extends Controller
             'ht_employee',
             'locations',
             // 'family',
+            // 'familyCount',
         ));
     }
 
     public function homeTripAdminDetail(Request $request, $key)
     {
-        // Gunakan findByRouteKey untuk mendekripsi $key
-        // dd($key);
-        $employee_id = decrypt($key);
-
-        // Ambil data dependents, medical, dan medical_plan berdasarkan employee_id
-        $family = Dependents::orderBy('date_of_birth', 'desc')->where('employee_id', $employee_id)->get();
-        // $medical = HealthCoverage::orderBy('created_at', 'desc')->where('employee_id', $employee_id)->get();
-        // $medical_plan = HealthPlan::orderBy('period', 'desc')->where('employee_id', $employee_id)->get();
-        // $medicalGroup = HealthCoverage::select(
-        //     'no_medic',
-        //     'date',
-        //     'period',
-        //     'hospital_name',
-        //     'patient_name',
-        //     'disease',
-        //     'verif_by',
-        //     'balance_verif',
-        //     'approved_by',
-        //     DB::raw('SUM(CASE WHEN medical_type = "Maternity" THEN balance ELSE 0 END) as maternity_total'),
-        //     DB::raw('SUM(CASE WHEN medical_type = "Inpatient" THEN balance ELSE 0 END) as inpatient_total'),
-        //     DB::raw('SUM(CASE WHEN medical_type = "Outpatient" THEN balance ELSE 0 END) as outpatient_total'),
-        //     DB::raw('SUM(CASE WHEN medical_type = "Glasses" THEN balance ELSE 0 END) as glasses_total'),
-        //     'status',
-        //     DB::raw('MAX(created_at) as latest_created_at')
-
-        // )
-        //     ->where('employee_id', $employee_id)
-        //     ->where('status', '!=', 'Draft')
-        //     ->groupBy('no_medic', 'date', 'period', 'hospital_name', 'patient_name', 'disease', 'status', 'verif_by', 'balance_verif', 'approved_by')
-        //     ->orderBy('latest_created_at', 'desc')
-        //     ->get();
-
-        // $medicalGroup->map(function ($item) {
-        //     $approvedEmployee = Employee::where('employee_id', $item->approved_by)->first();
-
-        //     $item->approved_by_fullname = $approvedEmployee ? $approvedEmployee->fullname : null;
-        //     $item->total_per_no_medic = $item->maternity_total + $item->inpatient_total + $item->outpatient_total + $item->glasses_total;
-        //     return $item;
-        // });
-
-        $bissnisUnit = Employee::where('employee_id', $employee_id)
-            ->pluck('group_company');
-        $gaApproval = MasterBusinessUnit::where('nama_bisnis', $bissnisUnit)
-            ->first();
-        $gaFullname = Employee::where('employee_id', $gaApproval->approval_medical)
-            ->pluck('fullname');
-
-        // $rejectMedic = HealthCoverage::where('employee_id', $employee_id)
-        //     ->where('status', 'Rejected')  // Filter for rejected status
-        //     ->get()
-        //     ->keyBy('no_medic');
-
-        // Get employee IDs from both 'employee_id' and 'rejected_by'
-        // $employeeIds = $rejectMedic->pluck('employee_id')->merge($rejectMedic->pluck('rejected_by'))->unique();
-
-        // Fetch employee names for those IDs
-        // $employees = Employee::whereIn('employee_id', $employeeIds)
-        //     ->pluck('fullname', 'employee_id');
-
-        // Now map the full names to the respective HealthCoverage records
-        // $rejectMedic->transform(function ($item) use ($employees) {
-        //     $item->employee_fullname = $employees->get($item->employee_id);
-        //     $item->rejected_by_fullname = $employees->get($item->rejected_by);
-        //     return $item;
-        // });
-
-        // dd($rejectMedic);
-        // $medical = $medicalGroup->map(function ($item) use ($employee_id) {
-        //     // Fetch the usage_id based on no_medic
-        //     $usageId = HealthCoverage::where('no_medic', $item->no_medic)
-        //         ->where('employee_id', $employee_id)
-        //         ->value('usage_id'); // Assuming there's one usage_id per no_medic
-
-        //     // Add usage_id to the current item
-        //     $item->usage_id = $usageId;
-
-        //     return $item;
-        // });
-
-        // $master_medical = MasterMedical::where('active', 'T')->get();
-
-        // Format data medical_plan
-        // $formatted_data = [];
-        // foreach ($medical_plan as $plan) {
-        //     $formatted_data[$plan->period][$plan->medical_type] = $plan->balance;
-        // }
-
         $parentLink = 'Reimbursement';
-        $link = 'Medical';
+        $link = 'Home Trip';
 
-        // Kirim data ke view
+        $employee_id = decrypt($key);
+        $fullname = Employee::where('employee_id', $employee_id)->pluck('fullname')->first();
+        $user_id = Employee::where('employee_id', $employee_id)->pluck('id')->first();
+        $family = Dependents::orderBy('date_of_birth', 'asc')->where('employee_id', $employee_id)->get();
+
+        $query = Tiket::where('user_id', $user_id)->orderBy('created_at', 'desc');
+
+        $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
+            ->where('user_id', $user_id)
+            ->groupBy('no_tkt')
+            ->pluck('id');
+
+        $transactions = Tiket::whereIn('id', $latestTicketIds)
+            ->where('jns_dinas_tkt', '=', 'Cuti')
+            // ->where('approval_status', $statusFilter)
+            ->orderBy('created_at', 'desc')
+            ->select('id', 'no_tkt', 'np_tkt', 'type_tkt', 'jenis_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
+            ->get();
+
+        // Get all tickets for user
+        $tickets = Tiket::where('user_id', $user_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $tiketIds = $tickets->pluck('id');
+
+        $ticketApprovals = TiketApproval::whereIn('tkt_id', $tiketIds)
+            ->where(function ($query) {
+                $query->where('approval_status', 'Rejected');
+            })
+            ->get();
+
+        $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
+        $employeeName = Employee::pluck('fullname', 'employee_id');
+        
+        $managerL1Names = 'Unknown';
+        $managerL2Names = 'Unknown';
+
+        $employeeIds = $tickets->pluck('user_id')->unique();
+        foreach ($transactions as $transaction) {
+            // Fetch the employee for the current transaction
+            $employee = Employee::find($transaction->user_id);
+            // dd($employee);
+            // If the employee exists, fetch their manager names
+            if ($employee) {
+                $managerL1Id = $employee->manager_l1_id;
+                $managerL2Id = $employee->manager_l2_id;
+
+                $managerL1 = Employee::where('employee_id', $managerL1Id)->first();
+                $managerL2 = Employee::where('employee_id', $managerL2Id)->first();
+
+                $managerL1Names = $managerL1 ? $managerL1->fullname : 'Unknown';
+                $managerL2Names = $managerL2 ? $managerL2->fullname : 'Unknown';
+            }
+        }
+        
+        $ticket = $tickets->groupBy('no_tkt');
+
+        $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
+            return [$key => ['total' => $group->count()]];
+        });
+
+        $dependents_fam = Dependents::where('employee_id', $employee_id)->get();
+        $periods = HomeTrip::where('employee_id', $employee_id)->orderBy('period', 'desc')->pluck('period')->unique();
+
+        $formatted_data = $periods->mapWithKeys(function ($period) use ($employee_id, $dependents_fam) {
+            $data = ['employee' => HomeTrip::where('employee_id', $employee_id)->where('period', $period)->where('relation_type', 'Employee')->value('quota') ?? '-'];
+
+            foreach ($dependents_fam as $dependent) {
+                $data[$dependent->name] = HomeTrip::where('employee_id', $employee_id)
+                    ->where('period', $period)
+                    ->where('name', $dependent->name)
+                    ->value('quota') ?? '-';
+            }
+
+            return [$period => $data];
+        })->toArray();
+
         return view('hcis.reimbursements.homeTrip.admin.homeTripDetailAdmin', compact(
-            'family', 
-            // 'medical_plan', 
-            // 'medical', 
-            'parentLink', 
-            'link', 
-            // 'rejectMedic', 
-            // 'employees', 
-            'employee_id', 
-            // 'master_medical', 
-            // 'formatted_data', 
-            // 'medicalGroup', 
-            // 'gaFullname'
+            'parentLink',
+            'link',
+            'family',
+            'transactions',
+            'tickets',
+            'ticket',
+            'ticketApprovals',
+            'employeeName',
+            'ticketCounts',
+            'managerL1Names',
+            'managerL2Names',
+            'dependents_fam',
+            'employee_id',
+            'formatted_data',
+            'fullname',
         ));
     }
 }

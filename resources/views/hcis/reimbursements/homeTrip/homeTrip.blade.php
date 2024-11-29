@@ -116,7 +116,7 @@
                         @include('hcis.reimbursements.homeTrip.table.historyHomeTrip')
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                        {{-- @include('hcis.reimbursements.homeTrip.table.plafonMedical') --}}
+                        @include('hcis.reimbursements.homeTrip.table.plafonHomeTrip')
                     </div>
                     <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
                         @include('hcis.reimbursements.homeTrip.table.familyDataHomeTrip')
