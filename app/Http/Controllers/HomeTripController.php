@@ -30,8 +30,18 @@ class HomeTripController extends Controller
         $employee_id = Auth::user()->employee_id;
         $user_id = Auth::user()->id;
         $family = Dependents::orderBy('date_of_birth', 'asc')->where('employee_id', $employee_id)->get();
-        $plafonds = HomeTrip::orderBy('period')->orderBy('name')->where('employee_id', $employee_id)->get();
 
+        $yearNow = Carbon::now()->year; // Current year (e.g., 2024)
+        $yearStart = $yearNow - 2; // Start year (e.g., 2022)
+
+        // Fetch data filtered by the last 3 years
+        $plafonds = HomeTrip::where('employee_id', $employee_id)
+            ->whereBetween('period', [$yearStart, $yearNow]) // Filter for 2022 to 2024
+            ->orderBy('name') // Order by name
+            ->orderBy('period') // Then by period
+            ->get();
+
+        // Group data by period
         $plafonds = $plafonds->groupBy('period');
 
         // $query = Tiket::where('user_id', $user_id)->orderBy('created_at', 'desc');
