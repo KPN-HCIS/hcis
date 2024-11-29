@@ -15,7 +15,7 @@
     <p><strong>Approval Status:</strong> {{ $approvalStatus }}</p>
 
     <h3>Ticket Details</h3>
-    <table style="width: 100%; border-collapse: collapse;">
+    <table style="border-collapse: collapse;">
         <thead>
             <tr>
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">#</th>
