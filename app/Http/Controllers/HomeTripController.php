@@ -15,6 +15,7 @@ use Auth;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Dependents;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 
@@ -29,8 +30,11 @@ class HomeTripController extends Controller
         $employee_id = Auth::user()->employee_id;
         $user_id = Auth::user()->id;
         $family = Dependents::orderBy('date_of_birth', 'asc')->where('employee_id', $employee_id)->get();
-        // dd($transactions);
-        $query = Tiket::where('user_id', $user_id)->orderBy('created_at', 'desc');
+        $plafonds = HomeTrip::orderBy('period')->orderBy('name')->where('employee_id', $employee_id)->get();
+
+        $plafonds = $plafonds->groupBy('period');
+
+        // $query = Tiket::where('user_id', $user_id)->orderBy('created_at', 'desc');
 
         // Get the filter value, default to 'request' if not provided
         // $filter = $request->input('filter', 'request');
@@ -114,7 +118,7 @@ class HomeTripController extends Controller
             'ticketCounts',
             'managerL1Names',
             'managerL2Names',
-            // 'ticketsGroups',
+            'plafonds',
         ));
     }
     public function homeTripForm()
