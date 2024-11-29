@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ca_approval;
 use App\Models\ca_extend;
+use App\Models\HomeTrip;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CATransaction;
 use App\Models\BusinessTrip;
@@ -884,11 +885,15 @@ class ApprovalReimburseController extends Controller
     public function approveTicketFromLink($id, $manager_id, $status)
     {
         $employeeId = $manager_id;
+        $currentYear = now()->year;
 
         // Find the ticket by ID
         $ticket = Tiket::findOrFail($id);
+        $ticketUserId = $ticket->user_id;
         $noTkt = $ticket->no_tkt;
+        $ticketEmployeeId = Employee::where('id', $ticketUserId)->pluck('employee_id')->first();
 
+        $ticketNpTkt = Tiket::where('no_tkt', $noTkt)->pluck('np_tkt');
         // dd($ticket->approval_status);
         // If not rejected, proceed with normal approval process
         if ($ticket->approval_status == 'Pending L1') {
@@ -974,6 +979,12 @@ class ApprovalReimburseController extends Controller
 
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
+            foreach ($ticketNpTkt as $name) {
+                HomeTrip::where('employee_id', $ticketEmployeeId)
+                    ->where('name', $name)
+                    ->where('period', $currentYear)
+                    ->decrement('quota', 1);
+            }
         }
 
         // Log the approval into the tkt_approvals table for all tickets with the same no_tkt

@@ -26,6 +26,7 @@ use App\Models\ca_approval;
 use App\Models\htl_transaction;
 use App\Models\Tiket;
 use App\Models\TiketApproval;
+use App\Models\HomeTrip;
 use App\Models\master_holiday;
 use App\Models\HotelApproval;
 use App\Models\tkt_transaction;
@@ -3657,10 +3658,18 @@ class ReimburseController extends Controller
     {
         $user = Auth::user();
         $employeeId = $user->employee_id;
+        $currentYear = now()->year;
 
         // Find the ticket by ID
         $ticket = Tiket::findOrFail($id);
+        $ticketUserId = $ticket->user_id;
+        $ticketEmployeeId = Employee::where('id', $ticketUserId)->pluck('employee_id')->first();
+
         $noTkt = $ticket->no_tkt;
+        $quota = HomeTrip::where('employee_id', $ticketEmployeeId)->get();
+
+        $ticketNpTkt = Tiket::where('no_tkt', $noTkt)->pluck('np_tkt');
+        // dd($ticketEmployeeId, $quota, $ticketNpTkt);
 
         // Check the provided status_approval input
         $statusApproval = $request->input('status_approval');
@@ -3785,6 +3794,12 @@ class ReimburseController extends Controller
 
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
+            foreach ($ticketNpTkt as $name) {
+                HomeTrip::where('employee_id', $ticketEmployeeId)
+                    ->where('name', $name)
+                    ->where('period', $currentYear)
+                    ->decrement('quota', 1);
+            }
         } else {
             return redirect()->back()->with('error', 'Invalid status update.');
         }
