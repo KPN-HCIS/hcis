@@ -161,20 +161,6 @@
                     </div> <!-- end col-->
                 @endcan
             @endif
-            @if (auth()->check())
-                @can('report_hcis_htl')
-                    <div class="col-md-3">
-                        <a href="{{ route('hotel.admin') }}">
-                            <div class="card" style="height: 200px">
-                                <div class="card-body">
-                                    <img src="{{ asset('images/menu/ht.png') }}" alt="logo">
-                                    <h5 class="my-3">Hotel (Admin)</h5>
-                                </div> <!-- end card-body-->
-                            </div> <!-- end card-->
-                        </a>
-                    </div> <!-- end col-->
-                @endcan
-            @endif
         </div>
     @endsection
 
