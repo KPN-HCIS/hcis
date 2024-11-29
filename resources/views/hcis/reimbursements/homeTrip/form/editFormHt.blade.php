@@ -30,8 +30,10 @@
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="btEditForm" method="post" action="{{ route('home-trip-form.post') }}">
+                        <form id="btEditForm" method="post"
+                            action="{{ route('home-trip-form.put', ['id' => $ticket->id]) }}">
                             @csrf
+                            @method('PUT')
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="mb-2">
@@ -80,8 +82,8 @@
                                                 <b>TICKET <?php echo $displayNumber; ?></b>
                                             </div>
                                             <div class="row">
-                                                <label class="form-label" for="np_tkt">Passengers Name (No KTP)</label>
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label" for="np_tkt">Passengers Name</label>
                                                     <select class="form-select form-select-sm select2"
                                                         id="np_tkt_<?php echo $i; ?>" name="np_tkt[]" required>
                                                         <option value="" disabled
@@ -102,7 +104,9 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="col-md-6">
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label" for="">NIK</label>
                                                     <div class="mb-2">
                                                         <input type="number" name="noktp_tkt[]"
                                                             id="noktp_tkt_<?php echo $i; ?>"
@@ -111,28 +115,7 @@
                                                             oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-6 mb-2">
-                                                    <label class="form-label">From</label>
-                                                    <div class="input-group">
-                                                        <input class="form-control form-control-sm" name="dari_tkt[]"
-                                                            type="text" placeholder="ex. Yogyakarta (YIA)" required
-                                                            value="{{ $ticket['dari_tkt'] ?? '' }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <label class="form-label">To</label>
-                                                    <div class="input-group">
-                                                        <input class="form-control form-control-sm" name="ke_tkt[]"
-                                                            type="text" placeholder="ex. Jakarta (CGK)" required
-                                                            value="{{ $ticket['ke_tkt'] ?? '' }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <label class="form-label"
                                                         for="jenis_tkt_<?php echo $i; ?>">Transportation Type</label>
                                                     <div class="input-group">
@@ -159,7 +142,26 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 mb-2">
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-5 mb-2">
+                                                    <label class="form-label">From</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="dari_tkt[]"
+                                                            type="text" placeholder="ex. Yogyakarta (YIA)" required
+                                                            value="{{ $ticket['dari_tkt'] ?? '' }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5 mb-2">
+                                                    <label class="form-label">To</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="ke_tkt[]"
+                                                            type="text" placeholder="ex. Jakarta (CGK)" required
+                                                            value="{{ $ticket['ke_tkt'] ?? '' }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 mb-2">
                                                     <label for="type_tkt_<?php echo $i; ?>" class="form-label">Ticket
                                                         Type</label>
                                                     <select class="form-select form-select-sm" name="type_tkt[]" required>
@@ -192,7 +194,43 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- Repeat similar changes for return trip and other fields -->
+                                            <div class="round-trip-options"
+                                                style="display: {{ isset($ticket['type_tkt']) && $ticket['type_tkt'] == 'Round Trip' ? 'block' : 'none' }};">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Return Date</label>
+                                                        <div class="input-group">
+                                                            <input class="form-control form-control-sm"
+                                                                name="tgl_plg_tkt[]" type="date"
+                                                                id="tgl_plg_tkt_<?php echo $i; ?>"
+                                                                onchange="validateDates(<?php echo $i; ?>)"
+                                                                value="{{ $ticket['tgl_plg_tkt'] ?? '' }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label">Return Time</label>
+                                                        <div class="input-group">
+                                                            <input class="form-control form-control-sm"
+                                                                id="jam_plg_tkt_<?php echo $i; ?>" name="jam_plg_tkt[]"
+                                                                type="time"
+                                                                onchange="validateDates(<?php echo $i; ?>)"
+                                                                value="{{ $ticket['jam_plg_tkt'] ?? '' }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 mb-2">
+                                                    <label class="form-label">Information</label>
+                                                    <textarea class="form-control" name="ket_tkt[]" rows="3" placeholder="Add ticket details" required>{{ $ticket['ket_tkt'] ?? '' }}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-danger remove-ticket-btn"
+                                                    id="remove-ticket-btn" data-form-id="<?php echo $i; ?>">Remove
+                                                    Data</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <?php endfor; ?>
@@ -516,36 +554,19 @@
                     <b>TICKET ${formNumber}</b>
                 </div>
                 <div class="row">
-                    <label class="form-label" for="jk_tkt">Passengers Name (No KTP)</label>
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label" for="jk_tkt">Passengers Name</label>
                         <select class="form-select form-select-sm selection2" id="np_tkt_${formNumber}" name="np_tkt[]" required>
                             <option value="" selected>--- Choose Passengers ---</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                         <label class="form-label" for="jk_tkt">NIK</label>
                         <div class="mb-2">
                             <input type="number" name="noktp_tkt[]" id="noktp_tkt_${formNumber}" class="form-control form-control-sm" required placeholder="No KTP" oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">From</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm" name="dari_tkt[]" type="text" placeholder="ex. Yogyakarta (YIA)" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">To</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm" name="ke_tkt[]" type="text" placeholder="ex. Jakarta (CGK)" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-2">
+                     <div class="col-md-4 mb-2">
                         <label class="form-label" for="jenis_tkt_${formNumber}">Transportation Type</label>
                         <div class="input-group">
                             <select class="form-select form-select-sm" name="jenis_tkt[]" id="jenis_tkt_${formNumber}" required>
@@ -558,7 +579,22 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-2">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 mb-2">
+                        <label class="form-label">From</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="dari_tkt[]" type="text" placeholder="ex. Yogyakarta (YIA)" required>
+                        </div>
+                    </div>
+                    <div class="col-md-5 mb-2">
+                        <label class="form-label">To</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="ke_tkt[]" type="text" placeholder="ex. Jakarta (CGK)" required>
+                        </div>
+                    </div>
+                      <div class="col-md-2 mb-2">
                         <label for="type_tkt_${formNumber}" class="form-label">Ticket Type</label>
                         <select class="form-select form-select-sm" name="type_tkt[]" required>
                             <option value="One Way" selected>One Way</option>

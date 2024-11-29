@@ -73,12 +73,9 @@
                                 <div class="col-md-4">
                                     <div class="mb-2">
                                         <label class="form-label" for="jns_dinas_tkt">Service Type</label>
-                                        <select class="form-select form-select-sm" name="jns_dinas_tkt" id="jns_dinas_tkt"
-                                            required>
-                                            <option value="" disabled selected>Select Service Type</option>
-                                            <option value="Dinas">Dinas</option>
-                                            <option value="Cuti">Cuti</option>
-                                        </select>
+                                        <input class="form-control bg-light form-control-sm" type='text' name="jns_dinas_tkt" id="jns_dinas_tkt"
+                                            value="Dinas" readonly>
+                                        </input>
                                     </div>
                                 </div>
                             </div>

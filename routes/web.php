@@ -405,7 +405,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/home-trip/form-add/post', [HomeTripController::class, 'homeTripCreate'])->name('home-trip-form.post');
     Route::post('/home-trip/delete/{id}', [HomeTripController::class, 'homeTripDelete'])->name('home-trip.delete');
     Route::get('/home-trip/form-update/{id}', [HomeTripController::class, 'homeTripFormUpdate'])->name('home-trip-form.edit');
-    // Route::put('/home-trip/form-update/update/{id}', [HomeTripController::class, 'homeTripUpdate'])->name('home-trip-form.put');
+    Route::put('/home-trip/form-update/update/{id}', [HomeTripController::class, 'homeTripUpdate'])->name('home-trip-form.put');
 
     //Home Trip Approval
     // HT APPROVAL ROUTE HERE !!!!!!!

@@ -2819,9 +2819,8 @@ class ReimburseController extends Controller
         }
 
         // Apply status filter to the query
-        $query->whereIn('approval_status', $statusFilter);
-
-        // Log::info('Filtered Query:', ['query' => $query->toSql(), 'bindings' => $query->getBindings()]);
+        $query->whereIn('approval_status', $statusFilter)
+            ->where('jns_dinas_tkt', '=', 'Dinas');
 
         // Get the filtered tickets
         $ticketsFilter = $query->get();
@@ -2835,7 +2834,8 @@ class ReimburseController extends Controller
         // Get transactions with the latest ticket IDs
         $transactions = Tiket::whereIn('id', $latestTicketIds)
             ->with('businessTrip')
-            ->whereIn('approval_status', $statusFilter) // Apply the same filter to transactions
+            ->whereIn('approval_status', $statusFilter)
+            ->where('jns_dinas_tkt', '=', 'Dinas')
             ->orderBy('created_at', 'desc')
             ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();

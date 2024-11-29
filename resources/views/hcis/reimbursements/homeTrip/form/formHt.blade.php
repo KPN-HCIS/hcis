@@ -70,8 +70,8 @@
                                                 <b>TICKET <?php echo $i; ?></b>
                                             </div>
                                             <div class="row">
-                                                <label class="form-label" for="np_tkt">Passengers Name (No KTP)</label>
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label" for="np_tkt">Passengers Name</label>
                                                     <select class="form-select form-select-sm select2"
                                                         id="np_tkt_<?php echo $i; ?>" name="np_tkt[]" required>
                                                         <option value="" disabled selected>--- Choose Passengers ---
@@ -90,7 +90,8 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
+                                                    <label class="form-label" for="np_tkt">NIK</label>
                                                     <div class="mb-2">
                                                         <input type="number" name="noktp_tkt[]"
                                                             id="noktp_tkt_<?php echo $i; ?>"
@@ -99,26 +100,7 @@
                                                             oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-6 mb-2">
-                                                    <label class="form-label">From</label>
-                                                    <div class="input-group">
-                                                        <input class="form-control form-control-sm" name="dari_tkt[]"
-                                                            type="text" placeholder="ex. Yogyakarta (YIA)" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <label class="form-label">To</label>
-                                                    <div class="input-group">
-                                                        <input class="form-control form-control-sm" name="ke_tkt[]"
-                                                            type="text" placeholder="ex. Jakarta (CGK)" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <label class="form-label"
                                                         for="jenis_tkt_<?php echo $i; ?>">Transportation
                                                         Type</label>
@@ -134,7 +116,24 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 mb-2">
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-5 mb-2">
+                                                    <label class="form-label">From</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="dari_tkt[]"
+                                                            type="text" placeholder="ex. Yogyakarta (YIA)" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5 mb-2">
+                                                    <label class="form-label">To</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control form-control-sm" name="ke_tkt[]"
+                                                            type="text" placeholder="ex. Jakarta (CGK)" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 mb-2">
                                                     <label for="type_tkt_<?php echo $i; ?>" class="form-label">Ticket
                                                         Type</label>
                                                     <select class="form-select form-select-sm" name="type_tkt[]" required>
@@ -524,36 +523,19 @@
                     <b>TICKET ${formNumber}</b>
                 </div>
                 <div class="row">
-                    <label class="form-label" for="jk_tkt">Passengers Name (No KTP)</label>
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label" for="jk_tkt">Passengers Name (No KTP)</label>
                         <select class="form-select form-select-sm selection2" id="np_tkt_${formNumber}" name="np_tkt[]" required>
                             <option value="" selected>--- Choose Passengers ---</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-2">
+                            <label class="form-label" for="">NIK</label>
                             <input type="number" name="noktp_tkt[]" id="noktp_tkt_${formNumber}" class="form-control form-control-sm" required placeholder="No KTP" oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">From</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm" name="dari_tkt[]" type="text" placeholder="ex. Yogyakarta (YIA)" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">To</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm" name="ke_tkt[]" type="text" placeholder="ex. Jakarta (CGK)" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-2">
+                     <div class="col-md-4 mb-2">
                         <label class="form-label" for="jenis_tkt_${formNumber}">Transportation Type</label>
                         <div class="input-group">
                             <select class="form-select form-select-sm" name="jenis_tkt[]" id="jenis_tkt_${formNumber}" required>
@@ -566,7 +548,22 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-2">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 mb-2">
+                        <label class="form-label">From</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="dari_tkt[]" type="text" placeholder="ex. Yogyakarta (YIA)" required>
+                        </div>
+                    </div>
+                    <div class="col-md-5 mb-2">
+                        <label class="form-label">To</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="ke_tkt[]" type="text" placeholder="ex. Jakarta (CGK)" required>
+                        </div>
+                    </div>
+                      <div class="col-md-2 mb-2">
                         <label for="type_tkt_${formNumber}" class="form-label">Ticket Type</label>
                         <select class="form-select form-select-sm" name="type_tkt[]" required>
                             <option value="One Way" selected>One Way</option>
