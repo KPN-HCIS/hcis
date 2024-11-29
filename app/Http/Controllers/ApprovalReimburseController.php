@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ca_approval;
 use App\Models\ca_extend;
+use App\Models\HomeTrip;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CATransaction;
 use App\Models\BusinessTrip;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\DB;
 use App\Mail\CashAdvancedNotification;
 use App\Mail\HotelNotification;
 use App\Mail\TicketNotification;
+use App\Mail\HomeTripNotification;
 use App\Models\TiketApproval;
 use App\Models\HotelApproval;
 use Illuminate\Http\Request;
@@ -1786,11 +1788,15 @@ class ApprovalReimburseController extends Controller
     public function approveTicketFromLink($id, $manager_id, $status)
     {
         $employeeId = $manager_id;
+        $currentYear = now()->year;
 
         // Find the ticket by ID
         $ticket = Tiket::findOrFail($id);
+        $ticketUserId = $ticket->user_id;
         $noTkt = $ticket->no_tkt;
+        $ticketEmployeeId = Employee::where('id', $ticketUserId)->pluck('employee_id')->first();
 
+        $ticketNpTkt = Tiket::where('no_tkt', $noTkt)->pluck('np_tkt');
         // dd($ticket->approval_status);
         // If not rejected, proceed with normal approval process
         if ($ticket->approval_status == 'Pending L1') {
@@ -1837,26 +1843,52 @@ class ApprovalReimburseController extends Controller
                     $tipeTkt[] = $tkt->type_tkt;
                 }
 
-                // Send email with all hotel details
-                Mail::to($managerEmail)->send(new TicketNotification([
-                    'noSppd' => $ticket->no_sppd,
-                    'noTkt' => $noTktList,
-                    'namaPenumpang' => $npTkt,
-                    'dariTkt' => $dariTkt,
-                    'keTkt' => $keTkt,
-                    'tglBrktTkt' => $tglBrktTkt,
-                    'jamBrktTkt' => $jamBrktTkt,
-                    'tipeTkt' => $tipeTkt,
-                    'tglPlgTkt' => $tglPlgTkt,
-                    'jamPlgTkt' => $jamPlgTkt,
-                    'managerName' => $managerName,
-                    'approvalStatus' => 'Pending L2',
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                ]));
+                if ($ticket->jns_dinas_tkt == 'Dinas') {
+                    // Send email with all hotel details
+                    Mail::to($managerEmail)->send(new TicketNotification([
+                        'noSppd' => $ticket->no_sppd,
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                    ]));
+                } else {
+                    Mail::to($managerEmail)->send(new HomeTripNotification([
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                    ]));
+                }
             }
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
+            if ($ticket->jns_dinas_tkt == 'Cuti') {
+                foreach ($ticketNpTkt as $name) {
+                    HomeTrip::where('employee_id', $ticketEmployeeId)
+                        ->where('name', $name)
+                        ->where('period', $currentYear)
+                        ->decrement('quota', 1);
+                }
+            }
         }
 
         // Log the approval into the tkt_approvals table for all tickets with the same no_tkt

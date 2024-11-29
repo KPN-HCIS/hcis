@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\HomeTripNotification;
 use App\Mail\TicketNotification;
 use App\Models\BusinessTrip;
 use App\Models\Company;
@@ -13,11 +14,8 @@ use App\Models\TiketApproval;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Dependents;
-use Mail;
 use Illuminate\Support\Str;
-// use App\Models\HomeTrip;
-// use App\Models\HomeTripPlan;
-// use App\Models\HomeTripApproval;
+use Illuminate\Support\Facades\Mail;
 use App\Models\MasterBusinessUnit;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\date_interval_create_from_string;
@@ -83,6 +81,10 @@ class HomeTripController extends Controller
         $managerL2Names = 'Unknown';
 
         $employeeIds = $tickets->pluck('user_id')->unique();
+
+        $managerL1Names = 'Unknown';
+        $managerL2Names = 'Unknown';
+
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
@@ -197,22 +199,6 @@ class HomeTripController extends Controller
         $selectedName = $npTkt[0] ?? null;
         // dd($request->np_tkt, $selectedName);
 
-        // Check if the selected name is the employee
-        if ($selectedName === $employeeName) {
-            $gender = $employee->gender;
-            $noTelp = $employee->personal_mobile_number;
-        } else {
-            // Handle dependents
-            $dependent = Dependents::where('name', $selectedName)->first();
-            if ($dependent) {
-                $gender = $dependent->gender;
-                $noTelp = $dependent->phone;
-            } else {
-                // Handle the case where the name doesn't match employee or dependents
-                $gender = null;
-                $noTelp = null;
-            }
-        }
 
         // dd($families);
         if ($request->has('action_draft')) {
@@ -255,7 +241,22 @@ class HomeTripController extends Controller
         $generatedNoTkt = $this->generateTicketNumber();
 
         foreach ($ticketData['np_tkt'] as $key => $selectedName) {
-            // Only process if the required fields are filled
+            // Check if the selected name is the employee
+            if ($selectedName === $employeeName) {
+                $gender = $employee->gender;
+                $noTelp = $employee->personal_mobile_number;
+            } else {
+                // Handle dependents
+                $dependent = Dependents::where('name', $selectedName)->first();
+                if ($dependent) {
+                    $gender = $dependent->gender;
+                    $noTelp = $dependent->phone;
+                } else {
+                    // Handle the case where the name doesn't match employee or dependents
+                    $gender = null;
+                    $noTelp = null;
+                }
+            }
             if (!empty($selectedName)) {
                 $tiket = new Tiket();
                 $tiket->id = (string) Str::uuid();
@@ -298,42 +299,41 @@ class HomeTripController extends Controller
             }
         }
 
-        // if ($statusValue !== 'Draft') {
-        //     $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
-        //     $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-        //     $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
-        //     $approvalLink = route('approve.ticket', [
-        //         'id' => urlencode($tiket->id),
-        //         'manager_id' => $managerId,
-        //         'status' => 'Pending L2'
-        //     ]);
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($tiket->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
 
-        //     $rejectionLink = route('reject.ticket.link', [
-        //         'id' => urlencode($tiket->id),
-        //         'manager_id' => $managerId,
-        //         'status' => 'Rejected'
-        //     ]);
-        //     // // dd($managerEmail);
-        //     if ($managerEmail) {
-        //         // Send email to the manager
-        //         Mail::to($managerEmail)->send(new TicketNotification([
-        //             'noSppd' => $request->bisnis_numb,
-        //             'noTkt' => $noTktList,
-        //             'namaPenumpang' => $npTkt,
-        //             'dariTkt' => $dariTkt,
-        //             'keTkt' => $keTkt,
-        //             'tglBrktTkt' => $tglBrktTkt,
-        //             'jamBrktTkt' => $jamBrktTkt,
-        //             'approvalStatus' => $statusValue,
-        //             'tipeTkt' => $tipeTkt,
-        //             'tglPlgTkt' => $tglPlgTkt,
-        //             'jamPlgTkt' => $jamPlgTkt,
-        //             'managerName' => $managerName,
-        //             'approvalLink' => $approvalLink,
-        //             'rejectionLink' => $rejectionLink,
-        //         ]));
-        //     }
-        // }
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($tiket->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+            // // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new HomeTripNotification([
+                    'noTkt' => $noTktList,
+                    'namaPenumpang' => $npTkt,
+                    'dariTkt' => $dariTkt,
+                    'keTkt' => $keTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'approvalStatus' => $statusValue,
+                    'tipeTkt' => $tipeTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+        }
         return redirect()->route('home-trip')->with('success', 'The ticket request has been input successfully.');
     }
 
@@ -417,6 +417,163 @@ class HomeTripController extends Controller
             'ticketData' => $ticketData,
             'ticket' => $ticket,
         ]);
+    }
+
+    public function homeTripUpdate(Request $request, $id)
+    {
+        $userId = Auth::id();
+        $employee_id = Auth::user()->employee_id;
+        $employee = Employee::where('employee_id', $employee_id)->first();
+        $employeeName = $employee->fullname;
+
+        $npTkt = array_values($request->np_tkt);
+        $selectedName = $npTkt[0] ?? null;
+        // dd($request->np_tkt, $selectedName);
+
+        $existingTickets = Tiket::where('id', $id)->get()->keyBy('id');
+        if ($request->has('action_draft')) {
+            $statusValue = 'Draft';  // When "Save as Draft" is clicked
+        } elseif ($request->has('action_submit')) {
+            $statusValue = 'Pending L1';  // When "Submit" is clicked
+        }
+
+        $existingNoTkt = $existingTickets->first()->no_tkt ?? null;
+
+        $noTktList = [];
+        $npTkt = [];
+        $dariTkt = [];
+        $keTkt = [];
+        $tglBrktTkt = [];
+        $jamBrktTkt = [];
+        $tglPlgTkt = [];
+        $jamPlgTkt = [];
+        $tipeTkt = [];
+
+        foreach ($request->np_tkt as $key => $selectedName) {
+            if (!empty($selectedName)) {
+                // Check if the selected name is the employee
+                if ($selectedName === $employeeName) {
+                    $gender = $employee->gender;
+                    $noTelp = $employee->personal_mobile_number;
+                } else {
+                    // Handle dependents
+                    $dependent = Dependents::where('name', $selectedName)->first();
+                    if ($dependent) {
+                        $gender = $dependent->gender;
+                        $noTelp = $dependent->phone;
+                    } else {
+                        // Handle the case where the name doesn't match employee or dependents
+                        $gender = null;
+                        $noTelp = null;
+                    }
+                }
+
+                $ticketData = [
+                    'user_id' => Auth::id(),
+                    'unit' => $request->unit,
+                    'noktp_tkt' => $request->noktp_tkt[$key] ?? null,
+                    'dari_tkt' => $request->dari_tkt[$key] ?? null,
+                    'ke_tkt' => $request->ke_tkt[$key] ?? null,
+                    'tgl_brkt_tkt' => $request->tgl_brkt_tkt[$key] ?? null,
+                    'jam_brkt_tkt' => $request->jam_brkt_tkt[$key] ?? null,
+                    'jenis_tkt' => $request->jenis_tkt[$key] ?? null,
+                    'type_tkt' => $request->type_tkt[$key] ?? null,
+                    'tgl_plg_tkt' => $request->tgl_plg_tkt[$key] ?? null,
+                    'jam_plg_tkt' => $request->jam_plg_tkt[$key] ?? null,
+                    'ket_tkt' => $request->ket_tkt[$key] ?? null,
+                    'jk_tkt' => $gender,
+                    'np_tkt' => $request->np_tkt[$key] ?? null,
+                    'tlp_tkt' => $noTelp,
+                    'approval_status' => $statusValue,
+                    'jns_dinas_tkt' => 'Cuti',
+                    'tkt_only' => 'Y',
+                ];
+
+
+                if (isset($existingTickets[$selectedName])) {
+                    $existingTicket = $existingTickets[$selectedName];
+                    $ticketData['no_tkt'] = $existingTicket->no_tkt; // Use the same no_tkt
+                    $existingTicket->update($ticketData);
+                    $processedTicketIds[] = $existingTicket->id;
+                } else {
+                    // If no existing ticket, use the existing no_tkt from the first ticket
+                    $existingTicket = $existingTickets->first();
+                    $ticketData['no_tkt'] = $existingTicket->no_tkt;
+                    // dd($ticketData['no_tkt']);
+                    $newTiket = Tiket::create(array_merge($ticketData, [
+                        'id' => (string) Str::uuid(),
+                        // 'noktp_tkt' => $request->noktp_tkt[$key] ?? null,
+                        'tkt_only' => 'Y',
+                    ]));
+                    $processedTicketIds[] = $newTiket->id;
+                }
+
+                // Collect ticket data for email
+                $noTktList[] = $ticketData['no_tkt'];
+                $npTkt[] = $ticketData['np_tkt'];
+                $dariTkt[] = $ticketData['dari_tkt'];
+                $keTkt[] = $ticketData['ke_tkt'];
+                $tipeTkt[] = $ticketData['type_tkt'];
+                $tglBrktTkt[] = $ticketData['tgl_brkt_tkt'];
+                $jamBrktTkt[] = $ticketData['jam_brkt_tkt'];
+                $tglPlgTkt[] = $ticketData['tgl_plg_tkt'];
+                $jamPlgTkt[] = $ticketData['jam_plg_tkt'];
+            }
+        }
+
+        // Soft delete tickets that are no longer in the request
+        Tiket::where('no_tkt', $existingNoTkt)
+            ->whereNotIn('id', $processedTicketIds)
+            ->delete();
+
+        $ticketIdToUse = null;
+
+        // Always use the first valid ID from the processed tickets, ensuring it's a ticket that exists in the final state.
+        if (!empty($processedTicketIds)) {
+            $ticketIdToUse = $processedTicketIds[0];  // Use the first updated/created ticket ID
+        } elseif (!empty($existingTickets)) {
+            // As a fallback, use the first existing ticket ID if no processed IDs were created
+            $ticketIdToUse = $existingTickets->first()->id;
+        }
+
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($ticketIdToUse),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($ticketIdToUse),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Send email to the manager with all ticket details
+                Mail::to($managerEmail)->send(new HomeTripNotification([
+                    'noTkt' => $noTktList,  // all ticket numbers
+                    'namaPenumpang' => $npTkt,  // all passengers
+                    'dariTkt' => $dariTkt,  // all departure locations
+                    'keTkt' => $keTkt,
+                    'tipeTkt' => $tipeTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+        }
+
+        return redirect()->route('home-trip')->with('success', 'The ticket request has been updated successfully.');
+
     }
 
     public function homeTripDelete($id)
