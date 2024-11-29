@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <div class="card shadow-sm">
         <div class="card-header" style="background-color: #AB2F2B; color:white">
-            <h5 class="card-title mb-0">SPPD Rejection Form</h5>
+            <h5 class="card-title mb-0">Ticket Rejection Form</h5>
         </div>
 
         <div class="card-body">
@@ -20,11 +20,15 @@
                                 {{-- @foreach ($tickets as $ticket) --}}
                                 <tr>
                                     <th class="w-25">No. SPPD</th>
-                                    <td>: {{ $tickets->no_sppd ?? '' }}</td>
+                                    <td>: {{ $tickets->no_sppd ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th>No. Ticket</th>
                                     <td>: {{ $tickets->no_tkt }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Purposes</th>
+                                    <td>: {{ $tickets->jns_dinas_tkt }}</td>
                                 </tr>
                                 <tr>
                                     <th>Employee Name</th>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\HomeTripNotification;
 use App\Mail\TicketNotification;
 use App\Models\BusinessTrip;
 use App\Models\Company;
@@ -14,11 +15,8 @@ use Auth;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Dependents;
-use Mail;
 use Illuminate\Support\Str;
-// use App\Models\HomeTrip;
-// use App\Models\HomeTripPlan;
-// use App\Models\HomeTripApproval;
+use Illuminate\Support\Facades\Mail;
 
 class HomeTripController extends Controller
 {
@@ -276,42 +274,41 @@ class HomeTripController extends Controller
             }
         }
 
-        // if ($statusValue !== 'Draft') {
-        //     $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
-        //     $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-        //     $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
-        //     $approvalLink = route('approve.ticket', [
-        //         'id' => urlencode($tiket->id),
-        //         'manager_id' => $managerId,
-        //         'status' => 'Pending L2'
-        //     ]);
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($tiket->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
 
-        //     $rejectionLink = route('reject.ticket.link', [
-        //         'id' => urlencode($tiket->id),
-        //         'manager_id' => $managerId,
-        //         'status' => 'Rejected'
-        //     ]);
-        //     // // dd($managerEmail);
-        //     if ($managerEmail) {
-        //         // Send email to the manager
-        //         Mail::to($managerEmail)->send(new TicketNotification([
-        //             'noSppd' => $request->bisnis_numb,
-        //             'noTkt' => $noTktList,
-        //             'namaPenumpang' => $npTkt,
-        //             'dariTkt' => $dariTkt,
-        //             'keTkt' => $keTkt,
-        //             'tglBrktTkt' => $tglBrktTkt,
-        //             'jamBrktTkt' => $jamBrktTkt,
-        //             'approvalStatus' => $statusValue,
-        //             'tipeTkt' => $tipeTkt,
-        //             'tglPlgTkt' => $tglPlgTkt,
-        //             'jamPlgTkt' => $jamPlgTkt,
-        //             'managerName' => $managerName,
-        //             'approvalLink' => $approvalLink,
-        //             'rejectionLink' => $rejectionLink,
-        //         ]));
-        //     }
-        // }
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($tiket->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+            // // dd($managerEmail);
+            if ($managerEmail) {
+                // Send email to the manager
+                Mail::to($managerEmail)->send(new HomeTripNotification([
+                    'noTkt' => $noTktList,
+                    'namaPenumpang' => $npTkt,
+                    'dariTkt' => $dariTkt,
+                    'keTkt' => $keTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'approvalStatus' => $statusValue,
+                    'tipeTkt' => $tipeTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+        }
         return redirect()->route('home-trip')->with('success', 'The ticket request has been input successfully.');
     }
 
@@ -514,42 +511,41 @@ class HomeTripController extends Controller
             $ticketIdToUse = $existingTickets->first()->id;
         }
 
-        // if ($statusValue !== 'Draft') {
-        //     $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
-        //     $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-        //     $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
-        //     $approvalLink = route('approve.ticket', [
-        //         'id' => urlencode($ticketIdToUse),
-        //         'manager_id' => $managerId,
-        //         'status' => 'Pending L2'
-        //     ]);
+        if ($statusValue !== 'Draft') {
+            $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($ticketIdToUse),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
 
-        //     $rejectionLink = route('reject.ticket.link', [
-        //         'id' => urlencode($ticketIdToUse),
-        //         'manager_id' => $managerId,
-        //         'status' => 'Rejected'
-        //     ]);
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($ticketIdToUse),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
 
-        //     if ($managerEmail) {
-        //         // Send email to the manager with all ticket details
-        //         Mail::to($managerEmail)->send(new TicketNotification([
-        //             'noSppd' => $request->bisnis_numb,
-        //             'noTkt' => $noTktList,  // all ticket numbers
-        //             'namaPenumpang' => $npTkt,  // all passengers
-        //             'dariTkt' => $dariTkt,  // all departure locations
-        //             'keTkt' => $keTkt,
-        //             'tipeTkt' => $tipeTkt,
-        //             'tglBrktTkt' => $tglBrktTkt,
-        //             'jamBrktTkt' => $jamBrktTkt,
-        //             'tglPlgTkt' => $tglPlgTkt,
-        //             'jamPlgTkt' => $jamPlgTkt,
-        //             'approvalStatus' => $statusValue,
-        //             'managerName' => $managerName,
-        //             'approvalLink' => $approvalLink,
-        //             'rejectionLink' => $rejectionLink,
-        //         ]));
-        //     }
-        // }
+            if ($managerEmail) {
+                // Send email to the manager with all ticket details
+                Mail::to($managerEmail)->send(new HomeTripNotification([
+                    'noTkt' => $noTktList,  // all ticket numbers
+                    'namaPenumpang' => $npTkt,  // all passengers
+                    'dariTkt' => $dariTkt,  // all departure locations
+                    'keTkt' => $keTkt,
+                    'tipeTkt' => $tipeTkt,
+                    'tglBrktTkt' => $tglBrktTkt,
+                    'jamBrktTkt' => $jamBrktTkt,
+                    'tglPlgTkt' => $tglPlgTkt,
+                    'jamPlgTkt' => $jamPlgTkt,
+                    'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                ]));
+            }
+        }
 
         return redirect()->route('home-trip')->with('success', 'The ticket request has been updated successfully.');
 

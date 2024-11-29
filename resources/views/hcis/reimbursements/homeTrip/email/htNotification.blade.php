@@ -4,17 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Request Notification</title>
+    <title>Home Trip Request Notification</title>
 </head>
 
 <body>
-    <h2>Ticket Request Notification</h2>
+    <h2>Home Trip Request Notification</h2>
     <p>Dear Sir/Madam: <b>{{ $managerName }}</b></p><br>
 
-    <p><strong>No SPPD:</strong> {{ $noSppd }}</p>
     <p><strong>Approval Status:</strong> {{ $approvalStatus }}</p>
 
-    <h3>Ticket Details</h3>
+    <h3>Home Trip Ticket Details</h3>
     <table style="width: 100%; border-collapse: collapse;">
         <thead>
             <tr>
@@ -54,7 +53,7 @@
 
 
     <hr>
-    <p>For approval or rejection of the Ticket, you can choose the following links:</p>
+    <p>For approval or rejection of the Home Trip Ticket, you can choose the following links:</p>
     <p><a href="{{ $approvalLink }}">Approve</a> / <a href="{{ $rejectionLink }}">Reject</a></p>
 
     <p>Thank you,</p>

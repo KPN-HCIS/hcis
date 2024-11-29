@@ -46,7 +46,7 @@
 
 
     <hr>
-    <p>For approval or rejection of the Business Trip, you can choose the following links:</p>
+    <p>For approval or rejection of the Hotels, you can choose the following links:</p>
     <p><a href="{{ $approvalLink }}">Approve</a> / <a href="{{ $rejectionLink }}">Reject</a></p>
 
     <p>Thank you,</p>

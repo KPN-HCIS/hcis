@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\HotelNotification;
 use App\Mail\TicketNotification;
+use App\Mail\HomeTripNotification;
 
 class ReimburseController extends Controller
 {
@@ -3746,23 +3747,40 @@ class ReimburseController extends Controller
                     $tipeTkt[] = $tkt->type_tkt;
                 }
 
-                // Send email with all hotel details
-                Mail::to($managerEmail)->send(new TicketNotification([
-                    'noSppd' => $ticket->no_sppd,
-                    'noTkt' => $noTktList,
-                    'namaPenumpang' => $npTkt,
-                    'dariTkt' => $dariTkt,
-                    'keTkt' => $keTkt,
-                    'tglBrktTkt' => $tglBrktTkt,
-                    'jamBrktTkt' => $jamBrktTkt,
-                    'tipeTkt' => $tipeTkt,
-                    'tglPlgTkt' => $tglPlgTkt,
-                    'jamPlgTkt' => $jamPlgTkt,
-                    'managerName' => $managerName,
-                    'approvalStatus' => 'Pending L2',
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                ]));
+                if ($ticket->jns_dinas_tkt == 'Dinas') {
+                    Mail::to($managerEmail)->send(new TicketNotification([
+                        'noSppd' => $ticket->no_sppd,
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                    ]));
+                } else {
+                    Mail::to($managerEmail)->send(new HomeTripNotification([
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                    ]));
+                }
             }
 
         } elseif ($ticket->approval_status == 'Pending L2') {
