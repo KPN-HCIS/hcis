@@ -979,11 +979,13 @@ class ApprovalReimburseController extends Controller
 
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
-            foreach ($ticketNpTkt as $name) {
-                HomeTrip::where('employee_id', $ticketEmployeeId)
-                    ->where('name', $name)
-                    ->where('period', $currentYear)
-                    ->decrement('quota', 1);
+            if ($ticket->jns_dinas_tkt == 'Cuti') {
+                foreach ($ticketNpTkt as $name) {
+                    HomeTrip::where('employee_id', $ticketEmployeeId)
+                        ->where('name', $name)
+                        ->where('period', $currentYear)
+                        ->decrement('quota', 1);
+                }
             }
         }
 
