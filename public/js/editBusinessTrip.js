@@ -724,8 +724,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 .closest(".card-body")
                 .querySelector(".round-trip-options");
             if (roundTripOptions) {
-                roundTripOptions.style.display =
-                    e.target.value === "Round Trip" ? "block" : "none";
+                if (e.target.value === "Round Trip") {
+                    roundTripOptions.style.display = "block";
+                } else {
+                    roundTripOptions.style.display = "none";
+
+                    // Reset values within roundTripOptions
+                    const inputs = roundTripOptions.querySelectorAll(
+                        "input, select, textarea"
+                    );
+                    inputs.forEach((input) => {
+                        if (
+                            input.type === "checkbox" ||
+                            input.type === "radio"
+                        ) {
+                            input.checked = false;
+                        } else {
+                            input.value = "";
+                        }
+                    });
+                }
             }
         }
     });
