@@ -378,9 +378,14 @@
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
-    <script>
-        
-    </script>
+<script>
+    // Disable manual typing on input fields
+    document.querySelectorAll('input[type="date"]').forEach(function (input) {
+        input.addEventListener('keydown', function (e) {
+            e.preventDefault(); // Prevent manual typing
+        });
+    });
+</script>
 
     <script>
         function cleanNumber(value) {

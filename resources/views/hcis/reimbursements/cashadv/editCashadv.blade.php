@@ -300,6 +300,14 @@
 @endsection
 <!-- Tambahkan script JavaScript untuk mengumpulkan nilai repeat_days[] -->
 @push('scripts')
+<script>
+    // Disable manual typing on input fields
+    document.querySelectorAll('input[type="date"]').forEach(function (input) {
+        input.addEventListener('keydown', function (e) {
+            e.preventDefault(); // Prevent manual typing
+        });
+    });
+</script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const startDateField = document.getElementById('start_date');
