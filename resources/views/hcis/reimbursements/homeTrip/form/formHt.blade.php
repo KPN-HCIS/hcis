@@ -22,6 +22,7 @@
                 </div>
             </div>
         </div>
+        @include('hcis.reimbursements.businessTrip.modal')
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
@@ -321,6 +322,7 @@
             const ticketFormsContainer = document.getElementById("ticket_forms_container");
             const addTicketButton = document.getElementById("add-ticket-btn");
 
+
             function toggleRequiredAttributes(form, isRequired) {
                 const fields = [
                     'input[name="jk_tkt[]"]',
@@ -449,7 +451,21 @@
                     const roundTripOptions = e.target.closest(".card-body").querySelector(
                         ".round-trip-options");
                     if (roundTripOptions) {
-                        roundTripOptions.style.display = e.target.value === "Round Trip" ? "block" : "none";
+                        if (e.target.value === "Round Trip") {
+                            roundTripOptions.style.display = "block";
+                        } else {
+                            roundTripOptions.style.display = "none";
+
+                            // Reset values within roundTripOptions
+                            const inputs = roundTripOptions.querySelectorAll("input, select, textarea");
+                            inputs.forEach(input => {
+                                if (input.type === "checkbox" || input.type === "radio") {
+                                    input.checked = false;
+                                } else {
+                                    input.value = "";
+                                }
+                            });
+                        }
                     }
                 }
             });

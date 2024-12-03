@@ -73,8 +73,8 @@
                                 <div class="col-md-4">
                                     <div class="mb-2">
                                         <label class="form-label" for="jns_dinas_tkt">Service Type</label>
-                                        <input class="form-control bg-light form-control-sm" type='text' name="jns_dinas_tkt" id="jns_dinas_tkt"
-                                            value="Dinas" readonly>
+                                        <input class="form-control bg-light form-control-sm" type='text'
+                                            name="jns_dinas_tkt" id="jns_dinas_tkt" value="Dinas" readonly>
                                         </input>
                                     </div>
                                 </div>
@@ -490,10 +490,25 @@
                     const roundTripOptions = e.target.closest(".card-body").querySelector(
                         ".round-trip-options");
                     if (roundTripOptions) {
-                        roundTripOptions.style.display = e.target.value === "Round Trip" ? "block" : "none";
+                        if (e.target.value === "Round Trip") {
+                            roundTripOptions.style.display = "block";
+                        } else {
+                            roundTripOptions.style.display = "none";
+
+                            // Reset values within roundTripOptions
+                            const inputs = roundTripOptions.querySelectorAll("input, select, textarea");
+                            inputs.forEach(input => {
+                                if (input.type === "checkbox" || input.type === "radio") {
+                                    input.checked = false;
+                                } else {
+                                    input.value = "";
+                                }
+                            });
+                        }
                     }
                 }
             });
+
 
             function createNewTicketForm(formNumber) {
                 return `

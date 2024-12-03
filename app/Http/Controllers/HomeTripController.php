@@ -14,6 +14,7 @@ use App\Models\TiketApproval;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Dependents;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\MasterBusinessUnit;
@@ -32,8 +33,21 @@ class HomeTripController extends Controller
         $fullname = Employee::where('employee_id', $employee_id)->pluck('fullname')->first();
         $user_id = Auth::user()->id;
         $family = Dependents::orderBy('date_of_birth', 'asc')->where('employee_id', $employee_id)->get();
-        // dd($transactions);
-        $query = Tiket::where('user_id', $user_id)->orderBy('created_at', 'desc');
+
+        $yearNow = Carbon::now()->year; // Current year (e.g., 2024)
+        $yearStart = $yearNow - 2; // Start year (e.g., 2022)
+
+        // Fetch data filtered by the last 3 years
+        $plafonds = HomeTrip::where('employee_id', $employee_id)
+            ->whereBetween('period', [$yearStart, $yearNow]) // Filter for 2022 to 2024
+            ->orderBy('name') // Order by name
+            ->orderBy('period') // Then by period
+            ->get();
+
+        // Group data by period
+        $plafonds = $plafonds->groupBy('period');
+
+        // $query = Tiket::where('user_id', $user_id)->orderBy('created_at', 'desc');
 
         // Get the filter value, default to 'request' if not provided
         // $filter = $request->input('filter', 'request');
@@ -140,6 +154,7 @@ class HomeTripController extends Controller
             'employee_id',
             'formatted_data',
             'fullname',
+            'plafonds',
         ));
     }
     public function homeTripForm()

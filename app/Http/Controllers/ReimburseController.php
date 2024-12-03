@@ -4257,10 +4257,26 @@ class ReimburseController extends Controller
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
             if ($ticket->jns_dinas_tkt == 'Cuti') {
                 foreach ($ticketNpTkt as $name) {
+                    // Get the type_tkt for each ticket based on name
+                    $ticketType = Tiket::where('user_id', $ticket->user_id)
+                        ->where('no_tkt', $ticket->no_tkt)
+                        ->where('tkt_only', '=', 'Y')
+                        ->where('np_tkt', $name)  // Ensure we get the ticket type for the current name
+                        ->value('type_tkt');
+
+                    // Default to 'One Way' if no type_tkt is found
+                    if (!$ticketType) {
+                        $ticketType = 'One Way';
+                    }
+
+                    // Set decrement value based on the ticket type
+                    $decrementValue = ($ticketType == 'One Way') ? 1 : 2;
+
+                    // Decrement quota for this specific name and type
                     HomeTrip::where('employee_id', $ticketEmployeeId)
                         ->where('name', $name)
                         ->where('period', $currentYear)
-                        ->decrement('quota', 1);
+                        ->decrement('quota', $decrementValue);
                 }
             }
         } else {
