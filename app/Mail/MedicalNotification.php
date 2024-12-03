@@ -14,10 +14,12 @@ class MedicalNotification extends Mailable
     use Queueable, SerializesModels;
 
     public $healthCoverages;
+    public $logoBase64;
 
-    public function __construct($healthCoverages)
+    public function __construct($healthCoverages, $logoBase64 = null)
     {
         $this->healthCoverages = $healthCoverages;
+        $this->logoBase64 = $logoBase64;
     }
 
     public function build()

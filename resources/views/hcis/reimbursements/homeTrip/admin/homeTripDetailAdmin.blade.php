@@ -85,9 +85,9 @@
                 {{-- <a href="{{ route('export.excel') }}" class="btn btn-outline-success rounded-pill btn-action me-1">
                     <i class="bi bi-file-earmark-spreadsheet-fill"></i> Export to Excel
                 </a> --}}
-                <a href="{{ route('home-trip-form.add') }}" class="btn btn-primary rounded-pill">
+                {{-- <a href="{{ route('home-trip-form.add') }}" class="btn btn-primary rounded-pill">
                     <i class="bi bi-plus-circle"></i> Add Home Trip
-                </a>
+                </a> --}}
             </div>
         </div>
         <div class="row">
@@ -102,7 +102,7 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
                                 data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
-                                aria-selected="false">Plafonds Home Trip</button>
+                                aria-selected="false">Plafon Home Trip</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"

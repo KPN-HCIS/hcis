@@ -142,8 +142,8 @@
                     </div>
                 @endcan
             @endif
-            @if (auth()->check())
-                @can('report_hcis_ht')
+            {{-- @if (auth()->check())
+                @can('report_hcis_ht') --}}
                     <div class="col-md-3">
                         <a href="{{ route('home-trip.admin') }}">
                             <div class="card" style="height: 200px">
@@ -155,10 +155,10 @@
                             </div> <!-- end card-->
                         </a>
                     </div> <!-- end col-->
-                @endcan
-            @endif
-            @if (auth()->check())
-                @can('report_hcis_tkt')
+                {{-- @endcan
+            @endif --}}
+            {{-- @if (auth()->check())
+                @can('report_hcis_tkt') --}}
                     <div class="col-md-3">
                         <a href="{{ route('ticket.admin') }}">
                             <div class="card" style="height: 200px">
@@ -169,8 +169,8 @@
                             </div> <!-- end card-->
                         </a>
                     </div> <!-- end col-->
-                @endcan
-            @endif
+                {{-- @endcan
+            @endif --}}
             @if (auth()->check())
                 @can('report_hcis_htl')
                     <div class="col-md-3">

@@ -211,7 +211,7 @@
                                                         <td class="text-center">{{ $medicalRecord->status }}</td>
                                                         <td class="text-center">
                                                             <form id="deleteForm_{{ $medicalRecord->no_medic }}" method="POST"
-                                                                action="{{ route('medical-admin.delete', $medicalRecord->usage_id) }}" style="display: inline-block;">
+                                                                action="{{ route('medicalReport-admin.delete', $medicalRecord->usage_id) }}" style="display: inline-block;">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <input type="hidden" id="no_sppd_{{ $medicalRecord->no_medic }}" value="{{ $medicalRecord->no_medic }}">

@@ -81,9 +81,9 @@
                                 <div class="col-md-4">
                                     <div class="mb-2">
                                         <label class="form-label" for="jns_dinas_tkt">Service Type</label>
-                                        <input type="text" class="form-select bg-light form-select-sm"
-                                            name="jns_dinas_tkt" id="jns_dinas_tkt" value="{{ $ticket->jns_dinas_tkt }}"
-                                            readonly>
+                                        <input class="form-control bg-light form-control-sm" type='text'
+                                            name="jns_dinas_tkt" id="jns_dinas_tkt" value="Dinas" readonly>
+                                        </input>
                                     </div>
                                 </div>
                             </div>
@@ -148,11 +148,10 @@
                                                 <div class="col-md-5">
                                                     <div class="mb-2">
                                                         <input type="number" name="noktp_tkt[]"
-                                                        id="noktp_tkt_<?php echo $i; ?>"
-                                                        class="form-control form-control-sm" required
-                                                        placeholder="No KTP"
-                                                        value="{{ $ticket['noktp_tkt'] ?? '' }}"
-                                                        oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
+                                                            id="noktp_tkt_<?php echo $i; ?>"
+                                                            class="form-control form-control-sm" required
+                                                            placeholder="No KTP" value="{{ $ticket['noktp_tkt'] ?? '' }}"
+                                                            oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
                                                     </div>
                                                 </div>
                                             </div>
@@ -189,7 +188,8 @@
                                                 <div class="col-md-6 mb-2">
                                                     <label class="form-label">Transportation Type</label>
                                                     <div class="input-group">
-                                                        <select class="form-select form-select-sm" name="jenis_tkt[]" required>
+                                                        <select class="form-select form-select-sm" name="jenis_tkt[]"
+                                                            required>
                                                             <option value="">Select Transportation Type</option>
                                                             <option value="Train"
                                                                 {{ $ticket && $ticket['jenis_tkt'] == 'Train' ? 'selected' : '' }}>
@@ -274,7 +274,7 @@
                                                     <textarea class="form-control" name="ket_tkt[]" rows="3" placeholder="Add ticket details" required>{{ $ticket['ket_tkt'] ?? '' }}</textarea>
                                                 </div>
                                             </div>
-                                            <input type="hidden" name="ticket_ids[]" value="{{ $ticket['id']  }}">
+                                            <input type="hidden" name="ticket_ids[]" value="{{ $ticket['id'] }}">
 
                                             <div class="mt-2">
                                                 <button type="button"
@@ -531,10 +531,25 @@
                     const roundTripOptions = e.target.closest(".card-body").querySelector(
                         ".round-trip-options");
                     if (roundTripOptions) {
-                        roundTripOptions.style.display = e.target.value === "Round Trip" ? "block" : "none";
+                        if (e.target.value === "Round Trip") {
+                            roundTripOptions.style.display = "block";
+                        } else {
+                            roundTripOptions.style.display = "none";
+
+                            // Reset values within roundTripOptions
+                            const inputs = roundTripOptions.querySelectorAll("input, select, textarea");
+                            inputs.forEach(input => {
+                                if (input.type === "checkbox" || input.type === "radio") {
+                                    input.checked = false;
+                                } else {
+                                    input.value = "";
+                                }
+                            });
+                        }
                     }
                 }
             });
+
 
             function createNewTicketForm(formNumber) {
                 return `

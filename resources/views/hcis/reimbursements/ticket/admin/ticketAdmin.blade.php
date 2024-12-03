@@ -90,22 +90,43 @@
                 <div class="card shadow mb-4">
                     <div class="card-body">
                         <form action="{{ route('ticket.admin') }}" method="GET">
-                            <div class="input-group">
-                                <label class="col-form-label">Departure Date : </label>
-
-                                <input type="date" class="form-control mx-2" id="start_date" name="start_date" placeholder="Start Date" title="Start Date" value="{{ request()->get('start_date') }}">
-                                <label class="col-form-label"> - </label>
-                                <input type="date" class="form-control mx-2" id="end_date" name="end_date" placeholder="End Date" title="End Date" value="{{ request()->get('end_date') }}">
-
-                                <div class="input-group-append mx-2">
-                                    <button class="btn btn-primary" type="submit">Filter</button>
+                            <div class="row align-items-center g-3">
+                                <!-- Date Range Section -->
+                                <div class="col-md-7">
+                                    <div class="d-flex align-items-center mt-3">
+                                        <label class="form-label me-2 mb-0" style="width: 80px;">Departure</label>
+                                        <div class="input-group">
+                                            <input type="date" class="form-control ml-3" id="start_date" name="start_date" 
+                                                placeholder="Start Date" title="Start Date" value="{{ request()->get('start_date') }}">
+                                            <span class="px-2 mt-1">-</span>
+                                            <input type="date" class="form-control" id="end_date" name="end_date" 
+                                                placeholder="End Date" title="End Date" value="{{ request()->get('end_date') }}">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="input-group-append">
-                                    @if (isset($_GET['start_date']) && $_GET['start_date'] !== '')
-                                        <button style="display: block" class="btn btn-success w-100" type="button" onclick="redirectToExportExcel()">
-                                            <i class="ri-file-excel-2-line"></i> Export
-                                        </button>
-                                    @endif
+                    
+                                <!-- Location Dropdown -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="tkt_type" class="form-label">Ticket Type</label>
+                                        <select class="form-select select2" aria-label="Ticket Type" id="tkt_type" name="tkt_type">
+                                            <option value="" {{ request()->get('tkt_type') == '-' ? 'selected' : '' }}>All Type</option>
+                                            <option value="Cuti" {{ request()->get('tkt_type') == 'Cuti' ? 'selected' : '' }}>Cuti</option>
+                                            <option value="Dinas" {{ request()->get('tkt_type') == 'Dinas' ? 'selected' : '' }}>Dinas</option>
+                                        </select>
+                                    </div>
+                                </div>
+                    
+                                <!-- Buttons -->
+                                <div class="col-md-2">
+                                    <div class="d-flex gap-2" style="margin-top: 24px;">
+                                        <button class="btn btn-primary btn-sm" type="submit">Filter</button>
+                                        @if (isset($_GET['start_date']) && $_GET['start_date'] !== '' || (isset($_GET['tkt_type']) && $_GET['tkt_type'] !== '-'))
+                                            <button class="btn btn-success btn-sm" type="button" onclick="redirectToExportExcel()">
+                                                <i class="ri-file-excel-2-line"></i> Export
+                                            </button>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -448,6 +469,7 @@
 
             const startDate = document.getElementById("start_date").value;
             const endDate = document.getElementById("end_date").value;
+            const tktType = document.getElementById("tkt_type").value;
 
             // Create a form element
             const form = document.createElement("form");
@@ -464,8 +486,14 @@
             endDateInput.name = "end_date";
             endDateInput.value = endDate;
 
+            const tktTypeInput = document.createElement("input");
+            tktTypeInput.type = "hidden";
+            tktTypeInput.name = "tkt_type";
+            tktTypeInput.value = tktType;
+
             form.appendChild(startDateInput);
             form.appendChild(endDateInput);
+            form.appendChild(tktTypeInput);
 
             // Append the form to the body and submit it
             document.body.appendChild(form);

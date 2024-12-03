@@ -1,34 +1,33 @@
-<h4>Health Coverage Limit</h4>
+<h4>Plafonds Data</h4>
 <div class="table-responsive">
-    <table class="display nowrap dataTable dtr-inline collapsed">
-        <thead class="bg-primary text-center align-middle">
+    <table class="table table-bordered table-sm table-striped table-hover">
+        <thead class="bg-primary align-middle text-center">
             <tr>
-                <th rowspan="2" class="text-center sticky"
-                    style="z-index:auto !important;background-color:#AB2F2B !important;">Period</th>
-                <th colspan="{{ count($master_medical) }}" class="text-center">Type of Health Coverage</th>
-            </tr>
-            <tr>
-                @foreach ($master_medical as $master_medicals)
-                    <th class="text-center">{{ $master_medicals->name }}</th>
-                @endforeach
+                <th>Period</th>
+                <th>Family Name</th>
+                <th>Relation</th>
+                {{-- <th>Period</th> --}}
+                <th>Quota</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($formatted_data as $period => $balances)
-                <tr>
-                    <td class="text-center sticky bg-white" style="">{{ $period }}</td>
-                    @foreach ($master_medical as $master_medical_item)
-                        <td class="text-center">
-                            @if (isset($balances[$master_medical_item->name]))
-                                <span style="color: {{ $balances[$master_medical_item->name] < 0 ? 'red' : 'black' }}">
-                                    Rp. {{ number_format($balances[$master_medical_item->name], 0, ',', '.') }}
-                                </span>
-                            @else
-                                -
-                            @endif
-                        </td>
-                    @endforeach
-                </tr>
+            @php $no = 1; @endphp
+            @foreach ($plafonds as $year => $items)
+                {{-- Loop through years --}}
+                @foreach ($items as $index => $item)
+                    {{-- Loop through items for each year --}}
+                    <tr>
+                        {{-- Merge Period cells for the same year --}}
+                        @if ($index === 0)
+                            <td rowspan="{{ count($items) }}" class="align-middle text-center">
+                                {{ $year }}
+                            </td>
+                        @endif
+                        <td>{{ $item->name }}</td>
+                        <td>{{ $item->relation_type }}</td>
+                        <td class="text-center">{{ $item->quota ?? '0' }} Left</td>
+                    </tr>
+                @endforeach
             @endforeach
         </tbody>
     </table>

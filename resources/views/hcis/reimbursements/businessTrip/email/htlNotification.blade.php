@@ -13,7 +13,7 @@
 
     <h2>Hotel Details</h2>
 
-    <table style="width: 100%; border-collapse: collapse;">
+    <table style="border-collapse: collapse;">
         <thead>
             <tr>
                 <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">#</th>
@@ -46,7 +46,7 @@
 
 
     <hr>
-    <p>For approval or rejection of the Business Trip, you can choose the following links:</p>
+    <p>For approval or rejection of the Hotels, you can choose the following links:</p>
     <p><a href="{{ $approvalLink }}">Approve</a> / <a href="{{ $rejectionLink }}">Reject</a></p>
 
     <p>Thank you,</p>

@@ -26,6 +26,7 @@ use App\Models\ca_approval;
 use App\Models\htl_transaction;
 use App\Models\Tiket;
 use App\Models\TiketApproval;
+use App\Models\HomeTrip;
 use App\Models\master_holiday;
 use App\Models\HotelApproval;
 use App\Models\tkt_transaction;
@@ -42,6 +43,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\CashAdvancedNotification;
 use App\Mail\HotelNotification;
 use App\Mail\TicketNotification;
+use App\Mail\HomeTripNotification;
 
 class ReimburseController extends Controller
 {
@@ -941,11 +943,14 @@ class ReimburseController extends Controller
             $nextApproval = ca_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
+            $CANotificationLayer = "erzie.aldrian02@outlook.com";
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
             if ($CANotificationLayer) {
-                $textNotification = "{$model->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
+                $textNotification = "{$model->employee->fullname} apply for Cash Advanced with details as follows:";
 
-                $linkApprove = route('approval.email.approveddec', [
+                $linkApprove = route('approval.email.aproved', [
                     'id' => $model->id,
                     'employeeId' => $nextApproval->employee_id,
                     'action' => 'approve',
@@ -963,6 +968,7 @@ class ReimburseController extends Controller
                     null,
                     $linkApprove,
                     $linkReject,
+                    $base64Image,
                 ));
             }
         }
@@ -1310,9 +1316,12 @@ class ReimburseController extends Controller
             $nextApproval = ca_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
+            $CANotificationLayer = "erzie.aldrian02@outlook.com";
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
             if ($CANotificationLayer) {
-                $textNotification = "{$model->employee->fullname} mengajukan Cash Advanced dengan detail sebagai berikut:";
+                $textNotification = "{$model->employee->fullname} apply for Cash Advanced with details as follows:";
 
                 $linkApprove = route('approval.email.aproved', [
                     'id' => $model->id,
@@ -1332,6 +1341,7 @@ class ReimburseController extends Controller
                     null,
                     $linkApprove,
                     $linkReject,
+                    $base64Image,
                 ));
             }
         }
@@ -1432,9 +1442,12 @@ class ReimburseController extends Controller
             $nextApproval = ca_extend::where('ca_id', $id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
+            $CANotificationLayer = "erzie.aldrian02@outlook.com";
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
             if ($CANotificationLayer) {
-                $textNotification = "{$model->employee->fullname} mengajuan Extend Dinas dengan detail Berikut :";
+                $textNotification = "{$model->employee->fullname} Submit an Extend Service with the following details :";
                 $declaration = "Extend";
 
                 $linkApprove = route('approval.email.approvedext', [
@@ -1455,6 +1468,7 @@ class ReimburseController extends Controller
                     $declaration,
                     $linkApprove,
                     $linkReject,
+                    $base64Image,
                 ));
             }
 
@@ -1873,9 +1887,12 @@ class ReimburseController extends Controller
             $nextApproval = ca_sett_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
+            $CANotificationLayer = "erzie.aldrian02@outlook.com";
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
             if ($CANotificationLayer) {
-                $textNotification = "{$model->employee->fullname} mengajukan Declaration Cash Advanced dengan detail Berikut :";
+                $textNotification = "{$model->employee->fullname} filed a Cash Advanced Declaration with the following details :";
                 $declaration = "Declaration";
 
                 $linkApprove = route('approval.email.aproved', [
@@ -1896,6 +1913,7 @@ class ReimburseController extends Controller
                     $declaration,
                     $linkApprove,
                     $linkReject,
+                    $base64Image
                 ));
             }
         }
@@ -2127,7 +2145,7 @@ class ReimburseController extends Controller
                 if ($statusValue == 'Pending L1') {
                     $employee = Employee::where('id', $userId)->first();
                     // $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
-                    $HTLNotificationSubmit = "eriton.dewa@kpn-corp.com";
+                    $HTLNotificationSubmit = "erzie.aldrian02@outlook.com";
                     if ($HTLNotificationSubmit) {
                         // Kirim email ke pengguna transaksi (employee pada layer terakhir)
                         Mail::to($HTLNotificationSubmit)->send(new HotelNotification($hotelData));
@@ -2155,7 +2173,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = "erzie.aldrian02@outlook.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
 
             $approvalLink = route('approve.hotel', [
@@ -2205,7 +2223,7 @@ class ReimburseController extends Controller
 
             $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = "erzie.aldrian02@outlook.com";
             $managerName = Employee::where('employee_id', $managerId)->value('fullname');
 
             $approvalLink = route('approve.hotel', [
@@ -2475,7 +2493,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = "erzie.aldrian02@outlook.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             // dd($managerEmail);
             // // dd($managerEmail);
@@ -2512,7 +2530,7 @@ class ReimburseController extends Controller
         if ($statusValue == 'Pending L1') {
             $employee = Employee::where('id', $userId)->first();
             // $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
-            $HTLNotificationSubmit = "eriton.dewa@kpn-corp.com";
+            $HTLNotificationSubmit = "erzie.aldrian02@outlook.com";
             // dd($hotelData);
             $allHotels = Hotel::where('no_htl', $existingNoHtl)->get()->toArray();
             // dd($allHotels);
@@ -2852,7 +2870,7 @@ class ReimburseController extends Controller
 
             $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = "erzie.aldrian02@outlook.com";
             $managerName = Employee::where('employee_id', $managerId)->value('fullname');
 
             $approvalLink = route('approve.hotel', [
@@ -2994,6 +3012,9 @@ class ReimburseController extends Controller
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
 
+        $managerL1Name = 'Unknown';
+        $managerL2Name = 'Unknown';
+
         foreach ($transactions as $transaction) {
             // Fetch the employee for the current transaction
             $employee = Employee::find($transaction->user_id);
@@ -3108,9 +3129,8 @@ class ReimburseController extends Controller
         }
 
         // Apply status filter to the query
-        $query->whereIn('approval_status', $statusFilter);
-
-        // Log::info('Filtered Query:', ['query' => $query->toSql(), 'bindings' => $query->getBindings()]);
+        $query->whereIn('approval_status', $statusFilter)
+            ->where('jns_dinas_tkt', '=', 'Dinas');
 
         // Get the filtered tickets
         $ticketsFilter = $query->get();
@@ -3124,7 +3144,8 @@ class ReimburseController extends Controller
         // Get transactions with the latest ticket IDs
         $transactions = Tiket::whereIn('id', $latestTicketIds)
             ->with('businessTrip')
-            ->whereIn('approval_status', $statusFilter) // Apply the same filter to transactions
+            ->whereIn('approval_status', $statusFilter)
+            ->where('jns_dinas_tkt', '=', 'Dinas')
             ->orderBy('created_at', 'desc')
             ->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
             ->get();
@@ -3386,7 +3407,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = "erzie.aldrian02@outlook.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($tiket->id),
@@ -3438,7 +3459,7 @@ class ReimburseController extends Controller
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
             $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = "erzie.aldrian02@outlook.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticket->id),
@@ -3760,7 +3781,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = "erzie.aldrian02@outlook.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticketIdToUse),
@@ -4098,10 +4119,18 @@ class ReimburseController extends Controller
     {
         $user = Auth::user();
         $employeeId = $user->employee_id;
+        $currentYear = now()->year;
 
         // Find the ticket by ID
         $ticket = Tiket::findOrFail($id);
+        $ticketUserId = $ticket->user_id;
+        $ticketEmployeeId = Employee::where('id', $ticketUserId)->pluck('employee_id')->first();
+
         $noTkt = $ticket->no_tkt;
+        $quota = HomeTrip::where('employee_id', $ticketEmployeeId)->get();
+
+        $ticketNpTkt = Tiket::where('no_tkt', $noTkt)->pluck('np_tkt');
+        // dd($ticketEmployeeId, $quota, $ticketNpTkt);
 
         // Check the provided status_approval input
         $statusApproval = $request->input('status_approval');
@@ -4148,7 +4177,7 @@ class ReimburseController extends Controller
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
             $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = "erzie.aldrian02@outlook.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticket->id),
@@ -4189,26 +4218,67 @@ class ReimburseController extends Controller
                     $tipeTkt[] = $tkt->type_tkt;
                 }
 
-                // Send email with all hotel details
-                Mail::to($managerEmail)->send(new TicketNotification([
-                    'noSppd' => $ticket->no_sppd,
-                    'noTkt' => $noTktList,
-                    'namaPenumpang' => $npTkt,
-                    'dariTkt' => $dariTkt,
-                    'keTkt' => $keTkt,
-                    'tglBrktTkt' => $tglBrktTkt,
-                    'jamBrktTkt' => $jamBrktTkt,
-                    'tipeTkt' => $tipeTkt,
-                    'tglPlgTkt' => $tglPlgTkt,
-                    'jamPlgTkt' => $jamPlgTkt,
-                    'managerName' => $managerName,
-                    'approvalStatus' => 'Pending L2',
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                ]));
+                if ($ticket->jns_dinas_tkt == 'Dinas') {
+                    Mail::to($managerEmail)->send(new TicketNotification([
+                        'noSppd' => $ticket->no_sppd,
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                    ]));
+                } else {
+                    Mail::to($managerEmail)->send(new HomeTripNotification([
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                    ]));
+                }
             }
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
+            if ($ticket->jns_dinas_tkt == 'Cuti') {
+                foreach ($ticketNpTkt as $name) {
+                    // Get the type_tkt for each ticket based on name
+                    $ticketType = Tiket::where('user_id', $ticket->user_id)
+                        ->where('no_tkt', $ticket->no_tkt)
+                        ->where('tkt_only', '=', 'Y')
+                        ->where('np_tkt', $name)  // Ensure we get the ticket type for the current name
+                        ->value('type_tkt');
+
+                    // Default to 'One Way' if no type_tkt is found
+                    if (!$ticketType) {
+                        $ticketType = 'One Way';
+                    }
+
+                    // Set decrement value based on the ticket type
+                    $decrementValue = ($ticketType == 'One Way') ? 1 : 2;
+
+                    // Decrement quota for this specific name and type
+                    HomeTrip::where('employee_id', $ticketEmployeeId)
+                        ->where('name', $name)
+                        ->where('period', $currentYear)
+                        ->decrement('quota', $decrementValue);
+                }
+            }
         } else {
             return redirect()->back()->with('error', 'Invalid status update.');
         }
@@ -4237,10 +4307,7 @@ class ReimburseController extends Controller
         // Base query for filtering without user-specific filtering
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-
-        $permissionLocations = $this->permissionLocations;
-        $permissionCompanies = $this->permissionCompanies;
-        $permissionGroupCompanies = $this->permissionGroupCompanies;
+        $tktType = $request->input('tkt_type');
 
         // Fetch latest ticket IDs
         $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
@@ -4248,14 +4315,18 @@ class ReimburseController extends Controller
             ->pluck('id');
 
         // Get transactions with the latest ticket IDs
-        $transactions = Tiket::whereIn('id', $latestTicketIds)
-            ->with('businessTrip')
-            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions
-            ->orderBy('created_at', 'desc')
-
-            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
-            });
+        $transactions = Tiket::whereIn('id', $latestTicketIds)  
+            ->with('businessTrip')  
+            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions  
+            ->orderBy('created_at', 'desc')  
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {  
+                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);  
+            })  
+            ->when($tktType, function ($query) use ($tktType) {  
+                if ($tktType !== '-') { // Pastikan - tidak dianggap sebagai tipe yang valid  
+                    $query->where('jns_dinas_tkt', $tktType);  
+                }  
+            });  
 
 
         // Apply permission filters
@@ -4301,6 +4372,9 @@ class ReimburseController extends Controller
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
         $ticketsGroups = $tickets->groupBy('no_tkt');
         $employeeName = Employee::pluck('fullname', 'employee_id');
+
+        $managerL1Name = 'Unknown';
+        $managerL2Name = 'Unknown';
 
         // Fetch employee data and manager names for transactions
         foreach ($transactions as $transaction) {
@@ -4375,8 +4449,9 @@ class ReimburseController extends Controller
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $tktType = $request->input('tkt_type');
 
-        return Excel::download(new TicketExport($startDate, $endDate), 'ticket_report.xlsx');
+        return Excel::download(new TicketExport($startDate, $endDate, $tktType), 'ticket_report.xlsx');
     }
 
     public function ticketDeleteAdmin($key)

@@ -1,4 +1,4 @@
-@extends('layouts_.vertical', ['page_title' => 'Ticket'])
+@extends('layouts_.vertical', ['page_title' => 'Home Trip'])
 
 @section('css')
     <!-- Sertakan CSS Bootstrap jika diperlukan -->
@@ -14,7 +14,7 @@
                 <div class="page-title-box">
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="{{ route('ticket') }}">{{ $parentLink }}</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('home-trip') }}">{{ $parentLink }}</a></li>
                             <li class="breadcrumb-item active">{{ $link }}</li>
                         </ol>
                     </div>
@@ -25,12 +25,15 @@
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
-                    <h4 class="modal-title" id="viewFormEmployeeLabel">Add Ticket</h4>
-                    <a href="{{ route('ticket') }}" type="button" class="btn btn-close btn-close-white"></a>
+                    <h4 class="modal-title" id="viewFormEmployeeLabel">Edit Home Trip - <b>{{ $ticket->no_tkt }}</b></h4>
+                    <a href="{{ route('home-trip') }}" type="button" class="btn btn-close btn-close-white"></a>
                 </div>
                 <div class="card-body" @style('overflow-y: auto;')>
                     <div class="container-fluid">
-                        <form id="btEditForm" method="post" action="{{ route('ticket.submit') }}">@csrf
+                        <form id="btEditForm" method="post"
+                            action="{{ route('home-trip-form.put', ['id' => $ticket->id]) }}">
+                            @csrf
+                            @method('PUT')
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="mb-2">
@@ -57,131 +60,117 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="bisnis_numb">Business Trip Number</label>
-                                        <select class="form-control select2 form-select-sm" id="bisnis_numb"
-                                            name="bisnis_numb">
-                                            <option value="-">No Business Trip</option>
-                                            @foreach ($no_sppds as $no_sppd)
-                                                <option value="{{ $no_sppd->no_sppd }}">{{ $no_sppd->no_sppd }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-2">
-                                        <label class="form-label" for="jns_dinas_tkt">Service Type</label>
-                                        <input class="form-control bg-light form-control-sm" type='text'
-                                            name="jns_dinas_tkt" id="jns_dinas_tkt" value="Dinas" readonly>
-                                        </input>
-                                    </div>
-                                </div>
-                            </div>
                             <div id="tiket_div">
                                 <div class="d-flex flex-column gap-1" id="ticket_forms_container">
                                     <?php
-                                    $i = 1;
+                                    $maxForms = 5;
+                                    $ticketCount = count($ticketData);
+
+                                    if ($ticketCount === 0) {
+                                        $ticketCount = 1;
+                                        $ticketData = [null]; // Set an empty form data
+                                    }
+
+                                    for ($i = 0; $i < $ticketCount; $i++) :
+                                        $ticket = $ticketData[$i];
+                                        $displayNumber = $i + 1;
                                     ?>
                                     <div class="card bg-light shadow-none" id="ticket-form-<?php echo $i; ?>"
-                                        style="display: <?php echo $i === 1 ? 'block' : 'none'; ?>;">
+                                        style="display: <?php echo $i <= $ticketCount ? 'block' : 'none'; ?>;">
                                         <div class="card-body">
                                             <div class="h5 text-uppercase">
-                                                <b>TICKET <?php echo $i; ?></b>
+                                                <b>TICKET <?php echo $displayNumber; ?></b>
                                             </div>
                                             <div class="row">
-                                                <label class="form-label" for="jk_tkt">Passengers Name (No KTP)</label>
-                                                <div class="col-md-2">
-                                                    <div class="mb-2 mt-1 gap-1">
-                                                        <div class="form-group" id="jk_tkt_<?php echo $i; ?>">
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio"
-                                                                    id="male_<?php echo $i; ?>" name="jk_tkt[]"
-                                                                    value="Male" required>
-                                                                <label class="form-check-label"
-                                                                    for="male_<?php echo $i; ?>">Mr</label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline ms-2">
-                                                                <input class="form-check-input" type="radio"
-                                                                    id="female_<?php echo $i; ?>" name="jk_tkt[]"
-                                                                    value="Female" required>
-                                                                <label class="form-check-label"
-                                                                    for="female_<?php echo $i; ?>">Mrs</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label" for="np_tkt">Passengers Name</label>
+                                                    <select class="form-select form-select-sm select2"
+                                                        id="np_tkt_<?php echo $i; ?>" name="np_tkt[]" required>
+                                                        <option value="" disabled
+                                                            {{ empty($ticket['np_tkt']) ? 'selected' : '' }}>--- Choose
+                                                            Passengers ---</option>
+                                                        @if ($employeeInHomeTrip)
+                                                            <option value="{{ $employeeInHomeTrip->name }}"
+                                                                {{ $ticket['np_tkt'] == $employeeInHomeTrip->name ? 'selected' : '' }}>
+                                                                {{ $employeeInHomeTrip->name }} (Me)
+                                                            </option>
+                                                        @endif
+
+                                                        @foreach ($familyMembers as $family)
+                                                            <option value="{{ $family->name }}"
+                                                                {{ $ticket['np_tkt'] == $family->name ? 'selected' : '' }}>
+                                                                {{ $family->name }} ({{ $family->relation_type }})
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
 
-                                                <div class="col-md-5">
-                                                    <div class="mb-2">
-                                                        <input type="text" name="np_tkt[]"
-                                                            id="np_tkt_<?php echo $i; ?>"
-                                                            class="form-control form-control-sm" required
-                                                            placeholder="Passengers Name">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
+                                                    <label class="form-label" for="">NIK</label>
                                                     <div class="mb-2">
                                                         <input type="number" name="noktp_tkt[]"
                                                             id="noktp_tkt_<?php echo $i; ?>"
                                                             class="form-control form-control-sm" required
-                                                            placeholder="No KTP"
+                                                            placeholder="No KTP" value="{{ $ticket['noktp_tkt'] ?? '' }}"
                                                             oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label"
+                                                        for="jenis_tkt_<?php echo $i; ?>">Transportation Type</label>
+                                                    <div class="input-group">
+                                                        <select class="form-select form-select-sm" name="jenis_tkt[]"
+                                                            id="jenis_tkt_<?php echo $i; ?>" required>
+                                                            <option value=""
+                                                                {{ empty($ticket['jenis_tkt']) ? 'selected' : '' }}>Select
+                                                                Transportation Type</option>
+                                                            <option value="Train"
+                                                                {{ $ticket['jenis_tkt'] == 'Train' ? 'selected' : '' }}>
+                                                                Train</option>
+                                                            <option value="Bus"
+                                                                {{ $ticket['jenis_tkt'] == 'Bus' ? 'selected' : '' }}>Bus
+                                                            </option>
+                                                            <option value="Airplane"
+                                                                {{ $ticket['jenis_tkt'] == 'Airplane' ? 'selected' : '' }}>
+                                                                Airplane</option>
+                                                            <option value="Car"
+                                                                {{ $ticket['jenis_tkt'] == 'Car' ? 'selected' : '' }}>Car
+                                                            </option>
+                                                            <option value="Ferry"
+                                                                {{ $ticket['jenis_tkt'] == 'Ferry' ? 'selected' : '' }}>
+                                                                Ferry</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="mb-2">
-                                                        <label class="form-label" for="tlp_tkt_<?php echo $i; ?>">Phone
-                                                            Number</label>
-                                                        <input type="number" name="tlp_tkt[]"
-                                                            id="tlp_tkt_<?php echo $i; ?>"
-                                                            class="form-control form-control-sm" maxlength="12"
-                                                            placeholder="ex: 08123123123" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
+                                                <div class="col-md-5 mb-2">
                                                     <label class="form-label">From</label>
                                                     <div class="input-group">
                                                         <input class="form-control form-control-sm" name="dari_tkt[]"
-                                                            type="text" placeholder="ex. Yogyakarta (YIA)" required>
+                                                            type="text" placeholder="ex. Yogyakarta (YIA)" required
+                                                            value="{{ $ticket['dari_tkt'] ?? '' }}">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
+                                                <div class="col-md-5 mb-2">
                                                     <label class="form-label">To</label>
                                                     <div class="input-group">
                                                         <input class="form-control form-control-sm" name="ke_tkt[]"
-                                                            type="text" placeholder="ex. Jakarta (CGK)" required>
+                                                            type="text" placeholder="ex. Jakarta (CGK)" required
+                                                            value="{{ $ticket['ke_tkt'] ?? '' }}">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6 mb-2">
-                                                    <label class="form-label"
-                                                        for="jenis_tkt_<?php echo $i; ?>">Transportation
-                                                        Type</label>
-                                                    <div class="input-group">
-                                                        <select class="form-select form-select-sm" name="jenis_tkt[]"
-                                                            id="jenis_tkt_<?php echo $i; ?>" required>
-                                                            <option value="">Select Transportation Type</option>
-                                                            <option value="Train">Train</option>
-                                                            <option value="Bus">Bus</option>
-                                                            <option value="Airplane">Airplane</option>
-                                                            <option value="Car">Car</option>
-                                                            <option value="Ferry">Ferry</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-2 mb-2">
                                                     <label for="type_tkt_<?php echo $i; ?>" class="form-label">Ticket
                                                         Type</label>
                                                     <select class="form-select form-select-sm" name="type_tkt[]" required>
-                                                        {{-- <option value="" selected>Choose Ticket Type</option> --}}
-                                                        <option value="One Way" selected>One Way</option>
-                                                        <option value="Round Trip">Round Trip</option>
+                                                        <option value="One Way"
+                                                            {{ $ticket['type_tkt'] == 'One Way' ? 'selected' : '' }}>One
+                                                            Way</option>
+                                                        <option value="Round Trip"
+                                                            {{ $ticket['type_tkt'] == 'Round Trip' ? 'selected' : '' }}>
+                                                            Round Trip</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -192,7 +181,7 @@
                                                         <input class="form-control form-control-sm"
                                                             id="tgl_brkt_tkt_<?php echo $i; ?>" name="tgl_brkt_tkt[]"
                                                             type="date" onchange="validateDates(<?php echo $i; ?>)"
-                                                            required>
+                                                            required value="{{ $ticket['tgl_brkt_tkt'] ?? '' }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-2">
@@ -201,11 +190,12 @@
                                                         <input class="form-control form-control-sm"
                                                             id="jam_brkt_tkt_<?php echo $i; ?>" name="jam_brkt_tkt[]"
                                                             type="time" onchange="validateDates(<?php echo $i; ?>)"
-                                                            required>
+                                                            required value="{{ $ticket['jam_brkt_tkt'] ?? '' }}">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="round-trip-options" style="display: none;">
+                                            <div class="round-trip-options"
+                                                style="display: {{ isset($ticket['type_tkt']) && $ticket['type_tkt'] == 'Round Trip' ? 'block' : 'none' }};">
                                                 <div class="row mb-3">
                                                     <div class="col-md-6">
                                                         <label class="form-label">Return Date</label>
@@ -213,7 +203,8 @@
                                                             <input class="form-control form-control-sm"
                                                                 name="tgl_plg_tkt[]" type="date"
                                                                 id="tgl_plg_tkt_<?php echo $i; ?>"
-                                                                onchange="validateDates(<?php echo $i; ?>)">
+                                                                onchange="validateDates(<?php echo $i; ?>)"
+                                                                value="{{ $ticket['tgl_plg_tkt'] ?? '' }}">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -222,34 +213,32 @@
                                                             <input class="form-control form-control-sm"
                                                                 id="jam_plg_tkt_<?php echo $i; ?>" name="jam_plg_tkt[]"
                                                                 type="time"
-                                                                onchange="validateDates(<?php echo $i; ?>)">
+                                                                onchange="validateDates(<?php echo $i; ?>)"
+                                                                value="{{ $ticket['jam_plg_tkt'] ?? '' }}">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 mb-2">
-                                                    <label for="ket_tkt_<?php echo $i; ?>"
-                                                        class="form-label">Information</label>
-                                                    <textarea class="form-control" id="ket_tkt_<?php echo $i; ?>" name="ket_tkt[]" rows="3"
-                                                        placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                                                    <label class="form-label">Information</label>
+                                                    <textarea class="form-control" name="ket_tkt[]" rows="3" placeholder="Add ticket details" required>{{ $ticket['ket_tkt'] ?? '' }}</textarea>
                                                 </div>
                                             </div>
                                             <div class="mt-2">
                                                 <button type="button"
                                                     class="btn btn-sm btn-outline-danger remove-ticket-btn"
-                                                    id="remove-ticket-btn">Remove
+                                                    id="remove-ticket-btn" data-form-id="<?php echo $i; ?>">Remove
                                                     Data</button>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <?php endfor; ?>
                                 </div>
                                 <button type="button" class="btn btn-sm btn-outline-primary add-ticket-btn mb-2"
-                                    id="add-ticket-btn">Add
-                                    Ticket
-                                    Data</button>
+                                    id="add-ticket-btn">Add Home Trip Data</button>
                             </div>
+
 
                             <input type="hidden" name="status" value="Pending L1" id="status">
                             <input type="hidden" id="formActionType" name="formActionType" value="">
@@ -464,6 +453,7 @@
                     const addedForm = ticketFormsContainer.lastElementChild;
                     toggleRequiredAttributes(addedForm, true); // Making all fields required by default
                     updateFormNumbers();
+                    initializeAllSelect2();
                 } else {
                     Swal.fire({
                         title: "Warning!",
@@ -509,6 +499,66 @@
                 }
             });
 
+            function initializeAllSelect2() {
+                document.querySelectorAll(".selection2").forEach(function(selectElement) {
+                    $(selectElement).select2({
+                        theme: "bootstrap-5",
+                        width: "100%",
+                        minimumInputLength: 0,
+                        allowClear: true,
+                        placeholder: "Please Select Passengers",
+                        ajax: {
+                            url: "/search/passengers",
+                            dataType: "json",
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    searchTerm: params.term || "",
+                                    page: params.page || 1,
+                                };
+                            },
+                            processResults: function(data, params) {
+                                params.page = params.page || 1;
+
+                                // Combine employee and dependents into a single results array
+                                const results = [];
+
+                                // Add the employee data first (if any)
+                                if (data.employee && data.employee.length > 0) {
+                                    data.employee.forEach(function(employee) {
+                                        results.push({
+                                            id: employee.fullname,
+                                            text: `${employee.fullname} (${employee.relation_type})`,
+                                        });
+                                    });
+                                }
+
+                                // Add dependents data next (if any)
+                                if (data.dependents && data.dependents.length > 0) {
+                                    data.dependents.forEach(function(dependent) {
+                                        results.push({
+                                            id: dependent.fullname,
+                                            text: `${dependent.fullname} (${dependent.relation_type})`,
+                                        });
+                                    });
+                                }
+
+                                return {
+                                    results: results,
+                                    pagination: {
+                                        more: params.page * 30 < data
+                                            .total_count, // Adjust as needed
+                                    },
+                                };
+                            },
+                            cache: true,
+                        },
+                    });
+                });
+            }
+
+            // Call the function to initialize Select2 for existing forms
+            initializeAllSelect2();
 
             function createNewTicketForm(formNumber) {
                 return `
@@ -518,57 +568,22 @@
                     <b>TICKET ${formNumber}</b>
                 </div>
                 <div class="row">
-                    <label class="form-label" for="jk_tkt">Passengers Name (No KTP)</label>
-                    <div class="col-md-2">
-                        <div class="mb-2 mt-1 gap-1">
-                            <div class="form-group" id="jk_tkt_${formNumber}">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" id="male_${formNumber}" name="jk_tkt[]" value="Male">
-                                    <label class="form-check-label" for="male_${formNumber}">Mr</label>
-                                </div>
-                                <div class="form-check form-check-inline ms-2">
-                                    <input class="form-check-input" type="radio" id="female_${formNumber}" name="jk_tkt[]" value="Female">
-                                    <label class="form-check-label" for="female_${formNumber}">Mrs</label>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label" for="jk_tkt">Passengers Name</label>
+                        <select class="form-select form-select-sm selection2" id="np_tkt_${formNumber}" name="np_tkt[]" required>
+                            <option value="" selected>--- Choose Passengers ---</option>
+                        </select>
                     </div>
-                    <div class="col-md-5">
-                        <div class="mb-2">
-                            <input type="text" name="np_tkt[]" id="np_tkt_${formNumber}" class="form-control form-control-sm" placeholder="Passengers Name">
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="mb-2">
-                            <input type="number" name="noktp_tkt[]" id="noktp_tkt_${formNumber}" class="form-control form-control-sm" placeholder="No KTP">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-md-4">
+                         <label class="form-label" for="jk_tkt">NIK</label>
                         <div class="mb-2">
-                            <label class="form-label" for="tlp_tkt_${formNumber}">Phone Number</label>
-                            <input type="number" name="tlp_tkt[]" id="tlp_tkt_${formNumber}" class="form-control form-control-sm" maxlength="12" placeholder="ex: 08123123123">
+                            <input type="number" name="noktp_tkt[]" id="noktp_tkt_${formNumber}" class="form-control form-control-sm" required placeholder="No KTP" oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);">
                         </div>
                     </div>
-                    <div class="col-md-4 mb-2">
-                        <label class="form-label">From</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm" name="dari_tkt[]" type="text" placeholder="ex. Yogyakarta (YIA)">
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <label class="form-label">To</label>
-                        <div class="input-group">
-                            <input class="form-control form-control-sm" name="ke_tkt[]" type="text" placeholder="ex. Jakarta (CGK)">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
+                     <div class="col-md-4 mb-2">
                         <label class="form-label" for="jenis_tkt_${formNumber}">Transportation Type</label>
                         <div class="input-group">
-                            <select class="form-select form-select-sm" name="jenis_tkt[]" id="jenis_tkt_${formNumber}">
+                            <select class="form-select form-select-sm" name="jenis_tkt[]" id="jenis_tkt_${formNumber}" required>
                                 <option value="">Select Transportation Type</option>
                                 <option value="Train">Train</option>
                                 <option value="Bus">Bus</option>
@@ -578,28 +593,45 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-2">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 mb-2">
+                        <label class="form-label">From</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="dari_tkt[]" type="text" placeholder="ex. Yogyakarta (YIA)" required>
+                        </div>
+                    </div>
+                    <div class="col-md-5 mb-2">
+                        <label class="form-label">To</label>
+                        <div class="input-group">
+                            <input class="form-control form-control-sm" name="ke_tkt[]" type="text" placeholder="ex. Jakarta (CGK)" required>
+                        </div>
+                    </div>
+                      <div class="col-md-2 mb-2">
                         <label for="type_tkt_${formNumber}" class="form-label">Ticket Type</label>
-                        <select class="form-select form-select-sm" name="type_tkt[]">
+                        <select class="form-select form-select-sm" name="type_tkt[]" required>
                             <option value="One Way" selected>One Way</option>
                             <option value="Round Trip">Round Trip</option>
                         </select>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Date</label>
                         <div class="input-group">
-                            <input class="form-control form-control-sm" id="tgl_brkt_tkt_${formNumber}" name="tgl_brkt_tkt[]" type="date" onchange="validateDates(${formNumber})">
+                            <input class="form-control form-control-sm" id="tgl_brkt_tkt_${formNumber}" name="tgl_brkt_tkt[]" type="date" onchange="validateDates(${formNumber})" required>
                         </div>
                     </div>
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Time</label>
                         <div class="input-group">
-                            <input class="form-control form-control-sm" id="jam_brkt_tkt_${formNumber}" name="jam_brkt_tkt[]" type="time" onchange="validateDates(${formNumber})">
+                            <input class="form-control form-control-sm" id="jam_brkt_tkt_${formNumber}" name="jam_brkt_tkt[]" type="time" onchange="validateDates(${formNumber})" required>
                         </div>
                     </div>
                 </div>
+
                 <div class="round-trip-options" style="display: none;">
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -616,18 +648,21 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-12 mb-2">
                         <label for="ket_tkt_${formNumber}" class="form-label">Information</label>
-                        <textarea class="form-control" id="ket_tkt_${formNumber}" name="ket_tkt[]" rows="3" placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc."></textarea>
+                        <textarea class="form-control" id="ket_tkt_${formNumber}" name="ket_tkt[]" rows="3" placeholder="This field is for adding ticket details, e.g., Citilink, Garuda Indonesia, etc." required></textarea>
                     </div>
                 </div>
+
                 <div class="mt-2">
                     <button type="button" class="btn btn-sm btn-outline-danger remove-ticket-btn" id="remove-ticket-btn">Remove Data</button>
                 </div>
             </div>
         </div>`;
             }
+
         });
     </script>
 @endsection

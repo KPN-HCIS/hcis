@@ -3,113 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Cash Advanced Notification</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            line-height: 1.4;
-        }
-
-        .header {
-            width: 100%;
-            height: auto;
-            text-align: center;
-        }
-
-        .header img {
-            height: auto;
-            margin-bottom: 20px;
-            width: 20%; /* Default untuk desktop */
-        }
-
-        /* Media query untuk mobile devices */
-        @media screen and (max-width: 768px) {
-            .header img {
-                width: 50%; /* Ukuran untuk mobile */
-            }
-        }
-
-        h5 {
-            font-size: 13px;
-            margin: 0;
-            padding: 0;
-            margin-bottom: 10px;
-        }
-
-        p {
-            margin: 4px 0;
-            padding: 2px;
-        }
-
-        .table-approve {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 8px;
-            font-size: 10px;
-        }
-
-        .table-approve th,
-        .table-approve td {
-            border: 1px solid #ddd;
-            padding: 4px;
-            text-align: left;
-            vertical-align: top;
-        }
-
-        .table-approve .head-row {
-            font-weight: bold;
-            background-color: #f5f5f5;
-        }
-
-        .table-approve .head-row td {
-            text-align: center;
-        }
-
-        .table-approve th {
-            background-color: #ab2f2b;
-            color: #ffffff;
-            font-size: 10px;
-            font-weight: bold;
-            white-space: nowrap;
-            text-align: center;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            max-width: 100%;
-        }
-
-        .col-small {
-            width: 40px;
-            white-space: nowrap;
-        }
-
-        .col-medium {
-            width: 80px;
-            white-space: nowrap;
-        }
-
-        .col-amount {
-            width: 70px;
-            text-align: right;
-        }
-
-        .col-date {
-            width: 70px;
-            white-space: nowrap;
-        }
-    </style>
 </head>
     <body>
-        <div class="header">
-            <img src="https://stag-corp.kpndownstream.com/images/logo/logo-kpn-red.png" alt="Kop Surat">
-        </div>
+        <div style="width: 100%; height: auto; text-align: center;">
+            <img src="{{ $logoBase64 }}" 
+                 alt="Kop Surat" 
+                 style="height: auto; margin-bottom: 20px; width: 15%;">
+        </div>               
         <h5>Reimburse Cash Advanced Notification</h5>
         @if ($nextApproval)
         {{-- {{dd($nextApproval)}} --}}
-            <p>Kepada Yth : Bapak/Ibu <strong>{{ $nextApproval->employee->fullname }}</strong></p>
+            <p>Dear : Bapak/Ibu <strong>{{ $nextApproval->employee->fullname }}</strong></p>
             <br>
         @endif
 
@@ -123,44 +27,44 @@
         @if ($caTransaction)
             <table>
                 <tr>
-                    <td class="label">No Dokumen</td>
-                    <td class="colon">:</td>
-                    <td class="value">{{ $caTransaction->no_ca }}</td>
+                    <td>No Dokumen</td>
+                    <td>:</td>
+                    <td>{{ $caTransaction->no_ca }}</td>
                 </tr>
                 <tr>
-                    <td class="label">Name</td>
-                    <td class="colon">:</td>
-                    <td class="value">{{ $caTransaction->employee->fullname }}</td>
+                    <td>Name</td>
+                    <td>:</td>
+                    <td>{{ $caTransaction->employee->fullname }}</td>
                 </tr>
                 <tr>
-                    <td class="label">Start Date</td>
-                    <td class="colon">:</td>
-                    <td class="value">{{ $caTransaction->start_date }}</td>
+                    <td>Start Date</td>
+                    <td>:</td>
+                    <td>{{ $caTransaction->start_date }}</td>
                 </tr>
                 <tr>
-                    <td class="label">End Date</td>
-                    <td class="colon">:</td>
-                    <td class="value">{{ $caTransaction->end_date }}</td>
+                    <td>End Date</td>
+                    <td>:</td>
+                    <td>{{ $caTransaction->end_date }}</td>
                 </tr>
                 <tr>
-                    <td class="label">Destination</td>
-                    <td class="colon">:</td>
-                    <td class="value">{{ $caTransaction->destination == 'Others' ? $caTransaction->others_location : $caTransaction->destination }}</td>
+                    <td>Destination</td>
+                    <td>:</td>
+                    <td>{{ $caTransaction->destination == 'Others' ? $caTransaction->others_location : $caTransaction->destination }}</td>
                 </tr>
                 <tr>
-                    <td class="label">Purpose</td>
-                    <td class="colon">:</td>
-                    <td class="value">{{ $caTransaction->ca_needs }}</td>
+                    <td>Purpose</td>
+                    <td>:</td>
+                    <td>{{ $caTransaction->ca_needs }}</td>
                 </tr>
                 <tr>
-                    <td class="label">PT</td>
-                    <td class="colon">:</td>
-                    <td class="value">{{ $caTransaction->companies->contribution_level }} ({{ $caTransaction->contribution_level_code }})</td>
+                    <td>PT</td>
+                    <td>:</td>
+                    <td>{{ $caTransaction->companies->contribution_level }} ({{ $caTransaction->contribution_level_code }})</td>
                 </tr>
                 <tr>
-                    <td class="label">CA Type</td>
-                    <td class="colon">:</td>
-                    <td class="value">
+                    <td>CA Type</td>
+                    <td>:</td>
+                    <td>
                         @if($caTransaction->type_ca === 'entr')
                             Entertaiment
                         @elseif($caTransaction->type_ca === 'dns')
@@ -173,373 +77,396 @@
                     </td>
                 </tr>
             </table>
+            <br>
 
             @if($caTransaction->type_ca === 'entr')
                 @if ($declaration == "Declaration")
-                    <table class="table-approve" style="width: 80%;">
+                    <table style="border-collapse: collapse; width: 70%; margin-top: 8px; font-size: 10px;">
                         <tr>
-                            <th colspan="5"><b>Detail Cash Advanced :</b></th>
+                            <th colspan="5" style="border: 1px solid #ddd; padding: 4px; background-color: #ab2f2b; color: #ffffff; font-size: 10px; font-weight: bold; white-space: nowrap; text-align: center;">
+                                <b>Detail Cash Advanced :</b>
+                            </th>
                         </tr>
-                        <tr class="head-row">
-                            <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
-                            <td colspan="2">Estimate Plan</td>
-                            <td colspan="2">Estimate Declaration</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td rowspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Types of Down Payments</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Estimate Plan</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Estimate Declaration</td>
                         </tr>
-                        <tr class="head-row">
-                            <td>Total Days</td>
-                            <td>Amount</td>
-                            <td>Total Days</td>
-                            <td>Amount</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Amount</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Amount</td>
                         </tr>
                         <tr>
-                            <td class="label">Detail Entertain</td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Detail Entertain</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 {{ $caTransaction->total_days }} Days
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 {{ $caTransaction->total_days }} Days
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($declareCA['detail_e'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">Total</td>
-                            <td>Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
-                            <td></td>
-                            <td>Rp. {{ number_format($caTransaction->total_real, 0, ',', '.' )}}</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;" colspan="2">Total</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;"></td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Rp. {{ number_format($caTransaction->total_real, 0, ',', '.' )}}</td>
                         </tr>
                     </table>
                 @else
-                    <table class="table-approve" style="width: 70%;">
+                <table style="border-collapse: collapse; width: 70%; margin-top: 8px; font-size: 10px;">
                         <tr>
-                            <th colspan="3"><b>Detail Cash Advanced :</b></th>
+                            <th colspan="3" style="border: 1px solid #ddd; padding: 4px; background-color: #ab2f2b; color: #ffffff; font-size: 10px; font-weight: bold; white-space: nowrap; text-align: center;">>
+                                <b>Detail Cash Advanced :</b>
+                            </th>
                         </tr>
-                        <tr class="head-row">
-                            <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
-                            <td colspan="2">Estimate</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td rowspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Types of Down Payments</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Estimate</td>
                         </tr>
-                        <tr class="head-row">
-                            <td>Total Days</td>
-                            <td>Amount</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Amount</td>
                         </tr>
                         <tr>
-                            <td class="label">Detail Entertain</td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Detail Entertain</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">
                                 {{ $caTransaction->total_days }} Days
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">Total</td>
-                            <td>Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
                         </tr>
                     </table>
                 @endif
             @elseif($caTransaction->type_ca === 'dns')
                 @if ($declaration == "Declaration")
                     @if (count($declareCA['detail_perdiem']) > 0 && !empty($declareCA['detail_perdiem'][0]['company_code']))
-                        <table class="table-approve">
+                        <table style="border-collapse: collapse; width: 70%; margin-top: 8px; font-size: 10px;">
                             <tr>
-                                <th colspan="5"><b>Perdiem Plan :</b></th>
+                                <th colspan="5" style="border: 1px solid #ddd; padding: 4px; background-color: #ab2f2b; color: #ffffff; font-size: 10px; font-weight: bold; white-space: nowrap; text-align: center;">
+                                    <b>Perdiem Plan :</b>
+                                </th>
                             </tr>
-                            <tr class="head-row">
-                                <td>Start Date</td>
-                                <td>End Date</td>
-                                <td>Office Location</td>
-                                <td>Company Code</td>
-                                <td>Total Days</td>
+                            <tr style="font-weight: bold; background-color: #f5f5f5;">
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Start Date</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">End Date</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Office Location</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Company Code</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Total Days</td>
                             </tr>
-
+                        
                             @foreach($declareCA['detail_perdiem'] as $perdiem)
-                            <tr style="text-align: center">
-                                <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
-                                <td>
+                            <tr style="text-align: center;">
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
+                                    {{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}
+                                </td>
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
+                                    {{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}
+                                </td>
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                     @if ($perdiem['location'] == 'Others')
                                         Other ({{$perdiem['other_location']}})
                                     @else
                                         {{$perdiem['location']}}
                                     @endif
                                 </td>
-                                <td>{{ $perdiem['company_code'] }}</td>
-                                <td>{{ $perdiem['total_days'] }} Hari</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">{{ $perdiem['company_code'] }}</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">{{ $perdiem['total_days'] }} Hari</td>
                             </tr>
                             @endforeach
-                            <tr class="total-row">
-                                <td colspan="4" class="head-row">Total</td>
-                                <td>
+                        
+                            <tr style="font-weight: bold; background-color: #f5f5f5;">
+                                <td colspan="4" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">
                                     {{ array_sum(array_column($declareCA['detail_perdiem'], 'total_days')) }} Hari
                                 </td>
                             </tr>
-                        </table>
+                        </table>  
                     @endif
-                    <table class="table-approve" style="width: 80%;">
+                    <table style="border-collapse: collapse; width: 70%; margin-top: 8px; font-size: 10px;">
                         <tr>
-                            <th colspan="5"><b>Detail Cash Advanced :</b></th>
+                            <th colspan="5" style="border: 1px solid #ddd; padding: 4px; background-color: #ab2f2b; color: #ffffff; font-size: 10px; font-weight: bold; white-space: nowrap; text-align: center;">
+                                <b>Detail Cash Advanced :</b>
+                            </th>
                         </tr>
-                        <tr class="head-row">
-                            <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
-                            <td colspan="2">Estimate Plan</td>
-                            <td colspan="2">Estimate Declaration</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td rowspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Types of Down Payments</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Estimate Plan</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Estimate Declaration</td>
                         </tr>
-                        <tr class="head-row">
-                            <td>Total Days</td>
-                            <td>Amount</td>
-                            <td>Total Days</td>
-                            <td>Amount</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Amount</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Amount</td>
                         </tr>
                         <tr>
-                            <td class="label">Perdiem</td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Perdiem</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 @if (array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) <= 0)
                                     -
                                 @else
                                     {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
                                 @endif
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 @if (array_sum(array_column($declareCA['detail_perdiem'], 'total_days')) <= 0)
                                     -
                                 @else
                                     {{ array_sum(array_column($declareCA['detail_perdiem'], 'total_days')) }} Days
                                 @endif
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($declareCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td>Transport</td>
-                            <td>
-                                -
-                            </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Transport</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">-</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
                             </td>
-                            <td>
-                                -
-                            </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">-</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($declareCA['detail_transport'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td>Accomodation</td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Accomodation</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 @if (array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) <= 0)
                                     -
                                 @else
                                     {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Night
                                 @endif
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 @if (array_sum(array_column($declareCA['detail_penginapan'], 'total_days')) <= 0)
                                     -
                                 @else
                                     {{ array_sum(array_column($declareCA['detail_penginapan'], 'total_days')) }} Night
                                 @endif
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($declareCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td>Others</td>
-                            <td>
-                                -
-                            </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Others</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">-</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
                             </td>
-                            <td>
-                                -
-                            </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">-</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($declareCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">Total</td>
-                            <td>Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
-                            <td></td>
-                            <td>Rp. {{ number_format($caTransaction->total_real, 0, ',', '.') }}</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Total</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
+                                Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}
+                            </td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;"></td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
+                                Rp. {{ number_format($caTransaction->total_real, 0, ',', '.') }}
+                            </td>
                         </tr>
-                    </table>
+                    </table>                    
                 @else
                     @if (count($detailCA['detail_perdiem']) > 0 && !empty($detailCA['detail_perdiem'][0]['company_code']))
-                        <table class="table-approve">
+                        <table style="border-collapse: collapse; width: 70%; margin-top: 8px; font-size: 10px;">
                             <tr>
-                                <th colspan="5"><b>Perdiem Plan :</b></th>
+                                <th colspan="5" style="border: 1px solid #ddd; padding: 4px; background-color: #ab2f2b; color: #ffffff; font-size: 10px; font-weight: bold; white-space: nowrap; text-align: center;">
+                                    <b>Perdiem Plan :</b>
+                                </th>
                             </tr>
-                            <tr class="head-row">
-                                <td>Start Date</td>
-                                <td>End Date</td>
-                                <td>Office Location</td>
-                                <td>Company Code</td>
-                                <td>Total Days</td>
+                            <tr style="font-weight: bold; background-color: #f5f5f5;">
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Start Date</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">End Date</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Office Location</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Company Code</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
                             </tr>
-
+                        
                             @foreach($detailCA['detail_perdiem'] as $perdiem)
-                            <tr style="text-align: center">
-                                <td>{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
-                                <td>
+                            <tr style="text-align: center;">
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
+                                    {{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}
+                                </td>
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
+                                    {{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}
+                                </td>
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                     @if ($perdiem['location'] == 'Others')
                                         Other ({{$perdiem['other_location']}})
                                     @else
                                         {{$perdiem['location']}}
                                     @endif
                                 </td>
-                                <td>{{ $perdiem['company_code'] }}</td>
-                                <td>{{ $perdiem['total_days'] }} Hari</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">{{ $perdiem['company_code'] }}</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">{{ $perdiem['total_days'] }} Hari</td>
                             </tr>
                             @endforeach
-                            <tr class="total-row">
-                                <td colspan="4" class="head-row">Total</td>
-                                <td>
+                        
+                            <tr style="font-weight: bold; background-color: #f5f5f5;">
+                                <td colspan="4" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total</td>
+                                <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">
                                     {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
                                 </td>
                             </tr>
-                        </table>
+                        </table>  
+                        <br><br>                  
                     @endif
-                    <table class="table-approve" style="width: 70%;">
+                    <table style="border-collapse: collapse; width: 50%; margin-top: 8px; font-size: 10px;">
                         <tr>
-                            <th colspan="3"><b>Detail Cash Advanced :</b></th>
+                            <th colspan="3" style="border: 1px solid #ddd; padding: 4px; background-color: #ab2f2b; color: #ffffff; font-size: 10px; font-weight: bold; white-space: nowrap; text-align: center;">
+                                <b>Detail Cash Advanced :</b>
+                            </th>
                         </tr>
-                        <tr class="head-row">
-                            <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
-                            <td colspan="2">Estimate</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td rowspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Types of Down Payments</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Estimate</td>
                         </tr>
-                        <tr class="head-row">
-                            <td>Total Days</td>
-                            <td>Amount</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Amount</td>
                         </tr>
                         <tr>
-                            <td class="label">Perdiem</td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Perdiem</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 @if (array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) <= 0)
                                     -
                                 @else
                                     {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
                                 @endif
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td>Transport</td>
-                            <td>
-                                -
-                            </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Transport</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">-</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td>Accomodation</td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Accomodation</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 @if (array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) <= 0)
                                     -
                                 @else
                                     {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Night
                                 @endif
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td>Others</td>
-                            <td>
-                                -
-                            </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Others</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">-</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">Total</td>
-                            <td>Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">Total</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; vertical-align: top;">
+                                Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}
+                            </td>
                         </tr>
-                    </table>
+                    </table> 
+                    <br>                   
                 @endif
             @elseif($caTransaction->type_ca === 'ndns')
                 @if ($declaration == "Declaration")
-                    <table class="table-approve" style="width: 80%;">
+                    <table style="border-collapse: collapse; width: 70%; margin-top: 8px; font-size: 10px;">
                         <tr>
-                            <th colspan="5"><b>Detail Cash Advanced :</b></th>
+                            <th colspan="5" style="border: 1px solid #ddd; padding: 4px; background-color: #ab2f2b; color: #ffffff; font-size: 10px; font-weight: bold; white-space: nowrap; text-align: center;">
+                                <b>Detail Cash Advanced :</b>
+                            </th>
                         </tr>
-                        <tr class="head-row">
-                            <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
-                            <td colspan="2">Estimate Plan</td>
-                            <td colspan="2">Estimate Declaration</td>
+                        <<tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td rowspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Types of Down Payments</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Estimate Plan</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Estimate Declaration</td>
                         </tr>
-                        <tr class="head-row">
-                            <td>Total Days</td>
-                            <td>Amount</td>
-                            <td>Total Days</td>
-                            <td>Amount</td>
+                        <<tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Amount</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Amount</td>
                         </tr>
                         <tr>
-                            <td class="label">Non Bussiness Trip</td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Non Bussiness Trip</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">
                                 {{ $caTransaction->total_days }} Days
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">
                                 {{ $caTransaction->total_days }} Days
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($declareCA, 'nominal_nbt')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">Total</td>
-                            <td>Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
-                            <td></td>
-                            <td>Rp. {{ number_format($caTransaction->total_real, 0, ',', '.') }}</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Total</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;"></td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: center; vertical-align: top;">Rp. {{ number_format($caTransaction->total_real, 0, ',', '.') }}</td>
                         </tr>
                     </table>
                 @else
-                    <table class="table-approve" style="width: 70%;">
+                <table style="border-collapse: collapse; width: 50%; margin-top: 8px; font-size: 10px;">
                         <tr>
-                            <th colspan="3"><b>Detail Cash Advanced :</b></th>
+                            <th colspan="3" style="border: 1px solid #ddd; padding: 4px; background-color: #ab2f2b; color: #ffffff; font-size: 10px; font-weight: bold; white-space: nowrap; text-align: center;">
+                                <b>Detail Cash Advanced :</b>
+                            </th>
                         </tr>
-                        <tr class="head-row">
-                            <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
-                            <td colspan="2">Estimate</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td rowspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Types of Down Payments</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Estimate</td>
                         </tr>
-                        <tr class="head-row">
-                            <td>Total Days</td>
-                            <td>Amount</td>
+                        <tr style="font-weight: bold; background-color: #f5f5f5;">
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Total Days</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Amount</td>
                         </tr>
                         <tr>
-                            <td class="label">Non Bussiness Trip</td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Non Bussiness Trip</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">
                                 {{ $caTransaction->total_days }} Days
                             </td>
-                            <td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">
                                 Rp. {{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">Total</td>
-                            <td>Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
+                            <td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Total</td>
+                            <td style="border: 1px solid #ddd; padding: 4px; text-align: left; vertical-align: top;">Rp. {{ number_format($caTransaction->total_ca, 0, ',', '.') }}</td>
                         </tr>
                     </table>
                 @endif
@@ -547,13 +474,17 @@
             <br>
 
             @if ($linkApprove)
-                <p>Untuk Menyetujui atau Menolak Perjalanan Dinas tersebut dapat memilih link berikut : <a href="{{ $linkApprove }}"> Approve </a>/<a href="{{ $linkReject }}"> Reject </a></p>
+                <p>To Approve or Reject the Cash Advance, please select the following link :</p>
+                <p>
+                    <a href="{{ $linkApprove }}" style="font-size: 20px;">Approve</a>    /     
+                    <a href="{{ $linkReject }}" style="font-size: 20px;">Reject</a>
+                </p>                
             @else
-                <p>Cash Advanced yang telah di Approve bisa di lihat pada lampiran</p>
+                <p>Cash Advanced that has been approved can be seen in the attachment</p>
             @endif
             <br>
 
-            <p>Apabila ada pertanyaan, dapat menghubungi masing-masing bisnis unit </p>
+            <p>If you have any questions, please contact the respective business unit GA. </p>
             <br>
             <p><strong>----------------</strong></p>
             <p>Human Capital - KPN Corp</p>
