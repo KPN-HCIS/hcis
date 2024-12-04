@@ -74,7 +74,8 @@
                     </div>
                     <a href="{{ route('reimbursements') }}" class="mb-2 mt-2 me-4 page-title"><i class="ri-arrow-left-circle-line"></i></a>
                     <a href="{{ route('medical.confirmation') }}" class="mb-2 mt-2 me-1 btn btn-primary"><i class="bi bi-card-checklist"></i> Confirmation</a>
-                    <a href="{{ route('medical.report') }}" class="mb-2 mt-2 btn btn-primary"><i class="bi bi-file-earmark-post"></i> Report</a>
+                    <a href="{{ route('medical.report') }}" class="mb-2 mt-2 me-1 btn btn-primary"><i class="bi bi-file-earmark-post"></i> Report</a>
+                    <a class="mb-2 mt-2 me-1 btn btn-primary" data-bs-toggle="modal" data-bs-target="#importExcelHealtCoverage" type="button"><i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel</a>
                 </div>
             </div>
         </div>

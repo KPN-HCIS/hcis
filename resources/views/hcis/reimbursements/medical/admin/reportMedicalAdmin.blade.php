@@ -68,10 +68,10 @@
                         </ol>
                     </div>
                     <a href="{{ route('medical.admin') }}" class="mb-2 me-4 page-title"><i class="ri-arrow-left-circle-line"></i></a>
-                    <button class="mb-2 mt-2 btn btn-primary" data-bs-toggle="modal"
+                    {{-- <button class="mb-2 mt-2 btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#importExcelHealtCoverage" type="button">
                         <i class="bi bi-file-earmark-spreadsheet-fill"></i> Import from Excel
-                    </button>
+                    </button> --}}
                 </div>
             </div>
         </div>
