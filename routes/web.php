@@ -42,6 +42,7 @@ use App\Http\Controllers\BTApprovalController;
 use App\Models\Designation;
 use Faker\Provider\Medical;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return redirect('reimbursements');
@@ -311,8 +312,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/export', [ExportExcelController::class, 'export'])->name('export');
     Route::get('/download-template', function () {
-        // Logika untuk mengunduh template Excel
-        return response()->download(public_path('files/template_import_mdc.xlsx'));
+        // Logika untuk mengunduh template Excel uploads/proofs/01113060004/1733280403_Screenshot 2024-12-04 091727.png
+        // return response()->download(public_path('files/template_import_mdc.xlsx'));
+        return response()->download(Storage::path('public/uploads/template_import_mdc.xlsx'));
     })->name('download-template');
     Route::post('/admin-export', [ExportExcelController::class, 'exportAdmin'])->name('admin.export');
     Route::post('/notInitiatedReport', [ExportExcelController::class, 'notInitiated'])->name('team-goals.notInitiated');
