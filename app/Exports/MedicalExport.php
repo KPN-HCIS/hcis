@@ -64,9 +64,9 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
         if (!empty($this->customSearch)) {
             $employeeQuery->where('fullname', 'like', '%' . $this->customSearch . '%');
         }
-        if (!empty($this->startDate) && !empty($this->endDate)) {
-            $employeeQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
-        }
+        // if (!empty($this->startDate) && !empty($this->endDate)) {
+        //     $employeeQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
+        // }
 
         if (!empty($this->unit)) {
             $employeeQuery->where('work_area_code', $this->unit);
@@ -76,10 +76,15 @@ class MedicalExport implements FromCollection, WithHeadings, WithStyles, WithEve
 
         // Query HealthCoverage berdasarkan Employee ID
         $employeeIds = $employees->pluck('employee_id');
-        $healthCoverages = HealthCoverage::whereIn('employee_id', $employeeIds)
-            ->where('status', '!=', 'Draft')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $healthCoverage = HealthCoverage::whereIn('employee_id', $employeeIds)->where('status', '!=', 'Draft');
+        if (!empty($this->startDate) && !empty($this->endDate)) {
+            
+            $startDate = $this->startDate . ' 00:00:00';
+            $endDate = $this->endDate . ' 23:59:59';
+        
+            $healthCoverage->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        $healthCoverages = $healthCoverage->orderBy('created_at', 'desc')->get();
 
         $medical_plans = HealthPlan::where('period', $currentYear)->get();
         $balances = [];

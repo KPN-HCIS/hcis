@@ -114,23 +114,24 @@
                             @endphp
                             <div class="row mb-2">
                                 <div class="col-md-12 mt-2">
-                                    <label for="" class="form-label">Uploaded Proof</label>
+                                    <label for="" class="form-label">Attachment</label>
                                     @if (isset($medic->medical_proof) && $medic->medical_proof)
-                                        <div class="file-preview">
+                                        <div class="file-preview text-left">
                                             @php
+                                                // Get the file extension
                                                 $fileExtension = pathinfo($medic->medical_proof, PATHINFO_EXTENSION);
                                                 // Set the image based on the file type
                                                 $imageSrc = '';
                                                 if (in_array($fileExtension, ['pdf'])) {
                                                     $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your PDF icon
-                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'PNG'])) {
-                                                    $imageSrc = asset($medic->medical_proof); // Image files should display their own thumbnail
+                                                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                                    $imageSrc = Storage::url($medic->medical_proof); // Image files should display their own thumbnail
                                                 } else {
-                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png';
+                                                    $imageSrc = 'https://img.icons8.com/color/48/000000/pdf.png'; // Replace with the path to your default icon
                                                 }
                                             @endphp
 
-                                            <a href="{{ asset($medic->medical_proof) }}" target="_blank"
+                                            <a href="{{ Storage::url($medic->medical_proof) }}" target="_blank"
                                                 style="text-decoration: none;">
                                                 <img src="{{ $imageSrc }}" alt="{{ $fileExtension }} file"
                                                     class="file-icon" style="width: 50px; height: 50px;">
@@ -138,7 +139,7 @@
                                             </a>
                                         </div>
                                     @else
-                                        <div class="text-danger">No proof uploaded</div>
+                                        <div class="text-danger">No Attachment uploaded</div>
                                     @endif
                                 </div>
                             </div>

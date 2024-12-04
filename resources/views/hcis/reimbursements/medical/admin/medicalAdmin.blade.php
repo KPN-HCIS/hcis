@@ -55,9 +55,14 @@
             <!-- Breadcrumb Section -->
             <div class="col-md-6 mb-2 d-flex align-items-center">
                 <ol class="breadcrumb mb-0" style="align-items: center; padding-left: 0;">
-                    <li class="breadcrumb-item" style="font-size: 18px;">
+                    <li class="breadcrumb-item">
                         <a href="/reimbursements">
                             {{ $parentLink }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="/medical/admin">
+                            {{ $sublink }}
                         </a>
                     </li>
                     <li class="breadcrumb-item">

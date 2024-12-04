@@ -238,8 +238,8 @@
     @include('hcis.reimbursements.medical.navigation.modalMedical')
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
+    {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> --}}
+    {{-- <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script> --}}
 @endsection
 @section('script')
     {{-- @vite(['resources/js/pages/demo.form-advanced.js']) --}}
@@ -248,8 +248,8 @@
     {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
     <!-- Include Bootstrap Date Range Picker -->
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script> --}}
 
     <script src="{{ asset('/js/cashAdvanced/adminPage.js') }}"></script>
 @endsection

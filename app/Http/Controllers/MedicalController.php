@@ -245,6 +245,10 @@ class MedicalController extends Controller
         $employee_id = Auth::user()->employee_id;
         $no_medic = $this->generateNoMedic();
 
+        $contribution_level_code = Employee::where('employee_id', $employee_id)
+        ->pluck('contribution_level_code')
+        ->first();
+
         $statusValue = $request->has('action_draft') ? 'Draft' : 'Pending';
 
         $medical_proof_path = null;
@@ -252,16 +256,13 @@ class MedicalController extends Controller
             $file = $request->file('medical_proof');
             $filename = time() . '_' . $file->getClientOriginalName();
 
+            // Tentukan path penyimpanan relatif di disk 'public'
             $upload_path = 'uploads/proofs/' . $employee_id;
-            $full_path = public_path($upload_path);
 
-            // Check if the folder exists, if not, create it
-            if (!is_dir($full_path)) {
-                mkdir($full_path, 0755, true);
-            }
+            // Simpan file ke storage/app/public menggunakan Laravel's storage disk
+            $file->storeAs($upload_path, $filename, 'public');
 
-            $file->move($full_path, $filename);
-
+            // Path yang akan disimpan ke database (URL yang bisa diakses)
             $medical_proof_path = $upload_path . '/' . $filename;
         } else {
             $medical_proof_path = $request->existing_prove_declare;
@@ -286,6 +287,7 @@ class MedicalController extends Controller
             $healthCoverage = HealthCoverage::create([
                 'usage_id' => (string) Str::uuid(),
                 'employee_id' => $employee_id,
+                'contribution_level_code' => $contribution_level_code,
                 'no_medic' => $no_medic,
                 'no_invoice' => $request->no_invoice,
                 'hospital_name' => $request->hospital_name,
@@ -1212,10 +1214,11 @@ class MedicalController extends Controller
         }
 
         $parentLink = 'Reimbursement';
-        $link = 'Medical';
+        $sublink = 'Medical';
+        $link = 'Detail';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data', 'medicalGroup', 'gaFullname'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink','sublink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data', 'medicalGroup', 'gaFullname'));
     }
 
     public function medicalAdminDetailForm($key)
@@ -1413,7 +1416,8 @@ class MedicalController extends Controller
         }
 
         $parentLink = 'Reimbursement';
-        $link = 'Medical';
+        $sublink = 'Medical';
+        $link = 'Confirmation';
 
         // Kirim data ke view
         return view('hcis.reimbursements.medical.admin.medicalAdmin', compact(
@@ -1421,6 +1425,7 @@ class MedicalController extends Controller
             'medical_plan',
             'medical',
             'parentLink',
+            'sublink',
             'link',
             'rejectMedic',
             'employees',
@@ -1481,7 +1486,7 @@ class MedicalController extends Controller
         $endDate = $request->input('end_date');
         $unit = $request->input('unit');
 
-        return Excel::download(new MedicalExport($stat, $customSearch, $endDate, $startDate, $unit), 'medical_report.xlsx');
+        return Excel::download(new MedicalExport($stat, $customSearch, $startDate, $endDate, $unit), 'medical_report.xlsx');
     }
 
     public function exportDetailExcel($employee_id)

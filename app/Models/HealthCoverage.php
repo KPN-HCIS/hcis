@@ -17,6 +17,7 @@ class HealthCoverage extends Model
     protected $fillable = [
         'usage_id',
         'employee_id',
+        'contribution_level_code',
         'no_medic',
         'no_invoice',
         'hospital_name',

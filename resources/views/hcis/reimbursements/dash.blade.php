@@ -132,7 +132,7 @@
                     </div> <!-- end col-->
                 @endcan
             @endif
-            @if (auth()->check())
+            {{-- @if (auth()->check())
                 @can('report_hcis_ht')
                     <div class="col-md-3">
                         <a href="{{ route('home-trip.admin') }}">
@@ -160,7 +160,7 @@
                         </a>
                     </div> <!-- end col-->
                 @endcan
-            @endif
+            @endif --}}
         </div>
     @endsection
 
