@@ -130,7 +130,7 @@
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th class="text-center">No</th>
-                                        <th class="text-center">NIK</th>
+                                        
                                         <th class="text-center">Employee ID</th>
                                         <th class="text-center">Name</th>
                                         <th class="text-center">Join Date</th>
@@ -147,7 +147,7 @@
                                         @foreach ($med_employee as $med_employees)
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                                <td class="text-start">{{ $med_employees->ktp }}</td>
+                                                
                                                 <td>{{ $med_employees->employee_id }}</td>
                                                 <td>{{ $med_employees->fullname }}</td>
                                                 <td>{{ $med_employees->date_of_joining }}</td>

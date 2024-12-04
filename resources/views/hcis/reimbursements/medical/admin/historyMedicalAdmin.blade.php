@@ -9,7 +9,8 @@
                   @if (request()->routeIs('medical.confirmation'))
                       <th class="text-center">Employee Name</th>
                   @endif
-                  <th>Date</th>
+                  <th>Submit Date</th>
+                  <th>Claim Date</th>
                   <th class="text-center">Period</th>
                   <th data-priority="0" class="text-center">No. Medical</th>
                   <th class="text-center">Hospital Name</th>
@@ -32,7 +33,8 @@
                       @if (request()->routeIs('medical.confirmation'))
                           <td class="text-center">{{ $item->employee_fullname  }}</td>
                       @endif
-                      <td>{{ \Carbon\Carbon::parse($item->date)->format('d F Y') }}</td>
+                      <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
+                      <td>{{ \Carbon\Carbon::parse($item->date)->format('d M Y') }}</td>
                       <td class="text-center">{{ $item->period }}</td>
                       <td class="text-center">{{ $item->no_medic }}</td>
                       <td>{{ $item->hospital_name }}</td>

@@ -191,19 +191,27 @@ class RoleController extends Controller
             return redirect()->back()->with('error', 'Role with the same name already exists.');
         }
 
-        $permissions = [
-            'adminMenu' => $request->input('adminMenu', false), // 9 = adminmenu
-            'onBehalfView' => $request->input('onBehalfView', false), // Use false as default value if not set
-            'onBehalfApproval' => $request->input('onBehalfApproval', false),
-            'onBehalfSendback' => $request->input('onBehalfSendback', false),
-            'reportView' => $request->input('reportView', false),
-            'settingView' => $request->input('settingView', false),
-            'scheduleView' => $request->input('scheduleView', false),
-            'layerView' => $request->input('layerView', false),
-            'roleView' => $request->input('roleView', false),
-            'addGuide' => $request->input('addGuide', false),
-            'removeGuide' => $request->input('removeGuide', false),
-        ];
+        // $permissions = [
+        //     'adminMenu' => $request->input('adminMenu', false), // 9 = adminmenu
+        //     'onBehalfView' => $request->input('onBehalfView', false), // Use false as default value if not set
+        //     'onBehalfApproval' => $request->input('onBehalfApproval', false),
+        //     'onBehalfSendback' => $request->input('onBehalfSendback', false),
+        //     'reportView' => $request->input('reportView', false),
+        //     'settingView' => $request->input('settingView', false),
+        //     'scheduleView' => $request->input('scheduleView', false),
+        //     'layerView' => $request->input('layerView', false),
+        //     'roleView' => $request->input('roleView', false),
+        //     'addGuide' => $request->input('addGuide', false),
+        //     'removeGuide' => $request->input('removeGuide', false),
+        // ];
+        $permissionsFromDb = Permission::pluck('name')->toArray();
+
+        // Loop melalui setiap permission untuk mengisi data request
+        $permissions = [];
+        foreach ($permissionsFromDb as $permissionName) {
+            // Setiap permission diambil dari request, default false jika tidak ada
+            $permissions[$permissionName] = $request->input($permissionName, false);
+        }
 
         // Build permission_id string
         $permission_id = '';
@@ -250,19 +258,28 @@ class RoleController extends Controller
         // // Konversi ke JSON format
         $restriction = json_encode($data);
 
-        $permissions = [
-            'adminMenu' => $request->input('adminMenu', false), // 9 = adminmenu
-            'onBehalfView' => $request->input('onBehalfView', false), // Use false as default value if not set
-            'onBehalfApproval' => $request->input('onBehalfApproval', false),
-            'onBehalfSendback' => $request->input('onBehalfSendback', false),
-            'reportView' => $request->input('reportView', false),
-            'settingView' => $request->input('settingView', false),
-            'scheduleView' => $request->input('scheduleView', false),
-            'layerView' => $request->input('layerView', false),
-            'roleView' => $request->input('roleView', false),
-            'addGuide' => $request->input('addGuide', false),
-            'removeGuide' => $request->input('removeGuide', false),
-        ];
+        // $permissions = [
+        //     'adminMenu' => $request->input('adminMenu', false), // 9 = adminmenu
+        //     'onBehalfView' => $request->input('onBehalfView', false), // Use false as default value if not set
+        //     'onBehalfApproval' => $request->input('onBehalfApproval', false),
+        //     'onBehalfSendback' => $request->input('onBehalfSendback', false),
+        //     'reportView' => $request->input('reportView', false),
+        //     'settingView' => $request->input('settingView', false),
+        //     'scheduleView' => $request->input('scheduleView', false),
+        //     'layerView' => $request->input('layerView', false),
+        //     'roleView' => $request->input('roleView', false),
+        //     'addGuide' => $request->input('addGuide', false),
+        //     'removeGuide' => $request->input('removeGuide', false),
+        // ];
+        // Ambil semua permissions dari database
+        $permissionsFromDb = Permission::pluck('name')->toArray();
+
+        // Loop melalui setiap permission untuk mengisi data request
+        $permissions = [];
+        foreach ($permissionsFromDb as $permissionName) {
+            // Setiap permission diambil dari request, default false jika tidak ada
+            $permissions[$permissionName] = $request->input($permissionName, false);
+        }
 
         // Build permission_id string
         $permission_id = '';

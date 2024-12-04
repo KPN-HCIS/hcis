@@ -57,7 +57,7 @@ $(document).ready(function () {
                 var formattedValue = formatCurrency(balanceValue); // Format the initial value
                 var formGroup = `
                 <div class="col-md-3 mb-3">
-                    <label for="${type}" class="form-label">${type}</label>
+                    <label for="${type}" class="form-label">${type} Claim</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
                         <input type="text" class="form-control currency-input" id="${type}" name="medical_costs[${type}]" placeholder="0" value="${formattedValue}" required>

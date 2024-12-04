@@ -128,7 +128,7 @@
                             @endphp
 
                             <div class="col-md-8 mt-2">
-                                <label for="medical_proof" class="form-label">Upload Proof</label>
+                                <label for="medical_proof" class="form-label">Upload Document</label>
                                 <div class="d-flex align-items-center">
                                     <input type="file" id="medical_proof" name="medical_proof"
                                         accept="image/*,application/pdf" class="form-control me-2">
@@ -257,12 +257,12 @@
                 <th colspan="3" style="text-align: left; padding: 8px;">Medical Costs</th>
             </tr>
             ${Object.entries(medicalCosts).map(([type, cost]) => `
-                                                                                                                      <tr>
-                                                                                                                        <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
-                                                                                                                        <td style="width: 10%; text-align: right; padding: 8px;">:</td>
-                                                                                                                        <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
-                                                                                                                        </tr>
-                                                                                                                        `).join('')}
+                <tr>
+                <td style="width: 40%; text-align: left; padding: 8px;">${type}</td>
+                <td style="width: 10%; text-align: right; padding: 8px;">:</td>
+                <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${cost.toLocaleString('id-ID')}</strong></td>
+                </tr>
+                `).join('')}
 
                 </table>
             `;

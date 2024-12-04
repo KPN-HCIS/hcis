@@ -62,10 +62,10 @@
           <button type="submit" id="submitButtonRole" class="btn btn-primary"><span class="spinner-border spinner-border-sm me-1 d-none" role="status" aria-hidden="true"></span>Create Role</button>
         </div>
       </div>
-    </div>
       </div>
-</div>
-<hr class="mt-3 mb-3">
+      </div>
+      </div>
+      <hr class="mt-3 mb-3">
       <div class="row mb-4">
         <div class="col-md-3 mb-3">
           <div class="list-group" id="list-tab" role="tablist">

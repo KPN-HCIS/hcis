@@ -6,7 +6,8 @@
               <tr>
                   <th></th>
                   <th>No</th>
-                  <th>Date</th>
+                  <th>Submit Date</th>
+                  <th>Claim Date</th>
                   <th>Period</th>
                   <th data-priority="0">No. Medical</th>
                   <th>Hospital Name</th>
@@ -26,7 +27,8 @@
                   <tr>
                       <td class="text-center"></td>
                       <td class="text-center">{{ $loop->iteration }}</td>
-                      <td>{{ \Carbon\Carbon::parse($item->date)->format('d F Y') }}</td>
+                      <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
+                      <td>{{ \Carbon\Carbon::parse($item->date)->format('d M Y') }}</td>
                       <td class="text-center">{{ $item->period }}</td>
                       <td class="text-center">{{ $item->no_medic }}</td>
                       <td>{{ $item->hospital_name }}</td>
