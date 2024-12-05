@@ -244,7 +244,7 @@
                 <th colspan="3"><b>Detail Cash Advanced :</b></th>
             </tr>
             <tr class="head-row">
-                <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
+                <td rowspan="2" style="text-align: center;">Types of Cash Advanced</td>
                 <td colspan="2">Estimate</td>
             </tr>
             <tr class="head-row">
@@ -260,18 +260,19 @@
                         {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
                     @endif
                 </td>
-                <td style="text-align: right;">
-                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}</span>  
                 </td>
-                
             </tr>
             <tr>
                 <td>Transport</td>
                 <td>
                     -
                 </td>
-                <td style="text-align: right;">
-                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}</span>  
                 </td>
             </tr>
             <tr>
@@ -283,8 +284,9 @@
                         {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Night
                     @endif
                 </td>
-                <td style="text-align: right;">
-                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}</span>  
                 </td>
             </tr>
             <tr>
@@ -292,13 +294,17 @@
                 <td>
                     -
                 </td>
-                <td style="text-align: right;">
-                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}</span>  
                 </td>
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td style="text-align: right;">Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format($transactions->total_ca, 0, ',', '.') }}</span>  
+                </td>
             </tr>
         </table>
     @elseif ( $transactions->type_ca == 'ndns' )
@@ -307,7 +313,7 @@
                 <th colspan="3"><b>Detail Cash Advanced :</b></th>
             </tr>
             <tr class="head-row">
-                <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
+                <td rowspan="2" style="text-align: center;">Types of Cash Advanced</td>
                 <td colspan="2">Estimate</td>
             </tr>
             <tr class="head-row">
@@ -319,13 +325,17 @@
                 <td>
                     {{ $transactions->total_days }} Days
                 </td>
-                <td style="text-align: right;">
-                    Rp. {{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}</span>  
                 </td>
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td style="text-align: right;">Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format($transactions->total_ca, 0, ',', '.') }}</span>  
+                </td>
             </tr>
         </table>
     @elseif ( $transactions->type_ca == 'entr' )
@@ -334,7 +344,7 @@
                 <th colspan="3"><b>Detail Cash Advanced :</b></th>
             </tr>
             <tr class="head-row">
-                <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
+                <td rowspan="2" style="text-align: center;">Types of Cash Advanced</td>
                 <td colspan="2">Estimate</td>
             </tr>
             <tr class="head-row">
@@ -346,13 +356,17 @@
                 <td>
                     {{ $transactions->total_days }} Days
                 </td>
-                <td style="text-align: right;">
-                    Rp. {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}</span>  
                 </td>
             </tr>
             <tr>
                 <td colspan="2">Total</td>
-                <td style="text-align: right;">Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
+                <td>  
+                    <span style="float: left;">Rp.</span>  
+                    <span style="float: right;">{{ number_format($transactions->total_ca, 0, ',', '.') }}</span>  
+                </td>
             </tr>
         </table>
     @endif
@@ -464,7 +478,10 @@
                         </td>
                         <td>{{ $perdiem['company_code'] }}</td>
                         <td>{{ $perdiem['total_days'] }} Hari</td>
-                        <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format($perdiem['nominal'], 0, ',', '.') }}</span>  
+                        </td>
                     </tr>
                     @endforeach
                     <tr class="total-row">
@@ -472,8 +489,9 @@
                         <td>
                             {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
                         </td>
-                        <td style="text-align: right;">
-                            Rp. {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}</span>  
                         </td>
                     </tr>
                 </table>
@@ -495,16 +513,20 @@
                     @if (!empty($transport['company_code']))
                     <tr style="text-align: center">
                         <td>{{ \Carbon\Carbon::parse($transport['tanggal'])->format('d-M-y') }}</td>
-                        <td>{{ $transport['keterangan'] }}</td>
+                        <td style="text-align: left">{{ $transport['keterangan'] }}</td>
                         <td>{{ $transport['company_code'] }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($transport['nominal'], 0, ',', '.') }}</td>
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format($transport['nominal'], 0, ',', '.') }}</span>  
+                        </td>
                     </tr>
                     @endif
                     @endforeach
                     <tr class="total-row">
                         <td colspan="3" class="head-row">Total</td>
-                        <td style="text-align: right;">
-                            Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}</span>  
                         </td>
                     </tr>
                 </table>
@@ -531,7 +553,10 @@
                             <td>{{ $perdiem['hotel_name'] }}</td>
                             <td>{{ $perdiem['company_code'] }}</td>
                             <td>{{ $perdiem['total_days'] }} Hari</td>
-                            <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                            <td>  
+                                <span style="float: left;">Rp.</span>  
+                                <span style="float: right;">{{ number_format($perdiem['nominal'], 0, ',', '.') }}</span>  
+                            </td>
                         </tr>
                     @endforeach
                     <tr class="total-row">
@@ -539,8 +564,9 @@
                         <td>
                             {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Night
                         </td>
-                        <td style="text-align: right;">
-                            Rp. {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}</span>  
                         </td>
                     </tr>
                 </table>
@@ -560,14 +586,18 @@
                     @foreach($detailCA['detail_lainnya'] as $perdiem)
                     <tr style="text-align: center">
                         <td>{{ \Carbon\Carbon::parse($perdiem['tanggal'])->format('d-M-y') }}</td>
-                        <td>{{ $perdiem['keterangan'] }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($perdiem['nominal'], 0, ',', '.') }}</td>
+                        <td style="text-align: left">{{ $perdiem['keterangan'] }}</td>
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format($perdiem['nominal'], 0, ',', '.') }}</span>  
+                        </td>
                     </tr>
                     @endforeach
                     <tr class="total-row">
                         <td colspan="2" class="head-row">Total</td>
-                        <td style="text-align: right;">
-                            Rp. {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}</span>  
                         </td>
                     </tr>
                 </table>
@@ -587,14 +617,18 @@
                 @foreach($detailCA as $item)
                 <tr style="text-align: center">
                     <td>{{ \Carbon\Carbon::parse($item['tanggal_nbt'])->format('d-M-y') }}</td>
-                    <td>{{ $item['keterangan_nbt'] }}</td>
-                    <td style="text-align: right;">Rp. {{ number_format($item['nominal_nbt'], 0, ',', '.') }}</td>
+                    <td style="text-align: left">{{ $item['keterangan_nbt'] }}</td>
+                    <td>  
+                        <span style="float: left;">Rp.</span>  
+                        <span style="float: right;">{{ number_format($item['nominal_nbt'], 0, ',', '.') }}</span>  
+                    </td>
                 </tr>
                 @endforeach
                 <tr class="total-row">
                     <td colspan="2" class="head-row">Total</td>
-                    <td style="text-align: right;">
-                        Rp. {{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}
+                    <td>  
+                        <span style="float: left;">Rp.</span>  
+                        <span style="float: right;">{{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}</span>  
                     </td>
                 </tr>
             </table>
@@ -622,14 +656,18 @@
                             ];
                         @endphp
                         <td>{{ $typeMap[$detail['type']] ?? $detail['type'] }}</td>
-                        <td>{{ $detail['fee_detail'] }}</td>
-                        <td style="text-align: right;">Rp. {{ number_format($detail['nominal'], 0, ',', '.') }}</td>
+                        <td style="text-align: left">{{ $detail['fee_detail'] }}</td>
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format($detail['nominal'], 0, ',', '.') }}</span>  
+                        </td>
                     </tr>
                     @endforeach
                     <tr class="total-row">
                         <td colspan="2" class="head-row">Total</td>
-                        <td style="text-align: right;">
-                            Rp. {{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}
+                        <td>  
+                            <span style="float: left;">Rp.</span>  
+                            <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}</span>  
                         </td>
                     </tr>
                 </table>
@@ -709,7 +747,7 @@
                 $angle = 0.0;
 
                 // Tambahkan pengecekan PAGE_COUNT
-                if ($pdf->get_page_count() > 2) {
+                if ($pdf->get_page_count() > 1) {
                     $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
                 }
             }

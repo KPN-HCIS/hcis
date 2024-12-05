@@ -1371,6 +1371,7 @@ class ApprovalReimburseController extends Controller
                     $caTransaction->end_date = $req->input('ext_end_date');
                     $caTransaction->total_days = $req->input('ext_totaldays');
                     $caTransaction->reason_extend = $req->input('ext_reason');
+                    // dd($caTransaction);
                     $caTransaction->save();
                 }
 

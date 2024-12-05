@@ -1592,11 +1592,11 @@ class ReimburseController extends Controller
         $model = CATransaction::findByRouteKey($key);
         $employee_data = Employee::where('id', $userId)->first();
 
-        $req->validate([
-            'prove_declare' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Aturan validasi file gambar
-        ]);
-
         if ($req->hasFile('prove_declare')) {
+            $req->validate([
+                'prove_declare' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Aturan validasi file gambar
+            ]);
+
             $file = $req->file('prove_declare');
             $filename = time() . '_' . $file->getClientOriginalName();
 

@@ -279,11 +279,8 @@
                             <label for="prove_declare" class="form-label">Upload Document</label>
 
                             <!-- Input file -->
-                            <input type="file" id="prove_declare" name="prove_declare"
-                                accept="image/*, application/pdf" class="form-control" onchange="previewFile()"
-                                required>
-                            <input type="hidden" name="existing_prove_declare"
-                                value="{{ $transactions->prove_declare }}">
+                            <input type="file" id="prove_declare" name="prove_declare" accept="image/*, application/pdf" class="form-control" onchange="previewFile()">
+                            <input type="hidden" name="existing_prove_declare" value="{{ $transactions->prove_declare }}">
 
                             <!-- Show existing file -->
                             <div id="existing-file-preview" class="mt-2" style="display:none">
@@ -294,13 +291,15 @@
 
                                     @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
                                         <!-- Tampilkan gambar -->
-                                        <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
-                                            target="_blank">
-                                            <img id="existing-image"
-                                                src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
-                                                alt="Proof Image" style="max-width: 200px;">
-                                        </a>
-                                        <p>Click on the image to view the full size</p>
+                                        <div id="preview" style="display: none">
+                                            <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
+                                                target="_blank">
+                                                <img id="existing-image"
+                                                    src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
+                                                    alt="Proof Image" style="max-width: 200px;">
+                                            </a>
+                                            <p>Click on the image to view the full size</p>
+                                        </div>
                                     @elseif($extension == 'pdf')
                                         <!-- Tampilkan tautan untuk PDF -->
                                         <a id="existing-pdf"
@@ -363,7 +362,7 @@
                             <a href="{{ route('cashadvanced') }}" type="button"
                                 class="btn mb-2 btn-outline-secondary px-4 me-2">Cancel</a>
                             <button type="submit" name="action_ca_draft" value="Draft"
-                                class=" btn mb-2 btn-secondary btn-pill px-4 me-2 declaration-button-draft">Draft</button>
+                                class=" btn mb-2 btn-secondary btn-pill px-4 me-2 declaration-button">Draft</button>
                             <button type="submit" name="action_ca_submit" value="Pending"
                                 class=" btn mb-2 btn-primary btn-pill px-4 me-2 declaration-button">Submit</button>
                         </div>
@@ -538,11 +537,46 @@
     </script>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const existingFile = "{{ $transactions->prove_declare }}"; // Server-side blade syntax
+            const preview = document.getElementById('existing-file-preview');
+
+            if (existingFile) {
+                const fileExtension = existingFile.split('.').pop().toLowerCase();
+                preview.style.display = 'block';
+
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                    const img = document.createElement('img');
+                    img.src = "{{ asset($transactions->prove_declare) }}";
+                    img.alt = "Proof Image";
+                    img.style.maxWidth = '200px';
+                    preview.appendChild(img);
+                } else if (fileExtension === 'pdf') {
+                    const link = document.createElement('a');
+                    link.href = "{{ asset($transactions->prove_declare) }}";
+                    link.target = '_blank';
+                    const icon = document.createElement('img');
+                    icon.src = "https://img.icons8.com/color/48/000000/pdf.png";
+                    icon.style.maxWidth = '48px';
+                    link.appendChild(icon);
+                    preview.appendChild(link);
+
+                    const text = document.createElement('p');
+                    text.textContent = "Click to view PDF";
+                    preview.appendChild(text);
+                } else {
+                    preview.textContent = 'File type not supported.';
+                }
+            }
+        });
+
         function previewFile() {
             const fileInput = document.getElementById('prove_declare');
             const file = fileInput.files[0];
             const preview = document.getElementById('existing-file-preview');
+            
             preview.innerHTML = ''; // Kosongkan preview sebelumnya
+            preview.style.display = 'block'; // Tampilkan elemen preview
 
             if (file) {
                 const fileExtension = file.name.split('.').pop().toLowerCase();
@@ -567,8 +601,11 @@
                 } else {
                     preview.textContent = 'File type not supported.';
                 }
+            } else {
+                preview.style.display = 'none'; // Sembunyikan jika tidak ada file
             }
         }
+
     </script>
 
     <script>
