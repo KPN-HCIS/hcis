@@ -215,21 +215,51 @@ class HomeTripController extends Controller
         $selectedName = $npTkt[0] ?? null;
         // dd($request->np_tkt, $selectedName);
 
+        $passengerRequests = [];
         foreach ($request->np_tkt as $key => $selectedName) {
-            $quota = HomeTrip::where('employee_id', $employee_id)
-                ->where('period', $currentYear)
-                ->where('name', $selectedName)
-                ->pluck('quota')
-                ->first();
+            if (!isset($passengerRequests[$selectedName])) {
+                $passengerRequests[$selectedName] = [
+                    'tickets' => [],
+                    'quota' => HomeTrip::where('employee_id', $employee_id)
+                        ->where('period', $currentYear)
+                        ->where('name', $selectedName)
+                        ->pluck('quota')
+                        ->first()
+                ];
+            }
+            $passengerRequests[$selectedName]['tickets'][] = $request->type_tkt[$key];
+        }
 
-            if ($quota <= 1 && $request->type_tkt[$key] == 'Round Trip') {
+        // Validate each passenger's total ticket requests against their quota
+        foreach ($passengerRequests as $passengerName => $data) {
+            $quota = $data['quota'];
+            $tickets = $data['tickets'];
+            $quotaNeeded = 0;
+
+            // Calculate total quota needed
+            foreach ($tickets as $ticketType) {
+                $quotaNeeded += ($ticketType == 'Round Trip') ? 2 : 1;
+            }
+
+            // Validation checks
+            if ($quotaNeeded > $quota) {
                 return redirect()->back()
-                    ->with('error', "Insufficient quota for passenger: {$selectedName}")
+                    ->with('error', "The trip requested for {$passengerName} exceeds the allocated quota")
                     ->withInput();
+            }
+
+            // If multiple tickets, prevent round trips
+            if (count($tickets) > 1) {
+                foreach ($tickets as $ticketType) {
+                    if ($ticketType == 'Round Trip') {
+                        return redirect()->back()
+                            ->with('error', "Round trip not allowed for {$passengerName} when requesting multiple tickets")
+                            ->withInput();
+                    }
+                }
             }
         }
 
-        // dd($families);
         if ($request->has('action_draft')) {
             $statusValue = 'Draft';  // When "Save as Draft" is clicked
         } elseif ($request->has('action_submit')) {
@@ -461,18 +491,48 @@ class HomeTripController extends Controller
         // dd($request->np_tkt, $selectedName);
 
         $existingTickets = Tiket::where('id', $id)->get()->keyBy('id');
-
+        $passengerRequests = [];
         foreach ($request->np_tkt as $key => $selectedName) {
-            $quota = HomeTrip::where('employee_id', $employee_id)
-                ->where('period', $currentYear)
-                ->where('name', $selectedName)
-                ->pluck('quota')
-                ->first();
+            if (!isset($passengerRequests[$selectedName])) {
+                $passengerRequests[$selectedName] = [
+                    'tickets' => [],
+                    'quota' => HomeTrip::where('employee_id', $employee_id)
+                        ->where('period', $currentYear)
+                        ->where('name', $selectedName)
+                        ->pluck('quota')
+                        ->first()
+                ];
+            }
+            $passengerRequests[$selectedName]['tickets'][] = $request->type_tkt[$key];
+        }
 
-            if ($quota <= 1 && $request->type_tkt[$key] == 'Round Trip') {
+        // Validate each passenger's total ticket requests against their quota
+        foreach ($passengerRequests as $passengerName => $data) {
+            $quota = $data['quota'];
+            $tickets = $data['tickets'];
+            $quotaNeeded = 0;
+
+            // Calculate total quota needed
+            foreach ($tickets as $ticketType) {
+                $quotaNeeded += ($ticketType == 'Round Trip') ? 2 : 1;
+            }
+
+            // Validation checks
+            if ($quotaNeeded > $quota) {
                 return redirect()->back()
-                    ->with('error', "Insufficient quota for passenger: {$selectedName}")
+                    ->with('error', "TThe trip requested for {$passengerName} exceeds the allocated quota")
                     ->withInput();
+            }
+
+            // If multiple tickets, prevent round trips
+            if (count($tickets) > 1) {
+                foreach ($tickets as $ticketType) {
+                    if ($ticketType == 'Round Trip') {
+                        return redirect()->back()
+                            ->with('error', "Round trip not allowed for {$passengerName} when requesting multiple tickets")
+                            ->withInput();
+                    }
+                }
             }
         }
 
