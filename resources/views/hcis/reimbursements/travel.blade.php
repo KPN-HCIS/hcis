@@ -100,17 +100,19 @@
                 </a>
             </div>
 
-            <div class="col-md-3">
-                <a href="{{ route('home-trip') }}">
-                    <div class="card" style="height: 200px">
-                        <div class="card-body">
-                            <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
-                                style="width: 100px; height: 100px; border-radius: 100px;">
-                            <h5 class="my-3">Home Trip</h5>
-                        </div> <!-- end card-body-->
-                    </div> <!-- end card-->
-                </a>
-            </div><!-- end col-->
+            @if(!empty(trim(Auth::user()->employee->homebase ?? '')))
+                <div class="col-md-3">
+                    <a href="{{ route('home-trip') }}">
+                        <div class="card" style="height: 200px">
+                            <div class="card-body">
+                                <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
+                                    style="width: 100px; height: 100px; border-radius: 100px;">
+                                <h5 class="my-3">Home Trip</h5>
+                            </div> <!-- end card-body-->
+                        </div> <!-- end card-->
+                    </a>
+                </div><!-- end col-->
+            @endif
         </div> <!-- end row -->
 
         {{-- HR ADMIN --}}
