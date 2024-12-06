@@ -1057,26 +1057,26 @@
         @endif
     </div>
 
-    <table class="table-approve">
+    <table class="table-approve" style="width: 64%">
         <tr>
-            <th colspan="2"><b>Detail Non Bussiness Trip :</b></th>
+            <th colspan="2"><b>Total Attachment :</b></th>
         </tr>
         <tr class="head-row">
-            <td class="label" style="width:80%">Total Cash Advanced</td>
+            <td class="label" style="width:70%; text-align:right" >Total Cash Advanced</td>
             <td>  
                 <span style="float: left;">Rp.</span>  
                 <span style="float: right;">{{ number_format($transactions->total_ca, 0, ',', '.' )}}</span>  
             </td>
         </tr>
         <tr class="head-row">
-            <td class="label" style="width:80%">Total Declaration</td>
+            <td class="label" style="width:70%; text-align:right" >Total Declaration</td>
             <td>  
                 <span style="float: left;">Rp.</span>  
                 <span style="float: right;">{{ number_format($transactions->total_real, 0, ',', '.' )}}</span>  
             </td>
         </tr>
         <tr class="head-row">
-            <td class="label" style="width:80%">Balance</td>
+            <td class="label" style="width:70%; text-align:right" >Balance</td>
             <td>  
                 <span style="float: left;">Rp.</span>  
                 <span style="float: right;">{{ number_format($transactions->total_cost, 0, ',', '.' )}}</span>  
@@ -1084,13 +1084,17 @@
         </tr>
         @if($transactions->total_cost > 0)
             <tr>
-                <td class="label"><b>Transfer To</b></td>
-                <td class="value" style="width: 20%">{{ $transactions->companies->contribution_level }} / {{ $transactions->companies->account_number }}</td>
+                <td style="text-align:center" colspan="2">
+                    <span><b>Transfer To</b></span>
+                    <span style="float: right">{{ $transactions->companies->contribution_level }} / {{ $transactions->companies->account_number }}</span>
+                </td>
             </tr>
         @elseif($transactions->total_cost < 0)
             <tr>
-                <td class="label">Transfer To</td>
-                <td class="value" style="width: 20%">{{ $transactions->employee->bank_name }} - {{ $transactions->employee->bank_account_number }} - {{ $transactions->employee->bank_account_name }}</td>
+                <td style="text-align:center" colspan="2">
+                    <span><b>Transfer To</b></span>
+                    <span style="float: right">{{ $transactions->employee->bank_name }} - {{ $transactions->employee->bank_account_number }} - {{ $transactions->employee->bank_account_name }}</span>
+                </td>
             </tr>
         @endif
     </table>
