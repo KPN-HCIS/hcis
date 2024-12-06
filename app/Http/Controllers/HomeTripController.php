@@ -205,6 +205,7 @@ class HomeTripController extends Controller
     public function homeTripCreate(Request $request)
     {
         $userId = Auth::id();
+        $currentYear = now()->year;
         $employee_id = Auth::user()->employee_id;
         $employee = Employee::where('employee_id', $employee_id)->first();
 
@@ -214,6 +215,19 @@ class HomeTripController extends Controller
         $selectedName = $npTkt[0] ?? null;
         // dd($request->np_tkt, $selectedName);
 
+        foreach ($request->np_tkt as $key => $selectedName) {
+            $quota = HomeTrip::where('employee_id', $employee_id)
+                ->where('period', $currentYear)
+                ->where('name', $selectedName)
+                ->pluck('quota')
+                ->first();
+
+            if ($quota <= 1 && $request->type_tkt[$key] == 'Round Trip') {
+                return redirect()->back()
+                    ->with('error', "Insufficient quota for passenger: {$selectedName}")
+                    ->withInput();
+            }
+        }
 
         // dd($families);
         if ($request->has('action_draft')) {
@@ -440,12 +454,28 @@ class HomeTripController extends Controller
         $employee_id = Auth::user()->employee_id;
         $employee = Employee::where('employee_id', $employee_id)->first();
         $employeeName = $employee->fullname;
+        $currentYear = now()->year;
 
         $npTkt = array_values($request->np_tkt);
         $selectedName = $npTkt[0] ?? null;
         // dd($request->np_tkt, $selectedName);
 
         $existingTickets = Tiket::where('id', $id)->get()->keyBy('id');
+
+        foreach ($request->np_tkt as $key => $selectedName) {
+            $quota = HomeTrip::where('employee_id', $employee_id)
+                ->where('period', $currentYear)
+                ->where('name', $selectedName)
+                ->pluck('quota')
+                ->first();
+
+            if ($quota <= 1 && $request->type_tkt[$key] == 'Round Trip') {
+                return redirect()->back()
+                    ->with('error', "Insufficient quota for passenger: {$selectedName}")
+                    ->withInput();
+            }
+        }
+
         if ($request->has('action_draft')) {
             $statusValue = 'Draft';  // When "Save as Draft" is clicked
         } elseif ($request->has('action_submit')) {
