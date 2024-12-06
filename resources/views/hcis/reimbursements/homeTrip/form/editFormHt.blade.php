@@ -22,6 +22,7 @@
                 </div>
             </div>
         </div>
+        @include('hcis.reimbursements.businessTrip.modal')
         <div class="d-sm-flex align-items-center justify-content-center">
             <div class="card col-md-12">
                 <div class="card-header d-flex bg-primary text-white justify-content-between">
