@@ -278,46 +278,48 @@
                         <div class="col-md-12 mb-2 mt-2">
                             <label for="prove_declare" class="form-label">Upload Document</label>
 
-                            <!-- Input file -->
-                            <input type="file" id="prove_declare" name="prove_declare[]" accept="image/*, application/pdf" class="form-control" multiple 
-                                onchange="previewFiles()"
-                            >
-                            <input type="hidden" name="existing_prove_declare" value="{{ $transactions->prove_declare }}">
+                            <input type="file" id="prove_declare" name="prove_declare[]" accept="image/*, application/pdf" class="form-control mb-2" multiple onchange="previewFiles()">
+                            <input type="hidden" name="existing_prove_declare" id="existing-prove-declare" value="{{ $transactions->prove_declare }}">
+                            <input type="hidden" name="removed_prove_declare" id="removed-prove-declare" value="[]">
 
-                            <!-- Show existing file -->
+                            <!-- Preview untuk file lama -->
+                            <div id="existing-files-label" style="margin-bottom: 10px; font-weight: bold;">
+                                @if ($transactions->prove_declare)
+                                    Document on Draft:
+                                @endif
+                            </div>
                             <div id="existing-file-preview" class="mt-2">
                                 @if ($transactions->prove_declare)
                                     @php
-                                        $existingFiles = json_decode($transactions->prove_declare, true); // Decode JSON ke array
+                                        $existingFiles = json_decode($transactions->prove_declare, true);
                                     @endphp
 
                                     @foreach ($existingFiles as $file)
-                                        @php
-                                            $extension = pathinfo($file, PATHINFO_EXTENSION);
-                                        @endphp
-
-                                        <div class="file-preview" style="position: relative; display: inline-block; margin: 10px;">
+                                        @php $extension = pathinfo($file, PATHINFO_EXTENSION); @endphp
+                                        <div class="file-preview" data-file="{{ $file }}" style="position: relative; display: inline-block; margin: 10px;">
                                             @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
-                                                <!-- Tampilkan gambar -->
                                                 <a href="{{ asset($file) }}" target="_blank" rel="noopener noreferrer">
-                                                    <img src="{{ asset($file) }}" alt="Proof Image" style="max-width: 100px; border: 1px solid #ddd; border-radius: 5px; padding: 5px;">
+                                                    <img src="{{ asset($file) }}" alt="Proof Image" style="width: 100px; height: 100px; border: 1px solid rgb(221, 221, 221); border-radius: 5px; padding: 5px;">
                                                 </a>
                                             @elseif($extension === 'pdf')
-                                                <!-- Tampilkan PDF -->
                                                 <a href="{{ asset($file) }}" target="_blank" rel="noopener noreferrer">
-                                                    <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File">
+                                                    <img src="{{ asset('images/pdf_icon.png') }}" alt="PDF File">
                                                     <p>Click to view PDF</p>
                                                 </a>
                                             @else
                                                 <p>File type not supported.</p>
                                             @endif
-
-                                            <!-- Ikon hapus untuk menghapus file -->
                                             <span class="remove-existing" data-file="{{ $file }}" style="position: absolute; top: 5px; right: 5px; cursor: pointer; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold;">×</span>
                                         </div>
                                     @endforeach
                                 @endif
                             </div>
+
+                            <!-- Label untuk new file -->
+                            <div id="new-files-label" style="margin-top: 20px; margin-bottom: 10px; font-weight: bold;">
+                                New Document:
+                            </div>
+                            <div id="new-file-preview" class="mt-2"></div>
 
                         </div>
                         <div class="col-md-4 mb-2">
@@ -544,12 +546,55 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             let selectedFiles = [];
+            let removedFiles = []; // Menyimpan file yang dihapus
 
-            function updatePreview() {
+            function updateExistingPreview() {
+                const removedFilesInput = document.getElementById('removed-prove-declare');
+                removedFilesInput.value = JSON.stringify(removedFiles);
+
                 const previewContainer = document.getElementById('existing-file-preview');
-                previewContainer.innerHTML = '';
-                previewContainer.style.display = selectedFiles.length > 0 ? 'block' : 'none';
+                const existingFiles = Array.from(previewContainer.querySelectorAll('.file-preview'));
+                existingFiles.forEach((fileElement) => {
+                    const removeButton = fileElement.querySelector('.remove-existing');
+                    removeButton.onclick = () => {
+                        const filePath = removeButton.getAttribute('data-file');
+                        removedFiles.push(filePath); // Tambahkan ke daftar file yang dihapus
+                        fileElement.remove(); // Hapus elemen dari preview
+                        updateExistingPreview();
+                    };
+                });
+            }
 
+            function updateExistingPreview() {
+                const previewContainer = document.getElementById('existing-file-preview');
+                const labelContainer = document.getElementById('existing-files-label');
+                const existingFiles = Array.from(previewContainer.querySelectorAll('.file-preview'));
+
+                if (existingFiles.length > 0) {
+                    labelContainer.style.display = 'block';
+                } else {
+                    labelContainer.style.display = 'none';
+                }
+
+                const removedFilesInput = document.getElementById('removed-prove-declare');
+                removedFilesInput.value = JSON.stringify(removedFiles);
+
+                existingFiles.forEach((fileElement) => {
+                    const removeButton = fileElement.querySelector('.remove-existing');
+                    removeButton.onclick = () => {
+                        const filePath = removeButton.getAttribute('data-file');
+                        removedFiles.push(filePath);
+                        fileElement.remove();
+                        updateExistingPreview();
+                    };
+                });
+            }
+
+            function updateNewPreview() {
+                const previewContainer = document.getElementById('new-file-preview');
+                const labelContainer = document.getElementById('new-files-label');
+
+                previewContainer.innerHTML = '';
                 selectedFiles.forEach((file, index) => {
                     const fileExtension = file.name.split('.').pop().toLowerCase();
                     const fileWrapper = document.createElement('div');
@@ -559,23 +604,16 @@
 
                     const removeIcon = document.createElement('span');
                     removeIcon.textContent = '×';
-                    removeIcon.style.position = 'absolute';
-                    removeIcon.style.top = '5px';
-                    removeIcon.style.right = '5px';
-                    removeIcon.style.cursor = 'pointer';
-                    removeIcon.style.backgroundColor = '#ff4d4d';
-                    removeIcon.style.color = '#fff';
-                    removeIcon.style.borderRadius = '50%';
-                    removeIcon.style.width = '20px';
-                    removeIcon.style.height = '20px';
-                    removeIcon.style.display = 'flex';
-                    removeIcon.style.alignItems = 'center';
-                    removeIcon.style.justifyContent = 'center';
-                    removeIcon.style.fontWeight = 'bold';
+                    removeIcon.style = `
+                        position: absolute; top: 5px; right: 5px; cursor: pointer;
+                        background-color: #ff4d4d; color: #fff; border-radius: 50%;
+                        width: 20px; height: 20px; display: flex; align-items: center;
+                        justify-content: center; font-weight: bold;
+                    `;
                     removeIcon.onclick = () => {
                         selectedFiles.splice(index, 1);
                         syncFileInput();
-                        updatePreview();
+                        updateNewPreview();
                     };
                     fileWrapper.appendChild(removeIcon);
 
@@ -615,8 +653,15 @@
                     }
 
                     previewContainer.appendChild(fileWrapper);
+
+                    if (selectedFiles.length > 0) {
+                        labelContainer.style.display = 'block';
+                    } else {
+                        labelContainer.style.display = 'none';
+                    }
                 });
             }
+
 
             function syncFileInput() {
                 const dataTransfer = new DataTransfer();
@@ -629,29 +674,48 @@
                 const fileInput = document.getElementById('prove_declare');
                 const files = Array.from(fileInput.files);
 
+                const existingFilesCount = document.querySelectorAll('#existing-file-preview .file-preview').length;
+                const totalFiles = existingFilesCount + selectedFiles.length; // Total gabungan
+
                 files.forEach(file => {
                     const fileExtension = file.name.split('.').pop().toLowerCase();
                     if (file.size > 2 * 1024 * 1024) {
-                        alert(`File "${file.name}" exceeds the 2MB size limit.`);
-                        return;
+                        Swal.fire({  
+                            icon: 'error',  
+                            title: 'File Size Exceeded',  
+                            text: `File "${file.name}" exceeds the 2MB size limit.`,  
+                        });  
+                        return;  
                     }
                     if (!['jpg', 'jpeg', 'png', 'gif', 'pdf'].includes(fileExtension)) {
-                        alert(`File type "${fileExtension}" not supported.`);
+                        Swal.fire({  
+                            icon: 'error',  
+                            title: 'Unsupported File Type',  
+                            text: `File type "${fileExtension}" not supported.`,  
+                        });  
                         return;
                     }
                     if (!selectedFiles.some(existingFile => existingFile.name === file.name)) {
-                        if (selectedFiles.length < 10) {
+                        if (totalFiles < 10) {
                             selectedFiles.push(file);
                         } else {
-                            alert('You can upload a maximum of 10 files.');
+                            Swal.fire({  
+                                icon: 'error',  
+                                title: 'File Limit Exceeded',  
+                                text: 'You can upload a maximum of 10 files.',  
+                            });  
                         }
                     }
                 });
 
                 syncFileInput();
-                updatePreview();
+                updateNewPreview();
             };
+
+            updateExistingPreview();
         });
+
+
 
     </script>
 
