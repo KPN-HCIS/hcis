@@ -279,41 +279,46 @@
                             <label for="prove_declare" class="form-label">Upload Document</label>
 
                             <!-- Input file -->
-                            <input type="file" id="prove_declare" name="prove_declare" accept="image/*, application/pdf" class="form-control" onchange="previewFile()">
+                            <input type="file" id="prove_declare" name="prove_declare[]" accept="image/*, application/pdf" class="form-control" multiple 
+                                onchange="previewFiles()"
+                            >
                             <input type="hidden" name="existing_prove_declare" value="{{ $transactions->prove_declare }}">
 
                             <!-- Show existing file -->
-                            <div id="existing-file-preview" class="mt-2" style="display:none">
+                            <div id="existing-file-preview" class="mt-2">
                                 @if ($transactions->prove_declare)
                                     @php
-                                        $extension = pathinfo($transactions->prove_declare, PATHINFO_EXTENSION);
+                                        $existingFiles = json_decode($transactions->prove_declare, true); // Decode JSON ke array
                                     @endphp
 
-                                    @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
-                                        <!-- Tampilkan gambar -->
-                                        <div id="preview" style="display: none">
-                                            <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
-                                                target="_blank">
-                                                <img id="existing-image"
-                                                    src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
-                                                    alt="Proof Image" style="max-width: 200px;">
-                                            </a>
-                                            <p>Click on the image to view the full size</p>
+                                    @foreach ($existingFiles as $file)
+                                        @php
+                                            $extension = pathinfo($file, PATHINFO_EXTENSION);
+                                        @endphp
+
+                                        <div class="file-preview" style="position: relative; display: inline-block; margin: 10px;">
+                                            @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
+                                                <!-- Tampilkan gambar -->
+                                                <a href="{{ asset($file) }}" target="_blank" rel="noopener noreferrer">
+                                                    <img src="{{ asset($file) }}" alt="Proof Image" style="max-width: 100px; border: 1px solid #ddd; border-radius: 5px; padding: 5px;">
+                                                </a>
+                                            @elseif($extension === 'pdf')
+                                                <!-- Tampilkan PDF -->
+                                                <a href="{{ asset($file) }}" target="_blank" rel="noopener noreferrer">
+                                                    <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File">
+                                                    <p>Click to view PDF</p>
+                                                </a>
+                                            @else
+                                                <p>File type not supported.</p>
+                                            @endif
+
+                                            <!-- Ikon hapus untuk menghapus file -->
+                                            <span class="remove-existing" data-file="{{ $file }}" style="position: absolute; top: 5px; right: 5px; cursor: pointer; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold;">×</span>
                                         </div>
-                                    @elseif($extension == 'pdf')
-                                        <!-- Tampilkan tautan untuk PDF -->
-                                        <a id="existing-pdf"
-                                            href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
-                                            target="_blank">
-                                            <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File"
-                                                style="max-width: 48px;">
-                                            <p>Click to view PDF</p>
-                                        </a>
-                                    @else
-                                        <p>File type not supported.</p>
-                                    @endif
+                                    @endforeach
                                 @endif
                             </div>
+
                         </div>
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Total Cash Advanced</label>
@@ -537,74 +542,116 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const existingFile = "{{ $transactions->prove_declare }}"; // Server-side blade syntax
-            const preview = document.getElementById('existing-file-preview');
+        document.addEventListener("DOMContentLoaded", function () {
+            let selectedFiles = [];
 
-            if (existingFile) {
-                const fileExtension = existingFile.split('.').pop().toLowerCase();
-                preview.style.display = 'block';
+            function updatePreview() {
+                const previewContainer = document.getElementById('existing-file-preview');
+                previewContainer.innerHTML = '';
+                previewContainer.style.display = selectedFiles.length > 0 ? 'block' : 'none';
 
-                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                    const img = document.createElement('img');
-                    img.src = "{{ asset($transactions->prove_declare) }}";
-                    img.alt = "Proof Image";
-                    img.style.maxWidth = '200px';
-                    preview.appendChild(img);
-                } else if (fileExtension === 'pdf') {
-                    const link = document.createElement('a');
-                    link.href = "{{ asset($transactions->prove_declare) }}";
-                    link.target = '_blank';
-                    const icon = document.createElement('img');
-                    icon.src = "https://img.icons8.com/color/48/000000/pdf.png";
-                    icon.style.maxWidth = '48px';
-                    link.appendChild(icon);
-                    preview.appendChild(link);
+                selectedFiles.forEach((file, index) => {
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    const fileWrapper = document.createElement('div');
+                    fileWrapper.style.position = 'relative';
+                    fileWrapper.style.display = 'inline-block';
+                    fileWrapper.style.margin = '10px';
 
-                    const text = document.createElement('p');
-                    text.textContent = "Click to view PDF";
-                    preview.appendChild(text);
-                } else {
-                    preview.textContent = 'File type not supported.';
-                }
+                    const removeIcon = document.createElement('span');
+                    removeIcon.textContent = '×';
+                    removeIcon.style.position = 'absolute';
+                    removeIcon.style.top = '5px';
+                    removeIcon.style.right = '5px';
+                    removeIcon.style.cursor = 'pointer';
+                    removeIcon.style.backgroundColor = '#ff4d4d';
+                    removeIcon.style.color = '#fff';
+                    removeIcon.style.borderRadius = '50%';
+                    removeIcon.style.width = '20px';
+                    removeIcon.style.height = '20px';
+                    removeIcon.style.display = 'flex';
+                    removeIcon.style.alignItems = 'center';
+                    removeIcon.style.justifyContent = 'center';
+                    removeIcon.style.fontWeight = 'bold';
+                    removeIcon.onclick = () => {
+                        selectedFiles.splice(index, 1);
+                        syncFileInput();
+                        updatePreview();
+                    };
+                    fileWrapper.appendChild(removeIcon);
+
+                    if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(file);
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = "Preview Image";
+                        img.style.width = '100px';
+                        img.style.height = '100px';
+                        img.style.border = '1px solid #ddd';
+                        img.style.borderRadius = '5px';
+                        img.style.padding = '5px';
+                        link.appendChild(img);
+
+                        fileWrapper.appendChild(link);
+                    } else if (fileExtension === 'pdf') {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(file);
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+
+                        const icon = document.createElement('img');
+                        icon.src = "{{ asset('images/pdf_icon.png') }}";
+                        icon.style.maxWidth = '48px';
+                        icon.style.marginTop = '10px';
+                        link.appendChild(icon);
+                        fileWrapper.appendChild(link);
+
+                        const text = document.createElement('p');
+                        text.textContent = "Click to view PDF";
+                        fileWrapper.appendChild(text);
+                    }
+
+                    previewContainer.appendChild(fileWrapper);
+                });
             }
+
+            function syncFileInput() {
+                const dataTransfer = new DataTransfer();
+                selectedFiles.forEach(file => dataTransfer.items.add(file));
+                const fileInput = document.getElementById('prove_declare');
+                fileInput.files = dataTransfer.files;
+            }
+
+            window.previewFiles = function () {
+                const fileInput = document.getElementById('prove_declare');
+                const files = Array.from(fileInput.files);
+
+                files.forEach(file => {
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert(`File "${file.name}" exceeds the 2MB size limit.`);
+                        return;
+                    }
+                    if (!['jpg', 'jpeg', 'png', 'gif', 'pdf'].includes(fileExtension)) {
+                        alert(`File type "${fileExtension}" not supported.`);
+                        return;
+                    }
+                    if (!selectedFiles.some(existingFile => existingFile.name === file.name)) {
+                        if (selectedFiles.length < 10) {
+                            selectedFiles.push(file);
+                        } else {
+                            alert('You can upload a maximum of 10 files.');
+                        }
+                    }
+                });
+
+                syncFileInput();
+                updatePreview();
+            };
         });
-
-        function previewFile() {
-            const fileInput = document.getElementById('prove_declare');
-            const file = fileInput.files[0];
-            const preview = document.getElementById('existing-file-preview');
-            
-            preview.innerHTML = ''; // Kosongkan preview sebelumnya
-            preview.style.display = 'block'; // Tampilkan elemen preview
-
-            if (file) {
-                const fileExtension = file.name.split('.').pop().toLowerCase();
-
-                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                    const img = document.createElement('img');
-                    img.style.maxWidth = '200px';
-                    img.src = URL.createObjectURL(file);
-                    preview.appendChild(img);
-                } else if (fileExtension === 'pdf') {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(file);
-                    link.target = '_blank';
-                    const icon = document.createElement('img');
-                    icon.src = "https://img.icons8.com/color/48/000000/pdf.png";
-                    icon.style.maxWidth = '48px';
-                    link.appendChild(icon);
-                    const text = document.createElement('p');
-                    text.textContent = "Click to view PDF";
-                    preview.appendChild(link);
-                    preview.appendChild(text);
-                } else {
-                    preview.textContent = 'File type not supported.';
-                }
-            } else {
-                preview.style.display = 'none'; // Sembunyikan jika tidak ada file
-            }
-        }
 
     </script>
 
