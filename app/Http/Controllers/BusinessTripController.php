@@ -814,9 +814,10 @@ class BusinessTripController extends Controller
 
         if ($statusValue !== 'Draft') {
             // Get manager email
-            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
-            // dd($managerEmail);
+            $managerName = Employee::where('employee_id', $managerL1)->pluck('fullname')->first();
+
             if ($managerEmail) {
                 $detail_ca = isset($detail_ca) ? $detail_ca : [];
                 $caDetails = [
@@ -1246,13 +1247,6 @@ class BusinessTripController extends Controller
                     }
                 }
             }
-            if ($statusValue !== 'Declaration Draft') {
-                $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-                $managerEmail = "eriton.dewa@kpn-corp.com";
-                // dd($managerEmail);
-                if ($managerEmail) {
-                    // Send email to the manager
-                    Mail::to($managerEmail)->send(new BusinessTripNotification($n));
             // dd($detail_perdiem);
 
             // Populate detail_transport
@@ -1391,13 +1385,9 @@ class BusinessTripController extends Controller
 
                 $model_approval->save();
             }
-            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
-            // dd($managerEmail);
-            $managerName = Employee::where(
-                'employee_id',
-                $managerL1
-            )->pluck('fullname')->first();
+            $managerName = Employee::where('employee_id', $managerL1)->pluck('fullname')->first();
 
             if ($managerEmail) {
                 $approvalLink = route('approve.business.trip.declare', [
@@ -2490,9 +2480,8 @@ class BusinessTripController extends Controller
 
         if ($statusValue !== 'Draft') {
             // Get manager email
-            $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
+            // $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
-            // dd($managerEmail);
             $managerName = Employee::where('employee_id', $managerL1)->pluck('fullname')->first();
 
             if ($managerEmail) {
@@ -3055,11 +3044,9 @@ class BusinessTripController extends Controller
             if ($ca->total_cost <= 0 && $request->input('accept_status') === 'Return/Refund') {
                 return redirect()->back()->with('error', 'Cannot set status to Return/Refund when the total cost is negative.');
             } elseif ($ca->total_cost > 0 && $request->input('accept_status') === 'Return/Refund') {
-                $employeeEmail = Employee::where('id', $n->user_id)->pluck('email')->first();
-                $employeeName = Employee::where(
-                    'id',
-                    $n->user_id
-                )->pluck('fullname')->first();
+                // $employeeEmail = Employee::where('id', $n->user_id)->pluck('email')->first();
+                $employeeEmail = "eriton.dewa@kpn-corp.com";
+                $employeeName = Employee::where('id', $n->user_id)->pluck('fullname')->first();
 
                 if ($employeeEmail) {
                     $caTrans = CATransaction::where('no_sppd', $n->no_sppd)
@@ -3604,9 +3591,8 @@ class BusinessTripController extends Controller
         } elseif ($employeeId == $businessTrip->manager_l1_id) {
             $statusValue = 'Pending L2';
             $layer = 1;
-            $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            // $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
             $managerL2 = "eriton.dewa@kpn-corp.com";
-
             $managerName = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('fullname')->first();
 
             // dd($managerL2);
@@ -3915,7 +3901,7 @@ class BusinessTripController extends Controller
         } elseif ($employeeId == $businessTrip->manager_l1_id) {
             $statusValue = 'Declaration L2';
             $layer = 1;
-            $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
+            // $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
             $managerL2 = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('fullname')->first();
 

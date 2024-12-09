@@ -292,10 +292,10 @@
                                     @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
                                         <!-- Tampilkan gambar -->
                                         <div id="preview" style="display: none">
-                                            <a href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
+                                            <a href="{{ asset($transactions->prove_declare) }}"
                                                 target="_blank">
                                                 <img id="existing-image"
-                                                    src="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
+                                                    src="{{ asset($transactions->prove_declare) }}"
                                                     alt="Proof Image" style="max-width: 200px;">
                                             </a>
                                             <p>Click on the image to view the full size</p>
@@ -303,7 +303,8 @@
                                     @elseif($extension == 'pdf')
                                         <!-- Tampilkan tautan untuk PDF -->
                                         <a id="existing-pdf"
-                                            href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}"
+                                            {{-- href="{{ asset('uploads/proofs/' . $transactions->prove_declare) }}" --}}
+                                            href="{{ asset($transactions->prove_declare) }}"
                                             target="_blank">
                                             <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File"
                                                 style="max-width: 48px;">
