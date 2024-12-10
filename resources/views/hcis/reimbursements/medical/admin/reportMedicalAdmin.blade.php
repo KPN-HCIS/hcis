@@ -245,7 +245,7 @@
     {{-- @vite(['resources/js/pages/demo.form-advanced.js']) --}}
 
     <!-- Include jQuery -->
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+    {{-- <script src="{{ asset('vendor/bootstrap/js/jquery-3.6.0.min.js') }}"></script> --}}
 
     <!-- Include Bootstrap Date Range Picker -->
     {{-- <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>

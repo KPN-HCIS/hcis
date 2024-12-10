@@ -1592,28 +1592,46 @@ class ReimburseController extends Controller
         $model = CATransaction::findByRouteKey($key);
         $employee_data = Employee::where('id', $userId)->first();
 
+        if ($req->has('removed_prove_declare')) {
+            $removedFiles = json_decode($req->removed_prove_declare, true);
+            $existingFiles = $req->existing_prove_declare ? json_decode($req->existing_prove_declare, true) : [];
+        
+            // Hapus file yang ada di server
+            foreach ($removedFiles as $fileToRemove) {
+                if (in_array($fileToRemove, $existingFiles)) {
+                    $filePath = public_path($fileToRemove);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                    $existingFiles = array_filter($existingFiles, fn($file) => $file !== $fileToRemove);
+                }
+            }
+        } else {
+            $existingFiles = $req->existing_prove_declare ? json_decode($req->existing_prove_declare, true) : [];
+        }
+        
+        // Proses file baru
         if ($req->hasFile('prove_declare')) {
             $req->validate([
-                'prove_declare' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048', // Aturan validasi file gambar
+                'prove_declare.*' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048',
             ]);
-
-            $file = $req->file('prove_declare');
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            $upload_path = 'uploads/proofs/' . $employee_data->employee_id;
-            $full_path = public_path($upload_path);
-
-            // Check if the folder exists, if not, create it
-            if (!is_dir($full_path)) {
-                mkdir($full_path, 0755, true);
+        
+            foreach ($req->file('prove_declare') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $upload_path = 'uploads/proofs/' . $employee_data->employee_id;
+                $full_path = public_path($upload_path);
+        
+                if (!is_dir($full_path)) {
+                    mkdir($full_path, 0755, true);
+                }
+        
+                $file->move($full_path, $filename);
+                $existingFiles[] = $upload_path . '/' . $filename;
             }
-
-            $file->move($full_path, $filename);
-
-            $model->prove_declare = $upload_path . '/' . $filename;
-        } else {
-            $model->prove_declare = $req->existing_prove_declare;
         }
+        
+        // Simpan semua file yang tersisa ke database
+        $model->prove_declare = json_encode(array_values($existingFiles));                   
         $model->no_ca = $req->no_ca;
         $model->no_sppd = $req->bisnis_numb;
 

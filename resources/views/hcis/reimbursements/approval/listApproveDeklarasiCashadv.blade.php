@@ -798,26 +798,28 @@
 
                                     <!-- Show existing file -->
                                     <div id="existing-file-preview" class="mt-2">
-                                        @if($transactions->prove_declare)
+                                        @if ($transactions->prove_declare)
                                             @php
-                                                $extension = pathinfo($transactions->prove_declare, PATHINFO_EXTENSION);
+                                                $existingFiles = json_decode($transactions->prove_declare, true);
                                             @endphp
 
-                                            @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'JPG', 'JPEG', 'PNG']))
-                                                <!-- Tampilkan gambar -->
-                                                <a href="{{ asset($transactions->prove_declare) }}" target="_blank">
-                                                    <img id="existing-image" src="{{ asset($transactions->prove_declare) }}" alt="Proof Image" style="max-width: 200px;">
-                                                </a>
-                                                <p>Click on the image to view the full size</p>
-                                            @elseif($extension == 'pdf')
-                                                <!-- Tampilkan tautan untuk PDF -->
-                                                <a id="existing-pdf" href="{{ asset($transactions->prove_declare) }}" target="_blank">
-                                                    <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF File" style="max-width: 48px;">
-                                                    <p>Click to view PDF</p>
-                                                </a>
-                                            @else
-                                                <p>File type not supported.</p>
-                                            @endif
+                                            @foreach ($existingFiles as $file)
+                                                @php $extension = pathinfo($file, PATHINFO_EXTENSION); @endphp
+                                                <div class="file-preview" data-file="{{ $file }}" style="position: relative; display: inline-block; margin: 10px;">
+                                                    @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
+                                                        <a href="{{ asset($file) }}" target="_blank" rel="noopener noreferrer">
+                                                            <img src="{{ asset($file) }}" alt="Proof Image" style="width: 100px; height: 100px; border: 1px solid rgb(221, 221, 221); border-radius: 5px; padding: 5px;">
+                                                        </a>
+                                                    @elseif($extension === 'pdf')
+                                                        <a href="{{ asset($file) }}" target="_blank" rel="noopener noreferrer">
+                                                            <img src="{{ asset('images/pdf_icon.png') }}" alt="PDF File">
+                                                            <p>Click to view PDF</p>
+                                                        </a>
+                                                    @else
+                                                        <p>File type not supported.</p>
+                                                    @endif
+                                                </div>
+                                            @endforeach
                                         @endif
                                     </div>
                                 </div>
@@ -1059,7 +1061,7 @@
         });
 
     </script>
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js"></script> --}}
+    {{-- <script src="{{ asset('vendor/bootstrap/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script> --}}
 @endpush
