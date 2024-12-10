@@ -99,6 +99,8 @@
                                 </div>
                                 <input class="form-control" id="perdiem" name="perdiem" type="hidden"
                                     value="{{ $perdiem->amount }}" readonly>
+                                <input class="form-control" id="group_company" name="group_company" type="hidden"
+                                    value="{{ $employee_data->group_company }}" readonly>
                                 <div class="col-md-4 mb-2">
                                     <label for="tujuan" class="form-label">Destination</label>
                                     <select class="form-select form-select-sm select2" name="tujuan" id="tujuan"
@@ -165,7 +167,7 @@
                                                 <input type="hidden" name="ca" id="caHidden" value="Tidak">
                                                 <input class="form-check-input" type="checkbox" id="perdiemCheckbox"
                                                     value="Ya" onchange="updateCAValue()">
-                                                <label class="form-check-label" for="perdiemCheckbox">Perdiem</label>
+                                                <label class="form-check-label" for="perdiemCheckbox">{{ $allowance }}</label>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -219,7 +221,7 @@
                                                     <button class="nav-link" id="pills-perdiem-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-perdiem" type="button" role="tab"
                                                         aria-controls="pills-perdiem"
-                                                        aria-selected="false">Perdiem</button>
+                                                        aria-selected="false">{{ $allowance }}</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation" id="nav-cashAdvanced"
                                                     style="display: none;">
@@ -383,7 +385,7 @@
                     if (perdiemCheckbox && totalBtPerdiem == 0) {
                         Swal.fire({
                             title: "Warning!",
-                            text: "Total Perdiem is 0. Please fill in the values.",
+                            text: "Total {{$allowance}} is 0. Please fill in the values.",
                             icon: "warning",
                             confirmButtonColor: "#AB2F2B",
                             confirmButtonText: "OK",
@@ -403,7 +405,7 @@
                     const inputSummary = `
                             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                             <tr>
-                                <th style="width: 40%; text-align: left; padding: 8px;">Total Perdiem</th>
+                                <th style="width: 40%; text-align: left; padding: 8px;">Total {{ $allowance }}</th>
                                 <td style="width: 10%; text-align: right; padding: 8px;">:</td>
                                 <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtPerdiem}</strong></td>
                             </tr>
@@ -520,7 +522,7 @@
                     if (perdiemCheckbox && totalBtPerdiem == 0) {
                         Swal.fire({
                             title: "Warning!",
-                            text: "Total Perdiem is 0. Please fill in the values.",
+                            text: "Total {{$allowance}} is 0. Please fill in the values.",
                             icon: "warning",
                             confirmButtonColor: "#AB2F2B",
                             confirmButtonText: "OK",

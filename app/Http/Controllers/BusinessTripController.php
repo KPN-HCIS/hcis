@@ -2032,8 +2032,16 @@ class BusinessTripController extends Controller
         $companies = Company::orderBy('contribution_level')->get();
         $employees = Employee::orderBy('ktp')->get();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
-        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)->first();
+        $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
+                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+                    
         $job_level = Employee::where('id', $userId)->pluck('job_level')->first();
+
+        if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
+            $allowance = "Perdiem";
+        }else{
+            $allowance = "Allowance";
+        }
 
         if ($job_level) {
             // Extract numeric part of the job level
@@ -2055,6 +2063,7 @@ class BusinessTripController extends Controller
                 'parentLink' => $parentLink,
                 'link' => $link,
                 'isAllowed' => $isAllowed,
+                'allowance' => $allowance,
             ]
         );
     }
