@@ -346,7 +346,8 @@
                                                             $today = \Carbon\Carbon::today()->format('Y-m-d');
                                                         @endphp
                                                         @if (
-                                                            ($n->kembali < $today && $n->status == 'Approved') ||
+                                                            // $n->kembali < $today && 
+                                                            ($n->status == 'Approved') ||
                                                                 $n->status == 'Declaration Draft' ||
                                                                 $n->status == 'Declaration Rejected')
                                                             <form method="GET"

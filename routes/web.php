@@ -52,6 +52,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::get('dbauth', [SsoController::class, 'dbauth']);
 Route::get('sourcermb/dbauth', [SsoController::class, 'dbauthReimburse']);
+Route::get('sourcetrv/dbauth', [SsoController::class, 'dbauthTravel']);
 
 Route::get('fetch-employees', [EmployeeController::class, 'fetchAndStoreEmployees']);
 Route::get('inactive-employees', [EmployeeController::class, 'EmployeeInactive']);

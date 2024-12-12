@@ -19,6 +19,10 @@ class SsoController extends Controller
     {
         return $this->handleDbauth($request, route('reimbursements', absolute: false), 'kpnreimburse');
     }
+    public function dbauthTravel(Request $request)
+    {
+        return $this->handleDbauth($request, route('travel', absolute: false), 'kpnreimburse');
+    }
 
     private function handleDbauth(Request $request, $redirectRoute, $sessionValue)
     {

@@ -108,7 +108,7 @@
                                         <option value="">--- Choose Destination ---</option>
                                         @foreach ($locations as $location)
                                             <option value="{{ $location->area }}">
-                                                {{ $location->area . ' (' . $location->city . ')' }}
+                                                {{ $location->area . ' (' . $location->company_name . ')' }}
                                             </option>
                                         @endforeach
                                         <option value="Others">Others</option>

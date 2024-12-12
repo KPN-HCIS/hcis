@@ -220,7 +220,7 @@
             !empty($detailCA['detail_perdiem'][0]['company_code']))
         <table class="table-approve">
             <tr>
-                <th colspan="5"><b>Perdiem Plan :</b></th>
+                <th colspan="5"><b>{{$allowance}} Plan :</b></th>
             </tr>
             <tr class="head-row">
                 <td>Start Date</td>
@@ -266,7 +266,7 @@
             <td>Amount</td>
         </tr>
         <tr>
-            <td class="label">Perdiem</td>
+            <td class="label">{{$allowance}}</td>
             <td>
                 @if (array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) <= 0)
                     -
@@ -338,33 +338,7 @@
                         </tr>
                     </table>
                 </td>
-                <td style="width: 60%; vertical-align: top;">
-                    <table class="table-approve" style="width: 100%; text-align: center; display: inline-table;">
-                        <tr>
-                            <th colspan="3">Verifikasi</th>
-                        </tr>
-                        <tr>
-                            <td style="width: 33%"><br></td>
-                            <td style="width: 33%"><br></td>
-                            <td style="width: 33%"><br></td>
-                        </tr>
-                        <tr>
-                            <td><br><br><br><br><br></td>
-                            <td><br><br><br><br><br></td>
-                            <td><br><br><br><br><br></td>
-                        </tr>
-                        <tr>
-                            <td><br></td>
-                            <td><br></td>
-                            <td><br></td>
-                        </tr>
-                        <tr>
-                            <td><br></td>
-                            <td><br></td>
-                            <td><br></td>
-                        </tr>
-                    </table>
-                </td>
+                
             </tr>
         </table>
 
@@ -422,7 +396,7 @@
                 !empty($detailCA['detail_perdiem'][0]['company_code']))
             <table class="table-approve">
                 <tr>
-                    <th colspan="6"><b>Perdiem Plan :</b></th>
+                    <th colspan="6"><b>{{$allowance}} Plan :</b></th>
                 </tr>
                 <tr class="head-row">
                     <td>Start Date</td>

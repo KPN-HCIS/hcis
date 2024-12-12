@@ -421,7 +421,8 @@ class HomeTripController extends Controller
 
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
-            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($tiket->id),
@@ -704,7 +705,8 @@ class HomeTripController extends Controller
 
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
-            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticketIdToUse),

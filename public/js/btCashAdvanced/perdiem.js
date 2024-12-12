@@ -172,6 +172,7 @@ function clearFormPerdiem(index, event) {
 }
 
 function calculateTotalDaysPerdiem(input) {
+    console.log("proses calculate");
     const formGroup = input.closest(".row").parentElement;
     const startDateInput = formGroup.querySelector("input.start-perdiem");
     const endDateInput = formGroup.querySelector("input.end-perdiem");
@@ -220,12 +221,11 @@ function calculateTotalDaysPerdiem(input) {
                 'input[name="other_location_bt_perdiem[]"]'
             );
 
-            if (
-                groupCompany.value !== "Plantations" &&
-                (locationSelect.value === "Others" || otherLocationInput.value.trim() !== "")
-            ) {
+            if (groupCompany.value !== "Plantations"){
                 allowance *= 1;
-            } else {
+            }else if(locationSelect.value === "Others" || otherLocationInput.value.trim() !== ""){
+                allowance *= 1;
+            }else{
                 allowance *= 0.5;
             }
 

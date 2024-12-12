@@ -240,7 +240,7 @@
                                                 <input class="form-check-input" type="checkbox" id="perdiemCheckbox"
                                                     value="Ya" onchange="updateCAValue()" @checked($showPerdiem)
                                                     disabled>
-                                                <label class="form-check-label" for="perdiemCheckbox">Perdiem</label>
+                                                <label class="form-check-label" for="perdiemCheckbox">{{$allowance}}</label>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -298,7 +298,7 @@
                                                     <button class="nav-link" id="pills-perdiem-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-perdiem" type="button" role="tab"
                                                         aria-controls="pills-perdiem"
-                                                        aria-selected="false">Perdiem</button>
+                                                        aria-selected="false">{{$allowance}}</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation" id="nav-cashAdvanced"
                                                     style="display: {{ $showCashAdvanced ? 'block' : 'none' }};">
