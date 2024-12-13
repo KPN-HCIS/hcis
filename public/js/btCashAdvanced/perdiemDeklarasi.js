@@ -95,7 +95,7 @@ function removeFormPerdiem(index, event) {
             perdiemData = perdiemData.filter(
                 (data) => data.index !== index.toString()
             );
-            console.log("Data Perdiem setelah dihapus:", perdiemData); // Cek di console
+            console.log("Data setelah dihapus:", perdiemData); // Cek di console
 
             calculateTotalNominalBTPerdiem();
         }

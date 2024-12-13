@@ -324,7 +324,7 @@
                     const inputSummary = `
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                         <tr>
-                            <th style="width: 40%; text-align: left; padding: 8px;">Total Perdiem</th>
+                            <th style="width: 40%; text-align: left; padding: 8px;">Total {{$allowance}}</th>
                             <td style="width: 10%; text-align: right; padding: 8px;">:</td>
                             <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtPerdiem}</strong></td>
                         </tr>
