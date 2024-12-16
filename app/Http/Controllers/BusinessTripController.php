@@ -2969,6 +2969,12 @@ class BusinessTripController extends Controller
         $userId = Auth::id();
         $employee_data = Employee::where('id', $n->user_id)->first();
 
+        if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
+            $allowance = "Perdiem";
+        }else{
+            $allowance = "Allowance";
+        }
+
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
         // Initialize caDetail with an empty array if it's null
@@ -3033,6 +3039,7 @@ class BusinessTripController extends Controller
 
         return view('hcis.reimbursements.businessTrip.deklarasiAdmin', [
             'n' => $n,
+            'allowance' => $allowance,
             'hotelData' => $hotelData,
             'taksiData' => $taksi, // Pass the taxi data
             'ticketData' => $ticketData,

@@ -100,19 +100,17 @@
                 </a>
             </div>
 
-            {{-- @if(!empty(trim(Auth::user()->employee->homebase ?? ''))) --}}
-                <div class="col-md-3">
-                    <a href="{{ route('home-trip') }}">
-                        <div class="card" style="height: 200px">
-                            <div class="card-body">
-                                <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
-                                    style="width: 100px; height: 100px; border-radius: 100px;">
-                                <h5 class="my-3">Home Trip</h5>
-                            </div> <!-- end card-body-->
-                        </div> <!-- end card-->
-                    </a>
-                </div><!-- end col-->
-            {{-- @endif --}}
+            <div class="col-md-3">
+                <a href="{{ route('home-trip') }}">
+                    <div class="card" style="height: 200px">
+                        <div class="card-body">
+                            <img src="{{ asset('images/menu/home-trip.png') }}" alt="logo"
+                                style="width: 100px; height: 100px; border-radius: 100px;">
+                            <h5 class="my-3">Home Trip</h5>
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </a>
+            </div><!-- end col-->
         </div> <!-- end row -->
 
         {{-- HR ADMIN --}}
@@ -144,8 +142,8 @@
                     </div>
                 @endcan
             @endif
-            {{-- @if (auth()->check())
-                @can('report_hcis_ht') --}}
+            @if (auth()->check())
+                @can('report_hcis_ht')
                     <div class="col-md-3">
                         <a href="{{ route('home-trip.admin') }}">
                             <div class="card" style="height: 200px">
@@ -157,10 +155,10 @@
                             </div> <!-- end card-->
                         </a>
                     </div> <!-- end col-->
-                {{-- @endcan
-            @endif --}}
-            {{-- @if (auth()->check())
-                @can('report_hcis_tkt') --}}
+                @endcan
+            @endif
+            @if (auth()->check())
+                @can('report_hcis_tkt')
                     <div class="col-md-3">
                         <a href="{{ route('ticket.admin') }}">
                             <div class="card" style="height: 200px">
@@ -171,8 +169,8 @@
                             </div> <!-- end card-->
                         </a>
                     </div> <!-- end col-->
-                {{-- @endcan
-            @endif --}}
+                @endcan
+            @endif
             @if (auth()->check())
                 @can('report_hcis_htl')
                     <div class="col-md-3">
