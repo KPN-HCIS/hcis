@@ -2166,7 +2166,7 @@ class ReimburseController extends Controller
                     $HTLNotificationSubmit = "eriton.dewa@kpn-corp.com";
                     if ($HTLNotificationSubmit) {
                         // Kirim email ke pengguna transaksi (employee pada layer terakhir)
-                        Mail::to($HTLNotificationSubmit)->send(new HotelNotification($hotelData));
+                        // Mail::to($HTLNotificationSubmit)->send(new HotelNotification($hotelData));
                     }
                 }
                 $namaHtl[] = $hotelData['nama_htl'][$key];
@@ -2209,19 +2209,19 @@ class ReimburseController extends Controller
             // // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $req->bisnis_numb,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'approvalStatus' => $statusValue,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                ]));
+                // Mail::to($managerEmail)->send(new HotelNotification([
+                //     'noSppd' => $req->bisnis_numb,
+                //     'noHtl' => $noHtlList,
+                //     'namaHtl' => $namaHtl,
+                //     'lokasiHtl' => $lokasiHtl,
+                //     'tglMasukHtl' => $tglMasukHtl,
+                //     'tglKeluarHtl' => $tglKeluarHtl,
+                //     'totalHari' => $totalHari,
+                //     'approvalStatus' => $statusValue,
+                //     'managerName' => $managerName,
+                //     'approvalLink' => $approvalLink,
+                //     'rejectionLink' => $rejectionLink,
+                // ]));
             }
         }
         return redirect('/hotel')->with('success', 'Hotel request input successfully');
@@ -2277,19 +2277,19 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $hotel->no_sppd,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'approvalStatus' => 'Pending L2',
-                ]));
+                // Mail::to($managerEmail)->send(new HotelNotification([
+                //     'noSppd' => $hotel->no_sppd,
+                //     'noHtl' => $noHtlList,
+                //     'namaHtl' => $namaHtl,
+                //     'lokasiHtl' => $lokasiHtl,
+                //     'tglMasukHtl' => $tglMasukHtl,
+                //     'tglKeluarHtl' => $tglKeluarHtl,
+                //     'totalHari' => $totalHari,
+                //     'managerName' => $managerName,
+                //     'approvalLink' => $approvalLink,
+                //     'rejectionLink' => $rejectionLink,
+                //     'approvalStatus' => 'Pending L2',
+                // ]));
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -2529,19 +2529,19 @@ class ReimburseController extends Controller
 
             if ($managerEmail) {
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $req->bisnis_numb,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'approvalStatus' => $statusValue,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                ]));
+                // Mail::to($managerEmail)->send(new HotelNotification([
+                //     'noSppd' => $req->bisnis_numb,
+                //     'noHtl' => $noHtlList,
+                //     'namaHtl' => $namaHtl,
+                //     'lokasiHtl' => $lokasiHtl,
+                //     'tglMasukHtl' => $tglMasukHtl,
+                //     'tglKeluarHtl' => $tglKeluarHtl,
+                //     'totalHari' => $totalHari,
+                //     'approvalStatus' => $statusValue,
+                //     'managerName' => $managerName,
+                //     'approvalLink' => $approvalLink,
+                //     'rejectionLink' => $rejectionLink,
+                // ]));
             }
         }
 
@@ -2554,7 +2554,7 @@ class ReimburseController extends Controller
             // dd($allHotels);
             if ($HTLNotificationSubmit) {
                 // Pass all hotels to the notification email
-                Mail::to($HTLNotificationSubmit)->send(new HotelNotification($allHotels));
+                // Mail::to($HTLNotificationSubmit)->send(new HotelNotification($allHotels));
             }
         }
 
@@ -2924,19 +2924,19 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $hotel->no_sppd,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'approvalStatus' => 'Pending L2',
-                ]));
+                // Mail::to($managerEmail)->send(new HotelNotification([
+                //     'noSppd' => $hotel->no_sppd,
+                //     'noHtl' => $noHtlList,
+                //     'namaHtl' => $namaHtl,
+                //     'lokasiHtl' => $lokasiHtl,
+                //     'tglMasukHtl' => $tglMasukHtl,
+                //     'tglKeluarHtl' => $tglKeluarHtl,
+                //     'totalHari' => $totalHari,
+                //     'managerName' => $managerName,
+                //     'approvalLink' => $approvalLink,
+                //     'rejectionLink' => $rejectionLink,
+                //     'approvalStatus' => 'Pending L2',
+                // ]));
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
