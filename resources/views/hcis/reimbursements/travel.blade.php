@@ -100,7 +100,7 @@
                 </a>
             </div>
 
-            @if(!empty(trim(Auth::user()->employee->homebase ?? '')))
+            {{-- @if(!empty(trim(Auth::user()->employee->homebase ?? ''))) --}}
                 <div class="col-md-3">
                     <a href="{{ route('home-trip') }}">
                         <div class="card" style="height: 200px">
@@ -112,7 +112,7 @@
                         </div> <!-- end card-->
                     </a>
                 </div><!-- end col-->
-            @endif
+            {{-- @endif --}}
         </div> <!-- end row -->
 
         {{-- HR ADMIN --}}
