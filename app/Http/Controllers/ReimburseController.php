@@ -104,11 +104,16 @@ class ReimburseController extends Controller
 
     function reimbursements()
     {
-
         $userId = Auth::id();
-
+        if($userId=='23886' || $userId=='23892' || $userId=='23893' ||  $userId=='25678' || $userId=='25725' || $userId=='25734'){
+            $access_ca = "Y";
+        }else{
+            $access_ca = "N";
+        }
+        
         return view('hcis.reimbursements.dash', [
             'userId' => $userId,
+            'access_ca' => $access_ca,
         ]);
     }
     function travel()

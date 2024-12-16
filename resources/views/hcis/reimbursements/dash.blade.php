@@ -64,6 +64,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
+            @if($access_ca=='Y')
             <div class="col">
                 <a href="{{ route('cashadvanced') }}">
                     <div class="card" style="height: 200px">
@@ -74,7 +75,7 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            @if (auth()->user()->hasRole('superadmin'))
+            @endif
             <div class="col">
                 <a href="{{ route('medical') }}">
                     <div class="card" style="height: 200px">
@@ -85,9 +86,6 @@
                     </div> <!-- end card-->
                 </a>
             </div> <!-- end col-->
-            @endif
-
-
         </div> <!-- end row -->
 
         {{-- HR ADMIN --}}
@@ -103,7 +101,7 @@
         {{-- END HR ADMIN --}}
 
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 row-cols-xxl-8 text-center">
-            @if (auth()->check())
+            @if (auth()->check() && $access_ca=='Y')
                 @can('reportca_hcis')
                     <div class="col-md-3">
                         <a href="{{ route('cashadvanced.admin') }}">
