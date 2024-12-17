@@ -17,11 +17,11 @@
                                     <td class="value" style="border: none;">
                                         @php
                                             $typeMap = [
-                                                'food' => 'Food/Beverages/Souvenir',
-                                                'transport' => 'Transport',
                                                 'accommodation' => 'Accommodation',
-                                                'gift' => 'Gift',
+                                                'food' => 'Food/Beverages/Souvenir',
                                                 'fund' => 'Fund',
+                                                'gift' => 'Gift',
+                                                'transport' => 'Transport',
                                             ];
                                         @endphp
                                         {{ $typeMap[$detail['type']] ?? $detail['type'] }}
@@ -52,11 +52,11 @@
                                 <label class="form-label">Entertainment Type</label>
                                 <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
                                     <option value="">-</option>
-                                    <option value="food" {{ $detail_dec['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
-                                    <option value="transport" {{ $detail_dec['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
                                     <option value="accommodation" {{ $detail_dec['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
-                                    <option value="gift" {{ $detail_dec['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                    <option value="food" {{ $detail_dec['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                     <option value="fund" {{ $detail_dec['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
+                                    <option value="gift" {{ $detail_dec['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                    <option value="transport" {{ $detail_dec['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-2">
@@ -161,11 +161,11 @@
                             <label class="form-label">Entertainment Type</label>
                             <select name="enter_type_e_detail[]" id="enter_type_e_detail_{{ $loop->index + 1 }}" class="form-select">
                                 <option value="">-</option>
-                                <option value="food" {{ $detail_dec['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
-                                <option value="transport" {{ $detail_dec['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
                                 <option value="accommodation" {{ $detail_dec['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
-                                <option value="gift" {{ $detail_dec['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                <option value="food" {{ $detail_dec['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                 <option value="fund" {{ $detail_dec['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
+                                <option value="gift" {{ $detail_dec['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                <option value="transport" {{ $detail_dec['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-2">
@@ -225,11 +225,11 @@
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" id="enter_type_e_detail_1" class="form-select">
                             <option value="">-</option>
-                            <option value="food">Food/Beverages/Souvenir</option>
-                            <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
-                            <option value="gift">Gift</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
                             <option value="fund">Fund</option>
+                            <option value="gift">Gift</option>
+                            <option value="transport">Transport</option>
                         </select>
                     </div>
                     <div class="col-md-6 mb-2">

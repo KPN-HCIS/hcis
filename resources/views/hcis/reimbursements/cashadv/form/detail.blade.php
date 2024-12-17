@@ -12,11 +12,11 @@
                             <label class="form-label">Entertainment Type</label>
                             <select name="enter_type_e_detail[]" id="enter_type_e_detail[]" class="form-select">
                                 <option value="">-</option>
-                                <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
-                                <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
                                 <option value="accommodation" {{ $detail['type'] == 'accommodation' ? 'selected' : '' }}>Accommodation</option>
-                                <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                <option value="food" {{ $detail['type'] == 'food' ? 'selected' : '' }}>Food/Beverages/Souvenir</option>
                                 <option value="fund" {{ $detail['type'] == 'fund' ? 'selected' : '' }}>Fund</option>
+                                <option value="gift" {{ $detail['type'] == 'gift' ? 'selected' : '' }}>Gift</option>
+                                <option value="transport" {{ $detail['type'] == 'transport' ? 'selected' : '' }}>Transport</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-2">
@@ -76,11 +76,11 @@
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" id="enter_type_e_detail_1" class="form-select">
                             <option value="">-</option>
-                            <option value="food">Food/Beverages/Souvenir</option>
-                            <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
-                            <option value="gift">Gift</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
                             <option value="fund">Fund</option>
+                            <option value="gift">Gift</option>
+                            <option value="transport">Transport</option>
                         </select>
                     </div>
                     <div class="col-md-6 mb-2">
