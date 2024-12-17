@@ -111,8 +111,9 @@
                                         onchange="validateStartEndDates()">
                                 </div>
 
-                                <input class="form-control" id="perdiem" name="perdiem" type="hidden"
-                                    value="{{ $perdiem->amount }}" readonly>
+                                <input class="form-control" id="perdiem" name="perdiem" type="hidden" value="{{ $perdiem->amount }}" readonly>
+                                <input class="form-control" id="group_company" name="group_company" type="hidden"
+                                value="{{ $employee_data->group_company }}" readonly>
 
                                 <div class="col-md-4 mb-2">
                                     <label for="tujuan" class="form-label">Destination</label>
@@ -242,7 +243,7 @@
                                         Business Trip Needs <br>
                                         @if ($isAllowed)
                                             <span class="text-info fst-italic">* Your job
-                                                level is above 8. No perdiem is required for your job level</span>
+                                                level is above 8. No {{$allowance}} is required for your job level</span>
                                         @endif
                                     </label>
                                     <div class="row">
@@ -253,7 +254,7 @@
                                                 <input class="form-check-input" type="checkbox" id="perdiemCheckbox"
                                                     value="Ya" onchange="updateCAValue()"
                                                     @checked($showPerdiem)>
-                                                <label class="form-check-label" for="perdiemCheckbox">Perdiem</label>
+                                                <label class="form-check-label" for="perdiemCheckbox">{{$allowance}}</label>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -310,7 +311,7 @@
                                                     <button class="nav-link" id="pills-perdiem-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-perdiem" type="button" role="tab"
                                                         aria-controls="pills-perdiem"
-                                                        aria-selected="false">Perdiem</button>
+                                                        aria-selected="false">{{$allowance}}</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation" id="nav-cashAdvanced"
                                                     style="display: {{ $showCashAdvanced ? 'block' : 'none' }};">

@@ -43,33 +43,6 @@ class HotelNotification extends Mailable
 
     public function build()
     {
-<<<<<<< HEAD
-        return $this->subject('New Business Trip Request')
-            ->view('hcis.reimbursements.approval.email.htlNotification');
-    }
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Hotel Notification',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'hcis.reimbursements.approval.email.htlNotification',
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-=======
         return $this->subject('New Hotel Request')
             ->view('hcis.reimbursements.businessTrip.email.htlNotification');
     }
@@ -88,7 +61,6 @@ class HotelNotification extends Mailable
         );
     }
 
->>>>>>> origin/newBt
     public function attachments(): array
     {
         return [];

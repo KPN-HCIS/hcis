@@ -1379,6 +1379,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function calculateTotalDays() {
         const startDate = new Date(startDateInput.value);
         const endDate = new Date(endDateInput.value);
+        const groupCompany = document.getElementById("group_company");
+        // console.log("proses calculate");
+
         if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
             const timeDiff = endDate - startDate;
             const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
@@ -1388,7 +1391,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const perdiem = parseFloat(perdiemInput.value) || 0;
             let allowance = totalDays * perdiem;
 
-            if (othersLocationInput.value.trim() !== "") {
+            if (groupCompany.value !== "Plantations"){
+                allowance *= 1;
+            }else if (othersLocationInput.value.trim() !== "") {
                 allowance *= 1; // allowance * 50%
             } else {
                 allowance *= 0.5;

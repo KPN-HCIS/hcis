@@ -285,6 +285,7 @@
                             <!-- Preview untuk file lama -->
                             <div id="existing-files-label" style="margin-bottom: 10px; font-weight: bold;">
                                 @if ($transactions->prove_declare)
+                                    
                                     Document on Draft:
                                 @endif
                             </div>
@@ -297,7 +298,7 @@
                                     @foreach ($existingFiles as $file)
                                         @php $extension = pathinfo($file, PATHINFO_EXTENSION); @endphp
                                         <div class="file-preview" data-file="{{ $file }}" style="position: relative; display: inline-block; margin: 10px;">
-                                            @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif']))
+                                            @if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'PNG', 'JPG', 'JPEG']))
                                                 <a href="{{ asset($file) }}" target="_blank" rel="noopener noreferrer">
                                                     <img src="{{ asset($file) }}" alt="Proof Image" style="width: 100px; height: 100px; border: 1px solid rgb(221, 221, 221); border-radius: 5px; padding: 5px;">
                                                 </a>

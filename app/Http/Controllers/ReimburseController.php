@@ -104,11 +104,16 @@ class ReimburseController extends Controller
 
     function reimbursements()
     {
-
         $userId = Auth::id();
-
+        if($userId=='23886' || $userId=='23892' || $userId=='23893' ||  $userId=='25678' || $userId=='25725' || $userId=='25734'){
+            $access_ca = "Y";
+        }else{
+            $access_ca = "N";
+        }
+        
         return view('hcis.reimbursements.dash', [
             'userId' => $userId,
+            'access_ca' => $access_ca,
         ]);
     }
     function travel()
@@ -943,7 +948,7 @@ class ReimburseController extends Controller
             $nextApproval = ca_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            $CANotificationLayer = "erzie.aldrian02@outlook.com";
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             $imagePath = public_path('images/kop.jpg');
             $imageContent = file_get_contents($imagePath);
             $base64Image = "data:image/png;base64," . base64_encode($imageContent);
@@ -1316,7 +1321,7 @@ class ReimburseController extends Controller
             $nextApproval = ca_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            $CANotificationLayer = "erzie.aldrian02@outlook.com";
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             $imagePath = public_path('images/kop.jpg');
             $imageContent = file_get_contents($imagePath);
             $base64Image = "data:image/png;base64," . base64_encode($imageContent);
@@ -1442,7 +1447,7 @@ class ReimburseController extends Controller
             $nextApproval = ca_extend::where('ca_id', $id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            $CANotificationLayer = "erzie.aldrian02@outlook.com";
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             $imagePath = public_path('images/kop.jpg');
             $imageContent = file_get_contents($imagePath);
             $base64Image = "data:image/png;base64," . base64_encode($imageContent);
@@ -1905,7 +1910,7 @@ class ReimburseController extends Controller
             $nextApproval = ca_sett_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
-            $CANotificationLayer = "erzie.aldrian02@outlook.com";
+            $CANotificationLayer = "eriton.dewa@kpn-corp.com";
             $imagePath = public_path('images/kop.jpg');
             $imageContent = file_get_contents($imagePath);
             $base64Image = "data:image/png;base64," . base64_encode($imageContent);
@@ -2163,10 +2168,10 @@ class ReimburseController extends Controller
                 if ($statusValue == 'Pending L1') {
                     $employee = Employee::where('id', $userId)->first();
                     // $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
-                    $HTLNotificationSubmit = "erzie.aldrian02@outlook.com";
+                    $HTLNotificationSubmit = "eriton.dewa@kpn-corp.com";
                     if ($HTLNotificationSubmit) {
                         // Kirim email ke pengguna transaksi (employee pada layer terakhir)
-                        Mail::to($HTLNotificationSubmit)->send(new HotelNotification($hotelData));
+                        // Mail::to($HTLNotificationSubmit)->send(new HotelNotification($hotelData));
                     }
                 }
                 $namaHtl[] = $hotelData['nama_htl'][$key];
@@ -2191,7 +2196,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "erzie.aldrian02@outlook.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
 
             $approvalLink = route('approve.hotel', [
@@ -2209,19 +2214,19 @@ class ReimburseController extends Controller
             // // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $req->bisnis_numb,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'approvalStatus' => $statusValue,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                ]));
+                // Mail::to($managerEmail)->send(new HotelNotification([
+                //     'noSppd' => $req->bisnis_numb,
+                //     'noHtl' => $noHtlList,
+                //     'namaHtl' => $namaHtl,
+                //     'lokasiHtl' => $lokasiHtl,
+                //     'tglMasukHtl' => $tglMasukHtl,
+                //     'tglKeluarHtl' => $tglKeluarHtl,
+                //     'totalHari' => $totalHari,
+                //     'approvalStatus' => $statusValue,
+                //     'managerName' => $managerName,
+                //     'approvalLink' => $approvalLink,
+                //     'rejectionLink' => $rejectionLink,
+                // ]));
             }
         }
         return redirect('/hotel')->with('success', 'Hotel request input successfully');
@@ -2241,7 +2246,7 @@ class ReimburseController extends Controller
 
             $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "erzie.aldrian02@outlook.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->value('fullname');
 
             $approvalLink = route('approve.hotel', [
@@ -2277,19 +2282,19 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $hotel->no_sppd,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'approvalStatus' => 'Pending L2',
-                ]));
+                // Mail::to($managerEmail)->send(new HotelNotification([
+                //     'noSppd' => $hotel->no_sppd,
+                //     'noHtl' => $noHtlList,
+                //     'namaHtl' => $namaHtl,
+                //     'lokasiHtl' => $lokasiHtl,
+                //     'tglMasukHtl' => $tglMasukHtl,
+                //     'tglKeluarHtl' => $tglKeluarHtl,
+                //     'totalHari' => $totalHari,
+                //     'managerName' => $managerName,
+                //     'approvalLink' => $approvalLink,
+                //     'rejectionLink' => $rejectionLink,
+                //     'approvalStatus' => 'Pending L2',
+                // ]));
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -2511,7 +2516,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "erzie.aldrian02@outlook.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             // dd($managerEmail);
             // // dd($managerEmail);
@@ -2529,32 +2534,32 @@ class ReimburseController extends Controller
 
             if ($managerEmail) {
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $req->bisnis_numb,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'approvalStatus' => $statusValue,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                ]));
+                // Mail::to($managerEmail)->send(new HotelNotification([
+                //     'noSppd' => $req->bisnis_numb,
+                //     'noHtl' => $noHtlList,
+                //     'namaHtl' => $namaHtl,
+                //     'lokasiHtl' => $lokasiHtl,
+                //     'tglMasukHtl' => $tglMasukHtl,
+                //     'tglKeluarHtl' => $tglKeluarHtl,
+                //     'totalHari' => $totalHari,
+                //     'approvalStatus' => $statusValue,
+                //     'managerName' => $managerName,
+                //     'approvalLink' => $approvalLink,
+                //     'rejectionLink' => $rejectionLink,
+                // ]));
             }
         }
 
         if ($statusValue == 'Pending L1') {
             $employee = Employee::where('id', $userId)->first();
             // $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
-            $HTLNotificationSubmit = "erzie.aldrian02@outlook.com";
+            $HTLNotificationSubmit = "eriton.dewa@kpn-corp.com";
             // dd($hotelData);
             $allHotels = Hotel::where('no_htl', $existingNoHtl)->get()->toArray();
             // dd($allHotels);
             if ($HTLNotificationSubmit) {
                 // Pass all hotels to the notification email
-                Mail::to($HTLNotificationSubmit)->send(new HotelNotification($allHotels));
+                // Mail::to($HTLNotificationSubmit)->send(new HotelNotification($allHotels));
             }
         }
 
@@ -2888,7 +2893,7 @@ class ReimburseController extends Controller
 
             $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "erzie.aldrian02@outlook.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->value('fullname');
 
             $approvalLink = route('approve.hotel', [
@@ -2924,19 +2929,19 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $hotel->no_sppd,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'approvalStatus' => 'Pending L2',
-                ]));
+                // Mail::to($managerEmail)->send(new HotelNotification([
+                //     'noSppd' => $hotel->no_sppd,
+                //     'noHtl' => $noHtlList,
+                //     'namaHtl' => $namaHtl,
+                //     'lokasiHtl' => $lokasiHtl,
+                //     'tglMasukHtl' => $tglMasukHtl,
+                //     'tglKeluarHtl' => $tglKeluarHtl,
+                //     'totalHari' => $totalHari,
+                //     'managerName' => $managerName,
+                //     'approvalLink' => $approvalLink,
+                //     'rejectionLink' => $rejectionLink,
+                //     'approvalStatus' => 'Pending L2',
+                // ]));
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -3425,7 +3430,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "erzie.aldrian02@outlook.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($tiket->id),
@@ -3477,7 +3482,7 @@ class ReimburseController extends Controller
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
             $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "erzie.aldrian02@outlook.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticket->id),
@@ -3799,7 +3804,7 @@ class ReimburseController extends Controller
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', Auth::id())->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "erzie.aldrian02@outlook.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticketIdToUse),
@@ -4195,7 +4200,7 @@ class ReimburseController extends Controller
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
             $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "erzie.aldrian02@outlook.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticket->id),

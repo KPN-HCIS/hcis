@@ -95,7 +95,7 @@ function removeFormPerdiem(index, event) {
             perdiemData = perdiemData.filter(
                 (data) => data.index !== index.toString()
             );
-            console.log("Data Perdiem setelah dihapus:", perdiemData); // Cek di console
+            console.log("Data setelah dihapus:", perdiemData); // Cek di console
 
             calculateTotalNominalBTPerdiem();
         }
@@ -177,6 +177,7 @@ function calculateTotalDaysPerdiem(input) {
     const endDateInput = formGroup.querySelector("input.end-perdiem");
     const totalDaysInput = formGroup.querySelector("input.total-days-perdiem");
     const perdiemInput = document.getElementById("perdiem");
+    const groupCompany = document.getElementById("group_company");
     const allowanceInput = formGroup.querySelector(
         'input[name="nominal_bt_perdiem[]"]'
     );
@@ -216,10 +217,9 @@ function calculateTotalDaysPerdiem(input) {
                 'input[name="other_location_bt_perdiem[]"]'
             );
 
-            if (
-                locationSelect.value === "Others" ||
-                otherLocationInput.value.trim() !== ""
-            ) {
+            if (groupCompany.value !== "Plantations"){
+                allowance *= 1;
+            }else if (locationSelect.value === "Others" || otherLocationInput.value.trim() !== "") {
                 allowance *= 1;
             } else {
                 allowance *= 0.5;

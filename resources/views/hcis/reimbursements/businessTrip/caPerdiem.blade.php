@@ -11,9 +11,9 @@
         newForm.className = "card-body p-2 mb-3";
         newForm.style.backgroundColor = "#f8f8f8";
         newForm.innerHTML = `
-                <p class="fs-4 text-primary" style="font-weight: bold;">Perdiem ${formCountPerdiem}</p>
+                <p class="fs-4 text-primary" style="font-weight: bold;">{{ $allowance }} ${formCountPerdiem}</p>
                 <div id="form-container-bt-perdiem-req-${formCountPerdiem}" class="card-body bg-light p-2 mb-3">
-                    <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Request</p>
+                    <p class="fs-5 text-primary" style="font-weight: bold;">{{ $allowance }} Request</p>
                     <div class="row">
                         <!-- Company Code -->
                         <div class="col-md-6 mb-2">
@@ -30,7 +30,7 @@
 
                         <!-- Location Agency -->
                         <div class="col-md-6 mb-2">
-                            <label class="form-label" for="locationFilter">Location Agency</label>
+                            <label class="form-label" for="locationFilter">Location</label>
                             <select class="form-control select2" name="location_bt_perdiem[]" id="location_bt_perdiem_${formCountPerdiem}" onchange="toggleOtherLocation(this, ${formCountPerdiem})">
                                 <option value="">Select location...</option>
                                 @foreach($locations as $location)
@@ -48,13 +48,13 @@
                     <div class="row">
                         <!-- Start Perdiem -->
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Start Perdiem</label>
+                            <label class="form-label">Start {{ $allowance }}</label>
                             <input type="date" name="start_bt_perdiem[]" class="form-control form-control-sm start-perdiem" placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPerdiem(this)">
                         </div>
 
                         <!-- End Perdiem -->
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">End Perdiem</label>
+                            <label class="form-label">End {{ $allowance }}</label>
                             <input type="date" name="end_bt_perdiem[]" class="form-control form-control-sm end-perdiem" placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPerdiem(this)">
                         </div>
 
@@ -114,9 +114,9 @@
     <div id="form-container-perdiem">
         @foreach ($detailCA['detail_perdiem'] as $perdiem)
             <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
-                <p class="fs-4 text-primary" style="font-weight: bold; ">Perdiem {{ $loop->index + 1 }}</p>
+                <p class="fs-4 text-primary" style="font-weight: bold; ">{{ $allowance }} {{ $loop->index + 1 }}</p>
                 <div id="form-container-bt-perdiem-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3">
-                    <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Request</p>
+                    <p class="fs-5 text-primary" style="font-weight: bold;">{{ $allowance }} Request</p>
                     <div class="row">
                         <!-- Company Code -->
                         <div class="col-md-6 mb-2">
@@ -136,7 +136,7 @@
 
                         <!-- Location Agency -->
                         <div class="col-md-6 mb-2">
-                            <label class="form-label" for="locationFilter">Location Agency</label>
+                            <label class="form-label" for="locationFilter">Location</label>
                             <select class="form-control select2" name="location_bt_perdiem[]" id="location_bt_perdiem_{{ $loop->index + 1 }}" onchange="toggleOtherLocation(this, {{ $loop->index + 1 }})">
                                 <option value="">Select location...</option>
                                 @foreach($locations as $location)
@@ -154,7 +154,7 @@
                     <div class="row">
                         <!-- Start Perdiem -->
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Start Perdiem</label>
+                            <label class="form-label">Start {{ $allowance }}</label>
                             <input type="date" name="start_bt_perdiem[]"
                                 class="form-control form-control-sm start-perdiem"
                                 value="{{ $perdiem['start_date'] }}" placeholder="mm/dd/yyyy"
@@ -163,7 +163,7 @@
 
                         <!-- End Perdiem -->
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">End Perdiem</label>
+                            <label class="form-label">End {{ $allowance }}</label>
                             <input type="date" name="end_bt_perdiem[]"
                                 class="form-control form-control-sm end-perdiem" value="{{ $perdiem['end_date'] }}"
                                 placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPerdiem(this)">
@@ -210,7 +210,7 @@
     </div>
 
     <div class="mt-2">
-        <label class="form-label">Total Perdiem</label>
+        <label class="form-label">Total {{ $allowance }}</label>
         <div class="input-group">
             <div class="input-group-append">
                 <span class="input-group-text">Rp</span>
@@ -225,9 +225,9 @@
     {{-- Form Add --}}
     <div id="form-container-perdiem">
         <div id="form-container-bt-perdiem-1" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
-            <p class="fs-4 text-primary" style="font-weight: bold; ">Perdiem 1</p>
+            <p class="fs-4 text-primary" style="font-weight: bold; ">{{ $allowance }} 1</p>
             <div id="form-container-bt-perdiem-req-1" class="card-body bg-light p-2 mb-3">
-                <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Request</p>
+                <p class="fs-5 text-primary" style="font-weight: bold;">{{ $allowance }} Request</p>
                 <div class="row">
                     <!-- Company Code -->
                     <div class="col-md-6 mb-2">
@@ -244,7 +244,7 @@
 
                 <!-- Location Agency -->
                     <div class="col-md-6 mb-2">
-                        <label class="form-label" for="locationFilter">Location Agency</label>
+                        <label class="form-label" for="locationFilter">Location</label>
                         <select class="form-control select2" name="location_bt_perdiem[]"
                             id="location_bt_perdiem_1"
                             onchange="toggleOtherLocation(this, 1)">
@@ -265,14 +265,14 @@
             <div class="row">
                 <!-- Start Perdiem -->
                 <div class="col-md-4 mb-2">
-                    <label class="form-label">Start Perdiem</label>
+                    <label class="form-label">Start {{ $allowance }}</label>
                     <input type="date" name="start_bt_perdiem[]" class="form-control form-control-sm start-perdiem"
                         placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPerdiem(this)">
                 </div>
 
                     <!-- End Perdiem -->
                     <div class="col-md-4 mb-2">
-                        <label class="form-label">End Perdiem</label>
+                        <label class="form-label">End {{ $allowance }}</label>
                         <input type="date" name="end_bt_perdiem[]" class="form-control form-control-sm end-perdiem" placeholder="mm/dd/yyyy"
                             onchange="calculateTotalDaysPerdiem(this)">
                     </div>
@@ -313,7 +313,7 @@
     </div>
 
     <div class="mt-2">
-        <label class="form-label">Total Perdiem</label>
+        <label class="form-label">Total {{ $allowance }}</label>
         <div class="input-group">
             <div class="input-group-append">
                 <span class="input-group-text">Rp</span>

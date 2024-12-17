@@ -10,9 +10,9 @@
         newForm.className = "card-body p-2 mb-3";
         newForm.style.backgroundColor = "#f8f8f8";
         newForm.innerHTML = `
-            <p class="fs-4 text-primary" style="font-weight: bold;">Perdiem ${formCountPerdiem}</p>
+            <p class="fs-4 text-primary" style="font-weight: bold;">{{$allowance}} ${formCountPerdiem}</p>
             <div id="form-container-bt-perdiem-dec-${formCountPerdiem}" class="card-body bg-light p-2 mb-3">
-                <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
+                <p class="fs-5 text-primary" style="font-weight: bold;">{{$allowance}} Declaration</p>
                 <div class="row">
                     <!-- Company Code -->
                     <div class="col-md-6 mb-2">
@@ -47,13 +47,13 @@
                 <div class="row">
                     <!-- Start Perdiem -->
                     <div class="col-md-4 mb-2">
-                        <label class="form-label">Start Perdiem</label>
+                        <label class="form-label">Start </label>
                         <input type="date" name="start_bt_perdiem[]" class="form-control form-control-sm start-perdiem" placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPerdiem(this)">
                     </div>
 
                     <!-- End Perdiem -->
                     <div class="col-md-4 mb-2">
-                        <label class="form-label">End Perdiem</label>
+                        <label class="form-label">End </label>
                         <input type="date" name="end_bt_perdiem[]" class="form-control form-control-sm end-perdiem" placeholder="mm/dd/yyyy" onchange="calculateTotalDaysPerdiem(this)">
                     </div>
 
@@ -110,11 +110,11 @@
     <div id="form-container-perdiem">
         @foreach ($detailCA['detail_perdiem'] as $index => $perdiem)
             <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="p-2 mb-4 rounded-3" style="background-color: #f8f8f8">
-                <p class="fs-4 text-primary" style="font-weight: bold; ">Perdiem {{ $loop->index + 1 }}</p>
+                <p class="fs-4 text-primary" style="font-weight: bold; ">{{$allowance}} {{ $loop->index + 1 }}</p>
                 <div id="form-container-bt-perdiem-req-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
                     <div class="row">
                         <!-- Company Code -->
-                        <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Request</p>
+                        <p class="fs-5 text-primary" style="font-weight: bold;">{{$allowance}} Request</p>
                         <div class="col-md-6">
                             <table class="table" style="border: none; border-collapse: collapse; margin: 0; padding: 0;">
                                 <tr style="margin: 0; padding: 0;">
@@ -143,12 +143,12 @@
                         <div class="col-md-6">
                             <table class="table" style="border: none; border-collapse: collapse; margin: 0; padding: 0;">
                                 <tr style="margin: 0; padding: 0;">
-                                    <th class="label" style="border: none; width:40%; padding: 2px 0;">Start Perdiem</th>
+                                    <th class="label" style="border: none; width:40%; padding: 2px 0;">Start </th>
                                     <td class="colon" style="border: none; width:1%; padding: 2px 0;">:</td>
                                     <td class="value" style="border: none; padding: 2px 0;">{{ \Carbon\Carbon::parse($perdiem['start_date'])->format('d-M-y') }}</td>
                                 </tr>
                                 <tr style="margin: 0; padding: 0;">
-                                    <th class="label" style="border: none; padding: 2px 0;">End Perdiem</th>
+                                    <th class="label" style="border: none; padding: 2px 0;">End </th>
                                     <td class="colon" style="border: none; padding: 2px 0;">:</td>
                                     <td class="value" style="border: none; padding: 2px 0;">{{ \Carbon\Carbon::parse($perdiem['end_date'])->format('d-M-y') }}</td>
                                 </tr>
@@ -162,7 +162,7 @@
                     </div>
                 </div>
                 <div id="form-container-bt-perdiem-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3" style="border-radius: 1%;">
-                    <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
+                    <p class="fs-5 text-primary" style="font-weight: bold;">{{$allowance}} Declaration</p>
                     <input type="hidden" value="{{$perdiem['location']}}" name="location_bt_perdiem[]">
                     @if (isset($declareCA['detail_perdiem'][$index]))
                         @php
@@ -203,13 +203,13 @@
                         <div class="row">
                             <!-- Start Perdiem -->
                             <div class="col-md-4 mb-2">
-                                <label class="form-label">Start Perdiem</label>
+                                <label class="form-label">Start </label>
                                 <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" value="{{$perdiem_dec['start_date']}}" placeholder="mm/dd/yyyy"
                                     onchange="calculateTotalDaysPerdiem(this)">
                             </div>
                             <!-- End Perdiem -->
                             <div class="col-md-4 mb-2">
-                                <label class="form-label">End Perdiem</label>
+                                <label class="form-label">End </label>
                                 <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" value="{{$perdiem_dec['end_date']}}" placeholder="mm/dd/yyyy"
                                     onchange="calculateTotalDaysPerdiem(this)">
                             </div>
@@ -244,9 +244,9 @@
         @foreach ($declareCA['detail_perdiem'] as $index => $perdiem_dec)
             @if (!isset($detailCA['detail_perdiem'][$index]))
                 <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
-                    <p class="fs-4 text-primary" style="font-weight: bold;">Perdiem {{ $loop->index + 1 }}</p>
+                    <p class="fs-4 text-primary" style="font-weight: bold;">{{$allowance}} {{ $loop->index + 1 }}</p>
                     <div id="form-container-bt-transport-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3">
-                        <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
+                        <p class="fs-5 text-primary" style="font-weight: bold;">{{$allowance}} Declaration</p>
                         <div class="row">
                             <!-- Company Code -->
                             <div class="col-md-6 mb-2">
@@ -282,13 +282,13 @@
                         <div class="row">
                             <!-- Start Perdiem -->
                             <div class="col-md-4 mb-2">
-                                <label class="form-label">Start Perdiem</label>
+                                <label class="form-label">Start </label>
                                 <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" value="{{$perdiem_dec['start_date']}}" placeholder="mm/dd/yyyy"
                                     onchange="calculateTotalDaysPerdiem(this)">
                             </div>
                             <!-- End Perdiem -->
                             <div class="col-md-4 mb-2">
-                                <label class="form-label">End Perdiem</label>
+                                <label class="form-label">End </label>
                                 <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" value="{{$perdiem_dec['end_date']}}" placeholder="mm/dd/yyyy"
                                     onchange="calculateTotalDaysPerdiem(this)">
                             </div>
@@ -328,7 +328,7 @@
     </div>
 
     <div class="mt-2 mb-2">
-        <label class="form-label">Total Perdiem</label>
+        <label class="form-label">Total {{$allowance}}</label>
         <div class="input-group">
             <div class="input-group-append">
                 <span class="input-group-text">Rp</span>
@@ -341,9 +341,9 @@
         @foreach ($declareCA['detail_perdiem'] as $index => $perdiem_dec)
             @if (!isset($detailCA['detail_perdiem'][$index]))
                 <div id="form-container-bt-perdiem-{{ $loop->index + 1 }}" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
-                    <p class="fs-4 text-primary" style="font-weight: bold;">Perdiem {{ $loop->index + 1 }}</p>
+                    <p class="fs-4 text-primary" style="font-weight: bold;">{{$allowance}} {{ $loop->index + 1 }}</p>
                     <div id="form-container-bt-perdiem-dec-{{ $loop->index + 1 }}" class="card-body bg-light p-2 mb-3">
-                        <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
+                        <p class="fs-5 text-primary" style="font-weight: bold;">{{$allowance}} Declaration</p>
                         <div class="row">
                             <!-- Company Code -->
                             <div class="col-md-6 mb-2">
@@ -379,13 +379,13 @@
                         <div class="row">
                             <!-- Start Perdiem -->
                             <div class="col-md-4 mb-2">
-                                <label class="form-label">Start Perdiem</label>
+                                <label class="form-label">Start </label>
                                 <input type="date" name="start_bt_perdiem[]" class="form-control start-perdiem" value="{{$perdiem_dec['start_date']}}" placeholder="mm/dd/yyyy"
                                     onchange="calculateTotalDaysPerdiem(this)">
                             </div>
                             <!-- End Perdiem -->
                             <div class="col-md-4 mb-2">
-                                <label class="form-label">End Perdiem</label>
+                                <label class="form-label">End </label>
                                 <input type="date" name="end_bt_perdiem[]" class="form-control end-perdiem" value="{{$perdiem_dec['end_date']}}" placeholder="mm/dd/yyyy"
                                     onchange="calculateTotalDaysPerdiem(this)">
                             </div>
@@ -425,7 +425,7 @@
     </div>
 
     <div class="mt-2 mb-2">
-        <label class="form-label">Total Perdiem</label>
+        <label class="form-label">Total {{$allowance}}</label>
         <div class="input-group">
             <div class="input-group-append">
                 <span class="input-group-text">Rp</span>
@@ -437,9 +437,9 @@
     {{-- Form Add --}}
     <div id="form-container-perdiem">
         <div id="form-container-bt-perdiem-1" class="card-body p-2 mb-3" style="background-color: #f8f8f8">
-            <p class="fs-4 text-primary" style="font-weight: bold; ">Perdiem 1</p>
+            <p class="fs-4 text-primary" style="font-weight: bold; ">{{$allowance}} 1</p>
             <div id="form-container-bt-perdiem-dec-1" class="card-body bg-light p-2 mb-3">
-                <p class="fs-5 text-primary" style="font-weight: bold;">Perdiem Declaration</p>
+                <p class="fs-5 text-primary" style="font-weight: bold;">{{$allowance}} Declaration</p>
                 <div class="row">
                     <!-- Company Code -->
                     <div class="col-md-6 mb-2">
@@ -474,14 +474,14 @@
                 <div class="row">
                     <!-- Start Perdiem -->
                     <div class="col-md-4 mb-2">
-                        <label class="form-label">Start Perdiem</label>
+                        <label class="form-label">Start </label>
                         <input type="date" name="start_bt_perdiem[]" class="form-control form-control-sm start-perdiem" placeholder="mm/dd/yyyy"
                             onchange="calculateTotalDaysPerdiem(this)">
                     </div>
 
                     <!-- End Perdiem -->
                     <div class="col-md-4 mb-2">
-                        <label class="form-label">End Perdiem</label>
+                        <label class="form-label">End </label>
                         <input type="date" name="end_bt_perdiem[]" class="form-control form-control-sm end-perdiem" placeholder="mm/dd/yyyy"
                             onchange="calculateTotalDaysPerdiem(this)">
                     </div>
@@ -522,7 +522,7 @@
     </div>
 
     <div class="mt-2 mb-2">
-        <label class="form-label">Total Perdiem</label>
+        <label class="form-label">Total {{$allowance}}</label>
         <div class="input-group">
             <div class="input-group-append">
                 <span class="input-group-text">Rp</span>

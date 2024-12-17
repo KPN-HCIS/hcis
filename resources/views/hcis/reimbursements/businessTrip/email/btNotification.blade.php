@@ -34,7 +34,7 @@
             <tbody>
                 <!-- Perdiem Row -->
                 <tr>
-                    <td style="border: 1px solid #ddd; padding: 8px;">Perdiem</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">Allowance</td>
                     <td style="border: 1px solid #ddd; padding: 8px;">{{ $caDetails['total_days_perdiem'] ?? 0 }} Days
                     </td>
                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
