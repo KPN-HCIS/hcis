@@ -28,6 +28,7 @@ use App\Imports\ImportHealthCoverage;
 use App\Exports\MedicalExport;
 use App\Exports\MedicalDetailExport;
 use App\Mail\MedicalNotification;
+use Illuminate\Support\Facades\Http;
 
 
 class MedicalController extends Controller
@@ -192,6 +193,82 @@ class MedicalController extends Controller
                 }
             }
         }
+
+        $year = date('Y');
+        $month = date('m');
+        $ym = $year.'-'.$month;
+
+        $count = Dependents::where('employee_id', $employee_id)
+            ->where('updated_at', 'like', "$ym%")
+            ->count();
+
+        if ($count > 0) {
+            // return response()->json(['message' => 'Data sudah diperbarui bulan ini.']);
+        } else {
+            Log::info('updateDependents method started.');
+
+            $url = 'https://kpncorporation.darwinbox.com/orgmasterapi/getDependentDetails';
+
+            $data = [
+                "api_key" => "ae8304c9205210085def58cc613e25725872b55a6502af24eaac1586ff5dad673ed44092bd63f938433fe84839d56951f8dc110256c2b9732d55af04d01eef41",
+                "employee_number" => [$employee_id]
+            ];
+
+            $headers = [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Basic ZGFyd2luYm94c3R1ZGlvOkRCc3R1ZGlvMTIzNDUh'
+            ];
+
+            try {
+                Log::info('Sending request to API', ['url' => $url, 'data' => $data]);
+
+                $response = Http::withHeaders($headers)->post($url, $data);
+
+                if ($response->successful()) {
+                    $apiResponse = $response->json();
+                    Log::info('Decoded API Response', ['response' => $apiResponse]);
+
+                    if ($apiResponse['status'] == 1 && !empty($apiResponse['data'])) {
+                        $data = $apiResponse['data'];
+
+                        foreach ($data as $dependent) {
+                            Dependents::updateOrInsert(
+                                ['array_id' => $dependent[2]],
+                                [
+                                    'id' => Str::uuid(),
+                                    'employee_id' => $dependent[0], 
+                                    'name' => trim($dependent[3] .''. $dependent[4] . ' ' . $dependent[5]), 
+                                    'array_id' => $dependent[2], 
+                                    'first_name' => $dependent[3], 
+                                    'middle_name' => $dependent[4], 
+                                    'last_name' => $dependent[5], 
+                                    'relation_type' => ($dependent[6] == 'Son') ? 'Child' : $dependent[6],
+                                    'contact_details' => $dependent[7],
+                                    'phone' => $dependent[8], 
+                                    'date_of_birth' => Carbon::createFromFormat('d-m-Y', $dependent[9])->format('Y-m-d'), 
+                                    'nationality' => $dependent[14],
+                                    'updated_on' => Carbon::createFromFormat('d-m-Y', $dependent[15])->format('Y-m-d'), 
+                                    'jobs' => $dependent[16],
+                                    'gender' => explode('/', $dependent[17])[0],
+                                    'no_bpjs' => $dependent[18],
+                                    'education' => $dependent[19],
+                                    'updated_at' => now(),
+                                ]
+                            );
+                        }
+                        // return response()->json(['message' => 'Dependents data updated successfully.']);
+                    } else {
+                        // return response()->json(['error' => 'No data found in API response.'], 404);
+                    }
+                    // return response()->json(['message' => 'Dependents data updated successfully.']);
+                } else {
+                    // return response()->json(['error' => 'Failed API.'], 500);
+                }
+            } catch (\Exception $e) {
+                Log::error('Exception occurred in updateDependents method', ['error' => $e->getMessage()]);
+                // return response()->json(['message' => 'An error occurred: '.$e->getMessage()], 500);
+            }
+        }        
 
         $parentLink = 'Reimbursement';
         $link = 'Medical';
