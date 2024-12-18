@@ -54,4 +54,8 @@ class ca_extend extends Model
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id', 'id');
+    }
 }

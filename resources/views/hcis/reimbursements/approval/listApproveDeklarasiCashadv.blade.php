@@ -604,11 +604,11 @@
                                                                         <td>
                                                                             @php
                                                                                 $typeMap = [
-                                                                                    'food' => 'Food/Beverages/Souvenir',
-                                                                                    'transport' => 'Transport',
                                                                                     'accommodation' => 'Accommodation',
-                                                                                    'gift' => 'Gift',
+                                                                                    'food' => 'Food/Beverages/Souvenir',
                                                                                     'fund' => 'Fund',
+                                                                                    'transport' => 'Transport',
+                                                                                    'gift' => 'Gift',
                                                                                 ];
                                                                             @endphp
                                                                             {{ $typeMap[$detail['type']] ?? $detail['type'] }}
@@ -650,11 +650,11 @@
                                                                         <td>
                                                                             @php
                                                                                 $typeMap = [
-                                                                                    'food' => 'Food/Beverages/Souvenir',
-                                                                                    'transport' => 'Transport',
                                                                                     'accommodation' => 'Accommodation',
-                                                                                    'gift' => 'Gift',
+                                                                                    'food' => 'Food/Beverages/Souvenir',
                                                                                     'fund' => 'Fund',
+                                                                                    'gift' => 'Gift',
+                                                                                    'transport' => 'Transport',
                                                                                 ];
                                                                             @endphp
                                                                             {{ $typeMap[$detail['type']] ?? $detail['type'] }}
@@ -700,11 +700,11 @@
                                                                             @php
                                                                                 $relationTypes = [];
                                                                                 $typeMap = [
+                                                                                    'Accommodation' => 'Accommodation',
                                                                                     'Food' => 'Food/Beverages/Souvenir',
+                                                                                    'Fund' => 'Fund',
                                                                                     'Gift' => 'Gift',
                                                                                     'Transport' => 'Transport',
-                                                                                    'Accommodation' => 'Accommodation',
-                                                                                    'Fund' => 'Fund',
                                                                                 ];
 
                                                                                 // Mengumpulkan semua tipe relasi yang berstatus true
@@ -756,11 +756,11 @@
                                                                             @php
                                                                                 $relationTypes = [];
                                                                                 $typeMap = [
+                                                                                    'Accommodation' => 'Accommodation',
                                                                                     'Food' => 'Food/Beverages/Souvenir',
+                                                                                    'Fund' => 'Fund',
                                                                                     'Gift' => 'Gift',
                                                                                     'Transport' => 'Transport',
-                                                                                    'Accommodation' => 'Accommodation',
-                                                                                    'Fund' => 'Fund',
                                                                                 ];
 
                                                                                 // Mengumpulkan semua tipe relasi yang berstatus true

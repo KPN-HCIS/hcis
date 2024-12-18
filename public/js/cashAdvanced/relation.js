@@ -33,19 +33,10 @@ function addMoreFormRelationDec(event) {
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="transport_e_relation[]"
-                                type="checkbox"
-                                id="transport_e_relation_${formCountRelation}"
-                                value="transport">
+                                name="food_e_relation[]" type="checkbox"
+                                id="food_e_relation_${formCountRelation}" value="food">
                             <label class="form-check-label"
-                                for="transport_e_relation_${formCountRelation}">Transport</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                name="gift_e_relation[]" type="checkbox"
-                                id="gift_e_relation_${formCountRelation}" value="gift">
-                            <label class="form-check-label"
-                                for="gift_e_relation_${formCountRelation}">Gift</label>
+                                for="food_e_relation_${formCountRelation}">Food/Beverages/Souvenir</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
@@ -56,10 +47,19 @@ function addMoreFormRelationDec(event) {
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="food_e_relation[]" type="checkbox"
-                                id="food_e_relation_${formCountRelation}" value="food">
+                                name="gift_e_relation[]" type="checkbox"
+                                id="gift_e_relation_${formCountRelation}" value="gift">
                             <label class="form-check-label"
-                                for="food_e_relation_${formCountRelation}">Food/Beverages/Souvenir</label>
+                                for="gift_e_relation_${formCountRelation}">Gift</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                name="transport_e_relation[]"
+                                type="checkbox"
+                                id="transport_e_relation_${formCountRelation}"
+                                value="transport">
+                            <label class="form-check-label"
+                                for="transport_e_relation_${formCountRelation}">Transport</label>
                         </div>
                     </div>
                     <div class="col-md-4 mb-2">
@@ -132,19 +132,10 @@ function addMoreFormRelationReq(event) {
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="transport_e_relation[${checkboxCount}]"
-                                type="checkbox"
-                                id="transport_e_relation_${formCountRelation}"
-                                value="transport">
+                                name="food_e_relation[${checkboxCount}]" type="checkbox"
+                                id="food_e_relation_${formCountRelation}" value="food">
                             <label class="form-check-label"
-                                for="transport_e_relation_${formCountRelation}">Transport</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                name="gift_e_relation[${checkboxCount}]" type="checkbox"
-                                id="gift_e_relation_${formCountRelation}" value="gift">
-                            <label class="form-check-label"
-                                for="gift_e_relation_${formCountRelation}">Gift</label>
+                                for="food_e_relation_${formCountRelation}">Food/Beverages/Souvenir</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
@@ -155,10 +146,19 @@ function addMoreFormRelationReq(event) {
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="food_e_relation[${checkboxCount}]" type="checkbox"
-                                id="food_e_relation_${formCountRelation}" value="food">
+                                name="gift_e_relation[${checkboxCount}]" type="checkbox"
+                                id="gift_e_relation_${formCountRelation}" value="gift">
                             <label class="form-check-label"
-                                for="food_e_relation_${formCountRelation}">Food/Beverages/Souvenir</label>
+                                for="gift_e_relation_${formCountRelation}">Gift</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                name="transport_e_relation[${checkboxCount}]"
+                                type="checkbox"
+                                id="transport_e_relation_${formCountRelation}"
+                                value="transport">
+                            <label class="form-check-label"
+                                for="transport_e_relation_${formCountRelation}">Transport</label>
                         </div>
                     </div>
                     <div class="col-md-4 mb-2">
