@@ -260,9 +260,10 @@ class ReimburseController extends Controller
             $approval_sett->ReqName = $approval_sett->statusReqEmployee ? $approval_sett->statusReqEmployee->fullname : '';
         }
 
-        $ca_extend = ca_extend::where('approval_status', '<>', 'Rejected')
-            ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
-            ->get();
+        $ca_extend = ca_extend::where('approval_status', '<>', 'Rejected')  
+            ->orderBy('created_at', 'desc') // Mengurutkan terlebih dahulu berdasarkan created_at secara descending  
+            ->orderBy('layer', 'asc') // Kemudian mengurutkan berdasarkan layer  
+            ->get();  
 
         foreach ($ca_extend as $approval_ext) {
             $approval_ext->ReqName = $approval_ext->statusReqEmployee ? $approval_ext->statusReqEmployee->fullname : '';

@@ -862,7 +862,7 @@
         // Approval Extend Modal
         document.addEventListener('DOMContentLoaded', function () {
             var approvalExtModal = document.getElementById('approvalExtModal');
-
+            
             approvalExtModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;
 
@@ -897,8 +897,8 @@
                 document.getElementById('requestExtList').innerHTML = '';
                 document.getElementById('extendList').innerHTML = '';
 
-                var previousLayerApproved = true; // To check previous layer status
-                var previousLayerApprovedExt = true; // To check previous declaration status
+                var previousLayerApproved = true;
+                var previousLayerApprovedExt = true;
 
                 var requestLabel = document.createElement('label');
                 requestLabel.className = 'col-form-label mb-3';
@@ -910,6 +910,7 @@
                 extendLabel.textContent = 'Approval Extend';
                 document.getElementById('extendList').appendChild(extendLabel);
 
+                // First loop for CA approvals
                 @foreach ($ca_approvals as $approval)
                     if (transactionId === "{{ $approval->ca_id }}") {
                         var rowContainer = document.createElement('div');
@@ -934,8 +935,6 @@
                                 dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
                                 buttonCol.appendChild(dateText);
                             }
-                            // dateText.textContent = "{{ $approval->approval_status }} ({{ \Carbon\Carbon::parse($approval->approved_at)->format('d-M-y') }})";
-                            // buttonCol.appendChild(dateText);
                         } else if (previousLayerApproved) {
                             dateText.textContent = 'Something Wrong, This form just for Approve Extend';
                             buttonCol.appendChild(dateText);
@@ -955,73 +954,112 @@
                     }
                 @endforeach
 
+                // Create array to store matching extend items
+                var matchingExtendItems = [];
+                
+                // First collect all matching items
                 @foreach ($ca_extend as $approval_extend)
                     if (transactionId === "{{ $approval_extend->ca_id }}") {
-                        var rowContainerExt = document.createElement('div');
-                        rowContainerExt.className = 'row mb-3 text-center';
-
-                        var nameColExt = document.createElement('div');
-                        nameColExt.className = 'col-md-6';
-                        var nameTextExt = document.createElement('p');
-                        nameTextExt.innerHTML = "{{ $approval_extend->employee_id }} </br> Layer {{ $approval_extend->layer }}";
-                        nameColExt.appendChild(nameTextExt);
-
-                        var buttonColExt = document.createElement('div');
-                        buttonColExt.className = 'col-md-6';
-
-                        var dateTextExt = document.createElement('p');
-
-                        if ("{{ $approval_extend->approval_status }}" === "Approved") {
-                            if ("{{ $approval_extend->by_admin }}" === "T") {
-                                dateTextExt.textContent = "{{ $approval_extend->approval_status }} By Admin ({{ $approval_extend->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval_extend->approved_at)->format('d-M-y') }})";
-                                buttonColExt.appendChild(dateTextExt);
-                            } else {
-                                dateTextExt.textContent = "{{ $approval_extend->approval_status }} ({{ \Carbon\Carbon::parse($approval_extend->approved_at)->format('d-M-y') }})";
-                                buttonColExt.appendChild(dateTextExt);
-                            }
-                        } else if (previousLayerApprovedExt) {
-                            var rejectButtonExt = document.createElement('button');
-                            rejectButtonExt.type = 'button'; // Mengubah type menjadi 'button'
-                            rejectButtonExt.className = 'btn btn-sm btn-primary btn-pill px-1 me-1 mb-2';
-                            rejectButtonExt.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
-                            rejectButtonExt.setAttribute('data-bs-target', '#modalRejectExt'); // Menambahkan atribut data-bs-target
-                            rejectButtonExt.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
-                            rejectButtonExt.setAttribute('data-no-ca', transactionNo); // Menambahkan atribut data-no-ca
-                            rejectButtonExt.setAttribute('data-start-date', transactionStart); // Menambahkan atribut data-start-date
-                            rejectButtonExt.setAttribute('data-end-date', transactionEnd); // Menambahkan atribut data-end-date
-                            rejectButtonExt.setAttribute('data-total-days', transactionTotal); // Menambahkan atribut data-total-days
-                            rejectButtonExt.setAttribute('data-no-idCA', '{{ $approval_extend->id }}');
-                            rejectButtonExt.textContent = 'Reject'; // Mengubah text button
-
-                            var approveButtonExt = document.createElement('button');
-                            approveButtonExt.type = 'submit';
-                            approveButtonExt.name = 'action_ca_approve';
-                            approveButtonExt.value = 'Approve';
-                            approveButtonExt.className = 'btn btn-sm btn-success btn-pill px-1 me-1 mb-2';
-                            approveButtonExt.textContent = 'Approve';
-                            approveButtonExt.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
-
-                            // Tambahkan event listener SweetAlert pada tombol Approve
-                            addSweetAlertExt(approveButtonExt);
-
-                            form.querySelector('#data_no_id').value = "{{ $approval_extend->id }}";
-
-                            buttonColExt.appendChild(approveButtonExt);
-                            buttonColExt.appendChild(rejectButtonExt);
-                        } else {
-                            dateTextExt.textContent = 'Waiting for previous approval';
-                            buttonColExt.appendChild(dateTextExt);
-                        }
-
-                        if ("{{ $approval_extend->approval_status }}" !== "Approved") {
-                            previousLayerApprovedExt = false;
-                        }
-                        rowContainerExt.appendChild(nameColExt);
-                        rowContainerExt.appendChild(buttonColExt);
-
-                        document.getElementById('extendList').appendChild(rowContainerExt);
+                        matchingExtendItems.push({
+                            employee_id: "{{ $approval_extend->ReqName }}",
+                            layer: "{{ $approval_extend->layer }}",
+                            approval_status: "{{ $approval_extend->approval_status }}",
+                            by_admin: "{{ $approval_extend->by_admin }}",
+                            admin_name: "{{ $approval_extend->admin->name ?? 'Admin tidak tersedia.' }}",
+                            approved_at: "{{ $approval_extend->approved_at }}",
+                            id: "{{ $approval_extend->id }}"
+                        });
                     }
                 @endforeach
+
+                // Then render the items with dividers
+                matchingExtendItems.forEach((item, index) => {
+                    var rowContainerExt = document.createElement('div');
+                    rowContainerExt.className = 'row mb-3 text-center';
+
+                    var nameColExt = document.createElement('div');
+                    nameColExt.className = 'col-md-6';
+                    var nameTextExt = document.createElement('p');
+                    nameTextExt.innerHTML = item.employee_id + "</br> Layer " + item.layer;
+                    nameColExt.appendChild(nameTextExt);
+
+                    var buttonColExt = document.createElement('div');
+                    buttonColExt.className = 'col-md-6';
+
+                    var dateTextExt = document.createElement('p');
+
+                    if (item.approval_status === "Approved") {
+                        if (item.by_admin === "T") {
+                            dateTextExt.textContent = item.approval_status + " By Admin (" + item.admin_name + ") (" + moment(item.approved_at).format('DD-MMM-YY') + ")";
+                            buttonColExt.appendChild(dateTextExt);
+                        } else {
+                            dateTextExt.textContent = item.approval_status + " (" + moment(item.approved_at).format('DD-MMM-YY') + ")";
+                            buttonColExt.appendChild(dateTextExt);
+                        }
+                    } else if (previousLayerApprovedExt) {
+                        var rejectButtonExt = document.createElement('button');
+                        rejectButtonExt.type = 'button';
+                        rejectButtonExt.className = 'btn btn-sm btn-primary btn-pill px-1 me-1 mb-2';
+                        rejectButtonExt.setAttribute('data-bs-toggle', 'modal');
+                        rejectButtonExt.setAttribute('data-bs-target', '#modalRejectExt');
+                        rejectButtonExt.setAttribute('data-no-id', transactionId);
+                        rejectButtonExt.setAttribute('data-no-ca', transactionNo);
+                        rejectButtonExt.setAttribute('data-start-date', transactionStart);
+                        rejectButtonExt.setAttribute('data-end-date', transactionEnd);
+                        rejectButtonExt.setAttribute('data-total-days', transactionTotal);
+                        rejectButtonExt.setAttribute('data-no-idCA', item.id);
+                        rejectButtonExt.textContent = 'Reject';
+
+                        var approveButtonExt = document.createElement('button');
+                        approveButtonExt.type = 'submit';
+                        approveButtonExt.name = 'action_ca_approve';
+                        approveButtonExt.value = 'Approve';
+                        approveButtonExt.className = 'btn btn-sm btn-success btn-pill px-1 me-1 mb-2';
+                        approveButtonExt.textContent = 'Approve';
+                        approveButtonExt.setAttribute('data-no-ca', transactionNo);
+
+                        addSweetAlertExt(approveButtonExt);
+
+                        form.querySelector('#data_no_id').value = item.id;
+
+                        buttonColExt.appendChild(approveButtonExt);
+                        buttonColExt.appendChild(rejectButtonExt);
+                    } else {
+                        dateTextExt.textContent = 'Waiting for previous approval';
+                        buttonColExt.appendChild(dateTextExt);
+                    }
+
+                    if (item.approval_status !== "Approved") {
+                        previousLayerApprovedExt = false;
+                    }
+
+                    rowContainerExt.appendChild(nameColExt);
+                    rowContainerExt.appendChild(buttonColExt);
+
+                    document.getElementById('extendList').appendChild(rowContainerExt);
+
+                    // Add divider after every 4 items, but only if we have more than 4 items total
+                    // and we're not at the last item
+                    if (matchingExtendItems.length > 4 && 
+                        (index + 1) % 4 === 0 && 
+                        (index + 1) !== matchingExtendItems.length) {
+                        var dividerContainer = document.createElement('div');
+                        dividerContainer.className = 'd-flex align-items-center my-3'; // Container fleksibel untuk divider
+                        var lineLeft = document.createElement('hr');
+                        lineLeft.className = 'flex-grow-1 border border-primary opacity-50 m-0'; // Garis kiri
+                        var text = document.createElement('span');
+                        text.className = 'mx-2 text-primary'; // Teks di tengah
+                        text.textContent = 'Other Aproval Request';
+                        var lineRight = document.createElement('hr');
+                        lineRight.className = 'flex-grow-1 border border-primary opacity-50 m-0'; // Garis kanan
+                        // Susun elemen dalam container
+                        dividerContainer.appendChild(lineLeft);
+                        dividerContainer.appendChild(text);
+                        dividerContainer.appendChild(lineRight);
+
+                        document.getElementById('extendList').appendChild(dividerContainer);
+                    }
+                });
             });
         });
 
@@ -1189,73 +1227,175 @@
                     }
                 @endforeach
 
+                var matchingDeclarationExtendItems = [];
+
                 @foreach ($ca_extend as $approval_extend)
                     if (transactionId === "{{ $approval_extend->ca_id }}") {
-                        var rowContainerExt = document.createElement('div');
-                        rowContainerExt.className = 'row mb-3 text-center';
+                        matchingDeclarationExtendItems.push({
+                            employee_id: "{{ $approval_extend->ReqName }}",
+                            layer: "{{ $approval_extend->layer }}",
+                            approval_status: "{{ $approval_extend->approval_status }}",
+                            by_admin: "{{ $approval_extend->by_admin }}",
+                            admin_name: "{{ $approval_extend->admin->name ?? 'Admin tidak tersedia.' }}",
+                            approved_at: "{{ $approval_extend->approved_at }}",
+                            id: "{{ $approval_extend->id }}"
+                        });
+                    }
+                    // if (transactionId === "{{ $approval_extend->ca_id }}") {
+                    //     var rowContainerExt = document.createElement('div');
+                    //     rowContainerExt.className = 'row mb-3 text-center';
 
-                        var nameColExt = document.createElement('div');
-                        nameColExt.className = 'col-md-6';
-                        var nameTextExt = document.createElement('p');
-                        nameTextExt.innerHTML = "{{ $approval_extend->employee_id }} </br> Layer {{ $approval_extend->layer }}";
-                        nameColExt.appendChild(nameTextExt);
+                    //     var nameColExt = document.createElement('div');
+                    //     nameColExt.className = 'col-md-6';
+                    //     var nameTextExt = document.createElement('p');
+                    //     nameTextExt.innerHTML = "{{ $approval_extend->employee_id }} </br> Layer {{ $approval_extend->layer }}";
+                    //     nameColExt.appendChild(nameTextExt);
 
-                        var buttonColExt = document.createElement('div');
-                        buttonColExt.className = 'col-md-6';
+                    //     var buttonColExt = document.createElement('div');
+                    //     buttonColExt.className = 'col-md-6';
 
-                        var dateTextExt = document.createElement('p');
+                    //     var dateTextExt = document.createElement('p');
 
-                        if ("{{ $approval_extend->approval_status }}" === "Approved") {
-                            if ("{{ $approval_extend->by_admin }}" === "T") {
-                                dateTextExt.textContent = "{{ $approval_extend->approval_status }} By Admin ({{ $approval_extend->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval_extend->approved_at)->format('d-M-y') }})";
-                                buttonColExt.appendChild(dateTextExt);
-                            } else {
-                                dateTextExt.textContent = "{{ $approval_extend->approval_status }} ({{ \Carbon\Carbon::parse($approval_extend->approved_at)->format('d-M-y') }})";
-                                buttonColExt.appendChild(dateTextExt);
-                            }
-                        } else if (previousLayerApprovedExt) {
-                            var rejectButtonExt = document.createElement('button');
-                            rejectButtonExt.type = 'button'; // Mengubah type menjadi 'button'
-                            rejectButtonExt.className = 'btn btn-sm btn-primary btn-pill px-1 me-1 mb-2';
-                            rejectButtonExt.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
-                            rejectButtonExt.setAttribute('data-bs-target', '#modalRejectExt'); // Menambahkan atribut data-bs-target
-                            rejectButtonExt.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
-                            rejectButtonExt.setAttribute('data-no-ca', transactionNo); // Menambahkan atribut data-no-ca
-                            rejectButtonExt.setAttribute('data-start-date', transactionStart); // Menambahkan atribut data-start-date
-                            rejectButtonExt.setAttribute('data-end-date', transactionEnd); // Menambahkan atribut data-end-date
-                            rejectButtonExt.setAttribute('data-total-days', transactionTotal); // Menambahkan atribut data-total-days
-                            rejectButtonExt.setAttribute('data-no-idCA', '{{ $approval_extend->id }}');
-                            rejectButtonExt.textContent = 'Reject'; // Mengubah text button
+                    //     if ("{{ $approval_extend->approval_status }}" === "Approved") {
+                    //         if ("{{ $approval_extend->by_admin }}" === "T") {
+                    //             dateTextExt.textContent = "{{ $approval_extend->approval_status }} By Admin ({{ $approval_extend->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval_extend->approved_at)->format('d-M-y') }})";
+                    //             buttonColExt.appendChild(dateTextExt);
+                    //         } else {
+                    //             dateTextExt.textContent = "{{ $approval_extend->approval_status }} ({{ \Carbon\Carbon::parse($approval_extend->approved_at)->format('d-M-y') }})";
+                    //             buttonColExt.appendChild(dateTextExt);
+                    //         }
+                    //     } else if (previousLayerApprovedExt) {
+                    //         var rejectButtonExt = document.createElement('button');
+                    //         rejectButtonExt.type = 'button'; // Mengubah type menjadi 'button'
+                    //         rejectButtonExt.className = 'btn btn-sm btn-primary btn-pill px-1 me-1 mb-2';
+                    //         rejectButtonExt.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
+                    //         rejectButtonExt.setAttribute('data-bs-target', '#modalRejectExt'); // Menambahkan atribut data-bs-target
+                    //         rejectButtonExt.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
+                    //         rejectButtonExt.setAttribute('data-no-ca', transactionNo); // Menambahkan atribut data-no-ca
+                    //         rejectButtonExt.setAttribute('data-start-date', transactionStart); // Menambahkan atribut data-start-date
+                    //         rejectButtonExt.setAttribute('data-end-date', transactionEnd); // Menambahkan atribut data-end-date
+                    //         rejectButtonExt.setAttribute('data-total-days', transactionTotal); // Menambahkan atribut data-total-days
+                    //         rejectButtonExt.setAttribute('data-no-idCA', '{{ $approval_extend->id }}');
+                    //         rejectButtonExt.textContent = 'Reject'; // Mengubah text button
 
-                            var approveButtonExt = document.createElement('button');
-                            approveButtonExt.type = 'submit';
-                            approveButtonExt.name = 'action_ca_approve';
-                            approveButtonExt.value = 'Approve';
-                            approveButtonExt.className = 'btn btn-sm btn-success btn-pill px-1 me-1 mb-2';
-                            approveButtonExt.textContent = 'Approve';
-                            approveButtonExt.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
+                    //         var approveButtonExt = document.createElement('button');
+                    //         approveButtonExt.type = 'submit';
+                    //         approveButtonExt.name = 'action_ca_approve';
+                    //         approveButtonExt.value = 'Approve';
+                    //         approveButtonExt.className = 'btn btn-sm btn-success btn-pill px-1 me-1 mb-2';
+                    //         approveButtonExt.textContent = 'Approve';
+                    //         approveButtonExt.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
 
-                            // Tambahkan event listener SweetAlert pada tombol Approve
-                            addSweetAlertExt(approveButtonExt);
+                    //         // Tambahkan event listener SweetAlert pada tombol Approve
+                    //         addSweetAlertExt(approveButtonExt);
 
-                            form.querySelector('#data_no_id').value = "{{ $approval_extend->id }}";
+                    //         form.querySelector('#data_no_id').value = "{{ $approval_extend->id }}";
 
-                            buttonColExt.appendChild(approveButtonExt);
-                            buttonColExt.appendChild(rejectButtonExt);
+                    //         buttonColExt.appendChild(approveButtonExt);
+                    //         buttonColExt.appendChild(rejectButtonExt);
+                    //     } else {
+                    //         dateTextExt.textContent = 'Waiting for previous approval';
+                    //         buttonColExt.appendChild(dateTextExt);
+                    //     }
+
+                    //     if ("{{ $approval_extend->approval_status }}" !== "Approved") {
+                    //         previousLayerApprovedExt = false;
+                    //     }
+                    //     rowContainerExt.appendChild(nameColExt);
+                    //     rowContainerExt.appendChild(buttonColExt);
+
+                    //     document.getElementById('extendExtDecList').appendChild(rowContainerExt);
+                    // }
+                @endforeach
+
+                matchingDeclarationExtendItems.forEach((item, index) => {
+                    var rowContainerExt = document.createElement('div');
+                    rowContainerExt.className = 'row mb-3 text-center';
+
+                    var nameColExt = document.createElement('div');
+                    nameColExt.className = 'col-md-6';
+                    var nameTextExt = document.createElement('p');
+                    nameTextExt.innerHTML = item.employee_id + "</br> Layer " + item.layer;
+                    nameColExt.appendChild(nameTextExt);
+
+                    var buttonColExt = document.createElement('div');
+                    buttonColExt.className = 'col-md-6';
+
+                    var dateTextExt = document.createElement('p');
+
+                    if (item.approval_status === "Approved") {
+                        if (item.by_admin === "T") {
+                            dateTextExt.textContent = item.approval_status + " By Admin (" + item.admin_name + ") (" + moment(item.approved_at).format('DD-MMM-YY') + ")";
+                            buttonColExt.appendChild(dateTextExt);
                         } else {
-                            dateTextExt.textContent = 'Waiting for previous approval';
+                            dateTextExt.textContent = item.approval_status + " (" + moment(item.approved_at).format('DD-MMM-YY') + ")";
                             buttonColExt.appendChild(dateTextExt);
                         }
+                    } else if (previousLayerApprovedExt) {
+                        var rejectButtonExt = document.createElement('button');
+                        rejectButtonExt.type = 'button';
+                        rejectButtonExt.className = 'btn btn-sm btn-primary btn-pill px-1 me-1 mb-2';
+                        rejectButtonExt.setAttribute('data-bs-toggle', 'modal');
+                        rejectButtonExt.setAttribute('data-bs-target', '#modalRejectExt');
+                        rejectButtonExt.setAttribute('data-no-id', transactionId);
+                        rejectButtonExt.setAttribute('data-no-ca', transactionNo);
+                        rejectButtonExt.setAttribute('data-start-date', transactionStart);
+                        rejectButtonExt.setAttribute('data-end-date', transactionEnd);
+                        rejectButtonExt.setAttribute('data-total-days', transactionTotal);
+                        rejectButtonExt.setAttribute('data-no-idCA', item.id);
+                        rejectButtonExt.textContent = 'Reject';
 
-                        if ("{{ $approval_extend->approval_status }}" !== "Approved") {
-                            previousLayerApprovedExt = false;
-                        }
-                        rowContainerExt.appendChild(nameColExt);
-                        rowContainerExt.appendChild(buttonColExt);
+                        var approveButtonExt = document.createElement('button');
+                        approveButtonExt.type = 'submit';
+                        approveButtonExt.name = 'action_ca_approve';
+                        approveButtonExt.value = 'Approve';
+                        approveButtonExt.className = 'btn btn-sm btn-success btn-pill px-1 me-1 mb-2';
+                        approveButtonExt.textContent = 'Approve';
+                        approveButtonExt.setAttribute('data-no-ca', transactionNo);
 
-                        document.getElementById('extendExtDecList').appendChild(rowContainerExt);
+                        addSweetAlertExt(approveButtonExt);
+
+                        form.querySelector('#data_no_id').value = item.id;
+
+                        buttonColExt.appendChild(approveButtonExt);
+                        buttonColExt.appendChild(rejectButtonExt);
+                    } else {
+                        dateTextExt.textContent = 'Waiting for previous approval';
+                        buttonColExt.appendChild(dateTextExt);
                     }
-                @endforeach
+
+                    if (item.approval_status !== "Approved") {
+                        previousLayerApprovedExt = false;
+                    }
+
+                    rowContainerExt.appendChild(nameColExt);
+                    rowContainerExt.appendChild(buttonColExt);
+
+                    document.getElementById('extendExtDecList').appendChild(rowContainerExt);
+
+                    // Add divider after every 4 items, but only if we have more than 4 items total
+                    // and we're not at the last item
+                    if (matchingDeclarationExtendItems.length > 4 && 
+                        (index + 1) % 4 === 0 && 
+                        (index + 1) !== matchingDeclarationExtendItems.length) {
+                        var dividerContainer = document.createElement('div');
+                        dividerContainer.className = 'd-flex align-items-center my-3'; // Container fleksibel untuk divider
+                        var lineLeft = document.createElement('hr');
+                        lineLeft.className = 'flex-grow-1 border border-primary opacity-50 m-0'; // Garis kiri
+                        var text = document.createElement('span');
+                        text.className = 'mx-2 text-primary'; // Teks di tengah
+                        text.textContent = 'Other Aproval Request';
+                        var lineRight = document.createElement('hr');
+                        lineRight.className = 'flex-grow-1 border border-primary opacity-50 m-0'; // Garis kanan
+                        // Susun elemen dalam container
+                        dividerContainer.appendChild(lineLeft);
+                        dividerContainer.appendChild(text);
+                        dividerContainer.appendChild(lineRight);
+
+                        document.getElementById('extendExtDecList').appendChild(dividerContainer);
+                    }
+
+                });
             });
         });
 

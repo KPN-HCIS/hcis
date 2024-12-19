@@ -49,7 +49,10 @@ class ca_extend extends Model
     }
 
 
-
+    public function statusReqEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
