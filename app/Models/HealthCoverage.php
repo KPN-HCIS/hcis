@@ -35,6 +35,7 @@ class HealthCoverage extends Model
         'approved_by',
         'approved_at',
         'reject_info',
+        'admin_notes',
         'rejected_by',
         'rejected_at',
         'created_by',
