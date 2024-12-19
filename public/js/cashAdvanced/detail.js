@@ -32,11 +32,11 @@ function addMoreFormDetailDec(event) {
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" id="enter_type_e_detail_${formCountDetail}" class="form-select">
                             <option value="">-</option>
-                            <option value="food">Food/Beverages/Souvenir</option>
-                            <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
-                            <option value="gift">Gift</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
                             <option value="fund">Fund</option>
+                            <option value="gift">Gift</option>
+                            <option value="transport">Transport</option>
                         </select>
                     </div>
                     <div class="col-md-6 mb-2">
@@ -108,11 +108,11 @@ function addMoreFormDetailReq(event) {
                         <label class="form-label">Entertainment Type</label>
                         <select name="enter_type_e_detail[]" id="enter_type_e_detail_${formCountDetail}" class="form-select">
                             <option value="">-</option>
-                            <option value="food">Food/Beverages/Souvenir</option>
-                            <option value="transport">Transport</option>
                             <option value="accommodation">Accommodation</option>
-                            <option value="gift">Gift</option>
+                            <option value="food">Food/Beverages/Souvenir</option>
                             <option value="fund">Fund</option>
+                            <option value="gift">Gift</option>
+                            <option value="transport">Transport</option>
                         </select>
                     </div>
                     <div class="col-md-6 mb-2">

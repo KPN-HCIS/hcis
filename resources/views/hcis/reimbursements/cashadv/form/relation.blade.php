@@ -26,20 +26,11 @@
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input"
-                                        name="transport_e_relation[{{ $loop->index }}]"
-                                        type="checkbox"
-                                        id="transport_e_relation_{{ $loop->index + 1 }}"
-                                        value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
+                                        name="food_e_relation[{{ $loop->index }}]" type="checkbox"
+                                        id="food_e_relation_{{ $loop->index + 1 }}"
+                                        value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
-                                        for="transport_e_relation_{{ $loop->index + 1 }}">Transport</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                        name="gift_e_relation[{{ $loop->index }}]" type="checkbox"
-                                        id="gift_e_relation_{{ $loop->index + 1 }}"
-                                        value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
-                                    <label class="form-check-label"
-                                        for="gift_e_relation_{{ $loop->index + 1 }}">Gift</label>
+                                        for="food_e_relation_{{ $loop->index + 1 }}">Food/Beverages/Souvenir</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input"
@@ -51,11 +42,20 @@
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input"
-                                        name="food_e_relation[{{ $loop->index }}]" type="checkbox"
-                                        id="food_e_relation_{{ $loop->index + 1 }}"
-                                        value="food" {{ isset($relation['relation_type']['Food']) && $relation['relation_type']['Food'] ? 'checked' : '' }}>
+                                        name="gift_e_relation[{{ $loop->index }}]" type="checkbox"
+                                        id="gift_e_relation_{{ $loop->index + 1 }}"
+                                        value="gift" {{ isset($relation['relation_type']['Gift']) && $relation['relation_type']['Gift'] ? 'checked' : '' }}>
                                     <label class="form-check-label"
-                                        for="food_e_relation_{{ $loop->index + 1 }}">Food/Beverages/Souvenir</label>
+                                        for="gift_e_relation_{{ $loop->index + 1 }}">Gift</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                        name="transport_e_relation[{{ $loop->index }}]"
+                                        type="checkbox"
+                                        id="transport_e_relation_{{ $loop->index + 1 }}"
+                                        value="transport" {{ isset($relation['relation_type']['Transport']) && $relation['relation_type']['Transport'] ? 'checked' : '' }}>
+                                    <label class="form-check-label"
+                                        for="transport_e_relation_{{ $loop->index + 1 }}">Transport</label>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-2">
@@ -134,19 +134,10 @@
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="transport_e_relation[0]"
-                                type="checkbox"
-                                id="transport_e_relation_0"
-                                value="transport">
+                                name="food_e_relation[0]" type="checkbox"
+                                id="food_e_relation_0" value="food">
                             <label class="form-check-label"
-                                for="transport_e_relation_0">Transport</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                name="gift_e_relation[0]" type="checkbox"
-                                id="gift_e_relation_0" value="gift">
-                            <label class="form-check-label"
-                                for="gift_e_relation_0">Gift</label>
+                                for="food_e_relation_0">Food/Beverages/Souvenir</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
@@ -157,10 +148,19 @@
                         </div>
                         <div class="form-check">
                             <input class="form-check-input"
-                                name="food_e_relation[0]" type="checkbox"
-                                id="food_e_relation_0" value="food">
+                                name="gift_e_relation[0]" type="checkbox"
+                                id="gift_e_relation_0" value="gift">
                             <label class="form-check-label"
-                                for="food_e_relation_0">Food/Beverages/Souvenir</label>
+                                for="gift_e_relation_0">Gift</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                name="transport_e_relation[0]"
+                                type="checkbox"
+                                id="transport_e_relation_0"
+                                value="transport">
+                            <label class="form-check-label"
+                                for="transport_e_relation_0">Transport</label>
                         </div>
                     </div>
                     <div class="col-md-4 mb-2">

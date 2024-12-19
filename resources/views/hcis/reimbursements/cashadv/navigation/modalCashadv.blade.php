@@ -317,6 +317,108 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="approvalExtModal" tabindex="-1" aria-labelledby="approvalExtModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approvalExtModalLabel">Approval Cash Advanced Extend Update - <label id="approvalExt_no_ca"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="approveFormExt" action="{{ route('approvalExtAdmin.cashadvancedExtApprovedAdmin', ':id') }}" method="POST">@csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="no_id" id="no_id">
+                        <input type="hidden" name="ca_type" id="ca_type">
+                        <input type="hidden" name="totalca" id="totalca">
+                        <input type="hidden" name="no_ca" id="no_ca">
+                        <input type="hidden" name="bisnis_numb" id="bisnis_numb">
+                        <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
+                        <input type="hidden" name="approval_status" id="approval_status">
+                        <input type="hidden" name="data_no_id" id="data_no_id"> <!-- Hidden field to hold data_no_id -->
+                        <input type="hidden" name="ext_end_date" id="ext_end_date"> <!-- Hidden field to hold data_no_id -->
+                        <input type="hidden" name="ext_totaldays" id="ext_totaldays"> <!-- Hidden field to hold data_no_id -->
+                        <input type="hidden" name="ext_reason" id="ext_reason"> <!-- Hidden field to hold data_no_id -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3 text-right border-end border-danger-subtle" id="requestExtList">
+                                <label for="recipient-name" class="col-form-label mb-3">Approval Request : </label>
+                            </div>
+                            <div class="col-md-6 mb-3 text-right" id="extendList">
+                                <label for="recipient-name" class="col-form-label mb-3">Approval Extend : </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRejectExt" tabindex="-1" aria-labelledby="modalRejectExtLabel" aria-hidden="true">
+        <div class="modal-dialog" style="wid">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title text-center fs-5" id="modalRejectExtLabel">Rejection Reason Extend - <label id="rejectExt_no_ca_2"></label></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form_rejectExt" method="POST" action="{{ route('approvalExtAdmin.cashadvancedExtApprovedAdmin',':id') }}">@csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <label class="form-label" for="reason">Reasons for Refusal</label>
+                                <textarea name="reject_info" id="reject_info" class="form-control" required></textarea>
+                            </div>
+                            <input type="hidden" name="data_no_id" id="data_no_id">
+                            <input type="hidden" name="rejectExt_no_id" id="rejectExt_no_id">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="action_ca_reject" value="Reject" class=" btn btn-primary btn-pill px-4 me-2">Reject</button>
+                        {{-- <button type="submit" name="action_ca_submit" value="Pending" class="btn btn-primary" id="rejectButton">Extending</button> --}}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="approvalDecExtModal" tabindex="-1" aria-labelledby="approvalDecExtModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approvalDecExtModalLabel">Approval Cash Advanced Declaration Update - <label id="approvalExtDec_no_ca"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="approveFormDec" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="no_id" id="no_id">
+                        <input type="hidden" name="ca_type" id="ca_type">
+                        <input type="hidden" name="totalca" id="totalca">
+                        <input type="hidden" name="no_ca" id="no_ca">
+                        <input type="hidden" name="bisnis_numb" id="bisnis_numb">
+                        <input type="hidden" name="repeat_days_selected" id="repeatDaysSelected">
+                        <input type="hidden" name="approval_status" id="approval_status">
+                        <input type="hidden" name="data_no_id" id="data_no_id"> <!-- Hidden field to hold data_no_id -->
+                        <div class="row">
+                            <div class="col-md-4 mb-3 text-right border-end border-danger-subtle" id="requestExtDecList">
+                                <label for="recipient-name" class="col-form-label mb-3">Approval Request : </label>
+                            </div>
+                            <div class="col-md-4 mb-3 text-right border-end border-danger-subtle" id="declarationExtDecList">
+                                <label for="recipient-name" class="col-form-label mb-3">Approval Declaration : </label>
+                            </div> 
+                            <div class="col-md-3 mb-3 text-right" id="extendExtDecList">
+                                <label for="recipient-name" class="col-form-label mb-3">Approval Declaration : </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endif
 
 {{-- Success --}}

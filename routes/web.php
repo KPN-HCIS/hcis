@@ -185,6 +185,7 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/cashadvanced/approval/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionApprovalAdmin'])->name('approvalAdmin.cashadvancedApprovedAdmin');
         Route::post('/cashadvanced/approvalDec/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionDeklarasiAdmin'])->name('approvalDecAdmin.cashadvancedDecApprovedAdmin');
+        Route::post('/cashadvanced/approvalExt/submit/{id}', [ApprovalReimburseController::class, 'cashadvancedActionExtendAdmin'])->name('approvalExtAdmin.cashadvancedExtApprovedAdmin');
     });
 
     // Route::get('/cashadvanced/deklarasi/form/{id}', [ReimburseController::class, 'cashadvancedDeklarasi'])->name('cashadvanced.deklarasi');

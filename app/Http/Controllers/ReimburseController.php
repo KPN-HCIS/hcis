@@ -105,7 +105,7 @@ class ReimburseController extends Controller
     function reimbursements()
     {
         $userId = Auth::id();
-        if($userId=='23886' || $userId=='23892' || $userId=='23893' ||  $userId=='25678' || $userId=='25725' || $userId=='25734'){
+        if($userId=='23886' || $userId=='23892' || $userId=='23893' ||  $userId=='25678' || $userId=='25725' || $userId=='25734' || $userId='12345'){
             $access_ca = "Y";
         }else{
             $access_ca = "N";
@@ -242,7 +242,7 @@ class ReimburseController extends Controller
         $userId = Auth::id();
         $parentLink = 'Reimbursement';
         $link = 'Report CA';
-        $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee'])->orderBy('created_at', 'desc');
+        $query = CATransaction::with(['employee', 'statusReqEmployee', 'statusSettEmployee', 'statusExtendEmployee'])->orderBy('created_at', 'desc');
         $ca_approvals = ca_approval::with(['employee', 'statusReqEmployee'])
             ->where('approval_status', '<>', 'Rejected')
             ->orderBy('layer', 'asc') // Mengurutkan berdasarkan layer
@@ -258,6 +258,15 @@ class ReimburseController extends Controller
 
         foreach ($ca_sett as $approval_sett) {
             $approval_sett->ReqName = $approval_sett->statusReqEmployee ? $approval_sett->statusReqEmployee->fullname : '';
+        }
+
+        $ca_extend = ca_extend::where('approval_status', '<>', 'Rejected')  
+            ->orderBy('created_at', 'desc') // Mengurutkan terlebih dahulu berdasarkan created_at secara descending  
+            ->orderBy('layer', 'asc') // Kemudian mengurutkan berdasarkan layer  
+            ->get();  
+
+        foreach ($ca_extend as $approval_ext) {
+            $approval_ext->ReqName = $approval_ext->statusReqEmployee ? $approval_ext->statusReqEmployee->fullname : '';
         }
 
         $startDate = date('Y-m-d');
@@ -317,6 +326,7 @@ class ReimburseController extends Controller
         foreach ($ca_transactions as $transaction) {
             $transaction->ReqName = $transaction->statusReqEmployee ? $transaction->statusReqEmployee->fullname : '';
             $transaction->settName = $transaction->statusSettEmployee ? $transaction->statusSettEmployee->fullname : '';
+            $transaction->extName = $transaction->statusExtendEmployee ? $transaction->statusExtendEmployee->fullname : '';
         }
 
         // $pendingCACount = CATransaction::where('user_id', $userId)->where('approval_status', 'Pending')->count();
@@ -336,6 +346,7 @@ class ReimburseController extends Controller
             'endDate' => $endDate,
             'ca_approvals' => $ca_approvals,
             'ca_sett' => $ca_sett,
+            'ca_extend' => $ca_extend,
         ]);
     }
     public function cashadvancedAdminUpdate(Request $request, $id)
