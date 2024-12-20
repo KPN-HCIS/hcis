@@ -2047,28 +2047,33 @@ class ApprovalReimburseController extends Controller
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
             if ($ticket->jns_dinas_tkt == 'Cuti') {
+                // Hitung total pengurangan kuota berdasarkan semua tiket
+                $totalDecrement = 0;
+        
                 foreach ($ticketNpTkt as $name) {
-                    // Get the type_tkt for each ticket based on name
+                    // Dapatkan type_tkt untuk setiap tiket berdasarkan nama
                     $ticketType = Tiket::where('user_id', $ticket->user_id)
                         ->where('no_tkt', $ticket->no_tkt)
                         ->where('tkt_only', '=', 'Y')
-                        ->where('np_tkt', $name)  // Ensure we get the ticket type for the current name
+                        ->where('np_tkt', $name) // Pastikan mengambil type_tkt untuk nama saat ini
                         ->value('type_tkt');
-
-                    // Default to 'One Way' if no type_tkt is found
+        
+                    // Default ke 'One Way' jika type_tkt tidak ditemukan
                     if (!$ticketType) {
                         $ticketType = 'One Way';
                     }
-
-                    // Set decrement value based on the ticket type
+        
+                    // Tentukan nilai pengurangan berdasarkan type_tkt
                     $decrementValue = ($ticketType == 'One Way') ? 1 : 2;
-
-                    // Decrement quota for this specific name and type
-                    HomeTrip::where('employee_id', $ticketEmployeeId)
-                        ->where('name', $name)
-                        ->where('period', $currentYear)
-                        ->decrement('quota', $decrementValue);
+        
+                    // Tambahkan nilai pengurangan ke total
+                    $totalDecrement += $decrementValue;
                 }
+        
+                // Kurangi kuota total di HomeTrip berdasarkan employee_id
+                HomeTrip::where('employee_id', $ticketEmployeeId)
+                    ->where('period', $currentYear)
+                    ->decrement('quota', $totalDecrement);
             }
         }
 

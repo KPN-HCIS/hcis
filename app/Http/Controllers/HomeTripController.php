@@ -48,23 +48,6 @@ class HomeTripController extends Controller
         // Group data by period
         $plafonds = $plafonds->groupBy('period');
 
-        // $query = Tiket::where('user_id', $user_id)->orderBy('created_at', 'desc');
-
-        // Get the filter value, default to 'request' if not provided
-        // $filter = $request->input('filter', 'request');
-
-        // // Apply filter to the query
-        // if ($filter === 'request') {
-        //     $statusFilter = ['Pending L1', 'Pending L2', 'Approved', 'Draft'];
-        // } elseif ($filter === 'rejected') {
-        //     $statusFilter = ['Rejected'];
-        // }
-
-        // $ticketsFilter = $query->get();
-
-        // // Apply status filter to the query
-        // $query->whereIn('approval_status', $statusFilter);
-
         $latestTicketIds = Tiket::selectRaw('MAX(id) as id')
             ->where('user_id', $user_id)
             ->groupBy('no_tkt')
@@ -152,12 +135,16 @@ class HomeTripController extends Controller
             // If eligible year is current year or past year and no record exists, create records  
             if ($eligibleYear <= $currentYear) {  
                 // Get all dependents for this employee  
-                $dependents = Dependents::where('employee_id', $employee->employee_id)->get();  
+                $dependents = Dependents::where('employee_id', $employee->employee_id)->get();
+                $totalFamilyMembers = $dependents->count() + 1; // 1 untuk karyawan itu sendiri
+            
+                // Hitung kuota berdasarkan jumlah anggota keluarga
+                $quota = $totalFamilyMembers * 2;
         
                 // First create record for the employee  
-                $existingHomeTrip = HomeTrip::where('employee_id', $employee->employee_id)  
-                    ->where('period', $currentYear)  
-                    ->where('relation_type', 'Employee')  
+                $existingHomeTrip = HomeTrip::where('employee_id', $employee->employee_id)
+                    ->where('period', $currentYear)
+                    ->where('relation_type', 'Employee')
                     ->first();  
         
                 if (!$existingHomeTrip) {  
@@ -166,35 +153,15 @@ class HomeTripController extends Controller
                     $homeTrip->employee_id = $employee->employee_id;  
                     $homeTrip->name = $employee->fullname;  
                     $homeTrip->relation_type = 'Employee';  
-                    $homeTrip->quota = '2';  
+                    $homeTrip->quota = $quota; // Gunakan kuota yang dihitung
                     $homeTrip->period = $currentYear;  
                     $homeTrip->created_by = $userId;  
                     $homeTrip->save();  
                 }   
         
-                // Then create records for each dependent  
-                foreach ($dependents as $dependent) {  
-                    $existingDependentTrip = HomeTrip::where('employee_id', $employee->employee_id)  
-                        ->where('period', $currentYear)  
-                        ->where('name', $dependent->name)  
-                        ->where('relation_type', $dependent->relation_type)  
-                        ->first();  
-        
-                    if (!$existingDependentTrip) {  
-                        $dependentTrip = new HomeTrip();  
-                        $dependentTrip->id = Str::uuid();  
-                        $dependentTrip->employee_id = $employee->employee_id;  
-                        $dependentTrip->name = $dependent->name;  
-                        $dependentTrip->relation_type = $dependent->relation_type;  
-                        $dependentTrip->quota = '2';  
-                        $dependentTrip->period = $currentYear;  
-                        $dependentTrip->created_by = $userId;  
-                        $dependentTrip->save();  
-                    }  
-                    if ($existingDependentTrip == NULL) {
-                        session()->flash('refresh', true);
-                    }
-                }  
+                if ($existingHomeTrip == NULL) {
+                    session()->flash('refresh', true);
+                } 
             }  
         }          
         // Auto Input ht_plan End
@@ -237,10 +204,8 @@ class HomeTripController extends Controller
         $locations = Location::orderBy('area')->get();
         $employees = Employee::orderBy('ktp')->get();
 
-        $familyMembers = HomeTrip::where('employee_id', $employee_id)
-            ->where('period', $currentYear)
+        $familyMembers = Dependents::where('employee_id', $employee_id)
             ->where('relation_type', '!=', 'employee')
-            ->where('quota', '>', 0) // Only include family members with a quota > 0
             ->get();
 
         $employeeInHomeTrip = HomeTrip::where('employee_id', $employee_id)
@@ -283,27 +248,28 @@ class HomeTripController extends Controller
                     'tickets' => [],
                     'quota' => HomeTrip::where('employee_id', $employee_id)
                         ->where('period', $currentYear)
-                        ->where('name', $selectedName)
                         ->pluck('quota')
-                        ->first()
+                        ->sum() // Mengambil total kuota untuk employee_id
                 ];
             }
             $passengerRequests[$selectedName]['tickets'][] = $request->type_tkt[$key];
         }
-
-        // Validate each passenger's total ticket requests against their quota
+        
+        // Validasi total kuota berdasarkan employee_id
+        $totalQuotaUsed = 0;
         foreach ($passengerRequests as $passengerName => $data) {
             $quota = $data['quota'];
             $tickets = $data['tickets'];
             $quotaNeeded = 0;
-
-            // Calculate total quota needed
+        
+            // Hitung total kuota yang dibutuhkan
             foreach ($tickets as $ticketType) {
                 $quotaNeeded += ($ticketType == 'Round Trip') ? 2 : 1;
             }
-
-            // Validation checks
-            if ($quotaNeeded > $quota) {
+            $totalQuotaUsed += $quotaNeeded;
+        
+            // Validasi apakah kuota cukup
+            if ($totalQuotaUsed > $quota) {
                 return redirect()->back()
                     ->with('error', "The trip requested for {$passengerName} exceeds the allocated quota")
                     ->withInput();
