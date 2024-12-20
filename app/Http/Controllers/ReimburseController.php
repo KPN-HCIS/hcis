@@ -120,9 +120,11 @@ class ReimburseController extends Controller
     {
 
         $userId = Auth::id();
+        $jobLevel = Auth::user()->employee->job_level;
 
         return view('hcis.reimbursements.travel', [
             'userId' => $userId,
+            'jobLevel' => $jobLevel,
         ]);
     }
     public function cashadvanced()
@@ -4217,7 +4219,7 @@ class ReimburseController extends Controller
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
             $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
-            $managerEmail = "neko.play02@gmail.com";
+            $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticket->id),
