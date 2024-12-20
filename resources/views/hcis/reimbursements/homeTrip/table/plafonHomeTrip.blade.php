@@ -4,7 +4,7 @@
         <thead class="bg-primary align-middle text-center">
             <tr>
                 <th>Period</th>
-                <th>Family Name</th>
+                <th>Employee Name</th>
                 <th>Relation</th>
                 {{-- <th>Period</th> --}}
                 <th>Quota</th>

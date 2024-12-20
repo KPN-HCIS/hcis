@@ -104,6 +104,14 @@
 
                             <div class="row mb-2">
                                 <div class="col-md-12 mt-2">
+                                    <label for="" class="form-label">Admin Notes</label>
+                                    <textarea class="form-control form-control-sm" id="admin_notes" name="admin_notes" rows="3"
+                                        placeholder="Note from Admin...">{{ $medic->admin_notes }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-md-12 mt-2">
                                     <label for="" class="form-label">Detail Information</label>
                                     <textarea class="form-control form-control-sm bg-light" id="coverage_detail" name="coverage_detail" rows="3"
                                         placeholder="Please add more detail of disease ..." readonly>{{ $medic->coverage_detail }}</textarea>

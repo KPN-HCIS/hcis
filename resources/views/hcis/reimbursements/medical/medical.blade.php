@@ -169,23 +169,11 @@
                     target: "tr",
                 },
             },
-            columnDefs: [{
+            columnDefs: [
+                {
                     className: "control",
                     orderable: false,
                     targets: 0,
-                },
-                {
-                    className: "none", // This will hide Disease and the 4 dynamic columns
-                    targets: isConfirmationRoute ? [9, 10, 11, 12, 13] : [8, 9, 10, 11, 12],
-                },
-                {
-                    responsivePriority: 1,
-                    targets: 0,
-                },
-
-                {
-                    responsivePriority: 4,
-                    targets: 3,
                 },
             ],
             order: [1, "asc"],

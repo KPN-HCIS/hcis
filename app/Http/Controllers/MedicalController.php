@@ -654,6 +654,7 @@ class MedicalController extends Controller
         // Update the medical proof and common fields (if needed)
         $commonUpdateData = [
             'medical_proof' => $medical_proof_path ?? $existingMedical->medical_proof,
+            'admin_notes' => $request->input('admin_notes', $existingMedical->admin_notes),
         ];
 
         HealthCoverage::where('no_medic', $no_medic)->update($commonUpdateData);

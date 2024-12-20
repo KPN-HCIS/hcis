@@ -390,7 +390,7 @@
                     <h5 class="modal-title" id="approvalDecExtModalLabel">Approval Cash Advanced Declaration Update - <label id="approvalExtDec_no_ca"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="approveFormDec" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
+                <form id="approveFormDecExt" action="{{ route('approvalDecAdmin.cashadvancedDecApprovedAdmin', ':id') }}" method="POST">@csrf
                     <div class="modal-body">
                         <input type="hidden" name="no_id" id="no_id">
                         <input type="hidden" name="ca_type" id="ca_type">

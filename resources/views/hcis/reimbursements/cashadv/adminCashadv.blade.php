@@ -209,8 +209,8 @@
                                             </td>
                                             <!-- Button Action -->
                                             <td class="text-left">
-                                                @if(($ca_transaction->approval_sett != '' || $ca_transaction->approval_sett == 'Pending' || $ca_transaction->approval_sett == 'Approved') && $ca_transaction->approval_status != 'Rejected' && $ca_transaction->approval_status != 'Draft' && ($ca_transaction->approval_extend == 'Pending' || $ca_transaction->approval_extend == 'Approved'))
-                                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" title="Approval Extend Update" data-bs-target="#approvalDecExtModal"
+                                                @if(($ca_transaction->approval_sett != '' || $ca_transaction->approval_sett == 'Pending' || $ca_transaction->approval_sett == 'Approved' ) && $ca_transaction->approval_status != 'Rejected' && $ca_transaction->approval_status != 'Draft' && ($ca_transaction->approval_extend == 'Pending' || $ca_transaction->approval_extend == 'Approved' && $ca_transaction->approval_sett !== 'Rejected'))
+                                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" title="Approval Deklarasi Update" data-bs-target="#approvalDecExtModal"
                                                         data-type="{{ $ca_transaction->type_ca }}"
                                                         data-total="{{ number_format($ca_transaction->total_ca, 0, ',', '.') }}"
                                                         data-id="{{ $ca_transaction->id }}"
@@ -251,7 +251,7 @@
                                                     </button>
                                                 @elseif(($ca_transaction->approval_status == 'Pending') ||
                                                     ($ca_transaction->approval_status == 'Approved' &&
-                                                    ($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Draft')))
+                                                    ($ca_transaction->approval_sett == '' || $ca_transaction->approval_sett == 'Draft' || $ca_transaction->approval_sett == 'Rejected')))
                                                     <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" title="Approval Update" data-bs-target="#approvalModal"
                                                         data-type="{{ $ca_transaction->type_ca }}"
                                                         data-total="{{ number_format($ca_transaction->total_ca, 0, ',', '.') }}"
@@ -752,7 +752,7 @@
                         var nameCol = document.createElement('div');
                         nameCol.className = 'col-md-6';
                         var nameText = document.createElement('p');
-                        nameText.innerHTML = "{{ $approval->ReqName }} </br> Layer {{ $approval->layer}}";
+                        nameText.innerHTML = "{{ $approval->ReqName }}";
                         nameCol.appendChild(nameText);
 
                         var buttonCol = document.createElement('div');
@@ -797,7 +797,7 @@
                         var nameColDec = document.createElement('div');
                         nameColDec.className = 'col-md-6';
                         var nameTextDec = document.createElement('p');
-                        nameTextDec.innerHTML = "{{ $approval_sett->ReqName }} </br> Layer {{ $approval_sett->layer }}";
+                        nameTextDec.innerHTML = "{{ $approval_sett->ReqName }}";
                         nameColDec.appendChild(nameTextDec);
 
                         var buttonColDec = document.createElement('div');
@@ -980,7 +980,7 @@
                     var nameColExt = document.createElement('div');
                     nameColExt.className = 'col-md-6';
                     var nameTextExt = document.createElement('p');
-                    nameTextExt.innerHTML = item.employee_id + "</br> Layer " + item.layer;
+                    nameTextExt.innerHTML = item.employee_id;
                     nameColExt.appendChild(nameTextExt);
 
                     var buttonColExt = document.createElement('div');
@@ -1049,7 +1049,7 @@
                         lineLeft.className = 'flex-grow-1 border border-primary opacity-50 m-0'; // Garis kiri
                         var text = document.createElement('span');
                         text.className = 'mx-2 text-primary'; // Teks di tengah
-                        text.textContent = 'Other Aproval Request';
+                        text.textContent = 'Other Approval Extend';
                         var lineRight = document.createElement('hr');
                         lineRight.className = 'flex-grow-1 border border-primary opacity-50 m-0'; // Garis kanan
                         // Susun elemen dalam container
@@ -1088,6 +1088,7 @@
                 form.querySelector('#ca_type').value = transactionType;
                 form.querySelector('#totalca').value = transactionTotal;
                 form.querySelector('#no_id').value = transactionId;
+                form.querySelector('#data_no_id').value = transactionId;
                 form.querySelector('#no_ca').value = transactionNo;
                 form.querySelector('#bisnis_numb').value = transactionSPPD;
 
@@ -1122,7 +1123,7 @@
                         var nameCol = document.createElement('div');
                         nameCol.className = 'col-md-6';
                         var nameText = document.createElement('p');
-                        nameText.innerHTML = "{{ $approval->ReqName }} </br> Layer {{ $approval->layer}}";
+                        nameText.innerHTML = "{{ $approval->ReqName }}";
                         nameCol.appendChild(nameText);
 
                         var buttonCol = document.createElement('div');
@@ -1167,7 +1168,7 @@
                         var nameColDec = document.createElement('div');
                         nameColDec.className = 'col-md-6';
                         var nameTextDec = document.createElement('p');
-                        nameTextDec.innerHTML = "{{ $approval_sett->ReqName }} </br> Layer {{ $approval_sett->layer }}";
+                        nameTextDec.innerHTML = "{{ $approval_sett->ReqName }}";
                         nameColDec.appendChild(nameTextDec);
 
                         var buttonColDec = document.createElement('div');
@@ -1206,7 +1207,7 @@
                             approveButtonDec.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
 
                             // Tambahkan event listener SweetAlert pada tombol Approve
-                            addSweetAlertDec(approveButtonDec);
+                            addSweetAlertDecExt(approveButtonDec);
 
                             form.querySelector('#data_no_id').value = "{{ $approval_sett->id }}";
 
@@ -1241,71 +1242,6 @@
                             id: "{{ $approval_extend->id }}"
                         });
                     }
-                    // if (transactionId === "{{ $approval_extend->ca_id }}") {
-                    //     var rowContainerExt = document.createElement('div');
-                    //     rowContainerExt.className = 'row mb-3 text-center';
-
-                    //     var nameColExt = document.createElement('div');
-                    //     nameColExt.className = 'col-md-6';
-                    //     var nameTextExt = document.createElement('p');
-                    //     nameTextExt.innerHTML = "{{ $approval_extend->employee_id }} </br> Layer {{ $approval_extend->layer }}";
-                    //     nameColExt.appendChild(nameTextExt);
-
-                    //     var buttonColExt = document.createElement('div');
-                    //     buttonColExt.className = 'col-md-6';
-
-                    //     var dateTextExt = document.createElement('p');
-
-                    //     if ("{{ $approval_extend->approval_status }}" === "Approved") {
-                    //         if ("{{ $approval_extend->by_admin }}" === "T") {
-                    //             dateTextExt.textContent = "{{ $approval_extend->approval_status }} By Admin ({{ $approval_extend->admin->name ?? 'Admin tidak tersedia.' }}) ({{ \Carbon\Carbon::parse($approval_extend->approved_at)->format('d-M-y') }})";
-                    //             buttonColExt.appendChild(dateTextExt);
-                    //         } else {
-                    //             dateTextExt.textContent = "{{ $approval_extend->approval_status }} ({{ \Carbon\Carbon::parse($approval_extend->approved_at)->format('d-M-y') }})";
-                    //             buttonColExt.appendChild(dateTextExt);
-                    //         }
-                    //     } else if (previousLayerApprovedExt) {
-                    //         var rejectButtonExt = document.createElement('button');
-                    //         rejectButtonExt.type = 'button'; // Mengubah type menjadi 'button'
-                    //         rejectButtonExt.className = 'btn btn-sm btn-primary btn-pill px-1 me-1 mb-2';
-                    //         rejectButtonExt.setAttribute('data-bs-toggle', 'modal'); // Menambahkan atribut data-bs-toggle
-                    //         rejectButtonExt.setAttribute('data-bs-target', '#modalRejectExt'); // Menambahkan atribut data-bs-target
-                    //         rejectButtonExt.setAttribute('data-no-id', transactionId); // Menambahkan atribut data-no-id
-                    //         rejectButtonExt.setAttribute('data-no-ca', transactionNo); // Menambahkan atribut data-no-ca
-                    //         rejectButtonExt.setAttribute('data-start-date', transactionStart); // Menambahkan atribut data-start-date
-                    //         rejectButtonExt.setAttribute('data-end-date', transactionEnd); // Menambahkan atribut data-end-date
-                    //         rejectButtonExt.setAttribute('data-total-days', transactionTotal); // Menambahkan atribut data-total-days
-                    //         rejectButtonExt.setAttribute('data-no-idCA', '{{ $approval_extend->id }}');
-                    //         rejectButtonExt.textContent = 'Reject'; // Mengubah text button
-
-                    //         var approveButtonExt = document.createElement('button');
-                    //         approveButtonExt.type = 'submit';
-                    //         approveButtonExt.name = 'action_ca_approve';
-                    //         approveButtonExt.value = 'Approve';
-                    //         approveButtonExt.className = 'btn btn-sm btn-success btn-pill px-1 me-1 mb-2';
-                    //         approveButtonExt.textContent = 'Approve';
-                    //         approveButtonExt.setAttribute('data-no-ca', transactionNo); // Tambahkan data-no-ca agar SweetAlert bisa menggunakan nilai ini
-
-                    //         // Tambahkan event listener SweetAlert pada tombol Approve
-                    //         addSweetAlertExt(approveButtonExt);
-
-                    //         form.querySelector('#data_no_id').value = "{{ $approval_extend->id }}";
-
-                    //         buttonColExt.appendChild(approveButtonExt);
-                    //         buttonColExt.appendChild(rejectButtonExt);
-                    //     } else {
-                    //         dateTextExt.textContent = 'Waiting for previous approval';
-                    //         buttonColExt.appendChild(dateTextExt);
-                    //     }
-
-                    //     if ("{{ $approval_extend->approval_status }}" !== "Approved") {
-                    //         previousLayerApprovedExt = false;
-                    //     }
-                    //     rowContainerExt.appendChild(nameColExt);
-                    //     rowContainerExt.appendChild(buttonColExt);
-
-                    //     document.getElementById('extendExtDecList').appendChild(rowContainerExt);
-                    // }
                 @endforeach
 
                 matchingDeclarationExtendItems.forEach((item, index) => {
@@ -1315,7 +1251,7 @@
                     var nameColExt = document.createElement('div');
                     nameColExt.className = 'col-md-6';
                     var nameTextExt = document.createElement('p');
-                    nameTextExt.innerHTML = item.employee_id + "</br> Layer " + item.layer;
+                    nameTextExt.innerHTML = item.employee_id;
                     nameColExt.appendChild(nameTextExt);
 
                     var buttonColExt = document.createElement('div');
@@ -1332,33 +1268,8 @@
                             buttonColExt.appendChild(dateTextExt);
                         }
                     } else if (previousLayerApprovedExt) {
-                        var rejectButtonExt = document.createElement('button');
-                        rejectButtonExt.type = 'button';
-                        rejectButtonExt.className = 'btn btn-sm btn-primary btn-pill px-1 me-1 mb-2';
-                        rejectButtonExt.setAttribute('data-bs-toggle', 'modal');
-                        rejectButtonExt.setAttribute('data-bs-target', '#modalRejectExt');
-                        rejectButtonExt.setAttribute('data-no-id', transactionId);
-                        rejectButtonExt.setAttribute('data-no-ca', transactionNo);
-                        rejectButtonExt.setAttribute('data-start-date', transactionStart);
-                        rejectButtonExt.setAttribute('data-end-date', transactionEnd);
-                        rejectButtonExt.setAttribute('data-total-days', transactionTotal);
-                        rejectButtonExt.setAttribute('data-no-idCA', item.id);
-                        rejectButtonExt.textContent = 'Reject';
-
-                        var approveButtonExt = document.createElement('button');
-                        approveButtonExt.type = 'submit';
-                        approveButtonExt.name = 'action_ca_approve';
-                        approveButtonExt.value = 'Approve';
-                        approveButtonExt.className = 'btn btn-sm btn-success btn-pill px-1 me-1 mb-2';
-                        approveButtonExt.textContent = 'Approve';
-                        approveButtonExt.setAttribute('data-no-ca', transactionNo);
-
-                        addSweetAlertExt(approveButtonExt);
-
-                        form.querySelector('#data_no_id').value = item.id;
-
-                        buttonColExt.appendChild(approveButtonExt);
-                        buttonColExt.appendChild(rejectButtonExt);
+                        dateText.textContent = 'Something Wrong, This form just for Approve Declaration';
+                        buttonCol.appendChild(dateTextExt);
                     } else {
                         dateTextExt.textContent = 'Waiting for previous approval';
                         buttonColExt.appendChild(dateTextExt);
@@ -1384,7 +1295,7 @@
                         lineLeft.className = 'flex-grow-1 border border-primary opacity-50 m-0'; // Garis kiri
                         var text = document.createElement('span');
                         text.className = 'mx-2 text-primary'; // Teks di tengah
-                        text.textContent = 'Other Aproval Request';
+                        text.textContent = 'Other Approval Extend';
                         var lineRight = document.createElement('hr');
                         lineRight.className = 'flex-grow-1 border border-primary opacity-50 m-0'; // Garis kanan
                         // Susun elemen dalam container
@@ -1491,6 +1402,38 @@
                 });
             });
         }
+
+        function addSweetAlertDecExt(approveButtonDec) {
+            approveButtonDec.addEventListener("click", function (event) {
+                event.preventDefault(); // Mencegah submit form secara langsung
+                const transactionCA = approveButtonDec.getAttribute("data-no-ca");
+                const form = document.getElementById("approveFormDecExt");
+
+                Swal.fire({
+                    title: `Do you want to approve transaction "${transactionCA}"?`,
+                    text: "You won't be able to revert this!",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#0c63e4",
+                    cancelButtonColor: "#9a2a27",
+                    confirmButtonText: "Yes, approve it!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Buat input baru untuk action_ca_approve
+                        const input = document.createElement("input");
+                        input.type = "hidden"; // Set input sebagai hidden
+                        input.name = "action_ca_approve"; // Set nama input
+                        input.value = "Approve"; // Set nilai input
+
+                        // Tambahkan input ke form
+                        form.appendChild(input);
+
+                        form.submit(); // Kirim form
+                    }
+                });
+            });
+        }
+
 
         // Reject Request Modal
         document.addEventListener("DOMContentLoaded", function () {

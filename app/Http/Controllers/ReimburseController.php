@@ -120,9 +120,11 @@ class ReimburseController extends Controller
     {
 
         $userId = Auth::id();
+        $jobLevel = Auth::user()->employee->job_level;
 
         return view('hcis.reimbursements.travel', [
             'userId' => $userId,
+            'jobLevel' => $jobLevel,
         ]);
     }
     public function cashadvanced()
@@ -1851,8 +1853,6 @@ class ReimburseController extends Controller
             $managerL1 = $deptHeadManager->employee_id;
             $managerL2 = $deptHeadManager->manager_l1_id;
 
-            $model->sett_id = $managerL1;
-
             $cek_director_id = Employee::select([
                 'dsg.department_level2',
                 'dsg2.director_flag',
@@ -1895,30 +1895,37 @@ class ReimburseController extends Controller
                 )
                 ->get();
             // dd($req->contribution_level_code);
+            $nextApproval = null; // Inisialisasi variabel di luar loop
             foreach ($data_matrix_approvals as $data_matrix_approval) {
+                if ($data_matrix_approval->desc == "Dept Head AR & AP") {
+                    $employee_id = null;
 
-                if ($data_matrix_approval->employee_id == "cek_L1") {
-                    $employee_id = $managerL1;
-                } else if ($data_matrix_approval->employee_id == "cek_L2") {
-                    $employee_id = $managerL2;
-                } else if ($data_matrix_approval->employee_id == "cek_director") {
-                    $employee_id = $director_id;
-                } else {
-                    $employee_id = $data_matrix_approval->employee_id;
-                }
-                if ($employee_id != null) {
-                    $model_approval = new ca_sett_approval;
-                    $model_approval->ca_id = $req->no_id;
-                    $model_approval->role_name = $data_matrix_approval->desc;
-                    $model_approval->employee_id = $employee_id;
-                    $model_approval->layer = $data_matrix_approval->layer;
-                    $model_approval->approval_status = 'Pending';
+                    if ($data_matrix_approval->employee_id == "cek_L1") {
+                        $employee_id = $managerL1;
+                    } else if ($data_matrix_approval->employee_id == "cek_L2") {
+                        $employee_id = $managerL2;
+                    } else if ($data_matrix_approval->employee_id == "cek_director") {
+                        $employee_id = $director_id;
+                    } else {
+                        $employee_id = $data_matrix_approval->employee_id;
+                    }
 
-                    // Simpan data ke database
-                    $model_approval->save();
+                    if ($employee_id != null) {
+                        $model_approval = new ca_sett_approval;
+                        $model_approval->ca_id = $req->no_id;
+                        $model_approval->role_name = $data_matrix_approval->desc;
+                        $model_approval->employee_id = $employee_id;
+                        $model_approval->layer = $data_matrix_approval->layer;
+                        $model_approval->approval_status = 'Pending';
+                        $model_approval->save();
+                        
+                        $nextApproval = ca_sett_approval::where('ca_id', $model->id)
+                            ->where('employee_id', $employee_id)
+                            ->first();
+                        break;
+                    }
                 }
             }
-            $nextApproval = ca_sett_approval::where('ca_id', $model->id)->where('employee_id', $managerL1)->firstOrFail();
 
             // $CANotificationLayer = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             $CANotificationLayer = "eriton.dewa@kpn-corp.com";
@@ -1951,6 +1958,7 @@ class ReimburseController extends Controller
                 ));
             }
         }
+        $model->sett_id = $nextApproval->employee_id;
         $model->declaration_at = Carbon::now();
         $model->save();
 
@@ -4290,28 +4298,33 @@ class ReimburseController extends Controller
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
             if ($ticket->jns_dinas_tkt == 'Cuti') {
+                // Hitung total pengurangan kuota berdasarkan semua tiket
+                $totalDecrement = 0;
+        
                 foreach ($ticketNpTkt as $name) {
-                    // Get the type_tkt for each ticket based on name
+                    // Dapatkan type_tkt untuk setiap tiket berdasarkan nama
                     $ticketType = Tiket::where('user_id', $ticket->user_id)
                         ->where('no_tkt', $ticket->no_tkt)
                         ->where('tkt_only', '=', 'Y')
-                        ->where('np_tkt', $name)  // Ensure we get the ticket type for the current name
+                        ->where('np_tkt', $name) // Pastikan mengambil type_tkt untuk nama saat ini
                         ->value('type_tkt');
-
-                    // Default to 'One Way' if no type_tkt is found
+        
+                    // Default ke 'One Way' jika type_tkt tidak ditemukan
                     if (!$ticketType) {
                         $ticketType = 'One Way';
                     }
-
-                    // Set decrement value based on the ticket type
+        
+                    // Tentukan nilai pengurangan berdasarkan type_tkt
                     $decrementValue = ($ticketType == 'One Way') ? 1 : 2;
-
-                    // Decrement quota for this specific name and type
-                    HomeTrip::where('employee_id', $ticketEmployeeId)
-                        ->where('name', $name)
-                        ->where('period', $currentYear)
-                        ->decrement('quota', $decrementValue);
+        
+                    // Tambahkan nilai pengurangan ke total
+                    $totalDecrement += $decrementValue;
                 }
+        
+                // Kurangi kuota total di HomeTrip berdasarkan employee_id
+                HomeTrip::where('employee_id', $ticketEmployeeId)
+                    ->where('period', $currentYear)
+                    ->decrement('quota', $totalDecrement);
             }
         } else {
             return redirect()->back()->with('error', 'Invalid status update.');
