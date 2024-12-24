@@ -100,6 +100,12 @@ class BusinessTripController extends Controller
         $user = Auth::user();
         $query = BusinessTrip::where('user_id', $user->id)->orderBy('created_at', 'desc');
 
+        $disableBT = BusinessTrip::where('user_id', $user->id)
+        ->where(function ($query) {
+            $query->where('status', '!=','Verified');
+        })
+        ->count();
+
         // Get the filter value, default to 'all' if not provided
         $filter = $request->input('filter', 'all');
 
@@ -173,7 +179,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName', 'disableBT'));
     }
 
     public function delete($id)
