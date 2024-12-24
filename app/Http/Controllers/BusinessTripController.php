@@ -812,13 +812,17 @@ class BusinessTripController extends Controller
                         $employee_id = $data_matrix_approval->employee_id;
                     }
 
-                    $model_approval = new ca_approval;
-                    $model_approval->ca_id = $ca->id;  // Use $ca->id instead of $request->id_ca
-                    $model_approval->role_name = $data_matrix_approval->desc;
-                    $model_approval->employee_id = $employee_id;
-                    $model_approval->layer = $data_matrix_approval->layer;
-                    $model_approval->approval_status = 'Pending';
-
+                    if ($employee_id != null) {
+                        $model_approval = new ca_approval;
+                        $model_approval->ca_id = $ca->id;
+                        $model_approval->role_name = $data_matrix_approval->desc;
+                        $model_approval->employee_id = $employee_id;
+                        $model_approval->layer = $data_matrix_approval->layer;
+                        $model_approval->approval_status = 'Pending';
+    
+                        // Simpan data ke database
+                        $model_approval->save();
+                    }
                     $model_approval->save();
                 }
             }
@@ -832,6 +836,12 @@ class BusinessTripController extends Controller
             // $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerL1)->pluck('fullname')->first();
+
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $employeeName = Employee::where('id', $model->user_id)->pluck('fullname')->first();
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Bussiness Trip and waiting for your Approval with the following details :";
 
             if ($managerEmail) {
                 $detail_ca = isset($detail_ca) ? $detail_ca : [];
@@ -887,6 +897,9 @@ class BusinessTripController extends Controller
                     $managerName,
                     $approvalLink,
                     $rejectionLink,
+                    $employeeName,
+                    $base64Image,
+                    $textNotification,
                 ));
             }
         }
@@ -1398,13 +1411,17 @@ class BusinessTripController extends Controller
                     $employee_id = $data_matrix_approval->employee_id;
                 }
 
-                $model_approval = new ca_sett_approval;
-                $model_approval->ca_id = $caId;
-                $model_approval->role_name = $data_matrix_approval->desc;
-                $model_approval->employee_id = $employee_id;
-                $model_approval->layer = $data_matrix_approval->layer;
-                $model_approval->approval_status = $caStatus;
+                if ($employee_id != null) {
+                    $model_approval = new ca_sett_approval;
+                    $model_approval->ca_id = $caId;
+                    $model_approval->role_name = $data_matrix_approval->desc;
+                    $model_approval->employee_id = $employee_id;
+                    $model_approval->layer = $data_matrix_approval->layer;
+                    $model_approval->approval_status = $caStatus;
 
+                    // Simpan data ke database
+                    $model_approval->save();
+                }
                 $model_approval->save();
             }
             // $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
@@ -2503,13 +2520,17 @@ class BusinessTripController extends Controller
                     } else {
                         $employee_id = $data_matrix_approval->employee_id;
                     }
-                    // $uuid = Str::uuid();
-                    $model_approval = new ca_approval;
-                    $model_approval->ca_id = $ca_id;
-                    $model_approval->role_name = $data_matrix_approval->desc;
-                    $model_approval->employee_id = $employee_id;
-                    $model_approval->layer = $data_matrix_approval->layer;
-                    $model_approval->approval_status = 'Pending';
+                    if ($employee_id != null) {
+                        $model_approval = new ca_approval;
+                        $model_approval->ca_id = $ca_id;
+                        $model_approval->role_name = $data_matrix_approval->desc;
+                        $model_approval->employee_id = $employee_id;
+                        $model_approval->layer = $data_matrix_approval->layer;
+                        $model_approval->approval_status = 'Pending';
+    
+                        // Simpan data ke database
+                        $model_approval->save();
+                    }
 
                     // Simpan data ke database
                     $model_approval->save();
@@ -2522,6 +2543,12 @@ class BusinessTripController extends Controller
             // Get manager email
             // $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
+
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $employeeName = Employee::where('id', $userId)->pluck('fullname')->first();
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Bussiness Trip and waiting for your Approval with the following details :";
             $managerName = Employee::where('employee_id', $managerL1)->pluck('fullname')->first();
 
             if ($managerEmail) {
@@ -2578,7 +2605,10 @@ class BusinessTripController extends Controller
                     $caDetails,
                     $managerName,
                     $approvalLink,
-                    $rejectionLink
+                    $rejectionLink,
+                    $employeeName,
+                    $base64Image,
+                    $textNotification,
                 ));
             }
         }
@@ -3651,6 +3681,12 @@ class BusinessTripController extends Controller
             $managerL2 = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('fullname')->first();
 
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $employeeName = Employee::where('id', $businessTrip->user_id)->pluck('fullname')->first();
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Bussiness Trip and waiting for your Approval with the following details :";
+
             // dd($managerL2);
             if ($managerL2) {
                 $ca = CATransaction::where('no_sppd', $businessTrip->no_sppd)->orWhere('caonly', '!=', 'Y')->first();
@@ -3706,7 +3742,10 @@ class BusinessTripController extends Controller
                     $caDetails,
                     $managerName,
                     $approvalLink,
-                    $rejectionLink
+                    $rejectionLink,
+                    $employeeName,
+                    $base64Image,
+                    $textNotification,
                 ));
             }
 

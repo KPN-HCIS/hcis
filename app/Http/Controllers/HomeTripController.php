@@ -379,9 +379,14 @@ class HomeTripController extends Controller
 
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
+            $employeeName = Employee::where('id', $userId)->pluck('fullname')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $textNotification = "requesting a Home Trip and waiting for your Approval with the following details :";
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($tiket->id),
                 'manager_id' => $managerId,
@@ -410,6 +415,9 @@ class HomeTripController extends Controller
                     'managerName' => $managerName,
                     'approvalLink' => $approvalLink,
                     'rejectionLink' => $rejectionLink,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
+                    'base64Image' => $base64Image,
                 ]));
             }
         }

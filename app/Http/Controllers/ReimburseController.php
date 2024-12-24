@@ -2217,6 +2217,12 @@ class ReimburseController extends Controller
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $employeeName = Employee::where('id', $userId)->pluck('fullname')->first();
+
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Hotel and waiting for your Approval with the following details :";
 
             $approvalLink = route('approve.hotel', [
                 'id' => urlencode($model->id),
@@ -2233,19 +2239,22 @@ class ReimburseController extends Controller
             // // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
-                // Mail::to($managerEmail)->send(new HotelNotification([
-                //     'noSppd' => $req->bisnis_numb,
-                //     'noHtl' => $noHtlList,
-                //     'namaHtl' => $namaHtl,
-                //     'lokasiHtl' => $lokasiHtl,
-                //     'tglMasukHtl' => $tglMasukHtl,
-                //     'tglKeluarHtl' => $tglKeluarHtl,
-                //     'totalHari' => $totalHari,
-                //     'approvalStatus' => $statusValue,
-                //     'managerName' => $managerName,
-                //     'approvalLink' => $approvalLink,
-                //     'rejectionLink' => $rejectionLink,
-                // ]));
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                    'base64Image' => $base64Image,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
+                ]));
             }
         }
         return redirect('/hotel')->with('success', 'Hotel request input successfully');
@@ -2267,6 +2276,12 @@ class ReimburseController extends Controller
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->value('fullname');
+            $employeeName = Employee::where('id', $hotel->user_id)->pluck('fullname')->first();
+
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Ticket and waiting for your Approval with the following details :";
 
             $approvalLink = route('approve.hotel', [
                 'id' => urlencode($hotel->id),
@@ -2301,19 +2316,22 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                // Mail::to($managerEmail)->send(new HotelNotification([
-                //     'noSppd' => $hotel->no_sppd,
-                //     'noHtl' => $noHtlList,
-                //     'namaHtl' => $namaHtl,
-                //     'lokasiHtl' => $lokasiHtl,
-                //     'tglMasukHtl' => $tglMasukHtl,
-                //     'tglKeluarHtl' => $tglKeluarHtl,
-                //     'totalHari' => $totalHari,
-                //     'managerName' => $managerName,
-                //     'approvalLink' => $approvalLink,
-                //     'rejectionLink' => $rejectionLink,
-                //     'approvalStatus' => 'Pending L2',
-                // ]));
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $hotel->no_sppd,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                    'approvalStatus' => 'Pending L2',
+                    'base64Image' => $base64Image,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
+                ]));
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -2537,6 +2555,12 @@ class ReimburseController extends Controller
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $employeeName = Employee::where('id', $userId)->pluck('fullname')->first();
+            
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Hotel and waiting for your Approval with the following details :";
             // dd($managerEmail);
             // // dd($managerEmail);
             $approvalLink = route('approve.hotel', [
@@ -2553,19 +2577,22 @@ class ReimburseController extends Controller
 
             if ($managerEmail) {
                 // Send email to the manager
-                // Mail::to($managerEmail)->send(new HotelNotification([
-                //     'noSppd' => $req->bisnis_numb,
-                //     'noHtl' => $noHtlList,
-                //     'namaHtl' => $namaHtl,
-                //     'lokasiHtl' => $lokasiHtl,
-                //     'tglMasukHtl' => $tglMasukHtl,
-                //     'tglKeluarHtl' => $tglKeluarHtl,
-                //     'totalHari' => $totalHari,
-                //     'approvalStatus' => $statusValue,
-                //     'managerName' => $managerName,
-                //     'approvalLink' => $approvalLink,
-                //     'rejectionLink' => $rejectionLink,
-                // ]));
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $req->bisnis_numb,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'approvalStatus' => $statusValue,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                    'base64Image' => $base64Image,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
+                ]));
             }
         }
 
@@ -2914,6 +2941,12 @@ class ReimburseController extends Controller
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->value('fullname');
+            $employeeName = Employee::where('id', $hotel->user_id)->pluck('fullname')->first();
+            
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Hotel and waiting for your Approval with the following details :";
 
             $approvalLink = route('approve.hotel', [
                 'id' => urlencode($hotel->id),
@@ -2948,19 +2981,22 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                // Mail::to($managerEmail)->send(new HotelNotification([
-                //     'noSppd' => $hotel->no_sppd,
-                //     'noHtl' => $noHtlList,
-                //     'namaHtl' => $namaHtl,
-                //     'lokasiHtl' => $lokasiHtl,
-                //     'tglMasukHtl' => $tglMasukHtl,
-                //     'tglKeluarHtl' => $tglKeluarHtl,
-                //     'totalHari' => $totalHari,
-                //     'managerName' => $managerName,
-                //     'approvalLink' => $approvalLink,
-                //     'rejectionLink' => $rejectionLink,
-                //     'approvalStatus' => 'Pending L2',
-                // ]));
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $hotel->no_sppd,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                    'approvalStatus' => 'Pending L2',
+                    'base64Image' => $base64Image,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
+                ]));
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -3450,6 +3486,11 @@ class ReimburseController extends Controller
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Ticket and waiting for your Approval with the following details :";
+            $employeeName = Employee::where('id', $userId)->pluck('fullname')->first();
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($tiket->id),
@@ -3480,6 +3521,9 @@ class ReimburseController extends Controller
                     'managerName' => $managerName,
                     'approvalLink' => $approvalLink,
                     'rejectionLink' => $rejectionLink,
+                    'base64Image' => $base64Image,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
                 ]));
             }
         }
@@ -3503,6 +3547,13 @@ class ReimburseController extends Controller
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $employeeName = Employee::where('id', $ticket->user_id)->pluck('fullname')->first();
+
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Ticket and waiting for your Approval with the following details :";
+
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticket->id),
                 'manager_id' => $managerId,
@@ -3558,6 +3609,9 @@ class ReimburseController extends Controller
                     'approvalStatus' => 'Pending L2',
                     'approvalLink' => $approvalLink,
                     'rejectionLink' => $rejectionLink,
+                    'base64Image' => $base64Image,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
                 ]));
             }
         } elseif ($ticket->approval_status == 'Pending L2') {
@@ -3825,6 +3879,13 @@ class ReimburseController extends Controller
             // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $employeeName = Employee::where('id', Auth::id())->pluck('fullname')->first();
+
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Ticket and waiting for your Approval with the following details :";
+
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticketIdToUse),
                 'manager_id' => $managerId,
@@ -3854,6 +3915,9 @@ class ReimburseController extends Controller
                     'managerName' => $managerName,
                     'approvalLink' => $approvalLink,
                     'rejectionLink' => $rejectionLink,
+                    'base64Image' => $base64Image,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
                 ]));
             }
         }
@@ -4221,6 +4285,12 @@ class ReimburseController extends Controller
             // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $employeeName = Employee::where('id', $ticket->user_id)->pluck('fullname')->first();
+
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Ticket and waiting for your Approval with the following details :";
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($ticket->id),
                 'manager_id' => $managerId,
@@ -4276,6 +4346,9 @@ class ReimburseController extends Controller
                         'approvalStatus' => 'Pending L2',
                         'approvalLink' => $approvalLink,
                         'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
                     ]));
                 } else {
                     Mail::to($managerEmail)->send(new HomeTripNotification([

@@ -256,6 +256,12 @@ class BTApprovalController extends Controller
             $managerL2 = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('email')->first();
             // dd($managerL2, $status);
 
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $employeeName = Employee::where('id', $businessTrip->user_id)->pluck('fullname')->first();
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Bussiness Trip and waiting for your Approval with the following details :";
+
             $managerName = Employee::where('employee_id', $businessTrip->manager_l2_id)->pluck('fullname')->first();
 
             // dd($managerL2);
@@ -313,7 +319,10 @@ class BTApprovalController extends Controller
                     $caDetails,
                     $managerName,
                     $approvalLink,
-                    $rejectionLink
+                    $rejectionLink,
+                    $employeeName,
+                    $base64Image,
+                    $textNotification,
                 ));
             }
 
