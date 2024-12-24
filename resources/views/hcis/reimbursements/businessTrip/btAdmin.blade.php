@@ -172,7 +172,7 @@
                                 </div>
                             </form>
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover" id="defaultTable" width="100%" cellspacing="0">
+                                <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>No</th>
@@ -186,7 +186,8 @@
                                             <th>Hotel</th>
                                             <th>Taxi</th>
                                             <th>Status</th>
-                                            <th style="width: 150px;">Action</th>
+                                            <th style="">Approve</th>
+                                            <th style="width: 220px;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -312,7 +313,20 @@
                                                         {{ $n->status == 'Approved' ? 'Request Approved' : $n->status }}
                                                     </span>
                                                 </td>
-                                                <td>
+
+                                                <td style="text-align: center">
+                                                    <button type="button" class="btn btn-outline-success rounded-pill"
+                                                        data-bs-toggle="modal" data-bs-target="#approvalDecModal"
+                                                        data-id="{{ $n->id }}" data-sppd="{{ $n->no_sppd }}"
+                                                        data-status="{{ $n->status }}"
+                                                        data-manager-l1="{{ $managerL1Names[$n->manager_l1_id] ?? 'Unknown' }}"
+                                                        data-manager-l2="{{ $managerL2Names[$n->manager_l2_id] ?? 'Unknown' }}"
+                                                        title="Approval Update">
+                                                        <i class="bi bi-list-check"></i>
+                                                    </button>
+
+                                                </td>
+                                                <td style="text-align: center">
                                                     <form id="deleteForm_{{ $n->id }}" method="POST"
                                                         action="/businessTrip/admin/delete/{{ $n->id }}"
                                                         style="display: inline-block;">
@@ -360,6 +374,62 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- APPROVAL MODAL --}}
+                <div class="modal fade" id="approvalDecModal" tabindex="-1" aria-labelledby="approvalDecModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="approvalDecModalLabel">Approval Business Trip Update - <span
+                                        id="modalSPPD"></span></h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="approveForm" action="{{ '' }}" method="POST">@csrf
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <!-- Manager L1 -->
+                                        <div class="col-md-6 mb-3">
+                                            <div
+                                                class="d-flex flex-column align-items-start border-end border-danger-subtle p-3">
+                                                <label class="col-form-label mb-2 text-dark">Approval Request:</label>
+
+                                                <!-- Manager L1 Name & Buttons -->
+                                                <div class="mb-3 w-100">
+                                                    <div>
+                                                        <strong>Manager L1:</strong>
+                                                        <span id="managerL1Name"></span>
+                                                    </div>
+                                                    <div class="mt-2 d-flex justify-content-start" id="l1ActionContainer">
+                                                        <!-- Will be populated by JavaScript -->
+                                                    </div>
+                                                </div>
+
+                                                <!-- Manager L2 Name & Buttons -->
+                                                <div class="mb-3 w-100">
+                                                    <div>
+                                                        <strong>Manager L2:</strong>
+                                                        <span id="managerL2Name"></span>
+                                                    </div>
+                                                    <div class="mt-2 d-flex justify-content-start" id="l2ActionContainer">
+                                                        <!-- Will be populated by JavaScript -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Keep your declaration section as needed -->
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-primary rounded-pill"
+                                        data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -431,10 +501,135 @@
                     </div>
                 </div>
 
+                <!-- Rejection Reason Modal -->
+                <div class="modal fade" id="rejectReasonForm" tabindex="-1" aria-labelledby="rejectReasonFormLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header bg-light border-bottom-0">
+                                <h5 class="modal-title" id="rejectReasonFormLabel"
+                                    style="color: #333; font-weight: 600;">Rejection
+                                    Reason</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <form id="rejectReasonForm" method="POST"
+                                    action="{{ route('confirm.status', ['id' => $n->id]) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="status_approval" value="Rejected">
+
+                                    <div class="mb-3">
+                                        <label for="reject_info" class="form-label"
+                                            style="color: #555; font-weight: 500;">Please
+                                            provide a reason for rejection:</label>
+                                        <textarea class="form-control border-2" name="reject_info" id="reject_info" rows="4" required
+                                            style="resize: vertical; min-height: 100px;"></textarea>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button type="button" class="btn btn-outline-primary rounded-pill me-2"
+                                            data-bs-dismiss="modal" style="min-width: 100px;">Cancel</button>
+                                        <button type="submit" class="btn btn-primary rounded-pill"
+                                            style="min-width: 100px;">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const approvalModal = document.getElementById('approvalDecModal');
+                        if (approvalModal) {
+                            approvalModal.addEventListener('show.bs.modal', function(event) {
+                                // Get the button that triggered the modal
+                                const button = event.relatedTarget;
+                                const btId = button.getAttribute('data-id');
+                                const sppdNo = button.getAttribute('data-sppd');
+                                const status = button.getAttribute('data-status');
+                                const managerL1 = button.getAttribute('data-manager-l1');
+                                const managerL2 = button.getAttribute('data-manager-l2');
+
+                                // Update modal content
+                                document.getElementById('modalSPPD').textContent = sppdNo;
+                                document.getElementById('managerL1Name').textContent = managerL1;
+                                document.getElementById('managerL2Name').textContent = managerL2;
+
+                                // Get the containers
+                                const l1Container = document.getElementById('l1ActionContainer');
+                                const l2Container = document.getElementById('l2ActionContainer');
+
+                                // Clear previous content
+                                l1Container.innerHTML = '';
+                                l2Container.innerHTML = '';
+
+                                // Handle L1 container content
+                                if (status === 'Pending L1') {
+                                    l1Container.innerHTML = `
+                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                `;
+                                } else {
+                                    l1Container.innerHTML = `<div id="approvalDataL1" class="w-100"></div>`;
+                                }
+
+                                // Handle L2 container content
+                                if (status === 'Pending L2') {
+                                    l2Container.innerHTML = `
+                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                `;
+                                } else {
+                                    l2Container.innerHTML = `<div id="approvalDataL2" class="w-100"></div>`;
+                                }
+
+                                // Get and display approval data
+                                const approvals = @json($btApproved);
+                                const filteredApprovals = approvals.filter(approval => approval.bt_id === btId);
+
+                                // Display approval data if containers exist
+                                const approvalDataL1 = document.getElementById('approvalDataL1');
+                                const approvalDataL2 = document.getElementById('approvalDataL2');
+
+                                if (approvalDataL1) {
+                                    const l1Approvals = filteredApprovals.filter(a => a.layer === 1 && a
+                                        .approval_status === 'Pending L2');
+                                    if (l1Approvals.length > 0) {
+                                        approvalDataL1.innerHTML = l1Approvals.map(approval => `
+                                        <div class="border rounded p-2 mb-2">
+                                            <strong>Status:</strong> ${approval.approval_status}<br>
+                                            <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                        </div>
+                                    `).join('');
+                                    }
+                                }
+
+                                if (approvalDataL2) {
+                                    const l2Approvals = filteredApprovals.filter(a => a.layer === 2 && a
+                                        .approval_status === 'Approved');
+                                    if (l2Approvals.length > 0) {
+                                        approvalDataL2.innerHTML = l2Approvals.map(approval => `
+                                            <div class="border rounded p-2 mb-2">
+                                                <strong>Status:</strong> ${approval.approval_status}<br>
+                                                 <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                            </div>
+                                `).join('');
+                                    }
+                                }
+                            });
+                        }
+                    });
+
                     document.addEventListener('DOMContentLoaded', function() {
                         const rejectModal = new bootstrap.Modal(document.getElementById('rejectReasonModal'), {
                             keyboard: true,
