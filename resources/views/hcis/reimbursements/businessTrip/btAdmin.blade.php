@@ -670,6 +670,9 @@
                                             <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
                                         </div>
                                     `).join('');
+                                    } else {
+                                        approvalDataL1.innerHTML =
+                                            '<p class="text-muted">No L1 Request found</p>';
                                     }
                                 }
 
@@ -684,6 +687,9 @@
                                                 <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
                                             </div>
                                 `).join('');
+                                    } else {
+                                        approvalDataL2.innerHTML =
+                                            '<p class="text-muted">No L2 Request found</p>';
                                     }
                                 }
                                 if (approvalDataL1Declare) {
