@@ -349,7 +349,7 @@ class BusinessTripController extends Controller
         } elseif ($request->has('action_submit')) {
             $statusValue = 'Pending L1';  // When "Submit" is clicked
         }
-        
+
 
         // Store old SPPD number for later use
         $oldNoSppd = $n->no_sppd;
@@ -2065,8 +2065,10 @@ class BusinessTripController extends Controller
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
                     ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
-                    
+
         $job_level = Employee::where('id', $userId)->pluck('job_level')->first();
+
+        // dd($employee_data, $companies, $perdiem);
 
         if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
             $allowance = "Perdiem";

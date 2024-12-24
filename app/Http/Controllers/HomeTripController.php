@@ -74,7 +74,7 @@ class HomeTripController extends Controller
 
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
         $employeeName = Employee::pluck('fullname', 'employee_id');
-        
+
         $managerL1Names = 'Unknown';
         $managerL2Names = 'Unknown';
 
@@ -99,7 +99,7 @@ class HomeTripController extends Controller
                 $managerL2Names = $managerL2 ? $managerL2->fullname : 'Unknown';
             }
         }
-        
+
         $ticket = $tickets->groupBy('no_tkt');
 
         $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
@@ -122,41 +122,41 @@ class HomeTripController extends Controller
             return [$period => $data];
         })->toArray();
 
-        $currentYear = date('Y');  
-        $employees_cast = Employee::where('employee_id', $employee_id)->where('homebase', '!=', '')->get();  
+        $currentYear = date('Y');
+        $employees_cast = Employee::where('employee_id', $employee_id)->where('homebase', '!=', '')->get();
 
-        foreach ($employees_cast as $employee) {  
-            $joiningDate = date_create($employee->date_of_joining);  
+        foreach ($employees_cast as $employee) {
+            $joiningDate = date_create($employee->date_of_joining);
             $monthDay = $joiningDate->format('m-d');
             $eligibleYear = (int)$joiningDate->format('Y') + 1;
-        
-            if ($eligibleYear <= $currentYear) {  
+
+            if ($eligibleYear <= $currentYear) {
                 $dependents = Dependents::where('employee_id', $employee->employee_id)->get();
                 $totalFamilyMembers = $dependents->count() + 1;
-            
+
                 $quota = $totalFamilyMembers * 2;
-        
+
                 $existingHomeTrip = HomeTrip::where('employee_id', $employee->employee_id)
                     ->where('period', $currentYear)
                     ->where('relation_type', 'Employee')
-                    ->first();  
-        
-                if (!$existingHomeTrip) {  
-                    $homeTrip = new HomeTrip();  
-                    $homeTrip->id = Str::uuid();  
-                    $homeTrip->employee_id = $employee->employee_id;  
-                    $homeTrip->name = $employee->fullname;  
-                    $homeTrip->relation_type = 'Employee';  
+                    ->first();
+
+                if (!$existingHomeTrip) {
+                    $homeTrip = new HomeTrip();
+                    $homeTrip->id = Str::uuid();
+                    $homeTrip->employee_id = $employee->employee_id;
+                    $homeTrip->name = $employee->fullname;
+                    $homeTrip->relation_type = 'Employee';
                     $homeTrip->quota = $quota;
-                    $homeTrip->last_generate = $currentYear . '-' . $monthDay;  
-                    $homeTrip->period = $currentYear;  
-                    $homeTrip->created_by = $userId;  
-                    $homeTrip->save();  
+                    $homeTrip->last_generate = $currentYear . '-' . $monthDay;
+                    $homeTrip->period = $currentYear;
+                    $homeTrip->created_by = $userId;
+                    $homeTrip->save();
 
                     session()->flash('refresh', true);
-                }   
-            }  
-        }          
+                }
+            }
+        }
 
         return view('hcis.reimbursements.homeTrip.homeTrip', compact(
             'parentLink',
@@ -246,20 +246,20 @@ class HomeTripController extends Controller
             }
             $passengerRequests[$selectedName]['tickets'][] = $request->type_tkt[$key];
         }
-        
+
         // Validasi total kuota berdasarkan employee_id
         $totalQuotaUsed = 0;
         foreach ($passengerRequests as $passengerName => $data) {
             $quota = $data['quota'];
             $tickets = $data['tickets'];
             $quotaNeeded = 0;
-        
+
             // Hitung total kuota yang dibutuhkan
             foreach ($tickets as $ticketType) {
                 $quotaNeeded += ($ticketType == 'Round Trip') ? 2 : 1;
             }
             $totalQuotaUsed += $quotaNeeded;
-        
+
             // Validasi apakah kuota cukup
             if ($totalQuotaUsed > $quota) {
                 return redirect()->back()
@@ -268,15 +268,15 @@ class HomeTripController extends Controller
             }
 
             // If multiple tickets, prevent round trips
-            if (count($tickets) > 1) {
-                foreach ($tickets as $ticketType) {
-                    if ($ticketType == 'Round Trip') {
-                        return redirect()->back()
-                            ->with('error', "Round trip not allowed for {$passengerName} when requesting multiple tickets")
-                            ->withInput();
-                    }
-                }
-            }
+            // if (count($tickets) > 1) {
+            //     foreach ($tickets as $ticketType) {
+            //         if ($ticketType == 'Round Trip') {
+            //             return redirect()->back()
+            //                 ->with('error', "Round trip not allowed for {$passengerName} when requesting multiple tickets")
+            //                 ->withInput();
+            //         }
+            //     }
+            // }
         }
 
         if ($request->has('action_draft')) {
@@ -379,8 +379,8 @@ class HomeTripController extends Controller
 
         if ($statusValue !== 'Draft') {
             $managerId = Employee::where('id', $userId)->pluck('manager_l1_id')->first();
-            // $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
-            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerEmail = Employee::where('employee_id', $managerId)->pluck('email')->first();
+            // $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
             $approvalLink = route('approve.ticket', [
                 'id' => urlencode($tiket->id),
@@ -806,59 +806,59 @@ class HomeTripController extends Controller
             }
         }
 
-        if ($hasFilter) {  
+        if ($hasFilter) {
             $ht_employee = $query->orderBy('created_at', 'desc')->where('homebase', '!=', '')->get();
-            foreach ($ht_employee as $ht_employees) {  
+            foreach ($ht_employee as $ht_employees) {
                 // Get family count
                 $ht_employees->family_count = Dependents::where('employee_id', $ht_employees->employee_id)->count() + 1;
-                
+
                 // Get total quota from HomeTrip table for this employee
                 $ht_employees->ticket_count = HomeTrip::where('employee_id', $ht_employees->employee_id)
                     ->where('period', $currentYear)
                     ->sum('quota');
 
-                $latestPeriod = HomeTrip::where('employee_id', $ht_employees->employee_id)  
-                    ->orderBy('period', 'desc')  
-                    ->value('period');  
-                $ht_employees->latest_period = $latestPeriod ? $latestPeriod : '-';  
-            }  
-        } 
+                $latestPeriod = HomeTrip::where('employee_id', $ht_employees->employee_id)
+                    ->orderBy('period', 'desc')
+                    ->value('period');
+                $ht_employees->latest_period = $latestPeriod ? $latestPeriod : '-';
+            }
+        }
 
         // // Uncomment This for Generate all ht_plan from admin Auto Input ht_plan Start
-        // $currentYear = date('Y');  
-        // $employees_cast = Employee::where('homebase', '!=', '')->get();  
+        // $currentYear = date('Y');
+        // $employees_cast = Employee::where('homebase', '!=', '')->get();
 
-        // foreach ($employees_cast as $employee) {  
+        // foreach ($employees_cast as $employee) {
         //     // Get joining date
         //     $joiningDate = date_create($employee->date_of_joining);
-            
+
         //     // Calculate the first January after 1 year of employment
         //     $oneYearAfterJoining = date_create($employee->date_of_joining);
         //     $oneYearAfterJoining->modify('+1 year');
         //     $eligibleYear = (int)$oneYearAfterJoining->format('Y') + 1;
-            
+
         //     // If eligible year is current year or past year and no record exists, create records
         //     if ($eligibleYear <= $currentYear) {
         //         // Get all dependents for this employee
         //         $dependents = Dependents::where('employee_id', $employee->employee_id)->get();
 
         //         // First create record for the employee
-        //         $existingHomeTrip = HomeTrip::where('employee_id', $employee->employee_id)  
+        //         $existingHomeTrip = HomeTrip::where('employee_id', $employee->employee_id)
         //             ->where('period', $currentYear)
         //             ->where('relation_type', 'Employee')
-        //             ->first();  
+        //             ->first();
 
-        //         if (!$existingHomeTrip) {  
-        //             $homeTrip = new HomeTrip();  
+        //         if (!$existingHomeTrip) {
+        //             $homeTrip = new HomeTrip();
         //             $homeTrip->id = Str::uuid();
-        //             $homeTrip->employee_id = $employee->employee_id;  
-        //             $homeTrip->name = $employee->fullname;  
-        //             $homeTrip->relation_type = 'Employee';  
-        //             $homeTrip->quota = '2';  
-        //             $homeTrip->period = $currentYear;  
-        //             $homeTrip->created_by = $userId;  
-        //             $homeTrip->save();  
-        //         }   
+        //             $homeTrip->employee_id = $employee->employee_id;
+        //             $homeTrip->name = $employee->fullname;
+        //             $homeTrip->relation_type = 'Employee';
+        //             $homeTrip->quota = '2';
+        //             $homeTrip->period = $currentYear;
+        //             $homeTrip->created_by = $userId;
+        //             $homeTrip->save();
+        //         }
 
         //         // Then create records for each dependent
         //         foreach ($dependents as $dependent) {
@@ -880,13 +880,13 @@ class HomeTripController extends Controller
         //                 $dependentTrip->save();
         //             }
         //         }
-        //     }  
+        //     }
         // }
         // // Auto Input ht_plan End
 
-        return view('hcis.reimbursements.homeTrip.admin.homeTripAdmin', compact( 
-            'link', 
-            'parentLink', 
+        return view('hcis.reimbursements.homeTrip.admin.homeTripAdmin', compact(
+            'link',
+            'parentLink',
             'ht_employee',
             'locations',
             // 'family',
@@ -946,7 +946,7 @@ class HomeTripController extends Controller
 
         $ticketApprovals = $ticketApprovals->keyBy('tkt_id');
         $employeeName = Employee::pluck('fullname', 'employee_id');
-        
+
         $managerL1Names = 'Unknown';
         $managerL2Names = 'Unknown';
 
@@ -967,7 +967,7 @@ class HomeTripController extends Controller
                 $managerL2Names = $managerL2 ? $managerL2->fullname : 'Unknown';
             }
         }
-        
+
         $ticket = $tickets->groupBy('no_tkt');
 
         $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
@@ -990,41 +990,41 @@ class HomeTripController extends Controller
             return [$period => $data];
         })->toArray();
 
-        $currentYear = date('Y');  
-        $employees_cast = Employee::where('employee_id', $employee_id)->where('homebase', '!=', '')->get();  
+        $currentYear = date('Y');
+        $employees_cast = Employee::where('employee_id', $employee_id)->where('homebase', '!=', '')->get();
 
-        foreach ($employees_cast as $employee) {  
-            $joiningDate = date_create($employee->date_of_joining);  
+        foreach ($employees_cast as $employee) {
+            $joiningDate = date_create($employee->date_of_joining);
             $monthDay = $joiningDate->format('m-d');
             $eligibleYear = (int)$joiningDate->format('Y') + 1;
-        
-            if ($eligibleYear <= $currentYear) {  
+
+            if ($eligibleYear <= $currentYear) {
                 $dependents = Dependents::where('employee_id', $employee->employee_id)->get();
                 $totalFamilyMembers = $dependents->count() + 1;
-            
+
                 $quota = $totalFamilyMembers * 2;
-        
+
                 $existingHomeTrip = HomeTrip::where('employee_id', $employee->employee_id)
                     ->where('period', $currentYear)
                     ->where('relation_type', 'Employee')
-                    ->first();  
-        
-                if (!$existingHomeTrip) {  
-                    $homeTrip = new HomeTrip();  
-                    $homeTrip->id = Str::uuid();  
-                    $homeTrip->employee_id = $employee->employee_id;  
-                    $homeTrip->name = $employee->fullname;  
-                    $homeTrip->relation_type = 'Employee';  
+                    ->first();
+
+                if (!$existingHomeTrip) {
+                    $homeTrip = new HomeTrip();
+                    $homeTrip->id = Str::uuid();
+                    $homeTrip->employee_id = $employee->employee_id;
+                    $homeTrip->name = $employee->fullname;
+                    $homeTrip->relation_type = 'Employee';
                     $homeTrip->quota = $quota;
-                    $homeTrip->last_generate = $currentYear . '-' . $monthDay;  
-                    $homeTrip->period = $currentYear;  
-                    $homeTrip->created_by = $userId;  
-                    $homeTrip->save();  
+                    $homeTrip->last_generate = $currentYear . '-' . $monthDay;
+                    $homeTrip->period = $currentYear;
+                    $homeTrip->created_by = $userId;
+                    $homeTrip->save();
 
                     session()->flash('refresh', true);
-                }   
-            }  
-        }       
+                }
+            }
+        }
 
         return view('hcis.reimbursements.homeTrip.admin.homeTripDetailAdmin', compact(
             'parentLink',
