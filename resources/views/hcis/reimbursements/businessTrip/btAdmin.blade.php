@@ -171,7 +171,7 @@
                                     </button>
                                 </div>
                             </form>
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="overflow-y: auto">
                                 <table class="table table-sm table-hover" id="scheduleTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
                                         <tr>
@@ -202,7 +202,7 @@
                                                 <td>{{ $n->tujuan }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($n->mulai)->format('d-M-Y') }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($n->kembali)->format('d-M-Y') }}</td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->ca == 'Ya' && isset($caTransactions[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -221,7 +221,7 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->tiket == 'Ya' && isset($tickets[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -250,7 +250,7 @@
                                                     @endif
 
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->hotel == 'Ya' && isset($hotel[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -275,7 +275,7 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     @if ($n->taksi == 'Ya' && isset($taksi[$n->no_sppd]))
                                                         <a class="text-info btn-detail" data-toggle="modal"
                                                             data-target="#detailModal" style="cursor: pointer"
@@ -314,7 +314,7 @@
                                                     </span>
                                                 </td>
 
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     <button type="button" class="btn btn-outline-success rounded-pill"
                                                         data-bs-toggle="modal" data-bs-target="#approvalDecModal"
                                                         data-id="{{ $n->id }}" data-sppd="{{ $n->no_sppd }}"
@@ -326,7 +326,7 @@
                                                     </button>
 
                                                 </td>
-                                                <td style="text-align: center">
+                                                <td style="text-align: center; align-content: center">
                                                     <form id="deleteForm_{{ $n->id }}" method="POST"
                                                         action="/businessTrip/admin/delete/{{ $n->id }}"
                                                         style="display: inline-block;">
@@ -395,7 +395,7 @@
                                         <!-- Manager L1 -->
                                         <div class="col-md-6 mb-3">
                                             <div
-                                                class="d-flex flex-column align-items-start border-end border-danger-subtle p-3">
+                                                class="d-flex flex-column align-items-start border-end border-danger-subtle p-2 mr-2">
                                                 <label class="col-form-label mb-2 text-dark">Approval Request:</label>
 
                                                 <!-- Manager L1 Name & Buttons -->
@@ -421,8 +421,36 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex flex-column align-items-start p-2">
+                                                <label class="col-form-label mb-2 text-dark">Approval Declaration:</label>
 
-                                        <!-- Keep your declaration section as needed -->
+                                                <!-- Manager L1 Name & Buttons -->
+                                                <div class="mb-3 w-100">
+                                                    <div>
+                                                        <strong>Manager L1:</strong>
+                                                        <span id="managerL1NameDeclare"></span>
+                                                    </div>
+                                                    <div class="mt-2 d-flex justify-content-start"
+                                                        id="l1ActionContainerDeclare">
+                                                        <!-- Will be populated by JavaScript -->
+                                                    </div>
+                                                </div>
+
+                                                <!-- Manager L2 Name & Buttons -->
+                                                <div class="mb-3 w-100">
+                                                    <div>
+                                                        <strong>Manager L2:</strong>
+                                                        <span id="managerL2NameDeclare"></span>
+                                                    </div>
+                                                    <div class="mt-2 d-flex justify-content-start"
+                                                        id="l2ActionContainerDeclare">
+                                                        <!-- Will be populated by JavaScript -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -560,22 +588,30 @@
                                 document.getElementById('modalSPPD').textContent = sppdNo;
                                 document.getElementById('managerL1Name').textContent = managerL1;
                                 document.getElementById('managerL2Name').textContent = managerL2;
+                                document.getElementById('managerL1NameDeclare').textContent = managerL1;
+                                document.getElementById('managerL2NameDeclare').textContent = managerL2;
 
                                 // Get the containers
                                 const l1Container = document.getElementById('l1ActionContainer');
                                 const l2Container = document.getElementById('l2ActionContainer');
 
+                                const l1ContainerDeclare = document.getElementById('l1ActionContainerDeclare');
+                                const l2ContainerDeclare = document.getElementById('l2ActionContainerDeclare');
+
+
                                 // Clear previous content
                                 l1Container.innerHTML = '';
                                 l2Container.innerHTML = '';
+                                l1ContainerDeclare.innerHTML = '';
+                                l2ContainerDeclare.innerHTML = '';
 
                                 // Handle L1 container content
                                 if (status === 'Pending L1') {
                                     l1Container.innerHTML = `
-                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
-                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
-                `;
+                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                `;
                                 } else {
                                     l1Container.innerHTML = `<div id="approvalDataL1" class="w-100"></div>`;
                                 }
@@ -583,12 +619,34 @@
                                 // Handle L2 container content
                                 if (status === 'Pending L2') {
                                     l2Container.innerHTML = `
-                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
-                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
-                `;
+                                        <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                                                data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                    `;
                                 } else {
                                     l2Container.innerHTML = `<div id="approvalDataL2" class="w-100"></div>`;
+                                }
+                                if (status === 'Declaration L1') {
+                                    l1ContainerDeclare.innerHTML = `
+                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                `;
+                                } else {
+                                    l1ContainerDeclare.innerHTML =
+                                        `<div id="approvalDataL1Declare" class="w-100"></div>`;
+                                }
+
+                                // Handle L2 Declaration container content
+                                if (status === 'Declaration L2') {
+                                    l2ContainerDeclare.innerHTML = `
+                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                `;
+                                } else {
+                                    l2ContainerDeclare.innerHTML =
+                                        `<div id="approvalDataL2Declare" class="w-100"></div>`;
                                 }
 
                                 // Get and display approval data
@@ -598,6 +656,8 @@
                                 // Display approval data if containers exist
                                 const approvalDataL1 = document.getElementById('approvalDataL1');
                                 const approvalDataL2 = document.getElementById('approvalDataL2');
+                                const approvalDataL1Declare = document.getElementById('approvalDataL1Declare');
+                                const approvalDataL2Declare = document.getElementById('approvalDataL2Declare');
 
                                 if (approvalDataL1) {
                                     const l1Approvals = filteredApprovals.filter(a => a.layer === 1 && a
@@ -624,6 +684,45 @@
                                                 <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
                                             </div>
                                 `).join('');
+                                    }
+                                }
+                                if (approvalDataL1Declare) {
+                                    const l1Declarations = filteredApprovals.filter(a =>
+                                        a.layer === 1 &&
+                                        (a.approval_status === 'Declaration L1' || a.approval_status ===
+                                            'Declaration L2')
+                                    );
+                                    if (l1Declarations.length > 0) {
+                                        approvalDataL1Declare.innerHTML = l1Declarations.map(approval => `
+                                        <div class="border rounded p-2 mb-2">
+                                            <strong>Status:</strong> ${approval.approval_status}<br>
+                                            <strong>Declared By:</strong> ${approval.employee_id}<br>
+                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                        </div>
+                                    `).join('');
+                                    } else {
+                                        approvalDataL1Declare.innerHTML =
+                                            '<p class="text-muted">No L1 declarations found</p>';
+                                    }
+                                }
+
+                                if (approvalDataL2Declare) {
+                                    const l2Declarations = filteredApprovals.filter(a =>
+                                        a.layer === 2 &&
+                                        (a.approval_status === 'Declaration L2' || a.approval_status ===
+                                            'Declaration Approved')
+                                    );
+                                    if (l2Declarations.length > 0) {
+                                        approvalDataL2Declare.innerHTML = l2Declarations.map(approval => `
+                                        <div class="border rounded p-2 mb-2">
+                                            <strong>Status:</strong> ${approval.approval_status}<br>
+                                            <strong>Declared By:</strong> ${approval.employee_id}<br>
+                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                        </div>
+                                    `).join('');
+                                    } else {
+                                        approvalDataL2Declare.innerHTML =
+                                            '<p class="text-muted">No L2 declarations found</p>';
                                     }
                                 }
                             });
