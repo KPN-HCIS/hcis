@@ -100,6 +100,12 @@ class BusinessTripController extends Controller
         $user = Auth::user();
         $query = BusinessTrip::where('user_id', $user->id)->orderBy('created_at', 'desc');
 
+        $disableBT = BusinessTrip::where('user_id', $user->id)
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Verified');
+            })
+            ->count();
+
         // Get the filter value, default to 'all' if not provided
         $filter = $request->input('filter', 'all');
 
@@ -173,7 +179,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Business Trip';
 
-        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName'));
+        return view('hcis.reimbursements.businessTrip.businessTrip', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName', 'disableBT'));
     }
 
     public function delete($id)
@@ -242,9 +248,9 @@ class BusinessTripController extends Controller
         $employees = Employee::orderBy('ktp')->get();
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
-        if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
+        if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
-        }else{
+        } else {
             $allowance = "Allowance";
         }
 
@@ -257,7 +263,7 @@ class BusinessTripController extends Controller
         // Retrieve all hotels for the specific BusinessTrip
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
-                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+            ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
         $job_level = Employee::where('id', $userId)->pluck('job_level')->first();
 
         if ($job_level) {
@@ -349,15 +355,15 @@ class BusinessTripController extends Controller
         } elseif ($request->has('action_submit')) {
             $statusValue = 'Pending L1';  // When "Submit" is clicked
         }
-        
+
 
         // Store old SPPD number for later use
         $oldNoSppd = $n->no_sppd;
         $userId = Auth::id();
         $employee = Employee::where('id', $userId)->first();
-        if($employee->group_company =='Plantations' || $employee->group_company =='KPN Plantations'){
+        if ($employee->group_company == 'Plantations' || $employee->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
-        }else{
+        } else {
             $allowance = "Allowance";
         }
 
@@ -912,9 +918,9 @@ class BusinessTripController extends Controller
         $n = BusinessTrip::find($id);
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
-        if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
+        if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
-        }else{
+        } else {
             $allowance = "Allowance";
         }
 
@@ -935,7 +941,7 @@ class BusinessTripController extends Controller
         // Retrieve all hotels for the specific BusinessTrip
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
-                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+            ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
 
         $parentLink = 'Business Trip';
         $link = 'Declaration Business Trip';
@@ -1660,9 +1666,9 @@ class BusinessTripController extends Controller
                             $pdfName = 'CA.pdf';
                             $viewPath = 'hcis.reimbursements.businessTrip.ca_pdf';
                             $employee_data = Employee::where('id', $user->id)->first();
-                            if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
+                            if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
                                 $allowance = "Perdiem";
-                            }else{
+                            } else {
                                 $allowance = "Allowance";
                             }
                             $companies = Company::orderBy('contribution_level')->get();
@@ -1751,7 +1757,7 @@ class BusinessTripController extends Controller
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
                             $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
-                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+                                ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
                             $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
                             $approval = ca_sett_approval::with('employee')
                                 ->where('ca_id', $ca->id)
@@ -1904,7 +1910,7 @@ class BusinessTripController extends Controller
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
                             $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
-                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+                                ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
                             $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
                             $approval = ca_approval::with('employee')
                                 ->where('ca_id', $ca->id)
@@ -1988,7 +1994,7 @@ class BusinessTripController extends Controller
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
                             $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
-                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+                                ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
                             $no_sppds = CATransaction::where('user_id', $user->id)->where('approval_sett', '!=', 'Done')->get();
                             $approval = ca_sett_approval::with('employee')
                                 ->where('ca_id', $ca->id)
@@ -2081,13 +2087,15 @@ class BusinessTripController extends Controller
         $employees = Employee::orderBy('ktp')->get();
         $no_sppds = CATransaction::where('user_id', $userId)->where('approval_sett', '!=', 'Done')->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
-                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
-                    
+            ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+
         $job_level = Employee::where('id', $userId)->pluck('job_level')->first();
 
-        if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
+        // dd($employee_data, $companies, $perdiem);
+
+        if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
-        }else{
+        } else {
             $allowance = "Allowance";
         }
 
@@ -2875,11 +2883,14 @@ class BusinessTripController extends Controller
                     ->orWhere('approval_status', 'Declaration Rejected');
             })
             ->get();
-        // Log::info('Ticket Approvals:', $btApprovals->toArray());
 
         $btApprovals = $btApprovals->keyBy('bt_id');
         // dd($btApprovals);
         // Log::info('BT Approvals:', $btApprovals->toArray());
+
+        $btApproved = BTApproval::whereIn('bt_id', $btIds)->get();
+
+        // dd($btIds, $btApproved);
 
         $employeeIds = $sppd->pluck('user_id')->unique();
         $employees = Employee::whereIn('id', $employeeIds)->get()->keyBy('id');
@@ -2899,7 +2910,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Business Trip (Admin)';
 
-        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName'));
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName', 'btApproved'));
     }
     public function filterDateAdmin(Request $request)
     {
@@ -2999,9 +3010,9 @@ class BusinessTripController extends Controller
         $userId = Auth::id();
         $employee_data = Employee::where('id', $n->user_id)->first();
 
-        if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
+        if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
-        }else{
+        } else {
             $allowance = "Allowance";
         }
 
@@ -3022,7 +3033,7 @@ class BusinessTripController extends Controller
         // Retrieve all hotels for the specific BusinessTrip
         $hotels = Hotel::where('no_sppd', $n->no_sppd)->get();
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
-                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+            ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
 
         // Prepare hotel data for the view
         $hotelData = [];
@@ -3490,9 +3501,9 @@ class BusinessTripController extends Controller
         $employee_data = Employee::where('id', $n->user_id)->first();
         $employees = Employee::orderBy('ktp')->get();
 
-        if($employee_data->group_company =='Plantations' || $employee_data->group_company =='KPN Plantations'){
+        if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
-        }else{
+        } else {
             $allowance = "Allowance";
         }
 
@@ -3502,7 +3513,7 @@ class BusinessTripController extends Controller
         // Initialize caDetail with an empty array if it's null
         $caDetail = $ca ? json_decode($ca->detail_ca, true) : [];
         $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
-                    ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
+            ->where('bisnis_unit', 'like', '%' . $employee_data->group_company . '%')->first();
 
         // Safely access nominalPerdiem with default '0' if caDetail is empty
         $nominalPerdiem = isset($caDetail['detail_perdiem'][0]['nominal']) ? $caDetail['detail_perdiem'][0]['nominal'] : '0';

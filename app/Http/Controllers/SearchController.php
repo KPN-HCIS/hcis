@@ -43,11 +43,8 @@ class SearchController extends Controller
             ->first();
 
         // Fetch dependents that match the search term and have a valid quota
-        $dependents = HomeTrip::select('name as fullname', 'relation_type')
+        $dependents = Dependents::select('name as fullname', 'relation_type')
             ->where('employee_id', $employee_id)
-            ->where('period', $currentYear)
-            ->where('relation_type', '!=', 'employee')
-            ->where('quota', '>', 0) // Only include dependents with quota > 0
             ->where(function ($query) use ($searchTerm) {
                 $query->where('name', 'LIKE', '%' . $searchTerm . '%')
                     ->orWhere('relation_type', 'LIKE', '%' . $searchTerm . '%');
