@@ -39,6 +39,7 @@ use App\Http\Controllers\TeamGoalController;
 use App\Http\Controllers\ReimburseController;
 use App\Http\Controllers\HomeTripController;
 use App\Http\Controllers\BTApprovalController;
+use App\Http\Controllers\ReminderController;
 use App\Models\Designation;
 use Faker\Provider\Medical;
 use Illuminate\Support\Facades\Route;
@@ -118,6 +119,8 @@ Route::post('/approval/cashadvancedExt/reject/email/{id}/{employeeId}', [Approva
     ->name('approval.email.ext');
 
 // DIRECT AFTER APPROVE OR REJECT HALAMAN KOSONG
+Route::get('/page/notification', [ReminderController::class, 'emailReminder'])->name('email.reminderDec');
+
 Route::get('/page/{key}', [ApprovalReimburseController::class, 'blankApproval'])->name('blank.page');
 
 Route::get('/page', [ApprovalReimburseController::class, 'blankApproval'])->name('blank.pageUn');
