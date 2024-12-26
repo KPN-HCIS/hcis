@@ -418,7 +418,9 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/confirm/declaration/{id}', [BusinessTripController::class, 'updateStatusDeklarasi'])->name('confirm.deklarasi');
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
-
+    //APPROVAL ADMIN BT
+    Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'adminApproval'])->name('admin.approve');
+    Route::put('businessTrip/status/reject/{id}', [BusinessTripController::class, 'adminReject'])->name('admin.reject');
 
     //PDF BT
     Route::get('/businessTrip/pdf/{id}', [BusinessTripController::class, 'pdfDownload'])->name('pdf');

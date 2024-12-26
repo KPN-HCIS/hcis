@@ -389,7 +389,10 @@
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="approveForm" action="{{ '' }}" method="POST">@csrf
+                            <form id="approveForm" action="{{ route('admin.approve', ['id' => $n->id]) }}"
+                                method="POST">
+                                @csrf
+                                @method('PUT')
                                 <div class="modal-body">
                                     <div class="row">
                                         <!-- Manager L1 -->
@@ -543,7 +546,7 @@
                             </div>
                             <div class="modal-body p-4">
                                 <form id="rejectReasonForm" method="POST"
-                                    action="{{ route('confirm.status', ['id' => $n->id]) }}">
+                                    action="{{ route('admin.reject', ['id' => $n->id]) }}">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="status_approval" value="Rejected">
@@ -662,14 +665,27 @@
                                 if (approvalDataL1) {
                                     const l1Approvals = filteredApprovals.filter(a => a.layer === 1 && a
                                         .approval_status === 'Pending L2');
+                                    const l1Rejections = filteredApprovals.filter(a => a.layer === 1 && a
+                                        .approval_status === 'Rejected');
                                     if (l1Approvals.length > 0) {
                                         approvalDataL1.innerHTML = l1Approvals.map(approval => `
-                                        <div class="border rounded p-2 mb-2">
-                                            <strong>Status:</strong> ${approval.approval_status}<br>
-                                            <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
-                                        </div>
-                                    `).join('');
+                                                        <div class="border rounded p-2 mb-2">
+                                                            <strong>Status:</strong> ${approval.approval_status}<br>
+                                                            <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                                            <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                                        </div>
+                                                    `).join('');
+                                    } else if (l1Rejections.length > 0) {
+                                        approvalDataL1.innerHTML += l1Rejections.map(rejection => `
+                                          <div class="border rounded p-2 mb-2 bg-warning">
+                                                            <strong>Status:</strong> ${rejection.approval_status}<br>
+                                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                                        </div>
+                                                    `).join('');
                                     } else {
                                         approvalDataL1.innerHTML =
                                             '<p class="text-muted">No L1 Request found</p>';
@@ -679,14 +695,27 @@
                                 if (approvalDataL2) {
                                     const l2Approvals = filteredApprovals.filter(a => a.layer === 2 && a
                                         .approval_status === 'Approved');
+                                    const l2Rejections = filteredApprovals.filter(a => a.layer === 2 && a
+                                        .approval_status === 'Rejected');
                                     if (l2Approvals.length > 0) {
                                         approvalDataL2.innerHTML = l2Approvals.map(approval => `
                                             <div class="border rounded p-2 mb-2">
                                                 <strong>Status:</strong> ${approval.approval_status}<br>
-                                                 <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                                <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                                <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                             </div>
                                 `).join('');
+                                    } else if (l2Rejections.length > 0) {
+                                        approvalDataL2.innerHTML += l2Rejections.map(rejection => `
+                                        <div class="border rounded p-2 mb-2 bg-warning">
+                                            <strong>Status:</strong> ${rejection.approval_status}<br>
+                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                        </div>
+                                    `).join('');
                                     } else {
                                         approvalDataL2.innerHTML =
                                             '<p class="text-muted">No L2 Request found</p>';
@@ -695,15 +724,29 @@
                                 if (approvalDataL1Declare) {
                                     const l1Declarations = filteredApprovals.filter(a =>
                                         a.layer === 1 &&
-                                        (a.approval_status === 'Declaration L1' || a.approval_status ===
-                                            'Declaration L2')
+                                        (a.approval_status === 'Declaration L2')
+                                    );
+                                    const l1DeclarationsReject = filteredApprovals.filter(a =>
+                                        a.layer === 1 &&
+                                        (a.approval_status === 'Declaration Rejected')
                                     );
                                     if (l1Declarations.length > 0) {
                                         approvalDataL1Declare.innerHTML = l1Declarations.map(approval => `
                                         <div class="border rounded p-2 mb-2">
                                             <strong>Status:</strong> ${approval.approval_status}<br>
                                             <strong>Declared By:</strong> ${approval.employee_id}<br>
-                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                            <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                        </div>
+                                    `).join('');
+                                    } else if (l1DeclarationsReject.length > 0) {
+                                        approvalDataL1Declare.innerHTML += l1DeclarationsReject.map(rejection => `
+                                        <div class="border rounded p-2 mb-2 bg-warning">
+                                            <strong>Status:</strong> ${rejection.approval_status}<br>
+                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
                                     `).join('');
                                     } else {
@@ -715,15 +758,29 @@
                                 if (approvalDataL2Declare) {
                                     const l2Declarations = filteredApprovals.filter(a =>
                                         a.layer === 2 &&
-                                        (a.approval_status === 'Declaration L2' || a.approval_status ===
-                                            'Declaration Approved')
+                                        (a.approval_status === 'Declaration Approved')
+                                    );
+                                    const l2DeclarationsReject = filteredApprovals.filter(a =>
+                                        a.layer === 2 &&
+                                        (a.approval_status === 'Declaration Rejected')
                                     );
                                     if (l2Declarations.length > 0) {
                                         approvalDataL2Declare.innerHTML = l2Declarations.map(approval => `
                                         <div class="border rounded p-2 mb-2">
                                             <strong>Status:</strong> ${approval.approval_status}<br>
                                             <strong>Declared By:</strong> ${approval.employee_id}<br>
-                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                            <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                        </div>
+                                    `).join('');
+                                    } else if (l2DeclarationsReject.length > 0) {
+                                        approvalDataL2Declare.innerHTML += l2DeclarationsReject.map(rejection => `
+                                        <div class="border rounded p-2 mb-2 bg-warning">
+                                            <strong>Status:</strong> ${rejection.approval_status}<br>
+                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
                                     `).join('');
                                     } else {
@@ -859,7 +916,8 @@
 
                             function createTableHtml(data, title) {
                                 var tableHtml = '<h5>' + title + '</h5>';
-                                tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+                                tableHtml +=
+                                    '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
                                 var isArray = Array.isArray(data) && data.length > 0;
 
                                 // Assuming all objects in the data array have the same keys, use the first object to create headers
