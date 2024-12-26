@@ -545,10 +545,9 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-4">
-                                <form id="rejectReasonForm" method="POST"
-                                    action="{{ route('admin.reject', ['id' => $n->id]) }}">
+                                <form id="rejectReasonForm" method="POST">
                                     @csrf
-                                    @method('PUT')
+                                    <input type="hidden" name="_method" value="PUT">
                                     <input type="hidden" name="status_approval" value="Rejected">
 
                                     <div class="mb-3">
@@ -575,6 +574,24 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
+                    document.getElementById('rejectReasonForm').addEventListener('show.bs.modal', function(event) {
+                        const button = event.relatedTarget; // Button that triggered the modal
+                        const btId = button.getAttribute('data-id'); // Get the ID
+                        const form = this.querySelector('form');
+                        if (form && btId) {
+                            form.action = `/businessTrip/status/reject/${btId}`; // Update form action with correct path
+                            // Add method override for PUT request
+                            let methodInput = form.querySelector('input[name="_method"]');
+                            if (!methodInput) {
+                                methodInput = document.createElement('input');
+                                methodInput.type = 'hidden';
+                                methodInput.name = '_method';
+                                form.appendChild(methodInput);
+                            }
+                            methodInput.value = 'PUT';
+                        }
+                    });
+
                     document.addEventListener('click', function(event) {
                         if (event.target.matches('.btn-success')) {
                             const button = event.target;
@@ -582,7 +599,7 @@
                             const form = document.getElementById('approveForm');
 
                             if (btId && form) {
-                                form.action = `/admin/approve/${btId}`; // Update the form action
+                                form.action = `businessTrip/status/approve/${btId}`; // Update the form action
                                 form.submit(); // Submit the form
                             } else {
                                 console.error('Button ID or form element is missing.');
@@ -629,7 +646,7 @@
                                     l1Container.innerHTML = `
                                     <button type="submit" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
                                 `;
                                 } else {
                                     l1Container.innerHTML = `<div id="approvalDataL1" class="w-100"></div>`;
@@ -640,7 +657,7 @@
                                     l2Container.innerHTML = `
                                         <button type="submit" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
                                         <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                                data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                                data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
                                     `;
                                 } else {
                                     l2Container.innerHTML = `<div id="approvalDataL2" class="w-100"></div>`;
@@ -649,7 +666,7 @@
                                     l1ContainerDeclare.innerHTML = `
                                     <button type="submit" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
                                 `;
                                 } else {
                                     l1ContainerDeclare.innerHTML =
@@ -661,7 +678,7 @@
                                     l2ContainerDeclare.innerHTML = `
                                     <button type="submit" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
                                 `;
                                 } else {
                                     l2ContainerDeclare.innerHTML =
@@ -1023,8 +1040,6 @@
                             $('.modal-backdrop').remove();
                         });
                     });
-
-
 
                     $(document).ready(function() {
                         var table = $('#yourTableId').DataTable({

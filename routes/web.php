@@ -369,7 +369,6 @@ Route::middleware('auth')->group(function () {
         //ADMIN BT
         Route::get('/businessTrip/admin', [BusinessTripController::class, 'admin'])->name('businessTrip.admin');
         Route::get('/businessTrip/admin/filterDate', [BusinessTripController::class, 'filterDateAdmin'])->name('businessTrip-filterDate.admin');
-        Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'updatestatus'])->name('confirm.status');
         Route::get('/businessTrip/declaration/admin/{id}', [BusinessTripController::class, 'deklarasiAdmin'])->name('businessTrip.deklarasi.admin');
         Route::put('/businessTrip/declaration/admin/status/{id}', [BusinessTripController::class, 'deklarasiStatusAdmin'])->name('businessTrip.deklarasi.admin.status');
         Route::delete('/businessTrip/admin/delete/{id}', [BusinessTripController::class, 'deleteAdmin'])->name('delete.btAdmin');
@@ -419,7 +418,7 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
     //APPROVAL ADMIN BT
-    Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'adminApprove'])->name('admin.approve');
+    Route::put('businessTrip/status/approve/{id}', [BusinessTripController::class, 'adminApprove'])->name('admin.approve');
     Route::put('businessTrip/status/reject/{id}', [BusinessTripController::class, 'adminReject'])->name('admin.reject');
 
     //PDF BT
