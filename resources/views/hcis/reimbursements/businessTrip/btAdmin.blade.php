@@ -575,6 +575,22 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
+                    document.addEventListener('click', function(event) {
+                        if (event.target.matches('.btn-success')) {
+                            const button = event.target;
+                            const btId = button.getAttribute('data-id'); // Fetch `data-id` from the button
+                            const form = document.getElementById('approveForm');
+
+                            if (btId && form) {
+                                form.action = `/admin/approve/${btId}`; // Update the form action
+                                form.submit(); // Submit the form
+                            } else {
+                                console.error('Button ID or form element is missing.');
+                            }
+                        }
+                    });
+                </script>
+                <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const approvalModal = document.getElementById('approvalDecModal');
                         if (approvalModal) {
@@ -611,7 +627,7 @@
                                 // Handle L1 container content
                                 if (status === 'Pending L1') {
                                     l1Container.innerHTML = `
-                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                                    <button type="submit" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
                                             data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
                                 `;
@@ -622,7 +638,7 @@
                                 // Handle L2 container content
                                 if (status === 'Pending L2') {
                                     l2Container.innerHTML = `
-                                        <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                                        <button type="submit" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
                                         <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
                                                 data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
                                     `;
@@ -631,7 +647,7 @@
                                 }
                                 if (status === 'Declaration L1') {
                                     l1ContainerDeclare.innerHTML = `
-                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
+                                    <button type="submit" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
                                             data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
                                 `;
@@ -643,7 +659,7 @@
                                 // Handle L2 Declaration container content
                                 if (status === 'Declaration L2') {
                                     l2ContainerDeclare.innerHTML = `
-                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
+                                    <button type="submit" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
                                             data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
                                 `;

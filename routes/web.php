@@ -419,7 +419,7 @@ Route::middleware('auth')->group(function () {
     Route::put('businessTrip/status/change/{id}', [BusinessTripController::class, 'updatestatus'])->name('change.status');
 
     //APPROVAL ADMIN BT
-    Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'adminApproval'])->name('admin.approve');
+    Route::put('businessTrip/status/confirm/{id}', [BusinessTripController::class, 'adminApprove'])->name('admin.approve');
     Route::put('businessTrip/status/reject/{id}', [BusinessTripController::class, 'adminReject'])->name('admin.reject');
 
     //PDF BT
