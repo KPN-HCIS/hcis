@@ -145,8 +145,7 @@
                                             <th style="text-align: left">Total Hotel</th>
                                             <th>Details</th>
                                             <th>Status</th>
-                                            {{-- <th>Start Date</th>
-                                        <th>End Date</th> --}}
+                                            <th>Approval</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -217,8 +216,21 @@
                                                     </span>
 
                                                 </td>
-                                                {{-- <td>{{ \Carbon\Carbon::parse($transaction->tgl_masuk_htl)->format('d/m/Y') }}
-                                            <td>{{ \Carbon\Carbon::parse($transaction->tgl_keluar_htl)->format('d/m/Y') }} --}}
+                                                <td class="text-center">
+                                                    <button 
+                                                        type="button" 
+                                                        class="btn btn-sm btn-outline-success rounded-pill" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#approvalModal"
+                                                        data-id="{{ $transaction->id }}" 
+                                                        data-no="{{ $transaction->no_htl }}" 
+                                                        data-sppd="{{ $transaction->no_sppd }}"
+                                                        data-status="{{ $transaction->approval_status }}"
+                                                        data-manager-l1="{{ $managerL1Name ?? 'Unknown' }}" 
+                                                        data-manager-l2="{{ $managerL2Name ?? 'Unknown' }}">
+                                                        <i class="bi bi-list-check"></i>
+                                                    </button>
+                                                </td>
                                                 <td class="text-center">
                                                     <button type="button"
                                                         class="btn btn-sm btn-outline-success rounded-pill"

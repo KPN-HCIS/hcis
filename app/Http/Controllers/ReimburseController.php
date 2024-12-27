@@ -3021,6 +3021,138 @@ class ReimburseController extends Controller
         return redirect('/hotel/approval')->with('success', 'Request approved successfully');
     }
 
+    public function updateStatusHotelAdmin($id, Request $request)
+    {
+        $user = Auth::user();
+        $employeeId = $user->employee_id;
+
+        // Find the hotel by ID
+        $hotel = Hotel::findOrFail($id);
+        $noHtl = $hotel->no_htl;
+
+        // Check the provided status_approval input
+        $statusApproval = $request->input('status_approval');
+
+        // Handle rejection scenario
+        if ($statusApproval == 'Rejected') {
+            $rejectInfo = $request->input('reject_info');
+
+            // Get the current approval status before updating it
+            $currentApprovalStatus = $hotel->approval_status;
+
+            // Update all hotels with the same no_htl to 'Rejected'
+            Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Rejected']);
+
+            // Log the rejection into the hotel_approvals table for all hotels with the same no_htl
+            $hotels = Hotel::where('no_htl', $noHtl)->get();
+            foreach ($hotels as $hotel) {
+                $rejection = new HotelApproval();
+                $rejection->id = (string) Str::uuid();
+                $rejection->htl_id = $hotel->id;
+                $rejection->employee_id = $employeeId;
+
+                // Determine the correct layer based on the hotel's approval status BEFORE rejection
+                $rejection->layer = $currentApprovalStatus == 'Pending L2' ? 2 : 1;
+
+                $rejection->approval_status = 'Rejected';
+                $rejection->approved_at = now();
+                $rejection->reject_info = $rejectInfo;
+                $rejection->by_admin = 'T';
+                $rejection->save();
+            }
+
+            return redirect()->route('hotel.admin')->with('success', 'Request successfully Rejected.');
+        }
+
+        // Handle approval scenarios
+        if ($hotel->approval_status == 'Pending L1') {
+            Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Pending L2']);
+
+            $managerId = Employee::where('id', $hotel->user_id)->value('manager_l2_id');
+            // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerName = Employee::where('employee_id', $managerId)->value('fullname');
+            $employeeName = Employee::where('id', $hotel->user_id)->pluck('fullname')->first();
+            
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Hotel and waiting for your Approval with the following details :";
+
+            $approvalLink = route('approve.hotel', [
+                'id' => urlencode($hotel->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.hotel.link', [
+                'id' => urlencode($hotel->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Initialize arrays to collect details for multiple hotels
+                $noHtlList = [];
+                $namaHtl = [];
+                $lokasiHtl = [];
+                $tglMasukHtl = [];
+                $tglKeluarHtl = [];
+                $totalHari = [];
+
+                // Collect details for each hotel with the same no_htl
+                $hotels = Hotel::where('no_htl', $noHtl)->get();
+                foreach ($hotels as $htl) {
+                    $noHtlList[] = $htl->no_htl;
+                    $namaHtl[] = $htl->nama_htl;
+                    $lokasiHtl[] = $htl->lokasi_htl;
+                    $tglMasukHtl[] = $htl->tgl_masuk_htl;
+                    $tglKeluarHtl[] = $htl->tgl_keluar_htl;
+                    $totalHari[] = $htl->total_hari;
+                }
+
+                // Send email with all hotel details
+                Mail::to($managerEmail)->send(new HotelNotification([
+                    'noSppd' => $hotel->no_sppd,
+                    'noHtl' => $noHtlList,
+                    'namaHtl' => $namaHtl,
+                    'lokasiHtl' => $lokasiHtl,
+                    'tglMasukHtl' => $tglMasukHtl,
+                    'tglKeluarHtl' => $tglKeluarHtl,
+                    'totalHari' => $totalHari,
+                    'managerName' => $managerName,
+                    'approvalLink' => $approvalLink,
+                    'rejectionLink' => $rejectionLink,
+                    'approvalStatus' => 'Pending L2',
+                    'base64Image' => $base64Image,
+                    'textNotification' => $textNotification,
+                    'employeeName' => $employeeName,
+                ]));
+            }
+        } elseif ($hotel->approval_status == 'Pending L2') {
+            Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
+        } else {
+            return redirect()->back()->with('error', 'Invalid status update.');
+        }
+
+        // Log the approval into the hotel_approvals table for all hotels with the same no_htl
+        $hotels = Hotel::where('no_htl', $noHtl)->get();
+        foreach ($hotels as $hotel) {
+            $approval = new HotelApproval();
+            $approval->id = (string) Str::uuid();
+            $approval->htl_id = $hotel->id;
+            $approval->employee_id = $employeeId;
+            $approval->layer = $hotel->approval_status == 'Pending L2' ? 1 : 2;
+            $approval->approval_status = $hotel->approval_status;
+            $approval->approved_at = now();
+            $approval->by_admin = 'T';
+            $approval->save();
+        }
+
+        // Redirect to the hotel approval page
+        return redirect()->route('hotel.admin')->with('success', 'Request approved successfully.');
+    }
+
     public function hotelAdmin(Request $request)
     {
         $parentLink = 'Reimbursement';
@@ -3117,6 +3249,22 @@ class ReimburseController extends Controller
             return [$key => ['total' => $group->count()]];
         });
 
+        // Fetch approval data for each ticket ID
+        $approvalHotels = [];
+        foreach ($hotelIds as $hotelId) {
+            $hotels = HotelApproval::where('htl_id', $hotelId)->get();
+            foreach ($hotels as $hotelApprove) {
+                $approvalHotels[] = [
+                    'tkt_id' => $hotelId,
+                    'layer' => $hotelApprove->layer,
+                    'approval_status' => $hotelApprove->approval_status,
+                    'employee_id' => $hotelApprove->employee->fullname,
+                    'by_admin' => $hotelApprove->by_admin,
+                    'approved_at' => $hotelApprove->approved_at,
+                ];
+            }
+        }
+
         return view('hcis.reimbursements.hotel.admin.hotelAdmin', [
             'link' => $link,
             'parentLink' => $parentLink,
@@ -3129,6 +3277,7 @@ class ReimburseController extends Controller
             'managerL2Name' => $managerL2Name,
             'hotelApprovals' => $hotelApprovals,
             'employeeName' => $employeeName,
+            'approvalHotels' => $approvalHotels,
             // 'filter' => $filter,
         ]);
     }
