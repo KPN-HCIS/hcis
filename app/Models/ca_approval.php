@@ -21,6 +21,7 @@ class ca_approval extends Model
         'approved_at',
         'reject_info',
         'by_admin',
+        'admin_id',
     ];
 
     protected $keyType = 'string';
