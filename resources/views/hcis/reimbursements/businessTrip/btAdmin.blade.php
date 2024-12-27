@@ -389,7 +389,10 @@
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="approveForm" action="{{ '' }}" method="POST">@csrf
+                            <form id="approveForm" action="{{ route('admin.approve', ['id' => $n->id]) }}"
+                                method="POST">
+                                @csrf
+                                @method('PUT')
                                 <div class="modal-body">
                                     <div class="row">
                                         <!-- Manager L1 -->
@@ -542,10 +545,9 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-4">
-                                <form id="rejectReasonForm" method="POST"
-                                    action="{{ route('confirm.status', ['id' => $n->id]) }}">
+                                <form id="rejectReasonForm" method="POST">
                                     @csrf
-                                    @method('PUT')
+                                    <input type="hidden" name="_method" value="PUT">
                                     <input type="hidden" name="status_approval" value="Rejected">
 
                                     <div class="mb-3">
@@ -572,6 +574,40 @@
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
                 <script src="https://cdn.datatables.net/2.1.3/js/dataTables.min.js"></script>
                 <script>
+                    document.getElementById('rejectReasonForm').addEventListener('show.bs.modal', function(event) {
+                        const button = event.relatedTarget; // Button that triggered the modal
+                        const btId = button.getAttribute('data-id'); // Get the ID
+                        const form = this.querySelector('form');
+                        if (form && btId) {
+                            form.action = `/businessTrip/status/reject/${btId}`; // Update form action with correct path
+                            // Add method override for PUT request
+                            let methodInput = form.querySelector('input[name="_method"]');
+                            if (!methodInput) {
+                                methodInput = document.createElement('input');
+                                methodInput.type = 'hidden';
+                                methodInput.name = '_method';
+                                form.appendChild(methodInput);
+                            }
+                            methodInput.value = 'PUT';
+                        }
+                    });
+
+                    // document.addEventListener('click', function(event) {
+                    //     if (event.target.matches('.btn-success')) {
+                    //         const button = event.target;
+                    //         const btId = button.getAttribute('data-id'); // Fetch `data-id` from the button
+                    //         const form = document.getElementById('approveForm');
+
+                    //         if (btId && form) {
+                    //             form.action = `businessTrip/status/approve/${btId}`; // Update the form action
+                    //             form.submit(); // Submit the form
+                    //         } else {
+                    //             console.error('Button ID or form element is missing.');
+                    //         }
+                    //     }
+                    // });
+                </script>
+                <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const approvalModal = document.getElementById('approvalDecModal');
                         if (approvalModal) {
@@ -583,6 +619,19 @@
                                 const status = button.getAttribute('data-status');
                                 const managerL1 = button.getAttribute('data-manager-l1');
                                 const managerL2 = button.getAttribute('data-manager-l2');
+                                const form = document.getElementById('approveForm');
+
+                                if (form && btId) {
+                                    form.action = `/businessTrip/status/approve/${btId}`;
+                                    let methodInput = form.querySelector('input[name="_method"]');
+                                    if (!methodInput) {
+                                        methodInput = document.createElement('input');
+                                        methodInput.type = 'hidden';
+                                        methodInput.name = '_method';
+                                        form.appendChild(methodInput);
+                                    }
+                                    methodInput.value = 'PUT';
+                                }
 
                                 // Update modal content
                                 document.getElementById('modalSPPD').textContent = sppdNo;
@@ -605,12 +654,22 @@
                                 l1ContainerDeclare.innerHTML = '';
                                 l2ContainerDeclare.innerHTML = '';
 
+                                approvalModal.addEventListener('click', function(e) {
+                                    if (e.target.matches('.btn-success')) {
+                                        e.preventDefault();
+                                        const form = document.getElementById('approveForm');
+                                        if (form) {
+                                            form.submit();
+                                        }
+                                    }
+                                });
+
                                 // Handle L1 container content
                                 if (status === 'Pending L1') {
                                     l1Container.innerHTML = `
-                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                                    <button type="submit" class="btn btn-success btn-sm rounded-pill me-2" data-id="${btId}">Approve</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
                                 `;
                                 } else {
                                     l1Container.innerHTML = `<div id="approvalDataL1" class="w-100"></div>`;
@@ -619,18 +678,18 @@
                                 // Handle L2 container content
                                 if (status === 'Pending L2') {
                                     l2Container.innerHTML = `
-                                        <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                                        <button type="submit" class="btn btn-success btn-sm rounded-pill me-2" data-id="${btId}">Approve</button>
                                         <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                                data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                                data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
                                     `;
                                 } else {
                                     l2Container.innerHTML = `<div id="approvalDataL2" class="w-100"></div>`;
                                 }
                                 if (status === 'Declaration L1') {
                                     l1ContainerDeclare.innerHTML = `
-                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
+                                    <button type="submit" class="btn btn-success btn-sm rounded-pill me-2" data-id="${btId}">Approve Declaration</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
                                 `;
                                 } else {
                                     l1ContainerDeclare.innerHTML =
@@ -640,9 +699,9 @@
                                 // Handle L2 Declaration container content
                                 if (status === 'Declaration L2') {
                                     l2ContainerDeclare.innerHTML = `
-                                    <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve Declaration</button>
+                                    <button type="submit" class="btn btn-success btn-sm rounded-pill me-2" data-id="${btId}">Approve Declaration</button>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
                                 `;
                                 } else {
                                     l2ContainerDeclare.innerHTML =
@@ -662,14 +721,27 @@
                                 if (approvalDataL1) {
                                     const l1Approvals = filteredApprovals.filter(a => a.layer === 1 && a
                                         .approval_status === 'Pending L2');
+                                    const l1Rejections = filteredApprovals.filter(a => a.layer === 1 && a
+                                        .approval_status === 'Rejected');
                                     if (l1Approvals.length > 0) {
                                         approvalDataL1.innerHTML = l1Approvals.map(approval => `
-                                        <div class="border rounded p-2 mb-2">
-                                            <strong>Status:</strong> ${approval.approval_status}<br>
-                                            <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
-                                        </div>
-                                    `).join('');
+                                                        <div class="border rounded p-2 mb-2">
+                                                            <strong>Status:</strong> ${approval.approval_status}<br>
+                                                            <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                                            <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                                        </div>
+                                                    `).join('');
+                                    } else if (l1Rejections.length > 0) {
+                                        approvalDataL1.innerHTML += l1Rejections.map(rejection => `
+                                          <div class="border rounded p-2 mb-2 bg-warning">
+                                                            <strong>Status:</strong> ${rejection.approval_status}<br>
+                                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                                        </div>
+                                                    `).join('');
                                     } else {
                                         approvalDataL1.innerHTML =
                                             '<p class="text-muted">No L1 Request found</p>';
@@ -679,14 +751,27 @@
                                 if (approvalDataL2) {
                                     const l2Approvals = filteredApprovals.filter(a => a.layer === 2 && a
                                         .approval_status === 'Approved');
+                                    const l2Rejections = filteredApprovals.filter(a => a.layer === 2 && a
+                                        .approval_status === 'Rejected');
                                     if (l2Approvals.length > 0) {
                                         approvalDataL2.innerHTML = l2Approvals.map(approval => `
                                             <div class="border rounded p-2 mb-2">
                                                 <strong>Status:</strong> ${approval.approval_status}<br>
-                                                 <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                                <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                                <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                             </div>
                                 `).join('');
+                                    } else if (l2Rejections.length > 0) {
+                                        approvalDataL2.innerHTML += l2Rejections.map(rejection => `
+                                        <div class="border rounded p-2 mb-2 bg-warning">
+                                            <strong>Status:</strong> ${rejection.approval_status}<br>
+                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                        </div>
+                                    `).join('');
                                     } else {
                                         approvalDataL2.innerHTML =
                                             '<p class="text-muted">No L2 Request found</p>';
@@ -695,15 +780,29 @@
                                 if (approvalDataL1Declare) {
                                     const l1Declarations = filteredApprovals.filter(a =>
                                         a.layer === 1 &&
-                                        (a.approval_status === 'Declaration L1' || a.approval_status ===
-                                            'Declaration L2')
+                                        (a.approval_status === 'Declaration L2')
+                                    );
+                                    const l1DeclarationsReject = filteredApprovals.filter(a =>
+                                        a.layer === 1 &&
+                                        (a.approval_status === 'Declaration Rejected')
                                     );
                                     if (l1Declarations.length > 0) {
                                         approvalDataL1Declare.innerHTML = l1Declarations.map(approval => `
                                         <div class="border rounded p-2 mb-2">
                                             <strong>Status:</strong> ${approval.approval_status}<br>
                                             <strong>Declared By:</strong> ${approval.employee_id}<br>
-                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                            <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                        </div>
+                                    `).join('');
+                                    } else if (l1DeclarationsReject.length > 0) {
+                                        approvalDataL1Declare.innerHTML += l1DeclarationsReject.map(rejection => `
+                                        <div class="border rounded p-2 mb-2 bg-warning">
+                                            <strong>Status:</strong> ${rejection.approval_status}<br>
+                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
                                     `).join('');
                                     } else {
@@ -715,15 +814,29 @@
                                 if (approvalDataL2Declare) {
                                     const l2Declarations = filteredApprovals.filter(a =>
                                         a.layer === 2 &&
-                                        (a.approval_status === 'Declaration L2' || a.approval_status ===
-                                            'Declaration Approved')
+                                        (a.approval_status === 'Declaration Approved')
+                                    );
+                                    const l2DeclarationsReject = filteredApprovals.filter(a =>
+                                        a.layer === 2 &&
+                                        (a.approval_status === 'Declaration Rejected')
                                     );
                                     if (l2Declarations.length > 0) {
                                         approvalDataL2Declare.innerHTML = l2Declarations.map(approval => `
                                         <div class="border rounded p-2 mb-2">
                                             <strong>Status:</strong> ${approval.approval_status}<br>
                                             <strong>Declared By:</strong> ${approval.employee_id}<br>
-                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}
+                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                            <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                        </div>
+                                    `).join('');
+                                    } else if (l2DeclarationsReject.length > 0) {
+                                        approvalDataL2Declare.innerHTML += l2DeclarationsReject.map(rejection => `
+                                        <div class="border rounded p-2 mb-2 bg-warning">
+                                            <strong>Status:</strong> ${rejection.approval_status}<br>
+                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
                                     `).join('');
                                     } else {
@@ -859,7 +972,8 @@
 
                             function createTableHtml(data, title) {
                                 var tableHtml = '<h5>' + title + '</h5>';
-                                tableHtml += '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
+                                tableHtml +=
+                                    '<div class="table-responsive"><table class="table table-sm"><thead><tr>';
                                 var isArray = Array.isArray(data) && data.length > 0;
 
                                 // Assuming all objects in the data array have the same keys, use the first object to create headers
@@ -949,8 +1063,6 @@
                             $('.modal-backdrop').remove();
                         });
                     });
-
-
 
                     $(document).ready(function() {
                         var table = $('#yourTableId').DataTable({

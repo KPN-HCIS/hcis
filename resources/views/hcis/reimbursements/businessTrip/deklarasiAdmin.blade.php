@@ -194,7 +194,7 @@
                                             </div>
                                         </div>
                                         <div class="row mb-2">
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-6 mb-2">
                                                 <label class="form-label">Total Cash Advanced</label>
                                                 <div class="input-group">
                                                     <div class="input-group-append">
@@ -206,7 +206,7 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-6 mb-2">
                                                 <label class="form-label">Total Cash Advanced Deklarasi</label>
                                                 <div class="input-group">
                                                     <div class="input-group-append">
