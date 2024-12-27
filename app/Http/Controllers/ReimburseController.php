@@ -4422,6 +4422,208 @@ class ReimburseController extends Controller
         return redirect('/ticket/approval')->with('success', 'Request approved successfully');
     }
 
+    public function updateStatusTicketAdmin($id, Request $request)
+    {
+        $user = Auth::user();
+        $employeeId = $user->employee_id;
+        $currentYear = now()->year;
+
+        // Find the ticket by ID
+        $ticket = Tiket::findOrFail($id);
+        $ticketUserId = $ticket->user_id;
+        $ticketEmployeeId = Employee::where('id', $ticketUserId)->pluck('employee_id')->first();
+
+        $noTkt = $ticket->no_tkt;
+        $quota = HomeTrip::where('employee_id', $ticketEmployeeId)->get();
+
+        $ticketNpTkt = Tiket::where('no_tkt', $noTkt)->pluck('np_tkt');
+        // dd($ticketEmployeeId, $quota, $ticketNpTkt);
+
+        // Check the provided status_approval input
+        $statusApproval = $request->input('status_approval');
+
+        // Handle rejection scenario
+        if ($statusApproval == 'Rejected') {
+
+            $rejectInfo = $request->input('reject_info');
+
+            // Get the current approval status before updating it
+            $currentApprovalStatus = $ticket->approval_status;
+
+            // Update all tickets with the same no_tkt to 'Rejected'
+            Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Rejected']);
+
+            // Log the rejection into the tkt_approvals table for all tickets with the same no_tkt
+            $tickets = Tiket::where('no_tkt', $noTkt)->get();
+            foreach ($tickets as $ticket) {
+                $rejection = new TiketApproval();
+                $rejection->id = (string) Str::uuid();
+                $rejection->tkt_id = $ticket->id;
+                $rejection->employee_id = $employeeId;
+
+                // Determine the correct layer based on the ticket's approval status BEFORE rejection
+                if ($currentApprovalStatus == 'Pending L2') {
+                    $rejection->layer = 2; // Layer 2 if ticket was at L2
+                } else {
+                    $rejection->layer = 1; // Otherwise, it's Layer 1
+                }
+
+                $rejection->approval_status = 'Rejected';
+                $rejection->approved_at = now();
+                $rejection->reject_info = $rejectInfo;
+                $rejection->by_admin = 'T';
+                $rejection->save();
+            }
+
+            // Redirect to the ticket approval page instead of back to the same page
+            return redirect()->route('ticket.admin')->with('success', 'Request rejected successfully.');
+        }
+
+        // dd($ticket->approval_status);
+        // If not rejected, proceed with normal approval process
+        if ($ticket->approval_status == 'Pending L1') {
+            Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Pending L2']);
+            $managerId = Employee::where('id', $ticket->user_id)->value('manager_l2_id');
+            // $managerEmail = Employee::where('employee_id', $managerId)->value('email');
+            $managerEmail = "eriton.dewa@kpn-corp.com";
+            $managerName = Employee::where('employee_id', $managerId)->pluck('fullname')->first();
+            $employeeName = Employee::where('id', $ticket->user_id)->pluck('fullname')->first();
+
+            $imagePath = public_path('images/kop.jpg');
+            $imageContent = file_get_contents($imagePath);
+            $base64Image = "data:image/png;base64," . base64_encode($imageContent);
+            $textNotification = "requesting a Ticket and waiting for your Approval with the following details :";
+            $approvalLink = route('approve.ticket', [
+                'id' => urlencode($ticket->id),
+                'manager_id' => $managerId,
+                'status' => 'Pending L2'
+            ]);
+
+            $rejectionLink = route('reject.ticket.link', [
+                'id' => urlencode($ticket->id),
+                'manager_id' => $managerId,
+                'status' => 'Rejected'
+            ]);
+
+            if ($managerEmail) {
+                // Initialize arrays to collect details for multiple hotels
+                $noTktList = [];
+                $npTkt = [];
+                $dariTkt = [];
+                $keTkt = [];
+                $tglBrktTkt = [];
+                $jamBrktTkt = [];
+                $tglPlgTkt = [];
+                $jamPlgTkt = [];
+                $tipeTkt = [];
+
+                // Collect details for each hotel with the same no_htl
+                $tickets = Tiket::where('no_tkt', $noTkt)->get();
+                // dd($tickets);
+                foreach ($tickets as $tkt) {
+                    $noTktList[] = $tkt->no_tkt;
+                    $npTkt[] = $tkt->np_tkt;
+                    $dariTkt[] = $tkt->dari_tkt;
+                    $keTkt[] = $tkt->ke_tkt;
+                    $tglBrktTkt[] = $tkt->tgl_brkt_tkt;
+                    $jamBrktTkt[] = $tkt->jam_brkt_tkt;
+                    $tglPlgTkt[] = $tkt->tgl_plg_tkt;
+                    $jamPlgTkt[] = $tkt->jam_plg_tkt;
+                    $tipeTkt[] = $tkt->type_tkt;
+                }
+
+                if ($ticket->jns_dinas_tkt == 'Dinas') {
+                    Mail::to($managerEmail)->send(new TicketNotification([
+                        'noSppd' => $ticket->no_sppd,
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } else {
+                    Mail::to($managerEmail)->send(new HomeTripNotification([
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                }
+            }
+        } elseif ($ticket->approval_status == 'Pending L2') {
+            Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
+            if ($ticket->jns_dinas_tkt == 'Cuti') {
+                // Hitung total pengurangan kuota berdasarkan semua tiket
+                $totalDecrement = 0;
+        
+                foreach ($ticketNpTkt as $name) {
+                    // Dapatkan type_tkt untuk setiap tiket berdasarkan nama
+                    $ticketType = Tiket::where('user_id', $ticket->user_id)
+                        ->where('no_tkt', $ticket->no_tkt)
+                        ->where('tkt_only', '=', 'Y')
+                        ->where('np_tkt', $name) // Pastikan mengambil type_tkt untuk nama saat ini
+                        ->value('type_tkt');
+        
+                    // Default ke 'One Way' jika type_tkt tidak ditemukan
+                    if (!$ticketType) {
+                        $ticketType = 'One Way';
+                    }
+        
+                    // Tentukan nilai pengurangan berdasarkan type_tkt
+                    $decrementValue = ($ticketType == 'One Way') ? 1 : 2;
+        
+                    // Tambahkan nilai pengurangan ke total
+                    $totalDecrement += $decrementValue;
+                }
+        
+                // Kurangi kuota total di HomeTrip berdasarkan employee_id
+                HomeTrip::where('employee_id', $ticketEmployeeId)
+                    ->where('period', $currentYear)
+                    ->decrement('quota', $totalDecrement);
+            }
+        } else {
+            return redirect()->back()->with('error', 'Invalid status update.');
+        }
+
+        // Log the approval into the tkt_approvals table for all tickets with the same no_tkt
+        $tickets = Tiket::where('no_tkt', $noTkt)->get();
+        foreach ($tickets as $ticket) {
+            $approval = new TiketApproval();
+            $approval->id = (string) Str::uuid();
+            $approval->tkt_id = $ticket->id;
+            $approval->employee_id = $employeeId;
+            $approval->layer = $ticket->approval_status == 'Pending L2' ? 1 : 2;
+            $approval->approval_status = $ticket->approval_status;
+            $approval->approved_at = now();
+            $approval->by_admin = 'T';
+            $approval->save();
+        }
+        return redirect()->route('ticket.admin')->with('success', 'Request approved successfully.');
+    }
+
     public function ticketAdmin(Request $request)
     {
         $parentLink = 'Reimbursement';
@@ -4525,7 +4727,17 @@ class ReimburseController extends Controller
         // Fetch approval data for each ticket ID
         $approvalTickets = [];
         foreach ($tiketIds as $tiketId) {
-            $approvalTickets[$tiketId] = TiketApproval::where('tkt_id', $tiketId)->get();
+            $tickets = TiketApproval::where('tkt_id', $tiketId)->get();
+            foreach ($tickets as $ticketApprove) {
+                $approvalTickets[] = [
+                    'tkt_id' => $tiketId,
+                    'layer' => $ticketApprove->layer,
+                    'approval_status' => $ticketApprove->approval_status,
+                    'employee_id' => $ticketApprove->employee->fullname,
+                    'by_admin' => $ticketApprove->by_admin,
+                    'approved_at' => $ticketApprove->approved_at,
+                ];
+            }
         }
 
         // Return the view with all the data
