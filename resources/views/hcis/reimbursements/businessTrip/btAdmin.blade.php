@@ -591,21 +591,6 @@
                             methodInput.value = 'PUT';
                         }
                     });
-
-                    // document.addEventListener('click', function(event) {
-                    //     if (event.target.matches('.btn-success')) {
-                    //         const button = event.target;
-                    //         const btId = button.getAttribute('data-id'); // Fetch `data-id` from the button
-                    //         const form = document.getElementById('approveForm');
-
-                    //         if (btId && form) {
-                    //             form.action = `businessTrip/status/approve/${btId}`; // Update the form action
-                    //             form.submit(); // Submit the form
-                    //         } else {
-                    //             console.error('Button ID or form element is missing.');
-                    //         }
-                    //     }
-                    // });
                 </script>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
