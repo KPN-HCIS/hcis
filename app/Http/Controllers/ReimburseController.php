@@ -4365,6 +4365,9 @@ class ReimburseController extends Controller
                         'approvalStatus' => 'Pending L2',
                         'approvalLink' => $approvalLink,
                         'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
                     ]));
                 }
             }
@@ -4519,6 +4522,12 @@ class ReimburseController extends Controller
             return [$key => ['total' => $group->count()]];
         });
 
+        // Fetch approval data for each ticket ID
+        $approvalTickets = [];
+        foreach ($tiketIds as $tiketId) {
+            $approvalTickets[$tiketId] = TiketApproval::where('tkt_id', $tiketId)->get();
+        }
+
         // Return the view with all the data
         return view('hcis.reimbursements.ticket.admin.ticketAdmin', [
             'link' => $link,
@@ -4532,6 +4541,7 @@ class ReimburseController extends Controller
             'managerL2Name' => $managerL2Name ?? 'Unknown',
             'ticketApprovals' => $ticketApprovals,
             'employeeName' => $employeeName,
+            'approvalTicket' => $approvalTickets,
         ]);
     }
 

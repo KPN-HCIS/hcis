@@ -361,6 +361,7 @@ class HomeTripController extends Controller
                 $tiket->approval_status = $statusValue;
                 $tiket->jns_dinas_tkt = 'Cuti';
                 $tiket->tkt_only = 'Y';
+                $tiket->no_sppd = '-';
                 // dd($request->all());
                 $tiket->save();
 
@@ -620,6 +621,7 @@ class HomeTripController extends Controller
                     'approval_status' => $statusValue,
                     'jns_dinas_tkt' => 'Cuti',
                     'tkt_only' => 'Y',
+                    'no_sppd' => '-',
                 ];
 
 

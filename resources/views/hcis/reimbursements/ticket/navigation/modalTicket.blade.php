@@ -101,6 +101,59 @@
     </div>
 </div>
 
+{{-- Booking Approval --}}
+<div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="approvalModalLabel">Approval Business Trip Update - {{$transaction->id}}<span
+                        id="modalSPPD"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <form id="approveForm" action="{{ '' }}" method="POST">@csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Manager L1 -->
+                        <div class="col-md-12 mb-3">
+                            <div
+                                class="d-flex flex-column align-items-start p-2 mr-2">
+                                <label class="col-form-label mb-2 text-dark">Approval Request:</label>
+
+                                <!-- Manager L1 Name & Buttons -->
+                                <div class="mb-3 w-100">
+                                    <div>
+                                        <strong>Manager L1:</strong>
+                                        <span id="managerL1Name"></span>
+                                    </div>
+                                    <div class="mt-2 d-flex justify-content-start" id="l1ActionContainer">
+                                        <!-- Will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Manager L2 Name & Buttons -->
+                                <div class="mb-3 w-100">
+                                    <div>
+                                        <strong>Manager L2:</strong>
+                                        <span id="managerL2Name"></span>
+                                    </div>
+                                    <div class="mt-2 d-flex justify-content-start" id="l2ActionContainer">
+                                        <!-- Will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary rounded-pill"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {{-- Success --}}
 @if (session('success'))
     <script>
@@ -209,4 +262,58 @@
         element.value = element.value.replace(/\./g, '');
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const approvalModal = document.getElementById('approvalModal');
+
+        if (approvalModal) {
+            approvalModal.addEventListener('show.bs.modal', function (event) {
+                // Ambil data dari tombol yang memicu modal
+                const button = event.relatedTarget;
+                const btId = button.getAttribute('data-id');
+                const status = button.getAttribute('data-status');
+                const managerL1Name = button.getAttribute('data-manager-l1') || 'Unknown';
+                const managerL2Name = button.getAttribute('data-manager-l2') || 'Unknown';
+
+                console.log('Button Data:', { id: btId, status, managerL1Name, managerL2Name });
+
+                // Update modal dengan data manager
+                document.getElementById('managerL1Name').textContent = managerL1Name;
+                document.getElementById('managerL2Name').textContent = managerL2Name;
+
+                // Kontainer untuk aksi dan data approval
+                const l1Container = document.getElementById('l1ActionContainer');
+                const l2Container = document.getElementById('l2ActionContainer');
+
+                // Hapus konten sebelumnya
+                l1Container.innerHTML = '';
+                l2Container.innerHTML = '';
+
+                // Fungsi untuk mengisi kontainer aksi
+                function populateContainer(container, status, layer) {
+                    if (status === `Pending ${layer}`) {
+                        container.innerHTML = `
+                            <button type="button" class="btn btn-success btn-sm rounded-pill me-2">Approve</button>
+                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                                    data-bs-toggle="modal" data-bs-target="#rejectReasonForm">Reject</button>
+                        `;
+                    } else {
+                        container.innerHTML = `<div id="approvalData${layer}" class="w-100"></div>`;
+                    }
+                }
+
+                // Isi kontainer aksi untuk L1 dan L2
+                populateContainer(l1Container, status, 'L1');
+                populateContainer(l2Container, status, 'L2');
+
+                // Ambil data approval dari server (Laravel Blade)
+                const approvals = @json($approvalTicket) || [];
+                console.log('Approval Data:', approvals);
+                console.log('tkt_id:', btId);
+
+                // Filter data approval berdasarkan btId
+                const filteredApprovals = approvals.filter(approval => approval.tkt_id === btId);
+                console.log('Filtered:', filteredApprovals);
+            });
+        }
+    });
 </script>

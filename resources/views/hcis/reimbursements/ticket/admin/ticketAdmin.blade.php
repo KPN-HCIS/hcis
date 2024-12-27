@@ -162,6 +162,7 @@
                                         <th>From/To</th>
                                         <th>Details</th>
                                         <th>Status</th>
+                                        <th>Approval</th>
                                         <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
@@ -242,13 +243,30 @@
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-sm btn-outline-success rounded-pill" data-bs-toggle="modal" data-bs-target="#bookingModal"
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-sm btn-outline-success rounded-pill" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#approvalModal"
+                                                    data-id="{{ $transaction->id }}" 
+                                                    data-no="{{ $transaction->no_tkt }}" 
+                                                    data-sppd="{{ $transaction->no_sppd }}"
+                                                    data-status="{{ $transaction->approval_status }}"
+                                                    data-manager-l1="{{ $managerL1Name ?? 'Unknown' }}" 
+                                                    data-manager-l2="{{ $managerL2Name ?? 'Unknown' }}">
+                                                    <i class="bi bi-list-check"></i>
+                                                </button>
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" data-bs-toggle="modal" data-bs-target="#bookingModal"
                                                         data-no-id="{{ $transaction->id }}"
-                                                        data-no-tkt="{{ $transaction->no_tkt }}">
+                                                        data-no-tkt="{{ $transaction->no_tkt }}"
+                                                        title="Booking Detail">
                                                     <i class="bi bi-ticket-perforated"></i>
                                                 </button>
                                                 <a href="{{ route('ticket.export', ['id' => $transaction->id]) }}"
-                                                    class="btn btn-sm btn-outline-info rounded-pill" target="_blank">
+                                                    class="btn btn-sm btn-outline-info rounded-pill" target="_blank"
+                                                    title="Download PDF">
                                                     <i class="bi bi-download"></i>
                                                 </a>
                                                 <form
