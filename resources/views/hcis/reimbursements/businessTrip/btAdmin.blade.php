@@ -398,7 +398,7 @@
                                         <!-- Manager L1 -->
                                         <div class="col-md-6 mb-3">
                                             <div
-                                                class="d-flex flex-column align-items-start border-end border-danger-subtle p-2 mr-2">
+                                                class="d-flex flex-column align-items-start border-danger-subtle px-2 mx-2 py-2">
                                                 <label class="col-form-label mb-2 text-dark">Approval Request:</label>
 
                                                 <!-- Manager L1 Name & Buttons -->
@@ -775,8 +775,8 @@
                                         approvalDataL1Declare.innerHTML = l1Declarations.map(approval => `
                                         <div class="border rounded p-2 mb-2">
                                             <strong>Status:</strong> ${approval.approval_status}<br>
-                                            <strong>Declared By:</strong> ${approval.employee_id}<br>
-                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                            <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
                                             <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
                                     `).join('');
@@ -809,8 +809,8 @@
                                         approvalDataL2Declare.innerHTML = l2Declarations.map(approval => `
                                         <div class="border rounded p-2 mb-2">
                                             <strong>Status:</strong> ${approval.approval_status}<br>
-                                            <strong>Declared By:</strong> ${approval.employee_id}<br>
-                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                            <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
                                             <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
                                     `).join('');
