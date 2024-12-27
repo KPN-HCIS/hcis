@@ -187,7 +187,7 @@
                                             <th>Taxi</th>
                                             <th>Status</th>
                                             <th style="">Approve</th>
-                                            <th style="width: 220px;">Action</th>
+                                            <th style="width: 270px;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
