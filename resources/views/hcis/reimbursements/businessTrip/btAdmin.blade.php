@@ -389,78 +389,83 @@
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="approveForm" action="{{ route('admin.approve', ['id' => $n->id]) }}"
-                                method="POST">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <!-- Manager L1 -->
-                                        <div class="col-md-6 mb-3">
-                                            <div
-                                                class="d-flex flex-column align-items-start border-danger-subtle px-2 mx-2 py-2">
-                                                <label class="col-form-label mb-2 text-dark">Approval Request:</label>
+                            @if (isset($n))
+                                <form id="approveForm" action="{{ route('admin.approve', ['id' => $n->id]) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <!-- Manager L1 -->
+                                            <div class="col-md-6 mb-3">
+                                                <div
+                                                    class="d-flex flex-column align-items-start border-danger-subtle px-2 mx-2 py-2">
+                                                    <label class="col-form-label mb-2 text-dark">Approval Request:</label>
 
-                                                <!-- Manager L1 Name & Buttons -->
-                                                <div class="mb-3 w-100">
-                                                    <div>
-                                                        <strong>Manager L1:</strong>
-                                                        <span id="managerL1Name"></span>
+                                                    <!-- Manager L1 Name & Buttons -->
+                                                    <div class="mb-3 w-100">
+                                                        <div>
+                                                            <strong>Manager L1:</strong>
+                                                            <span id="managerL1Name"></span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex justify-content-start"
+                                                            id="l1ActionContainer">
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </div>
                                                     </div>
-                                                    <div class="mt-2 d-flex justify-content-start" id="l1ActionContainer">
-                                                        <!-- Will be populated by JavaScript -->
-                                                    </div>
-                                                </div>
 
-                                                <!-- Manager L2 Name & Buttons -->
-                                                <div class="mb-3 w-100">
-                                                    <div>
-                                                        <strong>Manager L2:</strong>
-                                                        <span id="managerL2Name"></span>
-                                                    </div>
-                                                    <div class="mt-2 d-flex justify-content-start" id="l2ActionContainer">
-                                                        <!-- Will be populated by JavaScript -->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <div class="d-flex flex-column align-items-start p-2">
-                                                <label class="col-form-label mb-2 text-dark">Approval Declaration:</label>
-
-                                                <!-- Manager L1 Name & Buttons -->
-                                                <div class="mb-3 w-100">
-                                                    <div>
-                                                        <strong>Manager L1:</strong>
-                                                        <span id="managerL1NameDeclare"></span>
-                                                    </div>
-                                                    <div class="mt-2 d-flex justify-content-start"
-                                                        id="l1ActionContainerDeclare">
-                                                        <!-- Will be populated by JavaScript -->
-                                                    </div>
-                                                </div>
-
-                                                <!-- Manager L2 Name & Buttons -->
-                                                <div class="mb-3 w-100">
-                                                    <div>
-                                                        <strong>Manager L2:</strong>
-                                                        <span id="managerL2NameDeclare"></span>
-                                                    </div>
-                                                    <div class="mt-2 d-flex justify-content-start"
-                                                        id="l2ActionContainerDeclare">
-                                                        <!-- Will be populated by JavaScript -->
+                                                    <!-- Manager L2 Name & Buttons -->
+                                                    <div class="mb-3 w-100">
+                                                        <div>
+                                                            <strong>Manager L2:</strong>
+                                                            <span id="managerL2Name"></span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex justify-content-start"
+                                                            id="l2ActionContainer">
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="d-flex flex-column align-items-start p-2">
+                                                    <label class="col-form-label mb-2 text-dark">Approval
+                                                        Declaration:</label>
 
+                                                    <!-- Manager L1 Name & Buttons -->
+                                                    <div class="mb-3 w-100">
+                                                        <div>
+                                                            <strong>Manager L1:</strong>
+                                                            <span id="managerL1NameDeclare"></span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex justify-content-start"
+                                                            id="l1ActionContainerDeclare">
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Manager L2 Name & Buttons -->
+                                                    <div class="mb-3 w-100">
+                                                        <div>
+                                                            <strong>Manager L2:</strong>
+                                                            <span id="managerL2NameDeclare"></span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex justify-content-start"
+                                                            id="l2ActionContainerDeclare">
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-primary rounded-pill"
-                                        data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </form>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-primary rounded-pill"
+                                            data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>

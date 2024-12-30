@@ -2962,6 +2962,7 @@ class BusinessTripController extends Controller
         // Log::info('Ticket Approvals:', $btApprovals->toArray());
 
         $btApprovals = $btApprovals->keyBy('bt_id');
+        $btApproved = BTApproval::whereIn('bt_id', $btIds)->get();
 
         if ($startDate && $endDate) {
             $query->whereBetween('mulai', [$startDate, $endDate]);
@@ -2972,7 +2973,7 @@ class BusinessTripController extends Controller
         $parentLink = 'Reimbursement';
         $link = 'Business Trip (Admin)';
 
-        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName'));
+        return view('hcis.reimbursements.businessTrip.btAdmin', compact('sppd', 'parentLink', 'link', 'caTransactions', 'tickets', 'hotel', 'taksi', 'managerL1Names', 'managerL2Names', 'filter', 'btApprovals', 'employeeName', 'btApproved'));
     }
     public function deklarasiAdmin($id)
     {
