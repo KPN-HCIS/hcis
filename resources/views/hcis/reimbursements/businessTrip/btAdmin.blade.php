@@ -591,6 +591,16 @@
                             methodInput.value = 'PUT';
                         }
                     });
+
+                    function formatDateToCustomString(dateString) {
+                        const date = new Date(dateString);
+                        const day = date.getDate().toString().padStart(2, '0'); // Add leading zero for single-digit days
+                        const month = date.toLocaleString('en-US', {
+                            month: 'short'
+                        }); // Get abbreviated month name
+                        const year = date.getFullYear();
+                        return `${day}-${month}-${year}`;
+                    }
                 </script>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
@@ -713,7 +723,7 @@
                                                         <div class="border rounded p-2 mb-2">
                                                             <strong>Status:</strong> ${approval.approval_status}<br>
                                                             <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                                             <strong>Approved At:</strong> ${formatDateToCustomString(approval.approved_at)}<br>
                                                             <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                                         </div>
                                                     `).join('');
@@ -722,7 +732,7 @@
                                           <div class="border rounded p-2 mb-2 bg-warning">
                                                             <strong>Status:</strong> ${rejection.approval_status}<br>
                                                             <strong>Rejected By:</strong> ${rejection.employee_id}<br>
-                                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                                            <strong>Rejected At:</strong> ${formatDateToCustomString(rejection.approved_at)}<br>
                                                             <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
                                                             <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                                         </div>
@@ -743,7 +753,7 @@
                                             <div class="border rounded p-2 mb-2">
                                                 <strong>Status:</strong> ${approval.approval_status}<br>
                                                 <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                                <strong>Approved At:</strong> ${formatDateToCustomString(approval.approved_at)}<br>
                                                 <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                             </div>
                                 `).join('');
@@ -752,7 +762,7 @@
                                         <div class="border rounded p-2 mb-2 bg-warning">
                                             <strong>Status:</strong> ${rejection.approval_status}<br>
                                             <strong>Rejected By:</strong> ${rejection.employee_id}<br>
-                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejected At:</strong> ${formatDateToCustomString(rejection.approved_at)}<br>
                                             <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
                                             <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
@@ -776,7 +786,7 @@
                                         <div class="border rounded p-2 mb-2">
                                             <strong>Status:</strong> ${approval.approval_status}<br>
                                             <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                            <strong>Approved At:</strong> ${formatDateToCustomString(approval.approved_at)}<br>
                                             <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
                                     `).join('');
@@ -785,7 +795,7 @@
                                         <div class="border rounded p-2 mb-2 bg-warning">
                                             <strong>Status:</strong> ${rejection.approval_status}<br>
                                             <strong>Rejected By:</strong> ${rejection.employee_id}<br>
-                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejected At:</strong> ${formatDateToCustomString(rejection.approved_at)}<br>
                                             <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
                                             <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
@@ -810,7 +820,7 @@
                                         <div class="border rounded p-2 mb-2">
                                             <strong>Status:</strong> ${approval.approval_status}<br>
                                             <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                            <strong>Approved At:</strong> ${formatDateToCustomString(approval.approved_at)}<br>
                                             <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
                                     `).join('');
@@ -819,7 +829,7 @@
                                         <div class="border rounded p-2 mb-2 bg-warning">
                                             <strong>Status:</strong> ${rejection.approval_status}<br>
                                             <strong>Rejected By:</strong> ${rejection.employee_id}<br>
-                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejected At:</strong> ${formatDateToCustomString(rejection.approved_at)}<br>
                                             <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
                                             <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
