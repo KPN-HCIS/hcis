@@ -101,7 +101,7 @@
     </div>
 </div>
 
-{{-- Booking Approval --}}
+{{-- Request Approval --}}
 <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -154,7 +154,7 @@
     </div>
 </div>
 
-{{-- Booking Reject --}}
+{{-- Request Reject --}}
 <div class="modal fade" id="rejectApprovalModal" tabindex="-1" aria-labelledby="rejectApprovalModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
@@ -361,7 +361,7 @@
                             <div class="border rounded p-2 mb-2">  
                                 <strong>Status:</strong> ${approval.approval_status}<br>  
                                 <strong>Approved By:</strong> ${approval.employee_id} ${approval.by_admin === 'T' ? '(Admin)' : ''}<br> 
-                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}  
+                                <strong>Approved At:</strong> ${moment(approval.approved_at).format('DD-MMM-YY')}  
                             </div>  
                         `).join('');  
                     } else {  
@@ -377,7 +377,7 @@
                             <div class="border rounded p-2 mb-2">  
                                 <strong>Status:</strong> ${approval.approval_status}<br>  
                                 <strong>Approved By:</strong> ${approval.employee_id} ${approval.by_admin === 'T' ? '(Admin)' : ''}<br> 
-                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}  
+                                <strong>Approved At:</strong> ${moment(approval.approved_at).format('DD-MMM-YY')}  
                             </div>  
                         `).join('');  
                     } else {  

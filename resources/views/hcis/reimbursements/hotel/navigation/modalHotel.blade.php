@@ -352,7 +352,6 @@
 
                 // Filter data approval berdasarkan htlId  
                 const filteredApprovals = approvals.filter(approval => approval.htl_id === htlId);  
-                console.log(filteredApprovals);
 
                 const approvalDataL1 = document.getElementById('approvalDataL1');  
                 if (approvalDataL1) {  
@@ -362,7 +361,7 @@
                             <div class="border rounded p-2 mb-2">  
                                 <strong>Status:</strong> ${approval.approval_status}<br>  
                                 <strong>Approved By:</strong> ${approval.employee_id} ${approval.by_admin === 'T' ? '(Admin)' : ''}<br> 
-                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}  
+                                <strong>Approved At:</strong> ${moment(approval.approved_at).format('DD-MMM-YY')}
                             </div>  
                         `).join('');  
                     } else {  
@@ -378,7 +377,7 @@
                             <div class="border rounded p-2 mb-2">  
                                 <strong>Status:</strong> ${approval.approval_status}<br>  
                                 <strong>Approved By:</strong> ${approval.employee_id} ${approval.by_admin === 'T' ? '(Admin)' : ''}<br> 
-                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}  
+                                <strong>Approved At:</strong> ${moment(approval.approved_at).format('DD-MMM-YY')}  
                             </div>  
                         `).join('');  
                     } else {  

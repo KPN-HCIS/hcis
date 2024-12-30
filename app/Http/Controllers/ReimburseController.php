@@ -3255,7 +3255,7 @@ class ReimburseController extends Controller
             $hotels = HotelApproval::where('htl_id', $hotelId)->get();
             foreach ($hotels as $hotelApprove) {
                 $approvalHotels[] = [
-                    'tkt_id' => $hotelId,
+                    'htl_id' => $hotelId,
                     'layer' => $hotelApprove->layer,
                     'approval_status' => $hotelApprove->approval_status,
                     'employee_id' => $hotelApprove->employee->fullname,
