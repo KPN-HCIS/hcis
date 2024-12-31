@@ -153,10 +153,10 @@
                                         class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Request
                                     </button>
-                                    <button type="submit" name="filter" value="declaration"
+                                    {{-- <button type="submit" name="filter" value="declaration"
                                         class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Declaration
-                                    </button>
+                                    </button> --}}
                                     <button type="submit" name="filter" value="return_refund"
                                         class="btn {{ $currentFilter === 'return_refund' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Return/Refund
@@ -187,7 +187,7 @@
                                             <th>Taxi</th>
                                             <th>Status</th>
                                             <th style="">Approve</th>
-                                            <th style="width: 220px;">Action</th>
+                                            <th style="width: 270px;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -389,78 +389,83 @@
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form id="approveForm" action="{{ route('admin.approve', ['id' => $n->id]) }}"
-                                method="POST">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <!-- Manager L1 -->
-                                        <div class="col-md-6 mb-3">
-                                            <div
-                                                class="d-flex flex-column align-items-start border-end border-danger-subtle p-2 mr-2">
-                                                <label class="col-form-label mb-2 text-dark">Approval Request:</label>
+                            @if (isset($n))
+                                <form id="approveForm" action="{{ route('admin.approve', ['id' => $n->id]) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <!-- Manager L1 -->
+                                            <div class="col-md-12 mb-3">
+                                                <div
+                                                    class="d-flex flex-column align-items-start border-danger-subtle px-2 mx-2 py-2">
+                                                    <label class="col-form-label mb-2 text-dark">Approval Request:</label>
 
-                                                <!-- Manager L1 Name & Buttons -->
-                                                <div class="mb-3 w-100">
-                                                    <div>
-                                                        <strong>Manager L1:</strong>
-                                                        <span id="managerL1Name"></span>
+                                                    <!-- Manager L1 Name & Buttons -->
+                                                    <div class="mb-3 w-100">
+                                                        <div>
+                                                            <strong>Manager L1:</strong>
+                                                            <span id="managerL1Name"></span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex justify-content-start"
+                                                            id="l1ActionContainer">
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </div>
                                                     </div>
-                                                    <div class="mt-2 d-flex justify-content-start" id="l1ActionContainer">
-                                                        <!-- Will be populated by JavaScript -->
-                                                    </div>
-                                                </div>
 
-                                                <!-- Manager L2 Name & Buttons -->
-                                                <div class="mb-3 w-100">
-                                                    <div>
-                                                        <strong>Manager L2:</strong>
-                                                        <span id="managerL2Name"></span>
-                                                    </div>
-                                                    <div class="mt-2 d-flex justify-content-start" id="l2ActionContainer">
-                                                        <!-- Will be populated by JavaScript -->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <div class="d-flex flex-column align-items-start p-2">
-                                                <label class="col-form-label mb-2 text-dark">Approval Declaration:</label>
-
-                                                <!-- Manager L1 Name & Buttons -->
-                                                <div class="mb-3 w-100">
-                                                    <div>
-                                                        <strong>Manager L1:</strong>
-                                                        <span id="managerL1NameDeclare"></span>
-                                                    </div>
-                                                    <div class="mt-2 d-flex justify-content-start"
-                                                        id="l1ActionContainerDeclare">
-                                                        <!-- Will be populated by JavaScript -->
-                                                    </div>
-                                                </div>
-
-                                                <!-- Manager L2 Name & Buttons -->
-                                                <div class="mb-3 w-100">
-                                                    <div>
-                                                        <strong>Manager L2:</strong>
-                                                        <span id="managerL2NameDeclare"></span>
-                                                    </div>
-                                                    <div class="mt-2 d-flex justify-content-start"
-                                                        id="l2ActionContainerDeclare">
-                                                        <!-- Will be populated by JavaScript -->
+                                                    <!-- Manager L2 Name & Buttons -->
+                                                    <div class="mb-3 w-100">
+                                                        <div>
+                                                            <strong>Manager L2:</strong>
+                                                            <span id="managerL2Name"></span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex justify-content-start"
+                                                            id="l2ActionContainer">
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                            {{-- <div class="col-md-6 mb-3">
+                                                <div class="d-flex flex-column align-items-start p-2">
+                                                    <label class="col-form-label mb-2 text-dark">Approval
+                                                        Declaration:</label>
 
+                                                    <!-- Manager L1 Name & Buttons -->
+                                                    <div class="mb-3 w-100">
+                                                        <div>
+                                                            <strong>Manager L1:</strong>
+                                                            <span id="managerL1NameDeclare"></span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex justify-content-start"
+                                                            id="l1ActionContainerDeclare">
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Manager L2 Name & Buttons -->
+                                                    <div class="mb-3 w-100">
+                                                        <div>
+                                                            <strong>Manager L2:</strong>
+                                                            <span id="managerL2NameDeclare"></span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex justify-content-start"
+                                                            id="l2ActionContainerDeclare">
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> --}}
+
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-primary rounded-pill"
-                                        data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </form>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-primary rounded-pill"
+                                            data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -592,20 +597,15 @@
                         }
                     });
 
-                    // document.addEventListener('click', function(event) {
-                    //     if (event.target.matches('.btn-success')) {
-                    //         const button = event.target;
-                    //         const btId = button.getAttribute('data-id'); // Fetch `data-id` from the button
-                    //         const form = document.getElementById('approveForm');
-
-                    //         if (btId && form) {
-                    //             form.action = `businessTrip/status/approve/${btId}`; // Update the form action
-                    //             form.submit(); // Submit the form
-                    //         } else {
-                    //             console.error('Button ID or form element is missing.');
-                    //         }
-                    //     }
-                    // });
+                    function formatDateToCustomString(dateString) {
+                        const date = new Date(dateString);
+                        const day = date.getDate().toString().padStart(2, '0'); // Add leading zero for single-digit days
+                        const month = date.toLocaleString('en-US', {
+                            month: 'short'
+                        }); // Get abbreviated month name
+                        const year = date.getFullYear();
+                        return `${day}-${month}-${year}`;
+                    }
                 </script>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
@@ -637,22 +637,22 @@
                                 document.getElementById('modalSPPD').textContent = sppdNo;
                                 document.getElementById('managerL1Name').textContent = managerL1;
                                 document.getElementById('managerL2Name').textContent = managerL2;
-                                document.getElementById('managerL1NameDeclare').textContent = managerL1;
-                                document.getElementById('managerL2NameDeclare').textContent = managerL2;
+                                // document.getElementById('managerL1NameDeclare').textContent = managerL1;
+                                // document.getElementById('managerL2NameDeclare').textContent = managerL2;
 
                                 // Get the containers
                                 const l1Container = document.getElementById('l1ActionContainer');
                                 const l2Container = document.getElementById('l2ActionContainer');
 
-                                const l1ContainerDeclare = document.getElementById('l1ActionContainerDeclare');
-                                const l2ContainerDeclare = document.getElementById('l2ActionContainerDeclare');
+                                // const l1ContainerDeclare = document.getElementById('l1ActionContainerDeclare');
+                                // const l2ContainerDeclare = document.getElementById('l2ActionContainerDeclare');
 
 
                                 // Clear previous content
                                 l1Container.innerHTML = '';
                                 l2Container.innerHTML = '';
-                                l1ContainerDeclare.innerHTML = '';
-                                l2ContainerDeclare.innerHTML = '';
+                                // l1ContainerDeclare.innerHTML = '';
+                                // l2ContainerDeclare.innerHTML = '';
 
                                 approvalModal.addEventListener('click', function(e) {
                                     if (e.target.matches('.btn-success')) {
@@ -685,28 +685,28 @@
                                 } else {
                                     l2Container.innerHTML = `<div id="approvalDataL2" class="w-100"></div>`;
                                 }
-                                if (status === 'Declaration L1') {
-                                    l1ContainerDeclare.innerHTML = `
-                                    <button type="submit" class="btn btn-success btn-sm rounded-pill me-2" data-id="${btId}">Approve Declaration</button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
-                                `;
-                                } else {
-                                    l1ContainerDeclare.innerHTML =
-                                        `<div id="approvalDataL1Declare" class="w-100"></div>`;
-                                }
+                                // if (status === 'Declaration L1') {
+                                //     l1ContainerDeclare.innerHTML = `
+                                //     <button type="submit" class="btn btn-success btn-sm rounded-pill me-2" data-id="${btId}">Approve Declaration</button>
+                                //     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                                //             data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
+                                // `;
+                                // } else {
+                                //     l1ContainerDeclare.innerHTML =
+                                //         `<div id="approvalDataL1Declare" class="w-100"></div>`;
+                                // }
 
-                                // Handle L2 Declaration container content
-                                if (status === 'Declaration L2') {
-                                    l2ContainerDeclare.innerHTML = `
-                                    <button type="submit" class="btn btn-success btn-sm rounded-pill me-2" data-id="${btId}">Approve Declaration</button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
-                                            data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
-                                `;
-                                } else {
-                                    l2ContainerDeclare.innerHTML =
-                                        `<div id="approvalDataL2Declare" class="w-100"></div>`;
-                                }
+                                // // Handle L2 Declaration container content
+                                // if (status === 'Declaration L2') {
+                                //     l2ContainerDeclare.innerHTML = `
+                                //     <button type="submit" class="btn btn-success btn-sm rounded-pill me-2" data-id="${btId}">Approve Declaration</button>
+                                //     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill"
+                                //             data-bs-toggle="modal" data-bs-target="#rejectReasonForm" data-id="${btId}">Reject</button>
+                                // `;
+                                // } else {
+                                //     l2ContainerDeclare.innerHTML =
+                                //         `<div id="approvalDataL2Declare" class="w-100"></div>`;
+                                // }
 
                                 // Get and display approval data
                                 const approvals = @json($btApproved);
@@ -715,8 +715,8 @@
                                 // Display approval data if containers exist
                                 const approvalDataL1 = document.getElementById('approvalDataL1');
                                 const approvalDataL2 = document.getElementById('approvalDataL2');
-                                const approvalDataL1Declare = document.getElementById('approvalDataL1Declare');
-                                const approvalDataL2Declare = document.getElementById('approvalDataL2Declare');
+                                // const approvalDataL1Declare = document.getElementById('approvalDataL1Declare');
+                                // const approvalDataL2Declare = document.getElementById('approvalDataL2Declare');
 
                                 if (approvalDataL1) {
                                     const l1Approvals = filteredApprovals.filter(a => a.layer === 1 && a
@@ -728,7 +728,7 @@
                                                         <div class="border rounded p-2 mb-2">
                                                             <strong>Status:</strong> ${approval.approval_status}<br>
                                                             <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                                            <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                                             <strong>Approved At:</strong> ${formatDateToCustomString(approval.approved_at)}<br>
                                                             <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                                         </div>
                                                     `).join('');
@@ -737,7 +737,7 @@
                                           <div class="border rounded p-2 mb-2 bg-warning">
                                                             <strong>Status:</strong> ${rejection.approval_status}<br>
                                                             <strong>Rejected By:</strong> ${rejection.employee_id}<br>
-                                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                                            <strong>Rejected At:</strong> ${formatDateToCustomString(rejection.approved_at)}<br>
                                                             <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
                                                             <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                                         </div>
@@ -758,7 +758,7 @@
                                             <div class="border rounded p-2 mb-2">
                                                 <strong>Status:</strong> ${approval.approval_status}<br>
                                                 <strong>Approved By:</strong> ${approval.employee_id}<br>
-                                                <strong>Approved At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
+                                                <strong>Approved At:</strong> ${formatDateToCustomString(approval.approved_at)}<br>
                                                 <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                             </div>
                                 `).join('');
@@ -767,7 +767,7 @@
                                         <div class="border rounded p-2 mb-2 bg-warning">
                                             <strong>Status:</strong> ${rejection.approval_status}<br>
                                             <strong>Rejected By:</strong> ${rejection.employee_id}<br>
-                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
+                                            <strong>Rejected At:</strong> ${formatDateToCustomString(rejection.approved_at)}<br>
                                             <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
                                             <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
                                         </div>
@@ -777,73 +777,73 @@
                                             '<p class="text-muted">No L2 Request found</p>';
                                     }
                                 }
-                                if (approvalDataL1Declare) {
-                                    const l1Declarations = filteredApprovals.filter(a =>
-                                        a.layer === 1 &&
-                                        (a.approval_status === 'Declaration L2')
-                                    );
-                                    const l1DeclarationsReject = filteredApprovals.filter(a =>
-                                        a.layer === 1 &&
-                                        (a.approval_status === 'Declaration Rejected')
-                                    );
-                                    if (l1Declarations.length > 0) {
-                                        approvalDataL1Declare.innerHTML = l1Declarations.map(approval => `
-                                        <div class="border rounded p-2 mb-2">
-                                            <strong>Status:</strong> ${approval.approval_status}<br>
-                                            <strong>Declared By:</strong> ${approval.employee_id}<br>
-                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
-                                            <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
-                                        </div>
-                                    `).join('');
-                                    } else if (l1DeclarationsReject.length > 0) {
-                                        approvalDataL1Declare.innerHTML += l1DeclarationsReject.map(rejection => `
-                                        <div class="border rounded p-2 mb-2 bg-warning">
-                                            <strong>Status:</strong> ${rejection.approval_status}<br>
-                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
-                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
-                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
-                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
-                                        </div>
-                                    `).join('');
-                                    } else {
-                                        approvalDataL1Declare.innerHTML =
-                                            '<p class="text-muted">No L1 declarations found</p>';
-                                    }
-                                }
+                                // if (approvalDataL1Declare) {
+                                //     const l1Declarations = filteredApprovals.filter(a =>
+                                //         a.layer === 1 &&
+                                //         (a.approval_status === 'Declaration L2')
+                                //     );
+                                //     const l1DeclarationsReject = filteredApprovals.filter(a =>
+                                //         a.layer === 1 &&
+                                //         (a.approval_status === 'Declaration Rejected')
+                                //     );
+                                //     if (l1Declarations.length > 0) {
+                                //         approvalDataL1Declare.innerHTML = l1Declarations.map(approval => `
+                                //         <div class="border rounded p-2 mb-2">
+                                //             <strong>Status:</strong> ${approval.approval_status}<br>
+                                //             <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                //             <strong>Approved At:</strong> ${formatDateToCustomString(approval.approved_at)}<br>
+                                //             <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                //         </div>
+                                //     `).join('');
+                                //     } else if (l1DeclarationsReject.length > 0) {
+                                //         approvalDataL1Declare.innerHTML += l1DeclarationsReject.map(rejection => `
+                                //         <div class="border rounded p-2 mb-2 bg-warning">
+                                //             <strong>Status:</strong> ${rejection.approval_status}<br>
+                                //             <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                //             <strong>Rejected At:</strong> ${formatDateToCustomString(rejection.approved_at)}<br>
+                                //             <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                //             <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                //         </div>
+                                //     `).join('');
+                                //     } else {
+                                //         approvalDataL1Declare.innerHTML =
+                                //             '<p class="text-muted">No L1 declarations found</p>';
+                                //     }
+                                // }
 
-                                if (approvalDataL2Declare) {
-                                    const l2Declarations = filteredApprovals.filter(a =>
-                                        a.layer === 2 &&
-                                        (a.approval_status === 'Declaration Approved')
-                                    );
-                                    const l2DeclarationsReject = filteredApprovals.filter(a =>
-                                        a.layer === 2 &&
-                                        (a.approval_status === 'Declaration Rejected')
-                                    );
-                                    if (l2Declarations.length > 0) {
-                                        approvalDataL2Declare.innerHTML = l2Declarations.map(approval => `
-                                        <div class="border rounded p-2 mb-2">
-                                            <strong>Status:</strong> ${approval.approval_status}<br>
-                                            <strong>Declared By:</strong> ${approval.employee_id}<br>
-                                            <strong>Declared At:</strong> ${new Date(approval.approved_at).toLocaleDateString()}<br>
-                                            <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
-                                        </div>
-                                    `).join('');
-                                    } else if (l2DeclarationsReject.length > 0) {
-                                        approvalDataL2Declare.innerHTML += l2DeclarationsReject.map(rejection => `
-                                        <div class="border rounded p-2 mb-2 bg-warning">
-                                            <strong>Status:</strong> ${rejection.approval_status}<br>
-                                            <strong>Rejected By:</strong> ${rejection.employee_id}<br>
-                                            <strong>Rejected At:</strong> ${new Date(rejection.approved_at).toLocaleDateString()}<br>
-                                            <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
-                                            <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
-                                        </div>
-                                    `).join('');
-                                    } else {
-                                        approvalDataL2Declare.innerHTML =
-                                            '<p class="text-muted">No L2 declarations found</p>';
-                                    }
-                                }
+                                // if (approvalDataL2Declare) {
+                                //     const l2Declarations = filteredApprovals.filter(a =>
+                                //         a.layer === 2 &&
+                                //         (a.approval_status === 'Declaration Approved')
+                                //     );
+                                //     const l2DeclarationsReject = filteredApprovals.filter(a =>
+                                //         a.layer === 2 &&
+                                //         (a.approval_status === 'Declaration Rejected')
+                                //     );
+                                //     if (l2Declarations.length > 0) {
+                                //         approvalDataL2Declare.innerHTML = l2Declarations.map(approval => `
+                                //         <div class="border rounded p-2 mb-2">
+                                //             <strong>Status:</strong> ${approval.approval_status}<br>
+                                //             <strong>Approved By:</strong> ${approval.employee_id}<br>
+                                //             <strong>Approved At:</strong> ${formatDateToCustomString(approval.approved_at)}<br>
+                                //             <strong>Processed By:</strong> ${approval.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                //         </div>
+                                //     `).join('');
+                                //     } else if (l2DeclarationsReject.length > 0) {
+                                //         approvalDataL2Declare.innerHTML += l2DeclarationsReject.map(rejection => `
+                                //         <div class="border rounded p-2 mb-2 bg-warning">
+                                //             <strong>Status:</strong> ${rejection.approval_status}<br>
+                                //             <strong>Rejected By:</strong> ${rejection.employee_id}<br>
+                                //             <strong>Rejected At:</strong> ${formatDateToCustomString(rejection.approved_at)}<br>
+                                //             <strong>Rejection Info:</strong> ${rejection.reject_info || 'No additional info provided'}<br>
+                                //             <strong>Processed By:</strong> ${rejection.by_admin === 'T' ? 'Admin' : 'Layer Manager'}
+                                //         </div>
+                                //     `).join('');
+                                //     } else {
+                                //         approvalDataL2Declare.innerHTML =
+                                //             '<p class="text-muted">No L2 declarations found</p>';
+                                //     }
+                                // }
                             });
                         }
                     });
