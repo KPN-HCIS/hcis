@@ -10,7 +10,7 @@
                 @endif
             </button>
         </li>
-        <li class="nav-item" role="presentation">
+        {{-- <li class="nav-item" role="presentation">
             <button class="btn btn-outline-primary mb-2 rounded-pill shadow w-100 position-relative mx-3" id="pills-transport-tab" data-bs-toggle="pill"
                 data-bs-target="#pills-transport" type="button" role="tab"
                 aria-controls="pills-transport" aria-selected="false">Deklarasi Cash Advanced
@@ -18,7 +18,7 @@
                     <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ $pendingDECCount }}</span>
                 @endif
             </button>
-        </li>
+        </li> --}}
         <li class="nav-item" role="presentation">
             <button class="btn btn-outline-primary mb-2 rounded-pill shadow w-100 position-relative mx-4" id="pills-accomodation-tab"
                 data-bs-toggle="pill" data-bs-target="#pills-accomodation"

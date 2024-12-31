@@ -153,10 +153,10 @@
                                         class="btn {{ $currentFilter === 'request' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Request
                                     </button>
-                                    <button type="submit" name="filter" value="declaration"
+                                    {{-- <button type="submit" name="filter" value="declaration"
                                         class="btn {{ $currentFilter === 'declaration' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Declaration
-                                    </button>
+                                    </button> --}}
                                     <button type="submit" name="filter" value="return_refund"
                                         class="btn {{ $currentFilter === 'return_refund' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill btn-sm">
                                         Return/Refund
