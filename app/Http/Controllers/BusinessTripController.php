@@ -1417,19 +1417,19 @@ class BusinessTripController extends Controller
             //         $employee_id = $data_matrix_approval->employee_id;
             //     }
 
-                if ($employee_id != null) {
-                    $model_approval = new ca_sett_approval;
-                    $model_approval->ca_id = $caId;
-                    $model_approval->role_name = $data_matrix_approval->desc;
-                    $model_approval->employee_id = $employee_id;
-                    $model_approval->layer = $data_matrix_approval->layer;
-                    $model_approval->approval_status = $caStatus;
+                // if ($employee_id != null) {
+                //     $model_approval = new ca_sett_approval;
+                //     $model_approval->ca_id = $caId;
+                //     $model_approval->role_name = $data_matrix_approval->desc;
+                //     $model_approval->employee_id = $employee_id;
+                //     $model_approval->layer = $data_matrix_approval->layer;
+                //     $model_approval->approval_status = $caStatus;
 
-                    // Simpan data ke database
-                    $model_approval->save();
-                }
-                $model_approval->save();
-            }
+                //     // Simpan data ke database
+                //     $model_approval->save();
+                // }
+            //     $model_approval->save();
+            // }
             // $managerEmail = Employee::where('employee_id', $managerL1)->pluck('email')->first();
             $managerEmail = "eriton.dewa@kpn-corp.com";
             $managerName = Employee::where('employee_id', $managerL1)->pluck('fullname')->first();
