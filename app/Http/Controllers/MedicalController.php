@@ -196,7 +196,7 @@ class MedicalController extends Controller
 
         $year = date('Y');
         $month = date('m');
-        $ym = $year.'-'.$month;
+        $ym = $year . '-' . $month;
 
         $count = Dependents::where('employee_id', $employee_id)
             ->where('updated_at', 'like', "$ym%")
@@ -237,7 +237,7 @@ class MedicalController extends Controller
                                 [
                                     'id' => Str::uuid(),
                                     'employee_id' => $dependent[0],
-                                    'name' => trim($dependent[3] .''. $dependent[4] . ' ' . $dependent[5]),
+                                    'name' => trim($dependent[3] . '' . $dependent[4] . ' ' . $dependent[5]),
                                     'array_id' => $dependent[2],
                                     'first_name' => $dependent[3],
                                     'middle_name' => $dependent[4],
@@ -303,7 +303,7 @@ class MedicalController extends Controller
         $balanceData = [];
         foreach ($medicalBalances as $balance) {
             // Assuming `medical_type` is a property of `HealthPlan`
-            $balanceData[$balance->medical_type][$balance->period]  = $balance->balance;
+            $balanceData[$balance->medical_type][$balance->period] = $balance->balance;
         }
         // dd($balanceData);
 
@@ -324,8 +324,8 @@ class MedicalController extends Controller
         $no_medic = $this->generateNoMedic();
 
         $contribution_level_code = Employee::where('employee_id', $employee_id)
-        ->pluck('contribution_level_code')
-        ->first();
+            ->pluck('contribution_level_code')
+            ->first();
 
         $statusValue = $request->has('action_draft') ? 'Draft' : 'Pending';
 
@@ -900,7 +900,7 @@ class MedicalController extends Controller
             // Assuming `medical_type` is a property of `HealthPlan`
             $balanceData[$balance->medical_type][$balance->period] = $balance->balance;
         }
-// dd($balanceData);
+        // dd($balanceData);
         // Extract the medical types from medicGroup
         $selectedMedicalTypes = $medicGroup->pluck('medical_type')->unique();
         $balanceMapping = $medicGroup->pluck('balance_verif', 'medical_type');
@@ -1298,7 +1298,7 @@ class MedicalController extends Controller
         $link = 'Detail';
 
         // Kirim data ke view
-        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink','sublink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data', 'medicalGroup', 'gaFullname'));
+        return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'sublink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data', 'medicalGroup', 'gaFullname'));
     }
 
     public function medicalAdminDetailForm($key)
