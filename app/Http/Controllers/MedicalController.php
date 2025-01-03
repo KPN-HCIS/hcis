@@ -1320,7 +1320,7 @@ class MedicalController extends Controller
         $balanceData = [];
         foreach ($medicalBalances as $balance) {
             // Assuming `medical_type` is a property of `HealthPlan`
-            $balanceData[$balance->medical_type] = $balance->balance;
+            $balanceData[$balance->medical_type][$balance->period] = $balance->balance;
         }
 
         $employee_name = Employee::select('fullname')
@@ -1340,6 +1340,10 @@ class MedicalController extends Controller
         $no_medic = $this->generateNoMedic();
 
         $statusValue = $request->has('action_draft') ? 'Draft' : 'Pending';
+
+        $contribution_level_code = Employee::where('employee_id', $employee_id)
+        ->pluck('contribution_level_code')
+        ->first();
 
         $medical_proof_path = null;
         if ($request->hasFile('medical_proof')) {
@@ -1366,6 +1370,7 @@ class MedicalController extends Controller
             HealthCoverage::create([
                 'usage_id' => (string) Str::uuid(),
                 'employee_id' => $employee_id,
+                'contribution_level_code' => $contribution_level_code,
                 'no_medic' => $no_medic,
                 'no_invoice' => $request->no_invoice,
                 'hospital_name' => $request->hospital_name,
