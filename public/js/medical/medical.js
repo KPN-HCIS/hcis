@@ -1,20 +1,28 @@
 //Medical Form JS
 $(document).ready(function () {
     // Handle change event on medical type selection
-    $("#medical_type").on("change", function () {
-        var selectedTypes = $(this).val();
-        var balanceContainer = $("#balanceContainer");
+    $("#date, #medical_type").on("change", function () {
+        const selectedDate = $("#date").val();
+        const selectedYear = selectedDate
+            ? new Date(selectedDate).getFullYear()
+            : null;
+        const selectedTypes = $("#medical_type").val();
+        const balanceContainer = $("#balanceContainer");
+
         balanceContainer.empty(); // Clear previous balances
 
-        if (selectedTypes && selectedTypes.length > 0) {
+        if (selectedYear && selectedTypes && selectedTypes.length > 0) {
             selectedTypes.forEach(function (type) {
-                var balance = typeToBalanceMap[type] || 0; // Default to 0 if not found
-                var balanceGroup = `
+                // Fetch the balance based on type and year
+                const balance = typeToBalanceMap[type]?.[selectedYear] || 0;
+                const balanceGroup = `
                 <div class="col-md-3 mb-3">
-                    <label for="${type}" class="form-label">${type} Plafond</label>
+                    <label for="${type}" class="form-label">${type} Plafond (${selectedYear})</label>
                     <div class="input-group">
                         <span class="input-group-text">Rp</span>
-                        <input type="text" id="medical_plafond_${type}" class="form-control bg-light" value="${formatCurrency(balance)}" readonly>
+                        <input type="text" id="medical_plafond_${type}" class="form-control bg-light" value="${formatCurrency(
+                    balance
+                )}" readonly>
                     </div>
                 </div>
                 `;
@@ -27,7 +35,6 @@ $(document).ready(function () {
         return new Intl.NumberFormat("id-ID").format(value); // Format number as currency
     }
 });
-
 $(document).ready(function () {
     var typeToNameMap = {};
     medicalTypeData.forEach(function (type) {

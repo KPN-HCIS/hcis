@@ -33,14 +33,15 @@ $("#example").DataTable({
 
 //Medical Form JS
 $(document).ready(function () {
-    // Function to generate balance display based on selected types
-    function generateBalanceDisplay(selectedTypes) {
+    // Function to generate balance display based on selected types and year
+    function generateBalanceDisplay(selectedTypes, selectedYear) {
         var balanceContainer = $("#balanceContainer");
         balanceContainer.empty(); // Clear previous balances
 
         if (selectedTypes && selectedTypes.length > 0) {
             selectedTypes.forEach(function (type) {
-                var balance = typeToBalanceMap[type] || 0; // Default to 0 if not found
+                // Fetch balance based on type and year
+                var balance = typeToBalanceMap[type]?.[selectedYear] || 0; // Default to 0 if not found
                 var balanceGroup = `
                 <div class="col-md-3 mb-3">
                     <label for="${type}" class="form-label">${type} Plafond</label>
@@ -57,17 +58,26 @@ $(document).ready(function () {
         }
     }
 
-    // Function to handle change event on medical type selection
-    function handleMedicalTypeChange() {
+    // Function to handle changes in medical type and date
+    function handleInputChange() {
+        var selectedDate = $("#date").val();
+        var selectedYear = selectedDate
+            ? new Date(selectedDate).getFullYear()
+            : null;
         var selectedTypes = $("#medical_type").val();
-        generateBalanceDisplay(selectedTypes); // Generate balances based on selection
+
+        if (selectedYear && selectedTypes) {
+            generateBalanceDisplay(selectedTypes, selectedYear);
+        }
     }
 
-    // Initial load handling: generate balance display for initially selected types
-    handleMedicalTypeChange();
-    // Attach change event listener to the medical type dropdown
-    $("#medical_type").on("change", handleMedicalTypeChange);
+    // Attach change event listeners to the medical type dropdown and date input
+    $("#medical_type, #date").on("change", handleInputChange);
 
+    // Initial load handling
+    handleInputChange();
+
+    // Utility function to format numbers as currency
     function formatCurrency(value) {
         return new Intl.NumberFormat("id-ID").format(value); // Format number as currency
     }

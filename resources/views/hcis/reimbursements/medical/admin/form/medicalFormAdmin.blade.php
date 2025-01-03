@@ -128,9 +128,9 @@
                             <input type="hidden" name="status" value="Pending L1" id="status">
 
                             <div class="d-flex justify-content-end mt-4">
-                                <button type="submit" class="btn btn-outline-primary rounded-pill me-2 draft-button"
+                                {{-- <button type="submit" class="btn btn-outline-primary rounded-pill me-2 draft-button"
                                     name="action_draft" id="save-draft" value="Draft" id="save-draft">Save as
-                                    Draft</button>
+                                    Draft</button> --}}
                                 <button type="submit" class="btn btn-primary rounded-pill submit-button"
                                     name="action_submit" value="Pending" id="submit-btn">Submit</button>
                             </div>

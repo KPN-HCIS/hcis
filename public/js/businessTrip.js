@@ -201,9 +201,13 @@ function calculateTotalDays(index) {
 
     // Parse the dates
     const checkInDate = new Date(checkInInput.value);
+    checkInDate.setHours(0, 0, 0, 0);
     const checkOutDate = new Date(checkOutInput.value);
+    checkOutDate.setHours(0, 0, 0, 0);
     const mulaiDate = new Date(mulaiInput.value);
+    mulaiDate.setHours(0, 0, 0, 0);
     const kembaliDate = new Date(kembaliInput.value);
+    kembaliDate.setHours(0, 0, 0, 0);
 
     // Validate Check In Date
     if (checkInDate < mulaiDate) {
@@ -247,9 +251,15 @@ function calculateTotalDays(index) {
 
     // Calculate the total days if all validations pass
     if (checkInDate && checkOutDate) {
-        const diffTime = Math.abs(checkOutDate - checkInDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        totalDaysInput.value = diffDays;
+        // Check if same day
+        if (checkInDate.getTime() === checkOutDate.getTime()) {
+            totalDaysInput.value = 1;
+        } else {
+            // Calculate difference in days including both start and end dates
+            const diffTime = checkOutDate - checkInDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            totalDaysInput.value = diffDays;
+        }
     } else {
         totalDaysInput.value = "";
     }
@@ -1391,9 +1401,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const perdiem = parseFloat(perdiemInput.value) || 0;
             let allowance = totalDays * perdiem;
 
-            if (groupCompany.value !== "Plantations"){
+            if (groupCompany.value !== "Plantations") {
                 allowance *= 1;
-            }else if (othersLocationInput.value.trim() !== "") {
+            } else if (othersLocationInput.value.trim() !== "") {
                 allowance *= 1; // allowance * 50%
             } else {
                 allowance *= 0.5;
