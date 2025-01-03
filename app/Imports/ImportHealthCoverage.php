@@ -65,7 +65,7 @@ class ImportHealthCoverage implements ToModel
 
         if (!$isValidData) {
             $expectedTypesString = implode(", ", $expectedTypes);
-            throw new ImportDataInvalidException("Value '{$row[9]}' does not match any expected Type Value ({$expectedTypesString}). Import canceled.");
+            throw new ImportDataInvalidException("Value '{$row[10]}' does not match any expected Type Value ({$expectedTypesString}). Import canceled.");
         }
 
         if (!is_numeric($row[1])) {
@@ -80,7 +80,7 @@ class ImportHealthCoverage implements ToModel
             $dateTime = Date::excelToDateTimeObject($excelDate);
             $formattedDate = $dateTime->format('Y-m-d');
         } else {
-            $date = \DateTime::createFromFormat('d/m/Y', $row[6]);
+            $date = \DateTime::createFromFormat('d/m/Y', $row[7]);
             if (!$date) {
                 throw new ImportDataInvalidException("Invalid date format detected. Import canceled.");
             }
@@ -92,16 +92,17 @@ class ImportHealthCoverage implements ToModel
             'employee_id' => $row[1],
             'no_medic' => $newNoMedic,
             'no_invoice' => $row[2],
-            'hospital_name' => $row[3],
-            'patient_name' => $row[4],
-            'disease' => $row[5],
+            'contribution_level_code' => $row[3],
+            'hospital_name' => $row[4],
+            'patient_name' => $row[5],
+            'disease' => $row[6],
             'date' => $formattedDate,
-            'coverage_detail' => $row[7],
-            'period' => $row[8],
-            'medical_type' => $row[9],
-            'balance' => $row[10],
+            'coverage_detail' => $row[8],
+            'period' => $row[9],
+            'medical_type' => $row[10],
+            'balance' => $row[11],
             'balance_uncoverage' => '0',
-            'balance_verif' => $row[10],
+            'balance_verif' => $row[11],
             'status' => 'Done',
             'submission_type' => 'F',
             'created_by' => $userId,
