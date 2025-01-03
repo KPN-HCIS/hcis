@@ -1556,7 +1556,7 @@ class MedicalController extends Controller
             'file' => 'required|mimes:xlsx,xls',
         ]);
 
-        // Create instance of import class
+        // // Create instance of import class
         // $import = new ImportHealthCoverage();
 
         // // Import the data
@@ -1565,7 +1565,7 @@ class MedicalController extends Controller
         // // After import is complete, process the batched records and send emails
         // $import->afterImport();
 
-        // return redirect()->route('medical.report')->with('success', 'Transaction successfully added from Excel.');
+        // return redirect()->route('medical.admin')->with('success', 'Transaction successfully added from Excel.');
 
         try {
             // Create instance of import class

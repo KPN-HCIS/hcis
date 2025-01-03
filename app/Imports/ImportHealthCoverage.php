@@ -44,7 +44,12 @@ class ImportHealthCoverage implements ToModel
 
     public function model(array $row)
     {
-        if ($row[0] == 'No' && $row[1] == 'Employee ID' && $row[2] == 'No Invoice') {
+        if ($row[0] == 'No' && $row[1] == 'Employee Name' && $row[2] == 'Employee ID' && $row[3] == 'Contribution Level Code' && $row[4] == 'No Invoice' && $row[5] == 'Hospital Name' && $row[6] == 'Patient Name' && $row[7] == 'Desease' && $row[8] == 'Date' && $row[9] == 'Coverage Detail' && $row[10] == 'Period'&& $row[11] == 'Medical Type' && $row[12] == 'Amount') {
+            return null;
+        }
+
+        // Jangan Hapus ini Code kalo ngisi Excel
+        if (empty(array_filter($row))) {
             return null;
         }
 
@@ -57,7 +62,8 @@ class ImportHealthCoverage implements ToModel
 
         foreach ($MedicType as $type) {
             $expectedTypes[] = $type->name;
-            if ($type->name == $row[9]) {
+            
+            if ($type->name == $row[11]) {
                 $isValidData = true;
                 break;
             }
@@ -65,22 +71,22 @@ class ImportHealthCoverage implements ToModel
 
         if (!$isValidData) {
             $expectedTypesString = implode(", ", $expectedTypes);
-            throw new ImportDataInvalidException("Value '{$row[10]}' does not match any expected Type Value ({$expectedTypesString}). Import canceled.");
+            throw new ImportDataInvalidException("Value '$row[11]' does not match any expected Type Value ({$expectedTypesString}). Import canceled.");
         }
 
-        if (!is_numeric($row[1])) {
-            throw new ImportDataInvalidException("Invalid data format detected in column 1. Import canceled.");
+        if (!is_numeric($row[2])) {
+            throw new ImportDataInvalidException("Invalid data format detected in column 2. Import canceled.");
         }
-        if (!is_numeric($row[10])) {
-            throw new ImportDataInvalidException("Invalid data format detected in column 10. Import canceled.");
+        if (!is_numeric($row[12])) {
+            throw new ImportDataInvalidException("Invalid data format detected in column 12. Import canceled.");
         }
 
-        if (is_numeric($row[6])) {
-            $excelDate = intval($row[6]);
+        if (is_numeric($row[8])) {
+            $excelDate = intval($row[8]);
             $dateTime = Date::excelToDateTimeObject($excelDate);
             $formattedDate = $dateTime->format('Y-m-d');
         } else {
-            $date = \DateTime::createFromFormat('d/m/Y', $row[7]);
+            $date = \DateTime::createFromFormat('d/m/Y', $row[8]);
             if (!$date) {
                 throw new ImportDataInvalidException("Invalid date format detected. Import canceled.");
             }
@@ -89,20 +95,20 @@ class ImportHealthCoverage implements ToModel
 
         $healthCoverage = new HealthCoverage([
             'usage_id' => Str::uuid(),
-            'employee_id' => $row[1],
-            'no_medic' => $newNoMedic,
-            'no_invoice' => $row[2],
+            'employee_id' => $row[2],
             'contribution_level_code' => $row[3],
-            'hospital_name' => $row[4],
-            'patient_name' => $row[5],
-            'disease' => $row[6],
+            'no_medic' => $newNoMedic,
+            'no_invoice' => $row[4],
+            'hospital_name' => $row[5],
+            'patient_name' => $row[6],
+            'disease' => $row[7],
             'date' => $formattedDate,
-            'coverage_detail' => $row[8],
-            'period' => $row[9],
-            'medical_type' => $row[10],
-            'balance' => $row[11],
+            'coverage_detail' => $row[9],
+            'period' => $row[10],
+            'medical_type' => $row[11],
+            'balance' => $row[12],
             'balance_uncoverage' => '0',
-            'balance_verif' => $row[11],
+            'balance_verif' => $row[12],
             'status' => 'Done',
             'submission_type' => 'F',
             'created_by' => $userId,
