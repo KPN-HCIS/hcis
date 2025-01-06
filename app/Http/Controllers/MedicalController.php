@@ -320,6 +320,7 @@ class MedicalController extends Controller
 
     public function medicalCreate(Request $request)
     {
+        $userId = Auth::id();
         $employee_id = Auth::user()->employee_id;
         $no_medic = $this->generateNoMedic();
 
@@ -328,23 +329,48 @@ class MedicalController extends Controller
             ->first();
 
         $statusValue = $request->has('action_draft') ? 'Draft' : 'Pending';
+        $employee_data = Employee::where('id', $userId)->first();
 
-        $medical_proof_path = null;
-        if ($request->hasFile('medical_proof')) {
-            $file = $request->file('medical_proof');
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            // Tentukan path penyimpanan relatif di disk 'public'
-            $upload_path = 'uploads/proofs/' . $employee_id;
-
-            // Simpan file ke storage/app/public menggunakan Laravel's storage disk
-            $file->storeAs($upload_path, $filename, 'public');
-
-            // Path yang akan disimpan ke database (URL yang bisa diakses)
-            $medical_proof_path = $upload_path . '/' . $filename;
+        if ($request->has('removed_medical_proof')) {
+            $removedFiles = json_decode($request->removed_medical_proof, true);
+            $existingFiles = $request->existing_medical_proof ? json_decode($request->existing_medical_proof, true) : [];
+        
+            // Hapus file yang ada di server
+            foreach ($removedFiles as $fileToRemove) {
+                if (in_array($fileToRemove, $existingFiles)) {
+                    $filePath = public_path($fileToRemove);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                    $existingFiles = array_filter($existingFiles, fn($file) => $file !== $fileToRemove);
+                }
+            }
         } else {
-            $medical_proof_path = $request->existing_prove_declare;
+            $existingFiles = $request->existing_medical_proof ? json_decode($request->existing_medical_proof, true) : [];
         }
+        
+        // Proses file baru
+        if ($request->hasFile('medical_proof')) {
+            $request->validate([
+                'medical_proof.*' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            ]);
+        
+            foreach ($request->file('medical_proof') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $upload_path = 'uploads/proofs/' . $employee_data->employee_id;
+                $full_path = public_path($upload_path);
+        
+                if (!is_dir($full_path)) {
+                    mkdir($full_path, 0755, true);
+                }
+        
+                $file->move($full_path, $filename);
+                $existingFiles[] = $upload_path . '/' . $filename;
+            }
+        }
+        
+        // Simpan semua file yang tersisa ke database
+        $medical_proof_path = json_encode(array_values($existingFiles));    
 
         $medical_costs = $request->input('medical_costs', []);
         $date = Carbon::parse($request->date);
@@ -448,6 +474,7 @@ class MedicalController extends Controller
 
     public function medicalUpdate(Request $request, $id)
     {
+        $userId = Auth::id();
         $employee_id = Auth::user()->employee_id;
         $existingMedical = HealthCoverage::where('usage_id', $id)->first();
 
@@ -461,11 +488,48 @@ class MedicalController extends Controller
         $statusValue = $request->has('action_draft') ? 'Draft' : 'Pending';
 
         // Handle medical proof file upload
-        $medical_proof_path = null;
-        if ($request->hasFile('medical_proof')) {
-            $file = $request->file('medical_proof');
-            $medical_proof_path = $file->store('public/storage/proofs');
+        $employee_data = Employee::where('id', $userId)->first();
+
+        if ($request->has('removed_medical_proof')) {
+            $removedFiles = json_decode($request->removed_medical_proof, true);
+            $existingFiles = $request->existing_medical_proof ? json_decode($request->existing_medical_proof, true) : [];
+        
+            // Hapus file yang ada di server
+            foreach ($removedFiles as $fileToRemove) {
+                if (in_array($fileToRemove, $existingFiles)) {
+                    $filePath = public_path($fileToRemove);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                    $existingFiles = array_filter($existingFiles, fn($file) => $file !== $fileToRemove);
+                }
+            }
+        } else {
+            $existingFiles = $request->existing_medical_proof ? json_decode($request->existing_medical_proof, true) : [];
         }
+        
+        // Proses file baru
+        if ($request->hasFile('medical_proof')) {
+            $request->validate([
+                'medical_proof.*' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            ]);
+        
+            foreach ($request->file('medical_proof') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $upload_path = 'uploads/proofs/' . $employee_data->employee_id;
+                $full_path = public_path($upload_path);
+        
+                if (!is_dir($full_path)) {
+                    mkdir($full_path, 0755, true);
+                }
+        
+                $file->move($full_path, $filename);
+                $existingFiles[] = $upload_path . '/' . $filename;
+            }
+        }
+        
+        // Simpan semua file yang tersisa ke database
+        $medical_proof_path = json_encode(array_values($existingFiles));    
 
         $medical_costs = $request->input('medical_costs', []);
         $date = Carbon::parse($request->date);
@@ -1361,6 +1425,7 @@ class MedicalController extends Controller
 
     public function medicalAdminDetailCreate(Request $request, $key)
     {
+        $userId = Auth::id();
         $employee_id = decrypt($key);
         $no_medic = $this->generateNoMedic();
 
@@ -1370,11 +1435,49 @@ class MedicalController extends Controller
         ->pluck('contribution_level_code')
         ->first();
 
-        $medical_proof_path = null;
-        if ($request->hasFile('medical_proof')) {
-            $file = $request->file('medical_proof');
-            $medical_proof_path = $file->store('public/storage/proofs');
+        // Handle medical proof file upload
+        $employee_data = Employee::where('id', $userId)->first();
+
+        if ($request->has('removed_medical_proof')) {
+            $removedFiles = json_decode($request->removed_medical_proof, true);
+            $existingFiles = $request->existing_medical_proof ? json_decode($request->existing_medical_proof, true) : [];
+        
+            // Hapus file yang ada di server
+            foreach ($removedFiles as $fileToRemove) {
+                if (in_array($fileToRemove, $existingFiles)) {
+                    $filePath = public_path($fileToRemove);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                    $existingFiles = array_filter($existingFiles, fn($file) => $file !== $fileToRemove);
+                }
+            }
+        } else {
+            $existingFiles = $request->existing_medical_proof ? json_decode($request->existing_medical_proof, true) : [];
         }
+        
+        // Proses file baru
+        if ($request->hasFile('medical_proof')) {
+            $request->validate([
+                'medical_proof.*' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+            ]);
+        
+            foreach ($request->file('medical_proof') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $upload_path = 'uploads/proofs/' . $employee_data->employee_id;
+                $full_path = public_path($upload_path);
+        
+                if (!is_dir($full_path)) {
+                    mkdir($full_path, 0755, true);
+                }
+        
+                $file->move($full_path, $filename);
+                $existingFiles[] = $upload_path . '/' . $filename;
+            }
+        }
+        
+        // Simpan semua file yang tersisa ke database
+        $medical_proof_path = json_encode(array_values($existingFiles));    
 
         $medical_costs = $request->input('medical_costs', []);
         $date = Carbon::parse($request->date);
