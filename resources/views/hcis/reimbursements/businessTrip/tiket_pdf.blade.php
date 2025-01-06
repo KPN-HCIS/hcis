@@ -201,7 +201,7 @@
     </table>
 
     <table>
-        <tr>
+        {{-- <tr>
             <td class="label">HRD</td>
             <td class="colon">:</td>
             <td class="value">{{ $ticket->businessTrip->hrd }}</td>
@@ -210,7 +210,7 @@
             <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value">{{ $ticket->businessTrip->tanggal_hrd }}</td>
-        </tr>
+        </tr> --}}
     </table>
 </body>
 
