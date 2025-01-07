@@ -2739,14 +2739,8 @@ class ReimburseController extends Controller
             ->get();
         $totalTKTCount = $transactions_tkt->filter(function ($ticket) use ($employee) {
             $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
-
-            if (!$ticketOwnerEmployee) {
-                // If the employee is null, exclude this ticket
-                return false;
-            }
-
-            return ($ticket->approval_status === 'Pending L1' && $ticketOwnerEmployee->manager_l1_id === $employee->employee_id) ||
-                ($ticket->approval_status === 'Pending L2' && $ticketOwnerEmployee->manager_l2_id === $employee->employee_id);
+            return ($ticket->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) ||
+                ($ticket->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id);
         })->count();
 
         $totalPendingCount = CATransaction::where(function ($query) use ($employeeId) {
