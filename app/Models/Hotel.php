@@ -37,6 +37,7 @@ class Hotel extends Model
         'approval_extend',
         'hotel_only',
         'reject_info',
+        'contribution_level_code',
     ];
     protected $table = 'htl_transactions';
 

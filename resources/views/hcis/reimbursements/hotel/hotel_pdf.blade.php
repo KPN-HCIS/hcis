@@ -158,7 +158,7 @@
         <tr>
             <td class="label">PT</td>
             <td class="colon">:</td>
-            <td class="value">{{ $hotel->employee->company_name }}</td>
+            <td class="value">{{ $hotel->contribution_level_code }}</td>
         </tr>
         <tr>
             <td class="label">Cost Center</td>

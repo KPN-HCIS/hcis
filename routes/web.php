@@ -245,8 +245,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/hotel/status/change/{id}', [ReimburseController::class, 'updatestatusHotel'])->name('change.status.hotel');
 
 
-
-
     //Hotel Admin
     Route::middleware(['permission:report_hcis_htl'])->group(function () {
         Route::get('/hotel/admin', [ReimburseController::class, 'hotelAdmin'])->name('hotel.admin');

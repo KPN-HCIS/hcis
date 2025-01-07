@@ -58,9 +58,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-5">
                                     <div class="mb-2">
-                                        <label class="form-label" for="bisnis_numb">Business Trip Number</label>
+                                        <label class="form-label" for="bisnis_numb">Company Cost</label>
                                         <select class="form-control select2 form-select-sm" id="bisnis_numb"
                                             name="bisnis_numb">
                                             <option value="-">No Business Trip</option>
@@ -70,7 +70,22 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+
+                                <div class="col-md-5">
+                                    <div class="mb-2">
+                                        <label class="form-label" for="contribution_level_code">Costing Company</label>
+                                        <select class="form-control select2 form-select-sm" id="contribution_level_code"
+                                            name="contribution_level_code" required>
+                                            <option value="" selected disabled>Select Costing Company</option>
+                                            @foreach ($companies as $company)
+                                                <option value="{{ $company->contribution_level_code }}">
+                                                    {{ $company->contribution_level . ' (' . $company->contribution_level_code . ')' }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
                                     <div class="mb-2">
                                         <label class="form-label" for="jns_dinas_tkt">Service Type</label>
                                         <input class="form-control bg-light form-control-sm" type='text'

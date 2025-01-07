@@ -84,6 +84,7 @@ class Tiket extends Model
         'approval_status',
         'tkt_only',
         'jns_dinas_tkt',
+        'contribution_level_code',
     ];
     protected $table = 'tkt_transactions';
 
