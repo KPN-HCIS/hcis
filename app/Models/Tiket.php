@@ -23,26 +23,6 @@ class Tiket extends Model
     {
         return $this->belongsTo(TiketApproval::class, 'id', 'tkt_id');
     }
-    public function getManager1FullnameAttribute()
-    {
-        // Get the associated BusinessTrip record
-        $businessTrip = $this->businessTrip;
-        if ($businessTrip && $businessTrip->manager1) {
-            return $businessTrip->manager1->fullname;
-        }
-        return '-';
-    }
-
-    // Relationship to Employee through BusinessTrip for Manager 2
-    public function getManager2FullnameAttribute()
-    {
-        // Get the associated BusinessTrip record
-        $businessTrip = $this->businessTrip;
-        if ($businessTrip && $businessTrip->manager2) {
-            return $businessTrip->manager2->fullname;
-        }
-        return '-';
-    }
     public function latestApprovalL1()
     {
         return $this->hasOne(TiketApproval::class, 'tkt_id', 'id')
@@ -57,8 +37,14 @@ class Tiket extends Model
             ->where('approval_status', 'Approved')
             ->latest('approved_at');
     }
-
-
+    public function latestApprovalL1Name()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l1_id', 'employee_id')->select('fullname');
+    }
+    public function latestApprovalL2Name()
+    {
+        return $this->belongsTo(Employee::class, 'manager_l2_id', 'employee_id')->select('fullname');
+    }
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -84,6 +70,8 @@ class Tiket extends Model
         'approval_status',
         'tkt_only',
         'jns_dinas_tkt',
+        'manager_l1_id',
+        'manager_l2_id',
         'contribution_level_code',
     ];
     protected $table = 'tkt_transactions';

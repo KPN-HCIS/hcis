@@ -2137,6 +2137,29 @@ class ReimburseController extends Controller
         } elseif ($req->has('action_submit')) {
             $statusValue = 'Pending L1';  // When "Submit" is clicked
         }
+        $employee_data = Employee::where('id', $userId)->first();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
         // Prepare the hotel data arrays
         $hotelData = [
             'nama_htl' => $req->nama_htl,
@@ -2165,6 +2188,8 @@ class ReimburseController extends Controller
                 $model = new Hotel();
                 $model->id = (string) Str::uuid();
                 $model->no_htl = $noSppdHtl;
+                $model->manager_l1_id = $managerL1;
+                $model->manager_l2_id = $managerL2;
                 $model->contribution_level_code = $req->contribution_level_code;
                 $model->no_sppd = $req->bisnis_numb;
                 $model->user_id = $userId;
@@ -2471,6 +2496,30 @@ class ReimburseController extends Controller
             $statusValue = 'Pending L1';
         }
 
+        $employee_data = Employee::where('id', $userId)->first();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
+
         // Get the no_htl from the first existing hotel record
 
         // dd($noHtl);
@@ -2490,6 +2539,8 @@ class ReimburseController extends Controller
                 // Prepare hotel data array
                 $hotelData = [
                     'unit' => $req->unit,
+                    'manager_l1_id' => $managerL1,
+                    'manager_l2_id' => $managerL2,
                     'no_sppd' => $req->bisnis_numb,
                     'nama_htl' => $req->nama_htl[$index],
                     'lokasi_htl' => $req->lokasi_htl[$index],
@@ -2517,6 +2568,8 @@ class ReimburseController extends Controller
                         'id' => (string) Str::uuid(),
                         'user_id' => $userId,
                         'created_by' => $userId,
+                        'manager_l1_id' => $managerL1,
+                        'manager_l2_id' => $managerL2,
                         'contribution_level_code' => $req->contribution_level_code,
                     ]));
                     $processedHotelIds[] = $newHotel->id;  // Keep track of processed hotel IDs
@@ -2686,8 +2739,14 @@ class ReimburseController extends Controller
             ->get();
         $totalTKTCount = $transactions_tkt->filter(function ($ticket) use ($employee) {
             $ticketOwnerEmployee = Employee::where('id', $ticket->user_id)->first();
-            return ($ticket->approval_status == 'Pending L1' && $ticketOwnerEmployee->manager_l1_id == $employee->employee_id) ||
-                ($ticket->approval_status == 'Pending L2' && $ticketOwnerEmployee->manager_l2_id == $employee->employee_id);
+
+            if (!$ticketOwnerEmployee) {
+                // If the employee is null, exclude this ticket
+                return false;
+            }
+
+            return ($ticket->approval_status === 'Pending L1' && $ticketOwnerEmployee->manager_l1_id === $employee->employee_id) ||
+                ($ticket->approval_status === 'Pending L2' && $ticketOwnerEmployee->manager_l2_id === $employee->employee_id);
         })->count();
 
         $totalPendingCount = CATransaction::where(function ($query) use ($employeeId) {
@@ -3294,6 +3353,29 @@ class ReimburseController extends Controller
     public function ticketSubmit(Request $req)
     {
         $userId = Auth::id();
+        $employee_data = Employee::where('id', $userId)->first();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
         function getRomanMonth_tkt($month)
         {
             $romanMonths = [
@@ -3401,6 +3483,8 @@ class ReimburseController extends Controller
                 $tiket->no_tkt = $newNoTkt;
 
                 $userId = Auth::id();
+                $tiket->manager_l1_id = $managerL1;
+                $tiket->manager_l2_id = $managerL2;
                 $tiket->no_sppd = $req->bisnis_numb;
                 $tiket->user_id = $userId;
                 $tiket->unit = $req->unit;
@@ -3723,6 +3807,30 @@ class ReimburseController extends Controller
         $processedTicketIds = [];
         $firstNoTkt = null;
 
+        $employee_data = Employee::where('id', $userId)->first();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
+
         if ($req->has('action_draft')) {
             $statusValue = 'Draft';  // When "Save as Draft" is clicked
         } elseif ($req->has('action_submit')) {
@@ -3746,6 +3854,8 @@ class ReimburseController extends Controller
             if (!empty($value)) {
                 $ticketData = [
                     'no_sppd' => $req->bisnis_numb,
+                    'manager_l1_id' => $managerL1,
+                    'manager_l2_id' => $managerL2,
                     'contribution_level_code' => $req->contribution_level_code,
                     'user_id' => Auth::id(),
                     'unit' => $req->unit,
@@ -3782,6 +3892,8 @@ class ReimburseController extends Controller
                     $newTiket = Tiket::create(array_merge($ticketData, [
                         'id' => (string) Str::uuid(),
                         'noktp_tkt' => $value,
+                        'manager_l1_id' => $managerL1,
+                        'manager_l2_id' => $managerL2,
                         'contribution_level_code' => $req->contribution_level_code,
                         'tkt_only' => 'Y',
                     ]));
