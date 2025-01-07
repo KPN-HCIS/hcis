@@ -17,6 +17,7 @@ use App\Models\Dependents;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Models\MasterBusinessUnit;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\date_interval_create_from_string;
@@ -402,24 +403,28 @@ class HomeTripController extends Controller
             // // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new HomeTripNotification([
-                    'noTkt' => $noTktList,
-                    'namaPenumpang' => $npTkt,
-                    'dariTkt' => $dariTkt,
-                    'keTkt' => $keTkt,
-                    'tglBrktTkt' => $tglBrktTkt,
-                    'jamBrktTkt' => $jamBrktTkt,
-                    'approvalStatus' => $statusValue,
-                    'tipeTkt' => $tipeTkt,
-                    'tglPlgTkt' => $tglPlgTkt,
-                    'jamPlgTkt' => $jamPlgTkt,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                    'base64Image' => $base64Image,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new HomeTripNotification([
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'approvalStatus' => $statusValue,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                        'base64Image' => $base64Image,
+                    ]));          
+                } catch (\Exception $e) {
+                    Log::error('Email Create Home Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
         return redirect()->route('home-trip')->with('success', 'The ticket request has been input successfully.');
@@ -690,21 +695,25 @@ class HomeTripController extends Controller
 
             if ($managerEmail) {
                 // Send email to the manager with all ticket details
-                Mail::to($managerEmail)->send(new HomeTripNotification([
-                    'noTkt' => $noTktList,  // all ticket numbers
-                    'namaPenumpang' => $npTkt,  // all passengers
-                    'dariTkt' => $dariTkt,  // all departure locations
-                    'keTkt' => $keTkt,
-                    'tipeTkt' => $tipeTkt,
-                    'tglBrktTkt' => $tglBrktTkt,
-                    'jamBrktTkt' => $jamBrktTkt,
-                    'tglPlgTkt' => $tglPlgTkt,
-                    'jamPlgTkt' => $jamPlgTkt,
-                    'approvalStatus' => $statusValue,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new HomeTripNotification([
+                        'noTkt' => $noTktList,  // all ticket numbers
+                        'namaPenumpang' => $npTkt,  // all passengers
+                        'dariTkt' => $dariTkt,  // all departure locations
+                        'keTkt' => $keTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'approvalStatus' => $statusValue,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                    ]));           
+                } catch (\Exception $e) {
+                    Log::error('Email Update Home Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
 

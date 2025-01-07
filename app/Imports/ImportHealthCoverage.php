@@ -7,6 +7,7 @@ use App\Models\HealthPlan;
 use App\Models\MasterMedical;
 use App\Models\Employee;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -138,10 +139,14 @@ class ImportHealthCoverage implements ToModel
                 $imagePath = public_path('images/kop.jpg');
                 $imageContent = file_get_contents($imagePath);
                 $base64Image = "data:image/png;base64," . base64_encode($imageContent);
-                Mail::to($email)->send(new MedicalNotification(
-                    $records,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($email)->send(new MedicalNotification(
+                        $records,
+                        $base64Image,
+                    ));       
+                } catch (\Exception $e) {
+                    Log::error('Email Record Medical tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
 

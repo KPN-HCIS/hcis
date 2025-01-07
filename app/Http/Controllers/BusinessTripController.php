@@ -894,19 +894,23 @@ class BusinessTripController extends Controller
                 ]);
 
                 // Send an email with the detailed business trip information
-                Mail::to($managerEmail)->send(new BusinessTripNotification(
-                    $n,
-                    $hotelDetails,  // Pass hotel details
-                    $ticketDetails,
-                    $taksiDetails,
-                    $caDetails,
-                    $managerName,
-                    $approvalLink,
-                    $rejectionLink,
-                    $employeeName,
-                    $base64Image,
-                    $textNotification,
-                ));
+                try {
+                    Mail::to($managerEmail)->send(new BusinessTripNotification(
+                        $n,
+                        $hotelDetails,  // Pass hotel details
+                        $ticketDetails,
+                        $taksiDetails,
+                        $caDetails,
+                        $managerName,
+                        $approvalLink,
+                        $rejectionLink,
+                        $employeeName,
+                        $base64Image,
+                        $textNotification,
+                    ));   
+                } catch (\Exception $e) {
+                    Log::error('Email Update Bussines Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
 
@@ -1487,14 +1491,18 @@ class BusinessTripController extends Controller
                 ];
 
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new DeclarationNotification(
-                    $n,
-                    $caDetails,
-                    $caDeclare,
-                    $managerName,
-                    $approvalLink,
-                    $rejectionLink,
-                ));
+                try {
+                    Mail::to($managerEmail)->send(new DeclarationNotification(
+                        $n,
+                        $caDetails,
+                        $caDeclare,
+                        $managerName,
+                        $approvalLink,
+                        $rejectionLink,
+                    ));   
+                } catch (\Exception $e) {
+                    Log::error('Email Deklarasi Create Bussines Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
 
@@ -2605,19 +2613,23 @@ class BusinessTripController extends Controller
 
 
                 // Send an email with the detailed business trip information
-                Mail::to($managerEmail)->send(new BusinessTripNotification(
-                    $businessTrip,
-                    $hotelDetails,
-                    $ticketDetails,
-                    $taksiDetails,
-                    $caDetails,
-                    $managerName,
-                    $approvalLink,
-                    $rejectionLink,
-                    $employeeName,
-                    $base64Image,
-                    $textNotification,
-                ));
+                try {
+                    Mail::to($managerEmail)->send(new BusinessTripNotification(
+                        $businessTrip,
+                        $hotelDetails,
+                        $ticketDetails,
+                        $taksiDetails,
+                        $caDetails,
+                        $managerName,
+                        $approvalLink,
+                        $rejectionLink,
+                        $employeeName,
+                        $base64Image,
+                        $textNotification,
+                    ));   
+                } catch (\Exception $e) {
+                    Log::error('Email Create Bussines Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
         return redirect()->route('businessTrip')->with('success', 'Request Successfully Added');
@@ -3187,14 +3199,18 @@ class BusinessTripController extends Controller
                     // dd($caDeclare);
 
                     // Send email to the manager
-                    Mail::to($employeeEmail)->send(new RefundNotification(
-                        $n,
-                        $caDetails,
-                        $newDeclareCa,
-                        $employeeName,
-                        $accNum,
-                        $selisih,
-                    ));
+                    try {
+                        Mail::to($employeeEmail)->send(new RefundNotification(
+                            $n,
+                            $caDetails,
+                            $newDeclareCa,
+                            $employeeName,
+                            $accNum,
+                            $selisih,
+                        ));
+                    } catch (\Exception $e) {
+                        Log::error('Email Deklarasi Status Admin Bussines Trip tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
 
@@ -3746,19 +3762,23 @@ class BusinessTripController extends Controller
                 ]);
 
                 // Send an email with the detailed business trip information
-                Mail::to($managerL2)->send(new BusinessTripNotification(
-                    $businessTrip,
-                    $hotelDetails,  // Pass hotel details
-                    $ticketDetails,
-                    $taksiDetails,
-                    $caDetails,
-                    $managerName,
-                    $approvalLink,
-                    $rejectionLink,
-                    $employeeName,
-                    $base64Image,
-                    $textNotification,
-                ));
+                try {
+                    Mail::to($managerL2)->send(new BusinessTripNotification(
+                        $businessTrip,
+                        $hotelDetails,  // Pass hotel details
+                        $ticketDetails,
+                        $taksiDetails,
+                        $caDetails,
+                        $managerName,
+                        $approvalLink,
+                        $rejectionLink,
+                        $employeeName,
+                        $base64Image,
+                        $textNotification,
+                    ));       
+                } catch (\Exception $e) {
+                    Log::error('Email Update Status Bussines Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             if ($businessTrip->hotel == 'Ya') {
@@ -4587,14 +4607,18 @@ class BusinessTripController extends Controller
             // dd($managerL2);
             if ($managerL2) {
                 // Send email to L2
-                Mail::to($managerL2)->send(new DeclarationNotification(
-                    $businessTrip,
-                    $caDetails,
-                    $caDeclare,
-                    $managerName,
-                    $approvalLink,
-                    $rejectionLink,
-                ));
+                try {
+                    Mail::to($managerL2)->send(new DeclarationNotification(
+                        $businessTrip,
+                        $caDetails,
+                        $caDeclare,
+                        $managerName,
+                        $approvalLink,
+                        $rejectionLink,
+                    ));       
+                } catch (\Exception $e) {
+                    Log::error('Email Update Status Deklarasi Bussines Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
             // Handle CA approval for L1
             if ($businessTrip->ca == 'Ya') {

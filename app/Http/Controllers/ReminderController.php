@@ -47,13 +47,17 @@ class ReminderController extends Controller
                     $reminder = "Extend";
                     $declaration = "Declaration";
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedReminder(
-                        $transaction,
-                        $textNotification,
-                        $reminder,
-                        $base64Image,
-                        $declaration,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedReminder(
+                            $transaction,
+                            $textNotification,
+                            $reminder,
+                            $base64Image,
+                            $declaration,
+                        ));       
+                    } catch (\Exception $e) {
+                        Log::error('Email Reminder tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }  
 

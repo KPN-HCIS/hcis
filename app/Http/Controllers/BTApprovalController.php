@@ -311,19 +311,23 @@ class BTApprovalController extends Controller
                 ]);
 
                 // Send an email with the detailed business trip information
-                Mail::to($managerL2)->send(new BusinessTripNotification(
-                    $businessTrip,
-                    $hotelDetails,  // Pass hotel details
-                    $ticketDetails,
-                    $taksiDetails,
-                    $caDetails,
-                    $managerName,
-                    $approvalLink,
-                    $rejectionLink,
-                    $employeeName,
-                    $base64Image,
-                    $textNotification,
-                ));
+                try {
+                    Mail::to($managerL2)->send(new BusinessTripNotification(
+                        $businessTrip,
+                        $hotelDetails,  // Pass hotel details
+                        $ticketDetails,
+                        $taksiDetails,
+                        $caDetails,
+                        $managerName,
+                        $approvalLink,
+                        $rejectionLink,
+                        $employeeName,
+                        $base64Image,
+                        $textNotification,
+                    ));   
+                } catch (\Exception $e) {
+                    Log::error('Email Link Approval Bussines Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             if ($businessTrip->hotel == 'Ya') {
@@ -588,14 +592,18 @@ class BTApprovalController extends Controller
                 ];
 
                 // Send email to the manager
-                Mail::to($managerL2)->send(new DeclarationNotification(
-                    $businessTrip,
-                    $caDetails,
-                    $caDeclare,
-                    $managerName,
-                    $approvalLink,
-                    $rejectionLink,
-                ));
+                try {
+                    Mail::to($managerL2)->send(new DeclarationNotification(
+                        $businessTrip,
+                        $caDetails,
+                        $caDeclare,
+                        $managerName,
+                        $approvalLink,
+                        $rejectionLink,
+                    ));
+                } catch (\Exception $e) {
+                    Log::error('Email Deklarasi Approval Bussines Trip tidak terkirim: ' . $e->getMessage());
+                }
             }
             // Handle CA approval for L1
             if ($businessTrip->ca == 'Ya') {
